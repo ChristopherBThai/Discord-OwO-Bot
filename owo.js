@@ -53,6 +53,8 @@ client.on('message',msg => {
 
 	//Add point if they said owo
 	else if(msg.content.toLowerCase().includes('owo')) addPoint(msg.member.id);
+	
+	else if(msg.mentions.users.has(client.user.id)) msg.channel.send("*OwO What's this?!*  Do you need me?");
 });
 
 client.login(auth.token);
@@ -106,6 +108,7 @@ function getRankingValid(channel,members,chat,args){
 						count = parseInt(args[i]);
 				}
 				if (count>25) count = 25;
+				else if (count<1) count = 5;
 			}
 			if(global)
 				getGlobalRanking(members,chat,count);
