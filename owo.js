@@ -4,18 +4,28 @@ var auth = require('../tokens/owo-auth.json');
 var login = require('../tokens/owo-login.json');
 var prefix = "owo";
 
+var eightballCount = 18;
+
 client.on('message',msg => {
 	//Ignore if its a bot
 	if(msg.author.bot) return;
 
+	//Check if command
+	var args = "";
+	var isMention = false;;
+	var isCommand = false;
+	if(msg.content.indexOf(prefix) === 0){
+		args = msg.content.slice(prefix.length).trim().split(/ +/g);
+		isCommand = true;
+	}else if(msg.mentions.users.has(client.user.id)){
+		args = msg.content.substring(msg.content.indexOf(" ")).trim().split(/ +/g);;
+		isMention = true;
+		isCommand = true;
+	}
+
 	//Check for 'owo' prefix
-	if(msg.content.indexOf(prefix) ===0){
-
-		//Grabs command and args
-		const args = msg.content.slice(prefix.length).trim().split(/ +/g);
+	if(isCommand){
 		const command = args.shift().toLowerCase();
-		var isCommand = true;
-
 
 		//Displays top ranking
 		if (command === 'ranking'||command === 'rank'){
@@ -40,21 +50,33 @@ client.on('message',msg => {
 				msg.channel.send("*OwO What's this?* You're not and admin!");
 		}
 
+		//reply the question with yes or no
+		else if(msg.content[msg.content.length-1] === '?'){
+			eightball(msg,isMention);
+			isCommand = false;
+			console.log("Command: eightball");
+		}
+
 		//Displays all the commands
 		else if(command === "help"){
 			msg.channel.send("*OwO Sorry!* Master hasn't implemented it yet!");
 		}
 
-		else{ addPoint(msg.member.id); isCommand = false;}
+		//If not a command...
+		else{ 
+			addPoint(msg.member.id);
+			isCommand = false;
+			if(isMention)
+				msg.channel.send("*OwO What's this?!*  Do you need me?");
+		}
 
+		//Display the command to logs
 		if(isCommand)
 			console.log("Command: "+command+" {"+args+"}");
 	}
 
 	//Add point if they said owo
 	else if(msg.content.toLowerCase().includes('owo')) addPoint(msg.member.id);
-	
-	else if(msg.mentions.users.has(client.user.id)) msg.channel.send("*OwO What's this?!*  Do you need me?");
 });
 
 client.login(auth.token);
@@ -92,7 +114,7 @@ function getRankingValid(channel,members,chat,args){
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		var length = rows.length;
-		console.log("Blacklist count: "+rows.length);
+		console.log("	Blacklist count: "+rows.length);
 		if(rows.length>0){
 			chat.send("'owo rank' is disabled on this channel!");
 			return;
@@ -152,7 +174,7 @@ function getRanking(members,chat,count){
 		};
 		chat.send("**Top "+count+" *OwO* Rankings**",{ embed });
 	});
-	console.log("Displaying top "+count);
+	console.log("	Displaying top "+count);
 }
 
 function getGlobalRanking(members,chat,count){
@@ -180,7 +202,7 @@ function getGlobalRanking(members,chat,count){
 		};
 		chat.send("**Top "+count+" *OwO* Global Rankings**",{ embed });
 	});
-	console.log("Displaying top "+count+" global");
+	console.log("	Displaying top "+count+" global");
 }
 
 //=============================================================================Enable/Disable Rank===============================================================
@@ -202,6 +224,25 @@ function enable(id){
 	});
 }
 
+
+//=============================================================================EightBall===============================================================
+
+function eightball(msg,isMention){
+	var id = Math.ceil(Math.random()*eightballCount);
+	var sql = "SELECT answer FROM eightball WHERE id = "+id+";";
+	con.query(sql,function(err,rows,field){
+		if(err) throw err;
+		console.log(rows);
+		var question = msg.content;
+		if(isMention)
+			question = question.substring(question.indexOf(" ")+1);
+		else
+			question = question.substring(prefix.length+1);
+			
+		msg.channel.send("**"+msg.author+" asked:**  "+question+
+			"\n**Answer:**  "+rows[0].answer);
+	});
+}
 
 //=============================================================================Console Logs===============================================================
 
