@@ -28,7 +28,7 @@ client.on('message',msg => {
 	var isMention = false;;
 	var isCommand = false;
 	//Check for 'owo' prefix
-	if(msg.content.indexOf(prefix) === 0){
+	if(msg.content.toLowerCase().indexOf(prefix) === 0){
 		args = msg.content.slice(prefix.length).trim().split(/ +/g);
 		isCommand = true;
 	}else if(msg.mentions.users.has(client.user.id)){
@@ -83,10 +83,10 @@ client.on('message',msg => {
 
 		//If not a command...
 		else{ 
-			addPoint(msg.author.id);
+			addPoint(msg.author.id,msg);
 			isCommand = false;
 			if(isMention)
-				msg.channel.send("*OwO What's this?!*  Do you need me?");
+				msg.channel.send("*OwO What's this?!*  Do you need me? Type *owo help* for help!");
 		}
 
 		//Display the command to logs
@@ -95,7 +95,7 @@ client.on('message',msg => {
 	}
 
 	//Add point if they said owo
-	else if(msg.content.toLowerCase().includes('owo')) addPoint(msg.author.id);
+	else if(msg.content.toLowerCase().includes('owo')) addPoint(msg.author.id,msg);
 });
 
 //Discord login
@@ -121,11 +121,14 @@ con.connect(function(err){
 //=======================================================================Ranking System===========================================
 
 //Adds an owo point
-function addPoint(id){
+function addPoint(id,msg){
 	var sql = "INSERT INTO user (id,count) VALUES ("+id+",1) ON DUPLICATE KEY UPDATE count = count +1;"
 	con.query(sql,function(err,result){
 		if(err) throw err;
-		console.log("+1 for "+id);
+		if(msg.channel.type==="text")
+			console.log("+1 for "+msg.author.username+" from '"+msg.guild.name+" ["+msg.channel.name+"]'");
+		else
+			console.log("+1 for "+msg.author.username+" from DM");
 	});
 }
 
@@ -275,6 +278,118 @@ function eightball(msg,isMention){
 	});
 }
 
+//=============================================================================Feedback===============================================================
+
+//Sends the feedback to admin's DM
+function feedback(sender,type,message,admin,channel){
+	if(!message||message === ''){
+		channel.send("Silly "+sender + ", you need to add a message!"); 
+		return;
+	}
+	var sql = "INSERT INTO feedback (type,message,sender) values ('"+
+		type+"',?,"+
+		sender.id+");";
+	message = message.replace(/([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2694-\u2697]|\uD83E[\uDD10-\uDD5D])/g, ':emoji:')
+	sql = mysql.format(sql,message);
+	con.query(sql,function(err,rows,field){
+		if(err) throw err;
+		const embed = {
+			"color": 10590193,
+			"timestamp": new Date(),
+			"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
+			"author": {
+				"name": "OwO Bot Support",
+				"icon_url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"
+			},
+			"fields": [
+				{
+					"name":"A user sent a feedback!",
+					"value": "==============================================="
+				},{
+					"name": "Message ID",
+					"value": rows.insertId,
+					"inline": true
+				},{
+					"name": "Message Type",
+					"value": type,
+					"inline": true
+				},{
+					"name": "From "+sender.username,
+					"value": message+"\n\n==============================================="
+				}
+			]
+		};
+		channel.send("*OwO What's this?!*  "+sender+", Thanks for the "+type+"!");
+		admin.send({embed});
+		console.log("	New "+type+" sent to admin's DM");
+	});
+}
+
+//Replies to feedback
+function replyFeedback(dm,feedbackId,reply){
+	var sql = "SELECT type,message,sender FROM feedback WHERE id = "+feedbackId+";";
+	con.query(sql,function(err,rows,field){
+		if(err) throw err;
+		var user = client.users.get(String(rows[0].sender));
+		const embed = {
+			"color": 10590193,
+			"timestamp": new Date(),
+			"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
+			"author": {
+				"name": "OwO Bot Support",
+				"icon_url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"
+			},
+			"fields": [
+				{
+					"name":"Thank you for your feedback!",
+					"value": "==============================================="
+				},{
+					"name": "Message ID",
+					"value": feedbackId,
+					"inline": true
+				},{
+					"name": "Message Type",
+					"value": rows[0].type,
+					"inline": true
+				},{
+					"name": "Your Message",
+					"value": rows[0].message
+				},{
+					"name": "Reply from Admin",
+					"value": reply+"\n\n==============================================="
+				}
+			]
+		};
+
+		dm.send({embed});
+		console.log("	Replied to a feedback["+feedbackId+"] for "+user.username);
+	});
+}
+
+
+//=============================================================================Helpers===============================================================
+
+function isInt(value){
+	return !isNaN(value) &&
+		parseInt(Number(value)) == value &&
+		!isNaN(parseInt(value,10));
+}
+
+function showHelp(channel){
+	const embed = {
+		"title":"OwO Bot Commands List",
+		"color": 4886754,
+		"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
+		"description": "\n**owo help** - Displays this commands list!"+
+			"\n\n**owo rank [global] {count}** - displays the ranking of OwOs \ne.g `owo rank global`, `owo rank 25`, `owo rank global 25`"+
+			"\n\n**owo disablerank|removerank** - disables the command 'owo rank' on the current channel"+
+			"\n\n**owo enablerank|addrank** - enables the command 'owo rank' on the current channel"+
+			"\n\n**owo {question}?** - replies as a yes/no answer \ne.g. `owo Am I cute?`"+
+			"\n\n**owo feedback|suggestion|report {message}** - sends a message to an admin who will reply back \ne.g `owo feedback I love this bot!`"
+	};
+	channel.send({embed});
+}
+
 //=============================================================================Console Logs===============================================================
 
 client.on('ready',()=>{
@@ -293,62 +408,4 @@ client.on("guildDelete", guild => {
 	client.user.setActivity('with '+client.users.size+' Users! OwO');
 });
 
-//=============================================================================Helpers===============================================================
-
-function isInt(value){
-	return !isNaN(value) &&
-		parseInt(Number(value)) == value &&
-		!isNaN(parseInt(value,10));
-}
-
-function showHelp(channel){
-	const embed = {
-		"title":"OwO Bot Commands List",
-		"color": 4886754,
-		"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
-		"description": "\n**owo help** - Displays this commands list!"+
-			"\n\n**owo rank [global] {count}** - displays the ranking of OwOs e.g *'owo rank global' 'owo rank 25' 'owo rank global 25'*"+
-			"\n\n**owo disablerank|removerank** - disables the command 'owo rank' on the current channel"+
-			"\n\n**owo enablerank|addrank** - enables the command 'owo rank' on the current channel"+
-			"\n\n**owo {question}?** - replies as a yes/no answer e.g. *'owo Am I cute?'*"+
-			"\n\n**owo feedback|suggestion|report {message}** - sends a message to an admin who will reply back e.g *'owo feedback I love this bot!'*"
-	};
-	channel.send({embed});
-}
-
-//Sends the feedback to admin's DM
-function feedback(sender,type,message,admin,channel){
-	if(!message||message === ''){
-		channel.send("Silly "+sender + ", you need to add a message!"); 
-		return;
-	}
-	var sql = "INSERT INTO feedback (type,message,sender) values ('"+
-		type+"',?,"+
-		sender.id+");";
-	sql = mysql.format(sql,message);
-	con.query(sql,function(err,rows,field){
-		if(err) throw err;
-		admin.send("**ID:**  "+rows.insertId+
-			"\n**From:**  "+sender.username+
-			"\n**Type:**  "+type+
-			"\n**Message:**  "+message);
-		console.log("	New "+type+" sent to admin's DM");
-	});
-}
-
-//Replies to feedback
-function replyFeedback(dm,feedbackId,reply){
-	var sql = "SELECT type,message,sender FROM feedback WHERE id = "+feedbackId+";";
-	con.query(sql,function(err,rows,field){
-		if(err) throw err;
-		var user = client.users.get(String(rows[0].sender));
-		user.send("**Thank you for your "+rows[0].type+"!**"+
-			"\n**"+rows[0].type+" ID:**  "+feedbackId+
-			"\n**Your "+rows[0].type+":**  "+rows[0].message+
-			"\n**My Response:**  "+reply+
-			"\n*do not reply*");
-		dm.send("Replied to "+user.username+" for id "+feedbackId);
-		console.log("	Replied to a feedback["+feedbackId+"]");
-	});
-}
 
