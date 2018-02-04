@@ -15,7 +15,8 @@ client.on('message',msg => {
 		//Reply to a feedback/report/suggestion
 		if(adminCommand === 'reply'&&isInt(adminMsg[0])){
 			var feedbackId = parseInt(adminMsg.shift());
-			replyFeedback(feedbackId,adminMsg.join(' '));
+			replyFeedback(msg.channel,feedbackId,adminMsg.join(' '));
+			console.log("Admin Command: "+adminCommand+" "+feedbackId+" {"+adminMsg+"}");
 		}
 	}
 
@@ -124,7 +125,7 @@ function addPoint(id){
 	var sql = "INSERT INTO user (id,count) VALUES ("+id+",1) ON DUPLICATE KEY UPDATE count = count +1;"
 	con.query(sql,function(err,result){
 		if(err) throw err;
-		console.log("success for "+id);
+		console.log("+1 for "+id);
 	});
 }
 
@@ -336,15 +337,17 @@ function feedback(sender,type,message,admin,channel){
 }
 
 //Replies to feedback
-function replyFeedback(feedbackId,reply){
+function replyFeedback(dm,feedbackId,reply){
 	var sql = "SELECT type,message,sender FROM feedback WHERE id = "+feedbackId+";";
 	con.query(sql,function(err,rows,field){
 		if(err) throw err;
-		client.users.get(String(rows[0].sender)).send("**Thank you for your "+rows[0].type+"!**"+
+		var user = client.users.get(String(rows[0].sender));
+		user.send("**Thank you for your "+rows[0].type+"!**"+
 			"\n**"+rows[0].type+" ID:**  "+feedbackId+
 			"\n**Your "+rows[0].type+":**  "+rows[0].message+
 			"\n**My Response:**  "+reply+
 			"\n*do not reply*");
+		dm.send("Replied to "+user.username+" for id "+feedbackId);
 		console.log("	Replied to a feedback["+feedbackId+"]");
 	});
 }
