@@ -4,16 +4,29 @@ var auth = require('../tokens/owo-auth.json');
 var login = require('../tokens/owo-login.json');
 var prefix = "owo";
 
-var eightballCount = 18;
+var eightballCount = 29;
 
 client.on('message',msg => {
-	//Ignore if its a bot
-	if(msg.author.bot) return;
+	//Special admin commands via DM
+	if(msg.author.id===auth.admin&&msg.channel.type==="dm"){
+		var adminMsg = msg.content.trim().split(/ +/g);
+		const adminCommand = adminMsg.shift().toLowerCase();
+
+		//Reply to a feedback/report/suggestion
+		if(adminCommand === 'reply'&&isInt(adminMsg[0])){
+			var feedbackId = parseInt(adminMsg.shift());
+			replyFeedback(feedbackId,adminMsg.join(' '));
+		}
+	}
+
+	//Ignore if its a bot or DM
+	if(msg.author.bot||msg.channel.type!=="text") return;
 
 	//Check if command
 	var args = "";
 	var isMention = false;;
 	var isCommand = false;
+	//Check for 'owo' prefix
 	if(msg.content.indexOf(prefix) === 0){
 		args = msg.content.slice(prefix.length).trim().split(/ +/g);
 		isCommand = true;
@@ -23,7 +36,7 @@ client.on('message',msg => {
 		isCommand = true;
 	}
 
-	//Check for 'owo' prefix
+	//Commands
 	if(isCommand){
 		const command = args.shift().toLowerCase();
 
@@ -57,6 +70,11 @@ client.on('message',msg => {
 			console.log("Command: eightball");
 		}
 
+		//Sends feedback to admin
+		else if(command === 'feedback'|| command === 'suggestion' || command === 'report'){
+			feedback(msg.author,command,args.join(' '),client.users.get(auth.admin));
+		}
+
 		//Displays all the commands
 		else if(command === "help"){
 			msg.channel.send("*OwO Sorry!* Master hasn't implemented it yet!");
@@ -64,7 +82,7 @@ client.on('message',msg => {
 
 		//If not a command...
 		else{ 
-			addPoint(msg.member.id);
+			addPoint(msg.author.id);
 			isCommand = false;
 			if(isMention)
 				msg.channel.send("*OwO What's this?!*  Do you need me?");
@@ -76,11 +94,13 @@ client.on('message',msg => {
 	}
 
 	//Add point if they said owo
-	else if(msg.content.toLowerCase().includes('owo')) addPoint(msg.member.id);
+	else if(msg.content.toLowerCase().includes('owo')) addPoint(msg.author.id);
 });
 
+//Discord login
 client.login(auth.token);
 
+//Establish mysql connection
 var mysql = require('mysql');
 var con = mysql.createConnection({
 	host: "localhost",
@@ -91,7 +111,7 @@ var con = mysql.createConnection({
 	bigNumberStrings: true
 });
 
-
+//Display log when connected to mysql
 con.connect(function(err){
 	if(err) throw err;
 	console.log("Connected!");
@@ -99,6 +119,7 @@ con.connect(function(err){
 
 //=======================================================================Ranking System===========================================
 
+//Adds an owo point
 function addPoint(id){
 	var sql = "INSERT INTO user (id,count) VALUES ("+id+",1) ON DUPLICATE KEY UPDATE count = count +1;"
 	con.query(sql,function(err,result){
@@ -107,6 +128,7 @@ function addPoint(id){
 	});
 }
 
+//Checks if args are valid for ranking
 function getRankingValid(channel,members,chat,args){
 	//Check if its disabled
 	var sql = "SELECT * FROM blacklist WHERE id = "+channel+";";
@@ -140,6 +162,7 @@ function getRankingValid(channel,members,chat,args){
 	});
 }
 
+//Displays guild ranking
 function getRanking(members,chat,count){
 	//Grabs top 5
 	var sql = "SELECT * FROM user WHERE id IN ( ";
@@ -177,6 +200,7 @@ function getRanking(members,chat,count){
 	console.log("	Displaying top "+count);
 }
 
+//Displays global ranking
 function getGlobalRanking(members,chat,count){
 	//Grabs top 5
 	var sql = "SELECT * FROM user ORDER BY count DESC LIMIT "+count+";";
@@ -232,7 +256,6 @@ function eightball(msg,isMention){
 	var sql = "SELECT answer FROM eightball WHERE id = "+id+";";
 	con.query(sql,function(err,rows,field){
 		if(err) throw err;
-		console.log(rows);
 		var question = msg.content;
 		if(isMention)
 			question = question.substring(question.indexOf(" ")+1);
@@ -241,6 +264,13 @@ function eightball(msg,isMention){
 			
 		msg.channel.send("**"+msg.author+" asked:**  "+question+
 			"\n**Answer:**  "+rows[0].answer);
+		console.log("	question: "+question);
+		console.log("	answer: "+rows[0].answer);
+
+		if(Math.floor(Math.random()*100)===0){
+			msg.channel.send("**WAIT!** I Changed my mind!");
+			eightball(msg,isMention);
+		}
 	});
 }
 
@@ -268,5 +298,35 @@ function isInt(value){
 	return !isNaN(value) &&
 		parseInt(Number(value)) == value &&
 		!isNaN(parseInt(value,10));
+}
+
+//Sends the feedback to admin's DM
+function feedback(sender,type,message,admin){
+	var sql = "INSERT INTO feedback (type,message,sender) values ('"+
+		type+"',?,"+
+		sender.id+");";
+	sql = mysql.format(sql,message);
+	con.query(sql,function(err,rows,field){
+		if(err) throw err;
+		admin.send("**ID:**  "+rows.insertId+
+			"\n**From:**  "+sender.username+
+			"\n**Type:**  "+type+
+			"\n**Message:**  "+message);
+		console.log("	New "+type+" sent to admin's DM");
+	});
+}
+
+//Replies to feedback
+function replyFeedback(feedbackId,reply){
+	var sql = "SELECT type,message,sender FROM feedback WHERE id = "+feedbackId+";";
+	con.query(sql,function(err,rows,field){
+		if(err) throw err;
+		client.users.get(String(rows[0].sender)).send("**Thank you for your "+rows[0].type+"!**"+
+			"\n**"+rows[0].type+" ID:**  "+feedbackId+
+			"\n**Your "+rows[0].type+":**  "+rows[0].message+
+			"\n**My Response:**  "+reply+
+			"\n*do not reply*");
+		console.log("	Replied to a feedback["+feedbackId+"]");
+	});
 }
 
