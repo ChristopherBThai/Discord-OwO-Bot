@@ -72,12 +72,12 @@ client.on('message',msg => {
 
 		//Sends feedback to admin
 		else if(command === 'feedback'|| command === 'suggestion' || command === 'report'){
-			feedback(msg.author,command,args.join(' '),client.users.get(auth.admin));
+			feedback(msg.author,command,args.join(' '),client.users.get(auth.admin),msg.channel);
 		}
 
 		//Displays all the commands
 		else if(command === "help"){
-			msg.channel.send("*OwO Sorry!* Master hasn't implemented it yet!");
+			showHelp(msg.channel);
 		}
 
 		//If not a command...
@@ -300,8 +300,27 @@ function isInt(value){
 		!isNaN(parseInt(value,10));
 }
 
+function showHelp(channel){
+	const embed = {
+		"title":"OwO Bot Commands List",
+		"color": 4886754,
+		"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
+		"description": "\n**owo help** - Displays this commands list!"+
+			"\n\n**owo rank [global] {count}** - displays the ranking of OwOs e.g *'owo rank global' 'owo rank 25' 'owo rank global 25'*"+
+			"\n\n**owo disablerank|removerank** - disables the command 'owo rank' on the current channel"+
+			"\n\n**owo enablerank|addrank** - enables the command 'owo rank' on the current channel"+
+			"\n\n**owo {question}?** - replies as a yes/no answer e.g. *'owo Am I cute?'*"+
+			"\n\n**owo feedback|suggestion|report {message}** - sends a message to an admin who will reply back e.g *'owo feedback I love this bot!'*"
+	};
+	channel.send({embed});
+}
+
 //Sends the feedback to admin's DM
-function feedback(sender,type,message,admin){
+function feedback(sender,type,message,admin,channel){
+	if(!message||message === ''){
+		channel.send("Silly "+sender + ", you need to add a message!"); 
+		return;
+	}
 	var sql = "INSERT INTO feedback (type,message,sender) values ('"+
 		type+"',?,"+
 		sender.id+");";
