@@ -57,7 +57,7 @@ client.on('message',msg => {
 
 		//Adds channel to use owo ranking (Admins only)
 		else if(command === 'addrank'||command === 'enablerank'){
-			if(msg.member.permissions.hasPermission('MANAGE_CHANNELS')){
+			if(msg.member.permissions.has('MANAGE_CHANNELS')){
 				enable(msg.channel.id);
 				msg.channel.send("'owo rank' has been **enabled** for this channel!");			
 			}else
@@ -122,14 +122,18 @@ con.connect(function(err){
 
 //Adds an owo point
 function addPoint(id,msg){
-	var sql = "INSERT INTO user (id,count) VALUES ("+id+",1) ON DUPLICATE KEY UPDATE count = count +1;"
-	con.query(sql,function(err,result){
-		if(err) throw err;
-		if(msg.channel.type==="text")
-			console.log("+1 for "+msg.author.username+" from '"+msg.guild.name+" ["+msg.channel.name+"]'");
-		else
-			console.log("+1 for "+msg.author.username+" from DM");
-	});
+	var sql = "INSERT INTO user (id,count,lasttime) VALUES ("+id+",1,NOW()) ON DUPLICATE KEY UPDATE count = IF(TIMESTAMPDIFF(SECOND,lasttime,NOW())>10,count+1,count),lasttime = NOW();";
+	try{
+		con.query(sql,function(err,result){
+			if(err){ throw err; return;}
+			if(msg.channel.type==="text")
+				console.log(""+msg.author.username+"["+msg.guild.name+"]["+msg.channel.name+"] typed '"+msg+"'");
+			else
+				console.log(""+msg.author.username+" [DM] typed "+msg);
+		});
+	}catch(err){
+
+	}
 }
 
 //Checks if args are valid for ranking
@@ -180,26 +184,22 @@ function getRanking(members,chat,count){
 		if(err) throw err;
 		var rank = 1;
 		var ranking = [];
+		var embed = "```md\n< Top "+count+" OwO Rankings >\n\n";
 		rows.forEach(function(ele){
 			var id = String(ele.id);
 			var nickname = members.get(id).nickname;
 			var name = "";
 			if(nickname)
-				name = nickname+" *("+members.get(id).user.username+")*";
+				name = nickname+" ("+members.get(id).user.username+")";
 			else
 				name = ""+members.get(id).user.username;
-			ranking.push({
-				"name": rank+". "+name,
-				"value": "said *OwO*  __"+ele.count+"__ times!"
-			});
+			embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
 			rank++;
 		});
-		const embed = {
-			"color": 4886754,
-			"timestamp":new Date(),
-			"fields": ranking
-		};
-		chat.send("**Top "+count+" *OwO* Rankings**",{ embed });
+		var date = new Date();
+		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		chat.send(embed);
+
 	});
 	console.log("	Displaying top "+count);
 }
@@ -214,21 +214,16 @@ function getGlobalRanking(members,chat,count){
 		if(err) throw err;
 		var rank = 1;
 		var ranking = [];
+		var embed = "```md\n< Top "+count+" Global OwO Rankings >\n\n";
 		rows.forEach(function(ele){
 			var id = String(ele.id);
 			var name = ""+client.users.get(id).username;
-			ranking.push({
-				"name": rank+". "+name,
-				"value": "said *OwO*  __"+ele.count+"__ times!"
-			});
+			embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
 			rank++;
 		});
-		const embed = {
-			"color": 4886754,
-			"timestamp":new Date(),
-			"fields": ranking
-		};
-		chat.send("**Top "+count+" *OwO* Global Rankings**",{ embed });
+		var date = new Date();
+		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		chat.send(embed);
 	});
 	console.log("	Displaying top "+count+" global");
 }
@@ -395,17 +390,17 @@ function showHelp(channel){
 client.on('ready',()=>{
 	console.log('Logged in as '+client.user.tag+'!');
 	console.log('Bot has started, with '+client.users.size+' users, in '+client.channels.size+' channels of '+client.guilds.size+' guilds.');
-	client.user.setActivity('with '+client.users.size+' Users! OwO');
+	client.user.setActivity('with '+client.users.size+' Users! OwO | \n\'OwO help\' for help!');
 });
 
 client.on("guildCreate", guild => {
 	console.log('New guild joined: '+guild.name+' (id: '+guild.id+'). This guild has '+guild.memberCount+' members!');
-	client.user.setActivity('with '+client.users.size+' Users! OwO');
+	client.user.setActivity('with '+client.users.size+' Users! OwO | \n\'OwO help\' for help!');
 });
 
 client.on("guildDelete", guild => {
 	console.log('I have been removed from: '+guild.name+' (id: '+guild.id+')');
-	client.user.setActivity('with '+client.users.size+' Users! OwO');
+	client.user.setActivity('with '+client.users.size+' Users! OwO | \n\'OwO help\' for help!');
 });
 
 
