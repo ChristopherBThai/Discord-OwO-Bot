@@ -4,7 +4,7 @@ var auth = require('../tokens/owo-auth.json');
 var login = require('../tokens/owo-login.json');
 var prefix = "owo";
 
-var eightballCount = 29;
+var eightballCount = 38;
 
 client.on('message',msg => {
 	//Special admin commands via DM
@@ -68,7 +68,7 @@ client.on('message',msg => {
 		else if(msg.content[msg.content.length-1] === '?'){
 			eightball(msg,isMention);
 			isCommand = false;
-			console.log("Command: eightball");
+			console.log("Command: ? {"+args+"} by "+msg.author.username+"["+msg.guild.name+"]["+msg.channel.name+"]");
 		}
 
 		//Sends feedback to admin
@@ -81,6 +81,11 @@ client.on('message',msg => {
 			showHelp(msg.channel);
 		}
 
+		//Display link for discord invite
+		else if(command === "invite" || command === "link"){
+			showLink(msg.channel);
+		}
+
 		//If not a command...
 		else{ 
 			addPoint(msg.author.id,msg);
@@ -91,7 +96,7 @@ client.on('message',msg => {
 
 		//Display the command to logs
 		if(isCommand)
-			console.log("Command: "+command+" {"+args+"}");
+			console.log("Command: "+command+" {"+args+"} by "+msg.author.username+"["+msg.guild.name+"]["+msg.channel.name+"]");
 	}
 
 	//Add point if they said owo
@@ -120,7 +125,7 @@ con.connect(function(err){
 
 //=======================================================================Ranking System===========================================
 
-//Adds an owo point
+//Adds an owo point if 10s has passed for each user
 function addPoint(id,msg){
 	var sql = "INSERT INTO user (id,count,lasttime) VALUES ("+id+",1,NOW()) ON DUPLICATE KEY UPDATE count = IF(TIMESTAMPDIFF(SECOND,lasttime,NOW())>10,count+1,count),lasttime = NOW();";
 	try{
@@ -197,7 +202,7 @@ function getRanking(members,chat,count){
 			rank++;
 		});
 		var date = new Date();
-		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		embed += ("\n*owo counting has a 10s cooldown* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
 		chat.send(embed);
 
 	});
@@ -217,12 +222,17 @@ function getGlobalRanking(members,chat,count){
 		var embed = "```md\n< Top "+count+" Global OwO Rankings >\n\n";
 		rows.forEach(function(ele){
 			var id = String(ele.id);
-			var name = ""+client.users.get(id).username;
+			var user = client.users.get(id);
+			var name = "";
+			if(user === undefined || user.username === undefined)
+				name = "User Left Discord";
+			else
+				name = ""+user.username;
 			embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
 			rank++;
 		});
 		var date = new Date();
-		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		embed += ("\n*owo counting has a 10s cooldown* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
 		chat.send(embed);
 	});
 	console.log("	Displaying top "+count+" global");
@@ -230,7 +240,7 @@ function getGlobalRanking(members,chat,count){
 
 //=============================================================================Enable/Disable Rank===============================================================
 
-//Blacklists a channel
+//Blacklists a channel for 'owo rank'
 function disable(id){
 	var sql = "INSERT IGNORE INTO blacklist (id) VALUES ("+id+");"
 
@@ -239,6 +249,7 @@ function disable(id){
 	});
 }
 
+//Remove from blacklist
 function enable(id){
 	var sql = "DELETE FROM blacklist WHERE id = "+id+";";
 
@@ -250,6 +261,7 @@ function enable(id){
 
 //=============================================================================EightBall===============================================================
 
+//Eightball, replies as a yes/no answer
 function eightball(msg,isMention){
 	var id = Math.ceil(Math.random()*eightballCount);
 	var sql = "SELECT answer FROM eightball WHERE id = "+id+";";
@@ -356,7 +368,8 @@ function replyFeedback(dm,feedbackId,reply){
 			]
 		};
 
-		dm.send({embed});
+		user.send({embed});
+		dm.send("Replied to user "+user.username);
 		console.log("	Replied to a feedback["+feedbackId+"] for "+user.username);
 	});
 }
@@ -364,43 +377,61 @@ function replyFeedback(dm,feedbackId,reply){
 
 //=============================================================================Helpers===============================================================
 
+//Checks if a value is an int
 function isInt(value){
 	return !isNaN(value) &&
 		parseInt(Number(value)) == value &&
 		!isNaN(parseInt(value,10));
 }
 
+//Shows the help commands
 function showHelp(channel){
 	const embed = {
 		"title":"OwO Bot Commands List",
+		"url":"https://discordapp.com/oauth2/authorize?client_id=408785106942164992&permissions=2048&scope=bot",
 		"color": 4886754,
 		"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
+		"footer":{"text":"owo has a 10 second cooldown for counting"},
 		"description": "\n**owo help** - Displays this commands list!"+
 			"\n\n**owo rank [global] {count}** - displays the ranking of OwOs \ne.g `owo rank global`, `owo rank 25`, `owo rank global 25`"+
-			"\n\n**owo disablerank|removerank** - disables the command 'owo rank' on the current channel"+
-			"\n\n**owo enablerank|addrank** - enables the command 'owo rank' on the current channel"+
 			"\n\n**owo {question}?** - replies as a yes/no answer \ne.g. `owo Am I cute?`"+
-			"\n\n**owo feedback|suggestion|report {message}** - sends a message to an admin who will reply back \ne.g `owo feedback I love this bot!`"
+			"\n\n**owo feedback|suggestion|report {message}** - sends a message to an admin who will reply back \ne.g `owo feedback I love this bot!`"+
+			"\n\n**owo disablerank|removerank** - disables the command 'owo rank' on the current channel"+
+			"\n\n**owo enablerank|addrank** - enables the command 'owo rank' on the current channel\n"
+	};
+	channel.send({embed});
+}
+
+//Gives bot invite link
+function showLink(channel){
+	const embed = {
+		"title":"OwO! Click me to invite me to your server!",
+		"url":"https://discordapp.com/oauth2/authorize?client_id=408785106942164992&permissions=2048&scope=bot",
+		"color": 4886754,
+		"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
 	};
 	channel.send({embed});
 }
 
 //=============================================================================Console Logs===============================================================
 
+//When the bot client starts
 client.on('ready',()=>{
 	console.log('Logged in as '+client.user.tag+'!');
 	console.log('Bot has started, with '+client.users.size+' users, in '+client.channels.size+' channels of '+client.guilds.size+' guilds.');
-	client.user.setActivity('with '+client.users.size+' Users! OwO | \n\'OwO help\' for help!');
+	client.user.setActivity('with '+client.guilds.size+' Servers! OwO | \n\'OwO help\' for help!');
 });
 
+//When bot joins a new guild
 client.on("guildCreate", guild => {
 	console.log('New guild joined: '+guild.name+' (id: '+guild.id+'). This guild has '+guild.memberCount+' members!');
-	client.user.setActivity('with '+client.users.size+' Users! OwO | \n\'OwO help\' for help!');
+	client.user.setActivity('with '+client.guilds.size+' Servers! OwO | \n\'OwO help\' for help!');
 });
 
+//When bot is kicked from a guild
 client.on("guildDelete", guild => {
 	console.log('I have been removed from: '+guild.name+' (id: '+guild.id+')');
-	client.user.setActivity('with '+client.users.size+' Users! OwO | \n\'OwO help\' for help!');
+	client.user.setActivity('with '+client.guilds.size+' Servers! OwO | \n\'OwO help\' for help!');
 });
 
 
