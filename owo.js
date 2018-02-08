@@ -1,9 +1,11 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
 const ranking = require("./methods/ranking.js");
+//const me = require("./methods/me.js");
 const helper = require("./methods/helper.js");
 const other	= require("./methods/other.js");
 const feedback = require("./methods/feedback.js");
+const admin = require("./methods/admin.js");
 var auth = require('../tokens/owo-auth.json');
 var login = require('../tokens/owo-login.json');
 var prefix = "owo";
@@ -17,6 +19,10 @@ client.on('message',msg => {
 		//Reply to a feedback/report/suggestion
 		if(adminCommand === 'reply'&&helper.isInt(adminMsg[0])){
 			feedback.reply(mysql, con, client, msg, adminMsg);
+		}
+
+		else if(adminCommand === 'info'){
+			admin.info(client,msg);
 		}
 	}
 
@@ -48,7 +54,7 @@ client.on('message',msg => {
 
 		//Displays user's ranking
 		else if (command === 'me' || command === 'profile'){
-			//showMe(msg,args);
+			//me.display(con, client, msg, args);
 		}
 
 		//Removes channel to use owo ranking (Admins only)
@@ -131,98 +137,6 @@ con.connect(function(err){
 	if(err) throw err;
 	console.log("Connected!");
 });
-//=======================================================================Show me===========================================
-
-//Checks if args are valid for ranking
-function getMeValid(channel,members,chat,args){
-	//Check if its disabled
-	var sql = "SELECT * FROM blacklist WHERE id = "+channel+";";
-
-	con.query(sql,function(err,rows,fields){
-		if(err) throw err;
-		var length = rows.length;
-		console.log("	Blacklist count: "+rows.length);
-		if(rows.length>0){
-			chat.send("'owo me' is disabled on this channel!");
-			return;
-		}else{
-			//check for args
-			var global = false;
-			if(args.length==1&&args[0]=== "global"){
-				getGlobalMe(members,chat);
-			}else
-				getMe(members,chat);	
-		}
-	});
-}
-
-//Displays guild ranking
-function getMe(members,chat,oid){
-	//Grabs top 5
-	var sql = "SELECT * FROM user WHERE id IN ( ";
-	members.keyArray().forEach(function(ele){
-		sql = sql + ele + ",";
-	});
-	sql = sql.slice(0,-1) + " ) ORDER BY count DESC LIMIT "+count+";";
-
-	//Create an embeded message
-	con.query(sql,function(err,rows,fields){
-		if(err) throw err;
-		var rank = 1;
-		var ranking = [];
-		var embed = "```md\n< "+member.get(oid).nickname+"'s OwO Ranking >\n\n";
-		rows.forEach(function(ele){
-			var id = String(ele.id);
-			var nickname = members.get(id).nickname;
-			var name = "";
-			if(nickname)
-				name = nickname+" ("+members.get(id).user.username+")";
-			else
-				name = ""+members.get(id).user.username;
-			if(oid===id)
-
-				embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
-			else
-			rank++;
-		});
-		var date = new Date();
-		embed += ("\n*owo counting has a 10s cooldown* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
-		chat.send(embed);
-
-	});
-	console.log("	Displaying top "+count);
-}
-
-//Displays global ranking
-function getGlobalRanking(members,chat,count){
-	//Grabs top 5
-	var sql = "SELECT * FROM user ORDER BY count DESC LIMIT "+count+";";
-
-	//Create an embeded message
-	con.query(sql,function(err,rows,fields){
-		if(err) throw err;
-		var rank = 1;
-		var ranking = [];
-		var embed = "```md\n< Top "+count+" Global OwO Rankings >\n\n";
-		rows.forEach(function(ele){
-			var id = String(ele.id);
-			var user = client.users.get(id);
-			var name = "";
-			if(user === undefined || user.username === undefined)
-				name = "User Left Discord";
-			else
-				name = ""+user.username;
-			embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
-			rank++;
-		});
-		var date = new Date();
-		embed += ("\n*owo counting has a 10s cooldown* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
-		chat.send(embed);
-	});
-	console.log("	Displaying top "+count+" global");
-}
-
-
 
 //=============================================================================Console Logs===============================================================
 

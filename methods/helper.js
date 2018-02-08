@@ -27,13 +27,13 @@ exports.showHelp = function(channel){
 		"url":"https://discordapp.com/oauth2/authorize?client_id=408785106942164992&permissions=2048&scope=bot",
 		"color": 4886754,
 		"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
-		"footer":{"text":"owo has a 10 second cooldown for counting"},
-		"description": "\n**owo help** - Displays this commands list!"+
+		"description": "This bot will count how many times you type 'owo'! Spamming 'owo' will not count!!!"+ 
+			"\n\n**owo help** - Displays this commands list!"+
 			"\n\n**owo rank [global] {count}** - displays the ranking of OwOs \ne.g `owo rank global`, `owo rank 25`, `owo rank global 25`"+
 			"\n\n**owo {question}?** - replies as a yes/no answer \ne.g. `owo Am I cute?`"+
 			"\n\n**owo feedback|suggestion|report {message}** - sends a message to an admin who will reply back \ne.g `owo feedback I love this bot!`"+
-			"\n\n**owo disablerank|removerank** - disables the command 'owo rank' on the current channel"+
-			"\n\n**owo enablerank|addrank** - enables the command 'owo rank' on the current channel\n"
+			"\n\n**owo disablerank|enablerank** - disables/enables the command 'owo rank' on the current channel"+
+			"\n\n**owo link** - Want to add the bot to another server?? :D\n "
 	};
 	channel.send({embed});
 }

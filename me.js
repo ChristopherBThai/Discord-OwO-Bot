@@ -1,30 +1,8 @@
 //+=========================================+
 //||					   ||
-//||		RANKING METHODS		   ||
+//||		ME METHODS		   ||
 //||					   ||
 //+==========================================+
-
-/**
- * Adds an owo point if 10s has passed for each user
- * @param {mysql.Connection}	con - Mysql.createConnection()
- * @param {discord.Message}	msg - Discord's message
- *
- */
-exports.addPoint = function(con,msg){
-	var id = msg.author.id;
-	var sql = "INSERT INTO user (id,count,lasttime) VALUES ("+id+",1,NOW()) ON DUPLICATE KEY UPDATE count = IF(TIMESTAMPDIFF(SECOND,lasttime,NOW())>10,count+1,count),lasttime = NOW();";
-	try{
-		con.query(sql,function(err,result){
-			if(err){ throw err; return;}
-			if(msg.channel.type==="text")
-				console.log(""+msg.author.username+"["+msg.guild.name+"]["+msg.channel.name+"] typed '"+msg+"'");
-			else
-				console.log(""+msg.author.username+" [DM] typed "+msg);
-		});
-	}catch(err){
-
-	}
-}
 
 /**
  * Check for valid arguments to display leaderboards
@@ -101,7 +79,7 @@ function getRanking(con, members, channel, count){
 			rank++;
 		});
 		var date = new Date();
-		embed += ("\n*Spamming owo will not count!!!* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		embed += ("\n*owo counting has a 10s cooldown* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
 		channel.send(embed);
 
 	});
@@ -138,7 +116,7 @@ function getGlobalRanking(con, client, members, channel, count){
 			rank++;
 		});
 		var date = new Date();
-		embed += ("\n*Spamming owo will not count!!!* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		embed += ("\n*owo counting has a 10s cooldown* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
 		channel.send(embed);
 	});
 	console.log("	Displaying top "+count+" global");
@@ -154,3 +132,4 @@ function isInt(value){
 		parseInt(Number(value)) == value &&
 		!isNaN(parseInt(value,10));
 }
+
