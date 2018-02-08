@@ -11,9 +11,11 @@
  * @param {discord.Message}	msg 	- Discord's message
  * @param {string[]}		args 	- Command arguments
  */
-exports.display = function(con, client, msg, args){
+exports.display = function(con, client, msg, args, id){
 	var members = msg.guild.members;
 	var channel = msg.channel;
+	getGlobalRanking(con, client, members, channel, id);
+	return;
 	//Check if its disabled
 	var sql = "SELECT * FROM blacklist WHERE id = "+channel.id+";";
 
@@ -22,7 +24,7 @@ exports.display = function(con, client, msg, args){
 		var length = rows.length;
 		console.log("	Blacklist count: "+rows.length);
 		if(rows.length>0){
-			channel.send("'owo rank' is disabled on this channel!");
+			channel.send("'owo me' is disabled on this channel!");
 			return;
 		}else{
 			//check for args
@@ -94,32 +96,62 @@ function getRanking(con, members, channel, count){
  * @param {discord.Channel}	channel - Current channel
  * @param {int} 		count 	- number of ranks to display
  */
-function getGlobalRanking(con, client, members, channel, count){
+function getGlobalRanking(con, client, members, channel, id){
 	//Grabs top 5
-	var sql = "SELECT * FROM user ORDER BY count DESC LIMIT "+count+";";
+	var sql = "SELECT u.id,u.count,u1.id,u1.count FROM user AS u LEFT JOIN ( SELECT id,count FROM user ORDER BY count ASC ) AS u1 ON u1.count > u.count WHERE u.id = "+id+" ORDER BY u1.count ASC LIMIT 2;";
+	sql   +=  "SELECT u.id,u.count,u1.id,u1.count FROM user AS u LEFT JOIN ( SELECT id,count FROM user ORDER BY count DESC ) AS u1 ON u1.count < u.count WHERE u.id = "+id+" ORDER BY u1.count DESC LIMIT 2;";
+	sql   +=  "SELECT COUNT(*)+1 AS rank FROM user WHERE count > ( SELECT count FROM user WHERE id = "+id+" );";
 
 	//Create an embeded message
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
-		var rank = 1;
-		var ranking = [];
-		var embed = "```md\n< Top "+count+" Global OwO Rankings >\n\n";
-		rows.forEach(function(ele){
+		console.log(rows);
+		var above = rows[0];
+		var below = rows[1];
+		var userRank = parseInt(rows[2][0].rank);
+		var rank = userRank - above.length;
+		var embed = "```md\n< TITLE >\n\n";
+
+		//People above user
+		above.reverse().forEach(function(ele){
 			var id = String(ele.id);
-			var user = client.users.get(id);
-			var name = "";
-			if(user === undefined || user.username === undefined)
-				name = "User Left Discord";
-			else
-				name = ""+user.username;
-			embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
-			rank++;
+			if(id!==""&&id!==null&&!isNaN(id)){
+				var user = client.users.get(id);
+				var name = "";
+				if(user === undefined || user.username === undefined)
+					name = "User Left Discord";
+				else
+					name = ""+user.username;
+				embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
+				rank++;
+			}
+		});
+
+		//Current user
+		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
+		embed += "< I GO HERE >\n";
+		rank++;
+
+		//People below user
+		below.forEach(function(ele){
+			console.log(ele);
+			var id = String(ele.id);
+			if(id!==""&&id!==null&&!isNaN(id)){
+				var user = client.users.get(id);
+				var name = "";
+				if(user === undefined || user.username === undefined)
+					name = "User Left Discord";
+				else
+					name = ""+user.username;
+				embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
+				rank++;
+
+			}
 		});
 		var date = new Date();
 		embed += ("\n*owo counting has a 10s cooldown* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
 		channel.send(embed);
 	});
-	console.log("	Displaying top "+count+" global");
 }
 
 /**

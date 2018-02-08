@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
 const ranking = require("./methods/ranking.js");
-//const me = require("./methods/me.js");
+const me = require("./methods/me.js");
 const helper = require("./methods/helper.js");
 const other	= require("./methods/other.js");
 const feedback = require("./methods/feedback.js");
@@ -54,7 +54,7 @@ client.on('message',msg => {
 
 		//Displays user's ranking
 		else if (command === 'me' || command === 'profile'){
-			//me.display(con, client, msg, args);
+			me.display(con, client, msg, args,msg.author.id);
 		}
 
 		//Removes channel to use owo ranking (Admins only)
@@ -92,7 +92,7 @@ client.on('message',msg => {
 		}
 
 		//Displays all the commands
-		else if(command === "help"){
+		else if(command === "help" || command === "command"){
 			helper.showHelp(msg.channel);
 		}
 
@@ -129,7 +129,8 @@ var con = mysql.createConnection({
 	password: login.pass,
 	database: "owo",
 	supportBigNumbers: true,
-	bigNumberStrings: true
+	bigNumberStrings: true,
+	multipleStatements: true
 });
 
 //Display log when connected to mysql
