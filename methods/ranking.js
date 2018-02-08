@@ -101,7 +101,7 @@ function getRanking(con, members, channel, count){
 			rank++;
 		});
 		var date = new Date();
-		embed += ("\n*owo counting has a 10s cooldown* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		embed += ("\n*Spamming owo will not count!!!* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
 		channel.send(embed);
 
 	});
@@ -138,7 +138,7 @@ function getGlobalRanking(con, client, members, channel, count){
 			rank++;
 		});
 		var date = new Date();
-		embed += ("\n*owo counting has a 10s cooldown* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		embed += ("\n*Spamming owo will not count!!!* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
 		channel.send(embed);
 	});
 	console.log("	Displaying top "+count+" global");
