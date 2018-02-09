@@ -14,8 +14,6 @@
 exports.display = function(con, client, msg, args, id){
 	var members = msg.guild.members;
 	var channel = msg.channel;
-	getGlobalRanking(con, client, members, channel, id);
-	return;
 	//Check if its disabled
 	var sql = "SELECT * FROM blacklist WHERE id = "+channel.id+";";
 
@@ -28,6 +26,9 @@ exports.display = function(con, client, msg, args, id){
 			return;
 		}else{
 			//check for args
+			if(args.length==0)
+				getGlobalRanking(con, client, members, channel, id);
+			return;
 			var global = false;
 			var count = 5;
 			if(args.length==1||args.length==2){
@@ -100,15 +101,15 @@ function getGlobalRanking(con, client, members, channel, id){
 	//Grabs top 5
 	var sql = "SELECT u.id,u.count,u1.id,u1.count FROM user AS u LEFT JOIN ( SELECT id,count FROM user ORDER BY count ASC ) AS u1 ON u1.count > u.count WHERE u.id = "+id+" ORDER BY u1.count ASC LIMIT 2;";
 	sql   +=  "SELECT u.id,u.count,u1.id,u1.count FROM user AS u LEFT JOIN ( SELECT id,count FROM user ORDER BY count DESC ) AS u1 ON u1.count < u.count WHERE u.id = "+id+" ORDER BY u1.count DESC LIMIT 2;";
-	sql   +=  "SELECT COUNT(*)+1 AS rank FROM user WHERE count > ( SELECT count FROM user WHERE id = "+id+" );";
+	sql   +=  "SELECT id,count,(SELECT COUNT(*)+1 FROM user WHERE count > u.count) AS rank FROM user u WHERE u.id = "+id+";";
 
 	//Create an embeded message
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
-		console.log(rows);
 		var above = rows[0];
 		var below = rows[1];
-		var userRank = parseInt(rows[2][0].rank);
+		var me = rows[2][0];
+		var userRank = parseInt(me.rank);
 		var rank = userRank - above.length;
 		var embed = "";
 
@@ -137,12 +138,12 @@ function getGlobalRanking(con, client, members, channel, id){
 
 		//Current user
 		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
-		embed += "< I GO HERE >\n\n";
+		var name = client.users.get(me.id).username;
+		embed += "< "+rank+"   "+name+" >\n<\t   said owo "+me.count+" times! >\n";
 		rank++;
 
 		//People below user
 		below.forEach(function(ele){
-			console.log(ele);
 			var id = String(ele.id);
 			if(id!==""&&id!==null&&!isNaN(id)){
 				var user = client.users.get(id);
@@ -161,9 +162,9 @@ function getGlobalRanking(con, client, members, channel, id){
 
 		//Add top and bottom
 		if(!noTop)
-			embed = "```md\n< TITLE >\nYour rank is: \n\n#\t...\n\n" + embed;
+			embed = "```md\n< "+name+"'s Ranking >\nYour rank is: "+userRank+"\n\n#\t...\n\n" + embed;
 		else
-			embed = "```md\n< TITLE >\nYour rank is: \n\n" + embed;
+			embed = "```md\n< "+name+"'s Ranking >\nYour rank is: "+userRank+"\n\n" + embed;
 
 		if(!noBottom)
 			embed += "#\t...\n";
