@@ -110,7 +110,10 @@ function getGlobalRanking(con, client, members, channel, id){
 		var below = rows[1];
 		var userRank = parseInt(rows[2][0].rank);
 		var rank = userRank - above.length;
-		var embed = "```md\n< TITLE >\n\n";
+		var embed = "";
+
+		var noTop = false;
+		var noBottom = false;
 
 		//People above user
 		above.reverse().forEach(function(ele){
@@ -124,12 +127,17 @@ function getGlobalRanking(con, client, members, channel, id){
 					name = ""+user.username;
 				embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
 				rank++;
-			}
+			}else if(rank==0){
+				rank = 1;
+				noTop = true;
+			}else
+				noTop = true;
+				
 		});
 
 		//Current user
 		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
-		embed += "< I GO HERE >\n";
+		embed += "< I GO HERE >\n\n";
 		rank++;
 
 		//People below user
@@ -146,8 +154,21 @@ function getGlobalRanking(con, client, members, channel, id){
 				embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
 				rank++;
 
-			}
+			}else
+				noBottom = true;
+
 		});
+
+		//Add top and bottom
+		if(!noTop)
+			embed = "```md\n< TITLE >\nYour rank is: \n\n#\t...\n\n" + embed;
+		else
+			embed = "```md\n< TITLE >\nYour rank is: \n\n" + embed;
+
+		if(!noBottom)
+			embed += "#\t...\n";
+
+
 		var date = new Date();
 		embed += ("\n*owo counting has a 10s cooldown* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
 		channel.send(embed);
