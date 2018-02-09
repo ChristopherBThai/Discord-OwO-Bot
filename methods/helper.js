@@ -30,6 +30,7 @@ exports.showHelp = function(channel){
 		"description": "This bot will count how many times you type 'owo'! Spamming 'owo' will not count!!!"+ 
 			"\n\n**owo help** - Displays this commands list!"+
 			"\n\n**owo rank [global] {count}** - displays the ranking of OwOs \ne.g `owo rank global`, `owo rank 25`, `owo rank global 25`"+
+			"\n\n**owo me** - displays your ranking"+
 			"\n\n**owo {question}?** - replies as a yes/no answer \ne.g. `owo Am I cute?`"+
 			"\n\n**owo feedback|suggestion|report {message}** - sends a message to an admin who will reply back \ne.g `owo feedback I love this bot!`"+
 			"\n\n**owo disablerank|enablerank** - disables/enables the command 'owo rank' on the current channel"+
