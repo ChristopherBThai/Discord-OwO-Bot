@@ -26,6 +26,11 @@ exports.send = function(mysql, con, msg, admin, type, message){
 		type+"',?,"+
 		sender.id+");";
 	message = message.replace(/([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2694-\u2697]|\uD83E[\uDD10-\uDD5D])/g, ':emoji:')
+	if(message.length > 250){
+		console.log("\tMessage too big");
+		channel.send("Sorry! Messages must be under 250 character!!!");
+		return;
+	}
 	sql = mysql.format(sql,message);
 	con.query(sql,function(err,rows,field){
 		if(err) throw err;
@@ -74,6 +79,12 @@ exports.reply = function(mysql, con, client, msg, args){
 	var dm = msg.channel;
 	var feedbackId = parseInt(args.shift());
 	var reply = args.join(' ');
+	if(reply.length > 250){
+		console.log("Admin Command: reply "+feedbackId+" {"+reply+"}");
+		console.log("\tMessage too big");
+		dm.send("Sorry! Messages must be under 250 character!!!");
+		return;
+	}
 	var sql = "SELECT type,message,sender FROM feedback WHERE id = "+feedbackId+";";
 	con.query(sql,function(err,rows,field){
 		if(err) throw err;

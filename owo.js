@@ -48,13 +48,18 @@ client.on('message',msg => {
 		const command = args.shift().toLowerCase();
 
 		//Displays top ranking
-		if (command === 'ranking'||command === 'rank'){
+		if (command === 'top'||command === 'ranking'||command === 'rank'){
 			ranking.display(con, client, msg, args);
 		}
 
 		//Displays user's ranking
 		else if (command === 'me' || command === 'profile'){
-			me.display(con, client, msg, args,msg.author.id);
+			me.display(con, client, msg, args, msg.author.id, true);
+		}
+
+		//Displays guild's ranking
+		else if (command === 'guild' || command === 'server'){
+			me.display(con, client, msg, args, msg.guild.id, false);
 		}
 
 		//Removes channel to use owo ranking (Admins only)
