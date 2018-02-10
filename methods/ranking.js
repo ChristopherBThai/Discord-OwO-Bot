@@ -71,7 +71,7 @@ exports.display = function(con, client, msg, args){
 			else if(guild&&!global)
 				getGuildRanking(con, client, channel, count);
 			else if(!guild&&!global)
-				getRanking(con, members, channel, count);	
+				getRanking(con, client, msg.guild.id, members, channel, count);	
 		}
 	});
 }
@@ -83,21 +83,26 @@ exports.display = function(con, client, msg, args){
  * @param {discord.Channel}	channel - Current channel
  * @param {int} 		count 	- number of ranks to display
  */
-function getRanking(con, members, channel, count){
+function getRanking(con, client, guildId, members, channel, count){
 	//Grabs top 5
 	var sql = "SELECT * FROM user WHERE id IN ( ";
 	members.keyArray().forEach(function(ele){
 		sql = sql + ele + ",";
 	});
 	sql = sql.slice(0,-1) + " ) ORDER BY count DESC LIMIT "+count+";";
+	sql   +=  "SELECT id,count,(SELECT COUNT(*)+1 FROM guild WHERE count > g.count) AS rank FROM guild g WHERE g.id = "+guildId+";";
 
 	//Create an embeded message
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		var rank = 1;
 		var ranking = [];
-		var embed = "```md\n< Top "+count+" OwO Rankings >\n\n";
-		rows.forEach(function(ele){
+		var embed = "```md\n< Top "+count+" OwO Rankings for "+client.guilds.get(guildId)+" >\n";
+		if(rows[1][0]!==undefined&&rows[1][0]!==null){
+			embed += "> Guild Rank: "+rows[1][0].rank+"\n";
+			embed += ">\t\tcollectively said owo "+rows[1][0].count+" times!\n\n";
+		}
+		rows[0].forEach(function(ele){
 			var id = String(ele.id);
 			var nickname = members.get(id).nickname;
 			var name = "";
