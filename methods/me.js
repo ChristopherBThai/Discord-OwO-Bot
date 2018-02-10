@@ -77,7 +77,7 @@ function getGlobalRanking(con, client, channel, id){
 		//Current user
 		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
 		var name = client.users.get(me.id).username;
-		embed += "< "+rank+"   "+name+" >\n<\t   said owo "+me.count+" times! >\n";
+		embed += "< "+rank+"   "+name+" >\n\t\tsaid owo "+me.count+" times!\n";
 		rank++;
 
 		//People below user
@@ -156,7 +156,7 @@ function getGuildRanking(con, client, channel, id){
 		//Current user
 		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
 		var name = client.guilds.get(me.id).name;
-		embed += "< "+rank+"   "+name+" >\n<\t   collectively said owo "+me.count+" times! >\n";
+		embed += "< "+rank+"   "+name+" >\n\t\tcollectively said owo "+me.count+" times!\n";
 		rank++;
 
 		//People below user
