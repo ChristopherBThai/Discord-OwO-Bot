@@ -53,6 +53,10 @@ function getGlobalRanking(con, client, channel, id){
 		var above = rows[0];
 		var below = rows[1];
 		var me = rows[2][0];
+		if(me===null||me===undefined){
+			channel.send("You haven't said 'owo' yet!");
+			return;
+		}
 		var userRank = parseInt(me.rank);
 		var rank = userRank - above.length;
 		var embed = "";
@@ -132,6 +136,10 @@ function getGuildRanking(con, client, channel, id){
 		var above = rows[0];
 		var below = rows[1];
 		var me = rows[2][0];
+		if(me===null||me===undefined){
+			channel.send("You haven't said 'owo' yet!");
+			return
+		}
 		var guildRank = parseInt(me.rank);
 		var rank = guildRank - above.length;
 		var embed = "";
