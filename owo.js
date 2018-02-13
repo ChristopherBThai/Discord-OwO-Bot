@@ -82,10 +82,10 @@ client.on('message',msg => {
 
 		//reply the question with yes or no
 		else if(msg.content[msg.content.length-1] === '?'){
-			other.eightball(con,msg,isMention,prefix);
+				other.eightball(con,msg,isMention,prefix);
 			if(Math.floor(Math.random()*100)===0){
 				msg.channel.send("**WAIT!** I Changed my mind!");
-				eightball(con, msg, isMention);
+				other.eightball(con,msg,isMention,prefix);
 			}
 			isCommand = false;
 			console.log("Command: ? {"+args+"} by "+msg.author.username+"["+msg.guild.name+"]["+msg.channel.name+"]");
@@ -116,7 +116,7 @@ client.on('message',msg => {
 
 		//Display the command to logs
 		if(isCommand)
-			console.log("Command: "+command+" {"+args+"} by "+msg.author.username+"["+msg.guild.name+"]["+msg.channel.name+"]");
+			console.log("Command: "+command+" {"+args+"} ["+msg.guild.name+"]["+msg.channel.name+"]"+msg.author.username);
 	}
 
 	//Add point if they said owo

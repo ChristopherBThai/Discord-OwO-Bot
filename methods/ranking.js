@@ -20,9 +20,9 @@ exports.addPoint = function(con,msg){
 		con.query(sql,function(err,result){
 			if(err){ throw err; return;}
 			if(msg.channel.type==="text")
-				console.log(""+msg.author.username+"["+msg.guild.name+"]["+msg.channel.name+"] typed '"+msg+"'");
+				console.log("["+msg.guild.name+"]["+msg.channel.name+"]"+msg.author.username+" typed '"+msg+"'");
 			else
-				console.log(""+msg.author.username+" [DM] typed "+msg);
+				console.log("[DM]"+msg.author.username+" typed "+msg);
 		});
 	}catch(err){
 
@@ -45,9 +45,9 @@ exports.display = function(con, client, msg, args){
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		var length = rows.length;
-		console.log("	Blacklist count: "+rows.length);
 		if(rows.length>0){
 			channel.send("'owo rank' is disabled on this channel!");
+			console.log("	Command Disabled");
 			return;
 		}else{
 			//check for args
