@@ -25,3 +25,13 @@ exports.info = function(client,msg){
 	msg.channel.send(embed);
 	console.log("Admin Command: info");
 }
+
+exports.msgChannel = function(client,dm,id,message){
+	var channel = client.channels.get(id);
+	if(channel == null || channel == undefined){
+		dm.send("Could not find channel");
+		return;
+	}
+	channel.send(message);
+	dm.send("Message sent: "+message);
+}
