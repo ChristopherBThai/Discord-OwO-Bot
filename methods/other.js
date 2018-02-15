@@ -4,7 +4,7 @@
 //||					  ||
 //+========================================+
 
-var eightballCount = 46;
+var eightballCount = 55;
 
 /**
  * Disables 'owo rank'
@@ -54,4 +54,13 @@ exports.eightball = function(con,msg,isMention,prefix){
 		console.log("	question: "+question);
 		console.log("	answer: "+rows[0].answer);
 	});
+}
+
+/**
+ * Kisses a user!
+ * @param {discord.Message} 	msg - Discord's message
+ * @param {String[]}		args - arguments
+ */
+exports.kiss = function(msg,args){
+	msg.channel.send("*OwO What's This?*\n"+msg.author+" kissed "+args[0]+"!");
 }
