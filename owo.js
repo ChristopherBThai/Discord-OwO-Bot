@@ -21,8 +21,13 @@ client.on('message',msg => {
 			feedback.reply(mysql, con, client, msg, adminMsg);
 		}
 
+		//Grabs info of bot
 		else if(adminCommand === 'info'){
 			admin.info(client,msg);
+		}
+
+		else if(adminCommand === 'channel'){
+			admin.msgChannel(client,msg.author,adminMsg.shift(),adminMsg.join(' '));
 		}
 	}
 
@@ -41,6 +46,12 @@ client.on('message',msg => {
 		args = msg.content.substring(msg.content.indexOf(" ")).trim().split(/ +/g);;
 		isMention = true;
 		isCommand = true;
+	}
+
+	//OwO what's this?
+	if(msg.content.replace(/[hs'?]|\s/g,"")==="owowatti"){
+		isCommand = false;
+		msg.channel.send("*owo*");
 	}
 
 	//Commands
@@ -88,7 +99,13 @@ client.on('message',msg => {
 				other.eightball(con,msg,isMention,prefix);
 			}
 			isCommand = false;
-			console.log("Command: ? {"+args+"} by "+msg.author.username+"["+msg.guild.name+"]["+msg.channel.name+"]");
+			console.log("Command: ? {"+args+"} ["+msg.guild.name+"]["+msg.channel.name+"]["+msg.channel.id+"]"+msg.author.username);
+		}
+
+		//Kisses a user
+		else if(command === 'kiss'){
+			other.kiss(msg,args);
+
 		}
 
 		//Sends feedback to admin
@@ -110,17 +127,18 @@ client.on('message',msg => {
 		else{ 
 			ranking.addPoint(con,msg);
 			isCommand = false;
-			if(isMention)
+			if(isMention && args.length==0)
 				msg.channel.send("*OwO What's this?!*  Do you need me? Type *owo help* for help!");
 		}
 
 		//Display the command to logs
 		if(isCommand)
-			console.log("Command: "+command+" {"+args+"} ["+msg.guild.name+"]["+msg.channel.name+"]"+msg.author.username);
+			console.log("Command: "+command+" {"+args+"} ["+msg.guild.name+"]["+msg.channel.name+"]["+msg.channel.id+"]"+msg.author.username);
 	}
 
 	//Add point if they said owo
-	else if(msg.content.toLowerCase().includes('owo')) ranking.addPoint(msg.author.id,msg);
+	else if(msg.content.toLowerCase().includes('owo')) ranking.addPoint(con,msg);
+
 });
 
 //Discord login
