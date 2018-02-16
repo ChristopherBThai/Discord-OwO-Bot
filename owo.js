@@ -1,13 +1,18 @@
+var auth = require('../tokens/owo-auth.json');
+var login = require('../tokens/owo-login.json');
+
 const Discord = require("discord.js");
 const client = new Discord.Client();
+const DBL = require("dblapi.js");
+const dbl = new DBL(auth.dbl);
+
 const ranking = require("./methods/ranking.js");
 const me = require("./methods/me.js");
 const helper = require("./methods/helper.js");
 const other	= require("./methods/other.js");
 const feedback = require("./methods/feedback.js");
 const admin = require("./methods/admin.js");
-var auth = require('../tokens/owo-auth.json');
-var login = require('../tokens/owo-login.json');
+
 var prefix = "owo";
 
 client.on('message',msg => {
@@ -177,6 +182,9 @@ client.on('ready',()=>{
 	console.log('Logged in as '+client.user.tag+'!');
 	console.log('Bot has started, with '+client.users.size+' users, in '+client.channels.size+' channels of '+client.guilds.size+' guilds.');
 	client.user.setActivity('with '+client.guilds.size+' Servers! OwO | \n\'OwO help\' for help!');
+	setInterval(() => {
+		dbl.postStats(client.guilds.size);
+	}, 3200000);
 });
 
 //When bot joins a new guild
