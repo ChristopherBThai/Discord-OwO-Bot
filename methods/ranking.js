@@ -18,7 +18,7 @@ exports.addPoint = function(con,msg){
 		var sql = "SELECT id FROM timeout WHERE id = "+id+" AND TIMESTAMPDIFF(HOUR,time,NOW()) < 1"
 		con.query(sql,function(err,result){
 			if(result[0]!=null||result[0]!=undefined){
-				console.log("["+msg.guild.name+"]["+msg.channel.name+"]"+msg.author.username+" typed '"+text+"'");
+				console.log("["+msg.guild.name+"]["+msg.channel.name+"]["+msg.channel.id+"]"+msg.author.username+" typed '"+text+"'");
 				console.log("	User in timeout");
 			}else{
 				sql = "SET @add = 0;SET @diff = TIMESTAMPDIFF(SECOND,(SELECT lasttime FROM user WHERE id = "+id+"),NOW());"+
@@ -29,7 +29,7 @@ exports.addPoint = function(con,msg){
 					if(err){ throw err; return;}
 					var spam = result[5][0].spamcount;
 					if(msg.channel.type==="text")
-						console.log("["+msg.guild.name+"]["+msg.channel.name+"]"+msg.author.username+" typed '"+text+"'");
+						console.log("["+msg.guild.name+"]["+msg.channel.name+"]["+msg.channel.id+"]"+msg.author.username+" typed '"+text+"'");
 					else
 						console.log("[DM]"+msg.author.username+" typed "+text);
 					if(spam>=10){
