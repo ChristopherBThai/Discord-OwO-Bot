@@ -51,7 +51,7 @@ client.on('message',msg => {
 	//OwO what's this?
 	if(msg.content.replace(/[hs'?]|\s/g,"")==="owowatti"){
 		isCommand = false;
-		msg.channel.send("*owo*");
+		msg.channel.send("*owo intensifies*");
 	}
 
 	//Commands
@@ -127,7 +127,15 @@ client.on('message',msg => {
 		else{ 
 			ranking.addPoint(con,msg);
 			isCommand = false;
-			if(isMention && args.length==0)
+			if(isMention && msg.content.toLowerCase().includes("kiss"))
+				msg.channel.send("*blushes* >///<\n*muah!!!*");
+			else if(isMention && msg.content.toLowerCase().includes("hug"))
+				msg.channel.send("awww there there...\n*hugs*");
+			else if(isMention && msg.content.toLowerCase().includes("pat"))
+				msg.channel.send("uwu\ny-yyou're going to mess up my hair..!!");
+			else if(isMention && msg.content.toLowerCase().includes("slap"))
+				msg.channel.send("nuu uwu...\nthat's not nice...");
+			else if(msg.content === "<@408785106942164992>")
 				msg.channel.send("*OwO What's this?!*  Do you need me? Type *owo help* for help!");
 		}
 
@@ -137,7 +145,7 @@ client.on('message',msg => {
 	}
 
 	//Add point if they said owo
-	else if(msg.content.toLowerCase().includes('owo')) ranking.addPoint(con,msg);
+	else if(msg.content.toLowerCase().includes('owo')||msg.content.toLowerCase().includes('uwu')) ranking.addPoint(con,msg);
 
 });
 
