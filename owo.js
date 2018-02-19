@@ -54,7 +54,7 @@ client.on('message',msg => {
 	}
 
 	//OwO what's this?
-	if(msg.content.replace(/[hs'?]|\s/g,"")==="owowatti"){
+	if(msg.content.replace(/[hs'?]|\s/g,"").toLowerCase()==="owowatti"){
 		isCommand = false;
 		msg.channel.send("*owo intensifies*");
 	}
@@ -126,6 +126,17 @@ client.on('message',msg => {
 		//Display link for discord invite
 		else if(command === "invite" || command === "link"){
 			helper.showLink(msg.channel);
+		}
+
+		//Ping pong!
+		else if(command === "ping"){
+			msg.channel.send("Pong! | *"+(Math.round(100*client.ping)/100.0)+"ms*");
+
+		}
+
+		//Displays info
+		else if(command === "stats" || command === "stat"){
+			helper.showStats(client,con,msg);
 		}
 
 		//If not a command...

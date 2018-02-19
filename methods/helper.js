@@ -48,3 +48,33 @@ exports.showLink = function(channel){
 	};
 	channel.send({embed});
 }
+
+/**
+ * Show bot's info
+ * @param {mysql.connection}	con
+ * @param {discord.message}	msg
+ */
+exports.showStats = function(client, con, msg){
+	var sql = "SELECT COUNT(*) user, "+
+		"sum(count) total "+
+		"FROM user";
+	con.query(sql,function(err,rows,field){
+		if(err) throw err;
+		const embed = {
+		"description": "Here's a little bit of information! If you need help with commands, type `owo help`.",
+			"color": 1,
+			"timestamp": new Date(),
+			"author": {"name": "OwO Bot Information",
+				"url": "https://discordapp.com/api/oauth2/authorize?client_id=408785106942164992&permissions=2048&scope=bot",
+				"icon_url": "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
+			"fields": [{"name":"Current Guild",
+					"value":"```md\n<channelID: "+msg.channel.id+">\n<guildID:   "+msg.guild.id+">```"},
+				{"name": "Global information",
+					"value": "```md\n<TotalOwOs:  "+rows[0].total+">\n<OwOUsers:   "+rows[0].user+">```"},
+				{"name": "Bot Information",
+					"value": "```md\n<Guilds:    "+client.guilds.size+">\n<Channels:  "+client.channels.size+">\n<Users:     "+client.users.size+">``````md\n<Ping:       "+client.ping+"ms>\n<UpdatedOn:  "+client.readyAt+">\n<Uptime:     "+client.uptime+">```"
+				}]
+		};
+		msg.channel.send({embed});
+	});
+}
