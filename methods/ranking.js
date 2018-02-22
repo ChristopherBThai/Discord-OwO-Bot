@@ -24,7 +24,8 @@ exports.addPoint = function(con,msg){
 				sql = "SET @add = 0;SET @diff = TIMESTAMPDIFF(SECOND,(SELECT lasttime FROM user WHERE id = "+id+"),NOW());"+
 				"UPDATE user SET spamcount = IF(previnterval=@diff,spamcount+1,0),previnterval = IF(@diff>10000 AND @diff>9,0,@diff) WHERE id = "+id+";"+
 				"INSERT INTO user (id,count,lasttime) VALUES ("+id+",1,NOW()) ON DUPLICATE KEY UPDATE count = count + IF(@diff>10 AND spamcount < 11,@add:=1,@add:=0),lasttime = NOW();"+
-				"INSERT INTO guild (id,count) VALUES ("+guild.id+",1) ON DUPLICATE KEY UPDATE count = count + @add;SELECT spamcount FROM user WHERE id = "+id+";";
+				"INSERT INTO guild (id,count) VALUES ("+guild.id+",1) ON DUPLICATE KEY UPDATE count = count + @add;SELECT spamcount FROM user WHERE id = "+id+";"+
+				"INSERT INTO cowoncy (id,money) VALUES ("+id+",1) ON DUPLICATE KEY UPDATE money = money + @add;";
 				con.query(sql,function(err,result){
 					if(err){ throw err; return;}
 					var spam = result[5][0].spamcount;

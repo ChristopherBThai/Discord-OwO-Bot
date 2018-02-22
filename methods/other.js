@@ -64,3 +64,30 @@ exports.eightball = function(con,msg,isMention,prefix){
 exports.kiss = function(msg,args){
 	msg.channel.send("*OwO What's This?*\n"+msg.author+" kissed "+args[0]+"!");
 }
+
+/**
+ * spanks a user!
+ * @param {discord.Message} 	msg - Discord's message
+ * @param {String[]}		args - arguments
+ */
+exports.spank = function(msg,args){
+	msg.channel.send("*Naughty!*\n"+msg.author+" spanked "+args[0]+"!");
+}
+
+/**
+ * hugs a user!
+ * @param {discord.Message} 	msg - Discord's message
+ * @param {String[]}		args - arguments
+ */
+exports.hug = function(msg,args){
+	msg.channel.send("*Awww!!! adorable!*\n"+msg.author+" hugs "+args[0]+"!");
+}
+
+/**
+ * Slaps a user!
+ * @param {discord.Message} 	msg - Discord's message
+ * @param {String[]}		args - arguments
+ */
+exports.slap= function(msg,args){
+	msg.channel.send("*owie!*\n"+msg.author+" slaps "+args[0]+"!");
+}
