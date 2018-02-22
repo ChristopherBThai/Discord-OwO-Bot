@@ -9,6 +9,8 @@ const dbl = new DBL(auth.dbl);
 const ranking = require("./methods/ranking.js");
 const me = require("./methods/me.js");
 const helper = require("./methods/helper.js");
+const cowoncy = require("./methods/cowoncy.js");
+const zoo = require("./methods/zoo.js");
 const other	= require("./methods/other.js");
 const feedback = require("./methods/feedback.js");
 const admin = require("./methods/admin.js");
@@ -107,11 +109,25 @@ client.on('message',msg => {
 			console.log("Command: ? {"+args+"} ["+msg.guild.name+"]["+msg.channel.name+"]["+msg.channel.id+"]"+msg.author.username);
 		}
 
-		//Kisses a user
-		else if(command === 'kiss'){
-			other.kiss(msg,args);
-
+		//Cowoncy
+		else if (command === 'cowoncy'||command === 'credit'){
+			cowoncy.display(con,client,msg);
 		}
+
+		//Catch an animals
+		else if (command === 'catch'||command === 'hunt'){
+			zoo.catch(con,msg);
+		}
+
+		//Kisses a user
+		else if(command === 'kiss'){other.kiss(msg,args);}
+		//Hugs a user
+		else if(command === 'hug'){other.hug(msg,args);}
+		//Spanks a user
+		else if(command === 'spank'){other.spank(msg,args);}
+		//Slaps a user
+		else if(command === 'slap'){other.slap(msg,args);}
+		
 
 		//Sends feedback to admin
 		else if(command === 'feedback'|| command === 'suggestion' || command === 'report'){
@@ -147,7 +163,7 @@ client.on('message',msg => {
 				msg.channel.send("*blushes* >///<\n*muah!!!*");
 			else if(isMention && msg.content.toLowerCase().includes("hug"))
 				msg.channel.send("awww there there...\n*hugs*");
-			else if(isMention && msg.content.toLowerCase().includes("pat"))
+			else if(isMention && (msg.content.toLowerCase().includes("pat")||msg.content.toLowerCase().includes("pet")))
 				msg.channel.send("uwu\ny-yyou're going to mess up my hair..!!");
 			else if(isMention && msg.content.toLowerCase().includes("slap"))
 				msg.channel.send("nuu uwu...\nthat's not nice...");

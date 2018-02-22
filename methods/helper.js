@@ -29,6 +29,7 @@ exports.showHelp = function(channel){
 			"\n\n< owo {question}?\n>\treplies as a yes/no answer\n>\te.g. `owo Am I cute?`"+
 			"\n\n< owo feedback|suggestion|report {message}\n>\tsends a message to an admin who will reply back\n>\te.g `owo feedback I love this bot!`"+
 			"\n\n< owo disablerank|enablerank\n>\tdisables/enables the command 'owo rank' on the current channel"+
+			"\n\n< owo stats\n>\tGrab some bot stats!"+
 			"\n\n< owo link\n>\tWant to add the bot to another server?? :D```"+
 			"\n```# Remove brackets when typing commands\n# [] = optional arguments\n# {} = optional user input```";
 	channel.send(embed);
