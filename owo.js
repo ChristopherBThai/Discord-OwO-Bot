@@ -119,6 +119,11 @@ client.on('message',msg => {
 			zoo.catch(con,msg);
 		}
 
+		//SHows the zoo
+		else if (command === 'zoo'){
+			zoo.display(con,msg);
+		}
+
 		//Kisses a user
 		else if(command === 'kiss'){other.kiss(msg,args);}
 		//Hugs a user
