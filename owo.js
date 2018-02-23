@@ -110,7 +110,7 @@ client.on('message',msg => {
 		}
 
 		//Cowoncy
-		else if (command === 'cowoncy'||command === 'credit'){
+		else if (command === 'cowoncy'||command === 'credit'||command === 'money'||command === 'cash'){
 			cowoncy.display(con,client,msg);
 		}
 
