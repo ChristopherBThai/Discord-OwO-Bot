@@ -74,20 +74,25 @@ exports.display = function(con, client, msg, args){
 			//check for args
 			var global = false;
 			var guild = false;
+			var invalid = false;
 			var count = 5;
 			if(args.length==1||args.length==2){
 				for(var i in args){
 					if(args[i]=== "global")
 						global = true;
-					if(args[i]==="guild"||args[i]==="server")
+					else if(args[i]==="guild"||args[i]==="server")
 						guild = true;
 					else if(isInt(args[i]))
 						count = parseInt(args[i]);
+					else
+						invalid = true;
 				}
 				if (count>25) count = 25;
 				else if (count<1) count = 5;
 			}
-			if(global&&!guild)
+			if(invalid)
+				msg.channel.send("Invalid ranking type!");
+			else if(global&&!guild)
 				getGlobalRanking(con, client, channel, count);
 			else if(guild&&!global)
 				getGuildRanking(con, client, channel, count);

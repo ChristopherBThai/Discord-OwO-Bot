@@ -114,8 +114,15 @@ client.on('message',msg => {
 			cowoncy.display(con,client,msg);
 		}
 
+		//Daily cowoncy
+		else if (command === 'daily'){
+			cowoncy.daily(con,msg);
+		}
+
 		//Catch an animals
 		else if (command === 'catch'||command === 'hunt'){
+			console.log("Command: "+command+" {"+args+"} ["+msg.guild.name+"]["+msg.channel.name+"]["+msg.channel.id+"]"+msg.author.username);
+			isCommand = false;
 			zoo.catch(con,msg);
 		}
 
