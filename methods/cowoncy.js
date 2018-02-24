@@ -12,7 +12,7 @@ exports.display = function(con, client, msg){
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		if(rows[0]==undefined)
-			msg.channel.send("<:cowoncy:416043450337853441>** "+msg.author.username+", you currently have __"+rows[0].money+"__ cowoncy!**");
+			msg.channel.send("<:cowoncy:416043450337853441>** "+msg.author.username+", you currently have __0__ cowoncy!**");
 		else
 			msg.channel.send("<:cowoncy:416043450337853441>** "+msg.author.username+", you currently have __"+rows[0].money+"__ cowoncy!**");
 	});
