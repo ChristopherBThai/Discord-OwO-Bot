@@ -13,6 +13,7 @@ exports.display = function(con,msg){
 			text = text.replace("~"+result[i].name,result[i].name+toSmallNum(result[i].count));
 		}
 		text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question);
+		text += "\n*zoo is still a work in progress*";
 		msg.channel.send(text);
 	});
 }
@@ -28,7 +29,7 @@ exports.catch = function(con,msg){
 	var sql = "SELECT money,TIMESTAMPDIFF(SECOND,catch,NOW()) AS time FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,result){
 		if(err) throw err;
-		if(result[0].money<animals.rollprice){
+		if(result[0]==undefined||result[0].money<animals.rollprice){
 			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**");
 		}else if(result[0].time <= 20){
 			msg.channel.send("**"+msg.author.username+"! You need to wait "+(20-result[0].time)+" more seconds!**");
@@ -39,6 +40,7 @@ exports.catch = function(con,msg){
 			con.query(sql,function(err,result){
 				if(err) throw err;
 				msg.channel.send("You spent <:cowoncy:416043450337853441> 5! And you found a "+animal[0]+" "+animal[1]);
+				console.log("	Found: "+animal[0]+" "+animal[1]);
 			});
 		}
 	});
