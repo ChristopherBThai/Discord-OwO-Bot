@@ -1,21 +1,19 @@
-//var auth = require('../tokens/owo-auth.json');
-var auth = require('../tokens/scuttester-auth.json');
+var auth = require('../tokens/owo-auth.json');
+//var auth = require('../tokens/scuttester-auth.json');
 var login = require('../tokens/owo-login.json');
 
 
 const Discord = require("discord.js");
 const client = new Discord.Client();
-/*
 const DBL = require("dblapi.js");
 const dbl = new DBL(auth.dbl);
-*/
 
 const ranking = require("./methods/ranking.js");
 const me = require("./methods/me.js");
 const helper = require("./methods/helper.js");
 const cowoncy = require("./methods/cowoncy.js");
 const zoo = require("./methods/zoo.js");
-const other	= require("./methods/other.js");
+const other = require("./methods/other.js");
 const feedback = require("./methods/feedback.js");
 const admin = require("./methods/admin.js");
 

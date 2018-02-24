@@ -73,15 +73,22 @@ exports.display = function(con, client, msg, args){
 			//check for args
 			var global = false;
 			var guild = false;
+			var money = false;
+			var zoo = false;
 			var invalid = false;
 			var count = 5;
 			if(args.length==1||args.length==2){
 				for(var i in args){
-					if(args[i]=== "global")
-						global = true;
-					else if(args[i]==="guild"||args[i]==="server")
-						guild = true;
-					else if(isInt(args[i]))
+					if(!global&&!guild&&!money&&!zoo){
+						if(args[i]=== "global")
+							global = true;
+						else if(args[i]==="guild"||args[i]==="server")
+							guild = true;
+						else if(args[i]=== "zoo")
+							zoo = true;
+						else if(args[i]=== "cowoncy"||args[i]==="money")
+							money = true;
+					}else if(isInt(args[i]))
 						count = parseInt(args[i]);
 					else
 						invalid = true;
@@ -91,11 +98,13 @@ exports.display = function(con, client, msg, args){
 			}
 			if(invalid)
 				msg.channel.send("Invalid ranking type!");
-			else if(global&&!guild)
+			else if(global)
 				getGlobalRanking(con, client, channel, count);
-			else if(guild&&!global)
+			else if(guild)
 				getGuildRanking(con, client, channel, count);
-			else if(!guild&&!global)
+			else if(zoo)
+				getGlobalZooRanking(con, client, channel, count);
+			else
 				getRanking(con, client, msg.guild.id, members, channel, count);	
 		}
 	});
@@ -229,6 +238,55 @@ function getGuildRanking(con, client, channel, count){
 	});
 	console.log("	Displaying top "+count+" guilds");
 }
+
+/**
+ * displays global zoo ranking
+ * @param {mysql.Connection}	con 	- Mysql.createConnection()
+ * @param {mysql.Client}	client	- Discord.js's client
+ * @param {discord.Channel}	channel - Current channel
+ * @param {int} 		count 	- number of ranks to display
+ */
+function getGlobalZooRanking(con, client, channel, count){
+	//Grabs top 5
+	var sql = "SELECT id,SUM(points*count) AS points, "+
+		"SUM((CASE rank WHEN 'c' THEN 1 ELSE 0 END)*count) AS common, "+
+		"SUM((CASE rank WHEN 'u' THEN 1 ELSE 0 END)*count) AS uncommon, "+
+		"SUM((CASE rank WHEN 'r' THEN 1 ELSE 0 END)*count) AS rare, "+
+		"SUM((CASE rank WHEN 'e' THEN 1 ELSE 0 END)*count) AS epic, "+
+		"SUM((CASE rank WHEN 'm' THEN 1 ELSE 0 END)*count) AS mythical "+ 
+		"FROM animal NATURAL JOIN animal_rank NATURAL JOIN rank_points GROUP BY id ORDER BY points DESC LIMIT "+count+";";
+
+	//Create an embeded message
+	con.query(sql,function(err,rows,fields){
+		if(err) throw err;
+		var rank = 1;
+		var ranking = [];
+		var embed = "```md\n< Top "+count+" Global Zoo Rankings >\n\n";
+		rows.forEach(function(ele){
+			var id = String(ele.id);
+			var user = client.users.get(id);
+			var name = "";
+			if(user === undefined || user.username === undefined)
+				name = "User Left Bot";
+			else
+				name = ""+user.username;
+			name = name.replace("discord.gg","discord,gg");
+			embed += "#"+rank+"\t"+name+"\n\t\t"+ele.points+" zoo points: ";
+			embed += "M-"+ele.mythical+", ";
+			embed += "E-"+ele.epic+", ";
+			embed += "R-"+ele.rare+", ";
+			embed += "U-"+ele.uncommon+", ";
+			embed += "C-"+ele.common+"\n";
+			rank++;
+		});
+		var date = new Date();
+		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		channel.send(embed);
+	});
+	console.log("	Displaying top "+count+" global zoo");
+}
+
+
 
 /**
  * Checks if its an integer
