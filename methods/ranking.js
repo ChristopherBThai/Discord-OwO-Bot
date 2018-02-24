@@ -136,6 +136,7 @@ function getRanking(con, client, guildId, members, channel, count){
 				name = nickname+" ("+members.get(id).user.username+")";
 			else
 				name = ""+members.get(id).user.username;
+			name = name.replace("discord.gg","discord,gg");
 			embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
 			rank++;
 		});
@@ -172,6 +173,7 @@ function getGlobalRanking(con, client, channel, count){
 				name = "User Left Bot";
 			else
 				name = ""+user.username;
+			name = name.replace("discord.gg","discord,gg");
 			embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
 			rank++;
 		});
@@ -218,6 +220,7 @@ function getGuildRanking(con, client, channel, count){
 				name = "Guild Left Bot";
 			else
 				name = ""+guild.name;
+			name = name.replace("discord.gg","discord,gg");
 			embed += "#"+rank+"\t"+name+"\n\t\tcollectively said owo "+ele.count+" times!\n";
 			rank++;
 		});
