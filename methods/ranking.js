@@ -18,8 +18,7 @@ exports.addPoint = function(con,msg){
 		var sql = "SELECT id FROM timeout WHERE id = "+id+" AND TIMESTAMPDIFF(HOUR,time,NOW()) < 1"
 		con.query(sql,function(err,result){
 			if(result[0]!=null||result[0]!=undefined){
-				console.log("["+msg.guild.name+"]["+msg.channel.name+"]["+msg.channel.id+"]"+msg.author.username+" typed '"+text+"'");
-				console.log("	User in timeout");
+				console.log("-["+msg.guild.name+"]["+msg.channel.name+"]["+msg.channel.id+"]"+msg.author.username+" typed '"+text+"'");
 			}else{
 				sql = "SET @add = 0;SET @diff = TIMESTAMPDIFF(SECOND,(SELECT lasttime FROM user WHERE id = "+id+"),NOW());"+
 				"UPDATE user SET spamcount = IF(ABS(previnterval-@diff)<=1,spamcount+1,0),previnterval = IF(@diff>10000 AND @diff>9,0,@diff) WHERE id = "+id+";"+
@@ -38,7 +37,7 @@ exports.addPoint = function(con,msg){
 						sql = "INSERT INTO timeout (id,time) VALUES ("+id+",NOW()) ON DUPLICATE KEY UPDATE time = NOW();";
 						con.query(sql,function(err,result){
 							console.log("	Putting user in timeout");
-							msg.author.send("***OwO What's This?!?***\nYou have been timed out for 1H due to spam or macros!");
+							msg.author.send("***OwO What's This?!?***\nYou have been timed out for 1H due to spam or macros!\nIf you feel like this is a mistake, use `owo feedback` in a channel to get it fixed!");
 						});
 					}
 
