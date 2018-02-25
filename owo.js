@@ -74,12 +74,17 @@ client.on('message',msg => {
 
 		//Displays user's ranking
 		else if (command === 'me' || command === 'profile'){
-			me.display(con, client, msg, args, msg.author.id, true);
+			me.display(con, client, msg, args, msg.author.id, "u");
 		}
 
 		//Displays guild's ranking
 		else if (command === 'guild' || command === 'server'){
-			me.display(con, client, msg, args, msg.guild.id, false);
+			me.display(con, client, msg, args, msg.guild.id, "g");
+		}
+
+		//Displays zoo's ranking
+		else if (command === 'zoorank' || command === 'rankzoo'){
+			me.display(con, client, msg, args, msg.author.id, "z");
 		}
 
 		//Removes channel to use owo ranking (Admins only)
