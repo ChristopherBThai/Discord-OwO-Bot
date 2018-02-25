@@ -282,6 +282,105 @@ function getZooRanking(con, client, channel, id){
 	});
 }
 
+/**
+ * displays global zoo ranking
+ * @param {mysql.Connection}	con 	- Mysql.createConnection()
+ * @param {mysql.Client}	client	- Discord.js's client
+ * @param {discord.Channel}	channel - Current channel
+ * @param {int} 		count 	- number of ranks to display
+ */
+function getZooRanking(con, client, channel, id){
+	//Grabs top 5
+	var table = "SELECT id,SUM(points*count) AS points, "+
+		"SUM((CASE rank WHEN 'c' THEN 1 ELSE 0 END)*count) AS common, "+
+		"SUM((CASE rank WHEN 'u' THEN 1 ELSE 0 END)*count) AS uncommon, "+
+		"SUM((CASE rank WHEN 'r' THEN 1 ELSE 0 END)*count) AS rare, "+
+		"SUM((CASE rank WHEN 'e' THEN 1 ELSE 0 END)*count) AS epic, "+
+		"SUM((CASE rank WHEN 'm' THEN 1 ELSE 0 END)*count) AS mythical "+ 
+		"FROM animal NATURAL JOIN animal_rank NATURAL JOIN rank_points GROUP BY id;";
+
+	var sql = "SELECT u.id,u.count,u1.id,u1.count FROM user AS u LEFT JOIN ( SELECT id,count FROM user ORDER BY count ASC ) AS u1 ON u1.count > u.count WHERE u.id = "+id+" ORDER BY u1.count ASC LIMIT 2;";
+	sql   +=  "SELECT u.id,u.count,u1.id,u1.count FROM user AS u LEFT JOIN ( SELECT id,count FROM user ORDER BY count DESC ) AS u1 ON u1.count < u.count WHERE u.id = "+id+" ORDER BY u1.count DESC LIMIT 2;";
+	sql   +=  "SELECT id,count,(SELECT COUNT(*)+1 FROM user WHERE count > u.count) AS rank FROM user u WHERE u.id = "+id+";";
+	sql += "SELECT id,SUM(points*count) AS points, "+
+		"SUM((CASE rank WHEN 'c' THEN 1 ELSE 0 END)*count) AS common, "+
+		"SUM((CASE rank WHEN 'u' THEN 1 ELSE 0 END)*count) AS uncommon, "+
+		"SUM((CASE rank WHEN 'r' THEN 1 ELSE 0 END)*count) AS rare, "+
+		"SUM((CASE rank WHEN 'e' THEN 1 ELSE 0 END)*count) AS epic, "+
+		"SUM((CASE rank WHEN 'm' THEN 1 ELSE 0 END)*count) AS mythical "+ 
+		"(SELECT COUNT(*)+1 FROM :Q"+
+	
+		"FROM animal NATURAL JOIN animal_rank NATURAL JOIN rank_points GROUP BY id;";
+
+	//Create an embeded message
+	con.query(sql,function(err,rows,fields){
+		if(err) throw err;
+		var above = rows[0];
+		var below = rows[1];
+		var me = rows[2][0];
+		if(me===null||me===undefined){
+			channel.send("You haven't said 'owo' yet!");
+			return;
+		}
+		var userRank = parseInt(me.rank);
+		var rank = userRank - above.length;
+		var embed = "";
+
+		//People above user
+		above.reverse().forEach(function(ele){
+			var id = String(ele.id);
+			if(id!==""&&id!==null&&!isNaN(id)){
+				var user = client.users.get(id);
+				var name = "";
+				if(user === undefined || user.username === undefined)
+					name = "User Left Discord";
+				else
+					name = ""+user.username;
+				embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
+				rank++;
+			}else if(rank==0)
+				rank = 1;
+				
+		});
+
+		//Current user
+		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
+		var name = client.users.get(me.id).username;
+		embed += "< "+rank+"   "+name+" >\n\t\tsaid owo "+me.count+" times!\n";
+		rank++;
+
+		//People below user
+		below.forEach(function(ele){
+			var id = String(ele.id);
+			if(id!==""&&id!==null&&!isNaN(id)){
+				var user = client.users.get(id);
+				var name = "";
+				if(user === undefined || user.username === undefined)
+					name = "User Left Discord";
+				else
+					name = ""+user.username;
+				embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
+				rank++;
+
+			}
+
+		});
+
+		//Add top and bottom
+		if(userRank>3)
+			embed = "```md\n< "+name+"'s Ranking >\nYour rank is: "+userRank+"\n\n>...\n" + embed;
+		else
+			embed = "```md\n< "+name+"'s Ranking >\nYour rank is: "+userRank+"\n\n" + embed;
+
+		if(rank-userRank==3)
+			embed += ">...\n";
+
+
+		var date = new Date();
+		embed += ("\n*owo counting has a 10s cooldown* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		channel.send(embed);
+	});
+}
 
 
 /**

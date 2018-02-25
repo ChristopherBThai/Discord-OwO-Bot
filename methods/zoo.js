@@ -35,8 +35,10 @@ exports.catch = function(con,msg){
 			msg.channel.send("**"+msg.author.username+"! You need to wait "+(20-result[0].time)+" more seconds!**");
 		}else{
 			var animal = randAnimal();
+			var type = animal[2];
 			sql = "INSERT INTO animal (id,name,count) VALUES ("+msg.author.id+",'"+animal[1]+"',1) ON DUPLICATE KEY UPDATE count = count + 1;"+
-				"UPDATE cowoncy SET money = money - 5,catch = NOW() WHERE id = "+msg.author.id+";";
+				"UPDATE cowoncy SET money = money - 5,catch = NOW() WHERE id = "+msg.author.id+";"+
+				"INSERT INTO animal_count (id,"+type+") VALUES ("+msg.author.id+",1) ON DUPLICATE KEY UPDATE "+type+" = "+type+"+1;";
 			con.query(sql,function(err,result){
 				if(err) throw err;
 				msg.channel.send("You spent <:cowoncy:416043450337853441> 5! And you found a "+animal[0]+" "+animal[1]);
@@ -54,22 +56,27 @@ function randAnimal(){
 		rand = Math.ceil(Math.random()*(animals.common.length-1));
 		result.push(animals.ranks.common+" *(common)*");
 		result.push(animals.common[rand]);
+		result.push("common");
 	}else if(rand<parseFloat(animals.uncommon[0])){
 		rand = Math.ceil(Math.random()*(animals.uncommon.length-1));
 		result.push(animals.ranks.uncommon+" *(uncommon)*");
 		result.push(animals.uncommon[rand]);
+		result.push("uncommon");
 	}else if(rand<parseFloat(animals.rare[0])){
 		rand = Math.ceil(Math.random()*(animals.rare.length-1));
 		result.push(animals.ranks.rare+" *(rare)*");
 		result.push(animals.rare[rand]);
+		result.push("rare");
 	}else if(rand<parseFloat(animals.epic[0])){
 		rand = Math.ceil(Math.random()*(animals.epic.length-1));
 		result.push(animals.ranks.epic+" *(epic)*");
 		result.push(animals.epic[rand]);
+		result.push("epic");
 	}else{
 		rand = Math.ceil(Math.random()*(animals.mythical.length-1));
 		result.push(animals.ranks.mythical+" *(mythic)*");
 		result.push(animals.mythical[rand]);
+		result.push("mythical");
 	}
 	return result;
 }
