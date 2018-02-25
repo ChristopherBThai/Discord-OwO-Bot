@@ -67,7 +67,7 @@ exports.define = function(msg,word){
 			msg.channel.send("I couldn't find that word! :c");
 		}else{
 			const embed = {
-				  "description": "```"+entries[0].definition+"```\n*```"+entries[0].example+"```*",
+				  "description": entries[0].definition+"\n*```"+entries[0].example+"```*",
 				  "color": 4886754,
 				  "author": {
 					      "name": "Definition of '"+entries[0].word+"'",
@@ -85,7 +85,8 @@ exports.define = function(msg,word){
  * @param {String[]}		args - arguments
  */
 exports.kiss = function(msg,args){
-	msg.channel.send("*OwO What's This?*\n"+msg.author+" kissed "+args[0]+"!");
+	if(args[0]!=undefined)
+		msg.channel.send("*OwO What's This?*\n"+msg.author+" kissed "+args.join(" ")+"!");
 }
 
 /**
@@ -94,7 +95,8 @@ exports.kiss = function(msg,args){
  * @param {String[]}		args - arguments
  */
 exports.spank = function(msg,args){
-	msg.channel.send("*Naughty!*\n"+msg.author+" spanked "+args[0]+"!");
+	if(args[0]!=undefined)
+		msg.channel.send("*Naughty!*\n"+msg.author+" spanked "+args.join(" ")+"!");
 }
 
 /**
@@ -103,7 +105,8 @@ exports.spank = function(msg,args){
  * @param {String[]}		args - arguments
  */
 exports.hug = function(msg,args){
-	msg.channel.send("*Awww!!! adorable!*\n"+msg.author+" hugs "+args[0]+"!");
+	if(args[0]!=undefined)
+		msg.channel.send("*Awww!!! adorable!*\n"+msg.author+" hugs "+args.join(" ")+"!");
 }
 
 /**
@@ -112,5 +115,6 @@ exports.hug = function(msg,args){
  * @param {String[]}		args - arguments
  */
 exports.slap= function(msg,args){
-	msg.channel.send("*owie!*\n"+msg.author+" slaps "+args[0]+"!");
+	if(args[0]!=undefined)
+		msg.channel.send("*owie!*\n"+msg.author+" slaps "+args.join(" ")+"!");
 }
