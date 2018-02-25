@@ -192,16 +192,7 @@ function getGlobalRanking(con, client, channel, count){
 	console.log("	Displaying top "+count+" global");
 }
 
-/**
- * Checks if its an integer
- * @param {string}	value - value to check if integer
- *
- */
-function isInt(value){
-	return !isNaN(value) &&
-		parseInt(Number(value)) == value &&
-		!isNaN(parseInt(value,10));
-}
+
 
 /**
  * displays guild ranking
@@ -248,13 +239,7 @@ function getGuildRanking(con, client, channel, count){
  */
 function getGlobalZooRanking(con, client, channel, count){
 	//Grabs top 5
-	var sql = "SELECT id,SUM(points*count) AS points, "+
-		"SUM((CASE rank WHEN 'c' THEN 1 ELSE 0 END)*count) AS common, "+
-		"SUM((CASE rank WHEN 'u' THEN 1 ELSE 0 END)*count) AS uncommon, "+
-		"SUM((CASE rank WHEN 'r' THEN 1 ELSE 0 END)*count) AS rare, "+
-		"SUM((CASE rank WHEN 'e' THEN 1 ELSE 0 END)*count) AS epic, "+
-		"SUM((CASE rank WHEN 'm' THEN 1 ELSE 0 END)*count) AS mythical "+ 
-		"FROM animal NATURAL JOIN animal_rank NATURAL JOIN rank_points GROUP BY id ORDER BY points DESC LIMIT "+count+";";
+	var sql = "SELECT *,(common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*2000) AS points FROM animal_count ORDER BY points DESC LIMIT "+count+";";
 
 	//Create an embeded message
 	con.query(sql,function(err,rows,fields){
