@@ -22,7 +22,8 @@ exports.display = function(con, client, msg){
  * Daily cowoncy
  */
 exports.daily = function(con,msg){
-	var sql = "SELECT TIMESTAMPDIFF(HOUR,daily,NOW()) AS hour,TIMESTAMPDIFF(MINUTE,daily,NOW()) AS minute,TIMESTAMPDIFF(SECOND,daily,NOW()) AS second FROM cowoncy WHERE id = "+msg.author.id+";UPDATE cowoncy SET daily = NOW(), money = money + 100 WHERE id = "+msg.author.id+" AND TIMESTAMPDIFF(DAY,daily,NOW()) >= 1;";
+	var gain = 100 + Math.floor(Math.random()*100);
+	var sql = "SELECT TIMESTAMPDIFF(HOUR,daily,NOW()) AS hour,TIMESTAMPDIFF(MINUTE,daily,NOW()) AS minute,TIMESTAMPDIFF(SECOND,daily,NOW()) AS second FROM cowoncy WHERE id = "+msg.author.id+";UPDATE cowoncy SET daily = NOW(), money = money + "+gain+" WHERE id = "+msg.author.id+" AND TIMESTAMPDIFF(DAY,daily,NOW()) >= 1;";
 	con.query(sql,function(err,rows,fields){
 		if(rows[0][0]==undefined)
 			msg.channel.send("*OwO* uh-oh! Something went wrong! I'll try to fix it as soon as I can!");
@@ -32,7 +33,7 @@ exports.daily = function(con,msg){
 			var sec = 59 - (rows[0][0].second%60);
 			msg.channel.send("<:cowoncy:416043450337853441> Nu! You need to wait **"+hour+" H "+min+" M "+sec+" S**");
 		}else{
-			msg.channel.send("<:cowoncy:416043450337853441> *OwO What's this?*  Here's your daily **100** Cowoncy!");
+			msg.channel.send("<:cowoncy:416043450337853441> *OwO What's this?*  Here's your daily **"+gain+"** Cowoncy!");
 		}
 	});
 }
