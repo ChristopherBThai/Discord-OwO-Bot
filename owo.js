@@ -133,6 +133,11 @@ client.on('message',msg => {
 			zoo.display(con,msg);
 		}
 
+		//Define a word
+		else if (command === 'define'){
+			other.define(msg,args.join(" "));
+		}
+
 		//Kisses a user
 		else if(command === 'kiss'){other.kiss(msg,args);}
 		//Hugs a user
