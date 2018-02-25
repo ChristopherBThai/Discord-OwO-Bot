@@ -66,8 +66,15 @@ exports.define = function(msg,word){
 		if(error){
 			msg.channel.send("I couldn't find that word! :c");
 		}else{
-			msg.channel.send(entries[0].word);
-			msg.channel.send(entries[0].definition);
+			const embed = {
+				  "description": "```"+entries[0].definition+"```\n*```"+entries[0].example+"```*",
+				  "color": 4886754,
+				  "author": {
+					      "name": "Definition of '"+entries[0].word+"'",
+					      "icon_url": "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"
+					    }
+			};
+			msg.channel.send({ embed });
 		}
 	});
 }
