@@ -11,7 +11,7 @@
  * @param {discord.Message}	msg 	- Discord's message
  * @param {string[]}		args 	- Command arguments
  */
-exports.display = function(con, client, msg, args, id, isUser){
+exports.display = function(con, client, msg, args, id, type){
 	var channel = msg.channel;
 	//Check if its disabled
 	var sql = "SELECT * FROM blacklist WHERE id = "+channel.id+";";
@@ -26,8 +26,10 @@ exports.display = function(con, client, msg, args, id, isUser){
 		}else{
 			//check for args
 			if(args.length==0)
-				if(isUser)
+				if(type=="u")
 					getGlobalRanking(con, client, channel, id);
+				else if(type=="z")
+					getZooRanking(con, client, channel, id);
 				else
 					getGuildRanking(con, client, channel, id);
 		}
@@ -71,6 +73,7 @@ function getGlobalRanking(con, client, channel, id){
 					name = "User Left Discord";
 				else
 					name = ""+user.username;
+				name = name.replace("discord.gg","discord,gg");
 				embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
 				rank++;
 			}else if(rank==0)
@@ -81,6 +84,7 @@ function getGlobalRanking(con, client, channel, id){
 		//Current user
 		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
 		var name = client.users.get(me.id).username;
+		name = name.replace("discord.gg","discord,gg");
 		embed += "< "+rank+"   "+name+" >\n\t\tsaid owo "+me.count+" times!\n";
 		rank++;
 
@@ -94,6 +98,7 @@ function getGlobalRanking(con, client, channel, id){
 					name = "User Left Discord";
 				else
 					name = ""+user.username;
+				name = name.replace("discord.gg","discord,gg");
 				embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
 				rank++;
 
@@ -154,6 +159,7 @@ function getGuildRanking(con, client, channel, id){
 					name = "Guild Left Bot";
 				else
 					name = ""+guild.name;
+				name = name.replace("discord.gg","discord,gg");
 				embed += "#"+rank+"\t"+name+"\n\t\tcollectively said owo "+ele.count+" times!\n";
 				rank++;
 			}else if(rank==0)
@@ -164,6 +170,7 @@ function getGuildRanking(con, client, channel, id){
 		//Current user
 		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
 		var name = client.guilds.get(me.id).name;
+		name = name.replace("discord.gg","discord,gg");
 		embed += "< "+rank+"   "+name+" >\n\t\tcollectively said owo "+me.count+" times!\n";
 		rank++;
 
@@ -177,6 +184,7 @@ function getGuildRanking(con, client, channel, id){
 					name = "Guild Left Bot";
 				else
 					name = ""+guild.name;
+				name = name.replace("discord.gg","discord,gg");
 				embed += "#"+rank+"\t"+name+"\n\t\tcollectively said owo "+ele.count+" times!\n";
 				rank++;
 			}
@@ -208,9 +216,9 @@ function getGuildRanking(con, client, channel, id){
  */
 function getZooRanking(con, client, channel, id){
 	//Grabs top 5
-	var sql = "SELECT u.id,u.count,u1.id,u1.count FROM user AS u LEFT JOIN ( SELECT id,count FROM user ORDER BY count ASC ) AS u1 ON u1.count > u.count WHERE u.id = "+id+" ORDER BY u1.count ASC LIMIT 2;";
-	sql   +=  "SELECT u.id,u.count,u1.id,u1.count FROM user AS u LEFT JOIN ( SELECT id,count FROM user ORDER BY count DESC ) AS u1 ON u1.count < u.count WHERE u.id = "+id+" ORDER BY u1.count DESC LIMIT 2;";
-	sql   +=  "SELECT id,count,(SELECT COUNT(*)+1 FROM user WHERE count > u.count) AS rank FROM user u WHERE u.id = "+id+";";
+	var sql = "SELECT a.id,a1.* FROM animal_count AS a LEFT JOIN ( SELECT *,(common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*2000) AS points FROM animal_count ORDER BY points ASC ) AS a1 ON a1.points > (a.common*1+a.uncommon*5+a.rare*10+a.epic*50+a.mythical*500+a.legendary*2000) WHERE a.id = "+id+" ORDER BY a1.points ASC LIMIT 2;";
+	sql   +=  "SELECT a.id,a1.* FROM animal_count AS a LEFT JOIN ( SELECT *,(common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*2000) AS points FROM animal_count ORDER BY points DESC ) AS a1 ON a1.points < (a.common*1+a.uncommon*5+a.rare*10+a.epic*50+a.mythical*500+a.legendary*2000) WHERE a.id = "+id+" ORDER BY a1.points DESC LIMIT 2;";
+	sql   +=  "SELECT *,(common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*2000) AS points,(SELECT COUNT(*)+1 FROM animal_count WHERE (common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*2000) >(a.common*1+a.uncommon*5+a.rare*10+a.epic*50+a.mythical*500+a.legendary*2000) ) AS rank FROM animal_count a WHERE a.id = "+id+";";
 
 	//Create an embeded message
 	con.query(sql,function(err,rows,fields){
@@ -219,7 +227,7 @@ function getZooRanking(con, client, channel, id){
 		var below = rows[1];
 		var me = rows[2][0];
 		if(me===null||me===undefined){
-			channel.send("You haven't said 'owo' yet!");
+			channel.send("You don't have any animals!");
 			return;
 		}
 		var userRank = parseInt(me.rank);
@@ -236,7 +244,12 @@ function getZooRanking(con, client, channel, id){
 					name = "User Left Discord";
 				else
 					name = ""+user.username;
-				embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
+				embed += "#"+rank+"\t"+name+"\n\t\t"+ele.points+" zoo points: ";
+				embed += "M-"+ele.mythical+", ";
+				embed += "E-"+ele.epic+", ";
+				embed += "R-"+ele.rare+", ";
+				embed += "U-"+ele.uncommon+", ";
+				embed += "C-"+ele.common+"\n";
 				rank++;
 			}else if(rank==0)
 				rank = 1;
@@ -246,7 +259,12 @@ function getZooRanking(con, client, channel, id){
 		//Current user
 		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
 		var name = client.users.get(me.id).username;
-		embed += "< "+rank+"   "+name+" >\n\t\tsaid owo "+me.count+" times!\n";
+		embed += "< "+rank+"\t"+name+" >\n\t\t"+me.points+" zoo points: ";
+		embed += "M-"+me.mythical+", ";
+		embed += "E-"+me.epic+", ";
+		embed += "R-"+me.rare+", ";
+		embed += "U-"+me.uncommon+", ";
+		embed += "C-"+me.common+"\n";
 		rank++;
 
 		//People below user
@@ -259,7 +277,12 @@ function getZooRanking(con, client, channel, id){
 					name = "User Left Discord";
 				else
 					name = ""+user.username;
-				embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
+				embed += "#"+rank+"\t"+name+"\n\t\t"+ele.points+" zoo points: ";
+				embed += "M-"+ele.mythical+", ";
+				embed += "E-"+ele.epic+", ";
+				embed += "R-"+ele.rare+", ";
+				embed += "U-"+ele.uncommon+", ";
+				embed += "C-"+ele.common+"\n";
 				rank++;
 
 			}
@@ -268,120 +291,19 @@ function getZooRanking(con, client, channel, id){
 
 		//Add top and bottom
 		if(userRank>3)
-			embed = "```md\n< "+name+"'s Ranking >\nYour rank is: "+userRank+"\n\n>...\n" + embed;
+			embed = "```md\n< "+name+"'s Zoo Ranking >\nYour rank is: "+userRank+"\n\n>...\n" + embed;
 		else
-			embed = "```md\n< "+name+"'s Ranking >\nYour rank is: "+userRank+"\n\n" + embed;
+			embed = "```md\n< "+name+"'s Zoo Ranking >\nYour rank is: "+userRank+"\n\n" + embed;
 
 		if(rank-userRank==3)
 			embed += ">...\n";
 
 
 		var date = new Date();
-		embed += ("\n*owo counting has a 10s cooldown* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
 		channel.send(embed);
 	});
 }
-
-/**
- * displays global zoo ranking
- * @param {mysql.Connection}	con 	- Mysql.createConnection()
- * @param {mysql.Client}	client	- Discord.js's client
- * @param {discord.Channel}	channel - Current channel
- * @param {int} 		count 	- number of ranks to display
- */
-function getZooRanking(con, client, channel, id){
-	//Grabs top 5
-	var table = "SELECT id,SUM(points*count) AS points, "+
-		"SUM((CASE rank WHEN 'c' THEN 1 ELSE 0 END)*count) AS common, "+
-		"SUM((CASE rank WHEN 'u' THEN 1 ELSE 0 END)*count) AS uncommon, "+
-		"SUM((CASE rank WHEN 'r' THEN 1 ELSE 0 END)*count) AS rare, "+
-		"SUM((CASE rank WHEN 'e' THEN 1 ELSE 0 END)*count) AS epic, "+
-		"SUM((CASE rank WHEN 'm' THEN 1 ELSE 0 END)*count) AS mythical "+ 
-		"FROM animal NATURAL JOIN animal_rank NATURAL JOIN rank_points GROUP BY id;";
-
-	var sql = "SELECT u.id,u.count,u1.id,u1.count FROM user AS u LEFT JOIN ( SELECT id,count FROM user ORDER BY count ASC ) AS u1 ON u1.count > u.count WHERE u.id = "+id+" ORDER BY u1.count ASC LIMIT 2;";
-	sql   +=  "SELECT u.id,u.count,u1.id,u1.count FROM user AS u LEFT JOIN ( SELECT id,count FROM user ORDER BY count DESC ) AS u1 ON u1.count < u.count WHERE u.id = "+id+" ORDER BY u1.count DESC LIMIT 2;";
-	sql   +=  "SELECT id,count,(SELECT COUNT(*)+1 FROM user WHERE count > u.count) AS rank FROM user u WHERE u.id = "+id+";";
-	sql += "SELECT id,SUM(points*count) AS points, "+
-		"SUM((CASE rank WHEN 'c' THEN 1 ELSE 0 END)*count) AS common, "+
-		"SUM((CASE rank WHEN 'u' THEN 1 ELSE 0 END)*count) AS uncommon, "+
-		"SUM((CASE rank WHEN 'r' THEN 1 ELSE 0 END)*count) AS rare, "+
-		"SUM((CASE rank WHEN 'e' THEN 1 ELSE 0 END)*count) AS epic, "+
-		"SUM((CASE rank WHEN 'm' THEN 1 ELSE 0 END)*count) AS mythical "+ 
-		"(SELECT COUNT(*)+1 FROM :Q"+
-	
-		"FROM animal NATURAL JOIN animal_rank NATURAL JOIN rank_points GROUP BY id;";
-
-	//Create an embeded message
-	con.query(sql,function(err,rows,fields){
-		if(err) throw err;
-		var above = rows[0];
-		var below = rows[1];
-		var me = rows[2][0];
-		if(me===null||me===undefined){
-			channel.send("You haven't said 'owo' yet!");
-			return;
-		}
-		var userRank = parseInt(me.rank);
-		var rank = userRank - above.length;
-		var embed = "";
-
-		//People above user
-		above.reverse().forEach(function(ele){
-			var id = String(ele.id);
-			if(id!==""&&id!==null&&!isNaN(id)){
-				var user = client.users.get(id);
-				var name = "";
-				if(user === undefined || user.username === undefined)
-					name = "User Left Discord";
-				else
-					name = ""+user.username;
-				embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
-				rank++;
-			}else if(rank==0)
-				rank = 1;
-				
-		});
-
-		//Current user
-		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
-		var name = client.users.get(me.id).username;
-		embed += "< "+rank+"   "+name+" >\n\t\tsaid owo "+me.count+" times!\n";
-		rank++;
-
-		//People below user
-		below.forEach(function(ele){
-			var id = String(ele.id);
-			if(id!==""&&id!==null&&!isNaN(id)){
-				var user = client.users.get(id);
-				var name = "";
-				if(user === undefined || user.username === undefined)
-					name = "User Left Discord";
-				else
-					name = ""+user.username;
-				embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
-				rank++;
-
-			}
-
-		});
-
-		//Add top and bottom
-		if(userRank>3)
-			embed = "```md\n< "+name+"'s Ranking >\nYour rank is: "+userRank+"\n\n>...\n" + embed;
-		else
-			embed = "```md\n< "+name+"'s Ranking >\nYour rank is: "+userRank+"\n\n" + embed;
-
-		if(rank-userRank==3)
-			embed += ">...\n";
-
-
-		var date = new Date();
-		embed += ("\n*owo counting has a 10s cooldown* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
-		channel.send(embed);
-	});
-}
-
 
 /**
  * Checks if its an integer
