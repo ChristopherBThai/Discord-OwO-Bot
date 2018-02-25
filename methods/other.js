@@ -4,6 +4,7 @@
 //||					  ||
 //+========================================+
 
+const ud = require('urban-dictionary');
 var eightballCount = 55;
 
 /**
@@ -53,6 +54,21 @@ exports.eightball = function(con,msg,isMention,prefix){
 			"\n**Answer:**  "+rows[0].answer);
 		console.log("	question: "+question);
 		console.log("	answer: "+rows[0].answer);
+	});
+}
+
+/**
+ * Defines a word via urban dictionary
+ * @param 
+ */
+exports.define = function(msg,word){
+	ud.term(word, function(error,entries,tags,sounds){
+		if(error){
+			msg.channel.send("I couldn't find that word! :c");
+		}else{
+			msg.channel.send(entries[0].word);
+			msg.channel.send(entries[0].definition);
+		}
 	});
 }
 
