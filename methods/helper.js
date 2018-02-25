@@ -24,17 +24,16 @@ exports.isInt = function(value){
 exports.showHelp = function(channel){
 	const embed = "This bot will count how many times you type 'owo'! Spamming 'owo' will not count!!!\nThere are three types of rankings\n\t1. Users in server\n\t2. Users globally\n\t3. Guilds globally\n\n**Commands**"+ 
 			"\n```md\n# Main Commands"+
-			"\n< owo top [global|guild] {count}\n>\tDisplays the top ranking of OwOs\n>\te.g `owo top global`, `owo top 25`, `owo top guild 25`"+
-			"\n< owo me|guild\n>\tdisplays your or your guild's ranking"+
+			"\n< owo me|guild|zoorank\n>\tdisplays your ranking"+
+			"\n< owo top [global|guild|zoo] {count}\n>\tDisplays the top rankings!\n>\te.g `owo top global`, `owo top 25`, `owo top zoo 25`"+
 			"\n\n# Economy"+
 			"\n< owo money\n>\tDisplays how much cowoncy you have!"+
 			"\n< owo daily\n>\tGrab your free daily cowoncy!"+
-			"\n< owo top money\n>\tComing soon!"+
 			"\n\n# Fun"+
 			"\n< owo zoo\n>\tDisplays your zoo!"+
 			"\n< owo hunt\n>\tFetch animals for your zoo!"+
-			"\n< owo top zoo\n>\tComing soon!"+
 			"\n< owo {question}?\n>\treplies as a yes/no answer\n>\te.g. `owo Am I cute?`"+
+			"\n< owo define {word}\n>\tdefines a word!\n>\te.g. `owo define discord`"+
 			"\n\n# Utility"+
 			"\n< owo feedback|suggestion|report {message}\n>\tsends a message to an admin who will reply back\n>\te.g `owo feedback I love this bot!`"+
 			"\n< owo stats\n>\tGrab some bot stats!"+

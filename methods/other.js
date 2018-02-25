@@ -63,11 +63,13 @@ exports.eightball = function(con,msg,isMention,prefix){
  */
 exports.define = function(msg,word){
 	ud.term(word, function(error,entries,tags,sounds){
-		if(error){
+		if(word==""){
+			msg.channel.send("Silly human! Makes sure to add a word to define!");
+		}else if(error){
 			msg.channel.send("I couldn't find that word! :c");
 		}else{
 			const embed = {
-				  "description": entries[0].definition+"\n*```"+entries[0].example+"```*",
+				  "description": entries[0].definition+"\n*``"+entries[0].example+" ``*",
 				  "color": 4886754,
 				  "author": {
 					      "name": "Definition of '"+entries[0].word+"'",
