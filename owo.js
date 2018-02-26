@@ -1,12 +1,12 @@
-var auth = require('../tokens/owo-auth.json');
-//var auth = require('../tokens/scuttester-auth.json');
+//var auth = require('../tokens/owo-auth.json');
+var auth = require('../tokens/scuttester-auth.json');
 var login = require('../tokens/owo-login.json');
 
 
 const Discord = require("discord.js");
 const client = new Discord.Client();
-const DBL = require("dblapi.js");
-const dbl = new DBL(auth.dbl);
+//const DBL = require("dblapi.js");
+//const dbl = new DBL(auth.dbl);
 
 const ranking = require("./methods/ranking.js");
 const me = require("./methods/me.js");
@@ -117,7 +117,7 @@ client.on('message',msg => {
 				other.eightball(con,msg,isMention,prefix);
 			}
 			isCommand = false;
-			console.log("Command: ? {"+args+"} ["+msg.guild.name+"]["+msg.channel.name+"]["+msg.channel.id+"]"+msg.author.username);
+			clog("?",args,msg);
 		}
 
 		//Cowoncy
@@ -132,7 +132,7 @@ client.on('message',msg => {
 
 		//Catch an animals
 		else if (command === 'catch'||command === 'hunt'){
-			console.log("Command: "+command+" {"+args+"} ["+msg.guild.name+"]["+msg.channel.name+"]["+msg.channel.id+"]"+msg.author.username);
+			clog(command,args,msg);
 			isCommand = false;
 			zoo.catch(con,msg);
 		}
@@ -201,7 +201,7 @@ client.on('message',msg => {
 
 		//Display the command to logs
 		if(isCommand)
-			console.log("Command: "+command+" {"+args+"} ["+msg.guild.name+"]["+msg.channel.name+"]["+msg.channel.id+"]"+msg.author.username);
+			clog(command,args,msg);
 	}
 
 	//Add point if they said owo
@@ -254,4 +254,6 @@ client.on("guildDelete", guild => {
 	client.user.setActivity('with '+client.guilds.size+' Servers! OwO | \n\'OwO help\' for help!');
 });
 
-
+function clog(command,args,msg){
+	console.log("\x1b[0m\x1b[4mCommand\x1b[0m: %s\x1b[0m \x1b[36m{%s}\x1b[0m \x1b[0m%s\x1b[36m[%s][%s][%s]",command,args,msg.author.username,msg.guild.name,msg.channel.name,msg.channel.id); 
+}
