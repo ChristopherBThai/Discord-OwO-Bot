@@ -38,6 +38,10 @@ client.on('message',msg => {
 		else if(adminCommand === 'channel'){
 			admin.msgChannel(client,msg.author,adminMsg.shift(),adminMsg.join(' '));
 		}
+
+		else if(adminCommand === 'send'){
+			admin.send(client,con,msg,adminMsg);
+		}
 	}
 
 	//Ignore if its a bot or DM

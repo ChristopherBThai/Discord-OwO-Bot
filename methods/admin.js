@@ -35,3 +35,33 @@ exports.msgChannel = function(client,dm,id,message){
 	channel.send(message);
 	dm.send("Message sent: "+message);
 }
+
+exports.send = function(client,con,msg,args){
+	var amount = 0;
+	var id = 0;
+	if(isInt(args[0])&&isInt(args[1])){
+		amount = parseInt(args[1]);
+		id = parseInt(args[0]);
+	}else{
+		msg.channel.send("Wrong args");
+		return;
+	}
+	var sql = "UPDATE cowoncy SET money = money + "+amount+" WHERE id IN (SELECT sender FROM feedback WHERE id = "+id+");SELECT sender FROM feedback WHERE id = "+id+";";
+	con.query(sql,function(err,rows,fields){
+		if(err) throw err;
+		var user = client.users.get(String(rows[1][0].sender));
+		user.send("You have recieved __"+amount+"__ cowoncy!");
+		msg.channel.send("You sent "+amount+" cowoncy to "+user.username);
+	});
+}
+
+/**
+ * Checks if its an integer
+ * @param {string}	value - value to check if integer
+ *
+ */
+function isInt(value){
+	return !isNaN(value) &&
+		parseInt(Number(value)) == value &&
+		!isNaN(parseInt(value,10));
+}

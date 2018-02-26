@@ -36,6 +36,7 @@ exports.catch = function(con,msg){
 		}else{
 			var animal = randAnimal();
 			var type = animal[2];
+			var bonus = animal[3];
 			sql = "INSERT INTO animal (id,name,count) VALUES ("+msg.author.id+",'"+animal[1]+"',1) ON DUPLICATE KEY UPDATE count = count + 1;"+
 				"UPDATE cowoncy SET money = money - 5,catch = NOW() WHERE id = "+msg.author.id+";"+
 				"INSERT INTO animal_count (id,"+type+") VALUES ("+msg.author.id+",1) ON DUPLICATE KEY UPDATE "+type+" = "+type+"+1;";
@@ -57,26 +58,31 @@ function randAnimal(){
 		result.push(animals.ranks.common+" *(common)*");
 		result.push(animals.common[rand]);
 		result.push("common");
+		result.push("25");
 	}else if(rand<parseFloat(animals.uncommon[0])){
 		rand = Math.ceil(Math.random()*(animals.uncommon.length-1));
 		result.push(animals.ranks.uncommon+" *(uncommon)*");
 		result.push(animals.uncommon[rand]);
 		result.push("uncommon");
+		result.push("50");
 	}else if(rand<parseFloat(animals.rare[0])){
 		rand = Math.ceil(Math.random()*(animals.rare.length-1));
 		result.push(animals.ranks.rare+" *(rare)*");
 		result.push(animals.rare[rand]);
 		result.push("rare");
+		result.push("100");
 	}else if(rand<parseFloat(animals.epic[0])){
 		rand = Math.ceil(Math.random()*(animals.epic.length-1));
 		result.push(animals.ranks.epic+" *(epic)*");
 		result.push(animals.epic[rand]);
 		result.push("epic");
+		result.push("250");
 	}else{
 		rand = Math.ceil(Math.random()*(animals.mythical.length-1));
 		result.push(animals.ranks.mythical+" *(mythic)*");
 		result.push(animals.mythical[rand]);
 		result.push("mythical");
+		result.push("500");
 	}
 	return result;
 }
