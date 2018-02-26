@@ -3,6 +3,9 @@ var animals = require('../../tokens/owo-animals.json');
 var display = "";
 initDisplay();
 
+/**
+ * Displays your zoo
+ */
 exports.display = function(con,msg){
 	var sql = "SELECT name,count FROM animal WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,result){
