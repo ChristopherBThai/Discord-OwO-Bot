@@ -36,27 +36,27 @@ exports.slots = function(con,msg,args){
 			var rslots = [];
 			var rand = Math.random();
 			var win = 0;
-			if(rand<=.25){//1x 25%
-				win = amount;
+			if(rand<=.20){//1x 20%
+				win = amount+1;
 				rslots.push(slots[0]);
 				rslots.push(slots[0]);
 				rslots.push(slots[0]);
-			}else if(rand<=.35){ //2x 10%
+			}else if(rand<=.35){ //1.5x 15%
+				win = Math.ceil(amount*1.5);
+				rslots.push(slots[1]);
+				rslots.push(slots[1]);
+				rslots.push(slots[1]);
+			}else if(rand<=.45){ //2x 10%
 				win = amount*2;
-				rslots.push(slots[1]);
-				rslots.push(slots[1]);
-				rslots.push(slots[1]);
-			}else if(rand<=.40){ //3x 5%
+				rslots.push(slots[2]);
+				rslots.push(slots[2]);
+				rslots.push(slots[2]);
+			}else if(rand<=.50){ //3x 5%
 				win = amount*3;
-				rslots.push(slots[2]);
-				rslots.push(slots[2]);
-				rslots.push(slots[2]);
-			}else if(rand<=.425){ //5x 2.5%
-				win = amount*5;
 				rslots.push(slots[3]);
 				rslots.push(slots[3]);
 				rslots.push(slots[3]);
-			}else if(rand<=.435){ //10x 1%
+			}else if(rand<=.51){ //10x 1%
 				win = amount*10;
 				rslots.push(slots[4]);
 				rslots.push(slots[5]);
@@ -66,7 +66,7 @@ exports.slots = function(con,msg,args){
 				var slot2 = Math.floor(Math.random()*(slots.length-1));
 				var slot3 = Math.floor(Math.random()*(slots.length-1));
 				if(slot3==slot1)
-					slot2 = (slot1+1)%(slots.length-1);
+					slot2 = (slot1+Math.ceil(Math.random()*(slots.length-2)))%(slots.length-1);
 				if(slot2==slots.length-2)
 					slot2++;
 				rslots.push(slots[slot1]);
@@ -80,16 +80,16 @@ exports.slots = function(con,msg,args){
 			var sql = "UPDATE cowoncy SET money = money + "+(win-amount)+",slots = NOW() WHERE id = "+msg.author.id+";";
 			con.query(sql, function(err,result){
 				if(err) throw err;
-				var machine = "**`___SLOTS___  `**\n "+moving+" "+moving+" "+moving+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+amount+"\n`|         |`\n`|         |`";
+				var machine = "**`___SLOTS___  `**\n"+moving+" "+moving+" "+moving+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+amount+"\n`|         |`\n`|         |`";
 				msg.channel.send(machine)
 				.then(message => setTimeout(function(){
-						var machine = "**`___SLOTS___  `**\n "+rslots[0]+" "+moving+" "+moving+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+amount+"\n`|         |`\n`|         |`";
+						var machine = "**`___SLOTS___  `**\n"+rslots[0]+" "+moving+" "+moving+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+amount+"\n`|         |`\n`|         |`";
 						message.edit(machine)
 						.then(message => setTimeout(function(){
-								var machine = "**`___SLOTS___  `**\n "+rslots[0]+" "+moving+" "+rslots[2]+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+amount+"\n`|         |`\n`|         |`";
+								var machine = "**`___SLOTS___  `**\n"+rslots[0]+" "+moving+" "+rslots[2]+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+amount+"\n`|         |`\n`|         |`";
 								message.edit(machine)
 								.then(message => setTimeout(function(){
-										var machine = "**`___SLOTS___  `**\n "+rslots[0]+" "+rslots[1]+" "+rslots[2]+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+amount+"\n`|         |`  and won "+winmsg+"\n`|         |`";
+										var machine = "**`___SLOTS___  `**\n"+rslots[0]+" "+rslots[1]+" "+rslots[2]+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+amount+"\n`|         |`  and won "+winmsg+"\n`|         |`";
 										message.edit(machine)
 
 									},1000)
