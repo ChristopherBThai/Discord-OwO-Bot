@@ -16,7 +16,6 @@ exports.display = function(con,msg){
 			text = text.replace("~"+result[i].name,result[i].name+toSmallNum(result[i].count));
 		}
 		text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question);
-		text += "\n*zoo is still a work in progress*";
 		msg.channel.send(text);
 	});
 }
@@ -80,12 +79,18 @@ function randAnimal(){
 		result.push(animals.epic[rand]);
 		result.push("epic");
 		result.push("250");
-	}else{
+	}else if(rand<parseFloat(animals.mythical[0]{
 		rand = Math.ceil(Math.random()*(animals.mythical.length-1));
 		result.push(animals.ranks.mythical+" *(mythic)*");
 		result.push(animals.mythical[rand]);
 		result.push("mythical");
 		result.push("500");
+	}else{
+		rand = Math.ceil(Math.random()*(animals.legendary.length-1));
+		result.push(animals.ranks.legendary+" *(legendary)*");
+		result.push(animals.legendary[rand]);
+		result.push("legendary");
+		result.push("1000");
 	}
 	return result;
 }

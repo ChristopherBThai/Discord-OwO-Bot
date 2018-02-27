@@ -257,6 +257,8 @@ function getGlobalZooRanking(con, client, channel, count){
 				name = ""+user.username;
 			name = name.replace("discord.gg","discord,gg");
 			embed += "#"+rank+"\t"+name+"\n\t\t"+ele.points+" zoo points: ";
+			if(ele.legendary>0)
+				embed += "?-"+ele.legendary+", ";
 			embed += "M-"+ele.mythical+", ";
 			embed += "E-"+ele.epic+", ";
 			embed += "R-"+ele.rare+", ";

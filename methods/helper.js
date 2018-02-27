@@ -32,6 +32,7 @@ exports.showHelp = function(channel){
 			"\n\n# Fun"+
 			"\n< owo zoo\n>\tDisplays your zoo!"+
 			"\n< owo hunt\n>\tFetch animals for your zoo!"+
+			"\n< owo slots {amount}\n>\tGamble your cowoncy!!"+
 			"\n< owo {question}?\n>\treplies as a yes/no answer\n>\te.g. `owo Am I cute?`"+
 			"\n< owo define {word}\n>\tdefines a word!\n>\te.g. `owo define discord`"+
 			"\n\n# Utility"+

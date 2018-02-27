@@ -245,6 +245,8 @@ function getZooRanking(con, client, channel, id){
 				else
 					name = ""+user.username;
 				embed += "#"+rank+"\t"+name+"\n\t\t"+ele.points+" zoo points: ";
+				if(ele.legendary>0)
+					embed += "?-"+ele.legendary+", ";
 				embed += "M-"+ele.mythical+", ";
 				embed += "E-"+ele.epic+", ";
 				embed += "R-"+ele.rare+", ";
@@ -260,6 +262,8 @@ function getZooRanking(con, client, channel, id){
 		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
 		var name = client.users.get(me.id).username;
 		embed += "< "+rank+"\t"+name+" >\n\t\t"+me.points+" zoo points: ";
+		if(me.legendary>0)
+			embed += "?-"+me.legendary+", ";
 		embed += "M-"+me.mythical+", ";
 		embed += "E-"+me.epic+", ";
 		embed += "R-"+me.rare+", ";
@@ -277,6 +281,8 @@ function getZooRanking(con, client, channel, id){
 					name = "User Left Discord";
 				else
 					name = ""+user.username;
+				if(ele.legendary>0)
+					embed += "?-"+ele.legendary+", ";
 				embed += "#"+rank+"\t"+name+"\n\t\t"+ele.points+" zoo points: ";
 				embed += "M-"+ele.mythical+", ";
 				embed += "E-"+ele.epic+", ";
