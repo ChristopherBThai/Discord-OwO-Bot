@@ -52,8 +52,8 @@ exports.eightball = function(con,msg,isMention,prefix){
 			
 		msg.channel.send("**"+msg.author+" asked:**  "+question+
 			"\n**Answer:**  "+rows[0].answer);
-		console.log("	question: "+question);
-		console.log("	answer: "+rows[0].answer);
+			console.log("\x1b[36m%s\x1b[0m","    question: "+question);
+			console.log("\x1b[36m%s\x1b[0m","    answer: "+rows[0].answer);
 	});
 }
 

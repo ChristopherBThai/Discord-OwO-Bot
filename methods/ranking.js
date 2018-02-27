@@ -33,10 +33,10 @@ exports.addPoint = function(con,msg){
 					else
 						console.log("[DM]"+msg.author.username+" typed "+text);
 					if(spam>=10){
-						console.log("	Spam detected!");
+						console.log("\x1b[36m%s\x1b[0m","    Spam detected!");
 						sql = "INSERT INTO timeout (id,time) VALUES ("+id+",NOW()) ON DUPLICATE KEY UPDATE time = NOW();";
 						con.query(sql,function(err,result){
-							console.log("	Putting user in timeout");
+							console.log("\x1b[36m%s\x1b[0m","    Putting user in timeout");
 							msg.author.send("***OwO What's This?!?***\nYou have been timed out for 1H due to spam or macros!\nIf you feel like this is a mistake, use `owo feedback` in a channel to get it fixed!");
 						});
 					}
@@ -67,7 +67,7 @@ exports.display = function(con, client, msg, args){
 		var length = rows.length;
 		if(rows.length>0){
 			channel.send("'owo rank' is disabled on this channel!");
-			console.log("	Command Disabled");
+			console.log("\x1b[36m%s\x1b[0m","    Command disabled");
 			return;
 		}else{
 			//check for args
