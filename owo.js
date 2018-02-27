@@ -89,7 +89,7 @@ client.on('message',msg => {
 
 		//Slots!
 		else if (command === 'slot' || command === 'slots'){
-			slots.slots(con,msg);
+			slots.slots(con,msg,args);
 
 		}
 

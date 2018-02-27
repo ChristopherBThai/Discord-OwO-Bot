@@ -46,7 +46,7 @@ exports.catch = function(con,msg){
 			con.query(sql,function(err,result){
 				if(err) throw err;
 				msg.channel.send("You spent <:cowoncy:416043450337853441> 5! And you found a "+animal[0]+" "+animal[1]);
-				console.log("	Found: "+animal[0]+" "+animal[1]);
+				console.log("\x1b[36m%s\x1b[0m","    Found: "+animal[0]+" "+animal[1]);
 			});
 		}
 	});
