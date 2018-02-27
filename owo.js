@@ -1,12 +1,12 @@
-var auth = require('../tokens/owo-auth.json');
-//var auth = require('../tokens/scuttester-auth.json');
+//var auth = require('../tokens/owo-auth.json');
+var auth = require('../tokens/scuttester-auth.json');
 var login = require('../tokens/owo-login.json');
 
 
 const Discord = require("discord.js");
 const client = new Discord.Client();
-const DBL = require("dblapi.js");
-const dbl = new DBL(auth.dbl);
+//const DBL = require("dblapi.js");
+//const dbl = new DBL(auth.dbl);
 
 const ranking = require("./methods/ranking.js");
 const me = require("./methods/me.js");
@@ -128,7 +128,7 @@ client.on('message',msg => {
 		}
 
 		//Cowoncy
-		else if (command === 'cowoncy'||command === 'credit'||command === 'money'||command === 'cash'){
+		else if (command === 'cowoncy'||command === 'credit'||command === 'money'||command === 'cash'||command === 'balance'){
 			cowoncy.display(con,client,msg);
 		}
 

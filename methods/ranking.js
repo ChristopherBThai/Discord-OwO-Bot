@@ -239,7 +239,7 @@ function getGuildRanking(con, client, channel, count){
  */
 function getGlobalZooRanking(con, client, channel, count){
 	//Grabs top 5
-	var sql = "SELECT *,(common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*2000) AS points FROM animal_count ORDER BY points DESC LIMIT "+count+";";
+	var sql = "SELECT *,(common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*1000) AS points FROM animal_count ORDER BY points DESC LIMIT "+count+";";
 
 	//Create an embeded message
 	con.query(sql,function(err,rows,fields){
@@ -258,7 +258,7 @@ function getGlobalZooRanking(con, client, channel, count){
 			name = name.replace("discord.gg","discord,gg");
 			embed += "#"+rank+"\t"+name+"\n\t\t"+ele.points+" zoo points: ";
 			if(ele.legendary>0)
-				embed += "?-"+ele.legendary+", ";
+				embed += "L-"+ele.legendary+", ";
 			embed += "M-"+ele.mythical+", ";
 			embed += "E-"+ele.epic+", ";
 			embed += "R-"+ele.rare+", ";

@@ -216,9 +216,9 @@ function getGuildRanking(con, client, channel, id){
  */
 function getZooRanking(con, client, channel, id){
 	//Grabs top 5
-	var sql = "SELECT a.id,a1.* FROM animal_count AS a LEFT JOIN ( SELECT *,(common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*2000) AS points FROM animal_count ORDER BY points ASC ) AS a1 ON a1.points > (a.common*1+a.uncommon*5+a.rare*10+a.epic*50+a.mythical*500+a.legendary*2000) WHERE a.id = "+id+" ORDER BY a1.points ASC LIMIT 2;";
-	sql   +=  "SELECT a.id,a1.* FROM animal_count AS a LEFT JOIN ( SELECT *,(common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*2000) AS points FROM animal_count ORDER BY points DESC ) AS a1 ON a1.points < (a.common*1+a.uncommon*5+a.rare*10+a.epic*50+a.mythical*500+a.legendary*2000) WHERE a.id = "+id+" ORDER BY a1.points DESC LIMIT 2;";
-	sql   +=  "SELECT *,(common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*2000) AS points,(SELECT COUNT(*)+1 FROM animal_count WHERE (common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*2000) >(a.common*1+a.uncommon*5+a.rare*10+a.epic*50+a.mythical*500+a.legendary*2000) ) AS rank FROM animal_count a WHERE a.id = "+id+";";
+	var sql = "SELECT a.id,a1.* FROM animal_count AS a LEFT JOIN ( SELECT *,(common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*1000) AS points FROM animal_count ORDER BY points ASC ) AS a1 ON a1.points > (a.common*1+a.uncommon*5+a.rare*10+a.epic*50+a.mythical*500+a.legendary*1000) WHERE a.id = "+id+" ORDER BY a1.points ASC LIMIT 2;";
+	sql   +=  "SELECT a.id,a1.* FROM animal_count AS a LEFT JOIN ( SELECT *,(common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*1000) AS points FROM animal_count ORDER BY points DESC ) AS a1 ON a1.points < (a.common*1+a.uncommon*5+a.rare*10+a.epic*50+a.mythical*500+a.legendary*1000) WHERE a.id = "+id+" ORDER BY a1.points DESC LIMIT 2;";
+	sql   +=  "SELECT *,(common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*1000) AS points,(SELECT COUNT(*)+1 FROM animal_count WHERE (common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*1000) >(a.common*1+a.uncommon*5+a.rare*10+a.epic*50+a.mythical*500+a.legendary*1000) ) AS rank FROM animal_count a WHERE a.id = "+id+";";
 
 	//Create an embeded message
 	con.query(sql,function(err,rows,fields){
@@ -246,7 +246,7 @@ function getZooRanking(con, client, channel, id){
 					name = ""+user.username;
 				embed += "#"+rank+"\t"+name+"\n\t\t"+ele.points+" zoo points: ";
 				if(ele.legendary>0)
-					embed += "?-"+ele.legendary+", ";
+					embed += "L-"+ele.legendary+", ";
 				embed += "M-"+ele.mythical+", ";
 				embed += "E-"+ele.epic+", ";
 				embed += "R-"+ele.rare+", ";
@@ -263,7 +263,7 @@ function getZooRanking(con, client, channel, id){
 		var name = client.users.get(me.id).username;
 		embed += "< "+rank+"\t"+name+" >\n\t\t"+me.points+" zoo points: ";
 		if(me.legendary>0)
-			embed += "?-"+me.legendary+", ";
+			embed += "L-"+me.legendary+", ";
 		embed += "M-"+me.mythical+", ";
 		embed += "E-"+me.epic+", ";
 		embed += "R-"+me.rare+", ";
@@ -282,7 +282,7 @@ function getZooRanking(con, client, channel, id){
 				else
 					name = ""+user.username;
 				if(ele.legendary>0)
-					embed += "?-"+ele.legendary+", ";
+					embed += "L-"+ele.legendary+", ";
 				embed += "#"+rank+"\t"+name+"\n\t\t"+ele.points+" zoo points: ";
 				embed += "M-"+ele.mythical+", ";
 				embed += "E-"+ele.epic+", ";

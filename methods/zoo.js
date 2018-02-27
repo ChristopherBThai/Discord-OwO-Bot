@@ -1,5 +1,6 @@
 var animals = require('../../tokens/owo-animals.json');
 
+var secret = "";
 var display = "";
 initDisplay();
 
@@ -12,10 +13,17 @@ exports.display = function(con,msg){
 		if(err) throw err;
 		var text = ":seedling: :herb: :deciduous_tree:** "+msg.author.username+"'s zoo! **:deciduous_tree: :herb: :seedling:\n";
 		text += display;
+		var additional = "";
 		for (i in result){
 			text = text.replace("~"+result[i].name,result[i].name+toSmallNum(result[i].count));
+			if(animals.legendary.indexOf(result[i].name)>0){
+				if(additional=="")
+					additional = secret;
+				additional += result[i].name+toSmallNum(result[i].count)+"  ";
+			}
 		}
 		text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question);
+		text += additional;
 		msg.channel.send(text);
 	});
 }
@@ -79,7 +87,7 @@ function randAnimal(){
 		result.push(animals.epic[rand]);
 		result.push("epic");
 		result.push("250");
-	}else if(rand<parseFloat(animals.mythical[0]{
+	}else if(rand<parseFloat(animals.mythical[0])){
 		rand = Math.ceil(Math.random()*(animals.mythical.length-1));
 		result.push(animals.ranks.mythical+" *(mythic)*");
 		result.push(animals.mythical[rand]);
@@ -92,6 +100,14 @@ function randAnimal(){
 		result.push("legendary");
 		result.push("1000");
 	}
+
+		result = [];
+		rand = Math.ceil(Math.random()*(animals.legendary.length-1));
+		result.push(animals.ranks.legendary+" *(legendary)*");
+		result.push(animals.legendary[rand]);
+		result.push("legendary");
+		result.push("1000");
+
 	return result;
 }
 	
@@ -126,4 +142,5 @@ function initDisplay(){
 	display += "\n"+animals.ranks.mythical+"   ";
 	for (i=1;i<animals.mythical.length;i++)
 		display += "~"+animals.mythical[i]+gap;
+	secret = "\n"+animals.ranks.legendary+"    ";
 }
