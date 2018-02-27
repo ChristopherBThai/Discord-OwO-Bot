@@ -13,6 +13,7 @@ const me = require("./methods/me.js");
 const helper = require("./methods/helper.js");
 const cowoncy = require("./methods/cowoncy.js");
 const zoo = require("./methods/zoo.js");
+const slots = require("./methods/slots.js");
 const other = require("./methods/other.js");
 const feedback = require("./methods/feedback.js");
 const admin = require("./methods/admin.js");
@@ -84,6 +85,12 @@ client.on('message',msg => {
 		//Displays guild's ranking
 		else if (command === 'guild' || command === 'server'){
 			me.display(con, client, msg, args, msg.guild.id, "g");
+		}
+
+		//Slots!
+		else if (command === 'slot' || command === 'slots'){
+			slots.slots(con,msg);
+
 		}
 
 		//Displays zoo's ranking
