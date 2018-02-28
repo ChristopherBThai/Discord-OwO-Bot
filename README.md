@@ -3,15 +3,24 @@
 
 A Discord bot that will keep track of your OwO
 
-[OwO BOT](https://discordapp.com/api/oauth2/authorize?client_id=408785106942164992&permissions=0&scope=bot) Link for Discord!
+[OwO Bot](https://discordapp.com/api/oauth2/authorize?client_id=408785106942164992&permissions=0&scope=bot) Link for Discord!
 
-Compete against your server, globally, or as a guild! See who says 'owo' the most!
-Spamming 'owo' does not count!
+Rankings for points, cowoncy, and your zoo!
 
 ## Commands
-- `owo rank [global|guild] {count}` - displays the ranking of OwOs e.g. `"owo rank global" "owo rank 25" "owo rank guild 25"`
-- `owo me|guild` - displays your or your guild's rankings
-- `owo disablerank|enablerank` - disables/enables the command "owo rank" on the current channel
+- `owo rank [global|guild|zoo|money] {count}` - Displays top rankings!
+- `owo me|guild|zoorank|moneyrank` - displays your rank!
+
+- `owo money` - How much cowoncy do you have?
+- `owo daily` - Grab your daily cowoncy!
+
+- `owo zoo` - Admire your zoo!
+- `owo hunt` - Hunt for some animals!
+- `owo slots {amount}` - Willing to take risks?
+- `owo define {word}` - Define some words!
 - `owo {question}?` - replies as a yes/no answer e.g. `owo Am I cute?`
+
 - `owo feedback|suggestion|report {message}` - Sends a message to an admin, who will then reply back e.g. `owo feedback I love this bot!`
 - `owo help` - displays available commands
+- `owo link` - invite the bot to another server
+- `owo stats` - bot stats!
