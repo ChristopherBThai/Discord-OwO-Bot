@@ -24,8 +24,8 @@ exports.isInt = function(value){
 exports.showHelp = function(channel){
 	const embed = "This bot will count how many times you type 'owo'! Spamming 'owo' will not count!!!\nThere are three types of rankings\n\t1. Users in server\n\t2. Users globally\n\t3. Guilds globally\n\n**Commands**"+ 
 			"\n```md\n# Main Commands"+
-			"\n< owo me|guild|zoorank\n>\tdisplays your ranking"+
-			"\n< owo top [global|guild|zoo] {count}\n>\tDisplays the top rankings!\n>\te.g `owo top global`, `owo top 25`, `owo top zoo 25`"+
+			"\n< owo me|guild|zoorank|moneyrank\n>\tdisplays your ranking"+
+			"\n< owo top [global|guild|zoo|money] {count}\n>\tDisplays the top rankings!\n>\te.g `owo top global`, `owo top 25`, `owo top zoo 25`"+
 			"\n\n# Economy"+
 			"\n< owo money\n>\tDisplays how much cowoncy you have!"+
 			"\n< owo daily\n>\tGrab your free daily cowoncy!"+
