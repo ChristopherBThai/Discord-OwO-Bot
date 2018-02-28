@@ -19,8 +19,8 @@ exports.slots = function(con,msg,args){
 	}else if(amount<0){
 		msg.channel.send("Do you want to lose even more money????");
 		return;
-	}else if(amount>1000){
-		amount = 1000;
+	//}else if(amount>1000){
+	//	amount = 1000;
 	}
 
 	//Check if valid time and cowoncy
