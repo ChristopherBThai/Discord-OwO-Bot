@@ -104,6 +104,8 @@ exports.display = function(con, client, msg, args){
 				getGuildRanking(con, client, channel, count);
 			else if(zoo)
 				getGlobalZooRanking(con, client, channel, count);
+			else if(money)
+				getGlobalMoneyRanking(con, client, channel, count);
 			else
 				getRanking(con, client, msg.guild.id, members, channel, count);	
 		}
@@ -271,6 +273,42 @@ function getGlobalZooRanking(con, client, channel, count){
 		channel.send(embed);
 	});
 	console.log("	Displaying top "+count+" global zoo");
+}
+
+/**
+ * displays global cowoncy ranking
+ * @param {mysql.Connection}	con 	- Mysql.createConnection()
+ * @param {mysql.Client}	client	- Discord.js's client
+ * @param {discord.Channel}	channel - Current channel
+ * @param {int} 		count 	- number of ranks to display
+ */
+function getGlobalMoneyRanking(con, client, channel, count){
+	//Grabs top 5
+	var sql = "SELECT * FROM cowoncy ORDER BY money DESC LIMIT "+count+";";
+
+	//Create an embeded message
+	con.query(sql,function(err,rows,fields){
+		if(err) throw err;
+		var rank = 1;
+		var ranking = [];
+		var embed = "```md\n< Top "+count+" Global Cowoncy Rankings >\n\n";
+		rows.forEach(function(ele){
+			var id = String(ele.id);
+			var user = client.users.get(id);
+			var name = "";
+			if(user === undefined || user.username === undefined)
+				name = "User Left Bot";
+			else
+				name = ""+user.username;
+			name = name.replace("discord.gg","discord,gg");
+			embed += "#"+rank+"\t"+name+"\n\t\tCowoncy: "+ele.money+"\n";
+			rank++;
+		});
+		var date = new Date();
+		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		channel.send(embed);
+	});
+	console.log("	Displaying top "+count+" global cowoncy");
 }
 
 

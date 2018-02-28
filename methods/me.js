@@ -30,6 +30,8 @@ exports.display = function(con, client, msg, args, id, type){
 					getGlobalRanking(con, client, channel, id);
 				else if(type=="z")
 					getZooRanking(con, client, channel, id);
+				else if(type=="c")
+					getCowoncyRanking(con, client, channel, id);
 				else
 					getGuildRanking(con, client, channel, id);
 		}
@@ -300,6 +302,92 @@ function getZooRanking(con, client, channel, id){
 			embed = "```md\n< "+name+"'s Zoo Ranking >\nYour rank is: "+userRank+"\n\n>...\n" + embed;
 		else
 			embed = "```md\n< "+name+"'s Zoo Ranking >\nYour rank is: "+userRank+"\n\n" + embed;
+
+		if(rank-userRank==3)
+			embed += ">...\n";
+
+
+		var date = new Date();
+		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		channel.send(embed);
+	});
+}
+
+/**
+ * displays global cowoncy ranking
+ * @param {mysql.Connection}	con 	- Mysql.createConnection()
+ * @param {mysql.Client}	client	- Discord.js's client
+ * @param {discord.Channel}	channel - Current channel
+ * @param {int} 		count 	- number of ranks to display
+ */
+function getCowoncyRanking(con, client, channel, id){
+	//Grabs top 5
+	var sql = "SELECT u.id,u.money ,u1.id,u1.money FROM cowoncy AS u LEFT JOIN ( SELECT id,money FROM cowoncy ORDER BY money ASC ) AS u1 ON u1.money > u.money WHERE u.id = "+id+" ORDER BY u1.money ASC LIMIT 2;";
+	sql   +=  "SELECT u.id,u.money ,u1.id,u1.money FROM cowoncy AS u LEFT JOIN ( SELECT id,money FROM cowoncy ORDER BY money DESC ) AS u1 ON u1.money < u.money WHERE u.id = "+id+" ORDER BY u1.money DESC LIMIT 2;";
+	sql   +=  "SELECT id,money,(SELECT COUNT(*)+1 FROM cowoncy WHERE money > u.money ) AS rank FROM cowoncy u WHERE u.id = "+id+";";
+
+	//Create an embeded message
+	con.query(sql,function(err,rows,fields){
+		if(err) throw err;
+		var above = rows[0];
+		var below = rows[1];
+		var me = rows[2][0];
+		if(me===null||me===undefined){
+			channel.send("You don't have any cowoncy yet!");
+			return;
+		}
+		var userRank = parseInt(me.rank);
+		var rank = userRank - above.length;
+		var embed = "";
+
+		//People above user
+		above.reverse().forEach(function(ele){
+			var id = String(ele.id);
+			if(id!==""&&id!==null&&!isNaN(id)){
+				var user = client.users.get(id);
+				var name = "";
+				if(user === undefined || user.username === undefined)
+					name = "User Left Discord";
+				else
+					name = ""+user.username;
+				name = name.replace("discord.gg","discord,gg");
+				embed += "#"+rank+"\t"+name+"\n\t\tCowoncy: "+ele.money+"\n";
+				rank++;
+			}else if(rank==0)
+				rank = 1;
+				
+		});
+
+		//Current user
+		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
+		var name = client.users.get(me.id).username;
+		name = name.replace("discord.gg","discord,gg");
+		embed += "< "+rank+"   "+name+" >\n\t\tCowoncy: "+me.money+"\n";
+		rank++;
+
+		//People below user
+		below.forEach(function(ele){
+			var id = String(ele.id);
+			if(id!==""&&id!==null&&!isNaN(id)){
+				var user = client.users.get(id);
+				var name = "";
+				if(user === undefined || user.username === undefined)
+					name = "User Left Discord";
+				else
+					name = ""+user.username;
+				name = name.replace("discord.gg","discord,gg");
+				embed += "#"+rank+"\t"+name+"\n\t\tCowoncy: "+ele.money+"\n";
+				rank++;
+
+			}
+
+		});
+
+		//Add top and bottom
+		if(userRank>3)
+			embed = "```md\n< "+name+"'s Ranking >\nYour rank is: "+userRank+"\n\n>...\n" + embed;
+		else
+			embed = "```md\n< "+name+"'s Ranking >\nYour rank is: "+userRank+"\n\n" + embed;
 
 		if(rank-userRank==3)
 			embed += ">...\n";
