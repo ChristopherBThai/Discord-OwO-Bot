@@ -41,8 +41,8 @@ exports.catch = function(con,msg){
 		if(err) throw err;
 		if(result[0]==undefined||result[0].money<animals.rollprice){
 			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**");
-		}else if(result[0].time <= 10){
-			msg.channel.send("**"+msg.author.username+"! You need to wait "+(10-result[0].time)+" more seconds!**");
+		}else if(result[0].time <= 20){
+			msg.channel.send("**"+msg.author.username+"! You need to wait "+(20-result[0].time)+" more seconds!**");
 		}else{
 			var animal = randAnimal();
 			var type = animal[2];

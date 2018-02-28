@@ -19,8 +19,8 @@ exports.slots = function(con,msg,args){
 	}else if(amount<0){
 		msg.channel.send("Do you want to lose even more money????");
 		return;
-	}else if(amount>100){
-		amount = 100;
+	}else if(amount>1000){
+		amount = 1000;
 	}
 
 	//Check if valid time and cowoncy
@@ -29,30 +29,30 @@ exports.slots = function(con,msg,args){
 		if(err) throw err;
 		if(result[0]==undefined||result[0].money<amount){
 			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**");
-		}else if(result[0].time <= 10){
-			msg.channel.send("**"+msg.author.username+"! You need to wait "+(10-result[0].time)+" more seconds!**");
+		}else if(result[0].time <= 15){
+			msg.channel.send("**"+msg.author.username+"! You need to wait "+(15-result[0].time)+" more seconds!**");
 		}else{
 			//Decide results
 			var rslots = [];
 			var rand = Math.random();
 			var win = 0;
 			if(rand<=.20){//1x 20%
-				win = amount+1;
+				win = amount;
 				rslots.push(slots[0]);
 				rslots.push(slots[0]);
 				rslots.push(slots[0]);
-			}else if(rand<=.35){ //1.5x 15%
-				win = Math.ceil(amount*1.5);
+			}else if(rand<=.35){ //2x 15%
+				win = Math.ceil(amount*2);
 				rslots.push(slots[1]);
 				rslots.push(slots[1]);
 				rslots.push(slots[1]);
-			}else if(rand<=.45){ //2x 10%
-				win = amount*2;
+			}else if(rand<=.45){ //3x 10%
+				win = amount*3;
 				rslots.push(slots[2]);
 				rslots.push(slots[2]);
 				rslots.push(slots[2]);
 			}else if(rand<=.50){ //3x 5%
-				win = amount*3;
+				win = amount*4;
 				rslots.push(slots[3]);
 				rslots.push(slots[3]);
 				rslots.push(slots[3]);
