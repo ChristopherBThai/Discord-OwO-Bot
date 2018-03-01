@@ -1,12 +1,12 @@
-var auth = require('../tokens/owo-auth.json');
-//var auth = require('../tokens/scuttester-auth.json');
+//var auth = require('../tokens/owo-auth.json');
+var auth = require('../tokens/scuttester-auth.json');
 var login = require('../tokens/owo-login.json');
 
 
 const Discord = require("discord.js");
 const client = new Discord.Client();
-const DBL = require("dblapi.js");
-const dbl = new DBL(auth.dbl);
+//const DBL = require("dblapi.js");
+//const dbl = new DBL(auth.dbl);
 
 const ranking = require("./methods/ranking.js");
 const me = require("./methods/me.js");
@@ -72,35 +72,22 @@ client.on('message',msg => {
 	if(isCommand){
 		const command = args.shift().toLowerCase();
 
+		//Displays user ranking
+		if (command === 'my' || command === 'me'){
+			me.display(con, client, msg, args);
+		}
+
 		//Displays top ranking
-		if (command === 'top'||command === 'ranking'||command === 'rank'){
+		else if (command === 'top' || command === 'rank'){
 			ranking.display(con, client, msg, args);
 		}
 
 		//Displays user's ranking
-		else if (command === 'me' || command === 'profile'){
-			me.display(con, client, msg, args, msg.author.id, "u");
-		}
-
-		//Displays guild's ranking
-		else if (command === 'guild' || command === 'server'){
-			me.display(con, client, msg, args, msg.guild.id, "g");
-		}
-
-		//Displays zoo's ranking
-		else if (command === 'zoorank' || command === 'rankzoo'){
-			me.display(con, client, msg, args, msg.author.id, "z");
-		}
-
-		//Displays cowoncy ranking
-		else if (command === 'moneyrank' || command === 'cowoncyrank'){
-			me.display(con, client, msg, args, msg.author.id, "c");
-		}
-
-		//Slots!
-		else if (command === 'slot' || command === 'slots'){
-			slots.slots(con,msg,args);
-
+		else if (command === 'profile' ||
+			command === 'guild' || command === 'server' ||
+			command === 'zoorank' || command === 'rankzoo' ||
+			command === 'moneyrank'){
+			msg.channel.send("Some commands have changed! Check `owo help`!");
 		}
 
 		//Removes channel to use owo ranking (Admins only)
@@ -119,6 +106,12 @@ client.on('message',msg => {
 				msg.channel.send("'owo rank' has been **enabled** for this channel!");			
 			}else
 				msg.channel.send("*OwO What's this?* You're not and admin!");
+		}
+
+		//Slots!
+		else if (command === 'slot' || command === 'slots'){
+			slots.slots(con,msg,args);
+
 		}
 
 		//reply the question with yes or no
