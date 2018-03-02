@@ -25,7 +25,7 @@ exports.showHelp = function(channel){
 	const embed = "This bot will count how many times you type 'owo'! Spamming 'owo' will not count!!!\nThere are multiple rankings for points, cowoncy, and zoo!\n\n**Commands**"+ 
 			"\n```md\n# Main Commands"+
 			"\n< owo top points|guild|zoo|money [global] {count}\n>\tDisplays the top rankings!\n>\te.g `owo top zoo global`, `owo top points 25`, `owo top money global 25`"+
-			"\n< owo my points|guild|zoo|money [global]\n>\tdisplays your ranking"+
+			"\n< owo my points|guild|zoo|money [global]\n>\tdisplays your ranking\n>\tYou can also shorten the words like `owo my z g`"+
 			"\n# Economy"+
 			"\n< owo money\n>\tDisplays how much cowoncy you have!"+
 			"\n< owo daily\n>\tGrab your free daily cowoncy!"+
