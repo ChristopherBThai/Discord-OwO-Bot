@@ -1,12 +1,12 @@
-//var auth = require('../tokens/owo-auth.json');
-var auth = require('../tokens/scuttester-auth.json');
+var auth = require('../tokens/owo-auth.json');
+//var auth = require('../tokens/scuttester-auth.json');
 var login = require('../tokens/owo-login.json');
 
 
 const Discord = require("discord.js");
 const client = new Discord.Client();
-//const DBL = require("dblapi.js");
-//const dbl = new DBL(auth.dbl);
+const DBL = require("dblapi.js");
+const dbl = new DBL(auth.dbl);
 
 const ranking = require("./methods/ranking.js");
 const me = require("./methods/me.js");
@@ -75,6 +75,8 @@ client.on('message',msg => {
 		//Displays user ranking
 		if (command === 'my' || command === 'me'){
 			me.display(con, client, msg, args);
+		}else if(command === 'guild'){
+			me.display(con, client, msg, ["guild"]);
 		}
 
 		//Displays top ranking
@@ -87,7 +89,7 @@ client.on('message',msg => {
 			command === 'guild' || command === 'server' ||
 			command === 'zoorank' || command === 'rankzoo' ||
 			command === 'moneyrank'){
-			msg.channel.send("Some commands have changed! Check `owo help`!");
+			msg.channel.send("Some commands have changed! Check `owo help`!\nIf the commands are confusing let me know! Still a WIP bot :3");
 		}
 
 		//Removes channel to use owo ranking (Admins only)
@@ -174,7 +176,7 @@ client.on('message',msg => {
 
 		//Display link for discord invite
 		else if(command === "invite" || command === "link"){
-			helper.showLink(msg.channel);
+			helper.showLink(msg);
 		}
 
 		//Ping pong!
