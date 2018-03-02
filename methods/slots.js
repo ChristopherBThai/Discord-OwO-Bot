@@ -4,16 +4,19 @@ var moving = "<a:slot_gif:417473893368987649>";
 exports.slots = function(con,msg,args){
 	//Check arguments
 	var amount = 0;
+	var all = false;
 	if(args.length==0)
 		amount = 1;
 	else if(isInt(args[0])&&args.length==1)
 		amount = parseInt(args[0]);
+	else if(args.length==1&&args[0]=='all')
+		all = true;
 	else{
 		msg.channel.send("Invalid arguments!! :c");
 		return;
 	}
 
-	if(amount==0){
+	if(amount==0&&!all){
 		msg.channel.send("uwu.. you can't bet nothing silly!");
 		return;
 	}else if(amount<0){
@@ -27,7 +30,9 @@ exports.slots = function(con,msg,args){
 	var sql = "SELECT money,TIMESTAMPDIFF(SECOND,slots,NOW()) AS time FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,result){
 		if(err) throw err;
-		if(result[0]==undefined||result[0].money<amount){
+		if(all&&result[0]!=undefined)
+			amount = result[0].money
+		if(result[0]==undefined||result[0].money<amount||result[0].money<=0){
 			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**");
 		}else if(result[0].time <= 15){
 			msg.channel.send("**"+msg.author.username+"! You need to wait "+(15-result[0].time)+" more seconds!**");
