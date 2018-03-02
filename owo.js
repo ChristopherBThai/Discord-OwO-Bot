@@ -75,7 +75,7 @@ client.on('message',msg => {
 		//Displays user ranking
 		if (command === 'my' || command === 'me'){
 			me.display(con, client, msg, args);
-		}else if(command === 'guild'){
+		}else if(command === 'guild' || command === 'server'){
 			me.display(con, client, msg, ["guild"]);
 		}
 
@@ -85,9 +85,7 @@ client.on('message',msg => {
 		}
 
 		//Displays user's ranking
-		else if (command === 'profile' ||
-			command === 'guild' || command === 'server' ||
-			command === 'zoorank' || command === 'rankzoo' ||
+		else if (command === 'zoorank' || command === 'rankzoo' ||
 			command === 'moneyrank'){
 			msg.channel.send("Some commands have changed! Check `owo help`!\nIf the commands are confusing let me know! Still a WIP bot :3");
 		}
