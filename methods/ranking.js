@@ -17,6 +17,7 @@ exports.addPoint = function(con,msg){
 	try{
 		var sql = "SELECT id FROM timeout WHERE id = "+id+" AND TIMESTAMPDIFF(HOUR,time,NOW()) < 1"
 		con.query(sql,function(err,result){
+			if(err) throw err;
 			if(result[0]!=null||result[0]!=undefined){
 				console.log("\x1b[0m-%s\x1b[36m[%s][%s][%s]",msg.author.username+" typed '"+text+"'",msg.guild,msg.channel.name,msg.channel.id); 
 			}else{
