@@ -90,7 +90,8 @@ exports.define = function(msg,word){
 						"icon_url": "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"
 						}
 				};
-				msg.channel.send({ embed });
+				msg.channel.send({ embed })
+					.catch(msg.channel.send("I don't have permission to send embedded links! :c"));
 			}while(run);
 		}
 	});

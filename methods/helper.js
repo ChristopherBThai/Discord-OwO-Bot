@@ -49,14 +49,16 @@ exports.showHelp = function(channel){
  * @param {discord.Channel}	channel - The channel the message was sent in
  *
  */
-exports.showLink = function(channel){
+exports.showLink = function(msg){
+	var channel = msg.channel;
 	const embed = {
 		"title":"OwO! Click me to invite me to your server!",
-		"url":"https://discordapp.com/oauth2/authorize?client_id=408785106942164992&permissions=2048&scope=bot",
+		"url":"https://discordapp.com/api/oauth2/authorize?client_id=408785106942164992&permissions=444480&scope=bot",
 		"color": 4886754,
 		"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
 	};
-	channel.send({embed});
+	channel.send({embed})
+		.catch(channel.send("I don't have permission to send embedded links! :c"));
 }
 
 /**
@@ -75,7 +77,7 @@ exports.showStats = function(client, con, msg){
 			"color": 1,
 			"timestamp": new Date(),
 			"author": {"name": "OwO Bot Information",
-				"url": "https://discordapp.com/api/oauth2/authorize?client_id=408785106942164992&permissions=2048&scope=bot",
+				"url": "https://discordapp.com/api/oauth2/authorize?client_id=408785106942164992&permissions=444480&scope=bot",
 				"icon_url": "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
 			"fields": [{"name":"Current Guild",
 					"value":"```md\n<channelID: "+msg.channel.id+">\n<guildID:   "+msg.guild.id+">```"},
@@ -85,6 +87,7 @@ exports.showStats = function(client, con, msg){
 					"value": "```md\n<Guilds:    "+client.guilds.size+">\n<Channels:  "+client.channels.size+">\n<Users:     "+client.users.size+">``````md\n<Ping:       "+client.ping+"ms>\n<UpdatedOn:  "+client.readyAt+">\n<Uptime:     "+client.uptime+">```"
 				}]
 		};
-		msg.channel.send({embed});
+		msg.channel.send({embed})
+			.catch(msg.channel.send("I don't have permission to send embedded links! :c"));
 	});
 }
