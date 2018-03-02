@@ -1,7 +1,6 @@
 var auth = require('../tokens/owo-auth.json');
-var auth = require('../tokens/scuttester-auth.json');
+//var auth = require('../tokens/scuttester-auth.json');
 var login = require('../tokens/owo-login.json');
-
 
 const Discord = require("discord.js");
 const client = new Discord.Client();
@@ -138,7 +137,7 @@ client.on('message',msg => {
 
 		//Daily vote
 		else if (command === 'vote'){
-			vote.check(dbl,msg);
+			vote.link(msg);
 		}
 
 		//Catch an animals
@@ -239,6 +238,7 @@ var con = mysql.createConnection({
 con.connect(function(err){
 	if(err) throw err;
 	console.log("Connected!");
+	vote.sql(con);
 });
 
 //=============================================================================Console Logs===============================================================
@@ -251,6 +251,7 @@ client.on('ready',()=>{
 	setInterval(() => {
 		dbl.postStats(client.guilds.size);
 	}, 3200000);
+	vote.client(client);
 });
 
 //When bot joins a new guild

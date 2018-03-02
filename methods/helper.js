@@ -29,6 +29,7 @@ exports.showHelp = function(channel){
 			"\n# Economy"+
 			"\n< owo money\n>\tDisplays how much cowoncy you have!"+
 			"\n< owo daily\n>\tGrab your free daily cowoncy!"+
+			"\n< owo vote\n>\tVote for OwO bot to get free daily cowoncy!"+
 			"\n# Fun"+
 			"\n< owo zoo\n>\tDisplays your zoo!"+
 			"\n< owo hunt\n>\tFetch animals for your zoo!"+
