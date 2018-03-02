@@ -82,14 +82,18 @@ exports.display = function(con, client, msg, args){
 
 			for(var i in args){
 				if(!points&&!guild&&!money&&!zoo){
-					if(args[i]=== "points"||args[i]==="point")
+					if(args[i]=== "points"||args[i]==="point"||args[i]==="p")
 						points = true;
-					else if(args[i]==="guild"||args[i]==="server")
+					else if(args[i]==="guild"||args[i]==="server"||args[i]==="s"||args[i]==="g")
 						guild = true;
-					else if(args[i]=== "zoo")
+					else if(args[i]=== "zoo"||args[i]==="z")
 						zoo = true;
-					else if(args[i]=== "cowoncy"||args[i]==="money")
+					else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="m"||args[i]==="c")
 						money = true;
+					else if(args[i]==="global"||args[i]==="g") 
+						global = true;
+					else
+						invalid = true;
 				}else if(args[i]==="global"||args[i]==="g") global = true;
 				else if(isInt(args[i])) count = parseInt(args[i]);
 				else invalid = true;
@@ -109,7 +113,7 @@ exports.display = function(con, client, msg, args){
 				else if(money)
 					getGlobalMoneyRanking(con,client,msg,count);
 				else
-					msg.channel.send("Wrong arguments! :c Go check `owo help`!");
+					getGlobalRanking(con,client,msg,count);
 			}else{
 				if(points)
 					getRanking(con,client,msg,count);
@@ -120,7 +124,7 @@ exports.display = function(con, client, msg, args){
 				else if(money)
 					getMoneyRanking(con,client,msg,count);
 				else
-					msg.channel.send("Wrong arguments! :c Go check `owo help`!");
+					getRanking(con,client,msg,count);
 			}
 		}
 	});

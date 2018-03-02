@@ -34,14 +34,18 @@ exports.display = function(con, client, msg, args){
 
 			for(var i in args){
 				if(!points&&!guild&&!money&&!zoo){
-					if(args[i]=== "points"||args[i]==="point")
+					if(args[i]=== "points"||args[i]==="point"||args[i]==="p")
 						points = true;
-					else if(args[i]==="guild"||args[i]==="server")
+					else if(args[i]==="guild"||args[i]==="server"||args[i]==="g"||args[i]==="s")
 						guild = true;
-					else if(args[i]=== "zoo")
+					else if(args[i]=== "zoo"||args[i]==="z")
 						zoo = true;
-					else if(args[i]=== "cowoncy"||args[i]==="money")
+					else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="c"||args[i]==="m")
 						money = true;
+					else if(args[i]==="global"||args[i]==="g") 
+						global = true;
+					else
+						invalid = true;
 				}else if(args[i]==="global"||args[i]==="g") global = true;
 				else invalid = true;
 			}
@@ -58,7 +62,7 @@ exports.display = function(con, client, msg, args){
 				else if(money)
 					getGlobalMoneyRanking(con,client,msg,id);
 				else
-					msg.channel.send("Wrong arguments! :c Go check `owo help`!");
+					getGlobalPointRanking(con,client,msg,id);
 			}else{
 				if(points)
 					getPointRanking(con,client,msg,id);
@@ -69,7 +73,7 @@ exports.display = function(con, client, msg, args){
 				else if(money)
 					getMoneyRanking(con,client,msg,id);
 				else
-					msg.channel.send("Wrong arguments! :c Go check `owo help`!");
+					getPointRanking(con,client,msg,id);
 			}
 		}
 	});
@@ -617,7 +621,7 @@ function getGlobalMoneyRanking(con, client, msg, id){
 
 		//Add top and bottom
 		if(userRank>3)
-			embed = "```md\n< "+name+"'s Global Cowncy Ranking >\nYour rank is: "+userRank+"\n\n>...\n" + embed;
+			embed = "```md\n< "+name+"'s Global Cowoncy Ranking >\nYour rank is: "+userRank+"\n\n>...\n" + embed;
 		else
 			embed = "```md\n< "+name+"'s Global Cowoncy Ranking >\nYour rank is: "+userRank+"\n\n" + embed;
 
