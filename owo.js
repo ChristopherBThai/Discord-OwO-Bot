@@ -1,5 +1,5 @@
 var auth = require('../tokens/owo-auth.json');
-//var auth = require('../tokens/scuttester-auth.json');
+var auth = require('../tokens/scuttester-auth.json');
 var login = require('../tokens/owo-login.json');
 
 
@@ -12,6 +12,7 @@ const ranking = require("./methods/ranking.js");
 const me = require("./methods/me.js");
 const helper = require("./methods/helper.js");
 const cowoncy = require("./methods/cowoncy.js");
+const vote = require("./methods/vote.js");
 const zoo = require("./methods/zoo.js");
 const slots = require("./methods/slots.js");
 const other = require("./methods/other.js");
@@ -133,6 +134,11 @@ client.on('message',msg => {
 		//Daily cowoncy
 		else if (command === 'daily'){
 			cowoncy.daily(con,msg);
+		}
+
+		//Daily vote
+		else if (command === 'vote'){
+			vote.check(dbl,msg);
 		}
 
 		//Catch an animals
