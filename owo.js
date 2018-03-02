@@ -1,12 +1,12 @@
-var auth = require('../tokens/owo-auth.json');
-//var auth = require('../tokens/scuttester-auth.json');
+//var auth = require('../tokens/owo-auth.json');
+var auth = require('../tokens/scuttester-auth.json');
 var login = require('../tokens/owo-login.json');
 
 
 const Discord = require("discord.js");
 const client = new Discord.Client();
-const DBL = require("dblapi.js");
-const dbl = new DBL(auth.dbl);
+//const DBL = require("dblapi.js");
+//const dbl = new DBL(auth.dbl);
 
 const ranking = require("./methods/ranking.js");
 const me = require("./methods/me.js");
@@ -117,14 +117,14 @@ client.on('message',msg => {
 		}
 
 		//reply the question with yes or no
-		else if(msg.content[msg.content.length-1] === '?'){
+		else if(command === '8b' || command === '8ball' || command === 'ask'){
 				other.eightball(con,msg,isMention,prefix);
 			if(Math.floor(Math.random()*100)===0){
 				msg.channel.send("**WAIT!** I Changed my mind!");
 				other.eightball(con,msg,isMention,prefix);
 			}
 			isCommand = false;
-			clog("?",args,msg);
+			clog(command,args,msg);
 		}
 
 		//Cowoncy
