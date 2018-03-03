@@ -25,7 +25,7 @@ function upvote(id){
 				var user = client.users.get(id);
 				if(user!=undefined){
 					user.send("You have recieved __200__ cowoncy for voting!");
-					console.log(user.username+" has voted for the first time!");
+					console.log("\x1b[33m",user.username+" has voted for the first time!"); 
 				}
 			});
 		}else if(result[0].time>=23){
@@ -37,14 +37,14 @@ function upvote(id){
 				var user = client.users.get(id);
 				if(user!=undefined){
 					user.send("You have recieved __"+bonus+"__ cowoncy for voting!");
-					console.log(user.username+" has voted and recieved cowoncy");
+					console.log("\x1b[33m",user.username+" has voted and  recieved cowoncy!"); 
 				}
 			});
 		}else{
 			var user = client.users.get(id);
 			if(user!=undefined){
 				user.send("You wait need to wait "+(23-result[0].time)+" hours before voting again!");
-				console.log(user.username+" tried to vote again");
+				console.log("\x1b[33m",user.username+" tried to vote again"); 
 			}
 		}
 	});
