@@ -1,5 +1,9 @@
-var auth = require('../tokens/owo-auth.json');
-//var auth = require('../tokens/scuttester-auth.json');
+
+const debug = false;
+if(debug)
+	var auth = require('../tokens/scuttester-auth.json');
+else 
+	var auth = require('../tokens/owo-auth.json');
 var login = require('../tokens/owo-login.json');
 
 const Discord = require("discord.js");
@@ -137,6 +141,11 @@ client.on('message',msg => {
 			cowoncy.display(con,client,msg);
 		}
 
+		//Give cowoncy
+		else if(command === 'send' || command === 'give'){
+			cowoncy.give(client,con,msg,args);
+		}
+
 		//Daily cowoncy
 		else if (command === 'daily'){
 			cowoncy.daily(con,msg);
@@ -255,10 +264,12 @@ client.on('ready',()=>{
 	console.log('Logged in as '+client.user.tag+'!');
 	console.log('Bot has started, with '+client.users.size+' users, in '+client.channels.size+' channels of '+client.guilds.size+' guilds.');
 	client.user.setActivity('with '+client.guilds.size+' Servers! OwO | \n\'OwO help\' for help!');
-	setInterval(() => {
-		dbl.postStats(client.guilds.size);
-	}, 3200000);
-	vote.client(client);
+	if(!debug){
+		setInterval(() => {
+			dbl.postStats(client.guilds.size);
+		}, 3200000);
+		vote.client(client);
+	}
 });
 
 //When bot joins a new guild

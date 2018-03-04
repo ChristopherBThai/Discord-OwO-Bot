@@ -8,8 +8,6 @@ app.post('/scuttester',api.handler);
 
 api.on('upvote', (user,bot) => upvote(user));
 
-app.listen(3000);
-
 var con;
 var client;
 
@@ -56,6 +54,7 @@ exports.sql = function(sql){
 
 exports.client = function(cli){
 	client = cli;
+	app.listen(3000);
 }
 
 exports.link = function(msg){

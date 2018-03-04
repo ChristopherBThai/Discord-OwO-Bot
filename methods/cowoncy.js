@@ -39,4 +39,74 @@ exports.daily = function(con,msg){
 	});
 }
 
+/**
+ * Gives cowoncy to other users
+ */
+exports.give = function(client,con,msg,args){
+	var amount = -1;
+	var id = "";
+	var invalid = false;
+	for(i in args){
+		if(isInt(args[i])&&amount==-1)
+			amount = parseInt(args[i]);
+		else if(isUser(args[i]))
+			id = args[i].match(/[0-9]+/)[0];
+		else
+			invalid = true;
+	}
 
+	if(invalid||id==""||amount<=0){
+		msg.channel.send("Invalid arguments! :c")
+			.then(message => message.delete(3000));
+		return;
+	}
+	console.log(id);
+	console.log(msg.author.id);
+
+	var user = client.users.get(id);
+
+	if(user==undefined){
+		msg.channel.send("Could not find that user!")
+			.then(message => message.delete(3000));
+		return
+	}else if(user.bot){
+		msg.channel.send("You can't send cowoncy to a bot silly!")
+			.then(message => message.delete(3000));
+		return;
+	}
+
+	var sql = "SELECT money FROM cowoncy WHERE id = "+msg.author.id+";";
+	con.query(sql,function(err,rows,fields){
+		if(err) throw err;
+		if(rows.money<amount){
+			msg.channel.send("Silly "+msg.author.username+", you don't have enough cowoncy!")
+				.then(message => message.delete(3000));
+		}else{
+			sql = "UPDATE cowoncy SET money = money - "+amount+" WHERE id = "+msg.author.id+";"+
+				"INSERT INTO cowoncy (id,money) VALUES ("+id+","+amount+") ON DUPLICATE KEY UPDATE money = money + "+amount+";";
+			con.query(sql,function(err,rows,fields){
+				if(err) throw err;
+				msg.channel.send("**"+msg.author.username+" sent __"+amount+"__ cowoncy to "+user+"!**");
+			});
+		}
+	});
+
+}
+
+/*
+ * Checks if its a user
+ */
+function isUser(id){
+	return id.search(/<@[0-9]+>/)>=0;
+}
+
+/**
+ * Checks if its an integer
+ * @param {string}	value - value to check if integer
+ *
+ */
+function isInt(value){
+	return !isNaN(value) &&
+		parseInt(Number(value)) == value &&
+		!isNaN(parseInt(value,10));
+}
