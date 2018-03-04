@@ -55,6 +55,20 @@ exports.send = function(client,con,msg,args){
 	});
 }
 
+exports.giveall = function(con,msg,args){
+	var amount = 0;
+	if(isInt(args[0]))
+		amount = parseInt(args[0]);
+	else
+		return;
+	var users = getids(msg.guild.members);
+	var sql = "UPDATE IGNORE cowoncy SET money = money + "+amount+" WHERE id IN ("+users+");";
+	con.query(sql,function(err,rows,fields){
+		if(err) throw err;
+		msg.channel.send(msg.author.username+" gave everyone "+amount+" cowoncy!!!");
+	});
+}
+
 /**
  * Checks if its an integer
  * @param {string}	value - value to check if integer
@@ -65,3 +79,14 @@ function isInt(value){
 		parseInt(Number(value)) == value &&
 		!isNaN(parseInt(value,10));
 }
+/**
+ * Grabs all id from guild
+ */
+function getids(members){
+	var result = "";
+	members.keyArray().forEach(function(ele){
+		result += ele + ",";
+	});
+	return result.slice(0,-1);
+}
+
