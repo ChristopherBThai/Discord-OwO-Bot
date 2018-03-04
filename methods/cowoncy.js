@@ -49,7 +49,7 @@ exports.give = function(client,con,msg,args){
 	for(i in args){
 		if(isInt(args[i])&&amount==-1)
 			amount = parseInt(args[i]);
-		else if(isUser(args[i]))
+		else if(isUser(args[i])&&id=="")
 			id = args[i].match(/[0-9]+/)[0];
 		else
 			invalid = true;
@@ -60,6 +60,7 @@ exports.give = function(client,con,msg,args){
 			.then(message => message.delete(3000));
 		return;
 	}
+
 	console.log(id);
 	console.log(msg.author.id);
 
@@ -73,12 +74,15 @@ exports.give = function(client,con,msg,args){
 		msg.channel.send("You can't send cowoncy to a bot silly!")
 			.then(message => message.delete(3000));
 		return;
+	}else if(user.id==msg.author.id){
+		msg.channel.send("**"+msg.author+" sent __"+amount+"__ cowoncy to... "+user+"...**\n*but... why?*");
+		return;
 	}
 
 	var sql = "SELECT money FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
-		if(rows.money<amount){
+		if(rows[0].money<amount){
 			msg.channel.send("Silly "+msg.author.username+", you don't have enough cowoncy!")
 				.then(message => message.delete(3000));
 		}else{
@@ -97,7 +101,7 @@ exports.give = function(client,con,msg,args){
  * Checks if its a user
  */
 function isUser(id){
-	return id.search(/<@[0-9]+>/)>=0;
+	return id.search(/<@!?[0-9]+>/)>=0;
 }
 
 /**

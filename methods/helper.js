@@ -28,6 +28,7 @@ exports.showHelp = function(channel){
 			"\n< owo my points|guild|zoo|money [global]\n>\tdisplays your ranking\n>\tYou can also shorten the words like `owo my z g`"+
 			"\n# Economy"+
 			"\n< owo money\n>\tDisplays how much cowoncy you have!"+
+			"\n< owo give {@user} {amount}\n>\tGive someone your cowoncy!"+
 			"\n< owo daily\n>\tGrab your free daily cowoncy!"+
 			"\n< owo vote\n>\tVote for OwO bot to get free daily cowoncy!"+
 			"\n# Fun"+
