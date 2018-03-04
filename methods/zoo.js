@@ -40,9 +40,11 @@ exports.catch = function(con,msg){
 	con.query(sql,function(err,result){
 		if(err) throw err;
 		if(result[0]==undefined||result[0].money<animals.rollprice){
-			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**");
+			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**")
+				.then(message => message.delete(3000));
 		}else if(result[0].time <= 20){
-			msg.channel.send("**"+msg.author.username+"! You need to wait "+(20-result[0].time)+" more seconds!**");
+			msg.channel.send("**"+msg.author.username+"! You need to wait "+(20-result[0].time)+" more seconds!**")
+				.then(message => message.delete(3000));
 		}else{
 			var animal = randAnimal();
 			var type = animal[2];
@@ -52,7 +54,7 @@ exports.catch = function(con,msg){
 				"INSERT INTO animal_count (id,"+type+") VALUES ("+msg.author.id+",1) ON DUPLICATE KEY UPDATE "+type+" = "+type+"+1;";
 			con.query(sql,function(err,result){
 				if(err) throw err;
-				msg.channel.send("You spent <:cowoncy:416043450337853441> 5! And you found a "+animal[0]+" "+animal[1]);
+				msg.channel.send(msg.author.username+" spent <:cowoncy:416043450337853441> 5, and found a "+animal[0]+" "+animal[1]+"!");
 				console.log("\x1b[36m%s\x1b[0m","    Found: "+animal[0]+" "+animal[1]);
 			});
 		}

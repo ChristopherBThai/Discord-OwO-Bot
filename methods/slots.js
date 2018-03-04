@@ -12,7 +12,8 @@ exports.slots = function(con,msg,args){
 	else if(args.length==1&&args[0]=='all')
 		all = true;
 	else{
-		msg.channel.send("Invalid arguments!! :c");
+		msg.channel.send("Invalid arguments!! :c")
+			.then(message => message.delete(3000));
 		return;
 	}
 
@@ -33,9 +34,11 @@ exports.slots = function(con,msg,args){
 		if(all&&result[0]!=undefined)
 			amount = result[0].money
 		if(result[0]==undefined||result[0].money<amount||result[0].money<=0){
-			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**");
+			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**")
+				.then(message => message.delete(3000));
 		}else if(result[0].time <= 15){
-			msg.channel.send("**"+msg.author.username+"! You need to wait "+(15-result[0].time)+" more seconds!**");
+			msg.channel.send("**"+msg.author.username+"! You need to wait "+(15-result[0].time)+" more seconds!**")
+				.then(message => message.delete(3000));
 		}else{
 			//Decide results
 			var rslots = [];

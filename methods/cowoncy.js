@@ -31,9 +31,10 @@ exports.daily = function(con,msg){
 			var hour = 23 - rows[0][0].hour;
 			var min= 59 - (rows[0][0].minute%60);
 			var sec = 59 - (rows[0][0].second%60);
-			msg.channel.send("<:cowoncy:416043450337853441> Nu! You need to wait **"+hour+" H "+min+" M "+sec+" S**");
+			msg.channel.send("<:cowoncy:416043450337853441> Nu! "+msg.author.username+"! You need to wait **"+hour+" H "+min+" M "+sec+" S**")
+				.then(message => message.delete(3000));
 		}else{
-			msg.channel.send("<:cowoncy:416043450337853441> *OwO What's this?*  Here's your daily **"+gain+"** Cowoncy!");
+			msg.channel.send("<:cowoncy:416043450337853441> *OwO What's this?*  Here's your daily **"+gain+"** Cowoncy, "+msg.author.username+"!");
 		}
 	});
 }
