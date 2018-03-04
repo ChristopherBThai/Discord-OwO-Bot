@@ -72,6 +72,13 @@ client.on('message',msg => {
 	if(isCommand){
 		const command = args.shift().toLowerCase();
 
+		//Admin commands
+		if(msg.author.id===auth.admin){
+			if(command === "giveall"){
+				admin.giveall(con,msg,args);
+			}
+		}
+
 		//Displays user ranking
 		if (command === 'my' || command === 'me'){
 			me.display(con, client, msg, args);
