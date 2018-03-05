@@ -8,23 +8,35 @@ initDisplay();
  * Displays your zoo
  */
 exports.display = function(con,msg){
-	var sql = "SELECT name,count FROM animal WHERE id = "+msg.author.id+";";
+	var sql = "SELECT TIMESTAMPDIFF(SECOND,zoo,NOW()) AS time FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,result){
 		if(err) throw err;
-		var text = ":seedling: :herb: :deciduous_tree:** "+msg.author.username+"'s zoo! **:deciduous_tree: :herb: :seedling:\n";
-		text += display;
-		var additional = "";
-		for (i in result){
-			text = text.replace("~"+result[i].name,result[i].name+toSmallNum(result[i].count));
-			if(animals.legendary.indexOf(result[i].name)>0){
-				if(additional=="")
-					additional = secret;
-				additional += result[i].name+toSmallNum(result[i].count)+"  ";
-			}
+		console.log(result);
+		if(result[0]!=undefined&&result[0].time<=60){
+			msg.channel.send("**"+msg.author.username+"! You need to wait "+(60-result[0].time)+" more seconds!**")
+				.then(message => message.delete(3000));
+		}else{
+			var sql = "SELECT name,count FROM animal WHERE id = "+msg.author.id+";"+
+				"UPDATE IGNORE cowoncy SET zoo = NOW() WHERE id = "+msg.author.id+";";
+			con.query(sql,function(err,result){
+				if(err) throw err;
+				var text = ":seedling: :herb: :deciduous_tree:** "+msg.author.username+"'s zoo! **:deciduous_tree: :herb: :seedling:\n";
+				text += display;
+				var additional = "";
+				var row = result[0];
+				for (i in row){
+					text = text.replace("~"+row[i].name,row[i].name+toSmallNum(row[i].count));
+					if(animals.legendary.indexOf(row[i].name)>0){
+						if(additional=="")
+							additional = secret;
+						additional += row[i].name+toSmallNum(row[i].count)+"  ";
+					}
+				}
+				text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question);
+				text += additional;
+				msg.channel.send(text);
+			});
 		}
-		text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question);
-		text += additional;
-		msg.channel.send(text);
 	});
 }
 
@@ -42,8 +54,8 @@ exports.catch = function(con,msg){
 		if(result[0]==undefined||result[0].money<animals.rollprice){
 			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**")
 				.then(message => message.delete(3000));
-		}else if(result[0].time <= 20){
-			msg.channel.send("**"+msg.author.username+"! You need to wait "+(20-result[0].time)+" more seconds!**")
+		}else if(result[0].time <= 15){
+			msg.channel.send("**"+msg.author.username+"! You need to wait "+(15-result[0].time)+" more seconds!**")
 				.then(message => message.delete(3000));
 		}else{
 			var animal = randAnimal();
