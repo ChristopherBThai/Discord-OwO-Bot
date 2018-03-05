@@ -11,12 +11,11 @@ exports.display = function(con,msg){
 	var sql = "SELECT TIMESTAMPDIFF(SECOND,zoo,NOW()) AS time FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,result){
 		if(err) throw err;
-		console.log(result);
 		if(result[0]!=undefined&&result[0].time<=60){
 			msg.channel.send("**"+msg.author.username+"! You need to wait "+(60-result[0].time)+" more seconds!**")
 				.then(message => message.delete(3000));
 		}else{
-			var sql = "SELECT name,count FROM animal WHERE id = "+msg.author.id+";"+
+			var sql = "SELECT * FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+";"+
 				"UPDATE IGNORE cowoncy SET zoo = NOW() WHERE id = "+msg.author.id+";";
 			con.query(sql,function(err,result){
 				if(err) throw err;
@@ -24,6 +23,7 @@ exports.display = function(con,msg){
 				text += display;
 				var additional = "";
 				var row = result[0];
+				var count = row[0];
 				for (i in row){
 					text = text.replace("~"+row[i].name,row[i].name+toSmallNum(row[i].count));
 					if(animals.legendary.indexOf(row[i].name)>0){
@@ -34,6 +34,15 @@ exports.display = function(con,msg){
 				}
 				text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question);
 				text += additional;
+				var total = count.common*1+count.uncommon*5+count.rare*10+count.epic*50+count.mythical*500+count.legendary*1000;
+				text += "\n**Zoo Points: __"+total+"__**\n\t**";
+				if(count.legendary>0)
+					text += "L-"+count.legendary+", ";
+				text += "M-"+count.mythical+", ";
+				text += "E-"+count.epic+", ";
+				text += "R-"+count.rare+", ";
+				text += "U-"+count.uncommon+", ";
+				text += "C-"+count.common+"**";
 				msg.channel.send(text);
 			});
 		}
