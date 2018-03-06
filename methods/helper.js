@@ -41,7 +41,7 @@ exports.showHelp = function(channel){
 			"\n< owo feedback|suggestion|report {message}\n>\tsends a message to an admin who will reply back\n>\te.g `owo feedback I love this bot!`"+
 			"\n< owo stats\n>\tGrab some bot stats!"+
 			"\n< owo link\n>\tWant to add the bot to another server?? :D"+
-			"\n< owo help\n>\tDisplays this commands list!```"+
+			"\n< owo guildlink\n>\tCome join our server!"+
 			"\n```# Remove brackets when typing commands\n# [] = optional arguments\n# {} = optional user input```";
 	channel.send(embed);
 }
@@ -56,6 +56,23 @@ exports.showLink = function(msg){
 	const embed = {
 		"title":"OwO! Click me to invite me to your server!",
 		"url":"https://discordapp.com/api/oauth2/authorize?client_id=408785106942164992&permissions=444480&scope=bot",
+		"color": 4886754,
+		"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
+	};
+	channel.send({embed})
+		.catch(err => channel.send("I don't have permission to send embedded links! :c"));
+}
+
+
+/**
+ * Link for support guild
+ *
+ */
+exports.guild= function(msg){
+	var channel = msg.channel;
+	const embed = {
+		"title":"OwO! Click me to join the support channel!",
+		"url":"https://discord.gg/VKesv7J",
 		"color": 4886754,
 		"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
 	};
