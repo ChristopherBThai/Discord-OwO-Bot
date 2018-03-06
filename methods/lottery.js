@@ -4,17 +4,20 @@ var client;
 
 exports.bet = function(con,msg,args){
 	var amount = 0;
+	var all = false;
 	if(args.length==1&&isInt(args[0]))
 		amount = parseInt(args[0]);
-	else{
+	else if(args.length==1&&args[0]=='all'){
+		all = true;
+	}else{
 		msg.channel.send("wrong arguments! >:c");
 		return;
 	}
 	
-	if(amount == 0){
+	if(amount == 0&&!all){
 		msg.channel.send("You bet... nothing?");
 		return;
-	}else if(amount < 0){
+	}else if(amount < 0&&!all){
 		msg.channel.send("Do you understand how lotteries work?");
 		return;
 	}
@@ -22,10 +25,12 @@ exports.bet = function(con,msg,args){
 	var sql = "SELECT money FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,result){
 		if(err) throw err;
-		if(result[0]==undefined||result[0].money<amount){
+		if(result[0]==undefined||result[0].money<amount||result[0]==0){
 			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**")
 				.then(message => message.delete(3000));
 		}else{
+			if(all)
+				amount = parseInt(result[0].money);
 			var sql = "INSERT INTO lottery (id,channel,amount,valid) VALUES ("+msg.author.id+","+msg.channel.id+","+amount+",1) ON DUPLICATE KEY UPDATE amount = amount +"+amount+", valid = 1;"+
 				"SELECT SUM(amount) AS sum,COUNT(id) AS count FROM lottery WHERE valid = 1;"+
 				"SELECT * FROM lottery WHERE id = "+msg.author.id+";"+

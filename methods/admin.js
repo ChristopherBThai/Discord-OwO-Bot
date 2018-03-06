@@ -65,7 +65,7 @@ exports.giveall = function(con,msg,args){
 	var sql = "UPDATE IGNORE cowoncy SET money = money + "+amount+" WHERE id IN ("+users+");";
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
-		msg.channel.send(msg.author.username+" gave everyone "+amount+" cowoncy!!!");
+		msg.channel.send(msg.author.username+" gave @everyone "+amount+" cowoncy!!!");
 	});
 }
 
