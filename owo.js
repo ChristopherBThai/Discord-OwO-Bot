@@ -1,4 +1,4 @@
-const debug = false;
+const debug = true;
 if(debug)
 	var auth = require('../tokens/scuttester-auth.json');
 else 
@@ -17,6 +17,7 @@ const cowoncy = require("./methods/cowoncy.js");
 const vote = require("./methods/vote.js");
 const zoo = require("./methods/zoo.js");
 const slots = require("./methods/slots.js");
+const lottery = require("./methods/lottery.js");
 const other = require("./methods/other.js");
 const feedback = require("./methods/feedback.js");
 const admin = require("./methods/admin.js");
@@ -78,7 +79,12 @@ client.on('message',msg => {
 		//Admin commands
 		if(msg.author.id===auth.admin){
 			if(command === "giveall"){
+				clog(command,args,msg);
 				admin.giveall(con,msg,args);
+			}
+			if(command === "lotterytest"){
+				clog(command,args,msg);
+				lottery.pickWinnerTest();
 			}
 		}
 
@@ -121,7 +127,14 @@ client.on('message',msg => {
 		//Slots!
 		else if (command === 'slot' || command === 'slots'){
 			slots.slots(con,msg,args);
+		}
 
+		//Lottery!
+		else if (command === 'lottery' || command === 'bet'){
+			if(args.length==0)
+				lottery.display(con,msg,args);
+			else
+				lottery.bet(con,msg,args);
 		}
 
 		//reply the question with yes or no
@@ -197,6 +210,11 @@ client.on('message',msg => {
 			helper.showLink(msg);
 		}
 
+		//Display link for discord invite
+		else if(command === "guildlink" || command === "serverlink"){
+			helper.guild(msg);
+		}
+
 		//Ping pong!
 		else if(command === "ping"){
 			msg.channel.send("Pong! | *"+(Math.round(100*client.ping)/100.0)+"ms*");
@@ -254,6 +272,7 @@ con.connect(function(err){
 	if(err) throw err;
 	console.log("Connected!");
 	vote.sql(con);
+	lottery.con(con);
 });
 
 //=============================================================================Console Logs===============================================================
@@ -269,6 +288,7 @@ client.on('ready',()=>{
 		}, 3200000);
 		vote.client(client);
 	}
+	lottery.client(client);
 });
 
 //When bot joins a new guild

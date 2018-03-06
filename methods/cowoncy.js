@@ -28,7 +28,6 @@ exports.daily = function(con,msg){
 		"SELECT daily_streak FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
-		console.log(rows);
 		if(rows[0][0]!=undefined){
 			var hour = 23 - rows[0][0].hour;
 			var min= 59 - (rows[0][0].minute%60);
@@ -41,7 +40,7 @@ exports.daily = function(con,msg){
 				streak = rows[2][0].daily_streak;
 			var text = "**<:cowoncy:416043450337853441> *OwO What's this?*  Here's your daily __"+(gain+(streak*25))+" Cowoncy__, "+msg.author.username+"!**";
 			if(streak>0)
-				text += "\n**You're an a __"+(streak+1)+"__ daily streak!**";
+				text += "\n**You're on a __"+(streak+1)+"__ daily streak!**";
 			msg.channel.send(text);
 		}
 	});
