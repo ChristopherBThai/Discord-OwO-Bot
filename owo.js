@@ -1,4 +1,4 @@
-const debug = true;
+const debug = false;
 if(debug)
 	var auth = require('../tokens/scuttester-auth.json');
 else 
@@ -188,6 +188,24 @@ client.on('message',msg => {
 		else if(command === 'triggered'){weeb.triggered(msg,args);}
 		else if(command === 'wag'){weeb.wag(msg,args);}
 		else if(command === 'thinking'){weeb.thinking(msg,args);}
+
+		//emotes + user
+		else if(command === 'cuddle'){weeb.cuddle(client,msg,args);}
+		else if(command === 'hug'){weeb.hug(client,msg,args);}
+		else if(command === 'insult'){weeb.insult(client,msg,args);}
+		else if(command === 'kiss'){weeb.kiss(client,msg,args);}
+		else if(command === 'lick'){weeb.lick(client,msg,args);}
+		else if(command === 'nom'){weeb.nom(client,msg,args);}
+		else if(command === 'pat'||command === 'pet'){weeb.pat(client,msg,args);}
+		else if(command === 'poke'){weeb.poke(client,msg,args);}
+		else if(command === 'slap'){weeb.slap(client,msg,args);}
+		else if(command === 'stare'){weeb.stare(client,msg,args);}
+		else if(command === 'tickle'){weeb.tickle(client,msg,args);}
+		else if(command === 'highfive'){weeb.highfive(client,msg,args);}
+		else if(command === 'bite'){weeb.bite(client,msg,args);}
+		else if(command === 'greet'){weeb.greet(client,msg,args);}
+		else if(command === 'punch'){weeb.punch(client,msg,args);}
+		else if(command === 'handholding'||command === 'hold'){weeb.handholding(client,msg,args);}
 
 		//Grab type of pics
 		else if(command === 'image'||command === 'pic'){
