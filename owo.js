@@ -1,4 +1,4 @@
-const debug = false;
+const debug = true;
 if(debug)
 	var auth = require('../tokens/scuttester-auth.json');
 else 
@@ -15,6 +15,7 @@ const me = require("./methods/me.js");
 const helper = require("./methods/helper.js");
 const cowoncy = require("./methods/cowoncy.js");
 const vote = require("./methods/vote.js");
+const weeb = require("./methods/weebjs.js");
 const zoo = require("./methods/zoo.js");
 const slots = require("./methods/slots.js");
 const lottery = require("./methods/lottery.js");
@@ -189,7 +190,12 @@ client.on('message',msg => {
 		else if(command === 'spank'){other.spank(msg,args);}
 		//Slaps a user
 		else if(command === 'slap'){other.slap(msg,args);}
-		
+
+		//Grab type of pics
+		else if(command === 'imagetype'){weeb.getTypes(msg);}
+
+		//Grab type of pics
+		else if(command === 'image'){weeb.getImage(msg,args);}
 
 		//Sends feedback to admin
 		else if(command === 'feedback'|| command === 'suggestion' || command === 'report'){
