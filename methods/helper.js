@@ -27,22 +27,24 @@ exports.showHelp = function(channel){
 			"\n< owo top points|guild|zoo|money [global] {count}\n>\tDisplays the top rankings!\n>\te.g `owo top zoo global`, `owo top points 25`, `owo top money global 25`"+
 			"\n< owo my points|guild|zoo|money [global]\n>\tdisplays your ranking\n>\tYou can also shorten the words like `owo my z g`"+
 			"\n# Economy"+
-			"\n< owo money\n>\tDisplays how much cowoncy you have!"+
-			"\n< owo give {@user} {amount}\n>\tGive someone your cowoncy!"+
-			"\n< owo daily\n>\tGrab your free daily cowoncy!"+
-			"\n< owo vote\n>\tVote for OwO bot to get free daily cowoncy!"+
+			"\n< owo money >\t\t\t\t\tDisplays how much cowoncy you have!"+
+			"\n< owo give {@user} {amount} >\tGive someone your cowoncy!"+
+			"\n< owo daily >\t\t\t\t\tGrab your free daily cowoncy!"+
+			"\n< owo vote >\t\t\t\t\t Vote for OwO bot to get free daily cowoncy!"+
 			"\n# Fun"+
-			"\n< owo zoo\n>\tDisplays your zoo!"+
-			"\n< owo hunt\n>\tFetch animals for your zoo!"+
-			"\n< owo slots {amount}\n>\tGamble your cowoncy!!"+
-			"\n< owo lottery {amount}\n>\t24H Lottery! Feeling lucky?"+
-			"\n< owo 8b {question}\n>\treplies as a yes/no answer\n>\te.g. `owo 8b Am I cute?`"+
-			"\n< owo define {word}\n>\tdefines a word!\n>\te.g. `owo define discord`"+
+			"\n< owo zoo >\t\t\t\t\t  Displays your zoo!"+
+			"\n< owo hunt >\t\t\t\t\t Fetch animals for your zoo!"+
+			"\n< owo slots {amount} >\t\t   Gamble your cowoncy!!"+
+			"\n< owo lottery {amount} >\t\t 24H Lottery! Feeling lucky?"+
+			"\n< owo 8b {question} >\t\t\tReplies as a yes/no answer"+
+			"\n< owo define {word} >\t\t\tDefines a word!"+
+			"\n< owo gif|pic {type} >\t\t   Grabs a Image!"+
+			"\n< owo pet|slap|hug|etc {@user} > Hug someone~!"+
 			"\n# Utility"+
-			"\n< owo feedback|suggestion|report {message}\n>\tsends a message to an admin who will reply back\n>\te.g `owo feedback I love this bot!`"+
-			"\n< owo stats\n>\tGrab some bot stats!"+
-			"\n< owo link\n>\tWant to add the bot to another server?? :D"+
-			"\n< owo guildlink\n>\tCome join our server!```"+
+			"\n< owo feedback {message} >\t   Sends a message to an admin"+
+			"\n< owo stats >\t\t\t\t\tGrab some bot stats!"+
+			"\n< owo link >\t\t\t\t\t Want to add the bot to another server?? :D"+
+			"\n< owo guildlink >\t\t\t\tCome join our server!```"+
 			"\n```# Remove brackets when typing commands\n# [] = optional arguments\n# {} = optional user input```";
 	channel.send(embed);
 }
