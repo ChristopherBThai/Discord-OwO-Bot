@@ -34,15 +34,17 @@ exports.display = function(con,msg){
 				}
 				text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question);
 				text += additional;
-				var total = count.common*1+count.uncommon*5+count.rare*10+count.epic*50+count.mythical*500+count.legendary*1000;
-				text += "\n**Zoo Points: __"+total+"__**\n\t**";
-				if(count.legendary>0)
-					text += "L-"+count.legendary+", ";
-				text += "M-"+count.mythical+", ";
-				text += "E-"+count.epic+", ";
-				text += "R-"+count.rare+", ";
-				text += "U-"+count.uncommon+", ";
-				text += "C-"+count.common+"**";
+				if(count!=undefined){
+					var total = count.common*1+count.uncommon*5+count.rare*10+count.epic*50+count.mythical*500+count.legendary*1000;
+					text += "\n**Zoo Points: __"+total+"__**\n\t**";
+					if(count.legendary>0)
+						text += "L-"+count.legendary+", ";
+					text += "M-"+count.mythical+", ";
+					text += "E-"+count.epic+", ";
+					text += "R-"+count.rare+", ";
+					text += "U-"+count.uncommon+", ";
+					text += "C-"+count.common+"**";
+				}
 				msg.channel.send(text);
 			});
 		}

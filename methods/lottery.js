@@ -121,16 +121,19 @@ function pickWinner(){
 				found = true;
 				sql = "INSERT INTO cowoncy (id,money) VALUES ("+id+","+prize+") ON DUPLICATE KEY UPDATE money = money + "+prize+";";
 				sql += "UPDATE lottery SET valid = 0,amount = 0 WHERE valid = 1";
+
+				var channel = client.channels.get(users[i].channel);
+				var winner = user;
+				var winnerchance = chance
 				con.query(sql,function(err,result){
 					if(err) throw err;
-					var channel = client.channels.get(users[i].channel);
 					if(channel!=undefined)
-						channel.send("Congrats! **"+user+"** won **"+prize+" cowoncy** from the lottery!\nHe had a **"+chance+"%** chance to win!");
-					if(user!=undefined){
-						user.send("Congrats! You won **"+prize+" cowoncy** from the lottery with a **"+chance+"%** chance to win!");
-						console.log("\x1b[36m%s\x1b[0m","    "+user.username+" won the lottery");
+						channel.send("Congrats! **"+winner+"** won **"+prize+" cowoncy** from the lottery!\nHe had a **"+winnerchance+"%** chance to win!");
+					if(winner!=undefined){
+						winner.send("Congrats! You won **"+prize+" cowoncy** from the lottery with a **"+winnerchance+"%** chance to win!");
+						console.log("\x1b[36m%s\x1b[0m","    "+winner.username+" won the lottery");
 					}
-					console.log("\x1b[36m%s\x1b[0m","    "+user+" won the lottery");
+					console.log("\x1b[36m%s\x1b[0m","    "+winner+" won the lottery");
 				});
 			} else { //Loser
 				if(user!=undefined)
