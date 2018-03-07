@@ -82,10 +82,6 @@ client.on('message',msg => {
 				clog(command,args,msg);
 				admin.giveall(con,msg,args);
 			}
-			if(command === "lotterytest"){
-				clog(command,args,msg);
-				lottery.pickWinnerTest();
-			}
 		}
 
 		//Displays user ranking
