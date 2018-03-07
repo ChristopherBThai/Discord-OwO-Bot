@@ -100,8 +100,7 @@ exports.display = function(con,msg){
 
 function pickWinner(){
 	var sql = "SELECT id,amount,channel FROM lottery WHERE valid = 1;"+
-		"SELECT SUM(amount) AS sum,COUNT(id) AS count FROM lottery WHERE valid = 1;"+
-		"DELETE FROM lottery;";
+		"SELECT SUM(amount) AS sum,COUNT(id) AS count FROM lottery WHERE valid = 1;";
 	con.query(sql,function(err,result){
 		if(err) throw err;
 		var sum = parseInt(result[1][0].sum);
@@ -120,6 +119,7 @@ function pickWinner(){
 			if(rand<count&&!found){ //Winner
 				found = true;
 				sql = "INSERT INTO cowoncy (id,money) VALUES ("+id+","+prize+") ON DUPLICATE KEY UPDATE money = money + "+prize+";";
+				sql += "UPDATE lottery SET valid = 0 WHERE valid = 1";
 				con.query(sql,function(err,result){
 					if(err) throw err;
 					var channel = client.channels.get(users[i].channel);
@@ -171,8 +171,4 @@ function init(){
 		     mill += 86400000;
 	}
 	var timer = setTimeout(pickWinner,mill);
-}
-
-exports.pickWinnerTest = function(){
-	pickWinner();
 }
