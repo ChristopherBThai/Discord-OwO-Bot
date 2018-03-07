@@ -120,6 +120,185 @@ exports.thinking = function(msg,args){
 		grab(msg,"thinking","gif",msg.author.username+" is thinking...");
 }
 
+exports.cuddle = function(client,msg,args){
+	if(args.length!=1||!isUser(args[0]))
+		return;
+	var target = client.users.get(args[0].match(/[0-9]+/)[0]);
+	if(target == undefined){
+		msg.channel.send("I couldn't find that user :c");
+		return;
+	}
+	grab(msg,"cuddle","gif",msg.author.username+" cuddles with "+target.username+"~");
+}
 
+exports.hug = function(client,msg,args){
+	if(args.length!=1||!isUser(args[0]))
+		return;
+	var target = client.users.get(args[0].match(/[0-9]+/)[0]);
+	if(target == undefined){
+		msg.channel.send("I couldn't find that user :c");
+		return;
+	}
+	grab(msg,"hug","gif",msg.author.username+" hugged "+target.username+"!!");
+}
 
+exports.kiss = function(client,msg,args){
+	if(args.length!=1||!isUser(args[0]))
+		return;
+	var target = client.users.get(args[0].match(/[0-9]+/)[0]);
+	if(target == undefined){
+		msg.channel.send("I couldn't find that user :c");
+		return;
+	}
+	grab(msg,"kiss","gif",msg.author.username+" kisses "+target.username+" >///< cute!");
+}
 
+exports.lick = function(client,msg,args){
+	if(args.length!=1||!isUser(args[0]))
+		return;
+	var target = client.users.get(args[0].match(/[0-9]+/)[0]);
+	if(target == undefined){
+		msg.channel.send("I couldn't find that user :c");
+		return;
+	}
+	grab(msg,"lick","gif",msg.author.username+" licks "+target.username+"! Yummy!");
+}
+
+exports.nom = function(client,msg,args){
+	if(args.length!=1||!isUser(args[0]))
+		return;
+	var target = client.users.get(args[0].match(/[0-9]+/)[0]);
+	if(target == undefined){
+		msg.channel.send("I couldn't find that user :c");
+		return;
+	}
+	grab(msg,"nom","gif",msg.author.username+" nommed "+target.username+"! Owo!");
+}
+
+exports.pat = function(client,msg,args){
+	if(args.length!=1||!isUser(args[0]))
+		return;
+	var target = client.users.get(args[0].match(/[0-9]+/)[0]);
+	if(target == undefined){
+		msg.channel.send("I couldn't find that user :c");
+		return;
+	}
+	grab(msg,"pat","gif",msg.author.username+" pets "+target.username+"! cute!");
+}
+
+exports.poke = function(client,msg,args){
+	if(args.length!=1||!isUser(args[0]))
+		return;
+	var target = client.users.get(args[0].match(/[0-9]+/)[0]);
+	if(target == undefined){
+		msg.channel.send("I couldn't find that user :c");
+		return;
+	}
+	grab(msg,"poke","gif",msg.author.username+" pokes "+target.username+"");
+}
+
+exports.slap = function(client,msg,args){
+	if(args.length!=1||!isUser(args[0]))
+		return;
+	var target = client.users.get(args[0].match(/[0-9]+/)[0]);
+	if(target == undefined){
+		msg.channel.send("I couldn't find that user :c");
+		return;
+	}
+	grab(msg,"slap","gif",msg.author.username+" slaps "+target.username+"! Ouch!");
+}
+
+exports.stare = function(client,msg,args){
+	if(args.length!=1||!isUser(args[0]))
+		return;
+	var target = client.users.get(args[0].match(/[0-9]+/)[0]);
+	if(target == undefined){
+		msg.channel.send("I couldn't find that user :c");
+		return;
+	}
+	grab(msg,"stare","gif",msg.author.username+" stares at "+target.username+"");
+}
+
+exports.insult = function(client,msg,args){
+	if(args.length!=1||!isUser(args[0]))
+		return;
+	var target = client.users.get(args[0].match(/[0-9]+/)[0]);
+	if(target == undefined){
+		msg.channel.send("I couldn't find that user :c");
+		return;
+	}
+	grab(msg,"insult","gif",msg.author.username+" insults "+target.username+"! Meanie!");
+}
+
+exports.tickle = function(client,msg,args){
+	if(args.length!=1||!isUser(args[0]))
+		return;
+	var target = client.users.get(args[0].match(/[0-9]+/)[0]);
+	if(target == undefined){
+		msg.channel.send("I couldn't find that user :c");
+		return;
+	}
+	grab(msg,"tickle","gif",msg.author.username+" tickles "+target.username+"");
+}
+
+exports.highfive = function(client,msg,args){
+	if(args.length!=1||!isUser(args[0]))
+		return;
+	var target = client.users.get(args[0].match(/[0-9]+/)[0]);
+	if(target == undefined){
+		msg.channel.send("I couldn't find that user :c");
+		return;
+	}
+	grab(msg,"highfive","gif",msg.author.username+" high fives "+target.username+"! Slap!");
+}
+
+exports.bite = function(client,msg,args){
+	if(args.length!=1||!isUser(args[0]))
+		return;
+	var target = client.users.get(args[0].match(/[0-9]+/)[0]);
+	if(target == undefined){
+		msg.channel.send("I couldn't find that user :c");
+		return;
+	}
+	grab(msg,"bite","gif",msg.author.username+" bites "+target.username+"! rawr!");
+}
+
+exports.greet = function(client,msg,args){
+	if(args.length!=1||!isUser(args[0]))
+		return;
+	var target = client.users.get(args[0].match(/[0-9]+/)[0]);
+	if(target == undefined){
+		msg.channel.send("I couldn't find that user :c");
+		return;
+	}
+	grab(msg,"greet","gif",msg.author.username+" greets "+target.username+"! Hello!");
+}
+
+exports.punch = function(client,msg,args){
+	if(args.length!=1||!isUser(args[0]))
+		return;
+	var target = client.users.get(args[0].match(/[0-9]+/)[0]);
+	if(target == undefined){
+		msg.channel.send("I couldn't find that user :c");
+		return;
+	}
+	grab(msg,"punch","gif",msg.author.username+" punches "+target.username+"! oof!");
+}
+
+exports.handholding= function(client,msg,args){
+	if(args.length!=1||!isUser(args[0]))
+		return;
+	var target = client.users.get(args[0].match(/[0-9]+/)[0]);
+	if(target == undefined){
+		msg.channel.send("I couldn't find that user :c");
+		return;
+	}
+	grab(msg,"handholding","gif",msg.author.username+" holds "+target.username+"'s hand! adorable~");
+}
+
+/*
+ * Checks if its a user
+ */
+function isUser(id){
+	return id.search(/<@!?[0-9]+>/)>=0;
+}
