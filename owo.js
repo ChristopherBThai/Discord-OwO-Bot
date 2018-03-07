@@ -183,7 +183,7 @@ client.on('message',msg => {
 		else if(command === 'shrug'){weeb.shrug(msg,args);}
 		else if(command === 'sleepy'){weeb.sleepy(msg,args);}
 		else if(command === 'smile'){weeb.smile(msg,args);}
-		else if(command === 'smug'){weeb.smug(msg,args);}
+		else if(command === 'smug'||command === 'scoff'){weeb.smug(msg,args);}
 		else if(command === 'thumbsup'){weeb.thumbsup(msg,args);}
 		else if(command === 'triggered'){weeb.triggered(msg,args);}
 		else if(command === 'wag'){weeb.wag(msg,args);}
@@ -257,13 +257,13 @@ client.on('message',msg => {
 		else{ 
 			ranking.addPoint(con,msg);
 			isCommand = false;
-			if(isMention && msg.content.toLowerCase().includes("kiss"))
+			if(isMention && msg.content.toLowerCase().match(/\bkiss\b/))
 				msg.channel.send("*blushes* >///<\n*muah!!!*");
-			else if(isMention && msg.content.toLowerCase().includes("hug"))
+			else if(isMention && msg.content.toLowerCase().match(/\bhug\b/))
 				msg.channel.send("awww there there...\n*hugs*");
-			else if(isMention && (msg.content.toLowerCase().includes("pat")||msg.content.toLowerCase().includes("pet")))
+			else if(isMention && (msg.content.toLowerCase().match(/\bpat\b/)||msg.content.toLowerCase().match(/\bpat\b/)))
 				msg.channel.send("uwu\ny-yyou're going to mess up my hair..!!");
-			else if(isMention && msg.content.toLowerCase().includes("slap"))
+			else if(isMention && msg.content.toLowerCase().match(/\bslap\b/))
 				msg.channel.send("nuu uwu...\nthat's not nice...");
 			else if(msg.content === "<@408785106942164992>")
 				msg.channel.send("*OwO What's this?!*  Do you need me? Type *owo help* for help!");

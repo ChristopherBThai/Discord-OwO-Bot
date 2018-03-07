@@ -31,7 +31,7 @@ exports.bet = function(con,msg,args){
 		}else{
 			if(all)
 				amount = parseInt(result[0].money);
-			var sql = "INSERT INTO lottery (id,channel,amount,valid) VALUES ("+msg.author.id+","+msg.channel.id+","+amount+",1) ON DUPLICATE KEY UPDATE amount = amount +"+amount+", valid = 1;"+
+			var sql = "INSERT INTO lottery (id,channel,amount,valid) VALUES ("+msg.author.id+","+msg.channel.id+","+amount+",1) ON DUPLICATE KEY UPDATE amount = amount +"+amount+", valid = 1, channel = "+msg.channel.id+";"+
 				"SELECT SUM(amount) AS sum,COUNT(id) AS count FROM lottery WHERE valid = 1;"+
 				"SELECT * FROM lottery WHERE id = "+msg.author.id+";"+
 				"UPDATE cowoncy SET money = money - "+amount+" WHERE id = "+msg.author.id+";";
@@ -56,7 +56,7 @@ exports.bet = function(con,msg,args){
 
 exports.display = function(con,msg){
 	var sql = "SELECT SUM(amount) AS sum,COUNT(id) AS count FROM lottery WHERE valid = 1;"+
-		"SELECT * FROM lottery WHERE id = "+msg.author.id+";";
+		"SELECT * FROM lottery WHERE id = "+msg.author.id+" AND valid = 1;";
 	con.query(sql,function(err,result){
 		if(err) throw err;
 		var sum= 0;
@@ -99,6 +99,7 @@ exports.display = function(con,msg){
 }
 
 function pickWinner(){
+	console.log("Starting lottery...");
 	var sql = "SELECT id,amount,channel FROM lottery WHERE valid = 1;"+
 		"SELECT SUM(amount) AS sum,COUNT(id) AS count FROM lottery WHERE valid = 1;";
 	con.query(sql,function(err,result){
@@ -119,15 +120,17 @@ function pickWinner(){
 			if(rand<count&&!found){ //Winner
 				found = true;
 				sql = "INSERT INTO cowoncy (id,money) VALUES ("+id+","+prize+") ON DUPLICATE KEY UPDATE money = money + "+prize+";";
-				sql += "UPDATE lottery SET valid = 0 WHERE valid = 1";
+				sql += "UPDATE lottery SET valid = 0,amount = 0 WHERE valid = 1";
 				con.query(sql,function(err,result){
 					if(err) throw err;
 					var channel = client.channels.get(users[i].channel);
 					if(channel!=undefined)
 						channel.send("Congrats! **"+user+"** won **"+prize+" cowoncy** from the lottery!\nHe had a **"+chance+"%** chance to win!");
-					if(user!=undefined)
+					if(user!=undefined){
 						user.send("Congrats! You won **"+prize+" cowoncy** from the lottery with a **"+chance+"%** chance to win!");
-					console.log("\x1b[36m%s\x1b[0m","    "+user.username+" won the lottery");
+						console.log("\x1b[36m%s\x1b[0m","    "+user.username+" won the lottery");
+					}
+					console.log("\x1b[36m%s\x1b[0m","    "+user+" won the lottery");
 				});
 			} else { //Loser
 				if(user!=undefined)
