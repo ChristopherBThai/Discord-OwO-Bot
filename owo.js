@@ -156,14 +156,10 @@ client.on('message',msg => {
 		}
 
 		//Daily cowoncy
-		else if (command === 'daily'){
-			cowoncy.daily(con,msg);
-		}
+		else if (command === 'daily'){cowoncy.daily(con,msg);}
 
 		//Daily vote
-		else if (command === 'vote'){
-			vote.link(msg);
-		}
+		else if (command === 'vote'){vote.link(msg);}
 
 		//Catch an animals
 		else if (command === 'catch'||command === 'hunt'){
@@ -173,29 +169,40 @@ client.on('message',msg => {
 		}
 
 		//SHows the zoo
-		else if (command === 'zoo'){
-			zoo.display(con,msg);
-		}
+		else if (command === 'zoo'){zoo.display(con,msg);}
 
 		//Define a word
-		else if (command === 'define'){
-			other.define(msg,args.join(" "));
+		else if (command === 'define'){other.define(msg,args.join(" "));}
+
+		//emotes
+		else if(command === 'blush'){weeb.blush(msg,args);}
+		else if(command === 'cry'){weeb.cry(msg,args);}
+		else if(command === 'dance'){weeb.dance(msg,args);}
+		else if(command === 'lewd'){weeb.lewd(msg,args);}
+		else if(command === 'pout'){weeb.pout(msg,args);}
+		else if(command === 'shrug'){weeb.shrug(msg,args);}
+		else if(command === 'sleepy'){weeb.sleepy(msg,args);}
+		else if(command === 'smile'){weeb.smile(msg,args);}
+		else if(command === 'smug'){weeb.smug(msg,args);}
+		else if(command === 'thumbsup'){weeb.thumbsup(msg,args);}
+		else if(command === 'triggered'){weeb.triggered(msg,args);}
+		else if(command === 'wag'){weeb.wag(msg,args);}
+		else if(command === 'thinking'){weeb.thinking(msg,args);}
+
+		//Grab type of pics
+		else if(command === 'image'||command === 'pic'){
+			if(args.length==0)
+				weeb.getTypes(msg);
+			else
+				weeb.getImage(msg,args);
 		}
-
-		//Kisses a user
-		else if(command === 'kiss'){other.kiss(msg,args);}
-		//Hugs a user
-		else if(command === 'hug'){other.hug(msg,args);}
-		//Spanks a user
-		else if(command === 'spank'){other.spank(msg,args);}
-		//Slaps a user
-		else if(command === 'slap'){other.slap(msg,args);}
-
-		//Grab type of pics
-		else if(command === 'imagetype'){weeb.getTypes(msg);}
-
-		//Grab type of pics
-		else if(command === 'image'){weeb.getImage(msg,args);}
+		//Grab type of gif 
+		else if(command === 'gif'){
+			if(args.length==0)
+				weeb.getTypes(msg);
+			else
+				weeb.getGif(msg,args);
+		}
 
 		//Sends feedback to admin
 		else if(command === 'feedback'|| command === 'suggestion' || command === 'report'){
