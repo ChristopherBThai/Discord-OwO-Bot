@@ -26,7 +26,8 @@ function grab(msg,ptype,ftype,text){
 
 exports.getImage = function(msg,args){
 	if(args.length!=1){
-		msg.channel.send("Wrong argument type! :c");
+		msg.channel.send("Wrong argument type! :c")
+			.then(message => message.delete(3000));
 		return;
 	}
 	if(Math.random()>.5)

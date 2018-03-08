@@ -3,6 +3,8 @@
 //||		HELPER METHODS		  ||
 //||					  ||
 //+========================================+
+var help = require('../help.json');
+var commands = {};
 
 
 /**
@@ -24,29 +26,66 @@ exports.isInt = function(value){
 exports.showHelp = function(channel){
 	const embed = "This bot will count how many times you type 'owo'! Spamming 'owo' will not count!!!\nThere are multiple rankings for points, cowoncy, and zoo!\n\n**Commands**"+ 
 			"\n```md\n# Main Commands"+
-			"\n< owo top points|guild|zoo|money [global] {count}\n>\tDisplays the top rankings!\n>\te.g `owo top zoo global`, `owo top points 25`, `owo top money global 25`"+
-			"\n< owo my points|guild|zoo|money [global]\n>\tdisplays your ranking\n>\tYou can also shorten the words like `owo my z g`"+
+			"\n< owo top "+help.rank.args+"\n>\t"+help.rank.desc_short+"\n>\te.g `owo top zoo global`, `owo top points 25`, `owo top money global 25`"+
+			"\n< owo my "+help.my.args+"\n>\t"+help.my.desc_short+"\n>\tYou can also shorten the words like `owo my z g`"+
 			"\n# Economy"+
-			"\n< owo money >\t\t\t\t\tDisplays how much cowoncy you have!"+
-			"\n< owo give {@user} {amount} >\tGive someone your cowoncy!"+
-			"\n< owo daily >\t\t\t\t\tGrab your free daily cowoncy!"+
-			"\n< owo vote >\t\t\t\t\t Vote for OwO bot to get free daily cowoncy!"+
+			"\n< owo money "+help.money.args+">\t\t\t\t\t"+help.money.desc_short+
+			"\n< owo give "+help.give.args+" >\t"+help.give.desc_short+
+			"\n< owo daily >\t\t\t\t\t"+help.daily.desc_short+
+			"\n< owo vote >\t\t\t\t\t "+help.vote.desc_short+
 			"\n# Fun"+
-			"\n< owo zoo >\t\t\t\t\t  Displays your zoo!"+
-			"\n< owo hunt >\t\t\t\t\t Fetch animals for your zoo!"+
-			"\n< owo slots {amount} >\t\t   Gamble your cowoncy!!"+
-			"\n< owo lottery {amount} >\t\t 24H Lottery! Feeling lucky?"+
-			"\n< owo 8b {question} >\t\t\tReplies as a yes/no answer"+
-			"\n< owo define {word} >\t\t\tDefines a word!"+
-			"\n< owo gif|pic {type} >\t\t   Grabs a Image!"+
-			"\n< owo pet|slap|hug|etc {@user} > Hug someone~!"+
+			"\n< owo zoo >\t\t\t\t\t  "+help.zoo.desc_short+
+			"\n< owo hunt >\t\t\t\t\t "+help.hunt.desc_short+
+			"\n< owo slots {amount} >\t\t   "+help.slots.desc_short+
+			"\n< owo lottery {amount} >\t\t "+help.lottery.desc_short+
+			"\n< owo 8b {question} >\t\t\t"+help.b8.desc_short+
+			"\n< owo define {word} >\t\t\t"+help.define.desc_short+
+			"\n< owo gif|pic {type} >\t\t   "+help.gif.desc_short+
+			"\n< owo pet|slap|hug|etc {@user} > "+help.pet.desc_short+
 			"\n# Utility"+
-			"\n< owo feedback {message} >\t   Sends a message to an admin"+
-			"\n< owo stats >\t\t\t\t\tGrab some bot stats!"+
-			"\n< owo link >\t\t\t\t\t Want to add the bot to another server?? :D"+
-			"\n< owo guildlink >\t\t\t\tCome join our server!```"+
-			"\n```# Remove brackets when typing commands\n# [] = optional arguments\n# {} = optional user input```";
+			"\n< owo feedback {message} >\t   "+help.feedback.desc_short+
+			"\n< owo stats >\t\t\t\t\t"+help.stats.desc_short+
+			"\n< owo link >\t\t\t\t\t "+help.link.desc_short+
+			"\n< owo guildlink >\t\t\t\t"+help.guildlink.desc_short+"```"+
+			"```md\n< owo help {command} >\t\t   For more information on a command!\n> Remove brackets when typing commands\n> [] = optional arguments\n> {} = optional user input```";
 	channel.send(embed);
+}
+
+/**
+ * Shows description of a command
+ */
+exports.describe = function(msg,command){
+	var name = command;
+	command = help[commands[command]]
+	if(command == undefined){
+		msg.channel.send("Could not find that command :c")
+			.then(message => message.delete(3000));
+		return;
+	}
+	var desc = "\n# Description\n"+command.desc_long;
+	var example = "";
+	var related = "";
+	var title= "< owo "+name+" ";
+	if(command.args!="")
+		title+= command.args+" >";
+	else
+		title += ">";
+	if(command.example[0]!=undefined){
+		example = "\n# Example Command(s)\n";
+		for(i in command.example){
+			example += command.example[i]+" , ";
+		}
+		example = example.substr(0,example.length-3);
+	}
+	if(command.related[0]!=undefined){
+		related = "\n# Related Command(s)\n";
+		for(i in command.related){
+			related += command.related[i]+" , ";
+		}
+		related = related.substr(0,related.length-3);
+	}
+	var text = "```md\n"+title+"``````md"+desc+example+related+"``````md\n> Remove brackets when typing commands\n> [] = optional arguments\n> {} = optional user input```";
+	msg.channel.send(text);
 }
 
 /**
@@ -112,4 +151,17 @@ exports.showStats = function(client, con, msg){
 		msg.channel.send({embed})
 			.catch(err => msg.channel.send("I don't have permission to send embedded links! :c"));
 	});
+}
+
+/**
+ * Maps alts to their command names
+ */
+exports.init = function(){
+	for(var key in help){
+		var alt = help[key].alt;
+		commands[help[key].name] = key;
+		for(i in alt){
+			commands[alt[i]] = key;
+		}
+	}
 }
