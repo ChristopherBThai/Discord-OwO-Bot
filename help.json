@@ -1,0 +1,173 @@
+{
+	"rank":{
+		"name":"top",
+		"args":"points|guild|zoo|money [global] {count}",
+		"desc_short":"Displays the top rankings!",
+		"desc_long":"Displays the top ranking depending on your arguments\nYou can choose between your rank within the server or globally!\nYou can also shorten arguments like the examples below.",
+		"related":["owo my"],
+		"example":["owo top points global 25","owo top z 20","owo top m"],
+		"alt":["rank"]
+	},
+	"my":{
+		"name":"my",
+		"args":"points|guild|zoo|money [global]",
+		"desc_short":"Displays your ranking!",
+		"desc_long":"Displays the your ranking depending on your arguments\nYou can choose between your rank within the server or globally!\nYou can also shorten arguments like the examples below.",
+		"related":["owo top"],
+		"example":["owo my points","owo top z g"],
+		"alt":["me"]
+	},
+	"money":{
+		"name":"money",
+		"args":"",
+		"desc_short":"How much cowoncy do you own?",
+		"desc_long":"You can check your cowoncy balance. You earn more cowoncy by saying owo, dailies, and voting!",
+		"related":["owo give","owo daily","owo vote","owo my money"],
+		"example":[],
+		"alt":["cash","credit","cowoncy","balance"]
+	},
+	"give":{
+		"name":"give",
+		"args":"{@user} {amount}",
+		"desc_short":"Give cowoncy!",
+		"desc_long":"Send some cowoncy to other users! command must contain a @mention and a number.",
+		"related":["owo money"],
+		"example":["owo give @Scuttler 25"],
+		"alt":["send"]
+	},
+	"daily":{
+		"name":"daily",
+		"args":"",
+		"desc_short":"Daily cowoncy!",
+		"desc_long":"Grab your daily cowoncy every 24H! Daily streaks will give you extra cowoncy!",
+		"related":["owo money"],
+		"example":[],
+		"alt":[]
+	},
+	"vote":{
+		"name":"vote",
+		"args":"",
+		"desc_short":"Vote for cowoncy!",
+		"desc_long":"Vote for OwO bot every 24H on discordbots.org to gain cowoncy! Streaks will give more cowoncy!",
+		"related":["owo money"],
+		"example":[],
+		"alt":[]
+	},
+	"zoo":{
+		"name":"zoo",
+		"args":"",
+		"desc_short":"Show me your zoo!",
+		"desc_long":"Displays your zoo! Catch some animals with 'owo hunt'!",
+		"related":["owo hunt","owo top zoo","owo my zoo"],
+		"example":[],
+		"alt":[]
+	},
+	"hunt":{
+		"name":"hunt",
+		"args":"",
+		"desc_short":"Hunt for some animals",
+		"desc_long":"Hunt for some animals for your zoo!\nHigher ranking animals are harder to get!",
+		"related":["owo zoo"],
+		"example":[],
+		"alt":["catch"]
+	},
+	"slots":{
+		"name":"slots",
+		"args":"{amount}",
+		"desc_short":"Feeling lucky?",
+		"desc_long":"Bet your money on the slot machine! Earn up to 10x your money!",
+		"related":["owo money"],
+		"example":["owo slots 100"],
+		"alt":["slot"]
+	},
+	"lottery":{
+		"name":"lottery",
+		"args":"{amount}",
+		"desc_short":"Bet in the lottery!",
+		"desc_long":"Bet your money in the lottery! The more money you bet, the higher the chance!\nLottery ends 12am PST everyday",
+		"related":["owo money"],
+		"example":["owo lottery 100"],
+		"alt":["bet"]
+	},
+	"b8":{
+		"name":"8b",
+		"args":"{question}",
+		"desc_short":"8Ball~",
+		"desc_long":"Ask a question and get an answer!",
+		"related":[],
+		"example":["owo 8b Am I cute?"],
+		"alt":["8ball"]
+	},
+	"define":{
+		"name":"define",
+		"args":"{word}",
+		"desc_short":"Defines a word!",
+		"desc_long":"Grabs a definition from Urban Dictionary~",
+		"related":[],
+		"example":["owo define tsundere"],
+		"alt":[]
+	},
+	"gif":{
+		"name":"gif",
+		"args":"{type}",
+		"desc_short":"Grabs a gif or pic~",
+		"desc_long":"Grabs a gif/pic with the given type. To list all types, type 'owo gif'. Most types may not work for pic command.",
+		"related":[],
+		"example":["owo gif neko","owo pic rem"],
+		"alt":["pic"]
+	},
+	"pet":{
+		"name":"pet",
+		"args":"{@user}",
+		"desc_short":"Pet someone~",
+		"desc_long":"Pet/hug/punch/etc someone!\nThe list of commands are:\n`cuddle` , `hug` , `insult` , `kiss` , `lick` , `nom` , `pat` , `poke` , `slap` , `stare` , `highfive` , `bite` , `greet` , `punch` , `handholding`",
+		"related":["owo shrug","owo gif"],
+		"example":["owo hug @Scuttler","owo highfive @OwO"],
+		"alt":["cuddle" , "hug" , "insult" , "kiss" , "lick" , "nom" , "pat" , "poke" , "slap" , "stare" , "highfive" , "bite" , "greet" , "punch" , "handholding"]
+	},
+	"shrug":{
+		"name":"shrug",
+		"args":"",
+		"desc_short":"Some emotes~",
+		"desc_long":"Shrug, cry, pout, etc! List of commands are:\n`blush` , `cry` , `dance` , `lewd` , `pout` , `shrug` , `sleepy` , `smile` , `smug` , `thumbsup` , `wag` , `thinking`",
+		"related":["owo pet","owo gif"],
+		"example":["owo cry","owo pout"],
+		"alt":["blush" , "cry" , "dance" , "lewd" , "pout" , "shrug" , "sleepy" , "smile" , "smug" , "thumbsup" , "wag" , "thinking"]
+	},
+	"feedback":{
+		"name":"feedback",
+		"args":"{msg}",
+		"desc_short":"Sends a feedback to me!",
+		"desc_long":"Sends a feedback to an admin! Admins will reply back and maybe with a lil gift~",
+		"related":[],
+		"example":["owo feedback I love this bot!"],
+		"alt":["report","suggestion"]
+	},
+	"stats":{
+		"name":"stats",
+		"args":"",
+		"desc_short":"Bot stats!",
+		"desc_long":"Displays some bot stats!",
+		"related":[],
+		"example":[],
+		"alt":["stat"]
+	},
+	"link":{
+		"name":"link",
+		"args":"",
+		"desc_short":"Add me to your server!",
+		"desc_long":"Gives you a link to add OwO bot to another server!",
+		"related":[],
+		"example":[],
+		"alt":["invite"]
+	},
+	"guildlink":{
+		"name":"guildlink",
+		"args":"",
+		"desc_short":"Come join our guild!",
+		"desc_long":"Gives you a link to come join our discord server! Come for some help or extra cowoncy ;)",
+		"related":[],
+		"example":[],
+		"alt":["serverlink"]
+	}
+}

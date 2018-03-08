@@ -1,4 +1,4 @@
-const debug = false;
+const debug = true;
 if(debug)
 	var auth = require('../tokens/scuttester-auth.json');
 else 
@@ -229,7 +229,10 @@ client.on('message',msg => {
 
 		//Displays all the commands
 		else if(command === "help" || command === "command"){
-			helper.showHelp(msg.channel);
+			if(args.length>0)
+				helper.describe(msg,args[0].toLowerCase());
+			else
+				helper.showHelp(msg.channel);
 		}
 
 		//Display link for discord invite
@@ -316,6 +319,7 @@ client.on('ready',()=>{
 		vote.client(client);
 	}
 	lottery.client(client);
+	helper.init();
 });
 
 //When bot joins a new guild
