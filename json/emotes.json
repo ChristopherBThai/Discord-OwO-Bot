@@ -1,0 +1,260 @@
+{
+	"sEmote":{
+		"blush":{
+			"name":"blush",
+			"msg":[
+				"? blushed!! >///<",
+				"? is blushing! cute~",
+				"?'s face is red~"
+			]
+		},
+		"cry":{
+			"name":"cry",
+			"msg":[
+				"? is crying... :c",
+				"? needs a hug...",
+				"? is crying... there there...",
+				"? cries... :'c"
+			]
+		},
+		"dance":{
+			"name":"dance",
+			"msg":[
+				"? is dancing!!",
+				"? loves to dance!",
+				"? is shaking some booty!!"
+			]
+		},
+		"lewd":{
+			"name":"lewd",
+			"msg":[
+				"? thinks thats lewd...",
+				"? says, thats lewd!",
+				"? is not old enough for that!",
+				"?! Cover your eyes! It's too lewd!"
+			]
+		},
+		"pout":{
+			"name":"pout",
+			"msg":[
+				"? pouts >:c",
+				"? is pouting!",
+				"? doesn't like that!"
+			]
+		},
+		"shrug":{
+			"name":"shrug",
+			"msg":[
+				"? shrugs",
+				"? doesn't care~",
+				"? says, 'o well'"
+			]
+		},
+		"sleepy":{
+			"name":"sleepy",
+			"msg":[
+				"? is sleepy...",
+				"? is tired...",
+				"? needs a nap...",
+				"? wants to sleep..."
+			]
+		},
+		"smile":{
+			"name":"smile",
+			"msg":[
+				"? smiles! c:",
+				"? has a grin!!",
+				"? is happy!"
+			]
+		},
+		"smug":{
+			"name":"smug",
+			"msg":[
+				"? scoffs c:<",
+				"? has a smug look c;",
+				"? thinks litte of you ;)"
+			]
+		},
+		"thumbsup":{
+			"name":"thumbsup",
+			"msg":[
+				"? gives a thumbs up!",
+				"? agrees!",
+				"? has a thumbs up!"
+			]
+		},
+		"wag":{
+			"name":"wag",
+			"msg":[
+				"? wags its tail!",
+				"?'s tail is wagging~",
+				"? says, 'bork bork!'"
+			]
+		},
+		"thinking":{
+			"name":"thinking",
+			"msg":[
+				"? is thinking...",
+				"? is trying to understand",
+				"? cannot process that..."
+			]
+		},
+		"triggered":{
+			"name":"triggered",
+			"msg":[
+				"? is triggered!",
+				"? is TRIGGERED.",
+				"? is TRIGGERED!!!!"
+			]
+		},
+		"thonking":{
+			"alt":"thinking"
+		},
+		"scoff":{
+			"alt":"scoff"
+		},
+		"happy":{
+			"alt":"smile"
+		},
+		"thumbs":{
+			"alt":"thumbsup"
+		}
+	},
+	"uEmote":{
+		"cuddle":{
+			"name":"cuddle",
+			"msg":[
+				"? snuggles ?~ cute!",
+				"? cuddles ?~ adorable!",
+				"? cuddles ?~~ kyaaaa!!"
+			]
+		},
+		"hug":{
+			"name":"hug",
+			"msg":[
+				"? hugs ?!",
+				"? gives ? a big hug!",
+				"? hugs ?!! Don't squeeze too hard!"
+			]
+		},
+		"insult":{
+			"name":"insult",
+			"msg":[
+				"? insults ?! Rude!!!",
+				"? insults ?! Deserves it.",
+				"? insults ?! Oh my."
+			]
+		},
+		"kiss":{
+			"name":"kiss",
+			"msg":[
+				"? kissed ?! Cute!",
+				"? kisses ?!! OwO",
+				"? kisses ?'s lips~"
+			]
+		},
+		"lick":{
+			"name":"lick",
+			"msg":[
+				"? licks ?! lewd~",
+				"? licks ?! OwO",
+				"? gives ? a lick!",
+				"? licks ?!! Yummy!!",
+				"? licks ?!! How does it taste?!"
+			]
+		},
+		"nom":{
+			"name":"nom",
+			"msg":[
+				"? noms on ?",
+				"? noms ?! Yummy!",
+				"? noms ?!"
+			]
+		},
+		"pat":{
+			"name":"pat",
+			"msg":[
+				"? pets ?! There there!",
+				"? pets ?! Adorable~",
+				"? pets ?! *pat pat*"
+			]
+		},
+		"poke":{
+			"name":"poke",
+			"msg":[
+				"? boops ? .-.",
+				"? pokes ?! boop!", 
+				"? boops ?! Not to hard now!",
+				"? boops ? ;)"
+			]
+		},
+		"slap":{
+			"name":"slap",
+			"msg":[
+				"? slaps ?!! Deserves it!",
+				"? slaps ?!! oof.",
+				"? slaps ?!! That looks like it hurt..."
+			]
+		},
+		"stare":{
+			"name":"stare",
+			"msg":[
+				"? stares at ?...",
+				"? looks directly at ?'s eyes...",
+				"? stares at ?... What did you do??"
+			]
+		},
+		"highfive":{
+			"name":"highfive",
+			"msg":[
+				"? gives ? a highfive!",
+				"? highfives ?!",
+				"? highfives ?! Nice!"
+			]
+		},
+		"bite":{
+			"name":"bite",
+			"msg":[
+				"? bites ?! Owie",
+				"? bites ?!! Kinky ;)",
+				"? gives ? a bite! Yumm~"
+			]
+		},
+		"greet":{
+			"name":"greet",
+			"msg":[
+				"? says hello to ?",
+				"? waves at ?",
+				"? says hi to ?!"
+			]
+		},
+		"punch":{
+			"name":"punch",
+			"msg":[
+				"? punches ?!! Oof",
+				"? gives ? a punch! Ouch!",
+				"? gives ? a wack! Ha!"
+			]
+		},
+		"handholding":{
+			"name":"handholding",
+			"msg":[
+				"? holds ?'s hands~ adorable!",
+				"? holds ?'s hands~ LEWD.",
+				"? grabs ?'s hands~ awww"
+			]
+		},
+		"tickle":{
+			"name":"tickle",
+			"msg":[
+				"? tickles ?! Ha!",
+				"? tickles ?! OwO!",
+				"? tickles ?! Hehe~!"
+			]
+		},
+		"hold":{"alt":"handholding"},
+		"pet":{"alt":"pat"},
+		"wave":{"alt":"greet"},
+		"boop":{"alt":"poke"}
+	}
+}
