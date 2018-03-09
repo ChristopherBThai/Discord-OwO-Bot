@@ -3,8 +3,14 @@ var auth = require('../../tokens/owo-auth.json');
 
 const sh = new weeb("Wolke "+auth.weebsh,"owo/1.0");
 
-function grab(msg,ptype,ftype,text){
-	sh.getRandom({type:ptype,nsfw: false,filetype: ftype}).then(array => {
+function grab(msg,ptype,ftype,text,notsfw,retry){
+	var nsfwt = false;
+	var retryt = true
+	if(notsfw&&typeof notsfw == "boolean"&&notsfw)
+		nsfwt = "only";
+	if(retryt&&typeof retry== "boolean")
+		retryt = retry;
+	sh.getRandom({type:ptype,nsfw: nsfwt,filetype: ftype}).then(array => {
 
 		const embed = {
 			"color": 4886754,
@@ -20,7 +26,12 @@ function grab(msg,ptype,ftype,text){
 		msg.channel.send({embed});
 
 	}).catch(err => {
-		msg.channel.send("I couldn't find that image type! :c");
+		console.log(err);
+		if(retryt&&(ftype=="jpg"||ftype=="png")){
+			grab(msg,ptype,(ftype=="jpg")?"png":"jpg",text,notsfw,false);		
+		}else
+			msg.channel.send("I couldn't find that image type! :c")
+				.then(message => message.delete(3000));
 	});
 }
 
@@ -30,28 +41,58 @@ exports.getImage = function(msg,args){
 			.then(message => message.delete(3000));
 		return;
 	}
+	var nsfw = false;
+	if(args[0]=="nsfw"){
+		if(!msg.channel.nsfw){
+			msg.channel.send("nsfw channels only! >:c")
+				.then(message => message.delete(3000));
+			return;
+		}	
+		nsfw = true;
+		args[0] = "neko";
+	}
 	if(Math.random()>.5)
-		grab(msg,args[0],"pic",args[0]);
+		grab(msg,args[0],"png",args[0],nsfw);
 	else
-		grab(msg,args[0],"jpg",args[0]);
+		grab(msg,args[0],"jpg",args[0],nsfw);
 }
 
 exports.getGif = function(msg,args){
 	if(args.length!=1){
-		msg.channel.send("Wrong argument type! :c");
+		msg.channel.send("Wrong argument type! :c")
+			.then(message => message.delete(3000));
 		return;
 	}
-	grab(msg,args[0],"gif",args[0]);
+	if(args[0]=="nsfw")
+		if(msg.channel.nsfw)
+			msg.channel.send("Please try `owo pic nsfw`~")
+				.then(message => message.delete(3000));
+		else
+			msg.channel.send("nsfw channels only! >:c")
+				.then(message => message.delete(3000));
+	else
+		grab(msg,args[0],"gif",args[0]);
 }
 
+exports.getNSFWImage = function(msg,args){
+	if(args.length!=2){
+		msg.channel.send("Wrong argument type! :c")
+			.then(message => message.delete(3000));
+		return;
+	}
+	if(Math.random()>.5)
+		grab(msg,"neko","png",args.join(" "),true);
+	else
+		grab(msg,"neko","jpg",args.join(" "),true);
+}	
 
 exports.getTypes = function(msg){
 	sh.getTypes().then(array => {
 		var txt = "Available Image Types:\n";
 		for (i in array)
 			txt += "`"+array[i]+"`, ";
-		txt = txt.substr(0,txt.length-2)+"";
-		txt += "*Some types will not work on pic*";
+		txt += "`nsfw`";
+		txt += "\n*Some types will not work on pic*";
 		msg.channel.send(txt);
 	});
 }
