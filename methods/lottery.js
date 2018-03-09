@@ -166,6 +166,7 @@ function pickWinner(){
 				console.log("\x1b[36m%s\x1b[0m","    msg sent to "+user.username+" for losing");
 			}
 		}
+		init();
 	});
 }
 
@@ -183,19 +184,17 @@ function isInt(value){
 var initi = false;
 exports.con= function(tcon){
 	con = tcon;
-	if(client!=undefined)
+	if(client!=undefined&&!initi)
 		init();
 }
 
 exports.client= function(tclient){
 	client = tclient;
-	if(con!=undefined)
+	if(con!=undefined&&!initi)
 		init();
 }
 
 function init(){
-	if(initi)
-		return;
 	initi = true;
 	var now = new Date();
 	var mill = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0, 0) - now;
