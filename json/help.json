@@ -120,19 +120,19 @@
 		"name":"pet",
 		"args":"{@user}",
 		"desc_short":"Pet someone~",
-		"desc_long":"Pet/hug/punch/etc someone!\nThe list of commands are:\n`cuddle` , `hug` , `insult` , `kiss` , `lick` , `nom` , `pat` , `poke` , `slap` , `stare` , `highfive` , `bite` , `greet` , `punch` , `handholding`",
-		"related":["owo shrug","owo gif"],
+		"desc_long":"Pet/hug/punch/etc someone!\nRelated emotes are down below!",
+		"related":["owo pet|cuddle|hug|insult|kiss|lick|nom|pat|poke|slap|stare|highfive|bite|greet|punch|handholding|tickle"],
 		"example":["owo hug @Scuttler","owo highfive @OwO"],
-		"alt":["cuddle" , "hug" , "insult" , "kiss" , "lick" , "nom" , "pat" , "poke" , "slap" , "stare" , "highfive" , "bite" , "greet" , "punch" , "handholding"]
+		"alt":["cuddle" , "hug" , "insult" , "kiss" , "lick" , "nom" , "pat" , "poke" , "slap" , "stare" , "highfive" , "bite" , "greet" , "punch" , "handholding" , "tickle"]
 	},
 	"shrug":{
 		"name":"shrug",
 		"args":"",
 		"desc_short":"Some emotes~",
-		"desc_long":"Shrug, cry, pout, etc! List of commands are:\n`blush` , `cry` , `dance` , `lewd` , `pout` , `shrug` , `sleepy` , `smile` , `smug` , `thumbsup` , `wag` , `thinking`",
-		"related":["owo pet","owo gif"],
+		"desc_long":"Shrug, cry, pout, etc! \nRelated commands below!",
+		"related":["owo shrug|blush|cry|dance|lewd|pout|shrug|sleepy|smile|thumbsup|wag|thinking|triggered {@user}"],
 		"example":["owo cry","owo pout"],
-		"alt":["blush" , "cry" , "dance" , "lewd" , "pout" , "shrug" , "sleepy" , "smile" , "smug" , "thumbsup" , "wag" , "thinking"]
+		"alt":["blush" , "cry" , "dance" , "lewd" , "pout" , "shrug" , "sleepy" , "smile" , "smug" , "thumbsup" , "wag" , "thinking" , "triggered"]
 	},
 	"feedback":{
 		"name":"feedback",

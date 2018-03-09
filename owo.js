@@ -1,4 +1,4 @@
-const debug = false;
+const debug = true;
 if(debug)
 	var auth = require('../tokens/scuttester-auth.json');
 else 
@@ -23,6 +23,7 @@ const other = require("./methods/other.js");
 const feedback = require("./methods/feedback.js");
 const admin = require("./methods/admin.js");
 
+var emotes = require('./json/emotes.json');
 var prefix = "owo";
 
 client.on('message',msg => {
@@ -175,37 +176,10 @@ client.on('message',msg => {
 		else if (command === 'define'){other.define(msg,args.join(" "));}
 
 		//emotes
-		else if(command === 'blush'){weeb.blush(msg,args);}
-		else if(command === 'cry'){weeb.cry(msg,args);}
-		else if(command === 'dance'){weeb.dance(msg,args);}
-		else if(command === 'lewd'){weeb.lewd(msg,args);}
-		else if(command === 'pout'){weeb.pout(msg,args);}
-		else if(command === 'shrug'){weeb.shrug(msg,args);}
-		else if(command === 'sleepy'){weeb.sleepy(msg,args);}
-		else if(command === 'smile'){weeb.smile(msg,args);}
-		else if(command === 'smug'||command === 'scoff'){weeb.smug(msg,args);}
-		else if(command === 'thumbsup'){weeb.thumbsup(msg,args);}
-		else if(command === 'triggered'){weeb.triggered(msg,args);}
-		else if(command === 'wag'){weeb.wag(msg,args);}
-		else if(command === 'thinking'){weeb.thinking(msg,args);}
+		else if(emotes.sEmote[command]!=undefined&&args.length==0){weeb.sEmote(msg,command);}
 
 		//emotes + user
-		else if(command === 'cuddle'){weeb.cuddle(client,msg,args);}
-		else if(command === 'hug'){weeb.hug(client,msg,args);}
-		else if(command === 'insult'){weeb.insult(client,msg,args);}
-		else if(command === 'kiss'){weeb.kiss(client,msg,args);}
-		else if(command === 'lick'){weeb.lick(client,msg,args);}
-		else if(command === 'nom'){weeb.nom(client,msg,args);}
-		else if(command === 'pat'||command === 'pet'){weeb.pat(client,msg,args);}
-		else if(command === 'poke'){weeb.poke(client,msg,args);}
-		else if(command === 'slap'){weeb.slap(client,msg,args);}
-		else if(command === 'stare'){weeb.stare(client,msg,args);}
-		else if(command === 'tickle'){weeb.tickle(client,msg,args);}
-		else if(command === 'highfive'){weeb.highfive(client,msg,args);}
-		else if(command === 'bite'){weeb.bite(client,msg,args);}
-		else if(command === 'greet'){weeb.greet(client,msg,args);}
-		else if(command === 'punch'){weeb.punch(client,msg,args);}
-		else if(command === 'handholding'||command === 'hold'){weeb.handholding(client,msg,args);}
+		else if(emotes.uEmote[command]!=undefined&&args.length==1){weeb.uEmote(client,msg,args,command);}
 
 		//Grab type of pics
 		else if(command === 'image'||command === 'pic'){
@@ -228,7 +202,7 @@ client.on('message',msg => {
 		}
 
 		//Displays all the commands
-		else if(command === "help" || command === "command"){
+		else if(command === "help" || command === "command" || command === "commands"){
 			if(args.length>0)
 				helper.describe(msg,args[0].toLowerCase());
 			else

@@ -3,7 +3,7 @@
 //||		HELPER METHODS		  ||
 //||					  ||
 //+========================================+
-var help = require('../help.json');
+var help = require('../json/help.json');
 var commands = {};
 
 
