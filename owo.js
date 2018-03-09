@@ -1,4 +1,4 @@
-const debug = false;
+const debug = true;
 if(debug)
 	var auth = require('../tokens/scuttester-auth.json');
 else 

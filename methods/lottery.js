@@ -45,10 +45,46 @@ exports.bet = function(con,msg,args){
 				if(chance>=.01)
 					chance = Math.trunc(chance*100)/100
 
-				var text = "**"+msg.author.username+"**! You bet a total of **"+bet+"** cowoncy!\n";
-				text += "You have a **"+chance+"%** chance of winning **"+(sum+500)+"** cowoncy!\n";
-				text += "Good luck! *Your percentage and jackpat will change*";
-				msg.channel.send(text);
+				const embed = {
+					  "description": "Lottery ends every day at 12AM PST! Good Luck!!",
+					  "color": 4886754,
+					  "timestamp": new Date(),
+					  "footer": {
+						      "icon_url": "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png",
+						      "text": "*Percentage and jackpot may change over time"
+						    },
+					  "author": {
+						      "name": msg.author.username+"'s Lottery Submission",
+						    },
+					  "fields": [
+						      {
+							            "name": "You added",
+							            "value": "```fix\n"+amount+" Cowoncy```",
+							            "inline": true
+							          },
+						      {
+							            "name": "Your Total Submission",
+							            "value": "```fix\n"+bet+" Cowoncy```",
+							            "inline": true
+							          },
+						      {
+							            "name": "Winning Chance",
+							            "value": "```fix\n"+chance+"%```",
+							            "inline": true
+							          },
+						      {
+							            "name": "Current Jackpot",
+							            "value": "```fix\n"+(sum+500)+" Cowoncy```",
+							            "inline": true
+							          },
+						      {
+							            "name": "Ends in",
+							            "value": "```fix\n"+getTimeLeft()+"```",
+							            "inline": true
+							          }
+						    ]
+				};
+				msg.channel.send({ embed });
 			});
 		}
 	});
@@ -78,23 +114,47 @@ exports.display = function(con,msg){
 				chance = 100;
 		}
 
-		var now = new Date();
-		var mill = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0, 0) - now;
-		if (mill < 0) {
-			mill += 86400000;
-		}
-		mill=Math.trunc(mill/1000);
-		var sec = mill%60;
-		mill=Math.trunc(mill/60);
-		var min = mill%60;
-		mill=Math.trunc(mill/60);
-		var hour = mill%60;
+		const embed = {
+				"description": "Lottery ends every day at 12AM PST! Good Luck!!",
+				"color": 4886754,
+				"timestamp": new Date(),
+				"footer": {
+					"icon_url": "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png",
+					"text": "*Percentage and jackpot may change over time"
+					},
+				"author": {
+					"name": msg.author.username+"'s Lottery Status",
+					},
+				"fields": [
+					{
+							"name": "Your Total Submission",
+							"value": "```fix\n"+bet+" Cowoncy```",
+							"inline": true
+							},
+					{
+							"name": "Winning Chance",
+							"value": "```fix\n"+chance+"%```",
+							"inline": true
+							},
+					{
+							"name": "Number of Risk Takers",
+							"value": "```fix\n"+count+" users```",
+							"inline": true
+							},
 
-		var text = "**"+msg.author.username+"** has bet **"+bet+"** cowoncy and has a **"+chance+"%** to win!\n"+
-			"Current Jackpot: **"+(sum+500)+
-			"**\nNumber of risk takers: **"+count+"**"+
-			"\nEnds in: **"+hour+"H "+min+"M "+sec+"S**";
-		msg.channel.send(text);
+					{
+							"name": "Current Jackpot",
+							"value": "```fix\n"+(sum+500)+" Cowoncy```",
+							"inline": true
+							},
+					{
+							"name": "Ends in",
+							"value": "```fix\n"+getTimeLeft()+"```",
+							"inline": true
+							}
+					]
+		};
+		msg.channel.send({ embed });
 	});
 }
 
@@ -202,4 +262,19 @@ function init(){
 		     mill += 86400000;
 	}
 	var timer = setTimeout(pickWinner,mill);
+}
+
+function getTimeLeft(){
+	var now = new Date();
+	var mill = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0, 0) - now;
+	if (mill < 0) {
+		mill += 86400000;
+	}
+	mill=Math.trunc(mill/1000);
+	var sec = mill%60;
+	mill=Math.trunc(mill/60);
+	var min = mill%60;
+	mill=Math.trunc(mill/60);
+	var hour = mill%60;
+	return hour+"h "+min+"m "+sec+"s";
 }
