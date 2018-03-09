@@ -110,6 +110,10 @@ function pickWinner(){
 		var rand = Math.floor(Math.random()*sum);
 		var count = 0;
 		var found = false;
+		var winner;
+		var winnerchance;
+		var loser = [];
+		var loserchance = [];
 		for (i in users){
 			var id = users[i].id;
 			var user = client.users.get(id);
@@ -123,8 +127,8 @@ function pickWinner(){
 				sql += "UPDATE lottery SET valid = 0,amount = 0 WHERE valid = 1";
 
 				var channel = client.channels.get(users[i].channel);
-				var winner = user;
-				var winnerchance = chance
+				winner = user;
+				winnerchance = chance
 				con.query(sql,function(err,result){
 					if(err) throw err;
 					if(channel!=undefined)
@@ -135,9 +139,31 @@ function pickWinner(){
 					}
 					console.log("\x1b[36m%s\x1b[0m","    "+winner+" won the lottery");
 				});
-			} else { //Loser
-				if(user!=undefined)
-					user.send("You lost the lottery...\nYou had a **"+chance+"%** chance to win **"+prize+" cowoncy...**");
+			} else if(found) { //Loser
+				if(user!=undefined){
+					var text = "You lost the lottery...\nYou had a **"+chance+"%** chance to win **"+prize+" cowoncy...**";
+					if(winner!=undefined)
+						text += "\nThe winner was **"+winner.username+"** with a **"+winnerchance+"%** chance to win!";
+					user.send(text);
+					console.log("\x1b[36m%s\x1b[0m","    msg sent to "+user.username+" for losing");
+				}
+			} else {
+				if(user!=undefined){
+					loser.push(user);
+					loserchance.push(chance);
+				}
+			}
+		}
+
+		for(i in loser){
+			var user = loser[i];
+			var chance = loserchance[i];
+			if(user!=undefined){
+				var text = "You lost the lottery...\nYou had a **"+chance+"%** chance to win **"+prize+" cowoncy...**";
+				if(winner!=undefined)
+					text += "\nThe winner was **"+winner.username+"** with a **"+winnerchance+"%** chance to win!";
+				user.send(text);
+				console.log("\x1b[36m%s\x1b[0m","    msg sent to "+user.username+" for losing");
 			}
 		}
 	});
