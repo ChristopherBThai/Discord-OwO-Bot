@@ -1,11 +1,17 @@
 //Lottery!
+
+const global = require('./global.js');
+
 var con;
 var client;
 
+/**
+ * Bet in the lottery
+ */
 exports.bet = function(con,msg,args){
 	var amount = 0;
 	var all = false;
-	if(args.length==1&&isInt(args[0]))
+	if(args.length==1&&global.isInt(args[0]))
 		amount = parseInt(args[0]);
 	else if(args.length==1&&args[0]=='all'){
 		all = true;
@@ -90,6 +96,9 @@ exports.bet = function(con,msg,args){
 	});
 }
 
+/**
+ * Displays the lottery
+ */
 exports.display = function(con,msg){
 	var sql = "SELECT SUM(amount) AS sum,COUNT(id) AS count FROM lottery WHERE valid = 1;"+
 		"SELECT * FROM lottery WHERE id = "+msg.author.id+" AND valid = 1;";
@@ -158,6 +167,9 @@ exports.display = function(con,msg){
 	});
 }
 
+/**
+ * Picks the winner of the lottery
+ */
 function pickWinner(){
 	console.log("Starting lottery...");
 	var sql = "SELECT id,amount,channel FROM lottery WHERE valid = 1;"+
@@ -230,17 +242,6 @@ function pickWinner(){
 	});
 }
 
-/**
- * Checks if its an integer
- * @param {string}	value - value to check if integer
- *
- */
-function isInt(value){
-	return !isNaN(value) &&
-		parseInt(Number(value)) == value &&
-		!isNaN(parseInt(value,10));
-}
-
 var initi = false;
 exports.con= function(tcon){
 	con = tcon;
@@ -254,6 +255,9 @@ exports.client= function(tclient){
 		init();
 }
 
+/*
+ * Initializes lottery
+ */
 function init(){
 	initi = true;
 	var now = new Date();
@@ -264,6 +268,9 @@ function init(){
 	var timer = setTimeout(pickWinner,mill);
 }
 
+/**
+ * Time left in the lottery
+ */
 function getTimeLeft(){
 	var now = new Date();
 	var mill = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0, 0) - now;

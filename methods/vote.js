@@ -1,3 +1,7 @@
+/**
+ * dbl voting webhooks
+ */
+
 const express = require('express');
 const app = express();
 
@@ -11,6 +15,9 @@ api.on('upvote', (user,bot) => upvote(user));
 var con;
 var client;
 
+/**
+ * Listens to upvote webhooks
+ */
 function upvote(id){
 	var sql = "SELECT count,TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = "+id+";";
 	con.query(sql,function(err,result){
@@ -57,6 +64,9 @@ exports.client = function(cli){
 	app.listen(3000);
 }
 
+/**
+ * Sends a link to voting
+ */
 exports.link = function(msg){
 	const embed = {
 		"title":"Vote for me daily to recieve 200+ Cowoncy!",

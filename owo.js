@@ -10,6 +10,8 @@ const client = new Discord.Client();
 const DBL = require("dblapi.js");
 const dbl = new DBL(auth.dbl);
 
+const global = require("./methods/global.js");
+
 const ranking = require("./methods/ranking.js");
 const me = require("./methods/me.js");
 const helper = require("./methods/helper.js");
@@ -293,7 +295,7 @@ client.on('ready',()=>{
 		vote.client(client);
 	}
 	lottery.client(client);
-	helper.init();
+	global.init();
 });
 
 //When bot joins a new guild

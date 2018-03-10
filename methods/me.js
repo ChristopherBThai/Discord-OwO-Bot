@@ -4,6 +4,8 @@
 //||					   ||
 //+==========================================+
 
+const global = require('./global.js');
+
 /**
  * Check for valid arguments to display leaderboards
  * @param {mysql.Connection}	con 	- Mysql.createConnection()
@@ -172,7 +174,7 @@ function getGlobalPointRanking(con, client, msg, id){
  */
 function getPointRanking(con, client, msg, id){
 	var channel = msg.channel;
-	var users = getids(msg.guild.members);
+	var users = global.getids(msg.guild.members);
 	//Sql statements
 	var sql = "SELECT u.id,u.count,u1.id,u1.count FROM user AS u LEFT JOIN ( SELECT id,count FROM user WHERE id IN ("+users+") ORDER BY count ASC ) AS u1 ON u1.count > u.count WHERE u.id = "+id+" ORDER BY u1.count ASC LIMIT 2;";
 	sql   +=  "SELECT u.id,u.count,u1.id,u1.count FROM user AS u LEFT JOIN ( SELECT id,count FROM user WHERE id IN ("+users+") ORDER BY count DESC ) AS u1 ON u1.count < u.count WHERE u.id = "+id+" ORDER BY u1.count DESC LIMIT 2;";
@@ -450,7 +452,7 @@ function getGlobalZooRanking(con, client, msg, id){
  */
 function getZooRanking(con, client, msg, id){
 	var channel = msg.channel;
-	var users = getids(msg.guild.members);
+	var users = global.getids(msg.guild.members);
 	//Sql statements
 	var sql = "SELECT a.id,a1.* FROM animal_count AS a LEFT JOIN ( SELECT *,(common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*1000) AS points FROM animal_count WHERE id IN ("+users+") ORDER BY points ASC ) AS a1 ON a1.points > (a.common*1+a.uncommon*5+a.rare*10+a.epic*50+a.mythical*500+a.legendary*1000) WHERE a.id = "+id+" ORDER BY a1.points ASC LIMIT 2;";
 	sql   +=  "SELECT a.id,a1.* FROM animal_count AS a LEFT JOIN ( SELECT *,(common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*1000) AS points FROM animal_count WHERE id IN ("+users+") ORDER BY points DESC ) AS a1 ON a1.points < (a.common*1+a.uncommon*5+a.rare*10+a.epic*50+a.mythical*500+a.legendary*1000) WHERE a.id = "+id+" ORDER BY a1.points DESC LIMIT 2;";
@@ -644,7 +646,7 @@ function getGlobalMoneyRanking(con, client, msg, id){
  */
 function getMoneyRanking(con, client, msg, id){
 	var channel = msg.channel;
-	var users = getids(msg.guild.members);
+	var users = global.getids(msg.guild.members);
 	//Sql
 	var sql = "SELECT u.id,u.money ,u1.id,u1.money FROM cowoncy AS u LEFT JOIN ( SELECT id,money FROM cowoncy WHERE id IN ("+users+") ORDER BY money ASC ) AS u1 ON u1.money > u.money WHERE u.id = "+id+" ORDER BY u1.money ASC LIMIT 2;";
 	sql   +=  "SELECT u.id,u.money ,u1.id,u1.money FROM cowoncy AS u LEFT JOIN ( SELECT id,money FROM cowoncy WHERE id IN ("+users+") ORDER BY money DESC ) AS u1 ON u1.money < u.money WHERE u.id = "+id+" ORDER BY u1.money DESC LIMIT 2;";
@@ -721,27 +723,5 @@ function getMoneyRanking(con, client, msg, id){
 		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
 		channel.send(embed);
 	});
-}
-
-/**
- * Checks if its an integer
- * @param {string}	value - value to check if integer
- *
- */
-function isInt(value){
-	return !isNaN(value) &&
-		parseInt(Number(value)) == value &&
-		!isNaN(parseInt(value,10));
-}
-
-/**
- * Grabs all id from guild
- */
-function getids(members){
-	var result = "";
-	members.keyArray().forEach(function(ele){
-		result += ele + ",";
-	});
-	return result.slice(0,-1);
 }
 

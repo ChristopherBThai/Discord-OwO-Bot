@@ -1,13 +1,22 @@
+/**
+ * Slot machine!
+ */
+
+const global = require('./global.js');
+
 var slots = ["<:eggplant:417475705719226369>","<:heart:417475705899712522>","<:cherry:417475705178161162>","<:cowoncy:417475705912426496>","<:o_:417475705899843604>","<:w_:417475705920684053>"];
 var moving = "<a:slot_gif:417473893368987649>";
 
+/**
+ * Slots
+ */
 exports.slots = function(con,msg,args){
 	//Check arguments
 	var amount = 0;
 	var all = false;
 	if(args.length==0)
 		amount = 1;
-	else if(isInt(args[0])&&args.length==1)
+	else if(global.isInt(args[0])&&args.length==1)
 		amount = parseInt(args[0]);
 	else if(args.length==1&&args[0]=='all')
 		all = true;
@@ -111,13 +120,3 @@ exports.slots = function(con,msg,args){
 	});
 }
 
-/**
- * Checks if its an integer
- * @param {string}	value - value to check if integer
- *
- */
-function isInt(value){
-	return !isNaN(value) &&
-		parseInt(Number(value)) == value &&
-		!isNaN(parseInt(value,10));
-}
