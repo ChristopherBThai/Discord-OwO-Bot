@@ -35,7 +35,8 @@ exports.showHelp = function(channel){
 			"\n< owo feedback {message} >\t   "+help.feedback.desc_short+
 			"\n< owo stats >\t\t\t\t\t"+help.stats.desc_short+
 			"\n< owo link >\t\t\t\t\t "+help.link.desc_short+
-			"\n< owo guildlink >\t\t\t\t"+help.guildlink.desc_short+"```"+
+			"\n< owo guildlink >\t\t\t\t"+help.guildlink.desc_short+
+			"\n< owo disable|enable {command}>  "+help.disable.desc_short+"```"+
 			"```md\n< owo help {command} >\t\t   For more information on a command!\n> Remove brackets when typing commands\n> [] = optional arguments\n> {} = optional user input```";
 	channel.send(embed);
 }
@@ -117,11 +118,20 @@ exports.guild = function(msg){
  * @param {discord.message}	msg
  */
 exports.showStats = function(client, con, msg){
-	var sql = "SELECT COUNT(*) user, "+
-		"sum(count) total "+
-		"FROM user";
+	var sql = "SELECT COUNT(*) user,sum(count) AS total FROM user;";
+	sql += "SELECT SUM(common) AS common, SUM(uncommon) AS uncommon, SUM(rare) AS rare, SUM(epic) AS epic, SUM(mythical) AS mythical, SUM(legendary) AS legendary FROM animal_count;"
+	sql += "SELECT command FROM disabled WHERE channel = "+msg.channel.id+";";
 	con.query(sql,function(err,rows,field){
 		if(err) throw err;
+		var totalAnimals = parseInt(rows[1][0].common)+parseInt(rows[1][0].uncommon)+parseInt(rows[1][0].rare)+parseInt(rows[1][0].epic)+parseInt(rows[1][0].mythical)+parseInt(rows[1][0].legendary);
+		var disabled = "";
+		for(i in rows[2]){
+			disabled += rows[2][i].command+", ";
+		}
+		disabled = disabled.slice(0,-2);
+		if(disabled=="")
+			disabled = "no disabled commands";
+
 		const embed = {
 		"description": "Here's a little bit of information! If you need help with commands, type `owo help`.",
 			"color": 1,
@@ -130,9 +140,9 @@ exports.showStats = function(client, con, msg){
 				"url": "https://discordapp.com/api/oauth2/authorize?client_id=408785106942164992&permissions=444480&scope=bot",
 				"icon_url": "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
 			"fields": [{"name":"Current Guild",
-					"value":"```md\n<channelID: "+msg.channel.id+">\n<guildID:   "+msg.guild.id+">```"},
+					"value":"```md\n<userID:  "+msg.author.id+">\n<channelID: "+msg.channel.id+">\n<guildID:   "+msg.guild.id+">``````md\n< Disabled commands >\n"+disabled+"```"},
 				{"name": "Global information",
-					"value": "```md\n<TotalOwOs:  "+rows[0].total+">\n<OwOUsers:   "+rows[0].user+">```"},
+					"value": "```md\n<TotalOwOs:  "+rows[0][0].total+">\n<OwOUsers:   "+rows[0][0].user+">``````md\n<animalsCaught: "+totalAnimals+">\n<common: "+rows[1][0].common+">\n<uncommon: "+rows[1][0].uncommon+">\n<rare: "+rows[1][0].rare+">\n<epic: "+rows[1][0].epic+">\n<mythical: "+rows[1][0].mythical+">\n<legendary: "+rows[1][0].legendary+">```"},
 				{"name": "Bot Information",
 					"value": "```md\n<Guilds:    "+client.guilds.size+">\n<Channels:  "+client.channels.size+">\n<Users:     "+client.users.size+">``````md\n<Ping:       "+client.ping+"ms>\n<UpdatedOn:  "+client.readyAt+">\n<Uptime:     "+client.uptime+">```"
 				}]

@@ -169,5 +169,33 @@
 		"related":[],
 		"example":[],
 		"alt":["serverlink"]
+	},
+	"ping":{
+		"name":"ping",
+		"args":"",
+		"desc_short":"pong!",
+		"desc_long":"Gives you the bot's average ping!",
+		"related":[],
+		"example":[],
+		"alt":[]
+	},
+	"help":{
+		"name":"help",
+		"args":"{command}",
+		"desc_short":"Help commands!!",
+		"desc_long":"Gives you the list of commands or add a command at the end to describe a command!",
+		"related":[],
+		"example":["owo help","owo help zoo"],
+		"alt":["command","commands"]
+	},
+	"disable":{
+		"name":"disable",
+		"args":"{command}",
+		"desc_short":"Enable/Disable a command!",
+		"desc_long":"Enable/Disable a command for this channel! Only users with the MANAGE_CHANNELS permission can use this command",
+		"related":[],
+		"example":["owo disable hunt","owo enable hunt"],
+		"alt":["enable"],
+		"global":true
 	}
 }

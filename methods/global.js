@@ -4,6 +4,7 @@
 
 var help = require('../json/help.json');
 var commands = {};
+var client,con;
 
 /**
  * Checks if its an integer
@@ -34,10 +35,21 @@ exports.isUser = function(id){
 	return id.search(/<@!?[0-9]+>/)>=0;
 }
 
+/*
+ *
+ */
+exports.getUser = function(mention){
+	id = mention.match(/[0-9]+/)[0];
+	if(id=="")
+		return undefined;
+	return client.users.get(id);
+}
+
 /**
  * Maps alts to their command names
  */
-exports.init = function(){
+exports.init = function(tclient){
+	client = tclient;
 	for(var key in help){
 		var alt = help[key].alt;
 		commands[help[key].name] = key;
@@ -48,8 +60,41 @@ exports.init = function(){
 }
 
 /**
+ * Gets mysql con
+ */
+exports.con = function(tcon){
+	con = tcon;
+}
+
+/**
  * Checks if its a valid command
  */
 exports.validCommand = function(command){
 	return help[commands[command]]
+}
+
+/**
+ * Checks if command is disabled
+ */
+exports.isDisabled = async function(command,execute,executeOther,msg,args,isMention){
+	var channel = msg.channel.id;
+	var tcommand = help[commands[command]];
+	if(tcommand == undefined){
+		executeOther(command,msg,args,isMention);
+		return;
+	}
+	if(tcommand.global){
+		execute(command,msg,args,isMention);
+		return;
+	}
+	tcommand = tcommand.name;
+	var sql = "SELECT * FROM disabled WHERE command = '"+tcommand+"' AND channel = "+channel+";";
+	con.query(sql,function(err,rows,fields){
+		if(err) throw err;
+		if(rows[0]==undefined)
+			execute(command,msg,args,isMention);
+		else
+			msg.channel.send("That command is disabled on this channel!")
+				.then(message => message.delete(3000));
+	});
 }

@@ -78,7 +78,7 @@ exports.display = function(con, client, msg, args){
 			return;
 		}else{
 			//check for args
-			var global = false;
+			var globala = false;
 
 			var points = false;
 			var guild = false;
@@ -99,10 +99,10 @@ exports.display = function(con, client, msg, args){
 					else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="m"||args[i]==="c")
 						money = true;
 					else if(args[i]==="global"||args[i]==="g") 
-						global = true;
+						globala = true;
 					else
 						invalid = true;
-				}else if(args[i]==="global"||args[i]==="g") global = true;
+				}else if(args[i]==="global"||args[i]==="g") globala = true;
 				else if(global.isInt(args[i])) count = parseInt(args[i]);
 				else invalid = true;
 			}
@@ -111,7 +111,7 @@ exports.display = function(con, client, msg, args){
 
 			if(invalid)
 				msg.channel.send("Invalid ranking type!");
-			else if(global){
+			else if(globala){
 				if(points)
 					getGlobalRanking(con,client,msg,count);
 				else if(guild)
