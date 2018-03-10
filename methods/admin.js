@@ -1,3 +1,8 @@
+/**
+ * Admin commands
+ */
+
+const global = require('./global.js');
 
 /**
  * Grabs bot's info
@@ -26,6 +31,9 @@ exports.info = function(client,msg){
 	console.log("Admin Command: info");
 }
 
+/**
+ * Sends a message to a channel
+ */
 exports.msgChannel = function(client,dm,id,message){
 	var channel = client.channels.get(id);
 	if(channel == null || channel == undefined){
@@ -36,10 +44,13 @@ exports.msgChannel = function(client,dm,id,message){
 	dm.send("Message sent: "+message);
 }
 
+/**
+ * Sends cowoncy to a user
+ */
 exports.send = function(client,con,msg,args){
 	var amount = 0;
 	var id = 0;
-	if(isInt(args[0])&&isInt(args[1])){
+	if(global.isInt(args[0])&&global.isInt(args[1])){
 		amount = parseInt(args[1]);
 		id = parseInt(args[0]);
 	}else{
@@ -55,38 +66,20 @@ exports.send = function(client,con,msg,args){
 	});
 }
 
+/**
+ * gives everyone in the guild cowoncy
+ */
 exports.giveall = function(con,msg,args){
 	var amount = 0;
-	if(isInt(args[0]))
+	if(global.isInt(args[0]))
 		amount = parseInt(args[0]);
 	else
 		return;
-	var users = getids(msg.guild.members);
+	var users = global.getids(msg.guild.members);
 	var sql = "UPDATE IGNORE cowoncy SET money = money + "+amount+" WHERE id IN ("+users+");";
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		msg.channel.send(msg.author.username+" gave @everyone "+amount+" cowoncy!!!");
 	});
-}
-
-/**
- * Checks if its an integer
- * @param {string}	value - value to check if integer
- *
- */
-function isInt(value){
-	return !isNaN(value) &&
-		parseInt(Number(value)) == value &&
-		!isNaN(parseInt(value,10));
-}
-/**
- * Grabs all id from guild
- */
-function getids(members){
-	var result = "";
-	members.keyArray().forEach(function(ele){
-		result += ele + ",";
-	});
-	return result.slice(0,-1);
 }
 

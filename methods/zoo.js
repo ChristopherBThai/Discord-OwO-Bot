@@ -1,3 +1,9 @@
+/**
+ * Zoo!
+ */
+
+const global = require('./global');
+
 var animals = require('../../tokens/owo-animals.json');
 
 var secret = "";

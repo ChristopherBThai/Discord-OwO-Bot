@@ -4,7 +4,7 @@
 //||					    ||
 //+==========================================+
 
-
+const global = require('./global.js');
 
 /**
  * Sends a feedback to an admin
@@ -125,8 +125,3 @@ exports.reply = function(mysql, con, client, msg, args){
 		console.log("	Replied to a feedback["+feedbackId+"] for "+user.username);
 	});
 }
-
-
-
-
-

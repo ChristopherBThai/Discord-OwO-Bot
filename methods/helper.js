@@ -3,20 +3,9 @@
 //||		HELPER METHODS		  ||
 //||					  ||
 //+========================================+
+
+const global = require('./global.js');
 var help = require('../json/help.json');
-var commands = {};
-
-
-/**
- * Checks if its an integer
- * @param {string}	value - value to check if integer
- *
- */
-exports.isInt = function(value){
-	return !isNaN(value) &&
-		parseInt(Number(value)) == value &&
-		!isNaN(parseInt(value,10));
-}
 
 /**
  * Shows the help message
@@ -56,7 +45,7 @@ exports.showHelp = function(channel){
  */
 exports.describe = function(msg,command){
 	var name = command;
-	command = help[commands[command]]
+	command = global.validCommand(command);
 	if(command == undefined){
 		msg.channel.send("Could not find that command :c")
 			.then(message => message.delete(3000));
@@ -110,7 +99,7 @@ exports.showLink = function(msg){
  * Link for support guild
  *
  */
-exports.guild= function(msg){
+exports.guild = function(msg){
 	var channel = msg.channel;
 	const embed = {
 		"title":"OwO! Click me to join the support channel!",
@@ -153,15 +142,4 @@ exports.showStats = function(client, con, msg){
 	});
 }
 
-/**
- * Maps alts to their command names
- */
-exports.init = function(){
-	for(var key in help){
-		var alt = help[key].alt;
-		commands[help[key].name] = key;
-		for(i in alt){
-			commands[alt[i]] = key;
-		}
-	}
-}
+

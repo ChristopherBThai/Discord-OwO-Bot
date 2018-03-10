@@ -4,6 +4,8 @@
 //||					   ||
 //+=========================================+
 
+const global = require('./global.js');
+
 /**
  * Adds an owo point if 10s has passed for each user
  * @param {mysql.Connection}	con - Mysql.createConnection()
@@ -101,7 +103,7 @@ exports.display = function(con, client, msg, args){
 					else
 						invalid = true;
 				}else if(args[i]==="global"||args[i]==="g") global = true;
-				else if(isInt(args[i])) count = parseInt(args[i]);
+				else if(global.isInt(args[i])) count = parseInt(args[i]);
 				else invalid = true;
 			}
 			if (count>25) count = 25;
@@ -144,7 +146,7 @@ exports.display = function(con, client, msg, args){
  * @param {int} 		count 	- number of ranks to display
  */
 function getRanking(con, client, msg, count){
-	var userids = getids(msg.guild.members);
+	var userids = global.getids(msg.guild.members);
 	var channel = msg.channel;
 	var guildId = msg.guild.id;
 
@@ -277,7 +279,7 @@ function getGuildRanking(con, client, msg, count){
  */
 function getZooRanking(con, client, msg, count){
 	var channel = msg.channel;
-	var users = getids(msg.guild.members);
+	var users = global.getids(msg.guild.members);
 	//Grabs top 5
 	var sql = "SELECT *,(common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*1000) AS points FROM animal_count WHERE id IN ("+users+") ORDER BY points DESC LIMIT "+count+";";
 	sql   +=  "SELECT *,(common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*1000) AS points,(SELECT COUNT(*)+1 FROM animal_count WHERE (common*1+uncommon*5+rare*10+epic*50+mythical*500+legendary*1000) >(a.common*1+a.uncommon*5+a.rare*10+a.epic*50+a.mythical*500+a.legendary*1000) AND id IN ("+users+")) AS rank FROM animal_count a WHERE a.id = "+msg.author.id+";";
@@ -391,7 +393,7 @@ function getGlobalZooRanking(con, client, msg, count){
  * @param {int} 		count 	- number of ranks to display
  */
 function getMoneyRanking(con, client, msg, count){
-	var users = getids(msg.guild.members);
+	var users = global.getids(msg.guild.members);
 	var channel = msg.channel;
 	var sql = "SELECT * FROM cowoncy WHERE id IN ("+users+") ORDER BY money DESC LIMIT "+count+";";
 	sql +=  "SELECT id,money,(SELECT COUNT(*)+1 FROM cowoncy WHERE id IN ("+users+") AND money > c.money) AS rank FROM cowoncy c WHERE c.id = "+msg.author.id+";";
@@ -466,29 +468,5 @@ function getGlobalMoneyRanking(con, client, msg, count){
 		channel.send(embed);
 	});
 	console.log("	Displaying top "+count+" global cowoncy");
-}
-
-
-
-/**
- * Checks if its an integer
- * @param {string}	value - value to check if integer
- *
- */
-function isInt(value){
-	return !isNaN(value) &&
-		parseInt(Number(value)) == value &&
-		!isNaN(parseInt(value,10));
-}
-
-/**
- * Grabs all id from guild
- */
-function getids(members){
-	var result = "";
-	members.keyArray().forEach(function(ele){
-		result += ele + ",";
-	});
-	return result.slice(0,-1);
 }
 

@@ -1,10 +1,17 @@
+/**
+ * Weeb.sh api
+ */
+
+const global = require('./global.js');
+
 const weeb = require("weeb.js");
 var auth = require('../../tokens/owo-auth.json');
-
 var emotes = require('../json/emotes.json');
-
 const sh = new weeb("Wolke "+auth.weebsh,"owo/1.0");
 
+/**
+ * Gets an image from weeb.sh
+ */
 function grab(msg,ptype,ftype,text,notsfw,retry){
 	var nsfwt = false;
 	var retryt = true
@@ -36,6 +43,9 @@ function grab(msg,ptype,ftype,text,notsfw,retry){
 	});
 }
 
+/**
+ * Gets an image
+ */
 exports.getImage = function(msg,args){
 	if(args.length!=1){
 		msg.channel.send("Wrong argument type! :c")
@@ -58,6 +68,9 @@ exports.getImage = function(msg,args){
 		grab(msg,args[0],"jpg",args[0],nsfw);
 }
 
+/**
+ * Gets a gif
+ */
 exports.getGif = function(msg,args){
 	if(args.length!=1){
 		msg.channel.send("Wrong argument type! :c")
@@ -75,6 +88,9 @@ exports.getGif = function(msg,args){
 		grab(msg,args[0],"gif",args[0]);
 }
 
+/**
+ * Gets an nsfw image
+ */
 exports.getNSFWImage = function(msg,args){
 	if(args.length!=2){
 		msg.channel.send("Wrong argument type! :c")
@@ -87,6 +103,9 @@ exports.getNSFWImage = function(msg,args){
 		grab(msg,"neko","jpg",args.join(" "),true);
 }	
 
+/**
+ * Lists all weeb.sh types
+ */
 exports.getTypes = function(msg){
 	sh.getTypes().then(array => {
 		var txt = "Available Image Types:\n";
@@ -98,6 +117,9 @@ exports.getTypes = function(msg){
 	});
 }
 
+/**
+ * Self emotes
+ */
 exports.sEmote = function(msg,type){
 	var emote = emotes.sEmote[type];
 	if(emote == undefined)
@@ -109,8 +131,11 @@ exports.sEmote = function(msg,type){
 	grab(msg,emote.name,"gif",text);
 }
 
+/**
+ * Emotes towards users
+ */
 exports.uEmote= function(client,msg,args,type){
-	if(args.length!=1||!isUser(args[0]))
+	if(args.length!=1||!global.isUser(args[0]))
 		return;
 	var target = client.users.get(args[0].match(/[0-9]+/)[0]);
 	if(target == undefined){
@@ -128,9 +153,3 @@ exports.uEmote= function(client,msg,args,type){
 	grab(msg,emote.name,"gif",text);
 }
 
-/*
- * Checks if its a user
- */
-function isUser(id){
-	return id.search(/<@!?[0-9]+>/)>=0;
-}

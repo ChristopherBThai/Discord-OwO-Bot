@@ -1,3 +1,8 @@
+/**
+ * Cowoncy functions
+ */
+
+const global = require('./global.js');
 
 /**
  * Displays user's cowoncy
@@ -54,9 +59,9 @@ exports.give = function(client,con,msg,args){
 	var id = "";
 	var invalid = false;
 	for(i in args){
-		if(isInt(args[i])&&amount==-1)
+		if(global.isInt(args[i])&&amount==-1)
 			amount = parseInt(args[i]);
-		else if(isUser(args[i])&&id=="")
+		else if(global.isUser(args[i])&&id=="")
 			id = args[i].match(/[0-9]+/)[0];
 		else
 			invalid = true;
@@ -99,22 +104,4 @@ exports.give = function(client,con,msg,args){
 		}
 	});
 
-}
-
-/*
- * Checks if its a user
- */
-function isUser(id){
-	return id.search(/<@!?[0-9]+>/)>=0;
-}
-
-/**
- * Checks if its an integer
- * @param {string}	value - value to check if integer
- *
- */
-function isInt(value){
-	return !isNaN(value) &&
-		parseInt(Number(value)) == value &&
-		!isNaN(parseInt(value,10));
 }
