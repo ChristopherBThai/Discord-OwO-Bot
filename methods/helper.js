@@ -30,6 +30,8 @@ exports.showHelp = function(channel){
 			"\n< owo 8b {question} >\t\t\t"+help.b8.desc_short+
 			"\n< owo define {word} >\t\t\t"+help.define.desc_short+
 			"\n< owo gif|pic {type} >\t\t   "+help.gif.desc_short+
+			"\n# Social"+
+			"\n< owo rep {@user} >\t\t\t  "+help.rep.desc_short+
 			"\n< owo pet|slap|hug|etc {@user} > "+help.pet.desc_short+
 			"\n# Utility"+
 			"\n< owo feedback {message} >\t   "+help.feedback.desc_short+
