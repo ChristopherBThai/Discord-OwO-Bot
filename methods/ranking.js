@@ -84,12 +84,13 @@ exports.display = function(con, client, msg, args){
 			var guild = false;
 			var money = false;
 			var zoo = false;
+			var rep = false;
 
 			var invalid = false;
 			var count = 5;
 
 			for(var i in args){
-				if(!points&&!guild&&!money&&!zoo){
+				if(!points&&!guild&&!money&&!zoo&&!rep){
 					if(args[i]=== "points"||args[i]==="point"||args[i]==="p")
 						points = true;
 					else if(args[i]==="guild"||args[i]==="server"||args[i]==="s"||args[i]==="g")
@@ -98,8 +99,12 @@ exports.display = function(con, client, msg, args){
 						zoo = true;
 					else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="m"||args[i]==="c")
 						money = true;
+					else if(args[i]==="rep"||args[i]==="r") 
+						rep = true;
 					else if(args[i]==="global"||args[i]==="g") 
 						globala = true;
+					else if(global.isInt(args[i])) 
+						count = parseInt(args[i]);
 					else
 						invalid = true;
 				}else if(args[i]==="global"||args[i]==="g") globala = true;
@@ -120,6 +125,8 @@ exports.display = function(con, client, msg, args){
 					getGlobalZooRanking(con,client,msg,count);
 				else if(money)
 					getGlobalMoneyRanking(con,client,msg,count);
+				else if(rep)
+					getGlobalRepRanking(con,client,msg,count);
 				else
 					getGlobalRanking(con,client,msg,count);
 			}else{
@@ -131,6 +138,8 @@ exports.display = function(con, client, msg, args){
 					getZooRanking(con,client,msg,count);
 				else if(money)
 					getMoneyRanking(con,client,msg,count);
+				else if(rep)
+					getRepRanking(con,client,msg,count);
 				else
 					getRanking(con,client,msg,count);
 			}
@@ -470,3 +479,87 @@ function getGlobalMoneyRanking(con, client, msg, count){
 	console.log("	Displaying top "+count+" global cowoncy");
 }
 
+/**
+ * displays rep ranking
+ * @param {mysql.Connection}	con 	- Mysql.createConnection()
+ * @param {mysql.Client}	client	- Discord.js's client
+ * @param {discord.Message}	msg	- User's message
+ * @param {int} 		count 	- number of ranks to display
+ */
+function getRepRanking(con, client, msg, count){
+	var users = global.getids(msg.guild.members);
+	var channel = msg.channel;
+	var sql = "SELECT * FROM rep WHERE id IN ("+users+") ORDER BY count DESC LIMIT "+count+";";
+	sql +=  "SELECT id,count,(SELECT COUNT(*)+1 FROM rep WHERE id IN ("+users+") AND count > c.count) AS rank FROM rep c WHERE c.id = "+msg.author.id+";";
+
+	//Create an embeded message
+	con.query(sql,function(err,rows,fields){
+		if(err) throw err;
+		var rank = 1;
+		var ranking = [];
+		var embed = "```md\n< Top "+count+" Rep Rankings for "+client.guilds.get(msg.guild.id)+" >\n";
+		if(rows[1][0]!==undefined&&rows[1][0]!==null){
+			embed += "> Your Rank: "+rows[1][0].rank+"\n";
+			embed += ">\t\tRep: "+rows[1][0].count+"\n\n";
+		}
+		rows[0].forEach(function(ele){
+			var id = String(ele.id);
+			var user = client.users.get(id);
+			var name = "";
+			if(user === undefined || user.username === undefined)
+				name = "User Left Bot";
+			else
+				name = ""+user.username;
+			name = name.replace("discord.gg","discord,gg");
+			embed += "#"+rank+"\t"+name+"\n\t\tRep: "+ele.count+"\n";
+			rank++;
+		});
+		var date = new Date();
+		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		channel.send(embed);
+	});
+	console.log("	Displaying top "+count+" rep");
+}
+
+
+/**
+ * displays global rep ranking
+ * @param {mysql.Connection}	con 	- Mysql.createConnection()
+ * @param {mysql.Client}	client	- Discord.js's client
+ * @param {discord.Message}	msg	- User's message
+ * @param {int} 		count 	- number of ranks to display
+ */
+function getGlobalRepRanking(con, client, msg, count){
+	var channel = msg.channel;
+	//Grabs top 5
+	var sql = "SELECT * FROM rep ORDER BY count DESC LIMIT "+count+";";
+	sql +=  "SELECT id,count,(SELECT COUNT(*)+1 FROM rep WHERE count > c.count) AS rank FROM rep c WHERE c.id = "+msg.author.id+";";
+
+	//Create an embeded message
+	con.query(sql,function(err,rows,fields){
+		if(err) throw err;
+		var rank = 1;
+		var ranking = [];
+		var embed = "```md\n< Top "+count+" Global Rep Rankings >\n";
+		if(rows[1][0]!==undefined&&rows[1][0]!==null){
+			embed += "> Your Rank: "+rows[1][0].rank+"\n";
+			embed += ">\t\tRep: "+rows[1][0].count+"\n\n";
+		}
+		rows[0].forEach(function(ele){
+			var id = String(ele.id);
+			var user = client.users.get(id);
+			var name = "";
+			if(user === undefined || user.username === undefined)
+				name = "User Left Bot";
+			else
+				name = ""+user.username;
+			name = name.replace("discord.gg","discord,gg");
+			embed += "#"+rank+"\t"+name+"\n\t\tRep: "+ele.count+"\n";
+			rank++;
+		});
+		var date = new Date();
+		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		channel.send(embed);
+	});
+	console.log("	Displaying top "+count+" global rep");
+}

@@ -15,7 +15,7 @@ const sh = new weeb("Wolke "+auth.weebsh,"owo/1.0");
 function grab(msg,ptype,ftype,text,notsfw,retry){
 	var nsfwt = false;
 	var retryt = true
-	if(notsfw&&typeof notsfw == "boolean"&&notsfw)
+	if(typeof notsfw == "boolean"&&notsfw)
 		nsfwt = "only";
 	if(retryt&&typeof retry== "boolean")
 		retryt = retry;

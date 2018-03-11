@@ -1,7 +1,7 @@
 {
 	"rank":{
 		"name":"top",
-		"args":"points|guild|zoo|money [global] {count}",
+		"args":"points|guild|zoo|money|rep [global] {count}",
 		"desc_short":"Displays the top rankings!",
 		"desc_long":"Displays the top ranking depending on your arguments\nYou can choose between your rank within the server or globally!\nYou can also shorten arguments like the examples below.",
 		"related":["owo my"],
@@ -10,7 +10,7 @@
 	},
 	"my":{
 		"name":"my",
-		"args":"points|guild|zoo|money [global]",
+		"args":"points|guild|zoo|money|rep [global]",
 		"desc_short":"Displays your ranking!",
 		"desc_long":"Displays the your ranking depending on your arguments\nYou can choose between your rank within the server or globally!\nYou can also shorten arguments like the examples below.",
 		"related":["owo top"],
