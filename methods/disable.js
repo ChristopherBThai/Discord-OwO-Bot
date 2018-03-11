@@ -20,7 +20,7 @@ exports.disable = function(con,msg,command){
 		var sql = "INSERT IGNORE INTO disabled (channel,command) VALUES "+list+";";
 		con.query(sql,function(err,rows,field){
 			if(err) throw err;
-			msg.channel.send("The all commands have been disabled for this channel!");
+			msg.channel.send("The **all** commands have been **disabled** for this channel!");
 		});
 		return;
 	}
@@ -35,7 +35,7 @@ exports.disable = function(con,msg,command){
 	var sql = "INSERT IGNORE INTO disabled (channel,command) VALUES ("+msg.channel.id+",'"+command.name+"');";
 	con.query(sql,function(err,rows,field){
 		if(err) throw err;
-		msg.channel.send("The command **"+name+"** has been disabled for this channel!");
+		msg.channel.send("The command **"+name+"** has been **disabled** for this channel!");
 	});
 }
 
@@ -54,7 +54,7 @@ exports.enable = function(con,msg,command){
 		var sql = "DELETE FROM disabled WHERE channel = "+msg.channel.id+" AND command IN ("+list+");";
 		con.query(sql,function(err,rows,field){
 			if(err) throw err;
-			msg.channel.send("The all commands have been disabled for this channel!");
+			msg.channel.send("The **all** commands have been **enable** for this channel!");
 		});
 		return;
 	}
@@ -69,6 +69,6 @@ exports.enable = function(con,msg,command){
 	var sql = "DELETE FROM disabled WHERE channel = "+msg.channel.id+" AND command = '"+command.name+"';";
 	con.query(sql,function(err,rows,field){
 		if(err) throw err;
-		msg.channel.send("The command **"+name+"** has been enabled for this channel!");
+		msg.channel.send("The command **"+name+"** has been **enabled** for this channel!");
 	});
 }

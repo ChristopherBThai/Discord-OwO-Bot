@@ -15,7 +15,7 @@
 		"desc_long":"Displays the your ranking depending on your arguments\nYou can choose between your rank within the server or globally!\nYou can also shorten arguments like the examples below.",
 		"related":["owo top"],
 		"example":["owo my points","owo top z g"],
-		"alt":["me"]
+		"alt":["me","guild","rank"]
 	},
 	"money":{
 		"name":"money",
@@ -96,7 +96,7 @@
 		"desc_long":"Ask a question and get an answer!",
 		"related":[],
 		"example":["owo 8b Am I cute?"],
-		"alt":["8ball"]
+		"alt":["8ball","ask"]
 	},
 	"define":{
 		"name":"define",
