@@ -36,7 +36,7 @@ client.on('message',msg => {
 		const adminCommand = adminMsg.shift().toLowerCase();
 
 		//Reply to a feedback/report/suggestion
-		if(adminCommand === 'reply'&&helper.isInt(adminMsg[0])){
+		if(adminCommand === 'reply'&&global.isInt(adminMsg[0])){
 			feedback.reply(mysql, con, client, msg, adminMsg);
 		}
 
