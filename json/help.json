@@ -197,5 +197,14 @@
 		"example":["owo disable hunt","owo enable hunt"],
 		"alt":["enable"],
 		"global":true
+	},
+	"rep":{
+		"name":"rep",
+		"args":"{@user}",
+		"desc_short":"Give a rep point to a user!",
+		"desc_long":"Gives a reputation point to a user! You can only send one per day!\nYou can also give rep to bots!",
+		"related":[],
+		"example":["owo rep","owo rep @Scuttler"],
+		"alt":[]
 	}
 }

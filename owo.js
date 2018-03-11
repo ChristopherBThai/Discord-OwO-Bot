@@ -1,4 +1,4 @@
-const debug = false;
+const debug = true;
 if(debug)
 	var auth = require('../tokens/scuttester-auth.json');
 else 
@@ -20,6 +20,7 @@ const vote = require("./methods/vote.js");
 const disable = require("./methods/disable.js");
 const weeb = require("./methods/weebjs.js");
 const zoo = require("./methods/zoo.js");
+const rep = require("./methods/rep.js");
 const slots = require("./methods/slots.js");
 const lottery = require("./methods/lottery.js");
 const other = require("./methods/other.js");
@@ -137,6 +138,14 @@ function execute(command,msg,args,isMention){
 	//Cowoncy
 	else if (command === 'cowoncy'||command === 'credit'||command === 'money'||command === 'cash'||command === 'balance'){
 		cowoncy.display(con,client,msg);
+	}
+
+	//Give rep 
+	else if(command === 'rep'){
+		if(args.length==0)
+			rep.display(con,msg);
+		else
+			rep.give(con,client,msg,args);
 	}
 
 	//Give cowoncy

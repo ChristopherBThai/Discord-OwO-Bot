@@ -204,7 +204,7 @@ function pickWinner(){
 				con.query(sql,function(err,result){
 					if(err) throw err;
 					if(channel!=undefined)
-						channel.send("Congrats! **"+winner+"** won **"+prize+" cowoncy** from the lottery!\nHe had a **"+winnerchance+"%** chance to win!");
+						channel.send("Congrats! **"+winner+"** won **"+prize+" cowoncy** from the lottery with a **"+winnerchance+"%** chance to win!");
 					if(winner!=undefined){
 						winner.send("Congrats! You won **"+prize+" cowoncy** from the lottery with a **"+winnerchance+"%** chance to win!");
 						console.log("\x1b[36m%s\x1b[0m","    "+winner.username+" won the lottery");
