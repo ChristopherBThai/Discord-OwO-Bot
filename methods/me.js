@@ -27,15 +27,16 @@ exports.display = function(con, client, msg, args){
 			channel.send("This command is disabled on this channel!");
 			return;
 		}else{
-			var global = false;
+			var aglobal = false;
 			var invalid = false;
 			var points = false;
 			var guild = false;
 			var zoo = false;
 			var money = false;
+			var rep = false;
 
 			for(var i in args){
-				if(!points&&!guild&&!money&&!zoo){
+				if(!points&&!guild&&!money&&!zoo&&!rep){
 					if(args[i]=== "points"||args[i]==="point"||args[i]==="p")
 						points = true;
 					else if(args[i]==="guild"||args[i]==="server"||args[i]==="g"||args[i]==="s")
@@ -44,17 +45,19 @@ exports.display = function(con, client, msg, args){
 						zoo = true;
 					else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="c"||args[i]==="m")
 						money = true;
+					else if(args[i]=== "rep"||args[i]==="r")
+						rep = true;
 					else if(args[i]==="global"||args[i]==="g") 
-						global = true;
+						aglobal = true;
 					else
 						invalid = true;
-				}else if(args[i]==="global"||args[i]==="g") global = true;
+				}else if(args[i]==="global"||args[i]==="g") aglobal = true;
 				else invalid = true;
 			}
 			
 			if(invalid)
 				msg.channel.send("Wrong arguments! :c Go check `owo help`!");
-			else if(global){
+			else if(aglobal){
 				if(points)
 					getGlobalPointRanking(con,client,msg,id);
 				else if(guild)
@@ -63,6 +66,8 @@ exports.display = function(con, client, msg, args){
 					getGlobalZooRanking(con,client,msg,id);
 				else if(money)
 					getGlobalMoneyRanking(con,client,msg,id);
+				else if(rep)
+					getGlobalRepRanking(con,client,msg,id);
 				else
 					getGlobalPointRanking(con,client,msg,id);
 			}else{
@@ -74,6 +79,8 @@ exports.display = function(con, client, msg, args){
 					getZooRanking(con,client,msg,id);
 				else if(money)
 					getMoneyRanking(con,client,msg,id);
+				else if(rep)
+					getRepRanking(con,client,msg,id);
 				else
 					getPointRanking(con,client,msg,id);
 			}
@@ -714,6 +721,181 @@ function getMoneyRanking(con, client, msg, id){
 			embed = "```md\n< "+name+"'s Cowoncy Ranking for "+client.guilds.get(msg.guild.id)+" >\nYour rank is: "+userRank+"\n\n>...\n" + embed;
 		else
 			embed = "```md\n< "+name+"'s Cowoncy Ranking for "+client.guilds.get(msg.guild.id)+" >\nYour rank is: "+userRank+"\n\n" + embed;
+
+		if(rank-userRank==3)
+			embed += ">...\n";
+
+
+		var date = new Date();
+		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		channel.send(embed);
+	});
+}
+
+/**
+ * displays global rep ranking
+ * @param {mysql.Connection}	con 	- Mysql.createConnection()
+ * @param {mysql.Client}	client	- Discord.js's client
+ * @param {discord.Message}	msg	- Current channel
+ * @param {int} 		id	- User's id
+ */
+function getGlobalRepRanking(con, client, msg, id){
+	var channel = msg.channel;
+	//Sql
+	var sql = "SELECT u.id,u.count ,u1.id,u1.count FROM rep AS u LEFT JOIN ( SELECT id,count FROM rep ORDER BY count ASC ) AS u1 ON u1.count > u.count WHERE u.id = "+id+" ORDER BY u1.count ASC LIMIT 2;";
+	sql   +=  "SELECT u.id,u.count ,u1.id,u1.count FROM rep AS u LEFT JOIN ( SELECT id,count FROM rep ORDER BY count DESC ) AS u1 ON u1.count < u.count WHERE u.id = "+id+" ORDER BY u1.count DESC LIMIT 2;";
+	sql   +=  "SELECT id,count,(SELECT COUNT(*)+1 FROM rep WHERE count > u.count ) AS rank FROM rep u WHERE u.id = "+id+";";
+
+	//query
+	con.query(sql,function(err,rows,fields){
+		if(err) throw err;
+		var above = rows[0];
+		var below = rows[1];
+		var me = rows[2][0];
+		if(me===null||me===undefined){
+			channel.send("You don't have any rep yet!");
+			return;
+		}
+		var userRank = parseInt(me.rank);
+		var rank = userRank - above.length;
+		var embed = "";
+
+		//People above user
+		above.reverse().forEach(function(ele){
+			var id = String(ele.id);
+			if(id!==""&&id!==null&&!isNaN(id)){
+				var user = client.users.get(id);
+				var name = "";
+				if(user === undefined || user.username === undefined)
+					name = "User Left Discord";
+				else
+					name = ""+user.username;
+				name = name.replace("discord.gg","discord,gg");
+				embed += "#"+rank+"\t"+name+"\n\t\tRep: "+ele.count+"\n";
+				rank++;
+			}else if(rank==0)
+				rank = 1;
+				
+		});
+
+		//Current user
+		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
+		var name = client.users.get(me.id).username;
+		name = name.replace("discord.gg","discord,gg");
+		embed += "< "+rank+"   "+name+" >\n\t\tRep: "+me.count+"\n";
+		rank++;
+
+		//People below user
+		below.forEach(function(ele){
+			var id = String(ele.id);
+			if(id!==""&&id!==null&&!isNaN(id)){
+				var user = client.users.get(id);
+				var name = "";
+				if(user === undefined || user.username === undefined)
+					name = "User Left Discord";
+				else
+					name = ""+user.username;
+				name = name.replace("discord.gg","discord,gg");
+				embed += "#"+rank+"\t"+name+"\n\t\tRep: "+ele.count+"\n";
+				rank++;
+
+			}
+
+		});
+
+		//Add top and bottom
+		if(userRank>3)
+			embed = "```md\n< "+name+"'s Global Rep Ranking >\nYour rank is: "+userRank+"\n\n>...\n" + embed;
+		else
+			embed = "```md\n< "+name+"'s Global Rep Ranking >\nYour rank is: "+userRank+"\n\n" + embed;
+
+		if(rank-userRank==3)
+			embed += ">...\n";
+
+
+		var date = new Date();
+		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		channel.send(embed);
+	});
+}
+
+/**
+ * displays rep ranking
+ * @param {mysql.Connection}	con 	- Mysql.createConnection()
+ * @param {mysql.Client}	client	- Discord.js's client
+ * @param {discord.Message}	msg	- Current channel
+ * @param {int} 		id	- User's id
+ */
+function getRepRanking(con, client, msg, id){
+	var channel = msg.channel;
+	var users = global.getids(msg.guild.members);
+	//Sql
+	var sql = "SELECT u.id,u.count ,u1.id,u1.count FROM rep AS u LEFT JOIN ( SELECT id,count FROM rep WHERE id IN ("+users+") ORDER BY count ASC ) AS u1 ON u1.count > u.count WHERE u.id = "+id+" ORDER BY u1.count ASC LIMIT 2;";
+	sql   +=  "SELECT u.id,u.count ,u1.id,u1.count FROM rep AS u LEFT JOIN ( SELECT id,count FROM rep WHERE id IN ("+users+") ORDER BY count DESC ) AS u1 ON u1.count < u.count WHERE u.id = "+id+" ORDER BY u1.count DESC LIMIT 2;";
+	sql   +=  "SELECT id,count,(SELECT COUNT(*)+1 FROM rep WHERE count > u.count AND id IN ("+users+") ) AS rank FROM rep u WHERE u.id = "+id+";";
+
+	//query
+	con.query(sql,function(err,rows,fields){
+		if(err) throw err;
+		var above = rows[0];
+		var below = rows[1];
+		var me = rows[2][0];
+		if(me===null||me===undefined){
+			channel.send("You don't have any rep yet!");
+			return;
+		}
+		var userRank = parseInt(me.rank);
+		var rank = userRank - above.length;
+		var embed = "";
+
+		//People above user
+		above.reverse().forEach(function(ele){
+			var id = String(ele.id);
+			if(id!==""&&id!==null&&!isNaN(id)){
+				var user = client.users.get(id);
+				var name = "";
+				if(user === undefined || user.username === undefined)
+					name = "User Left Discord";
+				else
+					name = ""+user.username;
+				name = name.replace("discord.gg","discord,gg");
+				embed += "#"+rank+"\t"+name+"\n\t\tRep: "+ele.count+"\n";
+				rank++;
+			}else if(rank==0)
+				rank = 1;
+				
+		});
+
+		//Current user
+		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
+		var name = client.users.get(me.id).username;
+		name = name.replace("discord.gg","discord,gg");
+		embed += "< "+rank+"   "+name+" >\n\t\tRep: "+me.count+"\n";
+		rank++;
+
+		//People below user
+		below.forEach(function(ele){
+			var id = String(ele.id);
+			if(id!==""&&id!==null&&!isNaN(id)){
+				var user = client.users.get(id);
+				var name = "";
+				if(user === undefined || user.username === undefined)
+					name = "User Left Discord";
+				else
+					name = ""+user.username;
+				name = name.replace("discord.gg","discord,gg");
+				embed += "#"+rank+"\t"+name+"\n\t\tRep: "+ele.count+"\n";
+				rank++;
+
+			}
+
+		});
+
+		//Add top and bottom
+		if(userRank>3)
+			embed = "```md\n< "+name+"'s Rep Ranking for "+client.guilds.get(msg.guild.id)+" >\nYour rank is: "+userRank+"\n\n>...\n" + embed;
+		else
+			embed = "```md\n< "+name+"'s Rep Ranking for "+client.guilds.get(msg.guild.id)+" >\nYour rank is: "+userRank+"\n\n" + embed;
 
 		if(rank-userRank==3)
 			embed += ">...\n";
