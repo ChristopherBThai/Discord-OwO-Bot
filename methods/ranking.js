@@ -42,10 +42,14 @@ exports.addPoint = function(con,msg){
 						var penalty = 1;
 						if(spam3>1200)
 							penalty = 5;
-						sql = "INSERT INTO timeout (id,time,count,penalty) VALUES ("+id+",NOW(),1,1) ON DUPLICATE KEY UPDATE time = NOW(),count=count+1,penalty = penalty + "+penalty+";SELECT penalty FROM timeout WHERE id = "+id+";UPDATE user SET spamintervallongcount = 0,spamintervalcount = 0,spamcount = 0 WHERE id = "+id+";";
+						sql = "INSERT INTO timeout (id,time,count,penalty) VALUES ("+id+",NOW(),1,0) ON DUPLICATE KEY UPDATE time = NOW(),count=count+1,penalty = penalty + "+penalty+";SELECT penalty FROM timeout WHERE id = "+id+";UPDATE user SET spamintervallongcount = 0,spamintervalcount = 0,spamcount = 0 WHERE id = "+id+";";
 						con.query(sql,function(err,rows,fields){
-							console.log("\x1b[36m%s\x1b[0m","    Putting user in timeout for "+rows[1][0].penalty+"H");
-							msg.author.send("***OwO What's This?!?***\nYou have been timed out for "+rows[1][0].penalty+"H due to spam or macros! \nIf you feel like this is a mistake, use `owo feedback` in a channel to get it fixed!");
+							var time = rows[1][0].penalty;
+							console.log("\x1b[36m%s\x1b[0m","    Putting user in timeout for "+time+"H");
+							if(time==0)
+								msg.author.send("***OwO What's This?!?***\nThis is a warning! Please do not spam or use macros for owo!\nIf you feel like this is a mistake, use `owo feedback` in a channel to let me know!");
+							else
+								msg.author.send("***OwO What's This?!?***\nYou have been timed out for "+time+"H due to spam or macros! \nIf you feel like this is a mistake, use `owo feedback` in a channel to get it fixed!");
 						});
 					}
 
