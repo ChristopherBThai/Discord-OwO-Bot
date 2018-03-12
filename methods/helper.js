@@ -43,6 +43,18 @@ exports.showHelp = function(channel){
 	channel.send(embed);
 }
 
+exports.showCompactHelp = function(channel){
+	var text = "**Compact Command List**"+
+		"\n\n**Main:** `top`  `my`"+
+		"\n**Economy:** `money`  `give`  `daily`  `vote`"+
+		"\n**Fun:** `zoo`  `hunt`  `slots`  `lottery`  `8b`  `define`  `gif`  `pic`"+
+		"\n**Social:** `rep`  `pet`  `hug`  `kiss`"+
+		"\n**Utility:** `feedback`  `stats`  `link`  `guildlink`  `disable`  `enable`  `help`"+
+		"\n\nUse `owo help {command}` for further details!"+
+		"\nUse `owo {command}` to execute a command!";
+	channel.send(text);
+}
+
 /**
  * Shows description of a command
  */

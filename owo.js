@@ -1,4 +1,4 @@
-const debug = true;
+const debug = false;
 if(debug)
 	var auth = require('../tokens/scuttester-auth.json');
 else 
@@ -195,7 +195,8 @@ function execute(command,msg,args,isMention){
 	//Displays all the commands
 	else if(command === "help" || command === "command" || command === "commands"){
 		if(args.length>0)
-			helper.describe(msg,args[0].toLowerCase());
+			if(args[0]=="compact"||args[0]=="mobile"||args[0]=="simple"){helper.showCompactHelp(msg.channel);
+			}else{helper.describe(msg,args[0].toLowerCase());}
 		else
 			helper.showHelp(msg.channel);
 	}
