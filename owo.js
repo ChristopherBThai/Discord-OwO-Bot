@@ -1,4 +1,4 @@
-const debug = false;
+const debug = true;
 if(debug)
 	var auth = require('../tokens/scuttester-auth.json');
 else 
@@ -129,10 +129,6 @@ function execute(command,msg,args,isMention){
 	//reply the question with yes or no
 	else if(command === '8b' || command === '8ball' || command === 'ask'){
 			other.eightball(con,msg,isMention,prefix);
-		if(Math.floor(Math.random()*100)===0){
-			msg.channel.send("**WAIT!** I Changed my mind!");
-			other.eightball(con,msg,isMention,prefix);
-		}
 	}
 
 	//Cowoncy

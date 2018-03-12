@@ -38,7 +38,7 @@ function grab(msg,ptype,ftype,text,notsfw,retry){
 		if(retryt&&(ftype=="jpg"||ftype=="png")){
 			grab(msg,ptype,(ftype=="jpg")?"png":"jpg",text,notsfw,false);		
 		}else
-			msg.channel.send("I couldn't find that image type! :c")
+			msg.channel.send("I couldn't find that image type! :c\nType `owo help gif` for the list of types!")
 				.then(message => message.delete(3000));
 	});
 }
@@ -147,6 +147,12 @@ exports.uEmote= function(client,msg,args,type){
 		return;
 	if(emote.alt!=undefined)
 		emote = emotes.uEmote[emote.alt];
+	if(msg.author.id==target.id){
+		var text = emote.self[Math.floor(Math.random()*emote.self.length)];
+		text = text.replace(/\?/,msg.author.username);
+		msg.channel.send(text);
+		return;
+	}
 	var text = emote.msg[Math.floor(Math.random()*emote.msg.length)];
 	text = text.replace(/\?/,msg.author.username);
 	text = text.replace(/\?/,target.username);
