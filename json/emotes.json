@@ -127,6 +127,10 @@
 				"? snuggles ?~ cute!",
 				"? cuddles ?~ adorable!",
 				"? cuddles ?~~ kyaaaa!!"
+			],
+			"self":[
+				"oh noo ;-; I'll cuddle you ?...",
+				"D-do you need a hug ?...?"
 			]
 		},
 		"hug":{
@@ -135,6 +139,10 @@
 				"? hugs ?!",
 				"? gives ? a big hug!",
 				"? hugs ?!! Don't squeeze too hard!"
+			],
+			"self":[
+				"D-do you need a hug ?...?",
+				"I'll hug you ?... ;-;"
 			]
 		},
 		"insult":{
@@ -143,6 +151,9 @@
 				"? insults ?! Rude!!!",
 				"? insults ?! Deserves it.",
 				"? insults ?! Oh my."
+			],
+			"self":[
+				"Don't say that to yourself ?!"
 			]
 		},
 		"kiss":{
@@ -151,6 +162,11 @@
 				"? kissed ?! Cute!",
 				"? kisses ?!! OwO",
 				"? kisses ?'s lips~"
+			],
+			"self":[
+				"H-how do you kiss yourself, ??",
+				"I'll kiss you instead, ? ;c",
+				"... There there ?..."
 			]
 		},
 		"lick":{
@@ -161,6 +177,10 @@
 				"? gives ? a lick!",
 				"? licks ?!! Yummy!!",
 				"? licks ?!! How does it taste?!"
+			],
+			"self":[
+				"Are you a cat, ??",
+				"Silly ?! You can't lick yourself!"
 			]
 		},
 		"nom":{
@@ -169,6 +189,9 @@
 				"? noms on ?",
 				"? noms ?! Yummy!",
 				"? noms ?!"
+			],
+			"self":[
+				"?! You can't nom yourself silly!"
 			]
 		},
 		"pat":{
@@ -177,6 +200,10 @@
 				"? pets ?! There there!",
 				"? pets ?! Adorable~",
 				"? pets ?! *pat pat*"
+			],
+			"self":[
+				"oh noo ;-; I'll pat you ?...",
+				"There there ?..."
 			]
 		},
 		"poke":{
@@ -186,6 +213,9 @@
 				"? pokes ?! boop!", 
 				"? boops ?! Not to hard now!",
 				"? boops ? ;)"
+			],
+			"self":[
+				"Did you.... poke yourself, ??"
 			]
 		},
 		"slap":{
@@ -194,6 +224,10 @@
 				"? slaps ?!! Deserves it!",
 				"? slaps ?!! oof.",
 				"? slaps ?!! That looks like it hurt..."
+			],
+			"self":[
+				"Did you... slap yourself, ??? :c",
+				"Don't do that to yourself, ?!"
 			]
 		},
 		"stare":{
@@ -202,6 +236,9 @@
 				"? stares at ?...",
 				"? looks directly at ?'s eyes...",
 				"? stares at ?... What did you do??"
+			],
+			"self":[
+				"Are you... looking at a mirror, ??"
 			]
 		},
 		"highfive":{
@@ -210,6 +247,10 @@
 				"? gives ? a highfive!",
 				"? highfives ?!",
 				"? highfives ?! Nice!"
+			],
+			"self":[
+				";-; ?, there there...",
+				"Isn't that just clapping, ??"
 			]
 		},
 		"bite":{
@@ -218,6 +259,9 @@
 				"? bites ?! Owie",
 				"? bites ?!! Kinky ;)",
 				"? gives ? a bite! Yumm~"
+			],
+			"self":[
+				"?! Don't bite yourself!"
 			]
 		},
 		"greet":{
@@ -226,6 +270,9 @@
 				"? says hello to ?",
 				"? waves at ?",
 				"? says hi to ?!"
+			],
+			"self":[
+				"Poor ?... Do you need friends...?"
 			]
 		},
 		"punch":{
@@ -234,6 +281,10 @@
 				"? punches ?!! Oof",
 				"? gives ? a punch! Ouch!",
 				"? gives ? a wack! Ha!"
+			],
+			"self":[
+				"Whats wrong ??",
+				"Are you okay ??"
 			]
 		},
 		"handholding":{
@@ -242,6 +293,9 @@
 				"? holds ?'s hands~ adorable!",
 				"? holds ?'s hands~ LEWD.",
 				"? grabs ?'s hands~ awww"
+			],
+			"self":[
+				"You can't hold your own hand, ?..."
 			]
 		},
 		"tickle":{
@@ -250,6 +304,9 @@
 				"? tickles ?! Ha!",
 				"? tickles ?! OwO!",
 				"? tickles ?! Hehe~!"
+			],
+			"self":[
+				"You can't tickle yourself, ?..."
 			]
 		},
 		"hold":{"alt":"handholding"},
