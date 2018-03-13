@@ -21,7 +21,8 @@ exports.display = function(con,msg){
 			msg.channel.send("**"+msg.author.username+"! You need to wait "+(60-result[0].time)+" more seconds!**")
 				.then(message => message.delete(3000));
 		}else{
-			var sql = "SELECT * FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+";"+
+			var sql = "SELECT * FROM animal WHERE id = "+msg.author.id+";"+
+				"SELECT common,uncommon,rare,epic,mythical,legendary,SUM(CASE WHEN count>99 THEN 1 ELSE 0 END) AS over FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;"+
 				"UPDATE IGNORE cowoncy SET zoo = NOW() WHERE id = "+msg.author.id+";";
 			con.query(sql,function(err,result){
 				if(err) throw err;
@@ -29,16 +30,22 @@ exports.display = function(con,msg){
 				text += display;
 				var additional = "";
 				var row = result[0];
-				var count = row[0];
+				var count = result[1][0];
+				var over = false;
+				if(count!=undefined)
+					over = count.over>0;
 				for (i in row){
-					text = text.replace("~"+row[i].name,row[i].name+toSmallNum(row[i].count));
+					text = text.replace("~"+row[i].name,row[i].name+toSmallNum(row[i].count,over));
 					if(animals.legendary.indexOf(row[i].name)>0){
 						if(additional=="")
 							additional = secret;
-						additional += row[i].name+toSmallNum(row[i].count)+"  ";
+						additional += row[i].name+toSmallNum(row[i].count,over)+"  ";
 					}
 				}
-				text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question);
+				if(over)
+					text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question+animals.numbers[0]);
+				else
+					text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question);
 				text += additional;
 				if(count!=undefined){
 					var total = count.common*1+count.uncommon*5+count.rare*10+count.epic*50+count.mythical*500+count.legendary*1000;
@@ -134,17 +141,33 @@ function randAnimal(){
 	return result;
 }
 	
-function toSmallNum(num){
+function toSmallNum(num,over){
 	var result = "";
-	if(num>=99){
-		result += animals.numbers[9];
-		result += result;
+	if(over){
+		if(num>=999){
+			result += animals.numbers[9];
+			result += result + result;
+		}else{
+			var digit1 = num%10;
+			num /= 10;
+			var digit2 = Math.trunc(num%10);
+			var digit3 = Math.trunc(num/10);
+			result += animals.numbers[digit3];
+			result += animals.numbers[digit2];
+			result += animals.numbers[digit1];
+		}
 	}else{
-		var digit1 = num%10;
-		var digit2 = Math.trunc(num/10);
-		result += animals.numbers[digit2];
-		result += animals.numbers[digit1];
+		if(num>=99){
+			result += animals.numbers[9];
+			result += result;
+		}else{
+			var digit1 = num%10;
+			var digit2 = Math.trunc(num/10);
+			result += animals.numbers[digit2];
+			result += animals.numbers[digit1];
+		}
 	}
+	
 	return result;
 }
 
