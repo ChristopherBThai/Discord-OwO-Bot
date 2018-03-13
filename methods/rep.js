@@ -18,7 +18,7 @@ exports.give = function(con,client,msg,args){
 			.then(message => message.delete(3000));
 		return;
 	}else if(msg.author.id==user.id){
-		msg.channel.send("You can't give yourself rep, silly!")
+		msg.channel.send("You can't give yourself a cookie, silly!")
 			.then(message => message.delete(3000));
 		return;
 	}
@@ -39,7 +39,7 @@ exports.give = function(con,client,msg,args){
 			sql += "INSERT INTO rep (id,count,lasttime) VALUES ("+msg.author.id+",0,NOW()) ON DUPLICATE KEY UPDATE lasttime = NOW();";
 			con.query(sql,function(err,rows,fields){
 				if(err) throw err;
-				msg.channel.send("**"+user.username+"**! You got a rep point from **"+msg.author.username+"**!");
+				msg.channel.send("**"+user.username+"**! You got a cookie from **"+msg.author.username+"**!\n*nom nom nom c:<* <a:cookieeat:423020737364885525>");
 			});
 		}
 	});
@@ -52,6 +52,6 @@ exports.display = function(con,msg){
 		var count = 0;
 		if(rows[0]!=undefined)
 			count = rows[0].count;
-		msg.channel.send("**"+msg.author.username+"**! You currently have **"+count+"** rep points!");
+		msg.channel.send("**"+msg.author.username+"**! You currently have **"+count+"** cookies!\nYummy! c:< <a:cookieeat:423020737364885525>");
 	});
 }

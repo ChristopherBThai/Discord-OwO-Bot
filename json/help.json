@@ -1,7 +1,7 @@
 {
 	"rank":{
 		"name":"top",
-		"args":"points|guild|zoo|money|rep [global] {count}",
+		"args":"points|guild|zoo|money|cookie [global] {count}",
 		"desc_short":"Displays the top rankings!",
 		"desc_long":"Displays the top ranking depending on your arguments\nYou can choose between your rank within the server or globally!\nYou can also shorten arguments like the examples below.",
 		"related":["owo my"],
@@ -10,7 +10,7 @@
 	},
 	"my":{
 		"name":"my",
-		"args":"points|guild|zoo|money|rep [global]",
+		"args":"points|guild|zoo|money|cookie [global]",
 		"desc_short":"Displays your ranking!",
 		"desc_long":"Displays the your ranking depending on your arguments\nYou can choose between your rank within the server or globally!\nYou can also shorten arguments like the examples below.",
 		"related":["owo top"],
@@ -201,10 +201,10 @@
 	"rep":{
 		"name":"rep",
 		"args":"{@user}",
-		"desc_short":"Give a rep point to a user!",
-		"desc_long":"Gives a reputation point to a user! You can only send one per day!\nYou can also give rep to bots!",
+		"desc_short":"Give a cookie to a user!",
+		"desc_long":"Gives a cookie to a user! You can only send one per day!\nYou can also give cookies to bots!",
 		"related":[],
-		"example":["owo rep","owo rep @Scuttler"],
-		"alt":[]
+		"example":["owo cookie","owo cookie@Scuttler"],
+		"alt":["cookie"]
 	}
 }
