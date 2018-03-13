@@ -45,7 +45,7 @@ exports.display = function(con, client, msg, args){
 						zoo = true;
 					else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="c"||args[i]==="m")
 						money = true;
-					else if(args[i]=== "rep"||args[i]==="r")
+					else if(args[i]==="cookies"||args[i]==="cookie"||args[i]=== "rep"||args[i]==="r")
 						rep = true;
 					else if(args[i]==="global"||args[i]==="g") 
 						aglobal = true;
@@ -753,7 +753,7 @@ function getGlobalRepRanking(con, client, msg, id){
 		var below = rows[1];
 		var me = rows[2][0];
 		if(me===null||me===undefined){
-			channel.send("You don't have any rep yet!");
+			channel.send("You don't have any cookies yet!");
 			return;
 		}
 		var userRank = parseInt(me.rank);
@@ -771,7 +771,7 @@ function getGlobalRepRanking(con, client, msg, id){
 				else
 					name = ""+user.username;
 				name = name.replace("discord.gg","discord,gg");
-				embed += "#"+rank+"\t"+name+"\n\t\tRep: "+ele.count+"\n";
+				embed += "#"+rank+"\t"+name+"\n\t\tCookies: "+ele.count+"\n";
 				rank++;
 			}else if(rank==0)
 				rank = 1;
@@ -782,7 +782,7 @@ function getGlobalRepRanking(con, client, msg, id){
 		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
 		var name = client.users.get(me.id).username;
 		name = name.replace("discord.gg","discord,gg");
-		embed += "< "+rank+"   "+name+" >\n\t\tRep: "+me.count+"\n";
+		embed += "< "+rank+"   "+name+" >\n\t\tCookies: "+me.count+"\n";
 		rank++;
 
 		//People below user
@@ -796,7 +796,7 @@ function getGlobalRepRanking(con, client, msg, id){
 				else
 					name = ""+user.username;
 				name = name.replace("discord.gg","discord,gg");
-				embed += "#"+rank+"\t"+name+"\n\t\tRep: "+ele.count+"\n";
+				embed += "#"+rank+"\t"+name+"\n\t\tCookies: "+ele.count+"\n";
 				rank++;
 
 			}
@@ -805,9 +805,9 @@ function getGlobalRepRanking(con, client, msg, id){
 
 		//Add top and bottom
 		if(userRank>3)
-			embed = "```md\n< "+name+"'s Global Rep Ranking >\nYour rank is: "+userRank+"\n\n>...\n" + embed;
+			embed = "```md\n< "+name+"'s Global Cookie Ranking >\nYour rank is: "+userRank+"\n\n>...\n" + embed;
 		else
-			embed = "```md\n< "+name+"'s Global Rep Ranking >\nYour rank is: "+userRank+"\n\n" + embed;
+			embed = "```md\n< "+name+"'s Global Cookie Ranking >\nYour rank is: "+userRank+"\n\n" + embed;
 
 		if(rank-userRank==3)
 			embed += ">...\n";
@@ -841,7 +841,7 @@ function getRepRanking(con, client, msg, id){
 		var below = rows[1];
 		var me = rows[2][0];
 		if(me===null||me===undefined){
-			channel.send("You don't have any rep yet!");
+			channel.send("You don't have any cookies yet!");
 			return;
 		}
 		var userRank = parseInt(me.rank);
@@ -859,7 +859,7 @@ function getRepRanking(con, client, msg, id){
 				else
 					name = ""+user.username;
 				name = name.replace("discord.gg","discord,gg");
-				embed += "#"+rank+"\t"+name+"\n\t\tRep: "+ele.count+"\n";
+				embed += "#"+rank+"\t"+name+"\n\t\tCookies: "+ele.count+"\n";
 				rank++;
 			}else if(rank==0)
 				rank = 1;
@@ -870,7 +870,7 @@ function getRepRanking(con, client, msg, id){
 		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
 		var name = client.users.get(me.id).username;
 		name = name.replace("discord.gg","discord,gg");
-		embed += "< "+rank+"   "+name+" >\n\t\tRep: "+me.count+"\n";
+		embed += "< "+rank+"   "+name+" >\n\t\tCookies: "+me.count+"\n";
 		rank++;
 
 		//People below user
@@ -884,7 +884,7 @@ function getRepRanking(con, client, msg, id){
 				else
 					name = ""+user.username;
 				name = name.replace("discord.gg","discord,gg");
-				embed += "#"+rank+"\t"+name+"\n\t\tRep: "+ele.count+"\n";
+				embed += "#"+rank+"\t"+name+"\n\t\tCookies: "+ele.count+"\n";
 				rank++;
 
 			}
@@ -893,9 +893,9 @@ function getRepRanking(con, client, msg, id){
 
 		//Add top and bottom
 		if(userRank>3)
-			embed = "```md\n< "+name+"'s Rep Ranking for "+client.guilds.get(msg.guild.id)+" >\nYour rank is: "+userRank+"\n\n>...\n" + embed;
+			embed = "```md\n< "+name+"'s Cookie Ranking for "+client.guilds.get(msg.guild.id)+" >\nYour rank is: "+userRank+"\n\n>...\n" + embed;
 		else
-			embed = "```md\n< "+name+"'s Rep Ranking for "+client.guilds.get(msg.guild.id)+" >\nYour rank is: "+userRank+"\n\n" + embed;
+			embed = "```md\n< "+name+"'s Cookie Ranking for "+client.guilds.get(msg.guild.id)+" >\nYour rank is: "+userRank+"\n\n" + embed;
 
 		if(rank-userRank==3)
 			embed += ">...\n";

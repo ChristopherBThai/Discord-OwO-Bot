@@ -103,7 +103,7 @@ exports.display = function(con, client, msg, args){
 						zoo = true;
 					else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="m"||args[i]==="c")
 						money = true;
-					else if(args[i]==="rep"||args[i]==="r") 
+					else if(args[i]==="cookies"||args[i]==="cookie"||args[i]==="rep"||args[i]==="r") 
 						rep = true;
 					else if(args[i]==="global"||args[i]==="g") 
 						globala = true;
@@ -501,10 +501,10 @@ function getRepRanking(con, client, msg, count){
 		if(err) throw err;
 		var rank = 1;
 		var ranking = [];
-		var embed = "```md\n< Top "+count+" Rep Rankings for "+client.guilds.get(msg.guild.id)+" >\n";
+		var embed = "```md\n< Top "+count+" Cookie Rankings for "+client.guilds.get(msg.guild.id)+" >\n";
 		if(rows[1][0]!==undefined&&rows[1][0]!==null){
 			embed += "> Your Rank: "+rows[1][0].rank+"\n";
-			embed += ">\t\tRep: "+rows[1][0].count+"\n\n";
+			embed += ">\t\tCookies: "+rows[1][0].count+"\n\n";
 		}
 		rows[0].forEach(function(ele){
 			var id = String(ele.id);
@@ -515,14 +515,14 @@ function getRepRanking(con, client, msg, count){
 			else
 				name = ""+user.username;
 			name = name.replace("discord.gg","discord,gg");
-			embed += "#"+rank+"\t"+name+"\n\t\tRep: "+ele.count+"\n";
+			embed += "#"+rank+"\t"+name+"\n\t\tCookies: "+ele.count+"\n";
 			rank++;
 		});
 		var date = new Date();
 		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
 		channel.send(embed);
 	});
-	console.log("	Displaying top "+count+" rep");
+	console.log("	Displaying top "+count+" cookies");
 }
 
 
@@ -544,10 +544,10 @@ function getGlobalRepRanking(con, client, msg, count){
 		if(err) throw err;
 		var rank = 1;
 		var ranking = [];
-		var embed = "```md\n< Top "+count+" Global Rep Rankings >\n";
+		var embed = "```md\n< Top "+count+" Global Cookie Rankings >\n";
 		if(rows[1][0]!==undefined&&rows[1][0]!==null){
 			embed += "> Your Rank: "+rows[1][0].rank+"\n";
-			embed += ">\t\tRep: "+rows[1][0].count+"\n\n";
+			embed += ">\t\tCookies: "+rows[1][0].count+"\n\n";
 		}
 		rows[0].forEach(function(ele){
 			var id = String(ele.id);
@@ -558,12 +558,12 @@ function getGlobalRepRanking(con, client, msg, count){
 			else
 				name = ""+user.username;
 			name = name.replace("discord.gg","discord,gg");
-			embed += "#"+rank+"\t"+name+"\n\t\tRep: "+ele.count+"\n";
+			embed += "#"+rank+"\t"+name+"\n\t\tCookies: "+ele.count+"\n";
 			rank++;
 		});
 		var date = new Date();
 		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
 		channel.send(embed);
 	});
-	console.log("	Displaying top "+count+" global rep");
+	console.log("	Displaying top "+count+" global cookie");
 }
