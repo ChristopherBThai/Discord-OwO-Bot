@@ -184,7 +184,7 @@
 			]
 		},
 		"nom":{
-			"name":"nom",
+			"name":"bite",
 			"msg":[
 				"? noms on ?",
 				"? noms ?! Yummy!",
@@ -309,9 +309,22 @@
 				"You can't tickle yourself, ?..."
 			]
 		},
+		"kill":{
+			"name":"wasted",
+			"msg":[
+				"? killed ?! Brutal!",
+				"? killed ?! Oh my...",
+				"? killed ?! oof!"
+			],
+			"self":[
+				"Lets... not do that, ?...",
+				"No... ?... nu.... ;-;"
+			]
+		},
 		"hold":{"alt":"handholding"},
 		"pet":{"alt":"pat"},
 		"wave":{"alt":"greet"},
-		"boop":{"alt":"poke"}
+		"boop":{"alt":"poke"},
+		"grin":{"alt":"smile"}
 	}
 }

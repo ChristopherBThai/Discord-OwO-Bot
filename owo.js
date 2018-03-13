@@ -137,7 +137,7 @@ function execute(command,msg,args,isMention){
 	}
 
 	//Give rep 
-	else if(command === 'rep'||command === 'cookie'){
+	else if(command === 'rep'||command === 'cookie'||command === 'feed'){
 		if(args.length==0)
 			rep.display(con,msg);
 		else
