@@ -121,7 +121,7 @@
 		"args":"{@user}",
 		"desc_short":"Pet someone~",
 		"desc_long":"Pet/hug/punch/etc someone!\nRelated emotes are down below!",
-		"related":["owo pet|cuddle|hug|insult|kiss|lick|nom|pat|poke|slap|stare|highfive|bite|greet|punch|handholding|tickle"],
+		"related":["owo pet|cuddle|hug|insult|kiss|lick|nom|pat|poke|slap|stare|highfive|bite|greet|punch|handholding|tickle|kill"],
 		"example":["owo hug @Scuttler","owo highfive @OwO"],
 		"alt":["cuddle" , "hug" , "insult" , "kiss" , "lick" , "nom" , "pat" , "poke" , "boop" , "slap" , "stare" , "highfive" , "bite" , "greet" , "punch" , "handholding" , "tickle", "kill"]
 	},
