@@ -3,7 +3,9 @@
  */
 
 var help = require('../json/help.json');
+var animaljson = require('../../tokens/owo-animals.json');
 var commands = {};
+var animals = {};
 var client,con;
 
 /**
@@ -50,11 +52,22 @@ exports.getUser = function(mention){
  */
 exports.init = function(tclient){
 	client = tclient;
+
 	for(var key in help){
 		var alt = help[key].alt;
 		commands[help[key].name] = key;
 		for(i in alt){
 			commands[alt[i]] = key;
+		}
+	}
+
+	var animallist = animaljson["list"];
+	for(var key in animallist){
+		var alt = animallist[key].alt;
+		animals[animallist[key].value] = key;
+		animals[key] = key;
+		for(i in alt){
+			animals[alt[i]] = key;
 		}
 	}
 }
@@ -71,6 +84,16 @@ exports.con = function(tcon){
  */
 exports.validCommand = function(command){
 	return help[commands[command]]
+}
+
+/**
+ * Checks if its a valid animal
+ */
+exports.validAnimal = function(animal){
+	var ranimal = animaljson.list[animals[animal]];
+	if(ranimal == undefined)
+		return ranimal;
+	return ranimal.value;
 }
 
 /**

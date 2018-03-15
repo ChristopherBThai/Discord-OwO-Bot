@@ -1,4 +1,4 @@
-const debug = false;
+const debug = true;
 if(debug)
 	var auth = require('../tokens/scuttester-auth.json');
 else 
@@ -22,6 +22,7 @@ const weeb = require("./methods/weebjs.js");
 const zoo = require("./methods/zoo.js");
 const rep = require("./methods/rep.js");
 const slots = require("./methods/slots.js");
+const battle = require("./methods/battle.js");
 const lottery = require("./methods/lottery.js");
 const other = require("./methods/other.js");
 const feedback = require("./methods/feedback.js");
@@ -142,6 +143,16 @@ function execute(command,msg,args,isMention){
 			rep.display(con,msg);
 		else
 			rep.give(con,client,msg,args);
+	}
+
+	//Battle!
+	else if(command === 'fight'||command === 'battle'){
+		if(args[0]=="set")
+			battle.set(mysql,con,msg,args);
+		if(args[0]=="display")
+			battle.pet(con,msg);
+		else if(args.legnth==0)
+			battle.battle(msg,args);
 	}
 
 	//Give cowoncy
