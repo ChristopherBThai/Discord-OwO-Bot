@@ -13,7 +13,7 @@ const sh = new weeb("Wolke "+auth.weebsh,"owo/1.0");
  * Gets an image from weeb.sh
  */
 function grab(msg,ptype,ftype,text,notsfw,retry){
-	ftype = ftyle.toLowerCase();
+	ftype = ftype.toLowerCase();
 	var nsfwt = false;
 	var retryt = true
 	if(typeof notsfw == "boolean"&&notsfw)

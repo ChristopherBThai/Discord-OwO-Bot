@@ -148,7 +148,7 @@ exports.showStats = function(client, con, msg){
 
 		const embed = {
 		"description": "Here's a little bit of information! If you need help with commands, type `owo help`.",
-			"color": 1,
+			"color": 4886754,
 			"timestamp": new Date(),
 			"author": {"name": "OwO Bot Information",
 				"url": "https://discordapp.com/api/oauth2/authorize?client_id=408785106942164992&permissions=444480&scope=bot",

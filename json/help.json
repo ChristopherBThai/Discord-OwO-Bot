@@ -206,5 +206,14 @@
 		"related":[],
 		"example":["owo feed","owo feed @Scuttler"],
 		"alt":["cookie","feed"]
+	},
+	"battle":{
+		"name":"battle",
+		"args":"",
+		"desc_short":"",
+		"desc_long":"",
+		"related":[],
+		"example":[],
+		"alt":["fight"]
 	}
 }
