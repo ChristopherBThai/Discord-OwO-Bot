@@ -121,7 +121,7 @@
 		"args":"{@user}",
 		"desc_short":"Pet someone~",
 		"desc_long":"Pet/hug/punch/etc someone!\nRelated emotes are down below!",
-		"related":["owo pet|cuddle|hug|insult|kiss|lick|nom|pat|poke|slap|stare|highfive|bite|greet|punch|handholding|tickle|kill"],
+		"related":["owo pet|cuddle|hug|insult|kiss|lick|nom|pat|poke|slap|stare|highfive|bite|greet|punch|handholding|tickle|kill {@user}"],
 		"example":["owo hug @Scuttler","owo highfive @OwO"],
 		"alt":["cuddle" , "hug" , "insult" , "kiss" , "lick" , "nom" , "pat" , "poke" , "boop" , "slap" , "stare" , "highfive" , "bite" , "greet" , "punch" , "handholding" , "tickle", "kill"]
 	},
@@ -130,7 +130,7 @@
 		"args":"",
 		"desc_short":"Some emotes~",
 		"desc_long":"Shrug, cry, pout, etc! \nRelated commands below!",
-		"related":["owo shrug|blush|cry|dance|lewd|pout|shrug|sleepy|smile|thumbsup|wag|thinking|triggered {@user}"],
+		"related":["owo shrug|blush|cry|dance|lewd|pout|shrug|sleepy|smile|thumbsup|wag|thinking|triggered"],
 		"example":["owo cry","owo pout"],
 		"alt":["blush" , "cry" , "dance" , "lewd" , "pout" , "shrug" , "sleepy" , "smile" , "smug" , "thumbsup" , "wag" , "thinking" , "triggered"]
 	},
@@ -209,11 +209,11 @@
 	},
 	"battle":{
 		"name":"battle",
-		"args":"",
-		"desc_short":"",
-		"desc_long":"",
-		"related":[],
-		"example":[],
+		"args":"[set|rename|pets] {animal|name}",
+		"desc_short":"Battle you pets!",
+		"desc_long":"Use your animal to fight against other players! As you fight, the will level to become stronger!\nThey will also level up if someone fights against your pet!\nFeel free to add as many pets and check their status with 'owo battle pets'!\nYou can also rename your animals!",
+		"related":["owo zoo","owo hunt"],
+		"example":["owo battle","owo battle pets","owo battle set cow","owo battle rename cowboi","owo battle set penguin pengu"],
 		"alt":["fight"]
 	}
 }

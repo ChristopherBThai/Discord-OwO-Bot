@@ -30,6 +30,7 @@ exports.showHelp = function(channel){
 			"\n< owo 8b {question} >\t\t\t"+help.b8.desc_short+
 			"\n< owo define {word} >\t\t\t"+help.define.desc_short+
 			"\n< owo gif|pic {type} >\t\t   "+help.gif.desc_short+
+			"\n< owo battle [set|rename|pets] > "+help.battle.desc_short+
 			"\n# Social"+
 			"\n< owo cookie {@user} >\t\t\t  "+help.rep.desc_short+
 			"\n< owo pet|slap|hug|etc {@user} > "+help.pet.desc_short+
@@ -47,7 +48,7 @@ exports.showCompactHelp = function(channel){
 	var text = "**Compact Command List**"+
 		"\n\n**Main:** `top`  `my`"+
 		"\n**Economy:** `money`  `give`  `daily`  `vote`"+
-		"\n**Fun:** `zoo`  `hunt`  `slots`  `lottery`  `8b`  `define`  `gif`  `pic`"+
+		"\n**Fun:** `zoo`  `hunt`  `slots`  `lottery`  `8b`  `define`  `gif`  `pic`  `battle`"+
 		"\n**Social:** `cookie`  `pet`  `hug`  `kiss`"+
 		"\n**Utility:** `feedback`  `stats`  `link`  `guildlink`  `disable`  `enable`  `help`"+
 		"\n\nUse `owo help {command}` for further details!"+
