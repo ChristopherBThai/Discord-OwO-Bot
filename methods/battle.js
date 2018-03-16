@@ -63,6 +63,7 @@ function startBattle(client,con,msg,args){
 			"attack":upet.att,
 			"mhp":upet.hp,
 			"hp":upet.hp,
+			"mxp":maxxp(upet.lvl),
 			"xp":upet.xp};
 		var user2 = {
 			"username":opponent,
@@ -86,11 +87,11 @@ function startBattle(client,con,msg,args){
 			"color":4886754,
 			"fields": [{
 					"name": user1.username,
-					"value": "** "+user1.animal+" "+user1.name+"** Lvl "+user1.lvl+" ("+user1.hp+"/"+user1.mhp+")\n`████████████████████`",
+					"value": "** "+user1.animal+" "+user1.name+"** Lvl "+user1.lvl+" *("+user1.xp+"/"+user1.mxp+")*\n**HP**: "+user1.hp+"/"+user1.mhp+"\t **ATT**: "+user1.attack+"\n`████████████████████`",
 					"inline": true
 				},{
 					"name": user2.username,
-					"value": "** "+user2.animal+" "+user2.name+"** Lvl "+user2.lvl+" ("+user2.hp+"/"+user2.mhp+")\n`████████████████████`",
+					"value": "** "+user2.animal+" "+user2.name+"** Lvl "+user2.lvl+" \n**HP**: "+user2.hp+"/"+user2.mhp+"\t **ATT**: "+user2.attack+"\n`████████████████████`",
 					"inline": true
 				},{
 					"name": "Battle (0/3)!",
@@ -166,7 +167,9 @@ function display(con,id,eid,msg,user1,user2,log,count){
 		lvlup = givexp(con,xp+user1.xp,user1.lvl,id,user1.animal,winner,exp,user2.xp,user2.lvl,eid,user2.animal);
 		if(lvlup[0]!=undefined){
 			end += "\n= "+user1.name+" leveled up and gained "+lvlup[2]+" att and "+lvlup[3]+" hp!";
+			user1.xp = lvlup[1];
 		}
+		user1.xp += xp;
 	}
 
 
@@ -175,8 +178,8 @@ function display(con,id,eid,msg,user1,user2,log,count){
 	var percent2 = Math.ceil((user2.hp/user2.mhp)*20);
 	
 	//Sets up HP bar
-	var value1 = "** "+user1.animal+" "+user1.name+"** Lvl "+user1.lvl+" ("+user1.hp+"/"+user1.mhp+")\n`";
-	var value2 = "** "+user2.animal+" "+user2.name+"** Lvl "+user2.lvl+" ("+user2.hp+"/"+user2.mhp+")\n`";
+	var value1 = "** "+user1.animal+" "+user1.name+"** Lvl "+user1.lvl+" *("+user1.xp+"/"+user1.mxp+")*\n**HP**: "+user1.hp+"/"+user1.mhp+"\t **ATT**: "+user1.attack+"\n`";
+	var value2 = "** "+user2.animal+" "+user2.name+"** Lvl "+user2.lvl+" \n**HP**: "+user2.hp+"/"+user2.mhp+"\t **ATT**: "+user2.attack+"\n`";
 	for(i=0;i<20;i++){
 		if(i<percent1)
 			value1 += "█";
@@ -212,9 +215,9 @@ function display(con,id,eid,msg,user1,user2,log,count){
 	};
 
 	if(win||lose||draw)
-		msg.edit({embed});
+		msg.edit("**"+user1.username+"** spent <:cowoncy:416043450337853441> 5 to fight!",{embed})
 	else
-		msg.edit({embed})
+		msg.edit("**"+user1.username+"** spent <:cowoncy:416043450337853441> 5 to fight!",{embed})
 			.then(message => setTimeout(function(){
 			display(con,id,eid,message,user1,user2,log,count+1);
 		},1000));
@@ -229,7 +232,7 @@ exports.set = function(mysql, con,msg,args){
 	}
 	var animal = global.validAnimal(args[1]);
 	if(animal==undefined){
-		msg.channel.send("No such animal exists!")
+		msg.channel.send("You can only use animals from your zoo!")
 			.then(message => message.delete(3000));
 		return;
 	}
@@ -284,7 +287,7 @@ exports.rename = function(mysql,con,msg,args){
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		if(rows[0].affectedRows==0){
-			msg.channel.send("**"+msg.author.username+"**, you do not have this pet!")
+			msg.channel.send("**"+msg.author.username+"**, you do not have a pet!")
 				.then(message => message.delete(3000));
 		}else{
 			if(rows[1][0]!=undefined&&rows[1][0].nickname!=null)
@@ -314,7 +317,7 @@ exports.pet = function(con,msg){
 			var embed = {
 				"color": 4886754,
 				"author": {
-					"name": "Scuttler's Pet(s)",
+					"name": msg.author.username+"'s Pet(s)",
 					"icon_url": msg.author.avatarURL
 				},
 				"fields": [{
@@ -373,7 +376,7 @@ function givexp(con,xp,lvl,id,animal,won, expgain,exp,elvl,eid,eanimal){
 	var sql = "UPDATE animal NATURAL JOIN cowoncy SET lvl = lvl + "+lvlup+",xp = "+xp+",att = att + "+att+",hp = hp + "+hp+",won = won + "+win+",lost = lost + "+lose+",draw = draw + "+draw+"  WHERE id = "+id+" AND name = pet;";
 
 	//Opponent's xp
-	if(expgain!=0){
+	if(expgain!=0&&eid!=undefined){
 		exp += expgain;
 		var eneededxp = maxxp(elvl);
 		var elvlup = 0;
