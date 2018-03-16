@@ -91,7 +91,7 @@ exports.give = function(client,con,msg,args){
 	var sql = "SELECT money FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
-		if(rows[0].money<amount){
+		if(rows[0]==undefined||rows[0].money<amount){
 			msg.channel.send("Silly "+msg.author.username+", you don't have enough cowoncy!")
 				.then(message => message.delete(3000));
 		}else{

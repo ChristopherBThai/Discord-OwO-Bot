@@ -25,7 +25,6 @@ exports.send = function(mysql, con, msg, admin, type, message){
 	var sql = "INSERT INTO feedback (type,message,sender) values ('"+
 		type+"',?,"+
 		sender.id+");";
-	message = message.replace(/([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2694-\u2697]|\uD83E[\uDD10-\uDD5D])/g, ':emoji:')
 	if(message.length > 250){
 		console.log("\tMessage too big");
 		channel.send("Sorry! Messages must be under 250 character!!!");

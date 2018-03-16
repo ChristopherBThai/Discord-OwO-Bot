@@ -1,4 +1,4 @@
-const debug = true;
+const debug = false;
 if(debug)
 	var auth = require('../tokens/scuttester-auth.json');
 else 
@@ -147,12 +147,14 @@ function execute(command,msg,args,isMention){
 
 	//Battle!
 	else if(command === 'fight'||command === 'battle'){
-		if(args[0]=="set")
+		if(args[0]=="set"||args[0]=="s")
 			battle.set(mysql,con,msg,args);
-		if(args[0]=="display")
+		else if(args[0]=="rename"||args[0]=="r"||args[0]=="name")
+			battle.rename(mysql,con,msg,args);
+		else if(args[0]=="pets"||args[0]=="p"||args[0]=="pet"||args[0]=="zoo"||args[0]=="z")
 			battle.pet(con,msg);
-		else if(args.legnth==0)
-			battle.battle(msg,args);
+		else if(args.length<1)
+			battle.battle(client,con,msg,args);
 	}
 
 	//Give cowoncy
