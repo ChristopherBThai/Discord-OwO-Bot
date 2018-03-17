@@ -92,7 +92,8 @@ exports.validCommand = function(command){
  * Checks if its a valid animal
  */
 exports.validAnimal = function(animal){
-	animal = animal.toLowerCase();
+	if(animal!=undefined)
+		animal = animal.toLowerCase();
 	var ranimal = animaljson.list[animals[animal]];
 	if(ranimal == undefined)
 		return ranimal;
