@@ -24,7 +24,7 @@
 		"desc_long":"You can check your cowoncy balance. You earn more cowoncy by saying owo, dailies, and voting!",
 		"related":["owo give","owo daily","owo vote","owo my money"],
 		"example":[],
-		"alt":["cash","credit","cowoncy","balance"]
+		"alt":["cash","credit","cowoncy","balance","currency"]
 	},
 	"give":{
 		"name":"give",

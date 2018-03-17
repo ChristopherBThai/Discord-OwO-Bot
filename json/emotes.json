@@ -323,6 +323,8 @@
 		},
 		"hold":{"alt":"handholding"},
 		"pet":{"alt":"pat"},
+		"pets":{"alt":"pat"},
+		"pats":{"alt":"pat"},
 		"wave":{"alt":"greet"},
 		"boop":{"alt":"poke"},
 		"grin":{"alt":"smile"}

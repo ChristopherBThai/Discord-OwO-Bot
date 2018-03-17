@@ -26,7 +26,7 @@ exports.addPoint = function(con,msg){
 				sql = "SET @add = 0;SET @diff = TIMESTAMPDIFF(SECOND,(SELECT lasttime FROM user WHERE id = "+id+"),NOW());"+
 				"UPDATE user SET spamcount = IF(ABS(previnterval-@diff)<=1,spamcount+1,0),previnterval = IF(@diff>10000 AND @diff>9,0,@diff),spamintervalcount = IF(TIMESTAMPDIFF(MINUTE,spaminterval,NOW())>=30,0,spamintervalcount+1), spaminterval = IF(TIMESTAMPDIFF(MINUTE,spaminterval,NOW())>=30,NOW(),spaminterval),spamintervallongcount = IF(TIMESTAMPDIFF(DAY,spamintervallong,NOW())>=1,0,spamintervallongcount+1), spamintervallong = IF(TIMESTAMPDIFF(DAY,spamintervallong,NOW())>=1,NOW(),spamintervallong) WHERE id = "+id+";"+
 				"INSERT INTO user (id,count,lasttime) VALUES ("+id+",1,NOW()) ON DUPLICATE KEY UPDATE count = count + IF(@diff>10 AND spamcount < 11 AND spamintervalcount < 100 AND spamintervallongcount < 1200,@add:=1,@add:=0),lasttime = IF(@diff>10 AND spamcount < 11,NOW(),lasttime);"+
-				"INSERT INTO guild (id,count) VALUES ("+guild.id+",1) ON DUPLICATE KEY UPDATE count = count + @add;SELECT spamcount,spamintervalcount,spamintervallongcount FROM user WHERE id = "+id+";"+
+				"INSERT INTO guild (id,count) VALUES ("+guild.id+",1) ON DUPLICATE KEY UPDATE count = count + @add;SELECT spamcount,spamintervalcount,spamintervallongcount,previnterval FROM user WHERE id = "+id+";"+
 				"INSERT INTO cowoncy (id,money) VALUES ("+id+",1) ON DUPLICATE KEY UPDATE money = money + @add;";
 				con.query(sql,function(err,result){
 					if(err){ throw err; return;}
@@ -42,7 +42,7 @@ exports.addPoint = function(con,msg){
 						var penalty = 1;
 						if(spam3>1200)
 							penalty = 5;
-						sql = "INSERT INTO timeout (id,time,count,penalty) VALUES ("+id+",NOW(),1,0) ON DUPLICATE KEY UPDATE time = NOW(),count=count+1,penalty = penalty + "+penalty+";SELECT penalty FROM timeout WHERE id = "+id+";UPDATE user SET spamintervallongcount = 0,spamintervalcount = 0,spamcount = 0 WHERE id = "+id+";";
+						sql = "INSERT INTO timeout (id,time,count,penalty) VALUES ("+id+",NOW(),1,0) ON DUPLICATE KEY UPDATE time = NOW(),count=count+1,penalty = penalty + "+penalty+";SELECT penalty,count FROM timeout WHERE id = "+id+";UPDATE user SET spamintervallongcount = 0,spamintervalcount = 0,spamcount = 0 WHERE id = "+id+";";
 						con.query(sql,function(err,rows,fields){
 							var time = rows[1][0].penalty;
 							console.log("\x1b[36m%s\x1b[0m","    Putting user in timeout for "+time+"H");
@@ -50,6 +50,14 @@ exports.addPoint = function(con,msg){
 								msg.author.send("***OwO What's This?!?***\nThis is a warning! Please do not spam or use macros for owo!\nIf you feel like this is a mistake, use `owo feedback` in a channel to let me know!");
 							else
 								msg.author.send("***OwO What's This?!?***\nYou have been timed out for "+time+"H due to spam or macros! \nIf you feel like this is a mistake, use `owo feedback` in a channel to get it fixed!");
+							var amsg = "**"+msg.author.username+"** has been banned for **"+time+"H**! This is his "+rows[1][0].count+" time!\n**ID:** "+msg.author.id+"\n**Guild:** "+msg.guild.name+"\n **Reason:** ";
+							if(spam>=10)
+								amsg += "For saying owo "+spam+" times with a constant interval of "+result[5][0].previnterval;
+							else if(spam2>=100)
+								amsg += "For saying owo over 100 times within 30min";
+							else if(spam3>1200)
+								amsg += "For saying owo over 1200 times in a day";
+							global.msgAdmin(amsg);
 						});
 					}
 

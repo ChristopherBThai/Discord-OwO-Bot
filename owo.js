@@ -54,6 +54,10 @@ client.on('message',msg => {
 		else if(adminCommand === 'send'){
 			admin.send(client,con,msg,adminMsg);
 		}
+
+		else if(adminCommand === 'lift'){
+			admin.timeout(con,msg,adminMsg);
+		}
 	}
 
 	//Ignore if its a bot or DM
@@ -133,7 +137,7 @@ function execute(command,msg,args,isMention){
 	}
 
 	//Cowoncy
-	else if (command === 'cowoncy'||command === 'credit'||command === 'money'||command === 'cash'||command === 'balance'){
+	else if (command === 'cowoncy'||command === 'credit'||command === 'money'||command === 'cash'||command === 'balance'||command === 'currency'){
 		cowoncy.display(con,client,msg);
 	}
 
@@ -147,11 +151,12 @@ function execute(command,msg,args,isMention){
 
 	//Battle!
 	else if(command === 'fight'||command === 'battle'){
-		if(args[0]=="set"||args[0]=="s")
+		var subcommand = args[0].toLowerCase();
+		if(subcommand=="set"||subcommand=="s")
 			battle.set(mysql,con,msg,args);
-		else if(args[0]=="rename"||args[0]=="r"||args[0]=="name")
+		else if(subcommand=="rename"||subcommand=="r"||subcommand=="name")
 			battle.rename(mysql,con,msg,args);
-		else if(args[0]=="pets"||args[0]=="p"||args[0]=="pet"||args[0]=="zoo"||args[0]=="z")
+		else if(subcommand=="pets"||subcommand=="p"||subcommand=="pet"||subcommand=="zoo"||subcommand=="z")
 			battle.pet(con,msg);
 		else if(args.length<1)
 			battle.battle(client,con,msg,args);
@@ -311,7 +316,7 @@ client.on('ready',()=>{
 		vote.client(client);
 	}
 	lottery.client(client);
-	global.init();
+	global.init(client);
 });
 
 //When bot joins a new guild

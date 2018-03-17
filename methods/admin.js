@@ -83,3 +83,29 @@ exports.giveall = function(con,msg,args){
 	});
 }
 
+/**
+ * Sets a user's timeout
+ */
+exports.timeout = function(con,msg,args){
+	var user = global.getUser(args[0]);
+	var time;
+
+	if(user==undefined){
+		global.msgAdmin("Could not find that user");
+		return;
+	}
+	
+	if(global.isInt(args[1])){
+		time = parseInt(args[1]);
+	}else{
+		global.msgAdmin("Wrong time format");
+		return;
+	}
+
+	var sql = "UPDATE IGNORE timeout SET penalty = "+time+" WHERE id = "+user.id+";";
+	con.query(sql,function(err,rows,fields){
+		if(err) throw err;
+		user.send("Your penalty has been lifted by an admin! Sorry for the inconvenience!");
+		global.msgAdmin("Penalty has been set to "+time+" for "+user.username);
+	});
+}	

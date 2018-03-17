@@ -3,10 +3,12 @@
  */
 
 var help = require('../json/help.json');
+var auth = require('../../tokens/owo-auth.json');
 var animaljson = require('../../tokens/owo-animals.json');
 var commands = {};
 var animals = {};
 var client,con;
+var admin;
 
 /**
  * Checks if its an integer
@@ -121,4 +123,14 @@ exports.isDisabled = async function(command,execute,executeOther,msg,args,isMent
 			msg.channel.send("That command is disabled on this channel!")
 				.then(message => message.delete(3000));
 	});
+}
+
+/**
+ * Sends a message to an admin
+ */
+exports.msgAdmin = function (message){
+	if(admin==undefined)
+		admin = client.users.get(auth.admin);
+	if(admin!=undefined)
+		admin.send(message);
 }

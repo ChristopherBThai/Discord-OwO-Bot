@@ -54,7 +54,7 @@ exports.send = function(mysql, con, msg, admin, type, message){
 					"value": type,
 					"inline": true
 				},{
-					"name": "From "+sender.username,
+					"name": "From "+sender.username+" ("+sender.id+")",
 					"value": "```"+message+"```\n\n==============================================="
 				}
 			]
