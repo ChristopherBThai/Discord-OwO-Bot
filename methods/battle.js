@@ -245,7 +245,7 @@ exports.set = function(mysql, con,msg,args){
 	}
 	var sql;
 	if(nickname!=undefined){
-		nickname = nickname.replace(/([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2694-\u2697]|\uD83E[\uDD10-\uDD5D])/g, ':emoji:')
+		//nickname = nickname.replace(/([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2694-\u2697]|\uD83E[\uDD10-\uDD5D])/g, ':emoji:')
 		sql = "UPDATE cowoncy NATURAL JOIN animal SET pet = name, ispet = 1, nickname = ? WHERE id = "+msg.author.id+" AND name = '"+animal+"';";
 		sql = mysql.format(sql,nickname);
 	}else{
@@ -270,7 +270,7 @@ exports.set = function(mysql, con,msg,args){
 exports.rename = function(mysql,con,msg,args){
 	args.splice(0,1);
 	var name = args.join(" ");
-	name = name.replace(/([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2694-\u2697]|\uD83E[\uDD10-\uDD5D])/g, ':emoji:')
+	//name = name.replace(/([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2694-\u2697]|\uD83E[\uDD10-\uDD5D])/g, ':emoji:')
 
 	if(name.length>35){
 		msg.channel.send("Nickname is too long!")
