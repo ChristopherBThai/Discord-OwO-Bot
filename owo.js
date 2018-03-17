@@ -305,7 +305,8 @@ var con = mysql.createConnection({
 	database: "owo",
 	supportBigNumbers: true,
 	bigNumberStrings: true,
-	multipleStatements: true
+	multipleStatements: true,
+	charset: "utf8mb4"
 });
 
 //Display log when connected to mysql
