@@ -149,10 +149,18 @@ function execute(command,msg,args,isMention){
 			rep.give(con,client,msg,args);
 	}
 
+	//emotes
+	else if(emotes.sEmote[command]!=undefined&&args.length==0){weeb.sEmote(msg,command);}
+
+	//emotes + user
+	else if(emotes.uEmote[command]!=undefined&&args.length==1){weeb.uEmote(client,msg,args,command);}
+
 	//Battle!
 	else if(command === 'fight'||command === 'battle'){
-		var subcommand = args[0].toLowerCase();
-		if(subcommand=="set"||subcommand=="s")
+		var subcommand = args[0];
+		if(subcommand != undefined)
+			subcommand = subcommand.toLowerCase();
+		if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a")
 			battle.set(mysql,con,msg,args);
 		else if(subcommand=="rename"||subcommand=="r"||subcommand=="name")
 			battle.rename(mysql,con,msg,args);
@@ -160,6 +168,19 @@ function execute(command,msg,args,isMention){
 			battle.pet(con,msg);
 		else if(args.length<1)
 			battle.battle(client,con,msg,args);
+	}
+
+	//Battle pets
+	else if(command === 'pet'||command === 'pets'){
+		var subcommand = args[0];
+		if(subcommand != undefined)
+			subcommand = subcommand.toLowerCase();
+		if(args.length==0)
+			battle.pet(con,msg);
+		if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a")
+			battle.set(mysql,con,msg,args);
+		else if(subcommand=="rename"||subcommand=="r"||subcommand=="name")
+			battle.rename(mysql,con,msg,args);
 	}
 
 	//Give cowoncy
@@ -183,12 +204,6 @@ function execute(command,msg,args,isMention){
 
 	//Define a word
 	else if (command === 'define'){other.define(msg,args.join(" "));}
-
-	//emotes
-	else if(emotes.sEmote[command]!=undefined&&args.length==0){weeb.sEmote(msg,command);}
-
-	//emotes + user
-	else if(emotes.uEmote[command]!=undefined&&args.length==1){weeb.uEmote(client,msg,args,command);}
 
 	//Grab type of pics
 	else if(command === 'image'||command === 'pic'){

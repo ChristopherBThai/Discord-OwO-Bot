@@ -214,6 +214,6 @@
 		"desc_long":"Use your animal to fight against other players! As you fight, the will level to become stronger!\nThey will also level up if someone fights against your pet!\nFeel free to add as many pets and check their status with 'owo battle pets'!\nYou can also rename your animals!",
 		"related":["owo zoo","owo hunt"],
 		"example":["owo battle","owo battle pets","owo battle set cow","owo battle rename cowboi","owo battle set penguin pengu"],
-		"alt":["fight"]
+		"alt":["fight","pets"]
 	}
 }

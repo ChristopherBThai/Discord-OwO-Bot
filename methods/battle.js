@@ -80,18 +80,18 @@ function startBattle(client,con,msg,args){
 			log.push({"dmg1":dmg1,"dmg2":dmg2});
 		}
 		if(user1.name==null)
-			user1.name = "";
+			user1.name = "you";
 		if(user2.name==null)
-			user2.name= "";
+			user2.name= "enemy";
 		const embed = {
 			"color":4886754,
 			"fields": [{
 					"name": user1.username,
-					"value": "** "+user1.animal+" "+user1.name+"** Lvl "+user1.lvl+" *("+user1.xp+"/"+user1.mxp+")*\n**HP**: "+user1.hp+"/"+user1.mhp+"\t **ATT**: "+user1.attack+"\n`████████████████████`",
+					"value": "** "+user1.animal+" "+user1.name+"** Lvl "+user1.lvl+" *("+user1.xp+"/"+user1.mxp+")*\n**`HP`**`: "+user1.hp+"/"+user1.mhp+"`\t **`ATT`**`: "+user1.attack+"`\n`████████████████████`",
 					"inline": true
 				},{
 					"name": user2.username,
-					"value": "** "+user2.animal+" "+user2.name+"** Lvl "+user2.lvl+" \n**HP**: "+user2.hp+"/"+user2.mhp+"\t **ATT**: "+user2.attack+"\n`████████████████████`",
+					"value": "** "+user2.animal+" "+user2.name+"** Lvl "+user2.lvl+" \n**`HP`**`: "+user2.hp+"/"+user2.mhp+"`\t **`ATT`**`: "+user2.attack+"`\n`████████████████████`",
 					"inline": true
 				},{
 					"name": "Battle (0/3)!",
@@ -178,8 +178,8 @@ function display(con,id,eid,msg,user1,user2,log,count){
 	var percent2 = Math.ceil((user2.hp/user2.mhp)*20);
 	
 	//Sets up HP bar
-	var value1 = "** "+user1.animal+" "+user1.name+"** Lvl "+user1.lvl+" *("+user1.xp+"/"+user1.mxp+")*\n**HP**: "+user1.hp+"/"+user1.mhp+"\t **ATT**: "+user1.attack+"\n`";
-	var value2 = "** "+user2.animal+" "+user2.name+"** Lvl "+user2.lvl+" \n**HP**: "+user2.hp+"/"+user2.mhp+"\t **ATT**: "+user2.attack+"\n`";
+	var value1 = "** "+user1.animal+" "+user1.name+"** Lvl "+user1.lvl+" *("+user1.xp+"/"+user1.mxp+")*\n**`HP`**`: "+user1.hp+"/"+user1.mhp+"`\t **`ATT`**`: "+user1.attack+"`\n`";
+	var value2 = "** "+user2.animal+" "+user2.name+"** Lvl "+user2.lvl+" \n**`HP`**`: "+user2.hp+"/"+user2.mhp+"`\t **`ATT`**`: "+user2.attack+"`\n`";
 	for(i=0;i<20;i++){
 		if(i<percent1)
 			value1 += "█";
