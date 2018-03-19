@@ -335,6 +335,12 @@ client.on('ready',()=>{
 	global.init(client);
 });
 
+//When bot disconnects
+client.on('disconnect', function(erMsg, code) {
+	    console.log('----- Bot disconnected from Discord with code', code, 'for reason:', erMsg, '-----');
+	    client.connect();
+});
+
 //When bot joins a new guild
 client.on("guildCreate", guild => {
 	console.log('New guild joined: '+guild.name+' (id: '+guild.id+'). This guild has '+guild.memberCount+' members!');
