@@ -37,8 +37,8 @@ exports.addPoint = function(con,msg){
 				//Spam detection
 				sql = "UPDATE IGNORE user SET "+
 						//Constant time between points
-						"spamcount = IF(ABS(previnterval-"+result[1][0].cooldown+")<=1,spamcount+1,0), "+
-						"previnterval = IF(@diff>10000,0,"+result[1][0].cooldown+"), "+
+						"spamcount = IF(ABS(previnterval-"+cooldown+")<=1,spamcount+1,0), "+
+						"previnterval = IF(@diff>10000,0,"+cooldown+"), "+
 						//100 points under 30m
 						"spamintervalcount = IF(TIMESTAMPDIFF(MINUTE,spaminterval,NOW())>=30,0,spamintervalcount+1), "+
 						"spaminterval = IF(TIMESTAMPDIFF(MINUTE,spaminterval,NOW())>=30,NOW(),spaminterval), "+

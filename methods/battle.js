@@ -64,6 +64,7 @@ function startBattle(client,con,msg,args){
 			"mhp":upet.hp,
 			"hp":upet.hp,
 			"mxp":maxxp(upet.lvl),
+			"streak":upet.streak,
 			"xp":upet.xp};
 		var user2 = {
 			"username":opponent,
@@ -87,14 +88,14 @@ function startBattle(client,con,msg,args){
 			"color":4886754,
 			"fields": [{
 					"name": user1.username,
-					"value": "** "+user1.animal+" "+user1.name+"** Lvl "+user1.lvl+" *("+user1.xp+"/"+user1.mxp+")*\n**`HP`**`: "+user1.hp+"/"+user1.mhp+"`\t **`ATT`**`: "+user1.attack+"`\n`████████████████████`",
+					"value": "** "+user1.animal+" "+user1.name+"**\n`Lvl "+user1.lvl+"` *`("+user1.xp+"/"+user1.mxp+")`*\n`████████████████████`\n**`HP`**`: "+user1.hp+"/"+user1.mhp+"`    **`ATT`**`: "+user1.attack+"`",
 					"inline": true
 				},{
 					"name": user2.username,
-					"value": "** "+user2.animal+" "+user2.name+"** Lvl "+user2.lvl+" \n**`HP`**`: "+user2.hp+"/"+user2.mhp+"`\t **`ATT`**`: "+user2.attack+"`\n`████████████████████`",
+					"value": "** "+user2.animal+" "+user2.name+"**\n`Lvl "+user2.lvl+"`\n`████████████████████`\n**`HP`**`: "+user2.hp+"/"+user2.mhp+"`    **`ATT`**`: "+user2.attack+"`",
 					"inline": true
 				},{
-					"name": "Battle (0/3)!",
+					"name": "Battle (0/3)! (Win Streak: "+user1.streak+")",
 					"value": "```diff\n+ -----------------------\n- -----------------------\n= ```"
 				}]
 		};
@@ -142,7 +143,7 @@ function display(con,id,eid,msg,user1,user2,log,count){
 			xp = xp*10 + 15;
 		winner = 1;
 		color = 65280;
-		end = "You won! "+user1.name+" earned "+xp+" xp!";
+		end = "You won! "+user1.name+" earned "+xp+"(+"+user1.streak+") xp!";
 		win = true;
 	}else if(count>=2){
 		if(user1.hp>user2.hp){
@@ -164,12 +165,14 @@ function display(con,id,eid,msg,user1,user2,log,count){
 	var lvlup;
 	//Give xp to users
 	if(draw||win||lose){
-		lvlup = givexp(con,xp+user1.xp,user1.lvl,id,user1.animal,winner,exp,user2.xp,user2.lvl,eid,user2.animal);
+		lvlup = givexp(con,winner,   id,user1,xp,   eid,user2,exp);
 		if(lvlup[0]!=undefined){
 			end += "\n= "+user1.name+" leveled up and gained "+lvlup[2]+" att and "+lvlup[3]+" hp!";
 			user1.xp = lvlup[1];
 		}
 		user1.xp += xp;
+		if(win)
+			user1.xp += user1.streak-1;
 	}
 
 
@@ -178,8 +181,8 @@ function display(con,id,eid,msg,user1,user2,log,count){
 	var percent2 = Math.ceil((user2.hp/user2.mhp)*20);
 	
 	//Sets up HP bar
-	var value1 = "** "+user1.animal+" "+user1.name+"** Lvl "+user1.lvl+" *("+user1.xp+"/"+user1.mxp+")*\n**`HP`**`: "+user1.hp+"/"+user1.mhp+"`\t **`ATT`**`: "+user1.attack+"`\n`";
-	var value2 = "** "+user2.animal+" "+user2.name+"** Lvl "+user2.lvl+" \n**`HP`**`: "+user2.hp+"/"+user2.mhp+"`\t **`ATT`**`: "+user2.attack+"`\n`";
+	var value1 = "** "+user1.animal+" "+user1.name+"**\n`Lvl "+user1.lvl+"` *`("+user1.xp+"/"+user1.mxp+")`*\n`";
+	var value2 = "** "+user2.animal+" "+user2.name+"**\n`Lvl "+user2.lvl+"`\n`";
 	for(i=0;i<20;i++){
 		if(i<percent1)
 			value1 += "█";
@@ -190,12 +193,12 @@ function display(con,id,eid,msg,user1,user2,log,count){
 		else
 			value2 += "▁";
 	}
-	value1 += "`";
-	value2 += "`";
+	value1 += "`\n**`HP`**`: "+user1.hp+"/"+user1.mhp+"`    **`ATT`**`: "+user1.attack+"`";
+	value2 += "`\n**`HP`**`: "+user2.hp+"/"+user2.mhp+"`    **`ATT`**`: "+user2.attack+"`";
 
 	//Battle 
 	var title,actions;
-	title = "Battle ("+(count+1)+"/3)!";
+	title = "Battle ("+(count+1)+"/3)! (Win Streak: "+user1.streak+")";
 	actions = "```diff\n+ "+user1.name+" hits "+user2.name+" for "+log[count].dmg1+"hp!\n- "+user2.name+" hits "+user1.name+" for "+log[count].dmg2+"hp!\n= "+end+"```";
 
 	const embed = {
@@ -345,19 +348,33 @@ exports.pet = function(con,msg){
 }
 
 //Levels a pet
-function givexp(con,xp,lvl,id,animal,won, expgain,exp,elvl,eid,eanimal){
+function givexp(con,won, id,user1,xp, eid,user2,exp){
+	var xp = user1.xp+xp;
+	var lvl = user1.lvl;
+	var animal = user1.animal;
+
+	var expgain = exp;
+	var exp = user2.xp;
+	var elvl = user2.lvl;
+	var eanimal = user2.animal;
+
+
 	var result = []
 
 	//Player's xp
 	var win = 0;
 	var lose = 0;
 	var draw = 0;
-	if(won == 1)
+	if(won == 1){
 		win = 1;
-	else if(won == -1)
+		xp += user1.streak;
+		user1.streak++;
+	}else if(won == -1){
 		lose = 1;
-	else
+		user1.streak = 0;
+	}else{
 		draw = 1;
+	}
 	var neededxp = maxxp(lvl);
 	var lvlup = 0;
 	var att = 0;
@@ -373,7 +390,7 @@ function givexp(con,xp,lvl,id,animal,won, expgain,exp,elvl,eid,eanimal){
 		result.push(att);
 		result.push(hp);
 	}
-	var sql = "UPDATE animal NATURAL JOIN cowoncy SET lvl = lvl + "+lvlup+",xp = "+xp+",att = att + "+att+",hp = hp + "+hp+",won = won + "+win+",lost = lost + "+lose+",draw = draw + "+draw+"  WHERE id = "+id+" AND name = pet;";
+	var sql = "UPDATE animal NATURAL JOIN cowoncy SET lvl = lvl + "+lvlup+",xp = "+xp+",streak = "+user1.streak+",att = att + "+att+",hp = hp + "+hp+",won = won + "+win+",lost = lost + "+lose+",draw = draw + "+draw+"  WHERE id = "+id+" AND name = pet;";
 
 	//Opponent's xp
 	if(expgain!=0&&eid!=undefined){
