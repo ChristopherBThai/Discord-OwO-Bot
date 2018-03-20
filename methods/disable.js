@@ -20,7 +20,7 @@ exports.disable = function(con,msg,command){
 		var sql = "INSERT IGNORE INTO disabled (channel,command) VALUES "+list+";";
 		con.query(sql,function(err,rows,field){
 			if(err) throw err;
-			msg.channel.send("The **all** commands have been **disabled** for this channel!");
+			msg.channel.send("**All** commands have been **disabled** for this channel!");
 		});
 		return;
 	}

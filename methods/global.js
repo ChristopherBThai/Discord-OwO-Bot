@@ -9,6 +9,7 @@ var commands = {};
 var animals = {};
 var client,con;
 var admin;
+const cooldown = new Set();
 
 /**
  * Checks if its an integer
@@ -106,14 +107,32 @@ exports.validAnimal = function(animal){
 exports.isDisabled = async function(command,execute,executeOther,msg,args,isMention){
 	var channel = msg.channel.id;
 	var tcommand = help[commands[command]];
+
+	//If not a command
 	if(tcommand == undefined){
 		executeOther(command,msg,args,isMention);
 		return;
 	}
+
+	//Check if there is a global cooldown
+	if (cooldown.has(msg.author.id)) {
+		msg.channel.send("**"+msg.author.username+"**! Please slow down~ You're a little **too fast** for me :c")
+			.then(message => message.delete(2000));
+		return;
+	} else {
+		cooldown.add(msg.author.id);
+		setTimeout(() => {
+			cooldown.delete(msg.author.id);
+		}, 2000);
+	}
+
+	//If its a global command (no cooldown/disable)
 	if(tcommand.global){
 		execute(command,msg,args,isMention);
 		return;
 	}
+
+	//Check if the command is enabled
 	tcommand = tcommand.name;
 	var sql = "SELECT * FROM disabled WHERE command = '"+tcommand+"' AND channel = "+channel+";";
 	con.query(sql,function(err,rows,fields){

@@ -157,30 +157,12 @@ function execute(command,msg,args,isMention){
 
 	//Battle!
 	else if(command === 'fight'||command === 'battle'){
-		var subcommand = args[0];
-		if(subcommand != undefined)
-			subcommand = subcommand.toLowerCase();
-		if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a")
-			battle.set(mysql,con,msg,args);
-		else if(subcommand=="rename"||subcommand=="r"||subcommand=="name")
-			battle.rename(mysql,con,msg,args);
-		else if(subcommand=="pets"||subcommand=="p"||subcommand=="pet"||subcommand=="zoo"||subcommand=="z")
-			battle.pet(con,msg);
-		else if(args.length<1)
-			battle.battle(client,con,msg,args);
+		battle.execute_b(mysql,client,con,msg,args);
 	}
 
 	//Battle pets
 	else if(command === 'pet'||command === 'pets'){
-		var subcommand = args[0];
-		if(subcommand != undefined)
-			subcommand = subcommand.toLowerCase();
-		if(args.length==0)
-			battle.pet(con,msg);
-		if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a")
-			battle.set(mysql,con,msg,args);
-		else if(subcommand=="rename"||subcommand=="r"||subcommand=="name")
-			battle.rename(mysql,con,msg,args);
+		battle.execute_p(mysql,client,con,msg,args);
 	}
 
 	//Give cowoncy
@@ -274,8 +256,7 @@ function execute(command,msg,args,isMention){
 	}
 
 	//If not a command...
-	else{ 
-			}
+	else{ }
 }
 
 function executeOther(command,msg,args,isMention){
