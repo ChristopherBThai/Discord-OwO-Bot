@@ -5,6 +5,38 @@ const global = require('./global.js');
 var h = "█";
 var n = "▁";
 
+//Decides which command to execute (Command: battle)
+exports.execute_b = function(mysql,client,con,msg,args){
+		var subcommand = args[0];
+		if(subcommand != undefined)
+			subcommand = subcommand.toLowerCase();
+		if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a")
+			this.set(mysql,con,msg,args);
+		else if(subcommand=="rename"||subcommand=="r"||subcommand=="name")
+			this.rename(mysql,con,msg,args);
+		else if(subcommand=="pets"||subcommand=="p"||subcommand=="pet"||subcommand=="zoo"||subcommand=="z")
+			this.pet(con,msg);
+		else if(subcommand=="help")
+			this.describe(msg,"battle");
+		else if(args.length<1)
+			this.battle(client,con,msg,args);
+}
+
+//Decides which command to execute (Command: pets)
+exports.execute_p = function(mysql,client,con,msg,args){
+		var subcommand = args[0];
+		if(subcommand != undefined)
+			subcommand = subcommand.toLowerCase();
+		if(args.length==0)
+			this.pet(con,msg);
+		if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a")
+			this.set(mysql,con,msg,args);
+		else if(subcommand=="rename"||subcommand=="r"||subcommand=="name")
+			this.rename(mysql,con,msg,args);
+		else if(subcommand=="help")
+			this.describe(msg,"battle");
+}
+
 //Checks if user can battle or not
 exports.battle = function(client,con,msg,args){
 	var sql = "SELECT money,TIMESTAMPDIFF(SECOND,battle,NOW()) AS time FROM cowoncy WHERE id = "+msg.author.id+";";
@@ -126,6 +158,7 @@ function display(con,id,eid,msg,user1,user2,log,count){
 		winner = 0;
 		color = 6381923;
 		end = "It's a draw! "+user1.name+" earned "+xp+" xp!";
+		user1.streak = 0;
 		draw = true;
 	}else if(user1.hp<=0){
 		xp = 1;
