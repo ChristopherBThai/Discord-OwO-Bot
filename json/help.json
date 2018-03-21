@@ -209,11 +209,20 @@
 	},
 	"battle":{
 		"name":"battle",
-		"args":"[set|rename|pets] {animal|name}",
-		"desc_short":"Battle you pets!",
-		"desc_long":"Use your animal to fight against other players! As you fight, the will level to become stronger!\nThey will also level up if someone fights against your pet!\nFeel free to add as many pets and check their status with 'owo battle pets'!\nYou can also rename your animals!",
-		"related":["owo zoo","owo hunt"],
-		"example":["owo battle","owo battle pets","owo battle set cow","owo battle rename cowboi","owo battle set penguin pengu"],
-		"alt":["fight","pets"]
+		"args":"",
+		"desc_short":"Battle your pets!",
+		"desc_long":"Use your animal to fight against other players! As you fight, the will level to become stronger!\nThey will also level up if someone fights against your pet!\nFeel free to add as many pets and check their status with 'owo pets'!\nYou can also rename your animals!",
+		"related":["owo pets","owo zoo","owo hunt"],
+		"example":["owo battle"],
+		"alt":["fight"]
+	},
+	"pets":{
+		"name":"pets",
+		"args":"[add|rename] {animal|name}",
+		"desc_short":"View your pets!",
+		"desc_long":"Displays your current pets! These pets can fight other users with 'owo battle'! You can only add pets from your current zoo.\nAll pets have different stats and can be renamed!",
+		"related":["owo battle","owo zoo","owo hunt"],
+		"example":["owo pets","owo pets add penguin","owo pets rename pengu boi","owo pets add lion lion boi"],
+		"alt":["pet"]
 	}
 }

@@ -2,6 +2,7 @@
 
 const animal = require('../../tokens/owo-animals.json');
 const global = require('./global.js');
+const help = require('./helper.js');
 var h = "█";
 var n = "▁";
 
@@ -17,7 +18,7 @@ exports.execute_b = function(mysql,client,con,msg,args){
 		else if(subcommand=="pets"||subcommand=="p"||subcommand=="pet"||subcommand=="zoo"||subcommand=="z")
 			this.pet(con,msg);
 		else if(subcommand=="help")
-			this.describe(msg,"battle");
+			help.describe(msg,"battle");
 		else if(args.length<1)
 			this.battle(client,con,msg,args);
 }
@@ -34,7 +35,7 @@ exports.execute_p = function(mysql,client,con,msg,args){
 		else if(subcommand=="rename"||subcommand=="r"||subcommand=="name")
 			this.rename(mysql,con,msg,args);
 		else if(subcommand=="help")
-			this.describe(msg,"battle");
+			help.describe(msg,"pets");
 }
 
 //Checks if user can battle or not
@@ -67,7 +68,7 @@ function startBattle(client,con,msg,args){
 		var upet = rows[0][0];
 		var opet = rows[2][0];
 		if(upet == undefined){
-			msg.channel.send("You don't have a pet! Set one with `owo battle set [animal]`")
+			msg.channel.send("You don't have a pet! Set one with `owo pets add [animal] [nickname]`")
 				.then(message => message.delete(3000));
 			return;
 		}
@@ -344,7 +345,7 @@ exports.pet = function(con,msg){
 		var pet = rows[0][0];
 		var opet = rows[1];
 		if(pet==undefined)
-			msg.channel.send("You don't have a pet! Set one with `owo battle set [animal]`")
+			msg.channel.send("You don't have a pet! Set one with `owo pets add [animal] [nickname]`")
 				.then(message => message.delete(3000));
 		else{
 			var nickname = pet.nickname;
