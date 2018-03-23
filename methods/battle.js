@@ -1,6 +1,7 @@
 //Battle methods!
 
 const animal = require('../../tokens/owo-animals.json');
+const userbattle = require('./battleuser.js');
 const global = require('./global.js');
 const help = require('./helper.js');
 var h = "█";
@@ -11,7 +12,9 @@ exports.execute_b = function(mysql,client,con,msg,args){
 		var subcommand = args[0];
 		if(subcommand != undefined)
 			subcommand = subcommand.toLowerCase();
-		if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a")
+		if(global.isUser(subcommand))
+			userbattle.battle(client,con,msg,args);
+		else if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a")
 			this.set(mysql,con,msg,args);
 		else if(subcommand=="rename"||subcommand=="r"||subcommand=="name")
 			this.rename(mysql,con,msg,args);
@@ -445,7 +448,6 @@ function givexp(con,won, id,user1,xp, eid,user2,exp){
 
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
-
 	});
 
 	return result;
