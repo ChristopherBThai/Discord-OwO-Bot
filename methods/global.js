@@ -9,7 +9,7 @@ var commands = {};
 var animals = {};
 var client,con;
 var admin;
-const cooldown = new Set();
+const cooldown = {};
 
 /**
  * Checks if its an integer
@@ -117,15 +117,17 @@ exports.isDisabled = async function(command,execute,executeOther,msg,args,isMent
 	}
 
 	//Check if there is a global cooldown
-	if (cooldown.has(msg.author.id)) {
-		msg.channel.send("**"+msg.author.username+"**! Please slow down~ You're a little **too fast** for me :c")
-			.then(message => message.delete(2000));
-		return;
-	} else {
-		cooldown.add(msg.author.id);
+	if(cooldown[msg.author.id]==undefined){
+		cooldown[msg.author.id]=1;
 		setTimeout(() => {
-			cooldown.delete(msg.author.id);
-		}, 2000);
+			delete cooldown[msg.author.id];
+		}, 5000);
+	}else if(cooldown[msg.author.id]>=3) {
+		msg.channel.send("**"+msg.author.username+"**! Please slow down~ You're a little **too fast** for me :c")
+			.then(message => message.delete(3000));
+		return;
+	}else if(cooldown[msg.author.id]<3){
+		cooldown[msg.author.id]++;
 	}
 
 	//If its a global command (no cooldown/disable)
