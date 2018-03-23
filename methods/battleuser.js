@@ -27,9 +27,10 @@ exports.accept = function(client,con,msg,args){
 			if(global.isInt(args[1]))
 				amount = parseInt(args[1]);
 			sql = "SELECT money FROM cowoncy WHERE id IN ("+user1.id+","+user2.id+") AND money >= "+amount+";";
+			sql += "UPDATE battleuser SET time = '2017-01-01 10:10:10' WHERE (user1 = "+user1.id+" OR user2 = "+user1.id+") AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 5;";
 			con.query(sql,function(err,rows,fields){
 				if(err) throw err;
-				if(rows.length<2){
+				if(rows[0].length<2){
 					msg.channel.send("Looks like someone doesn't have enough cowoncy!")
 						.then(message => message.delete(3000));
 				}else{
@@ -132,7 +133,7 @@ exports.battle = function(client,con,msg,args){
 				const embed = {
 					"color":4886754,
 					"footer": {
-						"text": "This invitation ends in 1 minute"
+						"text": "This invitation ends in 5 minute"
 					},
 					"author": {
 						"name": opponent.username+"! You have been challeneged by "+msg.author.username+"!",
@@ -359,7 +360,6 @@ function givemoney(con,winner,amount,user1,user2){
 	}
 	var sql = "UPDATE cowoncy SET money = money + "+amount1+" WHERE id = "+user1.user.id+";";
 	sql += "UPDATE cowoncy SET money = money + "+amount2+" WHERE id = "+user2.user.id+";";
-	sql += "UPDATE battleuser SET time = '2017-01-01 10:10:10' WHERE (user1 = "+user1.user.id+" OR user2 = "+user1.user.id+") AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 1;";
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 	});
