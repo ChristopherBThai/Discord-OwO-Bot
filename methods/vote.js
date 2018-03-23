@@ -29,7 +29,7 @@ function upvote(id){
 				if(err) throw err;
 				var user = client.users.get(id);
 				if(user!=undefined){
-					user.send("You have recieved __200__ cowoncy for voting!");
+					user.send("You have received __200__ cowoncy for voting!");
 					console.log("\x1b[33m",user.username+" has voted for the first time!"); 
 				}
 			});
@@ -41,8 +41,8 @@ function upvote(id){
 				if(err) throw err;
 				var user = client.users.get(id);
 				if(user!=undefined){
-					user.send("You have recieved __"+bonus+"__ cowoncy for voting!");
-					console.log("\x1b[33m",user.username+" has voted and  recieved cowoncy!"); 
+					user.send("You have received __"+bonus+"__ cowoncy for voting!");
+					console.log("\x1b[33m",user.username+" has voted and  received cowoncy!"); 
 				}
 			});
 		}else{
@@ -69,7 +69,7 @@ exports.client = function(cli){
  */
 exports.link = function(msg){
 	const embed = {
-		"title":"Vote for me daily to recieve 200+ Cowoncy!",
+		"title":"Vote for me daily to receive 200+ Cowoncy!",
 		"url":"https://discordbots.org/bot/408785106942164992/vote",
 		"color": 4886754,
 		"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
