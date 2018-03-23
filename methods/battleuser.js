@@ -2,7 +2,7 @@ const global = require('./global.js');
 
 //Accepts battle
 exports.accept = function(client,con,msg,args){
-	var sql = "SELECT * FROM battleuser WHERE ((user1 = "+msg.author.id+" AND sender = 2) OR (user2 = "+msg.author.id+" AND sender = 1)) AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 1;";
+	var sql = "SELECT * FROM battleuser WHERE ((user1 = "+msg.author.id+" AND sender = 2) OR (user2 = "+msg.author.id+" AND sender = 1)) AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 5;";
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		if(rows[0]==undefined){
@@ -43,7 +43,7 @@ exports.accept = function(client,con,msg,args){
 //Decline battle
 exports.decline= function(client,con,msg,args){
 	var sql = "SELECT * FROM battleuser WHERE (user1 = "+msg.author.id+" OR user2 = "+msg.author.id+" ) AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 1;";
-	sql += "UPDATE battleuser SET time = '2017-01-01 10:10:10' WHERE (user1 = "+msg.author.id+" OR user2 = "+msg.author.id+" ) AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 1;";
+	sql += "UPDATE battleuser SET time = '2017-01-01 10:10:10' WHERE (user1 = "+msg.author.id+" OR user2 = "+msg.author.id+" ) AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 5;";
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		if(rows[0][0]==undefined){
@@ -103,15 +103,15 @@ exports.battle = function(client,con,msg,args){
 		largerid = opponent.id;
 		sender = 1;
 	}
-	var sql = "SELECT * FROM battleuser WHERE (user1 = "+msg.author.id+" OR user2 = "+msg.author.id+") AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 1;";
+	var sql = "SELECT * FROM battleuser WHERE (user1 = "+msg.author.id+" OR user2 = "+msg.author.id+") AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 5;";
 	sql += "SELECT * FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND money >= "+amount+" AND pet = name;";
-	sql += "SELECT * FROM battleuser WHERE (user1 = "+opponent.id+" OR user2 = "+opponent.id+") AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 1;";
+	sql += "SELECT * FROM battleuser WHERE (user1 = "+opponent.id+" OR user2 = "+opponent.id+") AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 5;";
 	sql += "SELECT * FROM cowoncy NATURAL JOIN animal WHERE id = "+opponent.id+" AND money >= "+amount+" AND pet = name;";
 	con.query(sql,function(err,result){
 		if(err) throw err;
 		//Already has a pending battle
 		if(result[0][0]!=undefined){
-			msg.channel.send("**"+msg.author.username+"**! You already have a battle pending!")
+			msg.channel.send("**"+msg.author.username+"**! You already have a battle pending!\nDecline it with `owo db`!")
 				.then(message => message.delete(3000));
 		}else if(result[1][0]==undefined){
 			msg.channel.send("**"+msg.author.username+"**! You don't have enough cowoncy!")
@@ -152,7 +152,7 @@ exports.battle = function(client,con,msg,args){
 						"inline": true
 						},{
 						"name": "The fight requires <:cowoncy:416043450337853441> "+amount+" cowoncy to start!",
-						"value": "To accept the battle type `owo acceptbattle` or `owo ab`.\nTo decline the battle type `owo decline battle` or `owo db`.",
+						"value": "To accept the battle type `owo acceptbattle` or `owo ab`.\nTo decline the battle type `owo declinebattle` or `owo db`.",
 					}]
 				};
 				msg.channel.send({ embed });
