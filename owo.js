@@ -23,6 +23,7 @@ const zoo = require("./methods/zoo.js");
 const rep = require("./methods/rep.js");
 const slots = require("./methods/slots.js");
 const battle = require("./methods/battle.js");
+const battleuser = require("./methods/battleuser.js");
 const lottery = require("./methods/lottery.js");
 const other = require("./methods/other.js");
 const feedback = require("./methods/feedback.js");
@@ -158,6 +159,16 @@ function execute(command,msg,args,isMention){
 	//Battle!
 	else if(command === 'fight'||command === 'battle'){
 		battle.execute_b(mysql,client,con,msg,args);
+	}
+
+	//Accept a battle from a user
+	else if(command === 'acceptbattle'||command === "ab"){
+		battleuser.accept(client,con,msg,args);
+	}
+
+	//Declines a battle from a user
+	else if(command === 'declinebattle'||command === "db"){
+		battleuser.decline(client,con,msg,args);
 	}
 
 	//Battle pets

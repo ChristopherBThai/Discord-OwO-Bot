@@ -89,7 +89,7 @@ exports.addPoint = function(con,msg){
 							//Notifies an admin
 							var amsg = "**"+msg.author.username+"** has been banned for **"+time+"H**! This is his "+rows[1][0].count+" time!\n**ID:** "+msg.author.id+"\n**Guild:** "+msg.guild.name+"\n **Reason:** ";
 							if(spam>=10)
-								amsg += "For saying owo "+spam+" times with a constant interval of "+result[5][0].previnterval;
+								amsg += "For saying owo "+spam+" times with a constant interval of "+result[4][0].previnterval;
 							else if(spam2>=100)
 								amsg += "For saying owo over 100 times within 30min";
 							else if(spam3>1200)
