@@ -77,9 +77,7 @@ exports.init = function(tclient){
 		}
 	}
 	for (key in animallist){
-		if(animallist[key].uni==undefined)
-			animalunicode[animallist[key].value] = animallist[key].value;
-		else
+		if(animallist[key].uni!=undefined)
 			animalunicode[animallist[key].value] = animallist[key].uni;
 	}
 }
@@ -114,7 +112,8 @@ exports.validAnimal = function(animal){
  * Changes animal to unicode
  */
 exports.unicodeAnimal = function(animal){
-	return animalunicode[animal];
+	var unicode = animalunicode[animal];
+	return (unicode==undefined)?animal:unicode;
 }
 
 /**
