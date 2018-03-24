@@ -15,6 +15,11 @@ initDisplay();
  * Displays your zoo
  */
 exports.display = function(con,msg){
+	var text = "";
+	for(key in animals.list){
+		text += global.unicodeAnimal(animals.list[key].value);
+	}
+	msg.channel.send(text);
 	var sql = "SELECT TIMESTAMPDIFF(SECOND,zoo,NOW()) AS time FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,result){
 		if(err) throw err;
@@ -27,7 +32,7 @@ exports.display = function(con,msg){
 				"UPDATE IGNORE cowoncy SET zoo = NOW() WHERE id = "+msg.author.id+";";
 			con.query(sql,function(err,result){
 				if(err) throw err;
-				var text = ":seedling: :herb: :deciduous_tree:** "+msg.author.username+"'s zoo! **:deciduous_tree: :herb: :seedling:\n";
+				var text = "🌿 🌱 🌳** "+msg.author.username+"'s zoo! **🌳 🌿 🌱\n";
 				text += display;
 				var additional = "";
 				var row = result[0];
