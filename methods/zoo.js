@@ -5,6 +5,7 @@
 const global = require('./global');
 
 var animals = require('../../tokens/owo-animals.json');
+var unicode = {};
 
 var secret = "";
 var display = "";
@@ -35,7 +36,7 @@ exports.display = function(con,msg){
 				if(count!=undefined)
 					over = count.over>0;
 				for (i in row){
-					text = text.replace("~"+row[i].name,row[i].name+toSmallNum(row[i].count,over));
+					text = text.replace("~"+row[i].name,global.unicodeAnimal(row[i].name)+toSmallNum(row[i].count,over));
 					if(animals.legendary.indexOf(row[i].name)>0){
 						if(additional=="")
 							additional = secret;
@@ -189,4 +190,5 @@ function initDisplay(){
 	for (i=1;i<animals.mythical.length;i++)
 		display += "~"+animals.mythical[i]+gap;
 	secret = "\n"+animals.ranks.legendary+"    ";
+
 }
