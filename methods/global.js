@@ -5,6 +5,7 @@
 var help = require('../json/help.json');
 var auth = require('../../tokens/owo-auth.json');
 var animaljson = require('../../tokens/owo-animals.json');
+var animalunicode = {};
 var commands = {};
 var animals = {};
 var client,con;
@@ -75,6 +76,12 @@ exports.init = function(tclient){
 			animals[alt[i]] = key;
 		}
 	}
+	for (key in animallist){
+		if(animallist[key].uni==undefined)
+			animalunicode[animallist[key].value] = animallist[key].value;
+		else
+			animalunicode[animallist[key].value] = animallist[key].uni;
+	}
 }
 
 /**
@@ -101,6 +108,13 @@ exports.validAnimal = function(animal){
 	if(ranimal == undefined)
 		return ranimal;
 	return ranimal
+}
+
+/**
+ * Changes animal to unicode
+ */
+exports.unicodeAnimal = function(animal){
+	return animalunicode[animal];
 }
 
 /**
