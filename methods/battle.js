@@ -95,6 +95,7 @@ function startBattle(client,con,msg,args){
 			"username":msg.author.username,
 			"name":upet.nickname,
 			"animal":upet.name,
+			"unicode":global.unicodeAnimal(upet.name),
 			"lvl":upet.lvl,
 			"attack":upet.att,
 			"mhp":upet.hp,
@@ -106,6 +107,7 @@ function startBattle(client,con,msg,args){
 			"username":opponent,
 			"name":opet.nickname,
 			"animal":opet.name,
+			"unicode":global.unicodeAnimal(opet.name),
 			"lvl":opet.lvl,
 			"attack":opet.att,
 			"mhp":opet.hp,
@@ -124,11 +126,11 @@ function startBattle(client,con,msg,args){
 			"color":4886754,
 			"fields": [{
 					"name": user1.username,
-					"value": "** "+user1.animal+" "+user1.name+"**\n`Lvl "+user1.lvl+"` *`("+user1.xp+"/"+user1.mxp+")`*\n`████████████████████`\n**`HP`**`: "+user1.hp+"/"+user1.mhp+"`    **`ATT`**`: "+user1.attack+"`",
+					"value": "** "+user1.unicode+" "+user1.name+"**\n`Lvl "+user1.lvl+"` *`("+user1.xp+"/"+user1.mxp+")`*\n`████████████████████`\n**`HP`**`: "+user1.hp+"/"+user1.mhp+"`    **`ATT`**`: "+user1.attack+"`",
 					"inline": true
 				},{
 					"name": user2.username,
-					"value": "** "+user2.animal+" "+user2.name+"**\n`Lvl "+user2.lvl+"`\n`████████████████████`\n**`HP`**`: "+user2.hp+"/"+user2.mhp+"`    **`ATT`**`: "+user2.attack+"`",
+					"value": "** "+user2.unicode+" "+user2.name+"**\n`Lvl "+user2.lvl+"`\n`████████████████████`\n**`HP`**`: "+user2.hp+"/"+user2.mhp+"`    **`ATT`**`: "+user2.attack+"`",
 					"inline": true
 				},{
 					"name": "Battle (0/3)! (Win Streak: "+user1.streak+")",
@@ -218,8 +220,8 @@ function display(con,id,eid,msg,user1,user2,log,count){
 	var percent2 = Math.ceil((user2.hp/user2.mhp)*20);
 	
 	//Sets up HP bar
-	var value1 = "** "+user1.animal+" "+user1.name+"**\n`Lvl "+user1.lvl+"` *`("+user1.xp+"/"+user1.mxp+")`*\n`";
-	var value2 = "** "+user2.animal+" "+user2.name+"**\n`Lvl "+user2.lvl+"`\n`";
+	var value1 = "** "+user1.unicode+" "+user1.name+"**\n`Lvl "+user1.lvl+"` *`("+user1.xp+"/"+user1.mxp+")`*\n`";
+	var value2 = "** "+user2.unicode+" "+user2.name+"**\n`Lvl "+user2.lvl+"`\n`";
 	for(i=0;i<20;i++){
 		if(i<percent1)
 			value1 += "█";
@@ -265,7 +267,7 @@ function display(con,id,eid,msg,user1,user2,log,count){
 
 //Sets an animal as a pet!
 exports.set = function(mysql, con,msg,args){
-	if(!(args.length==3||args.length==2)){
+	if(args.length<2){
 		msg.channel.send("Invalid arguments!")
 			.then(message => message.delete(3000));
 		return;
@@ -277,14 +279,15 @@ exports.set = function(mysql, con,msg,args){
 		return;
 	}
 	var animal = animal.value;
-	var nickname = args[2];
+	args.splice(0,2);
+	var nickname = args.join(" ");;
 	if(nickname!=undefined&&nickname.length>35){
 		msg.channel.send("Nickname is too long!")
 			.then(message => message.delete(3000));
 		return;
 	}
 	var sql;
-	if(nickname!=undefined){
+	if(nickname!=undefined&&nickname!=""){
 		//nickname = nickname.replace(/([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2694-\u2697]|\uD83E[\uDD10-\uDD5D])/g, ':emoji:')
 		sql = "UPDATE cowoncy NATURAL JOIN animal SET pet = name, ispet = 1, nickname = ? WHERE id = "+msg.author.id+" AND name = '"+animal+"';";
 		sql = mysql.format(sql,nickname);
@@ -299,9 +302,9 @@ exports.set = function(mysql, con,msg,args){
 				.then(message => message.delete(3000));
 		}else{
 			if(rows[1][0]!=undefined&&rows[1][0].nickname!=null)
-				msg.channel.send("**"+msg.author.username+"**, you successfully set your pet as **"+animal+" "+rows[1][0].nickname+"**!");
+				msg.channel.send("**"+msg.author.username+"**, you successfully set your pet as **"+global.unicodeAnimal(animal)+" "+rows[1][0].nickname+"**!");
 			else
-				msg.channel.send("**"+msg.author.username+"**, you successfully set your pet as **"+animal+"**!");
+				msg.channel.send("**"+msg.author.username+"**, you successfully set your pet as **"+global.unicodeAnimal(animal)+"**!");
 		}
 	});
 }
@@ -331,7 +334,7 @@ exports.rename = function(mysql,con,msg,args){
 				.then(message => message.delete(3000));
 		}else{
 			if(rows[1][0]!=undefined&&rows[1][0].nickname!=null)
-				msg.channel.send("**"+msg.author.username+"**, you successfully named your pet as **"+rows[1][0].name+" "+rows[1][0].nickname+"**!");
+				msg.channel.send("**"+msg.author.username+"**, you successfully named your pet as **"+global.unicodeAnimal(rows[1][0].name)+" "+rows[1][0].nickname+"**!");
 			else
 				msg.channel.send("**"+msg.author.username+"**! An error occured! :c")
 					.then(message => message.delete(3000));
@@ -361,7 +364,7 @@ exports.pet = function(con,msg){
 					"icon_url": msg.author.avatarURL
 				},
 				"fields": [{
-					"name": ":star: "+pet.name + " " + nickname,
+					"name": ":star: "+global.unicodeAnimal(pet.name) + " " + nickname,
 					"value": "`lvl: "+pet.lvl+" ("+pet.xp+"/"+maxxp(pet.lvl)+")`\n`hp:  "+pet.hp+"`\n`att: "+pet.att+"`",
 					"inline": true
 				}]
@@ -373,7 +376,7 @@ exports.pet = function(con,msg){
 				if(nickname == undefined)
 					nickname = "";
 				embed.fields.push({
-					"name": pet.name + " " + nickname,
+					"name": global.unicodeAnimal(pet.name) + " " + nickname,
 					"value": "`lvl: "+pet.lvl+" ("+pet.xp+"/"+maxxp(pet.lvl)+")`\n`hp:  "+pet.hp+"`\n`att: "+pet.att+"`",
 					"inline": true
 				});

@@ -141,7 +141,7 @@ exports.battle = function(client,con,msg,args){
 					},
 					"fields": [{
 						"name": msg.author.username,
-						"value": "**"+result[1][0].name+" "+result[1][0].nickname+"**\n`Lvl "+result[1][0].lvl+"`\n**`HP`**`: "+result[1][0].hp+"  `\n**`ATT`**`: "+result[1][0].att+"`",
+						"value": "**"+global.unicodeAnimal(result[1][0].name)+" "+result[1][0].nickname+"**\n`Lvl "+result[1][0].lvl+"`\n**`HP`**`: "+result[1][0].hp+"  `\n**`ATT`**`: "+result[1][0].att+"`",
 						"inline": true
 						},{
 						"name": "VS",
@@ -149,7 +149,7 @@ exports.battle = function(client,con,msg,args){
 						"inline": true
 						},{
 						"name": opponent.username,
-						"value": "**"+result[3][0].name+" "+result[3][0].nickname+"**\n`Lvl "+result[3][0].lvl+"`\n**`HP`**`: "+result[3][0].hp+"  `\n**`ATT`**`: "+result[3][0].att+"`",
+						"value": "**"+global.unicodeAnimal(result[3][0].name)+" "+result[3][0].nickname+"**\n`Lvl "+result[3][0].lvl+"`\n**`HP`**`: "+result[3][0].hp+"  `\n**`ATT`**`: "+result[3][0].att+"`",
 						"inline": true
 						},{
 						"name": "The fight requires <:cowoncy:416043450337853441> "+amount+" cowoncy to start!",
@@ -191,6 +191,7 @@ function startBattle(client,con,msg,user1,user2,amount){
 			"username":user1.username,
 			"name":upet.nickname,
 			"animal":upet.name,
+			"unicode":global.unicodeAnimal(upet.name),
 			"lvl":upet.lvl,
 			"attack":upet.att,
 			"mhp":upet.hp,
@@ -200,6 +201,7 @@ function startBattle(client,con,msg,user1,user2,amount){
 			"username":user2.username,
 			"name":opet.nickname,
 			"animal":opet.name,
+			"unicode":global.unicodeAnimal(opet.name),
 			"lvl":opet.lvl,
 			"attack":opet.att,
 			"mhp":opet.hp,
@@ -214,11 +216,11 @@ function startBattle(client,con,msg,user1,user2,amount){
 			"color":4886754,
 			"fields": [{
 					"name": user1.username,
-					"value": "** "+user1.animal+" "+user1.name+"**\n`Lvl "+user1.lvl+"`\n`████████████████████`\n**`HP`**`: "+user1.hp+"/"+user1.mhp+"`    **`ATT`**`: "+user1.attack+"`",
+					"value": "** "+user1.unicode+" "+user1.name+"**\n`Lvl "+user1.lvl+"`\n`████████████████████`\n**`HP`**`: "+user1.hp+"/"+user1.mhp+"`    **`ATT`**`: "+user1.attack+"`",
 					"inline": true
 				},{
 					"name": user2.username,
-					"value": "** "+user2.animal+" "+user2.name+"**\n`Lvl "+user2.lvl+"`\n`████████████████████`\n**`HP`**`: "+user2.hp+"/"+user2.mhp+"`    **`ATT`**`: "+user2.attack+"`",
+					"value": "** "+user2.unicode+" "+user2.name+"**\n`Lvl "+user2.lvl+"`\n`████████████████████`\n**`HP`**`: "+user2.hp+"/"+user2.mhp+"`    **`ATT`**`: "+user2.attack+"`",
 					"inline": true
 				},{
 					"name": "Battle (0/3)!",
@@ -301,8 +303,8 @@ function display(con,msg,user1,user2,log,count,amount,betmsg){
 	var percent2 = Math.ceil((user2.hp/user2.mhp)*20);
 	
 	//Sets up HP bar
-	var value1 = "** "+user1.animal+" "+user1.name+"**\n`Lvl "+user1.lvl+"`\n`";
-	var value2 = "** "+user2.animal+" "+user2.name+"**\n`Lvl "+user2.lvl+"`\n`";
+	var value1 = "** "+user1.unicode+" "+user1.name+"**\n`Lvl "+user1.lvl+"`\n`";
+	var value2 = "** "+user2.unicode+" "+user2.name+"**\n`Lvl "+user2.lvl+"`\n`";
 	for(i=0;i<20;i++){
 		if(i<percent1)
 			value1 += "█";

@@ -15,11 +15,6 @@ initDisplay();
  * Displays your zoo
  */
 exports.display = function(con,msg){
-	var text = "";
-	for(key in animals.list){
-		text += global.unicodeAnimal(animals.list[key].value);
-	}
-	msg.channel.send(text);
 	var sql = "SELECT TIMESTAMPDIFF(SECOND,zoo,NOW()) AS time FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,result){
 		if(err) throw err;
@@ -96,7 +91,7 @@ exports.catch = function(con,msg){
 				"INSERT INTO animal_count (id,"+type+") VALUES ("+msg.author.id+",1) ON DUPLICATE KEY UPDATE "+type+" = "+type+"+1;";
 			con.query(sql,function(err,result){
 				if(err) throw err;
-				msg.channel.send(msg.author.username+" spent <:cowoncy:416043450337853441> 5, and found a "+animal[0]+" "+animal[1]+"!");
+				msg.channel.send(msg.author.username+" spent <:cowoncy:416043450337853441> 5, and found a "+animal[0]+" "+global.unicodeAnimal(animal[1])+"!");
 				console.log("\x1b[36m%s\x1b[0m","    Found: "+animal[0]+" "+animal[1]);
 			});
 		}
