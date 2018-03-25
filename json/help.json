@@ -224,5 +224,14 @@
 		"related":["owo battle","owo zoo","owo hunt"],
 		"example":["owo pets","owo pets set penguin","owo pets rename pengu boi","owo pets set lion lion boi"],
 		"alt":["pet"]
+	},
+	"lootbox":{
+		"name":"lootbox",
+		"args":"",
+		"desc_short":"Open lootboxes!",
+		"desc_long":"description goes here.",
+		"related":[],
+		"example":["owo lootbox"],
+		"alt":["box"]
 	}
 }
