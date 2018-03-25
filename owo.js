@@ -24,6 +24,7 @@ const rep = require("./methods/rep.js");
 const slots = require("./methods/slots.js");
 const battle = require("./methods/battle.js");
 const battleuser = require("./methods/battleuser.js");
+const lootbox = require("./methods/lootbox.js");
 const lottery = require("./methods/lottery.js");
 const other = require("./methods/other.js");
 const feedback = require("./methods/feedback.js");
@@ -174,6 +175,10 @@ function execute(command,msg,args,isMention){
 	//Battle pets
 	else if(command === 'pet'||command === 'pets'){
 		battle.execute_p(mysql,client,con,msg,args);
+	}
+
+	else if(command === 'lootbox'||command === 'box'){
+		lootbox.open(msg,args);
 	}
 
 	//Give cowoncy
