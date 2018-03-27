@@ -55,7 +55,7 @@ exports.addPoint = function(con,msg){
 						"spamintervallongcount < 1200, "+
 					"1,0),lasttime = NOW();";
 				sql += "INSERT INTO guild (id,count) VALUES ("+guild.id+",1) ON DUPLICATE KEY UPDATE count = count + 1;";
-				sql += "INSERT INTO cowoncy (id,money) VALUES ("+id+",1) ON DUPLICATE KEY UPDATE money = money + 1;";
+				sql += "INSERT INTO cowoncy (id,money) VALUES ("+id+",2) ON DUPLICATE KEY UPDATE money = money + 2;";
 
 				//More Grab spam info to give penalties
 				sql += "SELECT spamcount,spamintervalcount,spamintervallongcount,previnterval FROM user WHERE id = "+id+";";
