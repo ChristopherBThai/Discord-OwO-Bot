@@ -8,6 +8,10 @@ exports.open = function(msg,args){
 	var count = 1;
 	if(global.isInt(args[0]))
 		count = parseInt(args[0]);
+	if(count>25)
+		count = 25;
+	if(count<=0)
+		count = 1;
 	var text = blank.repeat(count) + "\n";
 	text += shakegif.repeat(count)
 	msg.channel.send(text)
