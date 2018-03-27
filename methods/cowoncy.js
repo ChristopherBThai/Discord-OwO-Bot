@@ -29,7 +29,7 @@ exports.display = function(con, client, msg){
 exports.daily = function(con,msg){
 	var gain = 100 + Math.floor(Math.random()*100);
 	var sql = "SELECT TIMESTAMPDIFF(HOUR,daily,NOW()) AS hour,TIMESTAMPDIFF(MINUTE,daily,NOW()) AS minute,TIMESTAMPDIFF(SECOND,daily,NOW()) AS second FROM cowoncy WHERE id = "+msg.author.id+" AND TIMESTAMPDIFF(DAY,daily,NOW())<1;"+
-		"INSERT INTO cowoncy (id,money) VALUES ("+msg.author.id+","+gain+") ON DUPLICATE KEY UPDATE daily_streak = IF(TIMESTAMPDIFF(DAY,daily,NOW())>1,0,IF(TIMESTAMPDIFF(DAY,daily,NOW())<1,daily_streak,daily_streak+1)), money = IF(TIMESTAMPDIFF(DAY,daily,NOW()) >= 1,money+("+gain+"+(daily_streak*25)),money), daily = IF(TIMESTAMPDIFF(DAY,daily,NOW()) >= 1,NOW(),daily);"+
+		"INSERT INTO cowoncy (id,money) VALUES ("+msg.author.id+","+gain+") ON DUPLICATE KEY UPDATE daily_streak = IF(TIMESTAMPDIFF(DAY,daily,NOW())>1,0,IF(TIMESTAMPDIFF(DAY,daily,NOW())<1,daily_streak,daily_streak+1)), money = IF(TIMESTAMPDIFF(DAY,daily,NOW()) >= 1,IF(money+("+gain+"+(daily_streak*25))>1000,1000,money+("+gain+"+(daily_streak*25))),money), daily = IF(TIMESTAMPDIFF(DAY,daily,NOW()) >= 1,NOW(),daily);"+
 		"SELECT daily_streak FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
@@ -43,7 +43,10 @@ exports.daily = function(con,msg){
 			var streak = 0;
 			if(rows[2][0]!=undefined)
 				streak = rows[2][0].daily_streak;
-			var text = "**<:cowoncy:416043450337853441> *OwO What's this?*  Here's your daily __"+(gain+(streak*25))+" Cowoncy__, "+msg.author.username+"!**";
+			var totalgain = gain+(streak*25);
+			if(totalgain > 1000)
+				totalgain = 1000
+			var text = "**<:cowoncy:416043450337853441> *OwO What's this?*  Here's your daily __"+totalgain+" Cowoncy__, "+msg.author.username+"!**";
 			if(streak>0)
 				text += "\n**You're on a __"+(streak+1)+"__ daily streak!**";
 			msg.channel.send(text);
