@@ -74,24 +74,40 @@ exports.display = function(con,msg){
  */
 exports.catch = function(con,msg){
 	var sql = "SELECT money,TIMESTAMPDIFF(SECOND,catch,NOW()) AS time FROM cowoncy WHERE id = "+msg.author.id+";";
+	sql += "SELECT name,nickname,lvl,xp FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND name = pet;";
 	con.query(sql,function(err,result){
 		if(err) throw err;
-		if(result[0]==undefined||result[0].money<animals.rollprice){
+		if(result[0][0]==undefined||result[0][0].money<animals.rollprice){
 			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**")
 				.then(message => message.delete(3000));
-		}else if(result[0].time <= 15){
-			msg.channel.send("**"+msg.author.username+"! You need to wait "+(15-result[0].time)+" more seconds!**")
+		}else if(result[0][0].time <= 15){
+			msg.channel.send("**"+msg.author.username+"! You need to wait "+(15-result[0][0].time)+" more seconds!**")
 				.then(message => message.delete(3000));
 		}else{
 			var animal = randAnimal();
 			var type = animal[2];
-			var bonus = animal[3];
+			var xp = animal[3];
+			var lvlup = false;
 			sql = "INSERT INTO animal (id,name,count) VALUES ("+msg.author.id+",'"+animal[1]+"',1) ON DUPLICATE KEY UPDATE count = count + 1;"+
 				"UPDATE cowoncy SET money = money - 5,catch = NOW() WHERE id = "+msg.author.id+";"+
 				"INSERT INTO animal_count (id,"+type+") VALUES ("+msg.author.id+",1) ON DUPLICATE KEY UPDATE "+type+" = "+type+"+1;";
-			con.query(sql,function(err,result){
+			if(result[1][0]!=undefined){
+				var temp = givexp(animal[3],result[1][0].xp,result[1][0].lvl,msg.author.id,result[1][0].name);
+				sql += temp[0];
+				if(temp[1]>=1)
+					lvlup = true;
+			}
+			console.log(sql);
+			con.query(sql,function(err,result2){
 				if(err) throw err;
-				msg.channel.send(msg.author.username+" spent <:cowoncy:416043450337853441> 5, and found a "+animal[0]+" "+global.unicodeAnimal(animal[1])+"!");
+				var text = "**"+msg.author.username+"** spent **<:cowoncy:416043450337853441> 5**, and found a "+animal[0]+" "+global.unicodeAnimal(animal[1])+"!";
+				if(result2[3]!=undefined&&result2[3].affectedRows>=1){
+					text += "\n"+result[1][0].name+" **"+result[1][0].nickname+"** gained **"+animal[3]+" xp**";
+					if(lvlup)
+						text += " and leveled up";
+					text += "!";
+				}
+				msg.channel.send(text);
 				console.log("\x1b[36m%s\x1b[0m","    Found: "+animal[0]+" "+animal[1]);
 			});
 		}
@@ -107,37 +123,37 @@ function randAnimal(){
 		result.push(animals.ranks.common+" *(common)*");
 		result.push(animals.common[rand]);
 		result.push("common");
-		result.push("25");
+		result.push(1);
 	}else if(rand<parseFloat(animals.uncommon[0])){
 		rand = Math.ceil(Math.random()*(animals.uncommon.length-1));
 		result.push(animals.ranks.uncommon+" *(uncommon)*");
 		result.push(animals.uncommon[rand]);
 		result.push("uncommon");
-		result.push("50");
+		result.push(3);
 	}else if(rand<parseFloat(animals.rare[0])){
 		rand = Math.ceil(Math.random()*(animals.rare.length-1));
 		result.push(animals.ranks.rare+" *(rare)*");
 		result.push(animals.rare[rand]);
 		result.push("rare");
-		result.push("100");
+		result.push(8);
 	}else if(rand<parseFloat(animals.epic[0])){
 		rand = Math.ceil(Math.random()*(animals.epic.length-1));
 		result.push(animals.ranks.epic+" *(epic)*");
 		result.push(animals.epic[rand]);
 		result.push("epic");
-		result.push("250");
+		result.push(25);
 	}else if(rand<parseFloat(animals.mythical[0])){
 		rand = Math.ceil(Math.random()*(animals.mythical.length-1));
 		result.push(animals.ranks.mythical+" *(mythic)*");
 		result.push(animals.mythical[rand]);
 		result.push("mythical");
-		result.push("500");
+		result.push(500);
 	}else{
 		rand = Math.ceil(Math.random()*(animals.legendary.length-1));
 		result.push(animals.ranks.legendary+" *(legendary)*");
 		result.push(animals.legendary[rand]);
 		result.push("legendary");
-		result.push("1000");
+		result.push(1500);
 	}
 	return result;
 }
@@ -191,4 +207,33 @@ function initDisplay(){
 		display += "~"+animals.mythical[i]+gap;
 	secret = "\n"+animals.ranks.legendary+"    ";
 
+}
+
+//Levels a pet
+function givexp(xpgain,cxp,clvl,id,animal){
+	var totalxp = xpgain+cxp;
+
+	var neededxp = maxxp(clvl);
+	var lvlup = 0;
+	var att = 0;
+	var hp = 0;
+	if(totalxp/neededxp>=1){
+		lvlup = 1;
+		totalxp -= neededxp;
+		animal = global.validAnimal(animal);
+		if(animal==undefined)
+			return "";
+		att = animal.attr;
+		hp = animal.hpr;
+	}
+	
+	var result = ["UPDATE animal NATURAL JOIN cowoncy SET lvl = lvl + "+lvlup+",xp = "+totalxp+",att = att + "+att+",hp = hp + "+hp+" WHERE id = "+id+" AND name = pet;",
+		lvlup]
+
+	return result;
+}
+
+//Gets xp needed for that lvl
+function maxxp(lvl){
+	return 25*lvl*lvl;
 }

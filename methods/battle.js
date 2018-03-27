@@ -71,8 +71,7 @@ function startBattle(client,con,msg,args){
 		var upet = rows[0][0];
 		var opet = rows[2][0];
 		if(upet == undefined){
-			msg.channel.send("You don't have a pet! Set one with `owo pets add [animal] [nickname]`")
-				.then(message => message.delete(3000));
+			msg.channel.send("You don't have a pet! Set one with `owo pets add [animal] [nickname]`");
 			return;
 		}
 
@@ -207,7 +206,11 @@ function display(con,id,eid,msg,user1,user2,log,count){
 		lvlup = givexp(con,winner,   id,user1,xp,   eid,user2,exp);
 		if(lvlup[0]!=undefined){
 			end += "\n= "+user1.name+" leveled up and gained "+lvlup[2]+" att and "+lvlup[3]+" hp!";
+			user1.lvl = lvlup[0];
 			user1.xp = lvlup[1];
+			user1.mxp = maxxp(user1.lvl);
+			user1.attack += lvlup[2];
+			user1.mhp += lvlup[3];
 		}
 		user1.xp += xp;
 		if(win)
@@ -351,8 +354,7 @@ exports.pet = function(con,msg){
 		var pet = rows[0][0];
 		var opet = rows[1];
 		if(pet==undefined)
-			msg.channel.send("You don't have a pet! Set one with `owo pets add [animal] [nickname]`")
-				.then(message => message.delete(3000));
+			msg.channel.send("You don't have a pet! Set one with `owo pets add [animal] [nickname]`");
 		else{
 			var nickname = pet.nickname;
 			if(nickname == undefined)
