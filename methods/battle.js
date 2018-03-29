@@ -14,7 +14,7 @@ exports.execute_b = function(mysql,client,con,msg,args){
 			subcommand = subcommand.toLowerCase();
 		if(global.isUser(subcommand))
 			userbattle.battle(client,con,msg,args);
-		else if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a")
+		else if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a"||subcommand=="replace")
 			this.set(mysql,con,msg,args);
 		else if(subcommand=="remove"||subcommand=="delete"||subcommand=="d")
 			this.remove(mysql,con,msg,args);
@@ -35,7 +35,7 @@ exports.execute_p = function(mysql,client,con,msg,args){
 			subcommand = subcommand.toLowerCase();
 		if(args.length==0)
 			this.pet(con,msg);
-		if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a")
+		if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a"||subcommand=="replace")
 			this.set(mysql,con,msg,args);
 		else if(subcommand=="remove"||subcommand=="delete"||subcommand=="d")
 			this.remove(mysql,con,msg,args);
