@@ -34,9 +34,10 @@ exports.display = function(con, client, msg, args){
 			var zoo = false;
 			var money = false;
 			var rep = false;
+			var pet = false;
 
 			for(var i in args){
-				if(!points&&!guild&&!money&&!zoo&&!rep){
+				if(!points&&!guild&&!money&&!zoo&&!rep&&!pet){
 					if(args[i]=== "points"||args[i]==="point"||args[i]==="p")
 						points = true;
 					else if(args[i]==="guild"||args[i]==="server"||args[i]==="g"||args[i]==="s")
@@ -47,6 +48,8 @@ exports.display = function(con, client, msg, args){
 						money = true;
 					else if(args[i]==="cookies"||args[i]==="cookie"||args[i]=== "rep"||args[i]==="r")
 						rep = true;
+					else if(args[i]==="pets"||args[i]==="pet") 
+						pet = true;
 					else if(args[i]==="global"||args[i]==="g") 
 						aglobal = true;
 					else
@@ -68,6 +71,8 @@ exports.display = function(con, client, msg, args){
 					getGlobalMoneyRanking(con,client,msg,id);
 				else if(rep)
 					getGlobalRepRanking(con,client,msg,id);
+				else if(pet)
+					getGlobalPetRanking(con,client,msg,id);
 				else
 					getGlobalPointRanking(con,client,msg,id);
 			}else{
@@ -81,6 +86,8 @@ exports.display = function(con, client, msg, args){
 					getMoneyRanking(con,client,msg,id);
 				else if(rep)
 					getRepRanking(con,client,msg,id);
+				else if(pet)
+					getPetRanking(con,client,msg,id);
 				else
 					getPointRanking(con,client,msg,id);
 			}
@@ -907,3 +914,198 @@ function getRepRanking(con, client, msg, id){
 	});
 }
 
+/**
+ * displays global pet ranking
+ * @param {mysql.Connection}	con 	- Mysql.createConnection()
+ * @param {mysql.Client}	client	- Discord.js's client
+ * @param {discord.Message}	msg	- Current channel
+ * @param {int} 		id	- User's id
+ */
+function getGlobalPetRanking(con, client, msg, id){
+	var channel = msg.channel;
+	//Sql
+	var sql = "SELECT u.id,u.lvl,u.xp,u.att,u.hp,u.nickname, u1.id,u1.lvl,u1.xp,u1.att,u1.hp,u1.nickname FROM animal AS u LEFT JOIN ( SELECT id,lvl,xp,att,hp,nickname FROM animal ORDER BY lvl DESC, xp DESC) AS u1 ON u1.lvl > u.lvl OR (u1.lvl = u.lvl AND u1.xp > u.xp) WHERE u.id = "+id+" ORDER BY u.lvl DESC, u.xp DESC,u1.lvl ASC, u1.xp ASC LIMIT 2;";
+	sql   += "SELECT u.id,u.lvl,u.xp,u.att,u.hp,u.nickname, u1.id,u1.lvl,u1.xp,u1.att,u1.hp,u1.nickname FROM animal AS u LEFT JOIN ( SELECT id,lvl,xp,att,hp,nickname FROM animal ORDER BY lvl ASC, xp ASC) AS u1 ON u1.lvl < u.lvl OR (u1.lvl = u.lvl AND u1.xp < u.xp) WHERE u.id = "+id+" ORDER BY u.lvl DESC, u.xp DESC,u1.lvl DESC, u1.xp DESC LIMIT 2;";
+	sql   +=  "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c WHERE c.id = "+id+" ORDER BY lvl DESC, xp DESC LIMIT 1;";
+
+	//query
+	con.query(sql,function(err,rows,fields){
+		if(err) throw err;
+		var above = rows[0];
+		var below = rows[1];
+		var me = rows[2][0];
+		if(me===null||me===undefined){
+			channel.send("You don't have any pets yet!");
+			return;
+		}
+		var userRank = parseInt(me.rank);
+		var rank = userRank - above.length;
+		var embed = "";
+
+		//People above user
+		above.reverse().forEach(function(ele){
+			var id = String(ele.id);
+			if(id!==""&&id!==null&&!isNaN(id)){
+				var user = client.users.get(id);
+				var name = "";
+				if(user === undefined || user.username === undefined)
+					name = "User Left Discord";
+				else
+					name = ""+user.username;
+				name = name.replace("discord.gg","discord,gg");
+				if(ele.nickname!=null)
+					embed += "#"+rank+"\t"+ele.nickname+" ("+name+")\n\t\tLvl:"+ele.lvl+" Att:"+ele.att+" Hp:"+ele.hp+"\n";
+				else
+					embed += "#"+rank+"\t"+name+"\n\t\tLvl:"+ele.lvl+" Att:"+ele.att+" Hp:"+ele.hp+"\n";
+				rank++;
+			}else if(rank==0)
+				rank = 1;
+				
+		});
+
+		//Current user
+		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
+		var name = client.users.get(me.id).username;
+		name = name.replace("discord.gg","discord,gg");
+		if(me.nickname!=null)
+			embed += "< "+rank+"\t"+me.nickname+" ("+name+") >\n\t\tLvl:"+me.lvl+" Att:"+me.att+" Hp:"+me.hp+"\n";
+		else
+			embed += "< "+rank+"\t"+name+" >\n\t\tLvl:"+me.lvl+" Att:"+me.att+" Hp:"+me.hp+"\n";
+		rank++;
+
+		//People below user
+		below.forEach(function(ele){
+			var id = String(ele.id);
+			if(id!==""&&id!==null&&!isNaN(id)){
+				var user = client.users.get(id);
+				var name = "";
+				if(user === undefined || user.username === undefined)
+					name = "User Left Discord";
+				else
+					name = ""+user.username;
+				name = name.replace("discord.gg","discord,gg");
+				if(ele.nickname!=null)
+					embed += "#"+rank+"\t"+ele.nickname+" ("+name+")\n\t\tLvl:"+ele.lvl+" Att:"+ele.att+" Hp:"+ele.hp+"\n";
+				else
+					embed += "#"+rank+"\t"+name+"\n\t\tLvl:"+ele.lvl+" Att:"+ele.att+" Hp:"+ele.hp+"\n";
+				rank++;
+
+			}
+
+		});
+
+		//Add top and bottom
+		if(userRank>3)
+			embed = "```md\n< "+name+"'s Global Pet Ranking >\nYour rank is: "+userRank+"\n\n>...\n" + embed;
+		else
+			embed = "```md\n< "+name+"'s Global Pet Ranking >\nYour rank is: "+userRank+"\n\n" + embed;
+
+		if(rank-userRank==3)
+			embed += ">...\n";
+
+
+		var date = new Date();
+		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		channel.send(embed);
+	});
+}
+
+/**
+ * displays rep ranking
+ * @param {mysql.Connection}	con 	- Mysql.createConnection()
+ * @param {mysql.Client}	client	- Discord.js's client
+ * @param {discord.Message}	msg	- Current channel
+ * @param {int} 		id	- User's id
+ */
+function getPetRanking(con, client, msg, id){
+	var channel = msg.channel;
+	var users = global.getids(msg.guild.members);
+	//Sql
+	var sql = "SELECT u.id,u.count ,u1.id,u1.count FROM rep AS u LEFT JOIN ( SELECT id,count FROM rep WHERE id IN ("+users+") ORDER BY count ASC ) AS u1 ON u1.count > u.count WHERE u.id = "+id+" ORDER BY u1.count ASC LIMIT 2;";
+	sql   +=  "SELECT u.id,u.count ,u1.id,u1.count FROM rep AS u LEFT JOIN ( SELECT id,count FROM rep WHERE id IN ("+users+") ORDER BY count DESC ) AS u1 ON u1.count < u.count WHERE u.id = "+id+" ORDER BY u1.count DESC LIMIT 2;";
+	sql   +=  "SELECT id,count,(SELECT COUNT(*)+1 FROM rep WHERE count > u.count AND id IN ("+users+") ) AS rank FROM rep u WHERE u.id = "+id+";";
+	var sql = "SELECT u.id,u.lvl,u.xp,u.att,u.hp,u.nickname, u1.id,u1.lvl,u1.xp,u1.att,u1.hp,u1.nickname FROM animal AS u LEFT JOIN ( SELECT id,lvl,xp,att,hp,nickname FROM animal WHERE id IN ("+users+") ORDER BY lvl DESC, xp DESC) AS u1 ON u1.lvl > u.lvl OR (u1.lvl = u.lvl AND u1.xp > u.xp) WHERE u.id = "+id+" ORDER BY u.lvl DESC, u.xp DESC,u1.lvl ASC, u1.xp ASC LIMIT 2;";
+	sql   += "SELECT u.id,u.lvl,u.xp,u.att,u.hp,u.nickname, u1.id,u1.lvl,u1.xp,u1.att,u1.hp,u1.nickname FROM animal AS u LEFT JOIN ( SELECT id,lvl,xp,att,hp,nickname FROM animal WHERE id IN ("+users+") ORDER BY lvl ASC, xp ASC) AS u1 ON u1.lvl < u.lvl OR (u1.lvl = u.lvl AND u1.xp < u.xp) WHERE u.id = "+id+" ORDER BY u.lvl DESC, u.xp DESC,u1.lvl DESC, u1.xp DESC LIMIT 2;";
+	sql   +=  "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE id IN ("+users+") AND ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c WHERE c.id = "+id+" ORDER BY lvl DESC, xp DESC LIMIT 1;";
+
+	//query
+	con.query(sql,function(err,rows,fields){
+		if(err) throw err;
+		var above = rows[0];
+		var below = rows[1];
+		var me = rows[2][0];
+		if(me===null||me===undefined){
+			channel.send("You don't have any pets yet!");
+			return;
+		}
+		var userRank = parseInt(me.rank);
+		var rank = userRank - above.length;
+		var embed = "";
+
+		//People above user
+		above.reverse().forEach(function(ele){
+			var id = String(ele.id);
+			if(id!==""&&id!==null&&!isNaN(id)){
+				var user = client.users.get(id);
+				var name = "";
+				if(user === undefined || user.username === undefined)
+					name = "User Left Discord";
+				else
+					name = ""+user.username;
+				name = name.replace("discord.gg","discord,gg");
+				if(ele.nickname!=null)
+					embed += "#"+rank+"\t"+ele.nickname+" ("+name+")\n\t\tLvl:"+ele.lvl+" Att:"+ele.att+" Hp:"+ele.hp+"\n";
+				else
+					embed += "#"+rank+"\t"+name+"\n\t\tLvl:"+ele.lvl+" Att:"+ele.att+" Hp:"+ele.hp+"\n";
+				rank++;
+			}else if(rank==0)
+				rank = 1;
+				
+		});
+
+		//Current user
+		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
+		var name = client.users.get(me.id).username;
+		name = name.replace("discord.gg","discord,gg");
+		if(me.nickname!=null)
+			embed += "< "+rank+"\t"+me.nickname+" ("+name+") >\n\t\tLvl:"+me.lvl+" Att:"+me.att+" Hp:"+me.hp+"\n";
+		else
+			embed += "< "+rank+"\t"+name+" >\n\t\tLvl:"+me.lvl+" Att:"+me.att+" Hp:"+me.hp+"\n";
+		rank++;
+
+		//People below user
+		below.forEach(function(ele){
+			var id = String(ele.id);
+			if(id!==""&&id!==null&&!isNaN(id)){
+				var user = client.users.get(id);
+				var name = "";
+				if(user === undefined || user.username === undefined)
+					name = "User Left Discord";
+				else
+					name = ""+user.username;
+				name = name.replace("discord.gg","discord,gg");
+				if(ele.nickname!=null)
+					embed += "#"+rank+"\t"+ele.nickname+" ("+name+")\n\t\tLvl:"+ele.lvl+" Att:"+ele.att+" Hp:"+ele.hp+"\n";
+				else
+					embed += "#"+rank+"\t"+name+"\n\t\tLvl:"+ele.lvl+" Att:"+ele.att+" Hp:"+ele.hp+"\n";
+				rank++;
+
+			}
+
+		});
+
+		//Add top and bottom
+		if(userRank>3)
+			embed = "```md\n< "+name+"'s Pet Ranking for "+client.guilds.get(msg.guild.id)+" >\nYour rank is: "+userRank+"\n\n>...\n" + embed;
+		else
+			embed = "```md\n< "+name+"'s Pet Ranking for "+client.guilds.get(msg.guild.id)+" >\nYour rank is: "+userRank+"\n\n" + embed;
+
+		if(rank-userRank==3)
+			embed += ">...\n";
+
+
+		var date = new Date();
+		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		channel.send(embed);
+	});
+}
