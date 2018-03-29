@@ -97,7 +97,6 @@ exports.catch = function(con,msg){
 				if(temp[1]>=1)
 					lvlup = true;
 			}
-			console.log(sql);
 			con.query(sql,function(err,result2){
 				if(err) throw err;
 				var text = "**"+msg.author.username+"** spent **<:cowoncy:416043450337853441> 5**, and found a "+animal[0]+" "+global.unicodeAnimal(animal[1])+"!";
