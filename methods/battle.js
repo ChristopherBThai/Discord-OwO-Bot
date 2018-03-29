@@ -16,6 +16,8 @@ exports.execute_b = function(mysql,client,con,msg,args){
 			userbattle.battle(client,con,msg,args);
 		else if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a")
 			this.set(mysql,con,msg,args);
+		else if(subcommand=="remove"||subcommand=="delete"||subcommand=="d")
+			this.remove(mysql,con,msg,args);
 		else if(subcommand=="rename"||subcommand=="r"||subcommand=="name")
 			this.rename(mysql,con,msg,args);
 		else if(subcommand=="pets"||subcommand=="p"||subcommand=="pet"||subcommand=="zoo"||subcommand=="z")
@@ -35,6 +37,8 @@ exports.execute_p = function(mysql,client,con,msg,args){
 			this.pet(con,msg);
 		if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a")
 			this.set(mysql,con,msg,args);
+		else if(subcommand=="remove"||subcommand=="delete"||subcommand=="d")
+			this.remove(mysql,con,msg,args);
 		else if(subcommand=="rename"||subcommand=="r"||subcommand=="name")
 			this.rename(mysql,con,msg,args);
 		else if(subcommand=="help")
@@ -159,7 +163,7 @@ function display(con,id,eid,msg,user1,user2,log,count){
 
 	if(user1.hp<=0&&user2.hp<=0){
 		xp = 3
-		exp = 2;
+		exp = 3;
 		winner = 0;
 		color = 6381923;
 		end = "It's a draw! "+user1.name+" earned "+xp+" xp!";
@@ -167,7 +171,7 @@ function display(con,id,eid,msg,user1,user2,log,count){
 		draw = true;
 	}else if(user1.hp<=0){
 		xp = 1;
-		exp = 5;
+		exp = 15;
 		winner = -1;
 		color = 16711680;
 		end = "You lost! "+user1.name+" earned 1 xp!";
@@ -186,12 +190,12 @@ function display(con,id,eid,msg,user1,user2,log,count){
 	}else if(count>=2){
 		if(user1.hp>user2.hp){
 			xp = 5;
-			exp = 1;
+			exp = 3;
 		}else if(user1.hp<user2.hp){
 			xp = 3;
-			exp = 3;
+			exp = 5;
 		}else{
-			exp = 2;
+			exp = 4;
 			xp = 4;
 		}
 		winner = 0;
@@ -308,6 +312,40 @@ exports.set = function(mysql, con,msg,args){
 				msg.channel.send("**"+msg.author.username+"**, you successfully set your pet as **"+global.unicodeAnimal(animal)+" "+rows[1][0].nickname+"**!");
 			else
 				msg.channel.send("**"+msg.author.username+"**, you successfully set your pet as **"+global.unicodeAnimal(animal)+"**!");
+		}
+	});
+}
+
+//Removes a pet!
+exports.remove = function(mysql, con,msg,args){
+	if(args.length!=2){
+		msg.channel.send("Invalid arguments!")
+			.then(message => message.delete(3000));
+		return;
+	}
+	var animal = global.validAnimal(args[1]);
+	if(animal==undefined){
+		msg.channel.send("You can only select animals from your zoo!")
+			.then(message => message.delete(3000));
+		return;
+	}
+	var animal = animal.value;
+
+	var sql = "SELECT nickname,pet,name FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND name = '"+animal+"' AND ispet = 1;";
+	sql += "UPDATE animal SET ispet = 0 WHERE id = "+msg.author.id+" AND name = '"+animal+"' AND name != (SELECT pet FROM cowoncy WHERE id = "+msg.author.id+");";
+	con.query(sql,function(err,rows,fields){
+		if(err) throw err;
+		if(rows[0][0]==undefined){
+			msg.channel.send("**"+msg.author.username+"**, you do not have this pet!")
+				.then(message => message.delete(3000));
+		}else if(rows[0][0].pet==rows[0][0].name){
+			msg.channel.send("**"+msg.author.username+"**, you cannot remove your main pet!")
+				.then(message => message.delete(3000));
+		}else{
+			if(rows[0][0].nickname!=null)
+				msg.channel.send("**"+msg.author.username+"**, you successfully removed **"+global.unicodeAnimal(animal)+" "+rows[0][0].nickname+"**!");
+			else
+				msg.channel.send("**"+msg.author.username+"**, you successfully removed  **"+global.unicodeAnimal(animal)+"**!");
 		}
 	});
 }
