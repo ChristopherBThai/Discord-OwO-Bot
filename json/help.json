@@ -218,7 +218,7 @@
 	},
 	"pets":{
 		"name":"pets",
-		"args":"[set|rename] {animal|name}",
+		"args":"[set|rename|remove] {animal|name}",
 		"desc_short":"View your pets!",
 		"desc_long":"Displays your current pets! These pets can fight other users with 'owo battle'! You can only add pets from your current zoo.\nAll pets have different stats and can be renamed!",
 		"related":["owo battle","owo zoo","owo hunt"],
