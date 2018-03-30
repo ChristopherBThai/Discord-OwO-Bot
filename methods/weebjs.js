@@ -14,6 +14,7 @@ const sh = new weeb("Wolke "+auth.weebsh,"owo/1.0");
  */
 function grab(msg,ptype,ftype,text,notsfw,retry){
 	ftype = ftype.toLowerCase();
+	ptype = ptype.toLowerCase();
 	var nsfwt = false;
 	var retryt = true
 	if(typeof notsfw == "boolean"&&notsfw)
@@ -122,7 +123,7 @@ exports.getTypes = function(msg){
  * Self emotes
  */
 exports.sEmote = function(msg,type){
-	var emote = emotes.sEmote[type];
+	var emote = emotes.sEmote[type.toLowerCase()];
 	if(emote == undefined)
 		return;
 	if(emote.alt!=undefined)
@@ -143,7 +144,7 @@ exports.uEmote= function(client,msg,args,type){
 		msg.channel.send("I couldn't find that user :c");
 		return;
 	}
-	var emote = emotes.uEmote[type];
+	var emote = emotes.uEmote[type.toLowerCase()];
 	if(emote == undefined)
 		return;
 	if(emote.alt!=undefined)

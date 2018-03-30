@@ -130,9 +130,9 @@
 		"args":"",
 		"desc_short":"Some emotes~",
 		"desc_long":"Shrug, cry, pout, etc! \nRelated commands below!",
-		"related":["owo shrug|blush|cry|dance|lewd|pout|shrug|sleepy|smile|thumbsup|wag|thinking|triggered"],
+		"related":["owo shrug|blush|cry|dance|lewd|pout|shrug|sleepy|smile|thumbsup|wag|thinking|triggered|teehee|deredere"],
 		"example":["owo cry","owo pout"],
-		"alt":["blush" , "cry" , "dance" , "lewd" , "pout" , "shrug" , "sleepy" , "smile" , "smug" , "thumbsup" , "wag" , "thinking" , "triggered"]
+		"alt":["blush" , "cry" , "dance" , "lewd" , "pout" , "shrug" , "sleepy" , "smile" , "smug" , "thumbsup" , "wag" , "thinking" , "triggered","teehee","deredere"]
 	},
 	"feedback":{
 		"name":"feedback",
@@ -233,5 +233,14 @@
 		"related":[],
 		"example":["owo lootbox"],
 		"alt":["box"]
+	},
+	"ship":{
+		"name":"ship",
+		"args":"{@user1} {@user2}",
+		"desc_short":"Ship two people!",
+		"desc_long":"Ships two people!",
+		"related":[],
+		"example":["owo ship @Scuttler @OwO"],
+		"alt":[]
 	}
 }

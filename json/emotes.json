@@ -107,6 +107,22 @@
 				"? is TRIGGERED!!!!"
 			]
 		},
+		"teehee":{
+			"name":"teehee",
+			"msg":[
+				"? giggles~",
+				"? c;",
+				"? ;P"
+			]
+		},
+		"deredere":{
+			"name":"deredere",
+			"msg":[
+				"? is in love~",
+				"? loves that~",
+				"? <3"
+			]
+		},
 		"thonking":{
 			"alt":"thinking"
 		},
