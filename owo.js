@@ -17,6 +17,7 @@ const me = require("./methods/me.js");
 const helper = require("./methods/helper.js");
 const cowoncy = require("./methods/cowoncy.js");
 const vote = require("./methods/vote.js");
+const ship = require("./methods/ship.js");
 const disable = require("./methods/disable.js");
 const weeb = require("./methods/weebjs.js");
 const zoo = require("./methods/zoo.js");
@@ -156,6 +157,11 @@ function execute(command,msg,args,isMention){
 
 	//emotes + user
 	else if(emotes.uEmote[command]!=undefined&&args.length==1){weeb.uEmote(client,msg,args,command);}
+
+	//Ships user
+	else if(command === 'ship'){
+		ship.ship(msg,args);
+	}
 
 	//Battle!
 	else if(command === 'fight'||command === 'battle'){

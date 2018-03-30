@@ -35,6 +35,7 @@ exports.showHelp = function(channel){
 			"\n# Social"+
 			"\n< owo cookie {@user} >\t\t   "+help.rep.desc_short+
 			"\n< owo pet|slap|hug|etc {@user} > "+help.pet.desc_short+
+			"\n< owo ship {@user1} {@user2} >\t  "+help.ship.desc_short+
 			"\n# Utility"+
 			"\n< owo feedback {message} >\t   "+help.feedback.desc_short+
 			"\n< owo stats >\t\t\t\t\t"+help.stats.desc_short+
@@ -50,7 +51,7 @@ exports.showCompactHelp = function(channel){
 		"\n\n**Main:** `top`  `my`"+
 		"\n**Economy:** `money`  `give`  `daily`  `vote`"+
 		"\n**Fun:** `zoo`  `hunt`  `slots`  `lottery`  `8b`  `define`  `gif`  `pic`  `battle`"+
-		"\n**Social:** `cookie`  `pet`  `hug`  `kiss`"+
+		"\n**Social:** `cookie`  `pet`  `hug`  `kiss`  `ship`"+
 		"\n**Utility:** `feedback`  `stats`  `link`  `guildlink`  `disable`  `enable`  `help`"+
 		"\n\nUse `owo help {command}` for further details!"+
 		"\nUse `owo {command}` to execute a command!";
