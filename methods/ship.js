@@ -52,7 +52,7 @@ exports.ship = function(msg,args){
 	var name1 = user1.username;
 	var name2 = user2.username;
 	var name = combinename(name1,name2);
-	msg.channel.send("**"+name1+"**'s and **"+name2+"**'s shipping name is **" + name+"**!");
+	msg.channel.send(name1+" 💞 "+name2+" = " + name+"\n*How cute~!*");
 	console.log("\x1b[36m%s\x1b[0m","\t"+name1 + " + " + name2 + " = " + name);
 }
 
