@@ -35,7 +35,7 @@ exports.showHelp = function(channel){
 			"\n# Social"+
 			"\n< owo cookie {@user} >\t\t   "+help.rep.desc_short+
 			"\n< owo pet|slap|hug|etc {@user} > "+help.pet.desc_short+
-			"\n< owo ship {@user1} {@user2} >\t  "+help.ship.desc_short+
+			"\n< owo ship {@user1} {@user2} >   "+help.ship.desc_short+
 			"\n# Utility"+
 			"\n< owo feedback {message} >\t   "+help.feedback.desc_short+
 			"\n< owo stats >\t\t\t\t\t"+help.stats.desc_short+
