@@ -8,6 +8,7 @@ var animals = require('../../tokens/owo-animals.json');
 var unicode = {};
 
 var secret = "";
+var secret2 = "";
 var display = "";
 initDisplay();
 
@@ -18,8 +19,8 @@ exports.display = function(con,msg){
 	var sql = "SELECT TIMESTAMPDIFF(SECOND,zoo,NOW()) AS time FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,result){
 		if(err) throw err;
-		if(result[0]!=undefined&&result[0].time<=60){
-			msg.channel.send("**"+msg.author.username+"! You need to wait "+(60-result[0].time)+" more seconds!**")
+		if(result[0]!=undefined&&result[0].time<=45){
+			msg.channel.send("**"+msg.author.username+"! You need to wait "+(45-result[0].time)+" more seconds!**")
 				.then(message => message.delete(3000));
 		}else{
 			var sql = "SELECT * FROM animal WHERE id = "+msg.author.id+";"+
@@ -30,6 +31,7 @@ exports.display = function(con,msg){
 				var text = "🌿 🌱 🌳** "+msg.author.username+"'s zoo! **🌳 🌿 🌱\n";
 				text += display;
 				var additional = "";
+				var additional2 = "";
 				var row = result[0];
 				var count = result[1][0];
 				var over = false;
@@ -42,12 +44,19 @@ exports.display = function(con,msg){
 							additional = secret;
 						additional += row[i].name+toSmallNum(row[i].count,over)+"  ";
 					}
+					if(animals.special.indexOf(row[i].name)>0){
+						console.log("found special");
+						if(additional2=="")
+							additional2 = secret2;
+						additional2 += row[i].name+toSmallNum(row[i].count,over)+"  ";
+					}
 				}
 				if(over)
 					text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question+animals.numbers[0]);
 				else
 					text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question);
 				text += additional;
+				text += additional2;
 				if(count!=undefined){
 					var total = count.common*1+count.uncommon*5+count.rare*10+count.epic*50+count.mythical*500+count.legendary*1000;
 					text += "\n**Zoo Points: __"+total+"__**\n\t**";
@@ -101,7 +110,7 @@ exports.catch = function(con,msg){
 				if(err) throw err;
 				var text = "**"+msg.author.username+"** spent **<:cowoncy:416043450337853441> 5**, and found a "+animal[0]+" "+global.unicodeAnimal(animal[1])+"!";
 				if(result2[3]!=undefined&&result2[3].affectedRows>=1){
-					text += "\n"+result[1][0].name+" **"+result[1][0].nickname+"** gained **"+animal[3]+" xp**";
+					text += "\n"+result[1][0].name+" "+((result[1][0].nickname==null)?"":"**"+result[1][0].nickname+"**")+" gained **"+animal[3]+" xp**";
 					if(lvlup)
 						text += " and leveled up";
 					text += "!";
@@ -116,40 +125,46 @@ exports.catch = function(con,msg){
 function randAnimal(){
 	var rand = Math.random();
 	var result = [];
-	    
-	if(rand<parseFloat(animals.common[0])){
+
+	if(rand<parseFloat(animals.special[0])){
+		rand = Math.ceil(Math.random()*(animals.special.length-1));
+		result.push("**special**"+animals.ranks.special);
+		result.push(animals.special[rand]);
+		result.push("special");
+		result.push(500);
+	}else if(rand<parseFloat(animals.common[0])){
 		rand = Math.ceil(Math.random()*(animals.common.length-1));
-		result.push(animals.ranks.common+" *(common)*");
+		result.push("**common**"+animals.ranks.common);
 		result.push(animals.common[rand]);
 		result.push("common");
 		result.push(1);
 	}else if(rand<parseFloat(animals.uncommon[0])){
 		rand = Math.ceil(Math.random()*(animals.uncommon.length-1));
-		result.push(animals.ranks.uncommon+" *(uncommon)*");
+		result.push("**uncommon**"+animals.ranks.uncommon);
 		result.push(animals.uncommon[rand]);
 		result.push("uncommon");
 		result.push(3);
 	}else if(rand<parseFloat(animals.rare[0])){
 		rand = Math.ceil(Math.random()*(animals.rare.length-1));
-		result.push(animals.ranks.rare+" *(rare)*");
+		result.push("**rare**"+animals.ranks.rare);
 		result.push(animals.rare[rand]);
 		result.push("rare");
 		result.push(8);
 	}else if(rand<parseFloat(animals.epic[0])){
 		rand = Math.ceil(Math.random()*(animals.epic.length-1));
-		result.push(animals.ranks.epic+" *(epic)*");
+		result.push("**epic**"+animals.ranks.epic);
 		result.push(animals.epic[rand]);
 		result.push("epic");
 		result.push(25);
 	}else if(rand<parseFloat(animals.mythical[0])){
 		rand = Math.ceil(Math.random()*(animals.mythical.length-1));
-		result.push(animals.ranks.mythical+" *(mythic)*");
+		result.push("**mythic**"+animals.ranks.mythical);
 		result.push(animals.mythical[rand]);
 		result.push("mythical");
 		result.push(500);
 	}else{
 		rand = Math.ceil(Math.random()*(animals.legendary.length-1));
-		result.push(animals.ranks.legendary+" *(legendary)*");
+		result.push("**legendary**"+animals.ranks.legendary);
 		result.push(animals.legendary[rand]);
 		result.push("legendary");
 		result.push(1500);
@@ -205,6 +220,7 @@ function initDisplay(){
 	for (i=1;i<animals.mythical.length;i++)
 		display += "~"+animals.mythical[i]+gap;
 	secret = "\n"+animals.ranks.legendary+"    ";
+	secret2 = "\n"+animals.ranks.special+"    ";
 
 }
 
