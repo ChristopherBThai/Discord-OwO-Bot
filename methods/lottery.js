@@ -90,7 +90,9 @@ exports.bet = function(con,msg,args){
 							          }
 						    ]
 				};
-				msg.channel.send({ embed });
+				msg.channel.send({ embed })
+					.catch(err => msg.channel.send("I don't have permission to send embedded links! :c"));
+
 			});
 		}
 	});
@@ -163,7 +165,8 @@ exports.display = function(con,msg){
 							}
 					]
 		};
-		msg.channel.send({ embed });
+		msg.channel.send({ embed })
+			.catch(err => msg.channel.send("I don't have permission to send embedded links! :c"));
 	});
 }
 

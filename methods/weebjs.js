@@ -34,7 +34,8 @@ function grab(msg,ptype,ftype,text,notsfw,retry){
 			}
 		};
 
-		msg.channel.send({embed});
+		msg.channel.send({embed})
+			.catch(err => msg.channel.send("I don't have permission to send embedded links! :c"));
 
 	}).catch(err => {
 		if(retryt&&(ftype=="jpg"||ftype=="png")){
