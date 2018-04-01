@@ -45,11 +45,6 @@ client.on('message',msg => {
 			feedback.reply(mysql, con, client, msg, adminMsg);
 		}
 
-		//Grabs info of bot
-		else if(adminCommand === 'info'){
-			admin.info(client,msg);
-		}
-
 		else if(adminCommand === 'channel'){
 			admin.msgChannel(client,msg.author,adminMsg.shift(),adminMsg.join(' '));
 		}
