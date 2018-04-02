@@ -42,7 +42,7 @@ client.on('message',msg => {
 
 		//Reply to a feedback/report/suggestion
 		if(adminCommand === 'reply'&&global.isInt(adminMsg[0])){
-			feedback.reply(mysql, con, client, msg, adminMsg);
+			feedback.reply(mysql, con, msg, adminMsg);
 		}
 
 		else if(adminCommand === 'channel'){
@@ -106,9 +106,9 @@ function execute(command,msg,args,isMention){
 
 	//Displays user ranking
 	if (command === 'my' || command === 'me'){
-		me.display(con, client, msg, args);
+		me.display(con, msg, args);
 	}else if(command === 'guild' || command === 'server'){
-		me.display(con, client, msg, ["guild"]);
+		me.display(con, msg, ["guild"]);
 	}
 
 	//Displays top ranking
@@ -136,7 +136,7 @@ function execute(command,msg,args,isMention){
 
 	//Cowoncy
 	else if (command === 'cowoncy'||command === 'credit'||command === 'money'||command === 'cash'||command === 'balance'||command === 'currency'){
-		cowoncy.display(con,client,msg);
+		cowoncy.display(con,msg);
 	}
 
 	//Give rep 
@@ -160,22 +160,22 @@ function execute(command,msg,args,isMention){
 
 	//Battle!
 	else if(command === 'fight'||command === 'battle'){
-		battle.execute_b(mysql,client,con,msg,args);
+		battle.execute_b(mysql,con,msg,args);
 	}
 
 	//Accept a battle from a user
 	else if(command === 'acceptbattle'||command === "ab"){
-		battleuser.accept(client,con,msg,args);
+		battleuser.accept(con,msg,args);
 	}
 
 	//Declines a battle from a user
 	else if(command === 'declinebattle'||command === "db"){
-		battleuser.decline(client,con,msg,args);
+		battleuser.decline(con,msg,args);
 	}
 
 	//Battle pets
 	else if(command === 'pet'||command === 'pets'){
-		battle.execute_p(mysql,client,con,msg,args);
+		battle.execute_p(mysql,con,msg,args);
 	}
 
 	else if(command === 'lootbox'||command === 'box'){
@@ -184,7 +184,7 @@ function execute(command,msg,args,isMention){
 
 	//Give cowoncy
 	else if(command === 'send' || command === 'give'){
-		cowoncy.give(client,con,msg,args);
+		cowoncy.give(con,msg,args);
 	}
 
 	//Daily cowoncy

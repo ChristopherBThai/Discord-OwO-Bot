@@ -8,12 +8,12 @@ var h = "█";
 var n = "▁";
 
 //Decides which command to execute (Command: battle)
-exports.execute_b = function(mysql,client,con,msg,args){
+exports.execute_b = function(mysql,con,msg,args){
 		var subcommand = args[0];
 		if(subcommand != undefined)
 			subcommand = subcommand.toLowerCase();
 		if(global.isUser(subcommand))
-			userbattle.battle(client,con,msg,args);
+			userbattle.battle(con,msg,args);
 		else if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a"||subcommand=="replace")
 			this.set(mysql,con,msg,args);
 		else if(subcommand=="remove"||subcommand=="delete"||subcommand=="d")
@@ -25,11 +25,11 @@ exports.execute_b = function(mysql,client,con,msg,args){
 		else if(subcommand=="help")
 			help.describe(msg,"battle");
 		else if(args.length<1)
-			this.battle(client,con,msg,args);
+			this.battle(con,msg,args);
 }
 
 //Decides which command to execute (Command: pets)
-exports.execute_p = function(mysql,client,con,msg,args){
+exports.execute_p = function(mysql,con,msg,args){
 		var subcommand = args[0];
 		if(subcommand != undefined)
 			subcommand = subcommand.toLowerCase();
@@ -46,7 +46,7 @@ exports.execute_p = function(mysql,client,con,msg,args){
 }
 
 //Checks if user can battle or not
-exports.battle = function(client,con,msg,args){
+exports.battle = function(con,msg,args){
 	var sql = "SELECT money,TIMESTAMPDIFF(SECOND,battle,NOW()) AS time FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,result){
 		if(err) throw err;
@@ -59,14 +59,14 @@ exports.battle = function(client,con,msg,args){
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else{
-			startBattle(client,con,msg,args);
+			startBattle(con,msg,args);
 		}
 	});
 }
 
 
 //Starts a battle against a random user
-function startBattle(client,con,msg,args){
+function startBattle(con,msg,args){
 	var sql = "SELECT * FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND pet = name;";
 	sql += "SET @rand = (CEIL(RAND()*(SELECT COUNT(*) FROM animal WHERE ispet = 1 AND id != "+msg.author.id+")));"+
 		"SELECT * FROM (SELECT animal.*,@rownum := @rownum + 1 AS rank FROM animal ,(SELECT @rownum := 0) r WHERE ispet = 1 AND id != "+msg.author.id+") d WHERE rank <= @rand ORDER BY rank DESC LIMIT 1;"
