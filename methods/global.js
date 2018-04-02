@@ -181,5 +181,6 @@ exports.msgAdmin = async function (message){
 	if(admin==undefined)
 		admin = await client.fetchUser(auth.admin,true);
 	if(admin!=undefined)
-		admin.send(message);
+		admin.send(message)
+			.catch(err => console.error(err));
 }

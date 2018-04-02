@@ -9,6 +9,9 @@ var client;
  * Bet in the lottery
  */
 exports.bet = function(con,msg,args){
+	msg.channel.send("Sorry! The lottery is under construction :(");
+	return;
+
 	var amount = 0;
 	var all = false;
 	if(args.length==1&&global.isInt(args[0]))
@@ -166,7 +169,8 @@ exports.display = function(con,msg){
 					]
 		};
 		msg.channel.send({ embed })
-			.catch(err => msg.channel.send("I don't have permission to send embedded links! :c"));
+			.catch(err => msg.channel.send("I don't have permission to send embedded links! :c")
+				.catch(err => console.error(err)));
 	});
 }
 
@@ -262,6 +266,7 @@ exports.client= function(tclient){
  * Initializes lottery
  */
 function init(){
+	return;
 	initi = true;
 	var now = new Date();
 	var mill = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0, 0) - now;
