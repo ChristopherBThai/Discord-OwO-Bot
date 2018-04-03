@@ -306,12 +306,9 @@ function getGuildRanking(con, msg, id){
 		for(let ele of above.reverse()){
 			var id = String(ele.id);
 			if(id!==""&&id!==null&&!isNaN(id)){
-				var guild = await global.getGuildName(id);
-				var name = "";
-				if(guild === undefined || guild.name === undefined)
+				var name = await global.getGuildName(id);
+				if(name == null|| name == "")
 					name = "Guild Left Bot";
-				else
-					name = ""+guild.name;
 				name = name.replace("discord.gg","discord,gg");
 				embed += "#"+rank+"\t"+name+"\n\t\tcollectively said owo "+ele.count+" times!\n";
 				rank++;
@@ -321,12 +318,9 @@ function getGuildRanking(con, msg, id){
 		}
 
 		//Current user
-		//embed += "< #"+rank+"\t"+name+" \n\t\tsaid owo "+ele.count+" times! >\n";
-		var uname;
-		if(uname = await global.getGuildname(me.id))
-			uname = uname;
-		else 
-			uname = "your guild";
+		var uname = await global.getGuildName(me.id);
+		if(uname == null|| uname == "")
+			uname = "Guild Left Bot";
 		uname = uname.replace("discord.gg","discord,gg");
 		embed += "< "+rank+"   "+uname+" >\n\t\tcollectively said owo "+me.count+" times!\n";
 		rank++;
@@ -335,12 +329,9 @@ function getGuildRanking(con, msg, id){
 		for(let ele of below){
 			var id = String(ele.id);
 			if(id!==""&&id!==null&&!isNaN(id)){
-				var guild = await global.getUser(id);
-				var name = "";
-				if(guild === undefined || guild.name === undefined)
+				var name = await global.getGuildName(id);
+				if(name == null|| name == "")
 					name = "Guild Left Bot";
-				else
-					name = ""+guild.name;
 				name = name.replace("discord.gg","discord,gg");
 				embed += "#"+rank+"\t"+name+"\n\t\tcollectively said owo "+ele.count+" times!\n";
 				rank++;

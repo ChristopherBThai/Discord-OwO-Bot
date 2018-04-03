@@ -1,4 +1,4 @@
-const debug = true;
+const debug = false;
 if(debug)
 	var auth = require('../tokens/scuttester-auth.json');
 else 
@@ -35,6 +35,7 @@ var emotes = require('./json/emotes.json');
 var prefix = "owo";
 
 client.on('message',msg => {
+
 	//Special admin commands via DM
 	if(msg.author.id===auth.admin&&msg.channel.type==="dm"){
 		var adminMsg = msg.content.trim().split(/ +/g);
@@ -113,7 +114,7 @@ function execute(command,msg,args,isMention){
 
 	//Displays top ranking
 	else if (command === 'top' || command === 'rank'){
-		ranking.display(con, client, msg, args);
+		ranking.display(con, msg, args);
 	}
 
 	//Slots!
@@ -311,7 +312,6 @@ var con = mysql.createConnection({
 con.connect(function(err){
 	if(err) throw err;
 	console.log("Connected!");
-	vote.sql(con);
 	lottery.con(con);
 	global.con(con);
 });
@@ -322,14 +322,11 @@ con.connect(function(err){
 client.on('ready',()=>{
 	console.log('Logged in as '+client.user.tag+'!');
 	console.log('Bot has started, with '+client.users.size+' users, in '+client.channels.size+' channels of '+client.guilds.size+' guilds.');
-	client.user.setActivity('with '+client.guilds.size+' Servers! OwO | \n\'OwO help\' for help!');
 	if(!debug){
 		setInterval(() => {
-			dbl.postStats(client.guilds.size);
+			dbl.postStats(client.guilds.size,client.shards.id,client.shards.total);
 		}, 3200000);
-		vote.client(client);
 	}
-	lottery.client(client);
 	global.init(client);
 });
 
@@ -339,18 +336,38 @@ client.on('disconnect', function(erMsg, code) {
 	    client.connect();
 });
 
+//When bot reconnecting
+client.on('reconnecting', () => {
+	    console.log('--------------- Bot is reconnecting ---------------');
+});
+
+//When bot resumes 
+client.on('reconnecting', function(replayed) {
+	    console.log('--------------- Bot has resumed ---------------');
+});
+
 //When bot joins a new guild
 client.on("guildCreate", guild => {
 	console.log('New guild joined: '+guild.name+' (id: '+guild.id+'). This guild has '+guild.memberCount+' members!');
 	client.user.setActivity('with '+client.guilds.size+' Servers! OwO | \n\'OwO help\' for help!');
+	updateActivity();
 });
 
 //When bot is kicked from a guild
 client.on("guildDelete", guild => {
 	console.log('I have been removed from: '+guild.name+' (id: '+guild.id+')');
 	client.user.setActivity('with '+client.guilds.size+' Servers! OwO | \n\'OwO help\' for help!');
+	updateActivity();
 });
 
 function clog(command,args,msg){
 	console.log("\x1b[0m\x1b[4mCommand\x1b[0m: %s\x1b[0m \x1b[36m{%s}\x1b[0m \x1b[0m%s\x1b[36m[%s][%s][%s]",command,args,msg.author.username,msg.guild.name,msg.channel.name,msg.channel.id); 
+}
+
+function updateActivity(){
+	client.shard.fetchClientValues('guilds.size')
+		.then(results => {
+			client.user.setActivity(`with ${results.reduce((prev, val) => prev + val, 0)} Servers! | 'owo help' for help!`);
+		})
+		.catch(err => console.error(err));
 }

@@ -3,13 +3,12 @@
 const global = require('./global.js');
 
 var con;
-var client;
 
 /**
  * Bet in the lottery
  */
 exports.bet = function(con,msg,args){
-	msg.channel.send("Sorry! The lottery is under construction :(");
+	msg.channel.send("Sorry! The lottery is disabled for today!");
 	return;
 
 	var amount = 0;
@@ -19,15 +18,18 @@ exports.bet = function(con,msg,args){
 	else if(args.length==1&&args[0]=='all'){
 		all = true;
 	}else{
-		msg.channel.send("wrong arguments! >:c");
+		msg.channel.send("wrong arguments! >:c")
+			.catch(err => console.error(err));
 		return;
 	}
 	
 	if(amount == 0&&!all){
-		msg.channel.send("You bet... nothing?");
+		msg.channel.send("You bet... nothing?")
+			.catch(err => console.error(err));
 		return;
 	}else if(amount < 0&&!all){
-		msg.channel.send("Do you understand how lotteries work?");
+		msg.channel.send("Do you understand how lotteries work?")
+			.catch(err => console.error(err));
 		return;
 	}
 
@@ -36,7 +38,8 @@ exports.bet = function(con,msg,args){
 		if(err) throw err;
 		if(result[0]==undefined||result[0].money<amount||result[0]==0){
 			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else{
 			if(all)
 				amount = parseInt(result[0].money);
@@ -94,7 +97,8 @@ exports.bet = function(con,msg,args){
 						    ]
 				};
 				msg.channel.send({ embed })
-					.catch(err => msg.channel.send("I don't have permission to send embedded links! :c"));
+					.catch(err => msg.channel.send("I don't have permission to send embedded links! :c")
+						.catch(err => console.error(err)));
 
 			});
 		}
@@ -174,107 +178,11 @@ exports.display = function(con,msg){
 	});
 }
 
-/**
- * Picks the winner of the lottery
- */
-function pickWinner(){
-	console.log("Starting lottery...");
-	var sql = "SELECT id,amount,channel FROM lottery WHERE valid = 1;"+
-		"SELECT SUM(amount) AS sum,COUNT(id) AS count FROM lottery WHERE valid = 1;";
-	con.query(sql,function(err,result){
-		if(err) throw err;
-		var sum = parseInt(result[1][0].sum);
-		var prize = sum + 500;
-		var users = result[0];
-		var rand = Math.floor(Math.random()*sum);
-		var count = 0;
-		var found = false;
-		var winner;
-		var winnerchance;
-		var loser = [];
-		var loserchance = [];
-		for (i in users){
-			var id = users[i].id;
-			var user = client.users.get(id);
-			count += users[i].amount;
-			var chance = (users[i].amount/sum)*100;
-			if(chance>=.01)
-				chance = Math.trunc(chance*100)/100;
-			if(rand<count&&!found){ //Winner
-				found = true;
-				sql = "INSERT INTO cowoncy (id,money) VALUES ("+id+","+prize+") ON DUPLICATE KEY UPDATE money = money + "+prize+";";
-				sql += "UPDATE lottery SET valid = 0,amount = 0 WHERE valid = 1";
 
-				var channel = client.channels.get(users[i].channel);
-				winner = user;
-				winnerchance = chance
-				con.query(sql,function(err,result){
-					if(err) throw err;
-					if(channel!=undefined)
-						channel.send("Congrats! **"+winner+"** won **"+prize+" cowoncy** from the lottery with a **"+winnerchance+"%** chance to win!");
-					if(winner!=undefined){
-						winner.send("Congrats! You won **"+prize+" cowoncy** from the lottery with a **"+winnerchance+"%** chance to win!");
-						console.log("\x1b[36m%s\x1b[0m","    "+winner.username+" won the lottery");
-					}
-					console.log("\x1b[36m%s\x1b[0m","    "+winner+" won the lottery");
-				});
-			} else if(found) { //Loser
-				if(user!=undefined){
-					var text = "You lost the lottery...\nYou had a **"+chance+"%** chance to win **"+prize+" cowoncy...**";
-					if(winner!=undefined)
-						text += "\nThe winner was **"+winner.username+"** with a **"+winnerchance+"%** chance to win!";
-					user.send(text);
-					console.log("\x1b[36m%s\x1b[0m","    msg sent to "+user.username+" for losing");
-				}
-			} else {
-				if(user!=undefined){
-					loser.push(user);
-					loserchance.push(chance);
-				}
-			}
-		}
-
-		for(i in loser){
-			var user = loser[i];
-			var chance = loserchance[i];
-			if(user!=undefined){
-				var text = "You lost the lottery...\nYou had a **"+chance+"%** chance to win **"+prize+" cowoncy...**";
-				if(winner!=undefined)
-					text += "\nThe winner was **"+winner.username+"** with a **"+winnerchance+"%** chance to win!";
-				user.send(text);
-				console.log("\x1b[36m%s\x1b[0m","    msg sent to "+user.username+" for losing");
-			}
-		}
-		init();
-	});
-}
-
-var initi = false;
 exports.con= function(tcon){
 	con = tcon;
-	if(client!=undefined&&!initi)
-		init();
 }
 
-exports.client= function(tclient){
-	client = tclient;
-	if(con!=undefined&&!initi)
-		init();
-}
-
-/*
- * Initializes lottery
- */
-function init(){
-	return;
-	initi = true;
-	var now = new Date();
-	var mill = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0, 0) - now;
-	if (mill < 0) {
-		     mill += 86400000;
-	}
-	var timer = setTimeout(pickWinner,mill);
-}
 
 /**
  * Time left in the lottery

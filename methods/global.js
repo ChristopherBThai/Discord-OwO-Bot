@@ -51,6 +51,22 @@ exports.getUser = async function(mention){
 	return await client.fetchUser(id,true);
 }
 
+/*
+ * Gets name of guild
+ */
+exports.getGuildName = async function(id){
+	id = id.match(/[0-9]+/)[0];
+	var result = await client.shard.broadcastEval(`
+		var temp = this.guilds.get('${id}');
+		if(temp!=undefined)
+			temp = temp.name;
+		temp;
+	`);
+	console.log(result);
+	var result = result.reduce((fin, val) => fin = (val)?val:fin);
+	return result;
+}
+
 /**
  * DM a user
  */

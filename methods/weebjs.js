@@ -35,14 +35,16 @@ function grab(msg,ptype,ftype,text,notsfw,retry){
 		};
 
 		msg.channel.send({embed})
-			.catch(err => msg.channel.send("I don't have permission to send embedded links! :c"));
+			.catch(err => msg.channel.send("I don't have permission to send embedded links! :c")
+				.catch(err => console.error(err)));
 
 	}).catch(err => {
 		if(retryt&&(ftype=="jpg"||ftype=="png")){
 			grab(msg,ptype,(ftype=="jpg")?"png":"jpg",text,notsfw,false);		
 		}else
 			msg.channel.send("I couldn't find that image type! :c\nType `owo help gif` for the list of types!")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 	});
 }
 
@@ -52,14 +54,16 @@ function grab(msg,ptype,ftype,text,notsfw,retry){
 exports.getImage = function(msg,args){
 	if(args.length!=1){
 		msg.channel.send("Wrong argument type! :c")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
 	var nsfw = false;
 	if(args[0]=="nsfw"){
 		if(!msg.channel.nsfw){
 			msg.channel.send("nsfw channels only! >:c")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 			return;
 		}	
 		nsfw = true;
@@ -77,16 +81,19 @@ exports.getImage = function(msg,args){
 exports.getGif = function(msg,args){
 	if(args.length!=1){
 		msg.channel.send("Wrong argument type! :c")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
 	if(args[0]=="nsfw")
 		if(msg.channel.nsfw)
 			msg.channel.send("Please try `owo pic nsfw`~")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		else
 			msg.channel.send("nsfw channels only! >:c")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 	else
 		grab(msg,args[0],"gif",args[0]);
 }
@@ -97,7 +104,8 @@ exports.getGif = function(msg,args){
 exports.getNSFWImage = function(msg,args){
 	if(args.length!=2){
 		msg.channel.send("Wrong argument type! :c")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
 	if(Math.random()>.5)
@@ -116,7 +124,8 @@ exports.getTypes = function(msg){
 			txt += "`"+array[i]+"`, ";
 		txt += "`nsfw`";
 		txt += "\n*Some types will not work on pic*";
-		msg.channel.send(txt);
+		msg.channel.send(txt)
+			.catch(err => console.error(err));
 	});
 }
 
@@ -142,7 +151,8 @@ exports.uEmote= function(client,msg,args,type){
 		return;
 	var target = client.users.get(args[0].match(/[0-9]+/)[0]);
 	if(target == undefined){
-		msg.channel.send("I couldn't find that user :c");
+		msg.channel.send("I couldn't find that user :c")
+			.catch(err => console.error(err));
 		return;
 	}
 	var emote = emotes.uEmote[type.toLowerCase()];
@@ -153,7 +163,8 @@ exports.uEmote= function(client,msg,args,type){
 	if(msg.author.id==target.id){
 		var text = emote.self[Math.floor(Math.random()*emote.self.length)];
 		text = text.replace(/\?/,msg.author.username);
-		msg.channel.send(text);
+		msg.channel.send(text)
+			.catch(err => console.error(err));
 		return;
 	}
 	var text = emote.msg[Math.floor(Math.random()*emote.msg.length)];
