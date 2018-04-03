@@ -12,7 +12,7 @@ app.post('/scuttester',api.handler);
 
 api.on('upvote', (user,bot) => upvote(user));
 
-const pglobal = require('./global.js');
+const global = require('./global.js');
 
 var con;
 var manager;
@@ -29,7 +29,7 @@ function upvote(id){
 				"UPDATE IGNORE cowoncy SET money = money+200 WHERE id = "+id+";";
 			con.query(sql,function(err,result){
 				if(err) throw err;
-				pglobal.msgUser(id,"You have received __200__ cowoncy for voting!");
+				global.msgUser(id,"You have received __200__ cowoncy for voting!");
 				console.log("\x1b[33m",id+" has voted for the first time!"); 
 			});
 		}else if(result[0].time>=23){
@@ -38,11 +38,11 @@ function upvote(id){
 			"UPDATE IGNORE cowoncy SET money = money+"+bonus+" WHERE id = "+id+";";
 			con.query(sql,function(err,result){
 				if(err) throw err;
-				pglobal.msgUser(id,"You have received __"+bonus+"__ cowoncy for voting!")
+				global.msgUser(id,"You have received __"+bonus+"__ cowoncy for voting!")
 				console.log("\x1b[33m",id+" has voted and  received cowoncy!"); 
 			});
 		}else{
-			pglobal.msgUser(id,"You wait need to wait "+(23-result[0].time)+" hours before voting again!")
+			global.msgUser(id,"You wait need to wait "+(23-result[0].time)+" hours before voting again!")
 			console.log("\x1b[33m",id+" tried to vote again"); 
 		}
 	});
