@@ -19,7 +19,8 @@ exports.send = function(mysql, con, msg, admin, type, message){
 	var sender = msg.author;
 	var channel = msg.channel;
 	if(!message||message === ''){
-		channel.send("Silly "+sender + ", you need to add a message!"); 
+		channel.send("Silly "+sender + ", you need to add a message!")
+			.catch(err => console.error(err));
 		return;
 	}
 	var sql = "INSERT INTO feedback (type,message,sender) values ('"+
@@ -27,7 +28,8 @@ exports.send = function(mysql, con, msg, admin, type, message){
 		sender.id+");";
 	if(message.length > 250){
 		console.log("\tMessage too big");
-		channel.send("Sorry! Messages must be under 250 character!!!");
+		channel.send("Sorry! Messages must be under 250 character!!!")
+			.catch(err => console.error(err));
 		return;
 	}
 	sql = mysql.format(sql,message);
@@ -59,9 +61,10 @@ exports.send = function(mysql, con, msg, admin, type, message){
 				}
 			]
 		};
-		channel.send("*OwO What's this?!*  "+sender+", Thanks for the "+type+"!");
-		admin.send({embed});
-		console.log("	New "+type+" sent to admin's DM");
+		channel.send("*OwO What's this?!*  "+sender+", Thanks for the "+type+"!")
+			.catch(err => console.error(err));
+		global.msgAdmin({embed});
+		console.log("\tNew "+type+" sent to admin's DM");
 	});
 }
 
@@ -69,25 +72,25 @@ exports.send = function(mysql, con, msg, admin, type, message){
  * Replies to a feedback 
  * @param {mysql} 		mysql	-  MySql
  * @param {mysql.Connection} 	con 	-  MySql.createConnection()
- * @param {discord.Client} 	client	-  Discord.js client
  * @param {discord.Message}	msg 	-  the msg from discord
  * @param {string} 		args	-  The arguments of the command
  *
  */
-exports.reply = function(mysql, con, client, msg, args){
+exports.reply = function(mysql, con,  msg, args){
 	var dm = msg.channel;
 	var feedbackId = parseInt(args.shift());
 	var reply = args.join(' ');
 	if(reply.length > 250){
 		console.log("Admin Command: reply "+feedbackId+" {"+reply+"}");
 		console.log("\tMessage too big");
-		dm.send("Sorry! Messages must be under 250 character!!!");
+		dm.send("Sorry! Messages must be under 250 character!!!")
+			.catch(err => console.error(err));
 		return;
 	}
 	var sql = "SELECT type,message,sender FROM feedback WHERE id = "+feedbackId+";";
-	con.query(sql,function(err,rows,field){
+	con.query(sql,async function(err,rows,field){
 		if(err) throw err;
-		var user = client.users.get(String(rows[0].sender));
+		var user = await global.getUser(String(rows[0].sender));
 		const embed = {
 			"color": 10590193,
 			"timestamp": new Date(),
@@ -118,9 +121,11 @@ exports.reply = function(mysql, con, client, msg, args){
 			]
 		};
 
-		user.send({embed});
-		dm.send("Replied to user "+user.username);
+		user.send({embed})
+			.catch(err => console.error(err));
+		dm.send("Replied to user "+user.username)
+			.catch(err => console.error(err));
 		console.log("Admin Command: reply "+feedbackId+" {"+reply+"}");
-		console.log("	Replied to a feedback["+feedbackId+"] for "+user.username);
+		console.log("\tReplied to a feedback["+feedbackId+"] for "+user.username);
 	});
 }

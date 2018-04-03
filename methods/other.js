@@ -50,10 +50,10 @@ exports.eightball = function(con,msg,isMention,prefix){
 		else
 			question = question.substring(prefix.length+1);
 			
-		msg.channel.send("**"+msg.author+" asked:**  "+question+
-			"\n**Answer:**  "+rows[0].answer);
-			console.log("\x1b[36m%s\x1b[0m","    question: "+question);
-			console.log("\x1b[36m%s\x1b[0m","    answer: "+rows[0].answer);
+		msg.channel.send("**"+msg.author+" asked:**  "+question+"\n**Answer:**  "+rows[0].answer)
+			.catch(err => console.error(err));
+		console.log("\x1b[36m%s\x1b[0m","    question: "+question);
+		console.log("\x1b[36m%s\x1b[0m","    answer: "+rows[0].answer);
 	});
 }
 
@@ -64,9 +64,11 @@ exports.eightball = function(con,msg,isMention,prefix){
 exports.define = function(msg,word){
 	ud.term(word, function(error,entries,tags,sounds){
 		if(word==""){
-			msg.channel.send("Silly human! Makes sure to add a word to define!");
+			msg.channel.send("Silly human! Makes sure to add a word to define!")
+				.catch(err => console.error(err));
 		}else if(error){
-			msg.channel.send("I couldn't find that word! :c");
+			msg.channel.send("I couldn't find that word! :c")
+				.catch(err => console.error(err));
 		}else{
 			var def = entries[0].definition;
 			var example = "\n*``"+entries[0].example+" ``*";
@@ -92,7 +94,8 @@ exports.define = function(msg,word){
 				};
 
 				msg.channel.send({ embed })
-					.catch(err => msg.channel.send("I don't have permission to send embedded links! :c"));
+					.catch(err => msg.channel.send("I don't have permission to send embedded links! :c")
+						.catch(err => console.error(err)));
 			}while(run);
 		}
 	});
@@ -105,7 +108,8 @@ exports.define = function(msg,word){
  */
 exports.kiss = function(msg,args){
 	if(args[0]!=undefined)
-		msg.channel.send("*OwO What's This?*\n"+msg.author+" kissed "+args.join(" ")+"!");
+		msg.channel.send("*OwO What's This?*\n"+msg.author+" kissed "+args.join(" ")+"!")
+			.catch(err => console.error(err));
 }
 
 /**
@@ -115,7 +119,8 @@ exports.kiss = function(msg,args){
  */
 exports.spank = function(msg,args){
 	if(args[0]!=undefined)
-		msg.channel.send("*Naughty!*\n"+msg.author+" spanked "+args.join(" ")+"!");
+		msg.channel.send("*Naughty!*\n"+msg.author+" spanked "+args.join(" ")+"!")
+			.catch(err => console.error(err));
 }
 
 /**
@@ -125,7 +130,8 @@ exports.spank = function(msg,args){
  */
 exports.hug = function(msg,args){
 	if(args[0]!=undefined)
-		msg.channel.send("*Awww!!! adorable!*\n"+msg.author+" hugs "+args.join(" ")+"!");
+		msg.channel.send("*Awww!!! adorable!*\n"+msg.author+" hugs "+args.join(" ")+"!")
+			.catch(err => console.error(err));
 }
 
 /**
@@ -135,5 +141,6 @@ exports.hug = function(msg,args){
  */
 exports.slap= function(msg,args){
 	if(args[0]!=undefined)
-		msg.channel.send("*owie!*\n"+msg.author+" slaps "+args.join(" ")+"!");
+		msg.channel.send("*owie!*\n"+msg.author+" slaps "+args.join(" ")+"!")
+			.catch(err => console.error(err));
 }

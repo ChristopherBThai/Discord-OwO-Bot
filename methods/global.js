@@ -44,13 +44,41 @@ exports.isUser = function(id){
 }
 
 /*
- *
+ * gets a user
  */
-exports.getUser = function(mention){
+exports.getUser = async function(mention){
 	id = mention.match(/[0-9]+/)[0];
-	if(id=="")
-		return undefined;
-	return client.users.get(id);
+	return await client.fetchUser(id,true);
+}
+
+/*
+ * Gets name of guild
+ */
+exports.getGuildName = async function(id){
+	id = id.match(/[0-9]+/)[0];
+	var result = await client.shard.broadcastEval(`
+		var temp = this.guilds.get('${id}');
+		if(temp!=undefined)
+			temp = temp.name;
+		temp;
+	`);
+	console.log(result);
+	var result = result.reduce((fin, val) => fin = (val)?val:fin);
+	return result;
+}
+
+/**
+ * DM a user
+ */
+exports.msgUser = async function(id,msg){
+	id = id.match(/[0-9]+/)[0];
+	var user = await client.fetchUser(id,true);
+	var success;
+	if(user)
+		await user.send(msg)
+		.then(success = {username:user.username,id:user.id})
+		.catch(err => success = false);
+	return success;
 }
 
 /**
@@ -165,9 +193,10 @@ exports.isDisabled = async function(command,execute,executeOther,msg,args,isMent
 /**
  * Sends a message to an admin
  */
-exports.msgAdmin = function (message){
+exports.msgAdmin = async function (message){
 	if(admin==undefined)
-		admin = client.users.get(auth.admin);
+		admin = await client.fetchUser(auth.admin,true);
 	if(admin!=undefined)
-		admin.send(message);
+		admin.send(message)
+			.catch(err => console.error(err));
 }

@@ -20,7 +20,8 @@ exports.disable = function(con,msg,command){
 		var sql = "INSERT IGNORE INTO disabled (channel,command) VALUES "+list+";";
 		con.query(sql,function(err,rows,field){
 			if(err) throw err;
-			msg.channel.send("**All** commands have been **disabled** for this channel!");
+			msg.channel.send("**All** commands have been **disabled** for this channel!")
+				.catch(err => console.error(err));
 		});
 		return;
 	}
@@ -29,13 +30,15 @@ exports.disable = function(con,msg,command){
 		return;
 	if(command.global){
 		msg.channel.send("You cant disable that silly!")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
 	var sql = "INSERT IGNORE INTO disabled (channel,command) VALUES ("+msg.channel.id+",'"+command.name+"');";
 	con.query(sql,function(err,rows,field){
 		if(err) throw err;
-		msg.channel.send("The command **"+name+"** has been **disabled** for this channel!");
+		msg.channel.send("The command **"+name+"** has been **disabled** for this channel!")
+			.catch(err => console.error(err));
 	});
 }
 
@@ -54,7 +57,8 @@ exports.enable = function(con,msg,command){
 		var sql = "DELETE FROM disabled WHERE channel = "+msg.channel.id+" AND command IN ("+list+");";
 		con.query(sql,function(err,rows,field){
 			if(err) throw err;
-			msg.channel.send("The **all** commands have been **enable** for this channel!");
+			msg.channel.send("**All** commands have been **enable** for this channel!")
+				.catch(err => console.error(err));
 		});
 		return;
 	}
@@ -63,12 +67,14 @@ exports.enable = function(con,msg,command){
 		return;
 	if(command.global){
 		msg.channel.send("You cant enable that silly!")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
 	var sql = "DELETE FROM disabled WHERE channel = "+msg.channel.id+" AND command = '"+command.name+"';";
 	con.query(sql,function(err,rows,field){
 		if(err) throw err;
-		msg.channel.send("The command **"+name+"** has been **enabled** for this channel!");
+		msg.channel.send("The command **"+name+"** has been **enabled** for this channel!")
+			.catch(err => console.error(err));
 	});
 }

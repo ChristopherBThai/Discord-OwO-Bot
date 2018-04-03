@@ -43,7 +43,8 @@ exports.showHelp = function(channel){
 			"\n< owo guildlink >\t\t\t\t"+help.guildlink.desc_short+
 			"\n< owo disable|enable {command}>  "+help.disable.desc_short+"```"+
 			"```md\n< owo help {command} >\t\t   For more information on a command!\n> Remove brackets when typing commands\n> [] = optional arguments\n> {} = optional user input```";
-	channel.send(embed);
+	channel.send(embed)
+		.catch(err => console.error(err));
 }
 
 exports.showCompactHelp = function(channel){
@@ -55,7 +56,8 @@ exports.showCompactHelp = function(channel){
 		"\n**Utility:** `feedback`  `stats`  `link`  `guildlink`  `disable`  `enable`  `help`"+
 		"\n\nUse `owo help {command}` for further details!"+
 		"\nUse `owo {command}` to execute a command!";
-	channel.send(text);
+	channel.send(text)
+		.catch(err => console.error(err));
 }
 
 /**
@@ -66,7 +68,8 @@ exports.describe = function(msg,command){
 	command = global.validCommand(command);
 	if(command == undefined){
 		msg.channel.send("Could not find that command :c")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
 	var desc = "\n# Description\n"+command.desc_long;
@@ -92,7 +95,8 @@ exports.describe = function(msg,command){
 		related = related.substr(0,related.length-3);
 	}
 	var text = "```md\n"+title+"``````md"+desc+example+related+"``````md\n> Remove brackets when typing commands\n> [] = optional arguments\n> {} = optional user input```";
-	msg.channel.send(text);
+	msg.channel.send(text)
+		.catch(err => console.error(err));
 }
 
 /**
@@ -109,7 +113,8 @@ exports.showLink = function(msg){
 		"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
 	};
 	channel.send({embed})
-		.catch(err => channel.send("I don't have permission to send embedded links! :c"));
+		.catch(err => channel.send("I don't have permission to send embedded links! :c")
+			.catch(err => console.error(err)));
 }
 
 
@@ -126,7 +131,8 @@ exports.guild = function(msg){
 		"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
 	};
 	channel.send({embed})
-		.catch(err => channel.send("I don't have permission to send embedded links! :c"));
+		.catch(err => channel.send("I don't have permission to send embedded links! :c")
+			.catch(err => console.error(err)));
 }
 
 /**
@@ -165,7 +171,8 @@ exports.showStats = function(client, con, msg){
 				}]
 		};
 		msg.channel.send({embed})
-			.catch(err => msg.channel.send("I don't have permission to send embedded links! :c"));
+			.catch(err => msg.channel.send("I don't have permission to send embedded links! :c")
+				.catch(err => console.error(err)));
 	});
 }
 
