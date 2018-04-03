@@ -28,7 +28,6 @@ exports.addPoint = function(con,msg){
 				con.query(sql,function(err,result){
 					if(err){ throw err; return;}
 					console.log("\x1b[0m-%s\x1b[36m[%s][%s][%s]",msg.author.username+" typed '"+text+"'",msg.guild,msg.channel.name,msg.channel.id)
-						.catch(err => console.error(err));
 				});
 			}else{
 				var cooldown = 0;
