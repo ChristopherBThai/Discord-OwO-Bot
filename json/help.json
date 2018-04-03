@@ -205,7 +205,7 @@
 		"desc_long":"Gives a cookie to a user! You can only send one per day!\nYou can also give cookies to bots!",
 		"related":[],
 		"example":["owo feed","owo feed @Scuttler"],
-		"alt":["cookie","feed"]
+		"alt":["cookie","feed","cookies"]
 	},
 	"battle":{
 		"name":"battle",

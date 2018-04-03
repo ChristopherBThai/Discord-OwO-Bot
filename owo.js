@@ -141,11 +141,11 @@ function execute(command,msg,args,isMention){
 	}
 
 	//Give rep 
-	else if(command === 'rep'||command === 'cookie'||command === 'feed'){
+	else if(command === 'rep'||command === 'cookie'||command === 'feed'||command === 'cookies'){
 		if(args.length==0)
 			rep.display(con,msg);
 		else
-			rep.give(con,client,msg,args);
+			rep.give(con,msg,args);
 	}
 
 	//emotes
@@ -324,7 +324,7 @@ client.on('ready',()=>{
 	console.log('Bot has started, with '+client.users.size+' users, in '+client.channels.size+' channels of '+client.guilds.size+' guilds.');
 	if(!debug){
 		setInterval(() => {
-			dbl.postStats(client.guilds.size,client.shards.id,client.shards.total);
+			dbl.postStats(client.guilds.size,client.shard.id,client.shard.count);
 		}, 3200000);
 	}
 	global.init(client);
