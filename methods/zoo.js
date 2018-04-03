@@ -21,7 +21,8 @@ exports.display = function(con,msg){
 		if(err) throw err;
 		if(result[0]!=undefined&&result[0].time<=45){
 			msg.channel.send("**"+msg.author.username+"! You need to wait "+(45-result[0].time)+" more seconds!**")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else{
 			var sql = "SELECT * FROM animal WHERE id = "+msg.author.id+";"+
 				"SELECT common,uncommon,rare,epic,mythical,legendary,SUM(CASE WHEN count>99 THEN 1 ELSE 0 END) AS over FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;"+
@@ -68,7 +69,8 @@ exports.display = function(con,msg){
 					text += "U-"+count.uncommon+", ";
 					text += "C-"+count.common+"**";
 				}
-				msg.channel.send(text);
+				msg.channel.send(text)
+					.catch(err => console.error(err));
 			});
 		}
 	});
@@ -88,10 +90,12 @@ exports.catch = function(con,msg){
 		if(err) throw err;
 		if(result[0][0]==undefined||result[0][0].money<animals.rollprice){
 			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else if(result[0][0].time <= 15){
 			msg.channel.send("**"+msg.author.username+"! You need to wait "+(15-result[0][0].time)+" more seconds!**")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else{
 			var animal = randAnimal();
 			var type = animal[2];
@@ -115,7 +119,8 @@ exports.catch = function(con,msg){
 						text += " and leveled up";
 					text += "!";
 				}
-				msg.channel.send(text);
+				msg.channel.send(text)
+					.catch(err => console.error(err));
 				console.log("\x1b[36m%s\x1b[0m","    Found: "+animal[0]+" "+animal[1]);
 			});
 		}
@@ -131,7 +136,7 @@ function randAnimal(){
 		result.push("**special**"+animals.ranks.special);
 		result.push(animals.special[rand]);
 		result.push("special");
-		result.push(500);
+		result.push(100);
 	}else if(rand<parseFloat(animals.common[0])){
 		rand = Math.ceil(Math.random()*(animals.common.length-1));
 		result.push("**common**"+animals.ranks.common);
