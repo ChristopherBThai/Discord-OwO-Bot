@@ -29,13 +29,13 @@ exports.display = function(con, msg){
  */
 exports.daily = function(con,msg){
 	var gain = 100 + Math.floor(Math.random()*100);
-	var sql = "SELECT TIMESTAMPDIFF(HOUR,daily,NOW()) AS hour,TIMESTAMPDIFF(MINUTE,daily,NOW()) AS minute,TIMESTAMPDIFF(SECOND,daily,NOW()) AS second FROM cowoncy WHERE id = "+msg.author.id+" AND TIMESTAMPDIFF(DAY,daily,NOW())<1;"+
-		"INSERT INTO cowoncy (id,money) VALUES ("+msg.author.id+","+gain+") ON DUPLICATE KEY UPDATE daily_streak = IF(TIMESTAMPDIFF(DAY,daily,NOW())>1,0,IF(TIMESTAMPDIFF(DAY,daily,NOW())<1,daily_streak,daily_streak+1)), money = IF(TIMESTAMPDIFF(DAY,daily,NOW()) >= 1,IF(money+("+gain+"+(daily_streak*25))>1000,money+1000,money+("+gain+"+(daily_streak*25))),money), daily = IF(TIMESTAMPDIFF(DAY,daily,NOW()) >= 1,NOW(),daily);"+
+	var sql = "SELECT TIMESTAMPDIFF(HOUR,daily,NOW()) AS hour,TIMESTAMPDIFF(MINUTE,daily,NOW()) AS minute,TIMESTAMPDIFF(SECOND,daily,NOW()) AS second FROM cowoncy WHERE id = "+msg.author.id+" AND TIMESTAMPDIFF(HOUR,daily,NOW())<24;"+
+		"INSERT INTO cowoncy (id,money) VALUES ("+msg.author.id+","+gain+") ON DUPLICATE KEY UPDATE daily_streak = IF(TIMESTAMPDIFF(DAY,daily,NOW())>1,0,IF(TIMESTAMPDIFF(HOUR,daily,NOW())<24,daily_streak,daily_streak+1)), money = IF(TIMESTAMPDIFF(HOUR,daily,NOW()) >= 23,IF("+gain+"+(daily_streak*25)>1000,money+1000,money+("+gain+"+(daily_streak*25))),money), daily = IF(TIMESTAMPDIFF(HOUR,daily,NOW()) >= 23,NOW(),daily);"+
 		"SELECT daily_streak FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		if(rows[0][0]!=undefined){
-			var hour = 23 - rows[0][0].hour;
+			var hour = 22 - rows[0][0].hour;
 			var min= 59 - (rows[0][0].minute%60);
 			var sec = 59 - (rows[0][0].second%60);
 			msg.channel.send("**<:cowoncy:416043450337853441> Nu! "+msg.author.username+"! You need to wait __"+hour+" H "+min+" M "+sec+" S__**")
