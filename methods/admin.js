@@ -5,43 +5,25 @@
 const global = require('./global.js');
 
 /**
- * Grabs bot's info
- */
-exports.info = function(client,msg){
-	var embed = "```md\n< OwO Bot Info >\n"+
-		"> Session Started on: "+client.readyAt+"\n"+
-		"> Ping "+client.ping+"ms\n\n"+
-		"# Talking to "+client.users.size+" people\n"+
-		"# In "+client.guilds.size+" Guilds and "+client.channels.size+" channels";
-	client.guilds.array().forEach(function(ele){
-		var guild = "\n\t"+ele.name;
-		guild += "\n\t\t> "+ele.members.size+" Users";
-		guild += "\n\t\t> "+ele.channels.size+" Channels";
-		guild += "\n\t\t> Joined on "+ele.joinedAt;
-		if(embed.length+guild.length>=2000){
-			embed += "```";
-			msg.channel.send(embed);
-			embed = "```md"+guild;
-		}else
-			embed += guild;
-	});
-	var date = new Date();
-	embed += ("\n\n> "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
-	msg.channel.send(embed);
-	console.log("Admin Command: info");
-}
-
-/**
  * Sends a message to a channel
  */
-exports.msgChannel = function(client,dm,id,message){
-	var channel = client.channels.get(id);
-	if(channel == null || channel == undefined){
-		dm.send("Could not find channel");
-		return;
-	}
-	channel.send(message);
-	dm.send("Message sent: "+message);
+exports.msgChannel = async function(client,dm,id,message){
+	var channelname = await client.shard.broadcastEval(`
+		var channel = this.channels.get('${id}');
+		if(channel){
+			channel.send('${message}')
+			.catch(err => console.err(err));
+			channel = channel.id;
+		}
+		channel;
+	`);
+	channelname = channelname.reduce((result,current) => {if(current)result=current;return result;});
+	if(channelname)
+		dm.send("Message sent to "+channelname)
+		.catch(err => console.err(err));
+	else
+		dm.send("Could not find channel")
+		.catch(err => console.err(err));
 }
 
 /**
@@ -54,15 +36,20 @@ exports.send = function(client,con,msg,args){
 		amount = parseInt(args[1]);
 		id = parseInt(args[0]);
 	}else{
-		msg.channel.send("Wrong args");
+		msg.channel.send("Wrong args")
+		.catch(err => console.err(err));
 		return;
 	}
 	var sql = "UPDATE cowoncy SET money = money + "+amount+" WHERE id IN (SELECT sender FROM feedback WHERE id = "+id+");SELECT sender FROM feedback WHERE id = "+id+";";
-	con.query(sql,function(err,rows,fields){
+	con.query(sql,async function(err,rows,fields){
 		if(err) throw err;
-		var user = client.users.get(String(rows[1][0].sender));
-		user.send("You have recieved __"+amount+"__ cowoncy!");
-		msg.channel.send("You sent "+amount+" cowoncy to "+user.username);
+		if(user = await global.msgUser(String(rows[1][0].sender),"You have recieved __"+amount+"__ cowoncy!"))
+			msg.channel.send("You sent "+amount+" cowoncy to "+user.username)
+			.catch(err => console.err(err));
+		else
+			msg.channel.send("Could not find that user")
+			.catch(err => console.err(err));
+
 	});
 }
 
@@ -79,7 +66,8 @@ exports.giveall = function(con,msg,args){
 	var sql = "UPDATE IGNORE cowoncy SET money = money + "+amount+" WHERE id IN ("+users+");";
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
-		msg.channel.send(msg.author.username+" gave @everyone "+amount+" cowoncy!!!");
+		msg.channel.send(msg.author.username+" gave @everyone "+amount+" cowoncy!!!")
+		.catch(err => console.err(err));
 	});
 }
 
@@ -87,14 +75,7 @@ exports.giveall = function(con,msg,args){
  * Sets a user's timeout
  */
 exports.timeout = function(con,msg,args){
-	var user = global.getUser(args[0]);
 	var time;
-
-	if(user==undefined){
-		global.msgAdmin("Could not find that user");
-		return;
-	}
-	
 	if(global.isInt(args[1])){
 		time = parseInt(args[1]);
 	}else{
@@ -102,10 +83,18 @@ exports.timeout = function(con,msg,args){
 		return;
 	}
 
-	var sql = "UPDATE IGNORE timeout SET penalty = "+time+" WHERE id = "+user.id+";";
-	con.query(sql,function(err,rows,fields){
+	if(!global.isUser("<@"+args[0]+">")){
+		global.msgAdmin("Invalid user id");
+		return;
+	}
+	var sql = "UPDATE IGNORE timeout SET penalty = "+time+" WHERE id = "+args[0]+";";
+	con.query(sql,async function(err,rows,fields){
 		if(err) throw err;
-		user.send("Your penalty has been lifted by an admin! Sorry for the inconvenience!");
-		global.msgAdmin("Penalty has been set to "+time+" for "+user.username);
+		if(user = await global.msgUser(args[0],"Your penalty has been lifted by an admin! Sorry for the inconvenience!"))
+			msg.author.send("Penalty has been set to "+time+" for "+user.username)
+			.catch(err => console.err(err));
+		else
+			msg.author.send("Failed to set penalty for that user")
+			.catch(err => console.err(err));
 	});
 }	

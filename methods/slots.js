@@ -22,15 +22,18 @@ exports.slots = function(con,msg,args){
 		all = true;
 	else{
 		msg.channel.send("Invalid arguments!! :c")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
 
 	if(amount==0&&!all){
-		msg.channel.send("uwu.. you can't bet nothing silly!");
+		msg.channel.send("uwu.. you can't bet nothing silly!")
+			.catch(err => console.error(err));
 		return;
 	}else if(amount<0){
-		msg.channel.send("Do you want to lose even more money????");
+		msg.channel.send("Do you want to lose even more money????")
+			.catch(err => console.error(err));
 		return;
 	//}else if(amount>1000){
 	//	amount = 1000;
@@ -44,10 +47,12 @@ exports.slots = function(con,msg,args){
 			amount = result[0].money
 		if(result[0]==undefined||result[0].money<amount||result[0].money<=0){
 			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else if(result[0].time <= 15){
 			msg.channel.send("**"+msg.author.username+"! You need to wait "+(15-result[0].time)+" more seconds!**")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else{
 			//Decide results
 			var rslots = [];
@@ -114,7 +119,8 @@ exports.slots = function(con,msg,args){
 							},700)
 						);
 					},1000)
-				);
+				)
+				.catch(err => console.error(err));
 			});
 		}
 	});

@@ -2,24 +2,27 @@
 
 const global = require('./global.js');
 
-exports.give = function(con,client,msg,args){
+exports.give = async function(con,msg,args){
 	var id = "";
 	if(args.length==1&&global.isUser(args[0]))
 		id = args[0].match(/[0-9]+/)[0];
 	else{
 		msg.channel.send("Wrong arguments! >:c")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
 
-	var user = client.users.get(id);
+	var user = global.getUser(id);
 	if(user==undefined){
 		msg.channel.send("Could not find that user!")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}else if(msg.author.id==user.id){
 		msg.channel.send("You can't give yourself a cookie, silly!")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
 	
@@ -32,14 +35,16 @@ exports.give = function(con,client,msg,args){
 			var min= 59 - (result.min%60);
 			var sec = 59 - (result.sec%60);
 			msg.channel.send("NU! "+msg.author.username+"! You need to wait **"+hour+"H "+min+"M "+sec+"S**!")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 			return;
 		}else{
 			sql = "INSERT INTO rep (id,count) VALUES ("+user.id+",1) ON DUPLICATE KEY UPDATE count = count + 1;";
 			sql += "INSERT INTO rep (id,count,lasttime) VALUES ("+msg.author.id+",0,NOW()) ON DUPLICATE KEY UPDATE lasttime = NOW();";
 			con.query(sql,function(err,rows,fields){
 				if(err) throw err;
-				msg.channel.send("**"+user.username+"**! You got a cookie from **"+msg.author.username+"**!\n*nom nom nom c:<* <a:cookieeat:423020737364885525>");
+				msg.channel.send("**"+user.username+"**! You got a cookie from **"+msg.author.username+"**!\n*nom nom nom c:<* <a:cookieeat:423020737364885525>")
+					.catch(err => console.error(err));
 			});
 		}
 	});
@@ -52,6 +57,7 @@ exports.display = function(con,msg){
 		var count = 0;
 		if(rows[0]!=undefined)
 			count = rows[0].count;
-		msg.channel.send("**"+msg.author.username+"**! You currently have **"+count+"** cookies!\nYummy! c:< <a:cookieeat:423020737364885525>");
+		msg.channel.send("**"+msg.author.username+"**! You currently have **"+count+"** cookies!\nYummy! c:< <a:cookieeat:423020737364885525>")
+			.catch(err => console.error(err));
 	});
 }

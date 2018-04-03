@@ -8,12 +8,12 @@ var h = "█";
 var n = "▁";
 
 //Decides which command to execute (Command: battle)
-exports.execute_b = function(mysql,client,con,msg,args){
+exports.execute_b = function(mysql,con,msg,args){
 		var subcommand = args[0];
 		if(subcommand != undefined)
 			subcommand = subcommand.toLowerCase();
 		if(global.isUser(subcommand))
-			userbattle.battle(client,con,msg,args);
+			userbattle.battle(con,msg,args);
 		else if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a"||subcommand=="replace")
 			this.set(mysql,con,msg,args);
 		else if(subcommand=="remove"||subcommand=="delete"||subcommand=="d")
@@ -25,11 +25,11 @@ exports.execute_b = function(mysql,client,con,msg,args){
 		else if(subcommand=="help")
 			help.describe(msg,"battle");
 		else if(args.length<1)
-			this.battle(client,con,msg,args);
+			this.battle(con,msg,args);
 }
 
 //Decides which command to execute (Command: pets)
-exports.execute_p = function(mysql,client,con,msg,args){
+exports.execute_p = function(mysql,con,msg,args){
 		var subcommand = args[0];
 		if(subcommand != undefined)
 			subcommand = subcommand.toLowerCase();
@@ -46,45 +46,52 @@ exports.execute_p = function(mysql,client,con,msg,args){
 }
 
 //Checks if user can battle or not
-exports.battle = function(client,con,msg,args){
+exports.battle = function(con,msg,args){
 	var sql = "SELECT money,TIMESTAMPDIFF(SECOND,battle,NOW()) AS time FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,result){
 		if(err) throw err;
 		if(result[0]==undefined||result[0].money<5){
 			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else if(result[0].time <= 15){
 			msg.channel.send("**"+msg.author.username+"! You need to wait "+(15-result[0].time)+" more seconds!**")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else{
-			startBattle(client,con,msg,args);
+			startBattle(con,msg,args);
 		}
 	});
 }
 
 
 //Starts a battle against a random user
-function startBattle(client,con,msg,args){
+function startBattle(con,msg,args){
 	var sql = "SELECT * FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND pet = name;";
 	sql += "SET @rand = (CEIL(RAND()*(SELECT COUNT(*) FROM animal WHERE ispet = 1 AND id != "+msg.author.id+")));"+
 		"SELECT * FROM (SELECT animal.*,@rownum := @rownum + 1 AS rank FROM animal ,(SELECT @rownum := 0) r WHERE ispet = 1 AND id != "+msg.author.id+") d WHERE rank <= @rand ORDER BY rank DESC LIMIT 1;"
 	sql += "UPDATE cowoncy SET money = money - 5,battle = NOW() WHERE id = "+msg.author.id+";"
-	con.query(sql,function(err,rows,fields){
+	con.query(sql,async function(err,rows,fields){
 		if(err) throw err;
 		
+		//Checks if users has a pet
 		var upet = rows[0][0];
 		var opet = rows[2][0];
 		if(upet == undefined){
-			msg.channel.send("You don't have a pet! Set one with `owo pets add [animal] [nickname]`");
+			msg.channel.send("You don't have a pet! Set one with `owo pets add [animal] [nickname]`")
+				.catch(err => console.error(err));
 			return;
 		}
 
 		if(opet == undefined){
 			msg.channel.send("Something went wrong...")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 			return;
 		}
-		var opponent = client.users.get(opet.id);
+
+		//Finds opponent
+		var opponent = await global.getUser(opet.id);
 		var eid;
 		if(opponent==undefined)
 			opponent = "A User";
@@ -93,6 +100,7 @@ function startBattle(client,con,msg,args){
 			opponent = opponent.username;
 		}
 
+		//Assign variables to each user
 		var log = [];
 		var user1 = {
 			"username":msg.author.username,
@@ -122,9 +130,9 @@ function startBattle(client,con,msg,args){
 			log.push({"dmg1":dmg1,"dmg2":dmg2});
 		}
 		if(user1.name==null)
-			user1.name = "you";
+			user1.name = "You";
 		if(user2.name==null)
-			user2.name= "enemy";
+			user2.name= "Enemy";
 		const embed = {
 			"color":4886754,
 			"fields": [{
@@ -144,7 +152,9 @@ function startBattle(client,con,msg,args){
 		msg.channel.send("**"+msg.author.username+"** spent <:cowoncy:416043450337853441> 5 to fight!",{embed})
 			.then(message => setTimeout(function(){
 				display(con,msg.author.id,eid,message,user1,user2,log,0);
-			},1000));
+				},1000))
+			.catch(err => msg.channel.send("I don't have permission to send embeded messages!")
+				.catch(err => console.error(err)));
 	});
 }
 
@@ -265,24 +275,28 @@ function display(con,id,eid,msg,user1,user2,log,count){
 
 	if(win||lose||draw)
 		msg.edit("**"+user1.username+"** spent <:cowoncy:416043450337853441> 5 to fight!",{embed})
+			.catch(err => console.error(err));
 	else
 		msg.edit("**"+user1.username+"** spent <:cowoncy:416043450337853441> 5 to fight!",{embed})
 			.then(message => setTimeout(function(){
-			display(con,id,eid,message,user1,user2,log,count+1);
-		},1000));
+				display(con,id,eid,message,user1,user2,log,count+1);
+				},1000))
+			.catch(err => console.error(err));
 }
 
 //Sets an animal as a pet!
 exports.set = function(mysql, con,msg,args){
 	if(args.length<2){
 		msg.channel.send("Invalid arguments!")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
 	var animal = global.validAnimal(args[1]);
 	if(animal==undefined){
 		msg.channel.send("You can only use animals from your zoo!")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
 	var animal = animal.value;
@@ -290,12 +304,12 @@ exports.set = function(mysql, con,msg,args){
 	var nickname = args.join(" ");;
 	if(nickname!=undefined&&nickname.length>35){
 		msg.channel.send("Nickname is too long!")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
 	var sql;
 	if(nickname!=undefined&&nickname!=""){
-		//nickname = nickname.replace(/([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2694-\u2697]|\uD83E[\uDD10-\uDD5D])/g, ':emoji:')
 		sql = "UPDATE cowoncy NATURAL JOIN animal SET pet = name, ispet = 1, nickname = ? WHERE id = "+msg.author.id+" AND name = '"+animal+"';";
 		sql = mysql.format(sql,nickname);
 	}else{
@@ -306,12 +320,15 @@ exports.set = function(mysql, con,msg,args){
 		if(err) throw err;
 		if(rows[0].affectedRows==0){
 			msg.channel.send("**"+msg.author.username+"**, you do not have this pet!")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else{
 			if(rows[1][0]!=undefined&&rows[1][0].nickname!=null)
-				msg.channel.send("**"+msg.author.username+"**, you successfully set your pet as **"+global.unicodeAnimal(animal)+" "+rows[1][0].nickname+"**!");
+				msg.channel.send("**"+msg.author.username+"**, you successfully set your pet as **"+global.unicodeAnimal(animal)+" "+rows[1][0].nickname+"**!")
+					.catch(err => console.error(err));
 			else
-				msg.channel.send("**"+msg.author.username+"**, you successfully set your pet as **"+global.unicodeAnimal(animal)+"**!");
+				msg.channel.send("**"+msg.author.username+"**, you successfully set your pet as **"+global.unicodeAnimal(animal)+"**!")
+					.catch(err => console.error(err));
 		}
 	});
 }
@@ -320,32 +337,39 @@ exports.set = function(mysql, con,msg,args){
 exports.remove = function(mysql, con,msg,args){
 	if(args.length!=2){
 		msg.channel.send("Invalid arguments!")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
 	var animal = global.validAnimal(args[1]);
 	if(animal==undefined){
 		msg.channel.send("You can only select animals from your zoo!")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
 	var animal = animal.value;
 
 	var sql = "SELECT nickname,pet,name FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND name = '"+animal+"' AND ispet = 1;";
 	sql += "UPDATE animal SET ispet = 0 WHERE id = "+msg.author.id+" AND name = '"+animal+"' AND name != (SELECT pet FROM cowoncy WHERE id = "+msg.author.id+");";
+
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		if(rows[0][0]==undefined){
 			msg.channel.send("**"+msg.author.username+"**, you do not have this pet!")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else if(rows[0][0].pet==rows[0][0].name){
 			msg.channel.send("**"+msg.author.username+"**, you cannot remove your main pet!")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else{
 			if(rows[0][0].nickname!=null)
-				msg.channel.send("**"+msg.author.username+"**, you successfully removed **"+global.unicodeAnimal(animal)+" "+rows[0][0].nickname+"**!");
+				msg.channel.send("**"+msg.author.username+"**, you successfully removed **"+global.unicodeAnimal(animal)+" "+rows[0][0].nickname+"**!")
+					.catch(err => console.error(err));
 			else
-				msg.channel.send("**"+msg.author.username+"**, you successfully removed  **"+global.unicodeAnimal(animal)+"**!");
+				msg.channel.send("**"+msg.author.username+"**, you successfully removed  **"+global.unicodeAnimal(animal)+"**!")
+					.catch(err => console.error(err));
 		}
 	});
 }
@@ -354,31 +378,37 @@ exports.remove = function(mysql, con,msg,args){
 exports.rename = function(mysql,con,msg,args){
 	args.splice(0,1);
 	var name = args.join(" ");
-	//name = name.replace(/([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2694-\u2697]|\uD83E[\uDD10-\uDD5D])/g, ':emoji:')
 
 	if(name.length>35){
 		msg.channel.send("Nickname is too long!")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}else if(name==""){
 		msg.channel.send("Invalid nickname!")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
+
 	sql = "UPDATE cowoncy NATURAL JOIN animal SET nickname = ? WHERE id = "+msg.author.id+" AND pet = name;";
 	sql  += "SELECT name,nickname FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND name = pet;";
 	sql = mysql.format(sql,name);
+
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		if(rows[0].affectedRows==0){
 			msg.channel.send("**"+msg.author.username+"**, you do not have a pet!")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else{
 			if(rows[1][0]!=undefined&&rows[1][0].nickname!=null)
-				msg.channel.send("**"+msg.author.username+"**, you successfully named your pet as **"+global.unicodeAnimal(rows[1][0].name)+" "+rows[1][0].nickname+"**!");
+				msg.channel.send("**"+msg.author.username+"**, you successfully named your pet as **"+global.unicodeAnimal(rows[1][0].name)+" "+rows[1][0].nickname+"**!")
+					.catch(err => console.error(err));
 			else
 				msg.channel.send("**"+msg.author.username+"**! An error occured! :c")
-					.then(message => message.delete(3000));
+					.then(message => message.delete(3000))
+					.catch(err => console.error(err));
 		}
 	});
 
@@ -392,7 +422,8 @@ exports.pet = function(con,msg){
 		var pet = rows[0][0];
 		var opet = rows[1];
 		if(pet==undefined)
-			msg.channel.send("You don't have a pet! Set one with `owo pets add [animal] [nickname]`");
+			msg.channel.send("You don't have a pet! Set one with `owo pets add [animal] [nickname]`")
+				.catch(err => console.error(err));
 		else{
 			var nickname = pet.nickname;
 			if(nickname == undefined)
@@ -422,7 +453,8 @@ exports.pet = function(con,msg){
 				});
 			}
 
-			msg.channel.send({ embed });
+			msg.channel.send({ embed })
+				.catch(err => console.error(err));
 		}
 	});
 }

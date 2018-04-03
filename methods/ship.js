@@ -2,57 +2,65 @@
 const global = require('./global.js');
 const vowels = ['a','e','i','o','u','y'];
 
-exports.ship = function(msg,args){
+exports.ship = async function(msg,args){
 	var user1, user2;
 	if(args.length==2){
 		if(global.isUser(args[0])){
-			user1 = global.getUser(args[0]);
+			user1 = await global.getUser(args[0]);
 			if(user1==undefined){
 				msg.channel.send("Could not find that user!")
-					.then(message => message.delete(3000));
+					.then(message => message.delete(3000))
+					.catch(err => console.error(err));
 				return;
 			}
 		}else{
 			msg.channel.send("That's not a user!")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 			return;;
 		}
 		if(global.isUser(args[1])){
-			user2 = global.getUser(args[1]);
+			user2 = await global.getUser(args[1]);
 			if(user2==undefined){
 				msg.channel.send("Could not find that user!")
-					.then(message => message.delete(3000));
+					.then(message => message.delete(3000))
+					.catch(err => console.error(err));
 				return;
 			}
 		}else{
 			msg.channel.send("That's not a user!")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 			return;
 		}
 	}else if(args.length==1){
 		user1 = msg.author;
 		if(global.isUser(args[0])){
-			user2 = global.getUser(args[0]);
+			user2 = await global.getUser(args[0]);
 			if(user2==undefined){
 				msg.channel.send("Could not find that user!")
-					.then(message => message.delete(3000));
+					.then(message => message.delete(3000))
+					.catch(err => console.error(err));
 				return;
 			}
 		}else{
 			msg.channel.send("That's not a user!")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 			return;
 		}
 	}else{
 		msg.channel.send("Invalid arguments! >:c")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
 
 	var name1 = user1.username;
 	var name2 = user2.username;
 	var name = combinename(name1,name2);
-	msg.channel.send("**"+name1+"** 💞 **"+name2+"** = **" + name+"**");
+	msg.channel.send("**"+name1+"** 💞 **"+name2+"** = **" + name+"**")
+		.catch(err => console.error(err));
 	console.log("\x1b[36m%s\x1b[0m","\t"+name1 + " + " + name2 + " = " + name);
 }
 

@@ -35,6 +35,7 @@ var emotes = require('./json/emotes.json');
 var prefix = "owo";
 
 client.on('message',msg => {
+
 	//Special admin commands via DM
 	if(msg.author.id===auth.admin&&msg.channel.type==="dm"){
 		var adminMsg = msg.content.trim().split(/ +/g);
@@ -42,12 +43,7 @@ client.on('message',msg => {
 
 		//Reply to a feedback/report/suggestion
 		if(adminCommand === 'reply'&&global.isInt(adminMsg[0])){
-			feedback.reply(mysql, con, client, msg, adminMsg);
-		}
-
-		//Grabs info of bot
-		else if(adminCommand === 'info'){
-			admin.info(client,msg);
+			feedback.reply(mysql, con, msg, adminMsg);
 		}
 
 		else if(adminCommand === 'channel'){
@@ -111,14 +107,14 @@ function execute(command,msg,args,isMention){
 
 	//Displays user ranking
 	if (command === 'my' || command === 'me'){
-		me.display(con, client, msg, args);
+		me.display(con, msg, args);
 	}else if(command === 'guild' || command === 'server'){
-		me.display(con, client, msg, ["guild"]);
+		me.display(con, msg, ["guild"]);
 	}
 
 	//Displays top ranking
 	else if (command === 'top' || command === 'rank'){
-		ranking.display(con, client, msg, args);
+		ranking.display(con, msg, args);
 	}
 
 	//Slots!
@@ -141,7 +137,7 @@ function execute(command,msg,args,isMention){
 
 	//Cowoncy
 	else if (command === 'cowoncy'||command === 'credit'||command === 'money'||command === 'cash'||command === 'balance'||command === 'currency'){
-		cowoncy.display(con,client,msg);
+		cowoncy.display(con,msg);
 	}
 
 	//Give rep 
@@ -165,22 +161,22 @@ function execute(command,msg,args,isMention){
 
 	//Battle!
 	else if(command === 'fight'||command === 'battle'){
-		battle.execute_b(mysql,client,con,msg,args);
+		battle.execute_b(mysql,con,msg,args);
 	}
 
 	//Accept a battle from a user
 	else if(command === 'acceptbattle'||command === "ab"){
-		battleuser.accept(client,con,msg,args);
+		battleuser.accept(con,msg,args);
 	}
 
 	//Declines a battle from a user
 	else if(command === 'declinebattle'||command === "db"){
-		battleuser.decline(client,con,msg,args);
+		battleuser.decline(con,msg,args);
 	}
 
 	//Battle pets
 	else if(command === 'pet'||command === 'pets'){
-		battle.execute_p(mysql,client,con,msg,args);
+		battle.execute_p(mysql,con,msg,args);
 	}
 
 	else if(command === 'lootbox'||command === 'box'){
@@ -189,7 +185,7 @@ function execute(command,msg,args,isMention){
 
 	//Give cowoncy
 	else if(command === 'send' || command === 'give'){
-		cowoncy.give(client,con,msg,args);
+		cowoncy.give(con,msg,args);
 	}
 
 	//Daily cowoncy
@@ -316,7 +312,6 @@ var con = mysql.createConnection({
 con.connect(function(err){
 	if(err) throw err;
 	console.log("Connected!");
-	vote.sql(con);
 	lottery.con(con);
 	global.con(con);
 });
@@ -327,14 +322,11 @@ con.connect(function(err){
 client.on('ready',()=>{
 	console.log('Logged in as '+client.user.tag+'!');
 	console.log('Bot has started, with '+client.users.size+' users, in '+client.channels.size+' channels of '+client.guilds.size+' guilds.');
-	client.user.setActivity('with '+client.guilds.size+' Servers! OwO | \n\'OwO help\' for help!');
 	if(!debug){
 		setInterval(() => {
-			dbl.postStats(client.guilds.size);
+			dbl.postStats(client.guilds.size,client.shards.id,client.shards.total);
 		}, 3200000);
-		vote.client(client);
 	}
-	lottery.client(client);
 	global.init(client);
 });
 
@@ -344,18 +336,38 @@ client.on('disconnect', function(erMsg, code) {
 	    client.connect();
 });
 
+//When bot reconnecting
+client.on('reconnecting', () => {
+	    console.log('--------------- Bot is reconnecting ---------------');
+});
+
+//When bot resumes 
+client.on('reconnecting', function(replayed) {
+	    console.log('--------------- Bot has resumed ---------------');
+});
+
 //When bot joins a new guild
 client.on("guildCreate", guild => {
 	console.log('New guild joined: '+guild.name+' (id: '+guild.id+'). This guild has '+guild.memberCount+' members!');
 	client.user.setActivity('with '+client.guilds.size+' Servers! OwO | \n\'OwO help\' for help!');
+	updateActivity();
 });
 
 //When bot is kicked from a guild
 client.on("guildDelete", guild => {
 	console.log('I have been removed from: '+guild.name+' (id: '+guild.id+')');
 	client.user.setActivity('with '+client.guilds.size+' Servers! OwO | \n\'OwO help\' for help!');
+	updateActivity();
 });
 
 function clog(command,args,msg){
 	console.log("\x1b[0m\x1b[4mCommand\x1b[0m: %s\x1b[0m \x1b[36m{%s}\x1b[0m \x1b[0m%s\x1b[36m[%s][%s][%s]",command,args,msg.author.username,msg.guild.name,msg.channel.name,msg.channel.id); 
+}
+
+function updateActivity(){
+	client.shard.fetchClientValues('guilds.size')
+		.then(results => {
+			client.user.setActivity(`with ${results.reduce((prev, val) => prev + val, 0)} Servers! | 'owo help' for help!`);
+		})
+		.catch(err => console.error(err));
 }

@@ -1,25 +1,28 @@
 const global = require('./global.js');
 
 //Accepts battle
-exports.accept = function(client,con,msg,args){
+exports.accept = function(con,msg,args){
 	var sql = "SELECT * FROM battleuser WHERE ((user1 = "+msg.author.id+" AND sender = 2) OR (user2 = "+msg.author.id+" AND sender = 1)) AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 5;";
-	con.query(sql,function(err,rows,fields){
+	con.query(sql,async function(err,rows,fields){
 		if(err) throw err;
 		if(rows[0]==undefined){
 			msg.channel.send("**"+msg.author.username+"**! You have no pending battles!")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else{
 			var amount = rows[0].amount;
-			var user1 = global.getUser(rows[0].user1);
+			var user1 = await global.getUser(rows[0].user1);
 			if(user1==undefined){
 				msg.channel.send("Could not find that user")
-					.then(message => message.delete(3000));
+					.then(message => message.delete(3000))
+					.catch(err => console.error(err));
 				return;
 			}
-			var user2 = global.getUser(rows[0].user2);
+			var user2 = await global.getUser(rows[0].user2);
 			if(user2==undefined){
 				msg.channel.send("Could not find that user")
-					.then(message => message.delete(3000));
+					.then(message => message.delete(3000))
+					.catch(err => console.error(err));
 				return;
 			}
 			var win1 = rows[0].win1;
@@ -32,9 +35,10 @@ exports.accept = function(client,con,msg,args){
 				if(err) throw err;
 				if(rows[0].length<2){
 					msg.channel.send("Looks like someone doesn't have enough cowoncy!")
-						.then(message => message.delete(3000));
+						.then(message => message.delete(3000))
+						.catch(err => console.error(err));
 				}else{
-					startBattle(client,con,msg,user1,user2,amount);
+					startBattle(con,msg,user1,user2,amount);
 				}
 			});
 		}
@@ -42,39 +46,43 @@ exports.accept = function(client,con,msg,args){
 }
 
 //Decline battle
-exports.decline= function(client,con,msg,args){
+exports.decline= function(con,msg,args){
 	var sql = "SELECT * FROM battleuser WHERE (user1 = "+msg.author.id+" OR user2 = "+msg.author.id+" ) AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 1;";
 	sql += "UPDATE battleuser SET time = '2017-01-01 10:10:10' WHERE (user1 = "+msg.author.id+" OR user2 = "+msg.author.id+" ) AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 5;";
-	con.query(sql,function(err,rows,fields){
+	con.query(sql,async function(err,rows,fields){
 		if(err) throw err;
 		if(rows[0][0]==undefined){
 			msg.channel.send("**"+msg.author.username+"**! You have no pending battles!")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else{
 			var opponent;
 			if(rows[0][0].user1==msg.author.id)
 				opponent = rows[0][0].user2;
 			else
 				opponent = rows[0][0].user1;
-			var opponent = global.getUser(opponent);
+			var opponent = await global.getUser(opponent);
 			if(opponent==undefined){
 				msg.channel.send("Successfully declined your battle!")
-					.then(message => message.delete(3000));
+					.then(message => message.delete(3000))
+					.catch(err => console.error(err));
 				return;
 			}
 
-			msg.channel.send("**"+msg.author.username+"**, you have declined your battle against, **"+opponent.username+"**!");
+			msg.channel.send("**"+msg.author.username+"**, you have declined your battle against, **"+opponent.username+"**!")
+				.catch(err => console.error(err));
 		}
 	});
 }
 
 //Checks if users can battle or not
-exports.battle = function(client,con,msg,args){
+exports.battle = async function(con,msg,args){
 	//Finds opponent
-	var opponent = global.getUser(args[0]);
+	var opponent = await global.getUser(args[0]);
 	if(opponent==undefined){
 		msg.channel.send("I could not find that user!")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
 	//Bet amount
@@ -83,14 +91,16 @@ exports.battle = function(client,con,msg,args){
 		amount = parseInt(args[1]);
 	if(amount<0){
 		msg.channel.send("It doesnt work like that silly")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
 
 	//Check if self
 	if(opponent.id == msg.author.id){
 		msg.channel.send("You can't battle yourself silly")
-			.then(message => message.delete(3000));
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
 		return;
 	}
 	//Check for smaller id (for sql)
@@ -113,19 +123,24 @@ exports.battle = function(client,con,msg,args){
 		//Already has a pending battle
 		if(result[0][0]!=undefined){
 			msg.channel.send("**"+msg.author.username+"**! You already have a battle pending!\nDecline it with `owo db`!")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else if(result[1][0]==undefined){
 			msg.channel.send("**"+msg.author.username+"**! You don't have enough cowoncy!")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else if(result[1][0].time <= 15){
 			msg.channel.send("**"+msg.author.username+"! You need to wait "+(15-result[0][0].time)+" more seconds!**")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else if(result[2][0]!=undefined){
 			msg.channel.send("**"+opponent.username+"** already has a battle pending!")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else if(result[3][0]==undefined){
 			msg.channel.send("**"+opponent.username+"** doesn't have enough cowoncy!")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 		}else{
 			sql = "INSERT INTO battleuser (user1,user2,amount,sender) VALUES ("+smallerid+","+largerid+","+amount+","+sender+") ON DUPLICATE KEY UPDATE amount = "+amount+",time = NOW(),sender = "+sender+";";
 			con.query(sql,function(err,result2){
@@ -156,7 +171,8 @@ exports.battle = function(client,con,msg,args){
 						"value": "To accept the battle type `owo acceptbattle` or `owo ab`.\nTo decline the battle type `owo declinebattle` or `owo db`.",
 					}]
 				};
-				msg.channel.send({ embed });
+				msg.channel.send({ embed })
+					.catch(err => console.error(err));
 			});
 		}
 	});
@@ -164,7 +180,7 @@ exports.battle = function(client,con,msg,args){
 
 
 //Starts a battle against a user
-function startBattle(client,con,msg,user1,user2,amount){
+function startBattle(con,msg,user1,user2,amount){
 	var sql = "SELECT * FROM cowoncy NATURAL JOIN animal WHERE id = "+user1.id+" AND pet = name;";
 	sql += "SELECT * FROM cowoncy NATURAL JOIN animal WHERE id = "+user2.id+" AND pet = name;";
 	sql += "UPDATE cowoncy SET money = money - "+amount+",battle = NOW() WHERE id IN ("+user1.id+","+user2.id+");"
@@ -175,13 +191,15 @@ function startBattle(client,con,msg,user1,user2,amount){
 		var opet = rows[1][0];
 		if(upet == undefined){
 			msg.channel.send("**"+user1.username+"** doesn't have a pet!")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 			return;
 		}
 
 		if(opet == undefined){
 			msg.channel.send("**"+user2.username+"** doesn't have a pet!")
-				.then(message => message.delete(3000));
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
 			return;
 		}
 
@@ -235,7 +253,8 @@ function startBattle(client,con,msg,user1,user2,amount){
 		msg.channel.send(betmsg,{embed})
 			.then(message => setTimeout(function(){
 				display(con,message,user1,user2,log,0,amount,betmsg);
-			},1000));
+			},1000))
+			.catch(err => console.error(err));
 	});
 }
 
