@@ -13,7 +13,7 @@ exports.give = async function(con,msg,args){
 		return;
 	}
 
-	var user = global.getUser(id);
+	var user = await global.getUser(id);
 	if(user==undefined){
 		msg.channel.send("Could not find that user!")
 			.then(message => message.delete(3000))
