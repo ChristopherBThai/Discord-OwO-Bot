@@ -25,7 +25,7 @@ exports.display = function(con,msg){
 				.catch(err => console.error(err));
 		}else{
 			var sql = "SELECT * FROM animal WHERE id = "+msg.author.id+";"+
-				"SELECT common,uncommon,rare,epic,mythical,legendary,SUM(CASE WHEN count>99 THEN 1 ELSE 0 END) AS over FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;"+
+				"SELECT common,uncommon,rare,epic,mythical,legendary,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;"+
 				"UPDATE IGNORE cowoncy SET zoo = NOW() WHERE id = "+msg.author.id+";";
 			con.query(sql,function(err,result){
 				if(err) throw err;
@@ -35,26 +35,23 @@ exports.display = function(con,msg){
 				var additional2 = "";
 				var row = result[0];
 				var count = result[1][0];
-				var over = false;
+				var digits= 2;
 				if(count!=undefined)
-					over = count.over>0;
+					digits= (int)(Math.log10(count.biggest)+1);
 				for (i in row){
-					text = text.replace("~"+row[i].name,global.unicodeAnimal(row[i].name)+toSmallNum(row[i].count,over));
+					text = text.replace("~"+row[i].name,global.unicodeAnimal(row[i].name)+toSmallNum(row[i].count,digits));
 					if(animals.legendary.indexOf(row[i].name)>0){
 						if(additional=="")
 							additional = secret;
-						additional += row[i].name+toSmallNum(row[i].count,over)+"  ";
+						additional += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 					}
 					if(animals.special.indexOf(row[i].name)>0){
 						if(additional2=="")
 							additional2 = secret2;
-						additional2 += row[i].name+toSmallNum(row[i].count,over)+"  ";
+						additional2 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 					}
 				}
-				if(over)
-					text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question+animals.numbers[0]);
-				else
-					text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question);
+				text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question+toSmallNum(0,digits));
 				text += additional;
 				text += additional2;
 				if(count!=undefined){
@@ -176,33 +173,13 @@ function randAnimal(){
 	return result;
 }
 	
-function toSmallNum(num,over){
+function toSmallNum(num,digits){
 	var result = "";
-	if(over){
-		if(num>=999){
-			result += animals.numbers[9];
-			result += result + result;
-		}else{
-			var digit1 = num%10;
-			num /= 10;
-			var digit2 = Math.trunc(num%10);
-			var digit3 = Math.trunc(num/10);
-			result += animals.numbers[digit3];
-			result += animals.numbers[digit2];
-			result += animals.numbers[digit1];
-		}
-	}else{
-		if(num>=99){
-			result += animals.numbers[9];
-			result += result;
-		}else{
-			var digit1 = num%10;
-			var digit2 = Math.trunc(num/10);
-			result += animals.numbers[digit2];
-			result += animals.numbers[digit1];
-		}
+	for(i=0;i<digits;i++){
+		digit = num%10;
+		num = Math.trunc(num/10);
+		result = animals.numbers[digit]+result;
 	}
-	
 	return result;
 }
 
