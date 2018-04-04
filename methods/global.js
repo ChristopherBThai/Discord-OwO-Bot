@@ -62,7 +62,6 @@ exports.getGuildName = async function(id){
 			temp = temp.name;
 		temp;
 	`);
-	console.log(result);
 	var result = result.reduce((fin, val) => fin = (val)?val:fin);
 	return result;
 }

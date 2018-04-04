@@ -46,7 +46,6 @@ exports.display = function(con,msg){
 						additional += row[i].name+toSmallNum(row[i].count,over)+"  ";
 					}
 					if(animals.special.indexOf(row[i].name)>0){
-						console.log("found special");
 						if(additional2=="")
 							additional2 = secret2;
 						additional2 += row[i].name+toSmallNum(row[i].count,over)+"  ";
