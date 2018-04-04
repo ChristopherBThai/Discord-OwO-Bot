@@ -33,6 +33,7 @@ exports.send = function(mysql, con, msg, admin, type, message){
 		return;
 	}
 	sql = mysql.format(sql,message);
+	try{
 	con.query(sql,function(err,rows,field){
 		if(err) throw err;
 		const embed = {
@@ -66,6 +67,9 @@ exports.send = function(mysql, con, msg, admin, type, message){
 		global.msgAdmin({embed});
 		console.log("\tNew "+type+" sent to admin's DM");
 	});
+	}catch(err){
+		console.error(err);
+	}
 }
 
 /**
