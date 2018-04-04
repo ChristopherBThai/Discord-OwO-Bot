@@ -151,7 +151,7 @@ exports.battle = async function(con,msg,args){
 						"text": "This invitation ends in 5 minute"
 					},
 					"author": {
-						"name": opponent.username+"! You have been challeneged by "+msg.author.username+"!",
+						"name": opponent.username+"! You have been challenged by "+msg.author.username+"!",
 						"icon_url": opponent.avatarURL
 					},
 					"fields": [{
