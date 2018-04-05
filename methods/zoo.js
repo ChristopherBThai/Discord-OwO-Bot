@@ -19,7 +19,7 @@ exports.display = function(con,msg){
 	var sql = "SELECT TIMESTAMPDIFF(SECOND,zoo,NOW()) AS time FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,result){
 		if(err) throw err;
-		if(result[0]!=undefined&&result[0].time<=45){
+		if(false&&result[0]!=undefined&&result[0].time<=45){
 			msg.channel.send("**"+msg.author.username+"! You need to wait "+(45-result[0].time)+" more seconds!**")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
@@ -37,8 +37,8 @@ exports.display = function(con,msg){
 				var count = result[1][0];
 				var digits= 2;
 				if(count!=undefined)
-					digits= (int)(Math.log10(count.biggest)+1);
-				for (i in row){
+					digits= Math.trunc(Math.log10(count.biggest)+1);
+				for(var i=0;i<row.length;i++){
 					text = text.replace("~"+row[i].name,global.unicodeAnimal(row[i].name)+toSmallNum(row[i].count,digits));
 					if(animals.legendary.indexOf(row[i].name)>0){
 						if(additional=="")
@@ -173,11 +173,12 @@ function randAnimal(){
 	return result;
 }
 	
-function toSmallNum(num,digits){
+function toSmallNum(count,digits){
 	var result = "";
+	var num = count;
 	for(i=0;i<digits;i++){
-		digit = num%10;
-		num = Math.trunc(num/10);
+		var digit = count%10;
+		count = Math.trunc(count/10);
 		result = animals.numbers[digit]+result;
 	}
 	return result;
