@@ -19,7 +19,7 @@ exports.display = function(con,msg){
 	var sql = "SELECT TIMESTAMPDIFF(SECOND,zoo,NOW()) AS time FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,result){
 		if(err) throw err;
-		if(false&&result[0]!=undefined&&result[0].time<=45){
+		if(result[0]!=undefined&&result[0].time<=45){
 			msg.channel.send("**"+msg.author.username+"! You need to wait "+(45-result[0].time)+" more seconds!**")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));

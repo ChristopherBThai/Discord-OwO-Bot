@@ -51,13 +51,20 @@ exports.give = async function(con,msg,args){
 }
 
 exports.display = function(con,msg){
-	var sql = "SELECT * FROM rep WHERE id = "+msg.author.id+";";
+	var sql = "SELECT count,TIMESTAMPDIFF(DAY,lasttime,NOW()) AS time, TIMESTAMPDIFF(HOUR,lasttime,NOW()) AS hour, TIMESTAMPDIFF(MINUTE,lasttime,NOW()) AS min,TIMESTAMPDIFF(SECOND,lasttime,NOW()) AS sec FROM rep WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		var count = 0;
 		if(rows[0]!=undefined)
 			count = rows[0].count;
-		msg.channel.send("**"+msg.author.username+"**! You currently have **"+count+"** cookies!\nYummy! c:< <a:cookieeat:423020737364885525>")
+		var again = "You have one cookie to send!";
+		if(rows[0].time<1){
+			var hour = 23 - rows[0].hour;
+			var min= 59 - (rows[0].min%60);
+			var sec = 59 - (rows[0].sec%60);
+			again = "You can send a cookie in **"+hour+"H "+min+"M "+sec+"S**! ";
+		}
+		msg.channel.send("**"+msg.author.username+"**! You currently have **"+count+"** cookies! Yummy! c:< <a:cookieeat:423020737364885525>\n"+again)
 			.catch(err => console.error(err));
 	});
 }
