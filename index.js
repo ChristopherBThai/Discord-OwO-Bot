@@ -1,4 +1,4 @@
-const debug = true;
+const debug = false;
 if(debug)
 	var auth = require('../tokens/scuttester-auth.json');
 else 
@@ -21,15 +21,8 @@ Manager.on('launch', function(shard){
 	console.log(`Launched shard ${shard.id}`);
 	if(!loaded && shard.id == Manager.totalShards-1){
 		loaded = true;
-		console.log("Done loading");
 		setTimeout(updateActivity,5000);
-		if(!debug)
-			vote.setManager(Manager);
-		global.setManager(Manager);
-		//lottery.init();
 	}
-	//updateActivity();
-	Manager.broadcast("owo ");
 });
 
 Manager.on('imessage', (shard, message) => {
@@ -37,8 +30,11 @@ Manager.on('imessage', (shard, message) => {
 });
 
 function updateActivity(){
+	console.log("Done loading");
+	lottery.init();
+	if(!debug)
+		vote.setManager(Manager);
+	global.setManager(Manager);
 	Manager.broadcastEval("this.shard.fetchClientValues('guilds.size').then(results => {var result = results.reduce((prev, val) => prev + val, 0);this.user.setActivity('with '+result+' Servers!')}).catch(err => console.error(err))");
 }
-
-
 
