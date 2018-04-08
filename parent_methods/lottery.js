@@ -10,7 +10,7 @@ function pickWinner(){
 	console.log("Starting lottery...");
 	var sql = "SELECT id,amount,channel FROM lottery WHERE valid = 1;"+
 		"SELECT SUM(amount) AS sum,COUNT(id) AS count FROM lottery WHERE valid = 1;";
-	con.query(sql,function(err,result){
+	con.query(sql,async function(err,result){
 		if(err) throw err;
 		var sum = parseInt(result[1][0].sum);
 		var prize = sum + 500;
@@ -30,65 +30,47 @@ function pickWinner(){
 				chance = Math.trunc(chance*100)/100;
 			if(rand<count&&!found){ //Winner
 				found = true;
-				sql = "INSERT INTO cowoncy (id,money) VALUES ("+id+","+prize+") ON DUPLICATE KEY UPDATE money = money + "+prize+";";
-				sql += "UPDATE lottery SET valid = 0,amount = 0 WHERE valid = 1";
-
-				var channel = client.channels.get(users[i].channel);
+				var channel = users[i].channel;
 				winner = id;
 				winnerchance = chance
-				con.query(sql,function(err,result){
-					if(err) throw err;
-					if(channel!=undefined)
-						channel.send("Congrats! **"+winner+"** won **"+prize+" cowoncy** from the lottery with a **"+winnerchance+"%** chance to win!");
-					if(winner!=undefined){
-						winner.send("Congrats! You won **"+prize+" cowoncy** from the lottery with a **"+winnerchance+"%** chance to win!");
-						console.log("\x1b[36m%s\x1b[0m","    "+winner.username+" won the lottery");
-					}
-					console.log("\x1b[36m%s\x1b[0m","    "+winner+" won the lottery");
-				});
-			} else if(found) { //Loser
-				if(user!=undefined){
-					var text = "You lost the lottery...\nYou had a **"+chance+"%** chance to win **"+prize+" cowoncy...**";
-					if(winner!=undefined)
-						text += "\nThe winner was **"+winner.username+"** with a **"+winnerchance+"%** chance to win!";
-					user.send(text);
-					console.log("\x1b[36m%s\x1b[0m","    msg sent to "+user.username+" for losing");
-				}
+
+				sql = "INSERT INTO cowoncy (id,money) VALUES ("+id+","+prize+") ON DUPLICATE KEY UPDATE money = money + "+prize+";";
+				sql += "UPDATE lottery SET valid = 0,amount = 0 WHERE valid = 1";
+				//con.query(sql,function(err,result){if(err) console.log(err);});
 			} else {
-				if(user!=undefined){
-					loser.push(user);
-					loserchance.push(chance);
-				}
+				loser.push(id);
+				loserchance.push(chance);
 			}
 		}
 
-		msgUsers(winner,chance,prize,loser,loserchance);
-
-		for(i in loser){
-			var user = loser[i];
-			var chance = loserchance[i];
-			if(user!=undefined){
-				var text = "You lost the lottery...\nYou had a **"+chance+"%** chance to win **"+prize+" cowoncy...**";
-				if(winner!=undefined)
-					text += "\nThe winner was **"+winner.username+"** with a **"+winnerchance+"%** chance to win!";
-				user.send(text);
-				console.log("\x1b[36m%s\x1b[0m","    msg sent to "+user.username+" for losing");
-			}
-		}
-		init();
+		var winnername = await global.getUsername(winner);
+		msgUsers(winnername,winner,winnerchance,prize,loser,loserchance,-1);
+		this.init();
 	});
 }
 
-function msgUsers(winner,chance,prize,loser,loserchance){
-
+function msgUsers(winnername,winner,chance,prize,loser,loserchance,i){
+	if(i>=loser.length)
+		return;
+	if(i<0){
+		//global.msgUser(winner,"Congrats! You won **"+prize+" cowoncy** from the lottery with a **"+chance+"%** chance to win!");
+		//global.msgChannel(winnerChannel,"Congrats <@"+winner+">! You won **"+prize+"** cowoncy from the lottery with a **"+chance+"%** chance to win!");
+		console.log("\x1b[36m%s\x1b[0m","    "+winnername+" won the lottery");
+	}else{
+		var text = "You lost the lottery...\nYou had a **"+loserchance[i]+"%** chance to win **"+prize+" cowoncy...**";
+		if(winnername!=undefined)
+			text += "\nThe winner was **"+winnername+"** with a **"+chance+"%** chance to win!";
+		//global.msgUser(winner,text);
+		console.log("\x1b[36m%s\x1b[0m","    msg sent to "+loser[i]+" for losing");
+	}
+	setTimeout(function(){msgUsers(winnername,winner,chance,prize,loser,loserchance,i+1)},1000);
 }
 
 
 /*
  * Initializes lottery
  */
-function init(){
-	initi = true;
+exports.init = function(){
 	var now = new Date();
 	var mill = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0, 0) - now;
 	if (mill < 0) {

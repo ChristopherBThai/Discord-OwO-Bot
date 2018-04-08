@@ -38,6 +38,24 @@ exports.msgUser = function(id,msg){
 	`);
 }
 
+exports.getUsername = async function(id){
+	var username = await manager.broadcastEval(`
+		var user = this.users.get('${id}');
+		if(user!=undefined)
+			user = user.username;
+		user;
+	`);
+	return username.reduce((fin, val) => fin = (val)?val:fin);
+}
+
+exports.msgChannel = function(id,msg){
+	manager.broadcastEval(`
+		var channel = this.channels.get('${id}');
+		if(channel!=undefined)
+			channel.send('${msg}');
+	`);
+}
+
 exports.con = function(){
 	return con;
 }
