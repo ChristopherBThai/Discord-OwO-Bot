@@ -8,9 +8,6 @@ var con;
  * Bet in the lottery
  */
 exports.bet = function(con,msg,args){
-	msg.channel.send("Sorry! The lottery is disabled for today!");
-	return;
-
 	var amount = 0;
 	var all = false;
 	if(args.length==1&&global.isInt(args[0]))

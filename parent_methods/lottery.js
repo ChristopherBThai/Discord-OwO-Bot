@@ -20,6 +20,7 @@ function pickWinner(){
 		var found = false;
 		var winner;
 		var winnerchance;
+		var winnerChannel;
 		var loser = [];
 		var loserchance = [];
 		for (i in users){
@@ -30,13 +31,13 @@ function pickWinner(){
 				chance = Math.trunc(chance*100)/100;
 			if(rand<count&&!found){ //Winner
 				found = true;
-				var channel = users[i].channel;
+				var winnerChannel = users[i].channel;
 				winner = id;
 				winnerchance = chance
 
 				sql = "INSERT INTO cowoncy (id,money) VALUES ("+id+","+prize+") ON DUPLICATE KEY UPDATE money = money + "+prize+";";
 				sql += "UPDATE lottery SET valid = 0,amount = 0 WHERE valid = 1";
-				//con.query(sql,function(err,result){if(err) console.log(err);});
+				con.query(sql,function(err,result){if(err) console.log(err);});
 			} else {
 				loser.push(id);
 				loserchance.push(chance);
@@ -44,26 +45,26 @@ function pickWinner(){
 		}
 
 		var winnername = await global.getUsername(winner);
-		msgUsers(winnername,winner,winnerchance,prize,loser,loserchance,-1);
-		this.init();
+		msgUsers(winnername,winner,winnerchance,winnerChannel,prize,loser,loserchance,-1);
+		//this.init();
 	});
 }
 
-function msgUsers(winnername,winner,chance,prize,loser,loserchance,i){
+function msgUsers(winnername,winner,chance,winnerChannel,prize,loser,loserchance,i){
 	if(i>=loser.length)
 		return;
 	if(i<0){
-		//global.msgUser(winner,"Congrats! You won **"+prize+" cowoncy** from the lottery with a **"+chance+"%** chance to win!");
-		//global.msgChannel(winnerChannel,"Congrats <@"+winner+">! You won **"+prize+"** cowoncy from the lottery with a **"+chance+"%** chance to win!");
+		global.msgUser(winner,"Congrats! You won **"+prize+" cowoncy** from the lottery with a **"+chance+"%** chance to win!");
+		global.msgChannel(winnerChannel,"Congrats <@"+winner+">! You won **"+prize+"** cowoncy from the lottery with a **"+chance+"%** chance to win!");
 		console.log("\x1b[36m%s\x1b[0m","    "+winnername+" won the lottery");
 	}else{
 		var text = "You lost the lottery...\nYou had a **"+loserchance[i]+"%** chance to win **"+prize+" cowoncy...**";
 		if(winnername!=undefined)
 			text += "\nThe winner was **"+winnername+"** with a **"+chance+"%** chance to win!";
-		//global.msgUser(winner,text);
+		global.msgUser(loser[i],text);
 		console.log("\x1b[36m%s\x1b[0m","    msg sent to "+loser[i]+" for losing");
 	}
-	setTimeout(function(){msgUsers(winnername,winner,chance,prize,loser,loserchance,i+1)},1000);
+	setTimeout(function(){msgUsers(winnername,winner,chance,winnerChannel,prize,loser,loserchance,i+1)},1000);
 }
 
 
@@ -76,7 +77,7 @@ exports.init = function(){
 	if (mill < 0) {
 		     mill += 86400000;
 	}
-	var timer = setTimeout(pickWinner,mill);
+	var timer = setTimeout(pickWinner,5000);//mill);
 	con = global.con();
 }
 
