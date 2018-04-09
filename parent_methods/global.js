@@ -31,7 +31,7 @@ exports.msgUser = function(id,msg){
 			this.fetchUser('${id}')
 			.then(user => {
 				if(user!=undefined)
-					user.send('${msg}')
+					user.send(\`${msg}\`)
 					.catch(err => console.error(err));
 			}).catch(err => console.error(err));
 		}
@@ -52,7 +52,7 @@ exports.msgChannel = function(id,msg){
 	manager.broadcastEval(`
 		var channel = this.channels.get('${id}');
 		if(channel!=undefined)
-			channel.send('${msg}');
+			channel.send(\`${msg}\`);
 	`);
 }
 

@@ -25,16 +25,17 @@ Manager.on('launch', function(shard){
 	}
 });
 
-Manager.on('imessage', (shard, message) => {
+Manager.on('message', (shard, message) => {
 	    console.log(`Shard[${shard.id}] : ${message._eval} : ${message._result}`);
 });
 
 function updateActivity(){
 	console.log("Done loading");
-	lottery.init();
+	//lottery.init();
 	if(!debug)
 		vote.setManager(Manager);
 	global.setManager(Manager);
+	global.msgUser('184587051943985152',"this is a test\ntest");
 	Manager.broadcastEval("this.shard.fetchClientValues('guilds.size').then(results => {var result = results.reduce((prev, val) => prev + val, 0);this.user.setActivity('with '+result+' Servers!')}).catch(err => console.error(err))");
 }
 
