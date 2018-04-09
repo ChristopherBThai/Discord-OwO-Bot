@@ -115,9 +115,9 @@ exports.battle = async function(con,msg,args){
 		sender = 1;
 	}
 	var sql = "SELECT * FROM battleuser WHERE (user1 = "+msg.author.id+" OR user2 = "+msg.author.id+") AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 5;";
-	sql += "SELECT * FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND money >= "+amount+" AND pet = name;";
+	sql += "SELECT * FROM cowoncy LEFT OUTER JOIN animal ON cowoncy.id = animal.id AND pet = name WHERE cowoncy.id = "+msg.author.id+" AND money >= "+amount+";";
 	sql += "SELECT * FROM battleuser WHERE (user1 = "+opponent.id+" OR user2 = "+opponent.id+") AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 5;";
-	sql += "SELECT * FROM cowoncy NATURAL JOIN animal WHERE id = "+opponent.id+" AND money >= "+amount+" AND pet = name;";
+	sql += "SELECT * FROM cowoncy LEFT OUTER JOIN animal ON cowoncy.id = animal.id AND pet = name WHERE cowoncy.id = "+opponent.id+" AND money >= "+amount+" ;";
 	con.query(sql,function(err,result){
 		if(err) throw err;
 		//Already has a pending battle
@@ -127,6 +127,10 @@ exports.battle = async function(con,msg,args){
 				.catch(err => console.error(err));
 		}else if(result[1][0]==undefined){
 			msg.channel.send("**"+msg.author.username+"**! You don't have enough cowoncy!")
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
+		}else if(result[1][0].name==undefined){
+			msg.channel.send("**"+msg.author.username+"**! You don't have a pet!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else if(result[1][0].time <= 15){
@@ -139,6 +143,10 @@ exports.battle = async function(con,msg,args){
 				.catch(err => console.error(err));
 		}else if(result[3][0]==undefined){
 			msg.channel.send("**"+opponent.username+"** doesn't have enough cowoncy!")
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
+		}else if(result[3][0].name==undefined){
+			msg.channel.send("**"+opponent.username+"** doesn't have a pet!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else{
