@@ -46,7 +46,7 @@ function pickWinner(){
 
 		var winnername = await global.getUsername(winner);
 		msgUsers(winnername,winner,winnerchance,winnerChannel,prize,loser,loserchance,-1);
-		//this.init();
+		this.init();
 	});
 }
 
@@ -77,7 +77,7 @@ exports.init = function(){
 	if (mill < 0) {
 		     mill += 86400000;
 	}
-	var timer = setTimeout(pickWinner,5000);//mill);
+	var timer = setTimeout(pickWinner,mill);
 	con = global.con();
 }
 
