@@ -58,7 +58,7 @@ exports.display = function(con,msg){
 		if(rows[0]!=undefined)
 			count = rows[0].count;
 		var again = "You have one cookie to send!";
-		if(rows[0].time<1){
+		if(rows[0]!=undefined&&rows[0].time<1){
 			var hour = 23 - rows[0].hour;
 			var min= 59 - (rows[0].min%60);
 			var sec = 59 - (rows[0].sec%60);
