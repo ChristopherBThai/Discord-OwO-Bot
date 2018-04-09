@@ -97,7 +97,7 @@ exports.catch = function(con,msg){
 			var type = animal[2];
 			var xp = animal[3];
 			var lvlup = false;
-			sql = "INSERT INTO animal (id,name,count) VALUES ("+msg.author.id+",'"+animal[1]+"',1) ON DUPLICATE KEY UPDATE count = count + 1;"+
+			sql = "INSERT INTO animal (id,name,count,totalcount) VALUES ("+msg.author.id+",'"+animal[1]+"',1,1) ON DUPLICATE KEY UPDATE count = count + 1,totalcount = totalcount + 1;"+
 				"UPDATE cowoncy SET money = money - 5,catch = NOW() WHERE id = "+msg.author.id+";"+
 				"INSERT INTO animal_count (id,"+type+") VALUES ("+msg.author.id+",1) ON DUPLICATE KEY UPDATE "+type+" = "+type+"+1;";
 			if(result[1][0]!=undefined){
@@ -123,6 +123,78 @@ exports.catch = function(con,msg){
 	});
 }
 
+/**
+ * Sell an animal
+ */
+exports.sell = function(con,msg,args){
+	var animal = global.validAnimal(args[0]);
+	var count = "all";
+	if(temp=global.validAnimal(args[1])){
+		if(animal){
+			msg.channel.send("Invalid arguments! The correct command is `owo sell {animal} {count}`")
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
+			return;
+		}
+		animal = temp;
+		if(global.isInt(args[0])){
+			count = parseInt(args[0]);
+		}else{
+			msg.channel.send("Invalid arguments! The correct command is `owo sell {animal} {count}`")
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
+			return;
+		}
+	}else if(global.isInt(args[1])){
+		count = parseInt(args[1]);
+	}
+	
+	if(!animal){
+		msg.channel.send("I could not find that animal!")
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
+		return;
+	}
+	if(count!="all"&&count<=0){
+		msg.channel.send("You need to sell more than 1 silly~")
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
+		return;
+	}
+
+	var sql = "UPDATE cowoncy NATURAL JOIN animal SET money = money + "+(count*animal.price)+", count = count - "+count+" WHERE id = "+msg.author.id+" AND name = '"+animal.value+"' AND count >= "+count+";";
+	if(count=="all"){
+		sql = "SELECT count FROM animal WHERE id = "+msg.author.id+" AND name = '"+animal.value+"';";
+		sql += "UPDATE cowoncy NATURAL JOIN animal SET money = money + ((count-1)*"+animal.price+"), count = 1 WHERE id = "+msg.author.id+" AND name = '"+animal.value+"' AND count >= 1;";
+	}
+	con.query(sql,function(err,result){
+		if(err) throw err;
+		if(count=="all"){
+			if(result[1].affectedRows<=0){
+				msg.channel.send("**"+msg.author.username+"**, You don't have enough animals! >:c")
+					.then(message => message.delete(3000))
+					.catch(err => console.error(err));
+			}else{
+				count = result[0][0].count-1;
+				msg.channel.send("**"+msg.author.username+"** sold **"+global.unicodeAnimal(animal.value)+"x"+count+"** for a total of **<:cowoncy:416043450337853441>"+(count*animal.price)+"**")
+					.catch(err => console.error(err));
+				console.log("\x1b[36m%s\x1b[0m","\tsold "+animal.value+"x"+count+" for "+(count*animal.price));
+			}
+		}else if(result.affectedRows>0){
+			msg.channel.send("**"+msg.author.username+"** sold **"+global.unicodeAnimal(animal.value)+"x"+count+"** for a total of **<:cowoncy:416043450337853441>"+(count*animal.price)+"**")
+				.catch(err => console.error(err));
+			console.log("\x1b[36m%s\x1b[0m","\tsold "+animal.value+"x"+count+" for "+(count*animal.price));
+		}else{
+			msg.channel.send("**"+msg.author.username+"**, You can't sell more than you have silly! >:c")
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
+		}
+	});
+}
+
+/**
+ * Picks a random animal from secret json file
+ */
 function randAnimal(){
 	var rand = Math.random();
 	var result = [];

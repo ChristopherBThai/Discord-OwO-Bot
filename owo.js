@@ -1,4 +1,4 @@
-const debug = true;
+const debug = false;
 if(debug)
 	var auth = require('../tokens/scuttester-auth.json');
 else 
@@ -195,12 +195,13 @@ function execute(command,msg,args,isMention){
 	else if (command === 'vote'){vote.link(msg);}
 
 	//Catch an animals
-	else if (command === 'catch'||command === 'hunt'){
-		zoo.catch(con,msg);
-	}
+	else if (command === 'catch'||command === 'hunt'){zoo.catch(con,msg);}
 
 	//SHows the zoo
 	else if (command === 'zoo'){zoo.display(con,msg);}
+
+	//Sell an animal
+	else if (command === 'sell'){zoo.sell(con,msg,args);}
 
 	//Define a word
 	else if (command === 'define'){other.define(msg,args.join(" "));}

@@ -58,7 +58,7 @@
 		"args":"",
 		"desc_short":"Show me your zoo!",
 		"desc_long":"Displays your zoo! Catch some animals with 'owo hunt'!",
-		"related":["owo hunt","owo top zoo","owo my zoo"],
+		"related":["owo hunt","owo top zoo","owo my zoo","owo sell"],
 		"example":[],
 		"alt":[]
 	},
@@ -67,7 +67,7 @@
 		"args":"",
 		"desc_short":"Hunt for some animals",
 		"desc_long":"Hunt for some animals for your zoo!\nHigher ranking animals are harder to get!",
-		"related":["owo zoo"],
+		"related":["owo zoo","owo sell"],
 		"example":[],
 		"alt":["catch"]
 	},
@@ -241,6 +241,15 @@
 		"desc_long":"Ships two people!",
 		"related":[],
 		"example":["owo ship @Scuttler @OwO"],
+		"alt":[]
+	},
+	"sell":{
+		"name":"sell",
+		"args":"{animal} {count}",
+		"desc_short":"Sell your animal",
+		"desc_long":"Sell animals in your zoo! It will sell all but one if you don't specify count. Selling animals will NOT affect your zoo score",
+		"related":["owo hunt","owo zoo"],
+		"example":["owo sell dog","owo sell whale 3"],
 		"alt":[]
 	}
 }
