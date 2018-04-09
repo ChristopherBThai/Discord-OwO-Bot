@@ -107,6 +107,14 @@ exports.init = function(tclient){
 		if(animallist[key].uni!=undefined)
 			animalunicode[animallist[key].value] = animallist[key].uni;
 	}
+	
+	for(key in animaljson.ranks){
+		for(var i=1;i<animaljson[key].length;i++){
+			var name = animals[animaljson[key][i]];
+			animaljson.list[name].rank = key;
+			animaljson.list[name].price = animaljson.price[key];
+		}
+	}
 }
 
 /**
