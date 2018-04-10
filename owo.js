@@ -27,6 +27,7 @@ const battle = require("./methods/battle.js");
 const battleuser = require("./methods/battleuser.js");
 const lootbox = require("./methods/lootbox.js");
 const lottery = require("./methods/lottery.js");
+const translator = require("./methods/translator.js");
 const other = require("./methods/other.js");
 const feedback = require("./methods/feedback.js");
 const admin = require("./methods/admin.js");
@@ -272,6 +273,16 @@ function execute(command,msg,args,isMention){
 	//Displays info
 	else if(command === "stats" || command === "stat"){
 		helper.showStats(client,con,msg);
+	}
+
+	//Translate
+	else if(command === "translate"){
+		translator.translate(msg,args);
+	}
+
+	//Lists languages
+	else if(command === "listlang"){
+		translator.list(msg);
 	}
 
 	//If not a command...
