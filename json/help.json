@@ -251,5 +251,23 @@
 		"related":["owo hunt","owo zoo"],
 		"example":["owo sell dog","owo sell whale 3"],
 		"alt":[]
+	},
+	"translate":{
+		"name":"translate",
+		"args":"{msg} -{lang}",
+		"desc_short":"Translate to a language",
+		"desc_long":"Translate a given message to a specific language. The default language will be english. Use 'owo listlang' to see available languages",
+		"related":["owo listlang"],
+		"example":["owo translate Hello -ja","owo translate no hablo español -en"],
+		"alt":[]
+	},
+	"listlang":{
+		"name":"listlang",
+		"args":"",
+		"desc_short":"List all languages for translate",
+		"desc_long":"List all languages for translate command",
+		"related":["owo translate"],
+		"example":[],
+		"alt":[]
 	}
 }

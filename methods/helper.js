@@ -22,16 +22,19 @@ exports.showHelp = function(channel){
 			"\n< owo give "+help.give.args+" >\t"+help.give.desc_short+
 			"\n< owo daily >\t\t\t\t\t"+help.daily.desc_short+
 			"\n< owo vote >\t\t\t\t\t "+help.vote.desc_short+
-			"\n# Fun"+
+			"\n# Animals"+
 			"\n< owo zoo >\t\t\t\t\t  "+help.zoo.desc_short+
 			"\n< owo hunt >\t\t\t\t\t "+help.hunt.desc_short+
+			"\n< owo sell >\t\t\t\t\t "+help.sell.desc_short+
+			"\n< owo battle "+help.battle.args+" >\t "+help.battle.desc_short+
+			"\n< owo pets [set|rename] >\t\t"+help.pets.desc_short+
+			"\n# Fun"+
 			"\n< owo slots {amount} >\t\t   "+help.slots.desc_short+
 			"\n< owo lottery {amount} >\t\t "+help.lottery.desc_short+
 			"\n< owo 8b {question} >\t\t\t"+help.b8.desc_short+
-			"\n< owo define {word} >\t\t\t"+help.define.desc_short+
 			"\n< owo gif|pic {type} >\t\t   "+help.gif.desc_short+
-			"\n< owo battle "+help.battle.args+" >\t "+help.battle.desc_short+
-			"\n< owo pets [set|rename] >\t\t"+help.pets.desc_short+
+			"\n< owo translate {msg} -{lang} >  "+help.translate.desc_short+
+			"\n< owo define {word} >\t\t\t"+help.define.desc_short+
 			"\n# Social"+
 			"\n< owo cookie {@user} >\t\t   "+help.rep.desc_short+
 			"\n< owo pet|slap|hug|etc {@user} > "+help.pet.desc_short+
