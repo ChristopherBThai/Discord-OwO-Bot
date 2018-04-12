@@ -1,4 +1,4 @@
-const debug = false;
+const debug = true;
 if(debug)
 	var auth = require('../tokens/scuttester-auth.json');
 else 
@@ -13,6 +13,7 @@ const dbl = new DBL(auth.dbl);
 const global = require("./methods/global.js");
 
 const ranking = require("./methods/ranking.js");
+const macro = require("./methods/macro.js");
 const me = require("./methods/me.js");
 const helper = require("./methods/helper.js");
 const cowoncy = require("./methods/cowoncy.js");
@@ -58,6 +59,11 @@ client.on('message',msg => {
 		else if(adminCommand === 'lift'){
 			admin.timeout(con,msg,adminMsg);
 		}
+	}
+
+	//Check for verification code if it is a dm
+	if(msg.channel.type==="dm"){
+		macro.verify(msg,msg.content.trim());
 	}
 
 	//Ignore if its a bot or DM
@@ -326,6 +332,7 @@ con.connect(function(err){
 	console.log("Connected!");
 	lottery.con(con);
 	global.con(con);
+	macro.con(con);
 });
 
 //=============================================================================Console Logs===============================================================
