@@ -3,6 +3,7 @@
  */
 
 var help = require('../json/help.json');
+var macro = require('./macro.js');
 var auth = require('../../tokens/owo-auth.json');
 var animaljson = require('../../tokens/owo-animals.json');
 var animalunicode = {};
@@ -160,7 +161,14 @@ exports.isDisabled = async function(command,execute,executeOther,msg,args,isMent
 
 	//If not a command
 	if(tcommand == undefined){
-		executeOther(command,msg,args,isMention);
+		var sql = "SELECT id FROM timeout WHERE id = "+msg.author.id+" AND TIMESTAMPDIFF(HOUR,time,NOW()) < penalty;";
+		con.query(sql,function(err,rows,fields){
+			if(err) throw err;
+			if(rows[0]==undefined)
+				macro.check(msg,"point",function(){
+					executeOther(command,msg,args,isMention);
+				});
+		});
 		return;
 	}
 
@@ -187,11 +195,15 @@ exports.isDisabled = async function(command,execute,executeOther,msg,args,isMent
 	//Check if the command is enabled
 	tcommand = tcommand.name;
 	var sql = "SELECT * FROM disabled WHERE command = '"+tcommand+"' AND channel = "+channel+";";
+	sql += "SELECT id FROM timeout WHERE id = "+msg.author.id+" AND TIMESTAMPDIFF(HOUR,time,NOW()) < penalty;";
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
-		if(rows[0]==undefined)
-			execute(command,msg,args,isMention);
-		else
+		if(rows[1][0]!=undefined){
+		}else if(rows[0][0]==undefined){
+			macro.check(msg,tcommand,function(){
+				execute(command,msg,args,isMention);
+			});
+		}else
 			msg.channel.send("That command is disabled on this channel!")
 				.then(message => message.delete(3000));
 	});
