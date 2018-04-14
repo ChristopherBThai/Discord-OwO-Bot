@@ -165,8 +165,10 @@ exports.isDisabled = async function(command,execute,executeOther,msg,args,isMent
 		con.query(sql,function(err,rows,fields){
 			if(err) throw err;
 			if(rows[0]==undefined)
-				if(!macro.check(msg,"point"))
+				macro.check(msg,"point",function(){
 					executeOther(command,msg,args,isMention);
+				
+				});
 		});
 		return;
 	}
@@ -199,8 +201,9 @@ exports.isDisabled = async function(command,execute,executeOther,msg,args,isMent
 		if(err) throw err;
 		if(rows[1][0]!=undefined){
 		}else if(rows[0][0]==undefined){
-			if(!macro.check(msg,tcommand))
+			macro.check(msg,tcommand,function(){
 				execute(command,msg,args,isMention);
+			});
 		}else
 			msg.channel.send("That command is disabled on this channel!")
 				.then(message => message.delete(3000));

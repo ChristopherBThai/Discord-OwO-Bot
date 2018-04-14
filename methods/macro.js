@@ -1,4 +1,6 @@
 //Checks for macro users
+var redis = require('redis');
+var redclient = redis.createClient();
 var users = {};
 var letters = "abcdefghijklmnopqrstuvwxyz";
 var mcommands = {"slots":{cd:15000,half:94,six:800},"hunt":{cd:15000,half:94,six:800},"battle":{cd:15000,half:94,six:800},"point":{cd:10000,half:100,six:800}};
@@ -12,71 +14,64 @@ var global = require('./global.js');
  * false - ok
  * true - macro
  */
-exports.check = function(msg,command){
+exports.check = function(msg,command,callback){
 	if(!mcommands[command]){return false;}
 
 	var id = msg.author.id;
 
-	//Grab correct user/command json
-	if(!users[id]){
-		users[id]={};
-	}
-	var user = users[id];
-	if(!user[command]){
-		user[command] = {
-			"command":command,
-			"lasttime":new Date('January 1,2018'),
-			"prev":0,
-			"count":0,
-			"halftime":new Date('January 1,2018'),
-			"halfcount":0,
-			"sixtime":new Date('January 1,2018'),
-			"sixcount":0
-		}
-	}
-	var cuser = user[command];
+	getUser(id,function(user){
+		getCommand(id,command,function(cuser){
 
-	if(cuser){
-		var now = new Date();
-		var diff = now - cuser.lasttime;
+			console.log(user);
+			console.log(cuser);
+			
+			var now = new Date();
+			var diff = now - new Date(cuser.lasttime);
 
-		//Check for time limit
-		if(diff<mcommands[cuser.command].cd){
-			if(command == "point"){
-				cuser.lasttime = now;
-			}else{
-				diff = mcommands[cuser.command].cd-diff;
-				var mspercent = Math.trunc(((diff%1000)/1000)*100);
-				diff = Math.trunc(diff/1000);
-				var sec = diff%60;
-				msg.channel.send(" **|** Sorry **"+msg.author.username+"**, Please wait **"+sec+"."+mspercent+"s** to try again!");
+			//Check for time limit
+			if(diff<mcommands[cuser.command].cd){
+				if(command == "point"){
+					cuser.lasttime = now;
+					setCommand(id,command,cuser);
+				}else{
+					diff = mcommands[cuser.command].cd-diff;
+					var mspercent = Math.trunc(((diff%1000)/1000)*100);
+					diff = Math.trunc(diff/1000);
+					var sec = diff%60;
+					msg.channel.send(" **|** Sorry **"+msg.author.username+"**, Please wait **"+sec+"."+mspercent+"s** to try again!");
+				}
+				return;
 			}
-			return true;
-		}
 
-		//Check if doing human check
-		if(user.validText){
-			if(user.validMsgCount>=3){
-				delete user.validTryCount;
-				delete user.validMsgCount;
-				delete user.validText;
-				ban(msg,1,"Ignoring warning messages");
-				return true;
+			//Check if doing human check
+			if(user.validText){
+				if(user.validMsgCount>=3){
+					user.validTryCount = 0;
+					user.validMsgCount = 0;
+					user.validText = null;
+					ban(msg,1,"Ignoring warning messages");
+					setUser(id,user);
+					return;
+				}
+				msg.channel.send("**"+msg.author.username+"**! Please DM me the word `"+user.validText+"` to verify that you are human! ("+user.validMsgCount+"/3)");
+				user.validMsgCount++;
+				setUser(id,user);
+				return;
 			}
-			msg.channel.send("**"+msg.author.username+"**! Please DM me the word `"+user.validText+"` to verify that you are human! ("+user.validMsgCount+"/3)");
-			user.validMsgCount++;
-			return true;
-		}
 
-		//Check for macros
-		if(checkInterval(cuser,now,diff)||checkHalf(cuser,now)||checkSix(cuser,now)){
-			humanCheck(user,msg);
-			return true;
-		}
+			//Check for macros
+			if(checkInterval(cuser,now,diff)||checkHalf(cuser,now)||checkSix(cuser,now)){
+				humanCheck(user,msg);
+				setUser(id,user);
+				setCommand(id,command,cuser);
+				return;
+			}
 
-		cuser.lasttime = now;
-	}
-	return false;
+			cuser.lasttime = now;
+			setCommand(id,command,cuser);
+			callback();
+		});
+	});
 }
 
 function humanCheck(user,msg){
@@ -103,27 +98,30 @@ function humanCheck(user,msg){
 
 exports.verify = function(msg,text){
 	var user = users[msg.author.id];
-	if(!user||!user.validText)
-		return;
-	if(text==user.validText){
-		global.msgAdmin("**"+msg.author.username+"** avoided ban with correct verfication ("+user.validTryCount+"/3)");
-		msg.channel.send("I have verified that you are human! Thank you! :3")
-			.catch(err => console.error(err));
-		delete user.validTryCount;
-		delete user.validMsgCount;
-		delete user.validText;
-	}else{
-		user.validTryCount++;
-		if(user.validTryCount>3){
-			delete user.validTryCount;
-			delete user.validMsgCount;
-			delete user.validText;
-			ban(msg,1,"Failed verification 3x");
-		}else{
-			msg.channel.send("Wrong verification code! Please try again ("+user.validTryCount+"/3)")
+	getUser(msg.author.id,function(user){
+		if(!user||!user.validText)
+			return;
+		if(text==user.validText){
+			global.msgAdmin("**"+msg.author.username+"** avoided ban with correct verfication ("+user.validTryCount+"/3)");
+			msg.channel.send("I have verified that you are human! Thank you! :3")
 				.catch(err => console.error(err));
+			user.validTryCount = 0;
+			user.validMsgCount = 0;
+			user.validText = null;
+		}else{
+			user.validTryCount++;
+			if(user.validTryCount>3){
+				user.validTryCount = 0;
+				user.validMsgCount = 0;
+				user.validText = null;
+				ban(msg,1,"Failed verification 3x");
+			}else{
+				msg.channel.send("Wrong verification code! Please try again ("+user.validTryCount+"/3)")
+					.catch(err => console.error(err));
+			}
 		}
-	}
+		setUser(id,user);
+	});
 }
 
 function checkInterval(user,now,diff){
@@ -140,7 +138,7 @@ function checkInterval(user,now,diff){
 }
 
 function checkHalf(user,now){
-	if(now-user.halftime>1800000){
+	if(now-new Date(user.halftime)>1800000){
 		user.halfcount = 0;
 		user.halftime = now;
 		return false;
@@ -158,7 +156,7 @@ function checkHalf(user,now){
 }
 
 function checkSix(user,now){
-	if(now-user.sixtime>21600000){
+	if(now-new Date(user.sixtime)>21600000){
 		user.sixcount = 0;
 		user.sixtime = now;
 		return false;
@@ -189,26 +187,57 @@ function ban(msg,hours,reason){
 	});
 }
 
+function getUser(id,callback){
+	redclient.hgetall(id,function(err,obj){
+		if(err) {console.log(err); return;}
+		if(obj==null){
+			var user = {
+				validTryCount:0,
+				validMsgCount:0
+			}
+			redclient.hmset(id,user,function(obj2){
+				callback(user);
+			});
+		}else{
+			callback(obj);
+		}
+	});
+}
+
+function setUser(id,obj){
+	redclient.hmset(id,obj);
+}
+
+function getCommand(id,command,callback){
+	redclient.hgetall(id+""+command,function(err,obj){
+		if(err) {console.log(err); return;}
+		if(obj==null){
+			var user = {
+				"command":command,
+				"lasttime":new Date('January 1,2018'),
+				"prev":0,
+				"count":0,
+				"halftime":new Date('January 1,2018'),
+				"halfcount":0,
+				"sixtime":new Date('January 1,2018'),
+				"sixcount":0
+			}
+			redclient.hmset(id+""+command,user,function(obj2){
+				callback(user);
+			});
+		}else{
+			callback(obj);
+		}
+	});
+}
+
+function setCommand(id,command,obj){
+	redclient.hmset(id+""+command,obj);
+}
 exports.con = function(tcon){
 	con = tcon;
 }
 
-/*function humanCheck(user,msg){
-	var rand = Math.floor(Math.random()*vemoji.length);
-	var emoji = vemoji[rand];
-	var name = vname[rand]; 
-	var text = "**"+msg.author.username+"**! Please verify that you are a human by reacting with a **"+name+"** within 30s!";
-	const filter = (reaction,user) => vemoji.includes(reaction.emoji.name) && user.id == msg.author.id;
-	msg.channel.send(text)
-		.then(message => {
-			for(var i=0;i<vemoji.length;i++)
-				message.react(vemoji[i])
-				.catch(err=>{});
-			message.awaitReactions(filter,{time:30000,maxEmojis:1})
-				.then(collected => message.channel.send(collected.first(1).emoji))
-				.catch();
-			user.reactAttempt = 0;
-			user.msgAttempt = 0;
-		})
-		.catch(err => ban(msg,1));
-}*/
+redclient.on('connect',function(){
+	console.log('redis connected');
+});
