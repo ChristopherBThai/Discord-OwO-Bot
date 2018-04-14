@@ -47,7 +47,7 @@ exports.execute_p = function(mysql,con,msg,args){
 
 //Checks if user can battle or not
 exports.battle = function(con,msg,args){
-	var sql = "SELECT money,TIMESTAMPDIFF(SECOND,battle,NOW()) AS time FROM cowoncy WHERE id = "+msg.author.id+";";
+	var sql = "SELECT money FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,result){
 		if(err) throw err;
 		if(result[0]==undefined||result[0].money<5){
@@ -70,7 +70,7 @@ function startBattle(con,msg,args){
 	var sql = "SELECT * FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND pet = name;";
 	sql += "SET @rand = (CEIL(RAND()*(SELECT COUNT(*) FROM animal WHERE ispet = 1 AND id != "+msg.author.id+")));"+
 		"SELECT * FROM (SELECT animal.*,@rownum := @rownum + 1 AS rank FROM animal ,(SELECT @rownum := 0) r WHERE ispet = 1 AND id != "+msg.author.id+") d WHERE rank <= @rand ORDER BY rank DESC LIMIT 1;"
-	sql += "UPDATE cowoncy SET money = money - 5,battle = NOW() WHERE id = "+msg.author.id+";"
+	sql += "UPDATE cowoncy SET money = money - 5 WHERE id = "+msg.author.id+";"
 	con.query(sql,async function(err,rows,fields){
 		if(err) throw err;
 		

@@ -80,16 +80,12 @@ exports.display = function(con,msg){
  *
  */
 exports.catch = function(con,msg){
-	var sql = "SELECT money,TIMESTAMPDIFF(SECOND,catch,NOW()) AS time FROM cowoncy WHERE id = "+msg.author.id+";";
+	var sql = "SELECT money FROM cowoncy WHERE id = "+msg.author.id+";";
 	sql += "SELECT name,nickname,lvl,xp FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND name = pet;";
 	con.query(sql,function(err,result){
 		if(err) throw err;
 		if(result[0][0]==undefined||result[0][0].money<animals.rollprice){
 			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**")
-				.then(message => message.delete(3000))
-				.catch(err => console.error(err));
-		}else if(result[0][0].time <= 15){
-			msg.channel.send("**"+msg.author.username+"! You need to wait "+(15-result[0][0].time)+" more seconds!**")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else{
@@ -98,7 +94,7 @@ exports.catch = function(con,msg){
 			var xp = animal[3];
 			var lvlup = false;
 			sql = "INSERT INTO animal (id,name,count,totalcount) VALUES ("+msg.author.id+",'"+animal[1]+"',1,1) ON DUPLICATE KEY UPDATE count = count + 1,totalcount = totalcount + 1;"+
-				"UPDATE cowoncy SET money = money - 5,catch = NOW() WHERE id = "+msg.author.id+";"+
+				"UPDATE cowoncy SET money = money - 5 WHERE id = "+msg.author.id+";"+
 				"INSERT INTO animal_count (id,"+type+") VALUES ("+msg.author.id+",1) ON DUPLICATE KEY UPDATE "+type+" = "+type+"+1;";
 			if(result[1][0]!=undefined){
 				var temp = givexp(animal[3],result[1][0].xp,result[1][0].lvl,msg.author.id,result[1][0].name);

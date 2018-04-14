@@ -17,92 +17,15 @@ exports.addPoint = function(con,msg){
 	var guild = msg.guild;
 	var text = msg.content.replace(/(\n)+/g," | ");
 	try{
-		var sql = "SELECT id FROM timeout WHERE id = "+id+" AND TIMESTAMPDIFF(HOUR,time,NOW()) < penalty;";
-		sql += "SELECT TIMESTAMPDIFF(SECOND,lasttime,NOW()) AS cooldown FROM user WHERE id = "+id+";";
+		//Adds points
+		var sql = "INSERT INTO user (id,count,lasttime) VALUES ("+id+",1,NOW()) ON DUPLICATE KEY "+
+			"UPDATE count = count + 1,lasttime = NOW();";
+		sql += "INSERT INTO guild (id,count) VALUES ("+guild.id+",1) ON DUPLICATE KEY UPDATE count = count + 1;";
+		sql += "INSERT INTO cowoncy (id,money) VALUES ("+id+",2) ON DUPLICATE KEY UPDATE money = money + 2;";
+
 		con.query(sql,function(err,result){
-			if(err) throw err;
-			if(result[0][0]!=undefined){
-				//console.log("\x1b[0m----%s\x1b[36m[%s][%s][%s]",msg.author.username+" typed '"+text+"'",msg.guild,msg.channel.name,msg.channel.id); 
-			}else if(result[1][0]!=undefined&&result[1][0].cooldown<=10){
-				sql = "UPDATE user SET lasttime = NOW() WHERE id = "+id+";";
-				con.query(sql,function(err,result){
-					if(err){ throw err; return;}
-					console.log("\x1b[0m-%s\x1b[36m[%s][%s][%s]",msg.author.username+" typed '"+text+"'",msg.guild,msg.channel.name,msg.channel.id)
-				});
-			}else{
-				var cooldown = 0;
-				if(result[1][0]!=undefined)
-					cooldown = result[1][0].cooldown;
-
-				//Spam detection
-				sql = "UPDATE IGNORE user SET "+
-						//Constant time between points
-						"spamcount = IF(ABS(previnterval-"+cooldown+")<=1,spamcount+1,0), "+
-						"previnterval = IF(@diff>10000,0,"+cooldown+"), "+
-						//100 points under 30m
-						"spamintervalcount = IF(TIMESTAMPDIFF(MINUTE,spaminterval,NOW())>=30,0,spamintervalcount+1), "+
-						"spaminterval = IF(TIMESTAMPDIFF(MINUTE,spaminterval,NOW())>=30,NOW(),spaminterval), "+
-						//1200 points under 1d
-						"spamintervallongcount = IF(TIMESTAMPDIFF(DAY,spamintervallong,NOW())>=1,0,spamintervallongcount+1), "+
-						"spamintervallong = IF(TIMESTAMPDIFF(DAY,spamintervallong,NOW())>=1,NOW(),spamintervallong) "+
-					"WHERE id = "+id+";";
-
-				//Adds points
-				sql += "INSERT INTO user (id,count,lasttime) VALUES ("+id+",1,NOW()) ON DUPLICATE KEY "+
-					"UPDATE count = count + IF("+
-						"spamcount <= 10 AND "+
-						"spamintervalcount < 100 AND "+
-						"spamintervallongcount < 1200, "+
-					"1,0),lasttime = NOW();";
-				sql += "INSERT INTO guild (id,count) VALUES ("+guild.id+",1) ON DUPLICATE KEY UPDATE count = count + 1;";
-				sql += "INSERT INTO cowoncy (id,money) VALUES ("+id+",2) ON DUPLICATE KEY UPDATE money = money + 2;";
-
-				//More Grab spam info to give penalties
-				sql += "SELECT spamcount,spamintervalcount,spamintervallongcount,previnterval FROM user WHERE id = "+id+";";
-
-				con.query(sql,function(err,result){
-					if(err){ throw err; return;}
-
-					console.log("\x1b[0m%s\x1b[36m[%s][%s][%s]",msg.author.username+" typed '"+text+"'",msg.guild,msg.channel.name,msg.channel.id); 
-
-					//Spam detection
-					var spam = result[4][0].spamcount;
-					var spam2 = result[4][0].spamintervalcount;
-					var spam3 = result[4][0].spamintervallongcount;
-					if(spam>=10||spam2>=100||spam3>1200){
-						console.log("\x1b[36m%s\x1b[0m","    Spam detected!");
-						var penalty = 1;
-						if(spam3>1200)
-							penalty = 5;
-						sql = "INSERT INTO timeout (id,time,count,penalty) VALUES ("+id+",NOW(),1,0) ON DUPLICATE KEY UPDATE time = NOW(),count=count+1,penalty = penalty + "+penalty+";SELECT penalty,count FROM timeout WHERE id = "+id+";UPDATE user SET spamintervallongcount = 0,spamintervalcount = 0,spamcount = 0 WHERE id = "+id+";";
-						con.query(sql,function(err,rows,fields){
-
-							var time = rows[1][0].penalty;
-							console.log("\x1b[36m%s\x1b[0m","    Putting user in timeout for "+time+"H");
-
-							//Notifies the user
-							if(time==0)
-								msg.author.send("***OwO What's This?!?***\nThis is a warning! Please do not spam or use macros for owo!\nIf you feel like this is a mistake, use `owo feedback` in a channel to let me know!")
-									.catch(err => console.error(err));
-							else
-								msg.author.send("***OwO What's This?!?***\nYou have been timed out for "+time+"H due to spam or macros! \nIf you feel like this is a mistake, use `owo feedback` in a channel to get it fixed!")
-									.catch(err => console.error(err));
-
-							//Notifies an admin
-							var amsg = "**"+msg.author.username+"** has been banned for **"+time+"H**! This is his "+rows[1][0].count+" time!\n**ID:** "+msg.author.id+"\n**Guild:** "+msg.guild.name+"\n **Reason:** ";
-							if(spam>=10)
-								amsg += "For saying owo "+spam+" times with a constant interval of "+result[4][0].previnterval;
-							else if(spam2>=100)
-								amsg += "For saying owo over 100 times within 30min";
-							else if(spam3>1200)
-								amsg += "For saying owo over 1200 times in a day";
-							global.msgAdmin(amsg)
-								.catch(err => console.error(err));
-						});
-					}
-
-				});
-			}
+			if(err){ throw err; return;}
+			console.log("\x1b[0m%s\x1b[36m[%s][%s][%s]",msg.author.username+" typed '"+text+"'",msg.guild,msg.channel.name,msg.channel.id); 
 		});
 	}catch(err){
 
