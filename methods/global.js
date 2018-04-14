@@ -161,7 +161,13 @@ exports.isDisabled = async function(command,execute,executeOther,msg,args,isMent
 
 	//If not a command
 	if(tcommand == undefined){
-		executeOther(command,msg,args,isMention);
+		var sql = "SELECT id FROM timeout WHERE id = "+msg.author.id+" AND TIMESTAMPDIFF(HOUR,time,NOW()) < penalty;";
+		con.query(sql,function(err,rows,fields){
+			if(err) throw err;
+			if(rows[0]==undefined)
+				if(!macro.check(msg,"point"))
+					executeOther(command,msg,args,isMention);
+		});
 		return;
 	}
 
@@ -188,12 +194,13 @@ exports.isDisabled = async function(command,execute,executeOther,msg,args,isMent
 	//Check if the command is enabled
 	tcommand = tcommand.name;
 	var sql = "SELECT * FROM disabled WHERE command = '"+tcommand+"' AND channel = "+channel+";";
+	sql += "SELECT id FROM timeout WHERE id = "+msg.author.id+" AND TIMESTAMPDIFF(HOUR,time,NOW()) < penalty;";
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
-		if(rows[0]==undefined){
-			if(!macro.check(msg,tcommand)){
+		if(rows[1][0]!=undefined){
+		}else if(rows[0][0]==undefined){
+			if(!macro.check(msg,tcommand))
 				execute(command,msg,args,isMention);
-			}
 		}else
 			msg.channel.send("That command is disabled on this channel!")
 				.then(message => message.delete(3000));

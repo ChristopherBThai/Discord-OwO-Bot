@@ -47,7 +47,7 @@ exports.accept = function(con,msg,args){
 
 //Decline battle
 exports.decline= function(con,msg,args){
-	var sql = "SELECT * FROM battleuser WHERE (user1 = "+msg.author.id+" OR user2 = "+msg.author.id+" ) AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 1;";
+	var sql = "SELECT * FROM battleuser WHERE (user1 = "+msg.author.id+" OR user2 = "+msg.author.id+" ) AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 5;";
 	sql += "UPDATE battleuser SET time = '2017-01-01 10:10:10' WHERE (user1 = "+msg.author.id+" OR user2 = "+msg.author.id+" ) AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 5;";
 	con.query(sql,async function(err,rows,fields){
 		if(err) throw err;
