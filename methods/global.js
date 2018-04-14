@@ -167,7 +167,6 @@ exports.isDisabled = async function(command,execute,executeOther,msg,args,isMent
 			if(rows[0]==undefined)
 				macro.check(msg,"point",function(){
 					executeOther(command,msg,args,isMention);
-				
 				});
 		});
 		return;

@@ -3,7 +3,7 @@ var redis = require('redis');
 var redclient = redis.createClient();
 var users = {};
 var letters = "abcdefghijklmnopqrstuvwxyz";
-var mcommands = {"slots":{cd:15000,half:94,six:800},"hunt":{cd:15000,half:94,six:800},"battle":{cd:15000,half:94,six:800},"point":{cd:10000,half:100,six:800}};
+var mcommands = {"slots":{cd:15000,half:85,six:500},"hunt":{cd:15000,half:85,six:500},"battle":{cd:15000,half:85,six:500},"point":{cd:10000,half:100,six:750}};
 var vemoji = ["🐶","🐱","🐰","🐮","🐷","🐸","🐰","🦁","🐼"];
 var vname = ["dog","cat","bunny","cow","pig","frog","rabbit","lion","panda"];
 var con;
@@ -15,16 +15,13 @@ var global = require('./global.js');
  * true - macro
  */
 exports.check = function(msg,command,callback){
-	if(!mcommands[command]){return false;}
+	if(!mcommands[command]){callback();return;}
 
 	var id = msg.author.id;
 
 	getUser(id,function(user){
 		getCommand(id,command,function(cuser){
 
-			console.log(user);
-			console.log(cuser);
-			
 			var now = new Date();
 			var diff = now - new Date(cuser.lasttime);
 
