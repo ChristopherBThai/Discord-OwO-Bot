@@ -19,6 +19,7 @@ exports.check = function(msg,command,callback){
 
 	var id = msg.author.id;
 
+<<<<<<< HEAD
 	getUser(id,function(user){
 		getCommand(id,command,function(cuser){
 
@@ -41,6 +42,41 @@ exports.check = function(msg,command,callback){
 					msg.channel.send(" **|** Sorry **"+msg.author.username+"**, Please wait **"+sec+"."+mspercent+"s** to try again!");
 				}
 				return;
+=======
+	//Grab correct user/command json
+	if(!users[id]){
+		users[id]={};
+	}
+	var user = users[id];
+	if(!user[command]){
+		user[command] = {
+			"command":command,
+			"lasttime":new Date('January 1,2018'),
+			"prev":0,
+			"count":0,
+			"halftime":new Date('January 1,2018'),
+			"halfcount":0,
+			"sixtime":new Date('January 1,2018'),
+			"sixcount":0
+		}
+	}
+	var cuser = user[command];
+
+	if(cuser){
+		var now = new Date();
+		var diff = now - cuser.lasttime;
+
+		//Check for time limit
+		if(diff<mcommands[cuser.command].cd){
+			if(command == "point"){
+				cuser.lasttime = now;
+			}else{
+				diff = mcommands[cuser.command].cd-diff;
+				var mspercent = Math.trunc(((diff%1000)/1000)*100);
+				diff = Math.trunc(diff/1000);
+				var sec = diff%60;
+				msg.channel.send("⏱ **|** Sorry **"+msg.author.username+"**, Please wait **"+sec+"."+mspercent+"s** to try again!");
+>>>>>>> 7ffef36ccae9d4a99504792e072b5aecb78e94b8
 			}
 
 			//Check if doing human check
