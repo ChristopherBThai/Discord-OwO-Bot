@@ -49,7 +49,7 @@ exports.check = function(msg,command){
 				var mspercent = Math.trunc(((diff%1000)/1000)*100);
 				diff = Math.trunc(diff/1000);
 				var sec = diff%60;
-				msg.channel.send(" **|** Sorry **"+msg.author.username+"**, Please wait **"+sec+"."+mspercent+"s** to try again!");
+				msg.channel.send("⏱ **|** Sorry **"+msg.author.username+"**, Please wait **"+sec+"."+mspercent+"s** to try again!");
 			}
 			return true;
 		}
