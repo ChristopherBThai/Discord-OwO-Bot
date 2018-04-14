@@ -44,11 +44,11 @@ exports.check = function(msg,command,callback){
 			}
 
 			//Check if doing human check
-			if(user.validText){
+			if(user.validText&&user.validText!="ok"){
 				if(user.validMsgCount>=3){
 					user.validTryCount = 0;
 					user.validMsgCount = 0;
-					user.validText = null;
+					user.validText = "ok";
 					ban(msg,1,"Ignoring warning messages");
 					setUser(id,user);
 					return;
@@ -61,8 +61,7 @@ exports.check = function(msg,command,callback){
 
 			//Check for macros
 			if(checkInterval(cuser,now,diff)||checkHalf(cuser,now)||checkSix(cuser,now)){
-				humanCheck(user,msg);
-				setUser(id,user);
+				humanCheck(user,msg,function(){setUser(id,user)});
 				setCommand(id,command,cuser);
 				return;
 			}
@@ -74,7 +73,7 @@ exports.check = function(msg,command,callback){
 	});
 }
 
-function humanCheck(user,msg){
+function humanCheck(user,msg,callback){
 	var rand = "";
 	for(var i=0;i<5;i++)
 		rand += letters.charAt(Math.floor(Math.random()*letters.length));
@@ -83,6 +82,7 @@ function humanCheck(user,msg){
 			user.validTryCount = 0;
 			user.validMsgCount = 0;
 			user.validText = rand;
+			callback();
 		})
 		.catch(err => {
 			msg.channel.send("**"+msg.author.username+"**, please send me a DM with only the word `"+rand+"` to check that you are a human!")
@@ -92,14 +92,14 @@ function humanCheck(user,msg){
 			user.validTryCount = 0;
 			user.validMsgCount = 0;
 			user.validText = rand;
+			callback();
 		});
 	
 }
 
 exports.verify = function(msg,text){
-	var user = users[msg.author.id];
 	getUser(msg.author.id,function(user){
-		if(!user||!user.validText)
+		if(!user||!user.validText||user.validText=="ok")
 			return;
 		if(text==user.validText){
 			global.msgAdmin("**"+msg.author.username+"** avoided ban with correct verfication ("+user.validTryCount+"/3)");
@@ -107,20 +107,20 @@ exports.verify = function(msg,text){
 				.catch(err => console.error(err));
 			user.validTryCount = 0;
 			user.validMsgCount = 0;
-			user.validText = null;
+			user.validText = "ok";
 		}else{
 			user.validTryCount++;
 			if(user.validTryCount>3){
 				user.validTryCount = 0;
 				user.validMsgCount = 0;
-				user.validText = null;
+				user.validText = "ok";
 				ban(msg,1,"Failed verification 3x");
 			}else{
 				msg.channel.send("Wrong verification code! Please try again ("+user.validTryCount+"/3)")
 					.catch(err => console.error(err));
 			}
 		}
-		setUser(id,user);
+		setUser(msg.author.id,user);
 	});
 }
 
