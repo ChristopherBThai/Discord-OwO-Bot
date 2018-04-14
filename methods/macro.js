@@ -3,7 +3,7 @@ var redis = require('redis');
 var redclient = redis.createClient();
 var users = {};
 var letters = "abcdefghijklmnopqrstuvwxyz";
-var mcommands = {"slots":{cd:15000,half:85,six:500},"hunt":{cd:15000,half:85,six:500},"battle":{cd:15000,half:85,six:500},"point":{cd:10000,half:100,six:750}};
+var mcommands = {"slots":{cd:15000,half:80,six:500},"hunt":{cd:15000,half:80,six:500},"battle":{cd:15000,half:80,six:500},"point":{cd:10000,half:90,six:750}};
 var vemoji = ["🐶","🐱","🐰","🐮","🐷","🐸","🐰","🦁","🐼"];
 var vname = ["dog","cat","bunny","cow","pig","frog","rabbit","lion","panda"];
 var con;
