@@ -530,5 +530,5 @@ function givexp(con,won, id,user1,xp, eid,user2,exp){
 
 //Gets xp needed for that lvl
 function maxxp(lvl){
-	return 25*lvl*lvl;
+	return 25*lvl*lvl*Math.trunc((lvl+10)/10);
 }

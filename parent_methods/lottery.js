@@ -46,8 +46,8 @@ function pickWinner(){
 
 		var winnername = await global.getUsername(winner);
 		msgUsers(winnername,winner,winnerchance,winnerChannel,prize,loser,loserchance,-1);
-		this.init();
 	});
+	this.init();
 }
 
 function msgUsers(winnername,winner,chance,winnerChannel,prize,loser,loserchance,i){

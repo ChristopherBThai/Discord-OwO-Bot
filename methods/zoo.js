@@ -300,5 +300,5 @@ function givexp(xpgain,cxp,clvl,id,animal){
 
 //Gets xp needed for that lvl
 function maxxp(lvl){
-	return 25*lvl*lvl;
+	return 25*lvl*lvl*Math.trunc((lvl+10)/10);
 }
