@@ -19,7 +19,7 @@ exports.send = function(mysql, con, msg, admin, type, message){
 	var sender = msg.author;
 	var channel = msg.channel;
 	if(!message||message === ''){
-		channel.send("Silly "+sender + ", you need to add a message!")
+		channel.send("**🚫 |** Silly **"+sender+"**, you need to add a message!")
 			.catch(err => console.error(err));
 		return;
 	}
@@ -28,7 +28,7 @@ exports.send = function(mysql, con, msg, admin, type, message){
 		sender.id+");";
 	if(message.length > 250){
 		console.log("\tMessage too big");
-		channel.send("Sorry! Messages must be under 250 character!!!")
+		channel.send("**🚫 |** Sorry, "+sender+"! Messages must be under 250 character!!!")
 			.catch(err => console.error(err));
 		return;
 	}
@@ -62,7 +62,7 @@ exports.send = function(mysql, con, msg, admin, type, message){
 				}
 			]
 		};
-		channel.send("*OwO What's this?!*  "+sender+", Thanks for the "+type+"!")
+		channel.send("**📨 |** *OwO What's this?!*  "+sender+", Thanks for the "+type+"!")
 			.catch(err => console.error(err));
 		global.msgAdmin({embed});
 		console.log("\tNew "+type+" sent to admin's DM");

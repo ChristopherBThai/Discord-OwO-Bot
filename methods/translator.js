@@ -14,7 +14,7 @@ exports.translate = function(msg,args){
 	//Get text
 	var text = args.join(" ");
 	if(text.length>700){
-		msg.channel.send("Message is too long")
+		msg.channel.send("**🚫 |** Message is too long")
 			.catch(err => console.error(err));
 		return;
 	}
@@ -28,10 +28,10 @@ exports.translate = function(msg,args){
 			"footer":{"text":"Translated from \""+ptext+"\""}
 		};
 		msg.channel.send({embed})
-			.catch(err => msg.channel.send("I don't have permission to send embedded links! :c")
+			.catch(err => msg.channel.send("**🚫 |** I don't have permission to send embedded links! :c")
 			.catch(err => console.error(err)));
 	}).catch(err => {
-		msg.channel.send("Could not find that language! Use `owo listlang` to see available languages")
+		msg.channel.send("**🚫 |** Could not find that language! Use `owo listlang` to see available languages")
 			.catch(err => console.error(err));
 	})
 }

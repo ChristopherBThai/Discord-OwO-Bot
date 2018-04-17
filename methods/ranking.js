@@ -47,7 +47,7 @@ exports.display = function(con, msg, args){
 		if(err) throw err;
 		var length = rows.length;
 		if(rows.length>0){
-			channel.send("Command is disabled on this channel!")
+			channel.send("**🚫 |** Command is disabled on this channel!")
 				.catch(err => console.error(err));
 			console.log("\x1b[36m%s\x1b[0m","    Command disabled");
 			return;
@@ -93,7 +93,7 @@ exports.display = function(con, msg, args){
 			else if (count<1) count = 5;
 
 			if(invalid)
-				msg.channel.send("Invalid ranking type!")
+				msg.channel.send("**🚫 |** Invalid ranking type!")
 					.catch(err => console.error(err));
 			else if(globala){
 				if(points)

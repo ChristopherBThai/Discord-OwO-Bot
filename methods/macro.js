@@ -3,7 +3,7 @@ var redis = require('redis');
 var redclient = redis.createClient();
 var users = {};
 var letters = "abcdefghijklmnopqrstuvwxyz";
-var mcommands = {"slots":{cd:15000,half:80,six:500},"hunt":{cd:15000,half:80,six:500},"battle":{cd:15000,half:80,six:500},"point":{cd:10000,half:90,six:750}};
+var mcommands = {"zoo":{cd:45000,half:20,six:200},"slots":{cd:15000,half:80,six:500},"hunt":{cd:15000,half:80,six:500},"battle":{cd:15000,half:80,six:500},"point":{cd:10000,half:90,six:750}};
 var vemoji = ["🐶","🐱","🐰","🐮","🐷","🐸","🐰","🦁","🐼"];
 var vname = ["dog","cat","bunny","cow","pig","frog","rabbit","lion","panda"];
 var con;
@@ -35,7 +35,9 @@ exports.check = function(msg,command,callback){
 					var mspercent = Math.trunc(((diff%1000)/1000)*100);
 					diff = Math.trunc(diff/1000);
 					var sec = diff%60;
-					msg.channel.send("⏱ **|** Sorry **"+msg.author.username+"**, Please wait **"+sec+"."+mspercent+"s** to try again!");
+					msg.channel.send("⏱ **|** Sorry **"+msg.author.username+"**, Please wait **"+sec+"."+mspercent+"s** to try again!")
+						.then(message => message.delete(3000))
+						.catch(err => console.error(err));
 				}
 				return;
 			}
@@ -50,7 +52,7 @@ exports.check = function(msg,command,callback){
 					setUser(id,user);
 					return;
 				}
-				msg.channel.send("**"+msg.author.username+"**! Please DM me the word `"+user.validText+"` to verify that you are human! ("+user.validMsgCount+"/3)");
+				msg.channel.send("**⚠ | "+msg.author.username+"**! Please DM me the word `"+user.validText+"` to verify that you are human! ("+user.validMsgCount+"/3)");
 				user.validMsgCount++;
 				setUser(id,user);
 				return;
@@ -74,7 +76,7 @@ function humanCheck(user,msg,callback){
 	var rand = "";
 	for(var i=0;i<5;i++)
 		rand += letters.charAt(Math.floor(Math.random()*letters.length));
-	msg.author.send("Are you a real human? Please reply with `"+rand+"` so I can check!")
+	msg.author.send("**⚠ |** Are you a real human? Please reply with `"+rand+"` so I can check!")
 		.then(message => {
 			user.validTryCount = 0;
 			user.validMsgCount = 0;
@@ -82,7 +84,7 @@ function humanCheck(user,msg,callback){
 			callback();
 		})
 		.catch(err => {
-			msg.channel.send("**"+msg.author.username+"**, please send me a DM with only the word `"+rand+"` to check that you are a human!")
+			msg.channel.send("**⚠ | "+msg.author.username+"**, please send me a DM with only the word `"+rand+"` to check that you are a human!")
 			.catch(err => {
 				ban(msg,1,"No possible permission");
 			});
@@ -99,8 +101,8 @@ exports.verify = function(msg,text){
 		if(!user||!user.validText||user.validText=="ok")
 			return;
 		if(text==user.validText){
-			global.msgAdmin("**"+msg.author.username+"** avoided ban with correct verfication ("+user.validTryCount+"/3)");
-			msg.channel.send("I have verified that you are human! Thank you! :3")
+			global.msgAdmin("**⚠ | "+msg.author.username+"** avoided ban with correct verfication ("+user.validTryCount+"/3)");
+			msg.channel.send("**👍 |** I have verified that you are human! Thank you! :3")
 				.catch(err => console.error(err));
 			user.validTryCount = 0;
 			user.validMsgCount = 0;
@@ -113,7 +115,7 @@ exports.verify = function(msg,text){
 				user.validText = "ok";
 				ban(msg,1,"Failed verification 3x");
 			}else{
-				msg.channel.send("Wrong verification code! Please try again ("+user.validTryCount+"/3)")
+				msg.channel.send("**🚫 |** Wrong verification code! Please try again ("+user.validTryCount+"/3)")
 					.catch(err => console.error(err));
 			}
 		}
@@ -178,8 +180,8 @@ function ban(msg,hours,reason){
 		if(result[1][0]==undefined){
 			global.msgAdmin("An error has occured on the ban function of macro.js");
 		}else{
-			msg.channel.send("**"+msg.author.username+"**! You have been banned for **"+result[1][0].penalty+"H** for macros or botting!");
-			global.msgAdmin("**"+msg.author.username+"** has been banned for **"+reason+"**");
+			msg.channel.send("**☠ | "+msg.author.username+"**! You have been banned for **"+result[1][0].penalty+"H** for macros or botting!");
+			global.msgAdmin("**☠ | "+msg.author.username+"** has been banned for **"+reason+"**");
 		}
 	});
 }

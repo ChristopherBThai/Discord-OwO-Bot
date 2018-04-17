@@ -50,7 +50,7 @@ exports.eightball = function(con,msg,isMention,prefix){
 		else
 			question = question.substring(prefix.length+1);
 			
-		msg.channel.send("**"+msg.author+" asked:**  "+question+"\n**Answer:**  "+rows[0].answer)
+		msg.channel.send("**🎱 | "+msg.author+" asked:**  "+question+"\n**<:blank:427371936482328596> | Answer:**  "+rows[0].answer)
 			.catch(err => console.error(err));
 		console.log("\x1b[36m%s\x1b[0m","    question: "+question);
 		console.log("\x1b[36m%s\x1b[0m","    answer: "+rows[0].answer);
@@ -112,35 +112,3 @@ exports.kiss = function(msg,args){
 			.catch(err => console.error(err));
 }
 
-/**
- * spanks a user!
- * @param {discord.Message} 	msg - Discord's message
- * @param {String[]}		args - arguments
- */
-exports.spank = function(msg,args){
-	if(args[0]!=undefined)
-		msg.channel.send("*Naughty!*\n"+msg.author+" spanked "+args.join(" ")+"!")
-			.catch(err => console.error(err));
-}
-
-/**
- * hugs a user!
- * @param {discord.Message} 	msg - Discord's message
- * @param {String[]}		args - arguments
- */
-exports.hug = function(msg,args){
-	if(args[0]!=undefined)
-		msg.channel.send("*Awww!!! adorable!*\n"+msg.author+" hugs "+args.join(" ")+"!")
-			.catch(err => console.error(err));
-}
-
-/**
- * Slaps a user!
- * @param {discord.Message} 	msg - Discord's message
- * @param {String[]}		args - arguments
- */
-exports.slap= function(msg,args){
-	if(args[0]!=undefined)
-		msg.channel.send("*owie!*\n"+msg.author+" slaps "+args.join(" ")+"!")
-			.catch(err => console.error(err));
-}

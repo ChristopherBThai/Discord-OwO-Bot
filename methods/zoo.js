@@ -16,59 +16,49 @@ initDisplay();
  * Displays your zoo
  */
 exports.display = function(con,msg){
-	var sql = "SELECT TIMESTAMPDIFF(SECOND,zoo,NOW()) AS time FROM cowoncy WHERE id = "+msg.author.id+";";
+	var sql = "SELECT * FROM animal WHERE id = "+msg.author.id+";"+
+		"SELECT common,uncommon,rare,epic,mythical,legendary,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;"+
+		"UPDATE IGNORE cowoncy SET zoo = NOW() WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,result){
 		if(err) throw err;
-		if(result[0]!=undefined&&result[0].time<=45){
-			msg.channel.send("**"+msg.author.username+"! You need to wait "+(45-result[0].time)+" more seconds!**")
-				.then(message => message.delete(3000))
-				.catch(err => console.error(err));
-		}else{
-			var sql = "SELECT * FROM animal WHERE id = "+msg.author.id+";"+
-				"SELECT common,uncommon,rare,epic,mythical,legendary,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;"+
-				"UPDATE IGNORE cowoncy SET zoo = NOW() WHERE id = "+msg.author.id+";";
-			con.query(sql,function(err,result){
-				if(err) throw err;
-				var text = "🌿 🌱 🌳** "+msg.author.username+"'s zoo! **🌳 🌿 🌱\n";
-				text += display;
-				var additional = "";
-				var additional2 = "";
-				var row = result[0];
-				var count = result[1][0];
-				var digits= 2;
-				if(count!=undefined)
-					digits= Math.trunc(Math.log10(count.biggest)+1);
-				for(var i=0;i<row.length;i++){
-					text = text.replace("~"+row[i].name,global.unicodeAnimal(row[i].name)+toSmallNum(row[i].count,digits));
-					if(animals.legendary.indexOf(row[i].name)>0){
-						if(additional=="")
-							additional = secret;
-						additional += row[i].name+toSmallNum(row[i].count,digits)+"  ";
-					}
-					if(animals.special.indexOf(row[i].name)>0){
-						if(additional2=="")
-							additional2 = secret2;
-						additional2 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
-					}
-				}
-				text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question+toSmallNum(0,digits));
-				text += additional;
-				text += additional2;
-				if(count!=undefined){
-					var total = count.common*1+count.uncommon*5+count.rare*10+count.epic*50+count.mythical*500+count.legendary*1000;
-					text += "\n**Zoo Points: __"+total+"__**\n\t**";
-					if(count.legendary>0)
-						text += "L-"+count.legendary+", ";
-					text += "M-"+count.mythical+", ";
-					text += "E-"+count.epic+", ";
-					text += "R-"+count.rare+", ";
-					text += "U-"+count.uncommon+", ";
-					text += "C-"+count.common+"**";
-				}
-				msg.channel.send(text)
-					.catch(err => console.error(err));
-			});
+		var text = "🌿 🌱 🌳** "+msg.author.username+"'s zoo! **🌳 🌿 🌱\n";
+		text += display;
+		var additional = "";
+		var additional2 = "";
+		var row = result[0];
+		var count = result[1][0];
+		var digits= 2;
+		if(count!=undefined)
+			digits= Math.trunc(Math.log10(count.biggest)+1);
+		for(var i=0;i<row.length;i++){
+			text = text.replace("~"+row[i].name,global.unicodeAnimal(row[i].name)+toSmallNum(row[i].count,digits));
+			if(animals.legendary.indexOf(row[i].name)>0){
+				if(additional=="")
+					additional = secret;
+				additional += row[i].name+toSmallNum(row[i].count,digits)+"  ";
+			}
+			if(animals.special.indexOf(row[i].name)>0){
+				if(additional2=="")
+					additional2 = secret2;
+				additional2 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
+			}
 		}
+		text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question+toSmallNum(0,digits));
+		text += additional;
+		text += additional2;
+		if(count!=undefined){
+			var total = count.common*1+count.uncommon*5+count.rare*10+count.epic*50+count.mythical*500+count.legendary*1000;
+			text += "\n**Zoo Points: __"+total+"__**\n\t**";
+			if(count.legendary>0)
+				text += "L-"+count.legendary+", ";
+			text += "M-"+count.mythical+", ";
+			text += "E-"+count.epic+", ";
+			text += "R-"+count.rare+", ";
+			text += "U-"+count.uncommon+", ";
+			text += "C-"+count.common+"**";
+		}
+		msg.channel.send(text)
+			.catch(err => console.error(err));
 	});
 }
 
@@ -85,7 +75,7 @@ exports.catch = function(con,msg){
 	con.query(sql,function(err,result){
 		if(err) throw err;
 		if(result[0][0]==undefined||result[0][0].money<animals.rollprice){
-			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**")
+			msg.channel.send("**🚫 | "+msg.author.username+"**, You don't have enough cowoncy!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else{
@@ -104,9 +94,9 @@ exports.catch = function(con,msg){
 			}
 			con.query(sql,function(err,result2){
 				if(err) throw err;
-				var text = "**"+msg.author.username+"** spent **<:cowoncy:416043450337853441> 5**, and found a "+animal[0]+" "+global.unicodeAnimal(animal[1])+"!";
+				var text = "**🌱 | "+msg.author.username+"** spent **<:cowoncy:416043450337853441> 5**, and found a "+animal[0]+" "+global.unicodeAnimal(animal[1])+"!";
 				if(result2[3]!=undefined&&result2[3].affectedRows>=1){
-					text += "\n"+result[1][0].name+" "+((result[1][0].nickname==null)?"":"**"+result[1][0].nickname+"**")+" gained **"+animal[3]+" xp**";
+					text += "\n**<:blank:427371936482328596> |** "+result[1][0].name+" "+((result[1][0].nickname==null)?"":"**"+result[1][0].nickname+"**")+" gained **"+animal[3]+" xp**";
 					if(lvlup)
 						text += " and leveled up";
 					text += "!";
@@ -127,7 +117,7 @@ exports.sell = function(con,msg,args){
 	var count = "all";
 	if(temp=global.validAnimal(args[1])){
 		if(animal){
-			msg.channel.send("Invalid arguments! The correct command is `owo sell {animal} {count}`")
+			msg.channel.send("**🚫 |** Invalid arguments! The correct command is `owo sell {animal} {count}`")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 			return;
@@ -136,7 +126,7 @@ exports.sell = function(con,msg,args){
 		if(global.isInt(args[0])){
 			count = parseInt(args[0]);
 		}else{
-			msg.channel.send("Invalid arguments! The correct command is `owo sell {animal} {count}`")
+			msg.channel.send("**🚫 |** Invalid arguments! The correct command is `owo sell {animal} {count}`")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 			return;
@@ -146,13 +136,13 @@ exports.sell = function(con,msg,args){
 	}
 	
 	if(!animal){
-		msg.channel.send("I could not find that animal!")
+		msg.channel.send("**🚫 |** I could not find that animal!")
 			.then(message => message.delete(3000))
 			.catch(err => console.error(err));
 		return;
 	}
 	if(count!="all"&&count<=0){
-		msg.channel.send("You need to sell more than 1 silly~")
+		msg.channel.send("**🚫 |** You need to sell more than 1 silly~")
 			.then(message => message.delete(3000))
 			.catch(err => console.error(err));
 		return;
@@ -167,21 +157,21 @@ exports.sell = function(con,msg,args){
 		if(err) throw err;
 		if(count=="all"){
 			if(result[1].affectedRows<=0){
-				msg.channel.send("**"+msg.author.username+"**, You don't have enough animals! >:c")
+				msg.channel.send("**🚫 | "+msg.author.username+"**, You don't have enough animals! >:c")
 					.then(message => message.delete(3000))
 					.catch(err => console.error(err));
 			}else{
 				count = result[0][0].count-1;
-				msg.channel.send("**"+msg.author.username+"** sold **"+global.unicodeAnimal(animal.value)+"x"+count+"** for a total of **<:cowoncy:416043450337853441>"+(count*animal.price)+"**")
+				msg.channel.send("**🔪 | "+msg.author.username+"** sold **"+global.unicodeAnimal(animal.value)+"x"+count+"** for a total of **<:cowoncy:416043450337853441> "+(count*animal.price)+"**")
 					.catch(err => console.error(err));
 				console.log("\x1b[36m%s\x1b[0m","\tsold "+animal.value+"x"+count+" for "+(count*animal.price));
 			}
 		}else if(result.affectedRows>0){
-			msg.channel.send("**"+msg.author.username+"** sold **"+global.unicodeAnimal(animal.value)+"x"+count+"** for a total of **<:cowoncy:416043450337853441>"+(count*animal.price)+"**")
+			msg.channel.send("**🔪 | "+msg.author.username+"** sold **"+global.unicodeAnimal(animal.value)+"x"+count+"** for a total of **<:cowoncy:416043450337853441> "+(count*animal.price)+"**")
 				.catch(err => console.error(err));
 			console.log("\x1b[36m%s\x1b[0m","\tsold "+animal.value+"x"+count+" for "+(count*animal.price));
 		}else{
-			msg.channel.send("**"+msg.author.username+"**, You can't sell more than you have silly! >:c")
+			msg.channel.send("**🚫 | "+msg.author.username+"**, You can't sell more than you have silly! >:c")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}

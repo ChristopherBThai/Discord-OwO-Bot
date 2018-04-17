@@ -15,17 +15,17 @@ exports.bet = function(con,msg,args){
 	else if(args.length==1&&args[0]=='all'){
 		all = true;
 	}else{
-		msg.channel.send("wrong arguments! >:c")
+		msg.channel.send("**🚫 | "+msg.author.username+"**, wrong arguments! >:c")
 			.catch(err => console.error(err));
 		return;
 	}
 	
 	if(amount == 0&&!all){
-		msg.channel.send("You bet... nothing?")
+		msg.channel.send("**🚫 | "+msg.author.username+"**, You bet... nothing?")
 			.catch(err => console.error(err));
 		return;
 	}else if(amount < 0&&!all){
-		msg.channel.send("Do you understand how lotteries work?")
+		msg.channel.send("**🚫 | "+msg.author.username+"**, Do you understand how lotteries work?")
 			.catch(err => console.error(err));
 		return;
 	}
@@ -34,7 +34,7 @@ exports.bet = function(con,msg,args){
 	con.query(sql,function(err,result){
 		if(err) throw err;
 		if(result[0]==undefined||result[0].money<amount||result[0]==0){
-			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**")
+			msg.channel.send("**🚫 | "+msg.author.username+"**,  You don't have enough cowoncy!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else{
@@ -94,7 +94,7 @@ exports.bet = function(con,msg,args){
 						    ]
 				};
 				msg.channel.send({ embed })
-					.catch(err => msg.channel.send("I don't have permission to send embedded links! :c")
+					.catch(err => msg.channel.send("**🚫 |** I don't have permission to send embedded links! :c")
 						.catch(err => console.error(err)));
 
 			});
@@ -170,7 +170,7 @@ exports.display = function(con,msg){
 					]
 		};
 		msg.channel.send({ embed })
-			.catch(err => msg.channel.send("I don't have permission to send embedded links! :c")
+			.catch(err => msg.channel.send("**🚫 |** I don't have permission to send embedded links! :c")
 				.catch(err => console.error(err)));
 	});
 }
