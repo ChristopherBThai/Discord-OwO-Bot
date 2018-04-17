@@ -21,18 +21,18 @@ exports.slots = function(con,msg,args){
 	else if(args.length==1&&args[0]=='all')
 		all = true;
 	else{
-		msg.channel.send("Invalid arguments!! :c")
+		msg.channel.send("**🚫 |** Invalid arguments!! :c")
 			.then(message => message.delete(3000))
 			.catch(err => console.error(err));
 		return;
 	}
 
 	if(amount==0&&!all){
-		msg.channel.send("uwu.. you can't bet nothing silly!")
+		msg.channel.send("**🚫 |** uwu.. you can't bet nothing silly!")
 			.catch(err => console.error(err));
 		return;
 	}else if(amount<0){
-		msg.channel.send("Do you want to lose even more money????")
+		msg.channel.send("**🚫 |** Do you want to lose even more money????")
 			.catch(err => console.error(err));
 		return;
 	//}else if(amount>1000){
@@ -46,7 +46,7 @@ exports.slots = function(con,msg,args){
 		if(all&&result[0]!=undefined)
 			amount = result[0].money
 		if(result[0]==undefined||result[0].money<amount||result[0].money<=0){
-			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**")
+			msg.channel.send("**🚫 | "+msg.author.username+"**, You don't have enough cowoncy!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else{
