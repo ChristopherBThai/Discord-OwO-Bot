@@ -205,7 +205,7 @@ function startBattle(con,msg,user1,user2,amount){
 		}
 
 		if(opet == undefined){
-			msg.channel.send("**"🚫 | +user2.username+"** doesn't have a pet!")
+			msg.channel.send("**🚫 | "+user2.username+"** doesn't have a pet!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 			return;

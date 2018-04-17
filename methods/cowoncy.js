@@ -39,7 +39,7 @@ exports.daily = function(con,msg){
 			var min= 59 - (rows[0][0].minute%60);
 			var sec = 59 - (rows[0][0].second%60);
 			msg.channel.send("**⏱ | Nu! "+msg.author.username+"! You need to wait __"+hour+" H "+min+" M "+sec+" S__**")
-				.then(message => message.d0__ cowoncy!**""<:cowoncy:416043450337853441>** "+msg.author.username+", you currently have __elete(3000))
+				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else{
 			var streak = 0;

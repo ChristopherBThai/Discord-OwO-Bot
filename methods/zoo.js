@@ -162,12 +162,12 @@ exports.sell = function(con,msg,args){
 					.catch(err => console.error(err));
 			}else{
 				count = result[0][0].count-1;
-				msg.channel.send("**🔪 | "+msg.author.username+"** sold **"+global.unicodeAnimal(animal.value)+"x"+count+"** for a total of **<:cowoncy:416043450337853441>"+(count*animal.price)+"**")
+				msg.channel.send("**🔪 | "+msg.author.username+"** sold **"+global.unicodeAnimal(animal.value)+"x"+count+"** for a total of **<:cowoncy:416043450337853441> "+(count*animal.price)+"**")
 					.catch(err => console.error(err));
 				console.log("\x1b[36m%s\x1b[0m","\tsold "+animal.value+"x"+count+" for "+(count*animal.price));
 			}
 		}else if(result.affectedRows>0){
-			msg.channel.send("**🔪 | "+msg.author.username+"** sold **"+global.unicodeAnimal(animal.value)+"x"+count+"** for a total of **<:cowoncy:416043450337853441>"+(count*animal.price)+"**")
+			msg.channel.send("**🔪 | "+msg.author.username+"** sold **"+global.unicodeAnimal(animal.value)+"x"+count+"** for a total of **<:cowoncy:416043450337853441> "+(count*animal.price)+"**")
 				.catch(err => console.error(err));
 			console.log("\x1b[36m%s\x1b[0m","\tsold "+animal.value+"x"+count+" for "+(count*animal.price));
 		}else{
