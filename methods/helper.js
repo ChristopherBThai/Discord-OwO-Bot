@@ -70,7 +70,7 @@ exports.describe = function(msg,command){
 	var name = command;
 	command = global.validCommand(command);
 	if(command == undefined){
-		msg.channel.send("Could not find that command :c")
+		msg.channel.send("**🚫 |** Could not find that command :c")
 			.then(message => message.delete(3000))
 			.catch(err => console.error(err));
 		return;
@@ -116,7 +116,7 @@ exports.showLink = function(msg){
 		"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
 	};
 	channel.send({embed})
-		.catch(err => channel.send("I don't have permission to send embedded links! :c")
+		.catch(err => channel.send("**🚫 |** I don't have permission to send embedded links! :c")
 			.catch(err => console.error(err)));
 }
 
@@ -134,7 +134,7 @@ exports.guild = function(msg){
 		"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
 	};
 	channel.send({embed})
-		.catch(err => channel.send("I don't have permission to send embedded links! :c")
+		.catch(err => channel.send("**🚫 |** I don't have permission to send embedded links! :c")
 			.catch(err => console.error(err)));
 }
 
@@ -174,7 +174,7 @@ exports.showStats = function(client, con, msg){
 				}]
 		};
 		msg.channel.send({embed})
-			.catch(err => msg.channel.send("I don't have permission to send embedded links! :c")
+			.catch(err => msg.channel.send("**🚫 |** I don't have permission to send embedded links! :c")
 				.catch(err => console.error(err)));
 	});
 }

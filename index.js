@@ -21,7 +21,7 @@ Manager.on('launch', function(shard){
 	console.log(`Launched shard ${shard.id}`);
 	if(!loaded && shard.id == Manager.totalShards-1){
 		loaded = true;
-		setTimeout(updateActivity,5000);
+		setTimeout(updateActivity,15000);
 	}
 });
 
