@@ -43,7 +43,7 @@ exports.send = function(client,con,msg,args){
 	var sql = "UPDATE cowoncy SET money = money + "+amount+" WHERE id IN (SELECT sender FROM feedback WHERE id = "+id+");SELECT sender FROM feedback WHERE id = "+id+";";
 	con.query(sql,async function(err,rows,fields){
 		if(err) throw err;
-		if(user = await global.msgUser(String(rows[1][0].sender),"You have recieved __"+amount+"__ cowoncy!"))
+		if(user = await global.msgUser(String(rows[1][0].sender),"**💎 |** You have recieved __"+amount+"__ cowoncy!"))
 			msg.channel.send("You sent "+amount+" cowoncy to "+user.username)
 			.catch(err => console.err(err));
 		else
@@ -66,7 +66,7 @@ exports.giveall = function(con,msg,args){
 	var sql = "UPDATE IGNORE cowoncy SET money = money + "+amount+" WHERE id IN ("+users+");";
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
-		msg.channel.send(msg.author.username+" gave @everyone "+amount+" cowoncy!!!")
+		msg.channel.send("**💎 |** "+msg.author.username+" gave @everyone "+amount+" cowoncy!!!")
 		.catch(err => console.err(err));
 	});
 }
@@ -90,7 +90,7 @@ exports.timeout = function(con,msg,args){
 	var sql = "UPDATE IGNORE timeout SET penalty = "+time+" WHERE id = "+args[0]+";";
 	con.query(sql,async function(err,rows,fields){
 		if(err) throw err;
-		if(user = await global.msgUser(args[0],"Your penalty has been lifted by an admin! Sorry for the inconvenience!"))
+		if(user = await global.msgUser(args[0],"**🙇 |** Your penalty has been lifted by an admin! Sorry for the inconvenience!"))
 			msg.author.send("Penalty has been set to "+time+" for "+user.username)
 			.catch(err => console.err(err));
 		else

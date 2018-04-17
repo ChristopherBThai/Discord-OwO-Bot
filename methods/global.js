@@ -179,7 +179,7 @@ exports.isDisabled = async function(command,execute,executeOther,msg,args,isMent
 			delete cooldown[msg.author.id];
 		}, 5000);
 	}else if(cooldown[msg.author.id]>=3) {
-		msg.channel.send("**"+msg.author.username+"**! Please slow down~ You're a little **too fast** for me :c")
+		msg.channel.send("**⏱ | "+msg.author.username+"**, Please slow down~ You're a little **too fast** for me :c")
 			.then(message => message.delete(3000));
 		return;
 	}else if(cooldown[msg.author.id]<3){
@@ -204,7 +204,7 @@ exports.isDisabled = async function(command,execute,executeOther,msg,args,isMent
 				execute(command,msg,args,isMention);
 			});
 		}else
-			msg.channel.send("That command is disabled on this channel!")
+			msg.channel.send("**🚫 |** That command is disabled on this channel!")
 				.then(message => message.delete(3000));
 	});
 }
