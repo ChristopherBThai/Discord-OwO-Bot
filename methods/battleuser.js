@@ -6,21 +6,21 @@ exports.accept = function(con,msg,args){
 	con.query(sql,async function(err,rows,fields){
 		if(err) throw err;
 		if(rows[0]==undefined){
-			msg.channel.send("**"+msg.author.username+"**! You have no pending battles!")
+			msg.channel.send("**🚫 | "+msg.author.username+"**, You have no pending battles!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else{
 			var amount = rows[0].amount;
 			var user1 = await global.getUser(rows[0].user1);
 			if(user1==undefined){
-				msg.channel.send("Could not find that user")
+				msg.channel.send("**🚫 | "+msg.author.username+"**, I could not find that user")
 					.then(message => message.delete(3000))
 					.catch(err => console.error(err));
 				return;
 			}
 			var user2 = await global.getUser(rows[0].user2);
 			if(user2==undefined){
-				msg.channel.send("Could not find that user")
+				msg.channel.send("**🚫 | "+msg.author.username+"**, I could not find that user")
 					.then(message => message.delete(3000))
 					.catch(err => console.error(err));
 				return;
@@ -34,7 +34,7 @@ exports.accept = function(con,msg,args){
 			con.query(sql,function(err,rows,fields){
 				if(err) throw err;
 				if(rows[0].length<2){
-					msg.channel.send("Looks like someone doesn't have enough cowoncy!")
+					msg.channel.send("**🚫 | "+msg.author.username+"**, Looks like someone doesn't have enough cowoncy!")
 						.then(message => message.delete(3000))
 						.catch(err => console.error(err));
 				}else{
@@ -52,7 +52,7 @@ exports.decline= function(con,msg,args){
 	con.query(sql,async function(err,rows,fields){
 		if(err) throw err;
 		if(rows[0][0]==undefined){
-			msg.channel.send("**"+msg.author.username+"**! You have no pending battles!")
+			msg.channel.send("**🚫 | "+msg.author.username+"**,  You have no pending battles!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else{
@@ -63,13 +63,13 @@ exports.decline= function(con,msg,args){
 				opponent = rows[0][0].user1;
 			var opponent = await global.getUser(opponent);
 			if(opponent==undefined){
-				msg.channel.send("Successfully declined your battle!")
+				msg.channel.send("**✅ | "+msg.author.username+"**, You have successfully declined your battle!")
 					.then(message => message.delete(3000))
 					.catch(err => console.error(err));
 				return;
 			}
 
-			msg.channel.send("**"+msg.author.username+"**, you have declined your battle against, **"+opponent.username+"**!")
+			msg.channel.send("**✅ | "+msg.author.username+"**, You have successfully declined your battle against, **"+opponent.username+"**!")
 				.catch(err => console.error(err));
 		}
 	});
@@ -80,7 +80,7 @@ exports.battle = async function(con,msg,args){
 	//Finds opponent
 	var opponent = await global.getUser(args[0]);
 	if(opponent==undefined){
-		msg.channel.send("I could not find that user!")
+		msg.channel.send("**🚫 | "+msg.author.username+"**,  I could not find that user!")
 			.then(message => message.delete(3000))
 			.catch(err => console.error(err));
 		return;
@@ -90,7 +90,7 @@ exports.battle = async function(con,msg,args){
 	if(global.isInt(args[1]))
 		amount = parseInt(args[1]);
 	if(amount<0){
-		msg.channel.send("It doesnt work like that silly")
+		msg.channel.send("**🚫 | "+msg.author.username+"**,  It doesnt work like that silly")
 			.then(message => message.delete(3000))
 			.catch(err => console.error(err));
 		return;
@@ -98,7 +98,7 @@ exports.battle = async function(con,msg,args){
 
 	//Check if self
 	if(opponent.id == msg.author.id){
-		msg.channel.send("You can't battle yourself silly")
+		msg.channel.send("**🚫 | "+msg.author.username+"**,  You can't battle yourself silly")
 			.then(message => message.delete(3000))
 			.catch(err => console.error(err));
 		return;
@@ -122,31 +122,31 @@ exports.battle = async function(con,msg,args){
 		if(err) throw err;
 		//Already has a pending battle
 		if(result[0][0]!=undefined){
-			msg.channel.send("**"+msg.author.username+"**! You already have a battle pending!\nDecline it with `owo db`!")
+			msg.channel.send("**🚫 | "+msg.author.username+"**, You already have a battle pending!\nDecline it with `owo db`!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else if(result[1][0]==undefined){
-			msg.channel.send("**"+msg.author.username+"**! You don't have enough cowoncy!")
+			msg.channel.send("**🚫 | "+msg.author.username+"**, You don't have enough cowoncy!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else if(result[1][0].name==undefined){
-			msg.channel.send("**"+msg.author.username+"**! You don't have a pet!")
+			msg.channel.send("**🚫 | "+msg.author.username+"**, You don't have a pet!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else if(result[1][0].time <= 15){
-			msg.channel.send("**"+msg.author.username+"! You need to wait "+(15-result[0][0].time)+" more seconds!**")
+			msg.channel.send("**🚫 | "+msg.author.username+", You need to wait "+(15-result[0][0].time)+" more seconds!**")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else if(result[2][0]!=undefined){
-			msg.channel.send("**"+opponent.username+"** already has a battle pending!")
+			msg.channel.send("**🚫 | "+opponent.username+"** already has a battle pending!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else if(result[3][0]==undefined){
-			msg.channel.send("**"+opponent.username+"** doesn't have enough cowoncy!")
+			msg.channel.send("**🚫 | "+opponent.username+"** doesn't have enough cowoncy!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else if(result[3][0].name==undefined){
-			msg.channel.send("**"+opponent.username+"** doesn't have a pet!")
+			msg.channel.send("**🚫 | "+opponent.username+"** doesn't have a pet!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else{
@@ -198,14 +198,14 @@ function startBattle(con,msg,user1,user2,amount){
 		var upet = rows[0][0];
 		var opet = rows[1][0];
 		if(upet == undefined){
-			msg.channel.send("**"+user1.username+"** doesn't have a pet!")
+			msg.channel.send("**🚫 | "+user1.username+"** doesn't have a pet!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 			return;
 		}
 
 		if(opet == undefined){
-			msg.channel.send("**"+user2.username+"** doesn't have a pet!")
+			msg.channel.send("**"🚫 | +user2.username+"** doesn't have a pet!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 			return;
