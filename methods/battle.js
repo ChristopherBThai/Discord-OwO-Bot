@@ -51,11 +51,7 @@ exports.battle = function(con,msg,args){
 	con.query(sql,function(err,result){
 		if(err) throw err;
 		if(result[0]==undefined||result[0].money<5){
-			msg.channel.send("**"+msg.author.username+"! You don't have enough cowoncy!**")
-				.then(message => message.delete(3000))
-				.catch(err => console.error(err));
-		}else if(result[0].time <= 15){
-			msg.channel.send("**"+msg.author.username+"! You need to wait "+(15-result[0].time)+" more seconds!**")
+			msg.channel.send("**🚫 | "+msg.author.username+"**, You don't have enough cowoncy!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else{
@@ -78,13 +74,13 @@ function startBattle(con,msg,args){
 		var upet = rows[0][0];
 		var opet = rows[2][0];
 		if(upet == undefined){
-			msg.channel.send("You don't have a pet! Set one with `owo pets add [animal] [nickname]`")
+			msg.channel.send("**🚫 | "+msg.author.username+"**, You don't have a pet! Set one with `owo pets add [animal] [nickname]`")
 				.catch(err => console.error(err));
 			return;
 		}
 
 		if(opet == undefined){
-			msg.channel.send("Something went wrong...")
+			msg.channel.send("**🚫 | "+msg.author.username+"**, Something went wrong...")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 			return;
@@ -153,7 +149,7 @@ function startBattle(con,msg,args){
 			.then(message => setTimeout(function(){
 				display(con,msg.author.id,eid,message,user1,user2,log,0);
 				},1000))
-			.catch(err => msg.channel.send("I don't have permission to send embeded messages!")
+			.catch(err => msg.channel.send("**🚫 | "+msg.author.username+"**, I don't have permission to send embeded messages!")
 				.catch(err => console.error(err)));
 	});
 }
@@ -287,14 +283,14 @@ function display(con,id,eid,msg,user1,user2,log,count){
 //Sets an animal as a pet!
 exports.set = function(mysql, con,msg,args){
 	if(args.length<2){
-		msg.channel.send("Invalid arguments!")
+		msg.channel.send("**🚫 | "+msg.author.username+"**, You have invalid arguments!")
 			.then(message => message.delete(3000))
 			.catch(err => console.error(err));
 		return;
 	}
 	var animal = global.validAnimal(args[1]);
 	if(animal==undefined){
-		msg.channel.send("You can only use animals from your zoo!")
+		msg.channel.send("**🚫 | "+msg.author.username+"**, You can only use animals from your zoo!")
 			.then(message => message.delete(3000))
 			.catch(err => console.error(err));
 		return;
@@ -303,7 +299,7 @@ exports.set = function(mysql, con,msg,args){
 	args.splice(0,2);
 	var nickname = args.join(" ");;
 	if(nickname!=undefined&&nickname.length>35){
-		msg.channel.send("Nickname is too long!")
+		msg.channel.send("**🚫 | "+msg.author.username+"**, The nickname is too long!")
 			.then(message => message.delete(3000))
 			.catch(err => console.error(err));
 		return;
@@ -319,15 +315,15 @@ exports.set = function(mysql, con,msg,args){
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		if(rows[0].affectedRows==0){
-			msg.channel.send("**"+msg.author.username+"**, you do not have this pet!")
+			msg.channel.send("**🚫 | "+msg.author.username+"**, you do not have this pet!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else{
 			if(rows[1][0]!=undefined&&rows[1][0].nickname!=null)
-				msg.channel.send("**"+msg.author.username+"**, you successfully set your pet as **"+global.unicodeAnimal(animal)+" "+rows[1][0].nickname+"**!")
+				msg.channel.send("**🌱 | "+msg.author.username+"**, you successfully set your pet as **"+global.unicodeAnimal(animal)+" "+rows[1][0].nickname+"**!")
 					.catch(err => console.error(err));
 			else
-				msg.channel.send("**"+msg.author.username+"**, you successfully set your pet as **"+global.unicodeAnimal(animal)+"**!")
+				msg.channel.send("**🌱 | "+msg.author.username+"**, you successfully set your pet as **"+global.unicodeAnimal(animal)+"**!")
 					.catch(err => console.error(err));
 		}
 	});
@@ -336,14 +332,14 @@ exports.set = function(mysql, con,msg,args){
 //Removes a pet!
 exports.remove = function(mysql, con,msg,args){
 	if(args.length!=2){
-		msg.channel.send("Invalid arguments!")
+		msg.channel.send("**🚫 | "+msg.author.username+"**, You have invalid arguments!")
 			.then(message => message.delete(3000))
 			.catch(err => console.error(err));
 		return;
 	}
 	var animal = global.validAnimal(args[1]);
 	if(animal==undefined){
-		msg.channel.send("You can only select animals from your zoo!")
+		msg.channel.send("**🚫 | "+msg.author.username+"**, You can only select animals from your zoo!")
 			.then(message => message.delete(3000))
 			.catch(err => console.error(err));
 		return;
@@ -356,19 +352,19 @@ exports.remove = function(mysql, con,msg,args){
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		if(rows[0][0]==undefined){
-			msg.channel.send("**"+msg.author.username+"**, you do not have this pet!")
+			msg.channel.send("**🚫 | "+msg.author.username+"**, you do not have this pet!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else if(rows[0][0].pet==rows[0][0].name){
-			msg.channel.send("**"+msg.author.username+"**, you cannot remove your main pet!")
+			msg.channel.send("**🚫 | "+msg.author.username+"**, you cannot remove your main pet!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else{
 			if(rows[0][0].nickname!=null)
-				msg.channel.send("**"+msg.author.username+"**, you successfully removed **"+global.unicodeAnimal(animal)+" "+rows[0][0].nickname+"**!")
+				msg.channel.send("**🌱 | "+msg.author.username+"**, you successfully removed **"+global.unicodeAnimal(animal)+" "+rows[0][0].nickname+"**!")
 					.catch(err => console.error(err));
 			else
-				msg.channel.send("**"+msg.author.username+"**, you successfully removed  **"+global.unicodeAnimal(animal)+"**!")
+				msg.channel.send("**🌱 | "+msg.author.username+"**, you successfully removed  **"+global.unicodeAnimal(animal)+"**!")
 					.catch(err => console.error(err));
 		}
 	});
@@ -380,12 +376,12 @@ exports.rename = function(mysql,con,msg,args){
 	var name = args.join(" ");
 
 	if(name.length>35){
-		msg.channel.send("Nickname is too long!")
+		msg.channel.send("**🚫 | "+msg.author.username+"**, The nickname is too long!")
 			.then(message => message.delete(3000))
 			.catch(err => console.error(err));
 		return;
 	}else if(name==""){
-		msg.channel.send("Invalid nickname!")
+		msg.channel.send("**🚫 | "+msg.author.username+"**, Invalid nickname!")
 			.then(message => message.delete(3000))
 			.catch(err => console.error(err));
 		return;
@@ -398,15 +394,15 @@ exports.rename = function(mysql,con,msg,args){
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		if(rows[0].affectedRows==0){
-			msg.channel.send("**"+msg.author.username+"**, you do not have a pet!")
+			msg.channel.send("**🚫 | "+msg.author.username+"**, you do not have a pet!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else{
 			if(rows[1][0]!=undefined&&rows[1][0].nickname!=null)
-				msg.channel.send("**"+msg.author.username+"**, you successfully named your pet as **"+global.unicodeAnimal(rows[1][0].name)+" "+rows[1][0].nickname+"**!")
+				msg.channel.send("**🌱 | "+msg.author.username+"**, you successfully named your pet as **"+global.unicodeAnimal(rows[1][0].name)+" "+rows[1][0].nickname+"**!")
 					.catch(err => console.error(err));
 			else
-				msg.channel.send("**"+msg.author.username+"**! An error occured! :c")
+				msg.channel.send("**🚫 | "+msg.author.username+"**, An error occured! :c")
 					.then(message => message.delete(3000))
 					.catch(err => console.error(err));
 		}
@@ -422,7 +418,7 @@ exports.pet = function(con,msg){
 		var pet = rows[0][0];
 		var opet = rows[1];
 		if(pet==undefined)
-			msg.channel.send("You don't have a pet! Set one with `owo pets add [animal] [nickname]`")
+			msg.channel.send("**🚫 | "+msg.author.username+"**, You don't have a pet! Set one with `owo pets add [animal] [nickname]`")
 				.catch(err => console.error(err));
 		else{
 			var nickname = pet.nickname;
@@ -530,5 +526,5 @@ function givexp(con,won, id,user1,xp, eid,user2,exp){
 
 //Gets xp needed for that lvl
 function maxxp(lvl){
-	return 25*lvl*lvl;
+	return 25*lvl*lvl*Math.trunc((lvl+10)/10);
 }

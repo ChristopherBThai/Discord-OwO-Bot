@@ -8,13 +8,13 @@ exports.ship = async function(msg,args){
 		if(global.isUser(args[0])){
 			user1 = await global.getUser(args[0]);
 			if(user1==undefined){
-				msg.channel.send("Could not find that user!")
+				msg.channel.send("**🚫 |** Could not find that user!")
 					.then(message => message.delete(3000))
 					.catch(err => console.error(err));
 				return;
 			}
 		}else{
-			msg.channel.send("That's not a user!")
+			msg.channel.send("**🚫 |** That's not a user!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 			return;;
@@ -22,13 +22,13 @@ exports.ship = async function(msg,args){
 		if(global.isUser(args[1])){
 			user2 = await global.getUser(args[1]);
 			if(user2==undefined){
-				msg.channel.send("Could not find that user!")
+				msg.channel.send("**🚫 |** Could not find that user!")
 					.then(message => message.delete(3000))
 					.catch(err => console.error(err));
 				return;
 			}
 		}else{
-			msg.channel.send("That's not a user!")
+			msg.channel.send("**🚫 |** That's not a user!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 			return;
@@ -38,19 +38,19 @@ exports.ship = async function(msg,args){
 		if(global.isUser(args[0])){
 			user2 = await global.getUser(args[0]);
 			if(user2==undefined){
-				msg.channel.send("Could not find that user!")
+				msg.channel.send("**🚫 |** Could not find that user!")
 					.then(message => message.delete(3000))
 					.catch(err => console.error(err));
 				return;
 			}
 		}else{
-			msg.channel.send("That's not a user!")
+			msg.channel.send("**🚫 |** That's not a user!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 			return;
 		}
 	}else{
-		msg.channel.send("Invalid arguments! >:c")
+		msg.channel.send("**🚫 |** Invalid arguments! >:c")
 			.then(message => message.delete(3000))
 			.catch(err => console.error(err));
 		return;

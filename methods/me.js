@@ -23,7 +23,7 @@ exports.display = function(con, msg, args){
 		var length = rows.length;
 		console.log("	Blacklist count: "+rows.length);
 		if(rows.length>0){
-			channel.send("This command is disabled on this channel!")
+			channel.send("**🚫 |** This command is disabled on this channel!")
 				.catch(err => console.error(err));
 			return;
 		}else{
@@ -59,7 +59,7 @@ exports.display = function(con, msg, args){
 			}
 			
 			if(invalid)
-				msg.channel.send("Wrong arguments! :c Go check `owo help`!")
+				msg.channel.send("**🚫 |** Wrong arguments! :c Go check `owo help`!")
 					.catch(err => console.error(err));
 			else if(aglobal){
 				if(points)
