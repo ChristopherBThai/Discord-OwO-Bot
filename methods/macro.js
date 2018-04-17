@@ -3,7 +3,7 @@ var redis = require('redis');
 var redclient = redis.createClient();
 var users = {};
 var letters = "abcdefghijklmnopqrstuvwxyz";
-var mcommands = {"slots":{cd:15000,half:80,six:500},"hunt":{cd:15000,half:80,six:500},"battle":{cd:15000,half:80,six:500},"point":{cd:10000,half:90,six:750}};
+var mcommands = {"zoo":{cd:45000,half:20,six:200},"slots":{cd:15000,half:80,six:500},"hunt":{cd:15000,half:80,six:500},"battle":{cd:15000,half:80,six:500},"point":{cd:10000,half:90,six:750}};
 var vemoji = ["🐶","🐱","🐰","🐮","🐷","🐸","🐰","🦁","🐼"];
 var vname = ["dog","cat","bunny","cow","pig","frog","rabbit","lion","panda"];
 var con;
@@ -35,7 +35,9 @@ exports.check = function(msg,command,callback){
 					var mspercent = Math.trunc(((diff%1000)/1000)*100);
 					diff = Math.trunc(diff/1000);
 					var sec = diff%60;
-					msg.channel.send("⏱ **|** Sorry **"+msg.author.username+"**, Please wait **"+sec+"."+mspercent+"s** to try again!");
+					msg.channel.send("⏱ **|** Sorry **"+msg.author.username+"**, Please wait **"+sec+"."+mspercent+"s** to try again!")
+						.then(message => message.delete(3000))
+						.catch(err => console.error(err));
 				}
 				return;
 			}
