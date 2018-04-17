@@ -261,7 +261,7 @@ function startBattle(con,msg,user1,user2,amount){
 		msg.channel.send(betmsg,{embed})
 			.then(message => setTimeout(function(){
 				display(con,message,user1,user2,log,0,amount,betmsg);
-			},1000))
+			},2000))
 			.catch(err => console.error(err));
 	});
 }
@@ -372,7 +372,7 @@ function display(con,msg,user1,user2,log,count,amount,betmsg){
 		msg.edit(betmsg,{embed})
 			.then(message => setTimeout(function(){
 			display(con,message,user1,user2,log,count+1,amount,betmsg);
-		},1000));
+		},2000));
 }
 
 //Gives the money
