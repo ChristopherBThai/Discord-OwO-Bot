@@ -16,10 +16,10 @@ exports.display = function(con, msg){
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		if(rows[0]==undefined)
-			msg.channel.send("<:cowoncy:416043450337853441>** "+msg.author.username+", you currently have __0__ cowoncy!**")
+			msg.channel.send("**💰 | "+msg.author.username+"**, you currently have **<:cowoncy:416043450337853441> __0__ cowoncy!**")
 				.catch(err => console.error(err));
 		else
-			msg.channel.send("<:cowoncy:416043450337853441>** "+msg.author.username+", you currently have __"+rows[0].money+"__ cowoncy!**")
+			msg.channel.send("**💰 | "+msg.author.username+"**, you currently have **<:cowoncy:416043450337853441> __"+rows[0].money+"__ cowoncy!**")
 				.catch(err => console.error(err));
 	});
 }
@@ -38,8 +38,8 @@ exports.daily = function(con,msg){
 			var hour = 22 - rows[0][0].hour;
 			var min= 59 - (rows[0][0].minute%60);
 			var sec = 59 - (rows[0][0].second%60);
-			msg.channel.send("**<:cowoncy:416043450337853441> Nu! "+msg.author.username+"! You need to wait __"+hour+" H "+min+" M "+sec+" S__**")
-				.then(message => message.delete(3000))
+			msg.channel.send("**⏱ | Nu! "+msg.author.username+"! You need to wait __"+hour+" H "+min+" M "+sec+" S__**")
+				.then(message => message.d0__ cowoncy!**""<:cowoncy:416043450337853441>** "+msg.author.username+", you currently have __elete(3000))
 				.catch(err => console.error(err));
 		}else{
 			var streak = 0;
@@ -48,9 +48,9 @@ exports.daily = function(con,msg){
 			var totalgain = gain+(streak*25);
 			if(totalgain > 1000)
 				totalgain = 1000
-			var text = "**<:cowoncy:416043450337853441> *OwO What's this?*  Here's your daily __"+totalgain+" Cowoncy__, "+msg.author.username+"!**";
+			var text = "**💰 |** Here's your daily **<:cowoncy:416043450337853441> __"+totalgain+" Cowoncy__, "+msg.author.username+"**!";
 			if(streak>0)
-				text += "\n**You're on a __"+(streak+1)+"__ daily streak!**";
+				text += "\n**<:blank:427371936482328596> |** You're on a **__"+(streak+1)+"__ daily streak**!";
 			msg.channel.send(text)
 				.catch(err => console.error(err));
 		}
@@ -74,7 +74,7 @@ exports.give = async function(con,msg,args){
 	}
 
 	if(invalid||id==""||amount<=0){
-		msg.channel.send("Invalid arguments! :c")
+		msg.channel.send("**🚫 | "+msg.author.username+"**, Invalid arguments! :c")
 			.then(message => message.delete(3000))
 			.catch(err => console.error(err));
 		return;
@@ -83,17 +83,17 @@ exports.give = async function(con,msg,args){
 	var user = await global.getUser(id);
 
 	if(user==undefined){
-		msg.channel.send("Could not find that user!")
+		msg.channel.send("**🚫 | "+msg.author.username+"**, I could not find that user!")
 			.then(message => message.delete(3000))
 			.catch(err => console.error(err));
 		return
 	}else if(user.bot){
-		msg.channel.send("You can't send cowoncy to a bot silly!")
+		msg.channel.send("**🚫 | "+msg.author.username+"**, You can't send cowoncy to a bot silly!")
 			.then(message => message.delete(3000))
 			.catch(err => console.error(err));
 		return;
 	}else if(user.id==msg.author.id){
-		msg.channel.send("**"+msg.author+" sent __"+amount+"__ cowoncy to... "+user+"...**\n*but... why?*")
+		msg.channel.send("**💳 | "+msg.author+"** sent **"+amount+" cowoncy** to... **"+user+"**... *but... why?*")
 			.catch(err => console.error(err));
 		return;
 	}
@@ -102,7 +102,7 @@ exports.give = async function(con,msg,args){
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		if(rows[0]==undefined||rows[0].money<amount){
-			msg.channel.send("Silly "+msg.author.username+", you don't have enough cowoncy!")
+			msg.channel.send("**🚫 |** Silly **"+msg.author.username+"**, you don't have enough cowoncy!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
 		}else{
@@ -110,7 +110,7 @@ exports.give = async function(con,msg,args){
 				"INSERT INTO cowoncy (id,money) VALUES ("+id+","+amount+") ON DUPLICATE KEY UPDATE money = money + "+amount+";";
 			con.query(sql,function(err,rows,fields){
 				if(err) throw err;
-				msg.channel.send("**"+msg.author.username+" sent __"+amount+"__ cowoncy to "+user+"!**")
+				msg.channel.send("**💳 | "+msg.author.username+"** sent **"+amount+" cowoncy** to **"+user+"**!")
 					.catch(err => console.error(err));
 			});
 		}
