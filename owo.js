@@ -199,7 +199,7 @@ function execute(command,msg,args,isMention){
 	}
 
 	else if(command === 'shop'){
-		shop.display(msg,args);
+		//shop.display(msg,args);
 	}
 
 	//Give cowoncy
