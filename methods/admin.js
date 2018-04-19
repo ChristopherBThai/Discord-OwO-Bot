@@ -98,3 +98,32 @@ exports.timeout = function(con,msg,args){
 			.catch(err => console.err(err));
 	});
 }	
+
+/**
+ * Ban a user
+ */
+exports.ban= function(con,msg,args){
+	var time;
+	if(global.isInt(args[1])){
+		time = parseInt(args[1]);
+	}else{
+		global.msgAdmin("Wrong time format");
+		return;
+	}
+
+	if(!global.isUser("<@"+args[0]+">")){
+		global.msgAdmin("Invalid user id");
+		return;
+	}
+
+	var sql = "UPDATE IGNORE timeout SET penalty = "+time+" WHERE id = "+args[0]+";";
+	con.query(sql,async function(err,rows,fields){
+		if(err) throw err;
+		if(user = await global.msgUser(args[0],"**☠ |** You have been banned for "+time+" hours!"))
+			msg.author.send("Penalty has been set to "+time+" for "+user.username)
+			.catch(err => console.err(err));
+		else
+			msg.author.send("Failed to set penalty for that user")
+			.catch(err => console.err(err));
+	});
+}	

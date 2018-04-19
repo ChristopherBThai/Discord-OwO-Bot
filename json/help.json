@@ -269,5 +269,14 @@
 		"related":["owo translate"],
 		"example":[],
 		"alt":[]
+	},
+	"shop":{
+		"name":"shop",
+		"args":"{page}",
+		"desc_short":"Displays the shop!",
+		"desc_long":"Buy some items to upgrade your pets!\nYou can describe each item with 'owo describe {id}'",
+		"related":["owo describe {id}","owo buy {id}"],
+		"example":[],
+		"alt":["market"]
 	}
 }
