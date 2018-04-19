@@ -24,7 +24,7 @@ exports.check = function(msg,command,callback){
 			var diff = now - new Date(cuser.lasttime);
 
 			//Check for time limit
-			if(false&&diff<mcommands[cuser.command].cd){
+			if(diff<mcommands[cuser.command].cd){
 				if(command == "point"){
 					cuser.lasttime = now;
 					setCommand(id,command,cuser);
@@ -203,51 +203,71 @@ function ban(msg,user,reason){
 }
 
 function getUser(id,callback){
-	redclient.hgetall(id,function(err,obj){
-		if(err) {console.log(err); return;}
-		if(obj==null){
-			var user = {
-				validTryCount:0,
-				validMsgCount:0
+	try{
+		redclient.hgetall(id,function(err,obj){
+			if(err) {console.log(err); return;}
+			if(obj==null){
+				var user = {
+					validTryCount:0,
+					validMsgCount:0
+				}
+				redclient.hmset(id,user,function(obj2){
+					callback(user);
+				});
+			}else{
+				callback(obj);
 			}
-			redclient.hmset(id,user,function(obj2){
-				callback(user);
-			});
-		}else{
-			callback(obj);
-		}
-	});
+		});
+	}catch(err){
+		console.error("getUser("+id+",callback)");
+		console.error(err);
+	}
 }
 
 function setUser(id,obj){
-	redclient.hmset(id,obj);
+	try{
+		redclient.hmset(id,obj);
+	}catch(err){
+		console.error("setUser("+id+","+obj+")");
+		console.error(err);
+	}
 }
 
 function getCommand(id,command,callback){
-	redclient.hgetall(id+""+command,function(err,obj){
-		if(err) {console.log(err); return;}
-		if(obj==null){
-			var user = {
-				"command":command,
-				"lasttime":new Date('January 1,2018'),
-				"prev":0,
-				"count":0,
-				"halftime":new Date('January 1,2018'),
-				"halfcount":0,
-				"sixtime":new Date('January 1,2018'),
-				"sixcount":0
+	try{
+		redclient.hgetall(id+""+command,function(err,obj){
+			if(err) {console.log(err); return;}
+			if(obj==null){
+				var user = {
+					"command":command,
+					"lasttime":new Date('January 1,2018'),
+					"prev":0,
+					"count":0,
+					"halftime":new Date('January 1,2018'),
+					"halfcount":0,
+					"sixtime":new Date('January 1,2018'),
+					"sixcount":0
+				}
+				redclient.hmset(id+""+command,user,function(obj2){
+					callback(user);
+				});
+			}else{
+				callback(obj);
 			}
-			redclient.hmset(id+""+command,user,function(obj2){
-				callback(user);
-			});
-		}else{
-			callback(obj);
-		}
-	});
+		});
+	}catch(err){
+		console.error("getCommand("+id+","+command+",callback)");
+		console.error(err);
+	}
 }
 
 function setCommand(id,command,obj){
-	redclient.hmset(id+""+command,obj);
+	try{
+		redclient.hmset(id+""+command,obj);
+	}catch(err){
+		console.error("setCommand("+id+","+command+","+obj+")");
+		console.error(err);
+	}
 }
 exports.con = function(tcon){
 	con = tcon;
