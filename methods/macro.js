@@ -65,8 +65,8 @@ exports.check = function(msg,command,callback){
 				return;
 			}
 			if(checkSix(cuser,now)){
-				humanCheck(user,msg,function(){setUser(id,user)});
-				setCommand(id,command,mcommands[cuser.command].ban,"Using command `"+cuser.command+"` over "+mcommands[cuser.command].six+" times in 6H",cuser);
+				humanCheck(user,msg,mcommands[cuser.command].ban,"Using command `"+cuser.command+"` over "+mcommands[cuser.command].six+" times in 6H",function(){setUser(id,user)});
+				setCommand(id,command,cuser);
 				return;
 			}
 
@@ -203,71 +203,79 @@ function ban(msg,user,reason){
 }
 
 function getUser(id,callback){
-	try{
-		redclient.hgetall(id,function(err,obj){
-			if(err) {console.log(err); return;}
-			if(obj==null){
-				var user = {
-					validTryCount:0,
-					validMsgCount:0
-				}
-				redclient.hmset(id,user,function(obj2){
-					callback(user);
-				});
-			}else{
-				callback(obj);
+	redclient.hgetall(id,function(err,obj){
+		if(err) {
+			console.error("getUser("+id+",callback)");
+			console.error(err);
+			return;
+		}
+		if(obj==null){
+			var user = {
+				validTryCount:0,
+				validMsgCount:0
 			}
-		});
-	}catch(err){
-		console.error("getUser("+id+",callback)");
-		console.error(err);
-	}
+			redclient.hmset(id,user,function(err,obj2){
+				if(err){
+					console.error("getUser: hmset("+id+","+user+",function)");
+					console.error(err);
+					return;
+				}
+				callback(user);
+			});
+		}else{
+			callback(obj);
+		}
+	});
 }
 
 function setUser(id,obj){
-	try{
-		redclient.hmset(id,obj);
-	}catch(err){
-		console.error("setUser("+id+","+obj+")");
-		console.error(err);
-	}
+	redclient.hmset(id,obj,function(err,result){
+		if(err){
+			console.error("setUser("+id+","+obj+")");
+			console.error(err);
+		}
+	});
 }
 
 function getCommand(id,command,callback){
-	try{
-		redclient.hgetall(id+""+command,function(err,obj){
-			if(err) {console.log(err); return;}
-			if(obj==null){
-				var user = {
-					"command":command,
-					"lasttime":new Date('January 1,2018'),
-					"prev":0,
-					"count":0,
-					"halftime":new Date('January 1,2018'),
-					"halfcount":0,
-					"sixtime":new Date('January 1,2018'),
-					"sixcount":0
-				}
-				redclient.hmset(id+""+command,user,function(obj2){
-					callback(user);
-				});
-			}else{
-				callback(obj);
+	redclient.hgetall(id+""+command,function(err,obj){
+		if(err) {
+			console.error("getCommand("+id+","+command+",callback)");
+			console.log(err); 
+			return;
+		}
+		if(obj==null){
+			var user = {
+				"command":command,
+				"lasttime":new Date('January 1,2018'),
+				"prev":0,
+				"count":0,
+				"halftime":new Date('January 1,2018'),
+				"halfcount":0,
+				"sixtime":new Date('January 1,2018'),
+				"sixcount":0
 			}
-		});
-	}catch(err){
-		console.error("getCommand("+id+","+command+",callback)");
-		console.error(err);
-	}
+			redclient.hmset(id+""+command,user,function(err,obj2){
+				if(err){
+					console.error("getCommand: hmset("+id+""+command+","+user+",function)");
+					console.error(err);
+					return;
+				}
+				callback(user);
+			});
+		}else{
+			callback(obj);
+		}
+	});
 }
 
 function setCommand(id,command,obj){
-	try{
-		redclient.hmset(id+""+command,obj);
-	}catch(err){
-		console.error("setCommand("+id+","+command+","+obj+")");
-		console.error(err);
-	}
+		redclient.hmset(id+""+command,obj,function(err,reply){
+			if(err){
+				console.error("setCommand("+id+","+command+","+obj+")");
+				console.error(err);
+			}
+		});
 }
 exports.con = function(tcon){
 	con = tcon;
