@@ -32,6 +32,7 @@ const translator = require("./methods/translator.js");
 const other = require("./methods/other.js");
 const feedback = require("./methods/feedback.js");
 const admin = require("./methods/admin.js");
+const shop = require("./methods/shop.js");
 
 var emotes = require('./json/emotes.json');
 var prefix = "owo";
@@ -58,6 +59,10 @@ client.on('message',msg => {
 
 		else if(adminCommand === 'lift'){
 			admin.timeout(con,msg,adminMsg);
+		}
+
+		else if(adminCommand === 'ban'){
+			admin.ban(con,msg,adminMsg);
 		}
 	}
 
@@ -191,6 +196,10 @@ function execute(command,msg,args,isMention){
 
 	else if(command === 'lootbox'||command === 'box'){
 		lootbox.open(msg,args);
+	}
+
+	else if(command === 'shop'){
+		shop.display(msg,args);
 	}
 
 	//Give cowoncy
@@ -383,7 +392,7 @@ client.on("guildDelete", guild => {
 });
 
 function clog(command,args,msg){
-	console.log("\x1b[0m\x1b[4mCommand\x1b[0m: %s\x1b[0m \x1b[36m{%s}\x1b[0m \x1b[0m%s\x1b[36m[%s][%s][%s]",command,args,msg.author.username,msg.guild.name,msg.channel.name,msg.channel.id); 
+	console.log("\x1b[0m\x1b[4mCommand\x1b[0m: %s\x1b[0m \x1b[36m{%s}\x1b[0m \x1b[0m%s\x1b[36m[%s][%s][%s]",command,args,msg.author.username,msg.author.id,msg.guild.name,msg.channel.name); 
 }
 
 function updateActivity(){

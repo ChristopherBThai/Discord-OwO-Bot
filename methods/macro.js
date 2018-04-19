@@ -3,9 +3,7 @@ var redis = require('redis');
 var redclient = redis.createClient();
 var users = {};
 var letters = "abcdefghijklmnopqrstuvwxyz";
-var mcommands = {"zoo":{cd:45000,half:20,six:200},"slots":{cd:15000,half:80,six:500},"hunt":{cd:15000,half:80,six:500},"battle":{cd:15000,half:80,six:500},"point":{cd:10000,half:90,six:750}};
-var vemoji = ["🐶","🐱","🐰","🐮","🐷","🐸","🐰","🦁","🐼"];
-var vname = ["dog","cat","bunny","cow","pig","frog","rabbit","lion","panda"];
+var mcommands = {"zoo":{cd:45000,half:20,six:200,ban:1},"slots":{cd:15000,half:80,six:500,ban:1},"hunt":{cd:15000,half:80,six:500,ban:2},"battle":{cd:15000,half:80,six:500,ban:2},"point":{cd:10000,half:90,six:750,ban:1}};
 var con;
 var global = require('./global.js');
 
@@ -26,7 +24,7 @@ exports.check = function(msg,command,callback){
 			var diff = now - new Date(cuser.lasttime);
 
 			//Check for time limit
-			if(diff<mcommands[cuser.command].cd){
+			if(false&&diff<mcommands[cuser.command].cd){
 				if(command == "point"){
 					cuser.lasttime = now;
 					setCommand(id,command,cuser);
@@ -45,10 +43,7 @@ exports.check = function(msg,command,callback){
 			//Check if doing human check
 			if(user.validText&&user.validText!="ok"){
 				if(user.validMsgCount>=3){
-					user.validTryCount = 0;
-					user.validMsgCount = 0;
-					user.validText = "ok";
-					ban(msg,1,"Ignoring warning messages");
+					ban(msg,user,"Ignoring warning messages");
 					setUser(id,user);
 					return;
 				}
@@ -59,9 +54,19 @@ exports.check = function(msg,command,callback){
 			}
 
 			//Check for macros
-			if(checkInterval(cuser,now,diff)||checkHalf(cuser,now)||checkSix(cuser,now)){
-				humanCheck(user,msg,function(){setUser(id,user)});
+			if(checkInterval(cuser,now,diff)){
+				humanCheck(user,msg,mcommands[cuser.command].ban,"Using command `"+cuser.command+"` with an interval of "+diff+"ms",function(){setUser(id,user)});
 				setCommand(id,command,cuser);
+				return;
+			}
+			if(checkHalf(cuser,now)){
+				humanCheck(user,msg,mcommands[cuser.command].ban,"Using command `"+cuser.command+"` over "+mcommands[cuser.command].half+" times in 30min",function(){setUser(id,user)});
+				setCommand(id,command,cuser);
+				return;
+			}
+			if(checkSix(cuser,now)){
+				humanCheck(user,msg,function(){setUser(id,user)});
+				setCommand(id,command,mcommands[cuser.command].ban,"Using command `"+cuser.command+"` over "+mcommands[cuser.command].six+" times in 6H",cuser);
 				return;
 			}
 
@@ -72,25 +77,29 @@ exports.check = function(msg,command,callback){
 	});
 }
 
-function humanCheck(user,msg,callback){
+function humanCheck(user,msg,penalty,reason,callback){
 	var rand = "";
 	for(var i=0;i<5;i++)
 		rand += letters.charAt(Math.floor(Math.random()*letters.length));
+
+	user.validTryCount = 0;
+	user.validMsgCount = 0;
+	user.validText = rand;
+	user.validReason = reason;
+	user.validPenalty = penalty;
+	if(user.validCount==undefined)
+		user.validCount = 0;
+	user.validCount++;
+
 	msg.author.send("**⚠ |** Are you a real human? Please reply with `"+rand+"` so I can check!")
 		.then(message => {
-			user.validTryCount = 0;
-			user.validMsgCount = 0;
-			user.validText = rand;
 			callback();
 		})
 		.catch(err => {
 			msg.channel.send("**⚠ | "+msg.author.username+"**, please send me a DM with only the word `"+rand+"` to check that you are a human!")
 			.catch(err => {
-				ban(msg,1,"No possible permission");
+				ban(msg,user,"No possible permission");
 			});
-			user.validTryCount = 0;
-			user.validMsgCount = 0;
-			user.validText = rand;
 			callback();
 		});
 	
@@ -101,19 +110,17 @@ exports.verify = function(msg,text){
 		if(!user||!user.validText||user.validText=="ok")
 			return;
 		if(text==user.validText){
-			global.msgAdmin("**⚠ | "+msg.author.username+"** avoided ban with correct verfication ("+user.validTryCount+"/3)");
+			global.msgAdmin("**⚠ | ["+user.validCount+"] "+msg.author.username+"** avoided ban with correct verfication ("+user.validTryCount+"/3)\n**<:blank:427371936482328596> | Reason:** "+user.validReason+"\n**<:blank:427371936482328596> | Hours:** "+user.validPenalty);
 			msg.channel.send("**👍 |** I have verified that you are human! Thank you! :3")
 				.catch(err => console.error(err));
 			user.validTryCount = 0;
 			user.validMsgCount = 0;
 			user.validText = "ok";
+			user.validReason = "none";
 		}else{
 			user.validTryCount++;
 			if(user.validTryCount>3){
-				user.validTryCount = 0;
-				user.validMsgCount = 0;
-				user.validText = "ok";
-				ban(msg,1,"Failed verification 3x");
+				ban(msg,user,"Failed verification 3x");
 			}else{
 				msg.channel.send("**🚫 |** Wrong verification code! Please try again ("+user.validTryCount+"/3)")
 					.catch(err => console.error(err));
@@ -171,8 +178,12 @@ function checkSix(user,now){
 	user.sixcount++;
 	return false;
 }
-function ban(msg,hours,reason){
+function ban(msg,user,reason){
 	var id = msg.author.id;
+	console.log(user);
+	var hours = user.validPenalty;
+	if(!global.isInt(hours))
+		hours = 1;
 	var sql = "INSERT INTO timeout (id,time,count,penalty) VALUES ("+id+",NOW(),1,"+hours+") ON DUPLICATE KEY UPDATE time = NOW(),count=count+1,penalty = penalty + "+hours+";";
 	sql += "SELECT penalty,count FROM timeout WHERE id = "+id+";";
 	con.query(sql,function(err,result){
@@ -181,8 +192,13 @@ function ban(msg,hours,reason){
 			global.msgAdmin("An error has occured on the ban function of macro.js");
 		}else{
 			msg.channel.send("**☠ | "+msg.author.username+"**! You have been banned for **"+result[1][0].penalty+"H** for macros or botting!");
-			global.msgAdmin("**☠ | "+msg.author.username+"** has been banned for **"+reason+"**");
+			global.msgAdmin("**☠ | ["+user.validCount+"] "+msg.author.username+"** has been banned!\n**<:blank:427371936482328596> | Reason:** "+user.validReason+"\n**<:blank:427371936482328596> | Hours:** "+user.validPenalty);
 		}
+		user.validTryCount = 0;
+		user.validMsgCount = 0;
+		user.validText = "ok";
+		user.validReason = "none";
+		setUser(id,user);
 	});
 }
 
