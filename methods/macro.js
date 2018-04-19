@@ -91,18 +91,25 @@ function humanCheck(user,msg,penalty,reason,callback){
 		user.validCount = 0;
 	user.validCount++;
 
-	msg.author.send("**⚠ |** Are you a real human? Please reply with `"+rand+"` so I can check!")
-		.then(message => {
-			callback();
-		})
-		.catch(err => {
-			msg.channel.send("**⚠ | "+msg.author.username+"**, please send me a DM with only the word `"+rand+"` to check that you are a human!")
+	if(user.validCount<5){
+		msg.author.send("**⚠ |** Are you a real human? Please reply with `"+rand+"` so I can check!")
+			.then(message => {
+				callback();
+			})
+			.catch(err => {
+				msg.channel.send("**⚠ | "+msg.author.username+"**, please send me a DM with only the word `"+rand+"` to check that you are a human!")
+				.catch(err => {
+					ban(msg,user,"No possible permission");
+				});
+				callback();
+			});
+	}else{
+		msg.channel.send("**⚠ | "+msg.author.username+"**, please send me a DM with only the word `"+rand+"` to check that you are a human!")
 			.catch(err => {
 				ban(msg,user,"No possible permission");
 			});
 			callback();
-		});
-	
+	}
 }
 
 exports.verify = function(msg,text){
