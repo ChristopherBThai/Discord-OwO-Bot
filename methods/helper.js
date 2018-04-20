@@ -29,7 +29,8 @@ exports.showHelp = function(channel){
 			"\n< owo battle "+help.battle.args+" >\t "+help.battle.desc_short+
 			"\n< owo pets [set|rename] >\t\t"+help.pets.desc_short+
 			"\n# Fun"+
-			"\n< owo slots {amount} >\t\t   "+help.slots.desc_short+
+			"\n< owo slots {bet} >\t\t\t  "+help.slots.desc_short+
+			"\n< owo coinflip [h|t] {bet} >\t "+help.coinflip.desc_short+
 			"\n< owo lottery {amount} >\t\t "+help.lottery.desc_short+
 			"\n< owo 8b {question} >\t\t\t"+help.b8.desc_short+
 			"\n< owo gif|pic {type} >\t\t   "+help.gif.desc_short+
@@ -54,7 +55,8 @@ exports.showCompactHelp = function(channel){
 	var text = "**Compact Command List**"+
 		"\n\n**Main:** `top`  `my`"+
 		"\n**Economy:** `money`  `give`  `daily`  `vote`"+
-		"\n**Fun:** `zoo`  `hunt`  `slots`  `lottery`  `8b`  `define`  `gif`  `pic`  `battle`"+
+		"\n**Animals:** `zoo`  `hunt`  `sell`  `battle`  `pets`"+
+		"\n**Fun:** `slots`  `coinflip`  `lottery`  `8b`  `define`  `gif`  `pic`  `translate`"+
 		"\n**Social:** `cookie`  `pet`  `hug`  `kiss`  `ship`"+
 		"\n**Utility:** `feedback`  `stats`  `link`  `guildlink`  `disable`  `enable`  `help`"+
 		"\n\nUse `owo help {command}` for further details!"+
