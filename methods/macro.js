@@ -3,7 +3,7 @@ var redis = require('redis');
 var redclient = redis.createClient();
 var users = {};
 var letters = "abcdefghijklmnopqrstuvwxyz";
-var mcommands = {"zoo":{cd:45000,half:20,six:200,ban:1},"slots":{cd:15000,half:80,six:500,ban:1},"hunt":{cd:15000,half:80,six:500,ban:2},"battle":{cd:15000,half:80,six:500,ban:2},"point":{cd:10000,half:90,six:750,ban:1}};
+var mcommands = {"zoo":{cd:45000,half:20,six:200,ban:1},"coinflip":{cd:15000,half:80,six:500,ban:1},"slots":{cd:15000,half:80,six:500,ban:1},"hunt":{cd:15000,half:80,six:500,ban:2},"battle":{cd:15000,half:80,six:500,ban:2},"point":{cd:10000,half:90,six:750,ban:1}};
 var con;
 var global = require('./global.js');
 
@@ -65,7 +65,7 @@ exports.check = function(msg,command,callback){
 				return;
 			}
 			if(checkSix(cuser,now)){
-				humanCheck(user,msg,mcommands[cuser.command].ban,"Using command `"+cuser.command+"` over "+mcommands[cuser.command].six+" times in 6H",function(){setUser(id,user)});
+				humanCheck(user,msg,mcommands[cuser.command].ban*3,"Using command `"+cuser.command+"` over "+mcommands[cuser.command].six+" times in 6H",function(){setUser(id,user)});
 				setCommand(id,command,cuser);
 				return;
 			}

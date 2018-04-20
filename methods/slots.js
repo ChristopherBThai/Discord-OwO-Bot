@@ -42,7 +42,7 @@ exports.slots = function(con,msg,args){
 	//Check if valid time and cowoncy
 	var sql = "SELECT money FROM cowoncy WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,result){
-		if(err) throw err;
+		if(err){console.error(err);return;}
 		if(all&&result[0]!=undefined)
 			amount = result[0].money
 		if(result[0]==undefined||result[0].money<amount||result[0].money<=0){
@@ -97,7 +97,7 @@ exports.slots = function(con,msg,args){
 			//SQL results
 			var sql = "UPDATE cowoncy SET money = money + "+(win-amount)+" WHERE id = "+msg.author.id+";";
 			con.query(sql, function(err,result){
-				if(err) throw err;
+				if(err){console.error(err);return;}
 				var machine = "**`___SLOTS___  `**\n"+moving+" "+moving+" "+moving+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+amount+"\n`|         |`\n`|         |`";
 				msg.channel.send(machine)
 				.then(message => setTimeout(function(){

@@ -2,6 +2,8 @@ const translate = require('translate-google');
 
 //Translates a text to a diff language
 exports.translate = function(msg,args){
+	if(args.length==0)
+		return;
 	//Get language
 	var lang = args[args.length-1];
 	if(lang.charAt(0)=='-'){

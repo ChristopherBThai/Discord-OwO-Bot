@@ -278,5 +278,14 @@
 		"related":["owo describe {id}","owo buy {id}"],
 		"example":[],
 		"alt":["market"]
+	},
+	"coinflip":{
+		"name":"coinflip",
+		"args":"[head|tail] {bet}",
+		"desc_short":"Flip a coin!",
+		"desc_long":"Flip a coin to earn some cowoncy! You can shorten the command like in the example! Bet limit is set to 1000 cowoncy.",
+		"related":["owo money"],
+		"example":["owo coinflip head 25","owo cf t 25"],
+		"alt":["cf","coin","flip"]
 	}
 }

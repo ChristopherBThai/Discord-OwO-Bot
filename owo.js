@@ -33,6 +33,7 @@ const other = require("./methods/other.js");
 const feedback = require("./methods/feedback.js");
 const admin = require("./methods/admin.js");
 const shop = require("./methods/shop.js");
+const coinflip = require("./methods/coinflip.js");
 
 var emotes = require('./json/emotes.json');
 var prefix = "owo";
@@ -135,6 +136,11 @@ function execute(command,msg,args,isMention){
 	//Slots!
 	else if (command === 'slot' || command === 'slots'){
 		slots.slots(con,msg,args);
+	}
+
+	//Coin flip!
+	else if(command === 'coinflip'||command === 'cf'||command === 'coin'||command === 'flip'){
+		coinflip.bet(con,msg,args);
 	}
 
 	//Lottery!
