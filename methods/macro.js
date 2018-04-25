@@ -3,7 +3,7 @@ var redis = require('redis');
 var redclient = redis.createClient();
 var users = {};
 var letters = "abcdefghijklmnopqrstuvwxyz";
-var mcommands = {"zoo":{cd:45000,half:20,six:200,ban:1},"coinflip":{cd:15000,half:80,six:500,ban:1},"slots":{cd:15000,half:80,six:500,ban:1},"hunt":{cd:15000,half:80,six:500,ban:2},"battle":{cd:15000,half:80,six:500,ban:2},"point":{cd:10000,half:90,six:750,ban:1}};
+var mcommands = {"zoo":{cd:45000,half:20,six:200,ban:1},"coinflip":{cd:15000,half:80,six:500,ban:2},"slots":{cd:15000,half:80,six:500,ban:2},"hunt":{cd:15000,half:80,six:500,ban:5},"battle":{cd:15000,half:80,six:500,ban:5},"point":{cd:10000,half:90,six:750,ban:5}};
 var con;
 var global = require('./global.js');
 
@@ -42,6 +42,11 @@ exports.check = function(msg,command,callback){
 
 			//Check if doing human check
 			if(user.validText&&user.validText!="ok"){
+				if(user.validCount>15&&user.banCount>0){
+					ban(msg,user,"Ignoring warning messages*");
+					setUser(id,user);
+					return;
+				}
 				if(user.validMsgCount>=3){
 					ban(msg,user,"Ignoring warning messages");
 					setUser(id,user);
@@ -205,6 +210,9 @@ function ban(msg,user,reason){
 		user.validMsgCount = 0;
 		user.validText = "ok";
 		user.validReason = "none";
+		if(user.banCount==undefined)
+			user.banCount = 0;
+		user.banCount++;
 		setUser(id,user);
 	});
 }
