@@ -78,6 +78,7 @@ exports.init = function(){
 	}
 	con = global.con();
 	var timer = setTimeout(pickWinner,mill);
+	//var timer = setTimeout(pickWinner,5000);
 }
 
 /**

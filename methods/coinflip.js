@@ -24,7 +24,8 @@ exports.bet = function(con,msg,args){
 		return;
 	}
 	var choice = undefined;
-	arg1 = arg1.toLowerCase();
+	if(arg1!=undefined)
+		arg1 = arg1.toLowerCase();
 	if(arg1=='heads'||arg1=='h'||arg1=='head')
 		choice = 'h';
 	else if(arg1=='tails'||arg1=='t'||arg1=='tail')
@@ -82,8 +83,8 @@ exports.bet = function(con,msg,args){
 							text2 += "won **"+cowoncy+" "+(bet*2)+"**!!";
 						else
 							text2 += "lost it all... :c";
-						message.edit(text+text2)
 						console.log("\x1b[36m%s\x1b[0m","	spent: "+bet+" and "+((win)?"won":"lost"));
+						message.edit(text+text2)
 						.catch(err => console.error(err));
 					},2000))
 					.catch(err => console.error(err));
