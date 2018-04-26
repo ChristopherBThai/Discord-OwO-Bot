@@ -127,3 +127,33 @@ exports.ban= function(con,msg,args){
 			.catch(err => console.err(err));
 	});
 }	
+
+/**
+ * Resets a user
+ */
+exports.reset = function(con,msg,args){
+	var id;
+	if(!global.isUser("<@"+args[0]+">")){
+		global.msgAdmin("Invalid user id");
+		return;
+	}else{
+		id = args.shift();
+	}
+	var reason = args.join(" ");
+	var sql = "DELETE FROM animal WHERE id = "+id+";";
+	sql += "DELETE FROM animal_count WHERE id = "+id+";";
+	sql += "DELETE FROM cowoncy WHERE id = "+id+";";
+	sql += "DELETE FROM lottery WHERE id = "+id+";";
+	sql += "DELETE FROM rep WHERE id = "+id+";";
+	sql += "DELETE FROM user WHERE id = "+id+";";
+	sql += "DELETE FROM vote WHERE id = "+id+";";
+	con.query(sql,async function(err,rows,fields){
+		if(err){ console.error(err); return;}
+		if(user = await global.msgUser(id,"**☠ |** You account has been reset.\n**Reason:** "+reason))
+			msg.author.send("**☠ |** "+user.username+"'s account has been reset")
+				.catch(err => console.err(err));
+		else
+			msg.author.send("Failed to find that user")
+				.catch(err => console.err(err));
+	});
+}

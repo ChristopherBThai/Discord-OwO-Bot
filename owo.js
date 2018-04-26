@@ -65,6 +65,10 @@ client.on('message',msg => {
 		else if(adminCommand === 'ban'){
 			admin.ban(con,msg,adminMsg);
 		}
+
+		else if(adminCommand === 'permareset'){
+			admin.reset(con,msg,adminMsg);
+		}
 	}
 
 	//Check for verification code if it is a dm
