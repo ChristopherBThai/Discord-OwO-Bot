@@ -9,6 +9,7 @@ var unicode = {};
 
 var secret = "";
 var secret2 = "";
+var secret3 = "";
 var display = "";
 initDisplay();
 
@@ -17,7 +18,7 @@ initDisplay();
  */
 exports.display = function(con,msg){
 	var sql = "SELECT * FROM animal WHERE id = "+msg.author.id+";"+
-		"SELECT common,uncommon,rare,epic,mythical,legendary,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;"+
+		"SELECT common,uncommon,rare,epic,mythical,legendary,fabled,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;"+
 		"UPDATE IGNORE cowoncy SET zoo = NOW() WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,result){
 		if(err) throw err;
@@ -25,6 +26,7 @@ exports.display = function(con,msg){
 		text += display;
 		var additional = "";
 		var additional2 = "";
+		var additional3 = "";
 		var row = result[0];
 		var count = result[1][0];
 		var digits= 2;
@@ -37,18 +39,26 @@ exports.display = function(con,msg){
 					additional = secret;
 				additional += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 			}
-			if(animals.special.indexOf(row[i].name)>0){
+			else if(animals.fabled.indexOf(row[i].name)>0){
 				if(additional2=="")
 					additional2 = secret2;
 				additional2 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
+			}
+			else if(animals.special.indexOf(row[i].name)>0){
+				if(additional3=="")
+					additional3 = secret3;
+				additional3 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 			}
 		}
 		text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question+toSmallNum(0,digits));
 		text += additional;
 		text += additional2;
+		text += additional3;
 		if(count!=undefined){
-			var total = count.common*1+count.uncommon*5+count.rare*10+count.epic*50+count.mythical*500+count.legendary*1000;
+			var total = count.common*1+count.uncommon*5+count.rare*10+count.epic*50+count.mythical*500+count.legendary*1000+count.fabled*25000;
 			text += "\n**Zoo Points: __"+total+"__**\n\t**";
+			if(count.fabled>0)
+				text += "F-"+count.fabled+", ";
 			if(count.legendary>0)
 				text += "L-"+count.legendary+", ";
 			text += "M-"+count.mythical+", ";
@@ -221,12 +231,18 @@ function randAnimal(){
 		result.push(animals.mythical[rand]);
 		result.push("mythical");
 		result.push(500);
-	}else{
+	}else if(rand<parseFloat(animals.legendary[0])){
 		rand = Math.ceil(Math.random()*(animals.legendary.length-1));
 		result.push("**legendary**"+animals.ranks.legendary);
 		result.push(animals.legendary[rand]);
 		result.push("legendary");
 		result.push(1500);
+	}else{
+		rand = Math.ceil(Math.random()*(animals.fabled.length-1));
+		result.push("**fabled**"+animals.ranks.fabled);
+		result.push(animals.fabled[rand]);
+		result.push("fabled");
+		result.push(25000);
 	}
 	return result;
 }
@@ -260,7 +276,8 @@ function initDisplay(){
 	for (i=1;i<animals.mythical.length;i++)
 		display += "~"+animals.mythical[i]+gap;
 	secret = "\n"+animals.ranks.legendary+"    ";
-	secret2 = "\n"+animals.ranks.special+"    ";
+	secret2 = "\n"+animals.ranks.fabled+"    ";
+	secret3 = "\n"+animals.ranks.special+"    ";
 
 }
 
