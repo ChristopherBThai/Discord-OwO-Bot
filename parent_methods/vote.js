@@ -49,7 +49,6 @@ function upvote(id){
 }
 
 exports.setManager = function(manageri){
-	return;
 	manager = manageri;
 	con = global.con();
 	app.listen(3000);
