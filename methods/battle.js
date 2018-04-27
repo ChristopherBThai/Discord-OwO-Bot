@@ -1,6 +1,7 @@
 //Battle methods!
 
 const animal = require('../../tokens/owo-animals.json');
+const badwords = require('../../tokens/badwords.json');
 const userbattle = require('./battleuser.js');
 const global = require('./global.js');
 const help = require('./helper.js');
@@ -66,6 +67,7 @@ function startBattle(con,msg,args){
 	var sql = "SELECT * FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND pet = name;";
 	sql += "SET @rand = (CEIL(RAND()*(SELECT COUNT(*) FROM animal WHERE ispet = 1 AND id != "+msg.author.id+")));"+
 		"SELECT * FROM (SELECT animal.*,@rownum := @rownum + 1 AS rank FROM animal ,(SELECT @rownum := 0) r WHERE ispet = 1 AND id != "+msg.author.id+") d WHERE rank <= @rand ORDER BY rank DESC LIMIT 1;"
+	sql += "SELECT young FROM guild WHERE id = "+msg.guild.id+";";
 	sql += "UPDATE cowoncy SET money = money - 5 WHERE id = "+msg.author.id+";"
 	con.query(sql,async function(err,rows,fields){
 		if(err) throw err;
@@ -97,6 +99,8 @@ function startBattle(con,msg,args){
 		}
 
 		//Assign variables to each user
+		if(rows[3][0]!=undefined && rows[3][0].young && opet.offensive)
+			opet.nickname= "Potty Mouth";
 		var log = [];
 		var user1 = {
 			"username":msg.author.username,
@@ -306,10 +310,16 @@ exports.set = function(mysql, con,msg,args){
 	}
 	var sql;
 	if(nickname!=undefined&&nickname!=""){
-		sql = "UPDATE cowoncy NATURAL JOIN animal SET pet = name, ispet = 1, nickname = ? WHERE id = "+msg.author.id+" AND name = '"+animal+"';";
+		var offensive = 0;
+		var shortnick = name.replace(/\s/g,"").toLowerCase();
+		for(var i=0;i<badwords.length;i++){
+			if(shortnick.includes(badwords[i]))
+				offensive = 1;
+		}
+		sql = "UPDATE cowoncy NATURAL JOIN animal SET pet = name, ispet = 1, nickname = ?, offensive = "+offensive+" WHERE id = "+msg.author.id+" AND name = '"+animal+"';";
 		sql = mysql.format(sql,nickname);
 	}else{
-		sql = "UPDATE cowoncy NATURAL JOIN animal SET pet = name, ispet = 1 WHERE id = "+msg.author.id+" AND name = '"+animal+"';";
+		sql = "UPDATE cowoncy NATURAL JOIN animal SET pet = name, ispet = 1, offensive = 0 WHERE id = "+msg.author.id+" AND name = '"+animal+"';";
 	}
 	sql  += "SELECT nickname FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND name = pet;";
 	con.query(sql,function(err,rows,fields){
@@ -387,7 +397,15 @@ exports.rename = function(mysql,con,msg,args){
 		return;
 	}
 
-	sql = "UPDATE cowoncy NATURAL JOIN animal SET nickname = ? WHERE id = "+msg.author.id+" AND pet = name;";
+	var offensive = 0;
+	var shortnick = name.replace(/\s/g,"").toLowerCase();
+	console.log(shortnick);
+	for(var i=0;i<badwords.length;i++){
+		if(shortnick.includes(badwords[i]))
+			offensive = 1;
+	}
+
+	sql = "UPDATE cowoncy NATURAL JOIN animal SET nickname = ?, offensive = "+offensive+" WHERE id = "+msg.author.id+" AND pet = name;";
 	sql  += "SELECT name,nickname FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND name = pet;";
 	sql = mysql.format(sql,name);
 

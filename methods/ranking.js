@@ -24,7 +24,7 @@ exports.addPoint = function(con,msg){
 		sql += "INSERT INTO cowoncy (id,money) VALUES ("+id+",2) ON DUPLICATE KEY UPDATE money = money + 2;";
 
 		con.query(sql,function(err,result){
-			if(err){ throw err; return;}
+			if(err){ console.error(err); return;}
 			console.log("\x1b[0m%s\x1b[36m[%s][%s][%s]",msg.author.username+" typed '"+text+"'",msg.guild,msg.channel.name,msg.channel.id); 
 		});
 	}catch(err){
