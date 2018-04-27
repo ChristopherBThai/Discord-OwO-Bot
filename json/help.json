@@ -211,8 +211,8 @@
 		"name":"battle",
 		"args":"{@user} {bet}",
 		"desc_short":"Battle your pets!",
-		"desc_long":"Use your animal to fight against other players! As you fight, the will level to become stronger!\nThey will also level up if someone fights against your pet!\nFeel free to add as many pets and check their status with 'owo pets'!\nYou can also rename your animals!",
-		"related":["owo pets","owo zoo","owo hunt"],
+		"desc_long":"Use your animal to fight against other players! As you fight, the will level to become stronger!\nThey will also level up if someone fights against your pet!\nFeel free to add as many pets and check their status with 'owo pets'!\nYou can also rename your animals!\nBe aware that people can rename their pets to something offensive! To censor bad words, use the command 'owo censor'",
+		"related":["owo pets","owo zoo","owo hunt","owo censor"],
 		"example":["owo battle"],
 		"alt":["fight","acceptbattle","declinebattle","ab","db"]
 	},
@@ -287,5 +287,23 @@
 		"related":["owo money"],
 		"example":["owo coinflip head 25","owo cf t 25"],
 		"alt":["cf","coin","flip"]
+	},
+	"censor":{
+		"name":"censor",
+		"args":"",
+		"desc_short":"Add censorship to the guild!",
+		"desc_long":"This will enable censorship mode! All offensive words will be censored!",
+		"related":["owo uncensor"],
+		"example":[],
+		"alt":[]
+	},
+	"uncensor":{
+		"name":"uncensor",
+		"args":"",
+		"desc_short":"Remove censorship in the guild!",
+		"desc_long":"This will disable censorship mode! All offensive words will be shown!",
+		"related":["owo censor"],
+		"example":[],
+		"alt":[]
 	}
 }

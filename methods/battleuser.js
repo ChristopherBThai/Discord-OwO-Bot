@@ -191,7 +191,7 @@ exports.battle = async function(con,msg,args){
 function startBattle(con,msg,user1,user2,amount){
 	var sql = "SELECT * FROM cowoncy NATURAL JOIN animal WHERE id = "+user1.id+" AND pet = name;";
 	sql += "SELECT * FROM cowoncy NATURAL JOIN animal WHERE id = "+user2.id+" AND pet = name;";
-	sql += "UPDATE cowoncy SET money = money - "+amount+",battle = NOW() WHERE id IN ("+user1.id+","+user2.id+");"
+	sql += "UPDATE cowoncy SET money = money - "+amount+" WHERE id IN ("+user1.id+","+user2.id+");"
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		

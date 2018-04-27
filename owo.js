@@ -34,6 +34,7 @@ const feedback = require("./methods/feedback.js");
 const admin = require("./methods/admin.js");
 const shop = require("./methods/shop.js");
 const coinflip = require("./methods/coinflip.js");
+const kids= require("./methods/kids.js");
 
 var emotes = require('./json/emotes.json');
 var prefix = "owo";
@@ -249,6 +250,11 @@ function execute(command,msg,args,isMention){
 		else
 			weeb.getGif(msg,args);
 	}
+
+	//Enables censor mode
+	else if(command === 'censor'){ kids.censor(con,msg,args); }
+	//Disables censor mode
+	else if(command === 'uncensor'){ kids.uncensor(con,msg,args); }
 
 	//Sends feedback to admin
 	else if(command === 'feedback'|| command === 'suggestion' || command === 'report'){
