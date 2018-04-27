@@ -311,7 +311,7 @@ exports.set = function(mysql, con,msg,args){
 	var sql;
 	if(nickname!=undefined&&nickname!=""){
 		var offensive = 0;
-		var shortnick = name.replace(/\s/g,"").toLowerCase();
+		var shortnick = nickname.replace(/\s/g,"").toLowerCase();
 		for(var i=0;i<badwords.length;i++){
 			if(shortnick.includes(badwords[i]))
 				offensive = 1;
