@@ -15,85 +15,51 @@ const global = require('./global.js');
 exports.display = function(con, msg, args){
 	var channel = msg.channel;
 	var id = msg.author.id;
-	//Check if its disabled
-	var sql = "SELECT * FROM blacklist WHERE id = "+channel.id+";";
 
-	con.query(sql,function(err,rows,fields){
-		if(err) throw err;
-		var length = rows.length;
-		console.log("	Blacklist count: "+rows.length);
-		if(rows.length>0){
-			channel.send("**🚫 |** This command is disabled on this channel!")
-				.catch(err => console.error(err));
-			return;
-		}else{
-			var aglobal = false;
-			var invalid = false;
-			var points = false;
-			var guild = false;
-			var zoo = false;
-			var money = false;
-			var rep = false;
-			var pet = false;
+	var aglobal = false;
+	var invalid = false;
+	var points = false;
+	var guild = false;
+	var zoo = false;
+	var money = false;
+	var rep = false;
+	var pet = false;
 
-			for(var i in args){
-				if(!points&&!guild&&!money&&!zoo&&!rep&&!pet){
-					if(args[i]=== "points"||args[i]==="point"||args[i]==="p")
-						points = true;
-					else if(args[i]==="guild"||args[i]==="server"||args[i]==="g"||args[i]==="s")
-						guild = true;
-					else if(args[i]=== "zoo"||args[i]==="z")
-						zoo = true;
-					else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="c"||args[i]==="m")
-						money = true;
-					else if(args[i]==="cookies"||args[i]==="cookie"||args[i]=== "rep"||args[i]==="r")
-						rep = true;
-					else if(args[i]==="pets"||args[i]==="pet") 
-						pet = true;
-					else if(args[i]==="global"||args[i]==="g") 
-						aglobal = true;
-					else
-						invalid = true;
-				}else if(args[i]==="global"||args[i]==="g") aglobal = true;
-				else invalid = true;
-			}
-			
-			if(invalid)
-				msg.channel.send("**🚫 |** Wrong arguments! :c Go check `owo help`!")
-					.catch(err => console.error(err));
-			else if(aglobal){
-				if(points)
-					getGlobalPointRanking(con,msg,id);
-				else if(guild)
-					getGuildRanking(con,msg,msg.guild.id);
-				else if(zoo)
-					getGlobalZooRanking(con,msg,id);
-				else if(money)
-					getGlobalMoneyRanking(con,msg,id);
-				else if(rep)
-					getGlobalRepRanking(con,msg,id);
-				else if(pet)
-					getGlobalPetRanking(con,msg,id);
-				else
-					getGlobalPointRanking(con,msg,id);
-			}else{
-				if(points)
-					getPointRanking(con,msg,id);
-				else if(guild)
-					getGuildRanking(con,msg,msg.guild.id);
-				else if(zoo)
-					getZooRanking(con,msg,id);
-				else if(money)
-					getMoneyRanking(con,msg,id);
-				else if(rep)
-					getRepRanking(con,msg,id);
-				else if(pet)
-					getPetRanking(con,msg,id);
-				else
-					getPointRanking(con,msg,id);
-			}
-		}
-	});
+	for(var i in args){
+		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet){
+			if(args[i]=== "points"||args[i]==="point"||args[i]==="p") points = true;
+			else if(args[i]==="guild"||args[i]==="server"||args[i]==="g"||args[i]==="s") guild = true;
+			else if(args[i]=== "zoo"||args[i]==="z") zoo = true;
+			else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="c"||args[i]==="m") money = true;
+			else if(args[i]==="cookies"||args[i]==="cookie"||args[i]=== "rep"||args[i]==="r") rep = true;
+			else if(args[i]==="pets"||args[i]==="pet") pet = true;
+			else if(args[i]==="global"||args[i]==="g") aglobal = true;
+			else invalid = true;
+		}else if(args[i]==="global"||args[i]==="g") aglobal = true;
+		else invalid = true;
+	}
+	
+	if(invalid)
+		msg.channel.send("**🚫 |** Wrong arguments! :c Go check `owo help`!")
+			.catch(err => console.error(err));
+
+	else if(aglobal){
+		if(points) getGlobalPointRanking(con,msg,id);
+		else if(guild) getGuildRanking(con,msg,msg.guild.id);
+		else if(zoo) getGlobalZooRanking(con,msg,id);
+		else if(money) getGlobalMoneyRanking(con,msg,id);
+		else if(rep) getGlobalRepRanking(con,msg,id);
+		else if(pet) getGlobalPetRanking(con,msg,id);
+		else getGlobalPointRanking(con,msg,id);
+	}else{
+		if(points) getPointRanking(con,msg,id);
+		else if(guild) getGuildRanking(con,msg,msg.guild.id);
+		else if(zoo) getZooRanking(con,msg,id);
+		else if(money) getMoneyRanking(con,msg,id);
+		else if(rep) getRepRanking(con,msg,id);
+		else if(pet) getPetRanking(con,msg,id);
+		else getPointRanking(con,msg,id);
+	}
 }
 
 /**

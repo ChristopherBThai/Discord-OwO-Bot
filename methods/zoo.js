@@ -18,8 +18,7 @@ initDisplay();
  */
 exports.display = function(con,msg){
 	var sql = "SELECT * FROM animal WHERE id = "+msg.author.id+";"+
-		"SELECT common,uncommon,rare,epic,mythical,legendary,fabled,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;"+
-		"UPDATE IGNORE cowoncy SET zoo = NOW() WHERE id = "+msg.author.id+";";
+		"SELECT common,uncommon,rare,epic,mythical,legendary,fabled,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
 	con.query(sql,function(err,result){
 		if(err) throw err;
 		var text = "🌿 🌱 🌳** "+msg.author.username+"'s zoo! **🌳 🌿 🌱\n";

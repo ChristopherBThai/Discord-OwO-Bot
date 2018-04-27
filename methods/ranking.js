@@ -18,8 +18,8 @@ exports.addPoint = function(con,msg){
 	var text = msg.content.replace(/(\n)+/g," | ");
 	try{
 		//Adds points
-		var sql = "INSERT INTO user (id,count,lasttime) VALUES ("+id+",1,NOW()) ON DUPLICATE KEY "+
-			"UPDATE count = count + 1,lasttime = NOW();";
+		var sql = "INSERT INTO user (id,count) VALUES ("+id+",1) ON DUPLICATE KEY "+
+			"UPDATE count = count + 1;";
 		sql += "INSERT INTO guild (id,count) VALUES ("+guild.id+",1) ON DUPLICATE KEY UPDATE count = count + 1;";
 		sql += "INSERT INTO cowoncy (id,money) VALUES ("+id+",2) ON DUPLICATE KEY UPDATE money = money + 2;";
 
@@ -40,94 +40,58 @@ exports.addPoint = function(con,msg){
  */
 exports.display = function(con, msg, args){
 	var channel = msg.channel;
-	//Check if its disabled
-	var sql = "SELECT * FROM blacklist WHERE id = "+channel.id+";";
+	//check for args
+	var globala = false;
 
-	con.query(sql,function(err,rows,fields){
-		if(err) throw err;
-		var length = rows.length;
-		if(rows.length>0){
-			channel.send("**🚫 |** Command is disabled on this channel!")
-				.catch(err => console.error(err));
-			console.log("\x1b[36m%s\x1b[0m","    Command disabled");
-			return;
-		}else{
-			//check for args
-			var globala = false;
+	var points = false;
+	var guild = false;
+	var money = false;
+	var zoo = false;
+	var rep = false;
+	var pet = false;
 
-			var points = false;
-			var guild = false;
-			var money = false;
-			var zoo = false;
-			var rep = false;
-			var pet = false;
+	var invalid = false;
+	var count = 5;
 
-			var invalid = false;
-			var count = 5;
+	for(var i in args){
+		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet){
+			if(args[i]=== "points"||args[i]==="point"||args[i]==="p") points = true;
+			else if(args[i]==="guild"||args[i]==="server"||args[i]==="s"||args[i]==="g") guild = true;
+			else if(args[i]=== "zoo"||args[i]==="z") zoo = true;
+			else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="m"||args[i]==="c") money = true;
+			else if(args[i]==="cookies"||args[i]==="cookie"||args[i]==="rep"||args[i]==="r") rep = true;
+			else if(args[i]==="pets"||args[i]==="pet") pet = true;
+			else if(args[i]==="global"||args[i]==="g") globala = true;
+			else if(global.isInt(args[i])) count = parseInt(args[i]);
+			else invalid = true;
+		}else if(args[i]==="global"||args[i]==="g") globala = true;
+		else if(global.isInt(args[i])) count = parseInt(args[i]);
+		else invalid = true;
+	}
+	if (count>25) count = 25;
+	else if (count<1) count = 5;
 
-			for(var i in args){
-				if(!points&&!guild&&!money&&!zoo&&!rep&&!pet){
-					if(args[i]=== "points"||args[i]==="point"||args[i]==="p")
-						points = true;
-					else if(args[i]==="guild"||args[i]==="server"||args[i]==="s"||args[i]==="g")
-						guild = true;
-					else if(args[i]=== "zoo"||args[i]==="z")
-						zoo = true;
-					else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="m"||args[i]==="c")
-						money = true;
-					else if(args[i]==="cookies"||args[i]==="cookie"||args[i]==="rep"||args[i]==="r") 
-						rep = true;
-					else if(args[i]==="pets"||args[i]==="pet") 
-						pet = true;
-					else if(args[i]==="global"||args[i]==="g") 
-						globala = true;
-					else if(global.isInt(args[i])) 
-						count = parseInt(args[i]);
-					else
-						invalid = true;
-				}else if(args[i]==="global"||args[i]==="g") globala = true;
-				else if(global.isInt(args[i])) count = parseInt(args[i]);
-				else invalid = true;
-			}
-			if (count>25) count = 25;
-			else if (count<1) count = 5;
+	if(invalid)
+		msg.channel.send("**🚫 |** Invalid ranking type!")
+			.catch(err => console.error(err));
 
-			if(invalid)
-				msg.channel.send("**🚫 |** Invalid ranking type!")
-					.catch(err => console.error(err));
-			else if(globala){
-				if(points)
-					getGlobalRanking(con,msg,count);
-				else if(guild)
-					getGuildRanking(con,msg,count);
-				else if(zoo)
-					getGlobalZooRanking(con,msg,count);
-				else if(money)
-					getGlobalMoneyRanking(con,msg,count);
-				else if(rep)
-					getGlobalRepRanking(con,msg,count);
-				else if(pet)
-					getGlobalPetRanking(con,msg,count);
-				else
-					getGlobalRanking(con,msg,count);
-			}else{
-				if(points)
-					getRanking(con,msg,count);
-				else if(guild)
-					getGuildRanking(con,msg,count);
-				else if(zoo)
-					getZooRanking(con,msg,count);
-				else if(money)
-					getMoneyRanking(con,msg,count);
-				else if(rep)
-					getRepRanking(con,msg,count);
-				else if(pet)
-					getPetRanking(con,msg,count);
-				else
-					getRanking(con,msg,count);
-			}
-		}
-	});
+	else if(globala){
+		if(points) getGlobalRanking(con,msg,count);
+		else if(guild) getGuildRanking(con,msg,count);
+		else if(zoo) getGlobalZooRanking(con,msg,count);
+		else if(money) getGlobalMoneyRanking(con,msg,count);
+		else if(rep) getGlobalRepRanking(con,msg,count);
+		else if(pet) getGlobalPetRanking(con,msg,count);
+		else getGlobalRanking(con,msg,count);
+	}else{
+		if(points) getRanking(con,msg,count);
+		else if(guild) getGuildRanking(con,msg,count);
+		else if(zoo) getZooRanking(con,msg,count);
+		else if(money) getMoneyRanking(con,msg,count);
+		else if(rep) getRepRanking(con,msg,count);
+		else if(pet) getPetRanking(con,msg,count);
+		else getRanking(con,msg,count);
+	}
 }
 
 /**
