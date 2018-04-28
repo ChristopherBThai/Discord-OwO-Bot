@@ -204,7 +204,7 @@ function ban(msg,user,reason){
 			global.msgAdmin("An error has occured on the ban function of macro.js");
 		}else{
 			msg.channel.send("**☠ | "+msg.author.username+"**! You have been banned for **"+result[1][0].penalty+"H** for macros or botting!");
-			global.msgAdmin("**☠ | ["+user.validCount+"] "+msg.author.username+"** has been banned!\n**<:blank:427371936482328596> | "+msg.author.id+"\n**<:blank:427371936482328596> | Reason:** "+user.validReason+"\n**<:blank:427371936482328596> | Hours:** "+result[1][0].penalty.validPenalty);
+			global.msgAdmin("**☠ | ["+user.validCount+"] "+msg.author.username+"** has been banned!\n**<:blank:427371936482328596> | ID:** "+msg.author.id+"\n**<:blank:427371936482328596> | Reason:** "+user.validReason+"\n**<:blank:427371936482328596> | Hours:** "+result[1][0].penalty);
 		}
 		user.validTryCount = 0;
 		user.validMsgCount = 0;

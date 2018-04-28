@@ -116,9 +116,7 @@ client.on('message',msg => {
 
 	//Add point if they said owo
 	else if(msg.content.toLowerCase().includes('owo')||msg.content.toLowerCase().includes('uwu')) 
-		macro.check(msg,"point",function(){
-			ranking.addPoint(con,msg);
-		});
+		global.isDisabled("nocommand",execute,executeOther,msg,args,isMention)
 
 });
 
