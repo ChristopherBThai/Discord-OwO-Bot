@@ -3,7 +3,7 @@ var redis = require('redis');
 var redclient = redis.createClient();
 var users = {};
 var letters = "abcdefghijklmnopqrstuvwxyz";
-var mcommands = {"zoo":{cd:45000,half:20,six:200,ban:1},"coinflip":{cd:15000,half:80,six:500,ban:2},"slots":{cd:15000,half:80,six:500,ban:2},"hunt":{cd:15000,half:80,six:500,ban:5},"battle":{cd:15000,half:80,six:500,ban:5},"point":{cd:10000,half:90,six:750,ban:5}};
+var mcommands = {"zoo":{cd:45000,half:20,six:200,ban:5},"coinflip":{cd:15000,half:80,six:500,ban:5},"slots":{cd:15000,half:80,six:500,ban:5},"hunt":{cd:15000,half:80,six:500,ban:12},"battle":{cd:15000,half:80,six:500,ban:12},"point":{cd:10000,half:90,six:750,ban:12}};
 var con;
 var global = require('./global.js');
 
@@ -122,7 +122,7 @@ exports.verify = function(msg,text){
 		if(!user||!user.validText||user.validText=="ok")
 			return;
 		if(text==user.validText){
-			global.msgAdmin("**⚠ | ["+user.validCount+"] "+msg.author.username+"** avoided ban with correct verfication ("+user.validTryCount+"/3)\n**<:blank:427371936482328596> | Reason:** "+user.validReason+"\n**<:blank:427371936482328596> | Hours:** "+user.validPenalty);
+			global.msgAdmin("**⚠ | ["+user.validCount+"] "+msg.author.username+"** avoided ban with correct verfication ("+user.validTryCount+"/3)\n**<:blank:427371936482328596> | ID:** "+msg.author.id+"\n**<:blank:427371936482328596> | Reason:** "+user.validReason+"\n**<:blank:427371936482328596> | Hours:** "+user.validPenalty);
 			msg.channel.send("**👍 |** I have verified that you are human! Thank you! :3")
 				.catch(err => console.error(err));
 			user.validTryCount = 0;
@@ -196,7 +196,7 @@ function ban(msg,user,reason){
 	var hours = user.validPenalty;
 	if(!global.isInt(hours))
 		hours = 1;
-	var sql = "INSERT INTO timeout (id,time,count,penalty) VALUES ("+id+",NOW(),1,"+hours+") ON DUPLICATE KEY UPDATE time = NOW(),count=count+1,penalty = penalty + "+hours+";";
+	var sql = "INSERT INTO timeout (id,time,count,penalty) VALUES ("+id+",NOW(),1,"+hours+") ON DUPLICATE KEY UPDATE time = NOW(),count=count+1,penalty = penalty*2 + "+hours+";";
 	sql += "SELECT penalty,count FROM timeout WHERE id = "+id+";";
 	con.query(sql,function(err,result){
 		if(err) throw err;
@@ -204,7 +204,7 @@ function ban(msg,user,reason){
 			global.msgAdmin("An error has occured on the ban function of macro.js");
 		}else{
 			msg.channel.send("**☠ | "+msg.author.username+"**! You have been banned for **"+result[1][0].penalty+"H** for macros or botting!");
-			global.msgAdmin("**☠ | ["+user.validCount+"] "+msg.author.username+"** has been banned!\n**<:blank:427371936482328596> | Reason:** "+user.validReason+"\n**<:blank:427371936482328596> | Hours:** "+user.validPenalty);
+			global.msgAdmin("**☠ | ["+user.validCount+"] "+msg.author.username+"** has been banned!\n**<:blank:427371936482328596> | "+msg.author.id+"\n**<:blank:427371936482328596> | Reason:** "+user.validReason+"\n**<:blank:427371936482328596> | Hours:** "+result[1][0].penalty.validPenalty);
 		}
 		user.validTryCount = 0;
 		user.validMsgCount = 0;

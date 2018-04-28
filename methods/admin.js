@@ -43,7 +43,7 @@ exports.send = function(client,con,msg,args){
 	var sql = "UPDATE cowoncy SET money = money + "+amount+" WHERE id IN (SELECT sender FROM feedback WHERE id = "+id+");SELECT sender FROM feedback WHERE id = "+id+";";
 	con.query(sql,async function(err,rows,fields){
 		if(err) throw err;
-		if(user = await global.msgUser(String(rows[1][0].sender),"**💎 |** You have recieved __"+amount+"__ cowoncy!"))
+		if(user = await global.msgUser(String(rows[1][0].sender),"**💎 |** You have received __"+amount+"__ cowoncy!"))
 			msg.channel.send("You sent "+amount+" cowoncy to "+user.username)
 			.catch(err => console.err(err));
 		else
