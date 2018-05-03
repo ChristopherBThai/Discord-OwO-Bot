@@ -47,6 +47,7 @@ function pickWinner(){
 		var winnername = await global.getUsername(winner);
 		msgUsers(winnername,winner,winnerchance,winnerChannel,prize,loser,loserchance,-1);
 	});
+	setTime();
 }
 
 function msgUsers(winnername,winner,chance,winnerChannel,prize,loser,loserchance,i){
@@ -71,6 +72,10 @@ function msgUsers(winnername,winner,chance,winnerChannel,prize,loser,loserchance
  * Initializes lottery
  */
 exports.init = function(){
+	setTime();
+}
+
+function setTime(){
 	var now = new Date();
 	var mill = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0, 0) - now;
 	if (mill < 0) {
@@ -78,7 +83,6 @@ exports.init = function(){
 	}
 	con = global.con();
 	var timer = setTimeout(pickWinner,mill);
-	//var timer = setTimeout(pickWinner,5000);
 }
 
 /**

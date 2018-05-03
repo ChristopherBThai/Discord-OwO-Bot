@@ -145,10 +145,14 @@ exports.guild = function(msg){
  * @param {mysql.connection}	con
  * @param {discord.message}	msg
  */
-exports.showStats = function(client, con, msg){
+exports.showStats = async function(client, con, msg){
 	var sql = "SELECT COUNT(*) user,sum(count) AS total FROM user;";
 	sql += "SELECT SUM(common) AS common, SUM(uncommon) AS uncommon, SUM(rare) AS rare, SUM(epic) AS epic, SUM(mythical) AS mythical, SUM(legendary) AS legendary FROM animal_count;"
 	sql += "SELECT command FROM disabled WHERE channel = "+msg.channel.id+";";
+	
+	var guilds = await client.shard.fetchClientValues('guilds.size')
+	var channels = await client.shard.fetchClientValues('channels.size')
+	var users = await client.shard.fetchClientValues('users.size')
 	con.query(sql,function(err,rows,field){
 		if(err) throw err;
 		var totalAnimals = parseInt(rows[1][0].common)+parseInt(rows[1][0].uncommon)+parseInt(rows[1][0].rare)+parseInt(rows[1][0].epic)+parseInt(rows[1][0].mythical)+parseInt(rows[1][0].legendary);
@@ -172,7 +176,7 @@ exports.showStats = function(client, con, msg){
 				{"name": "Global information",
 					"value": "```md\n<TotalOwOs:  "+rows[0][0].total+">\n<OwOUsers:   "+rows[0][0].user+">``````md\n<animalsCaught: "+totalAnimals+">\n<common: "+rows[1][0].common+">\n<uncommon: "+rows[1][0].uncommon+">\n<rare: "+rows[1][0].rare+">\n<epic: "+rows[1][0].epic+">\n<mythical: "+rows[1][0].mythical+">\n<legendary: "+rows[1][0].legendary+">```"},
 				{"name": "Bot Information",
-					"value": "```md\n<Guilds:    "+client.guilds.size+">\n<Channels:  "+client.channels.size+">\n<Users:     "+client.users.size+">``````md\n<Ping:       "+client.ping+"ms>\n<UpdatedOn:  "+client.readyAt+">\n<Uptime:     "+client.uptime+">```"
+					"value": "```md\n<Guilds:    "+guilds+">\n<Channels:  "+channels+">\n<Users:     "+users+">``````md\n<Ping:       "+client.ping+"ms>\n<UpdatedOn:  "+client.readyAt+">\n<Uptime:     "+client.uptime+">```"
 				}]
 		};
 		msg.channel.send({embed})
