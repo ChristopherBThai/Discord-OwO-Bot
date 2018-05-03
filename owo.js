@@ -250,9 +250,21 @@ function execute(command,msg,args,isMention){
 	}
 
 	//Enables censor mode
-	else if(command === 'censor'){ kids.censor(con,msg,args); }
+	else if(command === 'censor'){ 
+		if(msg.member.permissions.has('MANAGE_CHANNELS'))
+			kids.censor(con,msg,args); 
+		else
+			msg.channel.send("Nu! You're not an admin!")
+				.then(message => message.delete(3000));
+	}
 	//Disables censor mode
-	else if(command === 'uncensor'){ kids.uncensor(con,msg,args); }
+	else if(command === 'uncensor'){
+		if(msg.member.permissions.has('MANAGE_CHANNELS'))
+			kids.uncensor(con,msg,args);
+		else
+			msg.channel.send("Nu! You're not an admin!")
+				.then(message => message.delete(3000));
+	}
 
 	//Sends feedback to admin
 	else if(command === 'feedback'|| command === 'suggestion' || command === 'report'){
@@ -286,7 +298,7 @@ function execute(command,msg,args,isMention){
 
 	//Disable a command
 	else if(command === "disable"){
-		if(msg.member.permissions.hasPermission('MANAGE_CHANNELS'))
+		if(msg.member.permissions.has('MANAGE_CHANNELS'))
 			disable.disable(con,msg,args[0]);
 		else
 			msg.channel.send("Nu! You're not an admin!")
@@ -295,7 +307,7 @@ function execute(command,msg,args,isMention){
 
 	//Disable a command
 	else if(command === "enable"){
-		if(msg.member.permissions.hasPermission('MANAGE_CHANNELS'))
+		if(msg.member.permissions.has('MANAGE_CHANNELS'))
 			disable.enable(con,msg,args[0]);
 		else
 			msg.channel.send("Nu! You're not an admin!")

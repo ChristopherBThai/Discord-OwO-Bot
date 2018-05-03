@@ -195,7 +195,10 @@ function display(con,id,eid,msg,user1,user2,log,count){
 			xp = xp*10 + 15;
 		winner = 1;
 		color = 65280;
-		end = "You won! "+user1.name+" earned "+xp+"(+"+user1.streak+") xp!";
+		var streak = user1.streak;
+		if(streak>1000)
+			streak = 1000;
+		end = "You won! "+user1.name+" earned "+xp+"(+"+streak+") xp!";
 		win = true;
 	}else if(count>=2){
 		if(user1.hp>user2.hp){
@@ -493,7 +496,10 @@ function givexp(con,won, id,user1,xp, eid,user2,exp){
 	var draw = 0;
 	if(won == 1){
 		win = 1;
-		xp += user1.streak;
+		var streak = user1.streak;
+		if(streak>1000)
+			streak = 1000;
+		xp += streak;
 		user1.streak++;
 	}else if(won == -1){
 		lose = 1;
