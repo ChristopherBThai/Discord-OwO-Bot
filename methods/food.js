@@ -27,7 +27,7 @@ exports.buy = function(con,msg,food){
 					});
 				}
 			}else{
-				msg.channel.send("** | "+msg.author.username+"**, You have successfully purchased:\n**<:blank:427371936482328596> | "+food.key+" "+food.name+"** for **<:cowoncy:416043450337853441> "+food.price+"**!");
+				msg.channel.send("**🛒 | "+msg.author.username+"**, You have successfully purchased:\n**<:blank:427371936482328596> | "+food.key+" "+food.name+"** for **<:cowoncy:416043450337853441> "+food.price+"**!");
 			}
 		});
 	});
