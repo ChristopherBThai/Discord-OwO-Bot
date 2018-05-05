@@ -153,6 +153,23 @@ exports.unicodeAnimal = function(animal){
 }
 
 /**
+ * Checks if user has enough cowoncy
+ */
+exports.checkCowoncy = function(msg,cowoncy,callback){
+	var sql = "SELECT id FROM cowoncy WHERE id = "+msg.author.id+" AND money >= "+cowoncy+";";
+	con.query(sql,function(err,rows,fields){
+		if(err){console.error(err);return;}
+		if(rows[0]==undefined){
+			msg.channel.send("**🚫 | "+msg.author.username+"**, You don't have enough cowoncy!")
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
+		}else{
+			callback();
+		}
+	});
+}
+
+/**
  * Checks if command is disabled
  */
 exports.isDisabled = async function(command,execute,executeOther,msg,args,isMention){

@@ -275,7 +275,7 @@
 		"args":"{page}",
 		"desc_short":"Displays the shop!",
 		"desc_long":"Buy some items to upgrade your pets!\nYou can describe each item with 'owo describe {id}'",
-		"related":["owo describe {id}","owo buy {id}"],
+		"related":["owo describe","owo buy"],
 		"example":[],
 		"alt":["market"]
 	},
@@ -303,6 +303,24 @@
 		"desc_short":"Remove censorship in the guild!",
 		"desc_long":"This will disable censorship mode! All offensive words will be shown!",
 		"related":["owo censor"],
+		"example":[],
+		"alt":[]
+	},
+	"buy":{
+		"name":"buy",
+		"args":"{id}",
+		"desc_short":"Buy an item from owo shop!",
+		"desc_long":"Buy an item from the owo shop!",
+		"related":["owo shop","owo describe"],
+		"example":[],
+		"alt":["purchase"]
+	},
+	"describe":{
+		"name":"describe",
+		"args":"{id}",
+		"desc_short":"Describe an item from owo shop!",
+		"desc_long":"Describe an item from the owo shop!",
+		"related":["owo shop","owo buy"],
 		"example":[],
 		"alt":[]
 	}
