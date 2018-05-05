@@ -1,4 +1,4 @@
-const debug = false;
+const debug = true;
 if(debug)
 	var auth = require('../tokens/scuttester-auth.json');
 else 
@@ -208,7 +208,13 @@ function execute(command,msg,args,isMention){
 	}
 
 	else if(command === 'shop'){
-		//shop.display(msg,args);
+		shop.display(msg,args);
+	}
+	else if(command === 'buy'){
+		shop.buy(con,msg,args);
+	}
+	else if(command === 'describe'){
+		shop.describe(msg,args);
 	}
 
 	//Give cowoncy
@@ -385,6 +391,7 @@ client.on('ready',()=>{
 		}, 3200000);
 	}
 	global.init(client);
+	shop.init();
 });
 
 //When bot disconnects
