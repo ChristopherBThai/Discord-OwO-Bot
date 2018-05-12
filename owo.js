@@ -35,6 +35,9 @@ const admin = require("./methods/admin.js");
 const shop = require("./methods/shop.js");
 const coinflip = require("./methods/coinflip.js");
 const kids= require("./methods/kids.js");
+const inventory = require("./methods/inventory.js");
+const food = require("./methods/food.js");
+const logger = require("./methods/logger.js");
 
 var emotes = require('./json/emotes.json');
 var prefix = "owo";
@@ -217,6 +220,14 @@ function execute(command,msg,args,isMention){
 		shop.describe(msg,args);
 	}
 
+	else if(command === 'inv'||command === 'inventory'){
+		inventory.display(con,msg);
+	}
+	
+	else if(command === 'equip'||command === 'use'){
+		inventory.equip(con,msg,args);
+	}
+
 	//Give cowoncy
 	else if(command === 'send' || command === 'give'){
 		cowoncy.give(con,msg,args);
@@ -392,6 +403,8 @@ client.on('ready',()=>{
 	}
 	global.init(client);
 	shop.init();
+	inventory.init();
+	food.init();
 });
 
 //When bot disconnects
