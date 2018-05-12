@@ -4,7 +4,7 @@
 		"name":"Eggplant",
 		"for":"att",
 		"price":100,
-		"desc":"",
+		"desc":"Some eggplant joke goes here\n+5 att",
 		"att":5,
 		"hp":0	
 	},
@@ -13,7 +13,7 @@
 		"name":"Apple",
 		"for":"hp",
 		"price":100,
-		"desc":"",
+		"desc":"Some apple joke goes here\n+5 hp",
 		"att":0,
 		"hp":5
 	},

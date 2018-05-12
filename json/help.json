@@ -323,5 +323,23 @@
 		"related":["owo shop","owo buy"],
 		"example":[],
 		"alt":[]
+	},
+	"inventory":{
+		"name":"inventory",
+		"args":"",
+		"desc_short":"Shows your inventory!",
+		"desc_long":"Displays the items you currently have!",
+		"related":["owo shop","owo buy"],
+		"example":[],
+		"alt":["inv"]
+	},
+	"equip":{
+		"name":"equip",
+		"args":"{id}",
+		"desc_short":"Equip an item!",
+		"desc_long":"Equip an item from your inventory to your current pet",
+		"related":["owo shop","owo buy","owo inventory"],
+		"example":[],
+		"alt":["use"]
 	}
 }

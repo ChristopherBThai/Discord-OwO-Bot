@@ -1,8 +1,8 @@
 var cowoncy = "<:cowoncy:416043450337853441>";
 const food = require('../json/food.json');
 const foodjs = require('./food.js');
-const global = require('./global.js');
 const fid = {};
+const global = require('./global.js');
 const numbers = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
 
 exports.display = function(msg,args){
@@ -29,8 +29,18 @@ exports.display = function(msg,args){
 }
 
 exports.describe = function(msg,args){
-	
+	var item = getItem(args);
+	if(typeof item === 'string' || item instanceof String){
+		msg.channel.send("**🚫 | "+msg.author.username+"**, "+item)
+			.then(message => message.delete(3000))
+			.catch(err => console.error(err));
+		return;
+	}
 
+	msg.channel.send("**🛒 | "+item.key+" "+item.name+"** "+toSmallNum(item.id,2)+"\n"+
+		"**<:blank:427371936482328596> | Price:** `"+item.price+"`\n"+
+		"__**<:blank:427371936482328596> | Used For:** `owo battle`                __\n"+
+		"**<:blank:427371936482328596> |** `"+item.desc.replace(/(?:\r\n|\r|\n)/g, "`\n**<:blank:427371936482328596> |** `")+"`");
 }
 
 exports.buy = function(con,msg,args){
