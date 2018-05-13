@@ -4,7 +4,7 @@ const name_id = {};
 
 exports.buy = function(con,msg,food){
 	global.checkCowoncy(msg,food.price,function(){
-		var sql = "INSERT IGNORE INTO user_food (uid,fid,fcount) values ((SELECT uid FROM user WHERE id = "+msg.author.id+"),(SELECT fid FROM food WHERE name = '"+food.name+"'),1) ON DUPLICATE KEY UPDATE fcount = fcount + 1;";
+		var sql = "INSERT IGNORE INTO user_food (uid,fid,fcount) values ((SELECT uid FROM user WHERE id = "+msg.author.id+"),(SELECT fid FROM food WHERE fname = '"+food.name+"'),1) ON DUPLICATE KEY UPDATE fcount = fcount + 1;";
 		sql += "UPDATE cowoncy SET money = money - "+food.price+" WHERE id = "+msg.author.id+";";
 
 		con.query(sql,function(err,rows,fields){
@@ -36,12 +36,12 @@ exports.buy = function(con,msg,food){
 }
 
 exports.getItems = function(con,id,callback){
-	var sql = "SELECT name,fcount FROM user NATURAL JOIN user_food NATURAL JOIN food WHERE id = "+id+" AND fcount > 0 ORDER BY fid ASC;";
+	var sql = "SELECT fname,fcount FROM user NATURAL JOIN user_food NATURAL JOIN food WHERE id = "+id+" AND fcount > 0 ORDER BY fid ASC;";
 	con.query(sql,function(err,rows,fields){
 		if(err){console.error(err);return;}
 		var items = {};
 		for(var i = 0;i<rows.length;i++){
-			var key = name_id[rows[i].name];
+			var key = name_id[rows[i].fname];
 			var item = food[key];
 			item["key"] = key;
 			items[key] = item;
@@ -55,7 +55,7 @@ exports.equip = function(con,msg,item){
 	
 	var sql = "SELECT COUNT(*) AS count FROM animal_food NATURAL JOIN animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name;";
 	sql += "SELECT * FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name;";
-	sql += "SELECT * FROM user_food NATURAL JOIN food NATURAL JOIN user WHERE name = '"+item.name+"' AND id = "+msg.author.id+" AND fcount > 0;";
+	sql += "SELECT * FROM user_food NATURAL JOIN food NATURAL JOIN user WHERE fname = '"+item.name+"' AND id = "+msg.author.id+" AND fcount > 0;";
 	con.query(sql,function(err,rows,fields){
 		if(err){console.error(err);return;}
 		if(rows[0][0]==undefined||rows[1][0]==undefined){
@@ -70,7 +70,7 @@ exports.equip = function(con,msg,item){
 			return;
 		}
 		var foodCount = parseInt(rows[0][0].count);
-		if(foodCount>3){
+		if(foodCount>=3){
 			msg.channel.send("**🚫 | "+msg.author.username+"**, Your pet can only have up to 3 items!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
