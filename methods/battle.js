@@ -64,13 +64,29 @@ exports.battle = function(con,msg,args){
 
 //Starts a battle against a random user
 function startBattle(con,msg,args){
-	var sql = "SELECT * FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND pet = name;";
+	var sql = "SELECT id,nickname,name,lvl,att,hp,lvl,streak,xp, "+
+			"GROUP_CONCAT((CASE WHEN pfid = 1 THEN fname ELSE NULL END)) AS one, "+
+			"GROUP_CONCAT((CASE WHEN pfid = 2 THEN fname ELSE NULL END)) AS two, "+
+			"GROUP_CONCAT((CASE WHEN pfid = 3 THEN fname ELSE NULL END)) AS three "+
+		"FROM (cowoncy NATURAL JOIN animal) LEFT JOIN (animal_food NATURAL JOIN food) "+
+		"ON animal.pid = animal_food.pid "+
+		"WHERE id = "+msg.author.id+" AND pet = name GROUP BY animal.pid;";
 	sql += "SET @rand = (CEIL(RAND()*(SELECT COUNT(*) FROM animal WHERE ispet = 1 AND id != "+msg.author.id+")));"+
-		"SELECT * FROM (SELECT animal.*,@rownum := @rownum + 1 AS rank FROM animal ,(SELECT @rownum := 0) r WHERE ispet = 1 AND id != "+msg.author.id+") d WHERE rank <= @rand ORDER BY rank DESC LIMIT 1;"
+		"SELECT id,nickname,name,lvl,att,hp,lvl,streak,xp, "+
+			"GROUP_CONCAT((CASE WHEN pfid = 1 THEN fname ELSE NULL END)) AS one, "+
+			"GROUP_CONCAT((CASE WHEN pfid = 2 THEN fname ELSE NULL END)) AS two, "+
+			"GROUP_CONCAT((CASE WHEN pfid = 3 THEN fname ELSE NULL END)) AS three "+
+		"FROM ("+
+			"SELECT * FROM (SELECT animal.*,@rownum := @rownum + 1 AS rank FROM animal ,(SELECT @rownum := 0) r WHERE ispet = 1 AND id != "+msg.author.id+") d WHERE rank <= @rand ORDER BY rank DESC LIMIT 1"+
+		") as opponent "+
+		"LEFT JOIN (animal_food NATURAL JOIN food) ON opponent.pid = animal_food.pid "+
+		"GROUP BY opponent.pid;";
 	sql += "SELECT young FROM guild WHERE id = "+msg.guild.id+";";
-	sql += "UPDATE cowoncy SET money = money - 5 WHERE id = "+msg.author.id+";"
+	sql += "UPDATE cowoncy SET money = money - 5 WHERE id = "+msg.author.id+";";
+	console.log(sql);
 	con.query(sql,async function(err,rows,fields){
 		if(err) throw err;
+		console.log(rows);
 		
 		//Checks if users has a pet
 		var upet = rows[0][0];
@@ -113,7 +129,8 @@ function startBattle(con,msg,args){
 			"hp":upet.hp,
 			"mxp":maxxp(upet.lvl),
 			"streak":upet.streak,
-			"xp":upet.xp};
+			"xp":upet.xp,
+			"fdisplay":"<:dot:445070369917894666> <:dot:445070369917894666> <:dot:445070369917894666>"};
 		var user2 = {
 			"username":opponent,
 			"name":opet.nickname,
@@ -123,7 +140,8 @@ function startBattle(con,msg,args){
 			"attack":opet.att,
 			"mhp":opet.hp,
 			"hp":opet.hp,
-			"xp":opet.xp};
+			"xp":opet.xp,
+			"fdisplay":":apple: :grapes: <:dot:445070369917894666>"};
 		for(i = 0;i<3;i++){
 			dmg1 = Math.ceil(Math.random()*user1.attack);
 			dmg2 = Math.ceil(Math.random()*user2.attack);
@@ -141,7 +159,7 @@ function startBattle(con,msg,args){
 					"inline": true
 				},{
 					"name": user2.username,
-					"value": "** "+user2.unicode+" "+user2.name+"**\n`Lvl "+user2.lvl+"`\n`████████████████████`\n**`HP`**`: "+user2.hp+"/"+user2.mhp+"`    **`ATT`**`: "+user2.attack+"`",
+					"value": "** "+user2.unicode+" "+user2.name+"**\n`Lvl "+user2.lvl+"` "+user2.fdisplay+"\n`████████████████████`\n**`HP`**`: "+user2.hp+"/"+user2.mhp+"`    **`ATT`**`: "+user2.attack+"`",
 					"inline": true
 				},{
 					"name": "Battle (0/3)! (Win Streak: "+user1.streak+")",
@@ -241,7 +259,7 @@ function display(con,id,eid,msg,user1,user2,log,count){
 	
 	//Sets up HP bar
 	var value1 = "** "+user1.unicode+" "+user1.name+"**\n`Lvl "+user1.lvl+"` *`("+user1.xp+"/"+user1.mxp+")`*\n`";
-	var value2 = "** "+user2.unicode+" "+user2.name+"**\n`Lvl "+user2.lvl+"`\n`";
+	var value2 = "** "+user2.unicode+" "+user2.name+"**\n`Lvl "+user2.lvl+"` "+user2.fdisplay+"\n`";
 	for(i=0;i<20;i++){
 		if(i<percent1)
 			value1 += "█";
