@@ -51,6 +51,15 @@ exports.getItems = function(con,id,callback){
 
 }
 
+exports.getFoodJson = function(name){
+	var id = name_id[name];
+	if(id==undefined)
+		return undefined;
+	var result = food[id];
+	result["key"] = id;
+	return result;
+}
+
 exports.equip = function(con,msg,item){
 	
 	var sql = "SELECT COUNT(*) AS count FROM animal_food NATURAL JOIN animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name;";

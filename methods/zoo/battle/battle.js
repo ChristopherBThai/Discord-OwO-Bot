@@ -5,6 +5,8 @@ const badwords = require('../../tokens/badwords.json');
 const userbattle = require('./battleuser.js');
 const global = require('./global.js');
 const help = require('./helper.js');
+const food = require('./food.js');
+const dot = "<:dot:446129270688055303>";
 var h = "█";
 var n = "▁";
 
@@ -117,6 +119,53 @@ function startBattle(con,msg,args){
 		//Assign variables to each user
 		if(rows[3][0]!=undefined && rows[3][0].young && opet.offensive)
 			opet.nickname= "Potty Mouth";
+
+		//get food
+		uOne = food.getFoodJson(upet.one);
+		uTwo = food.getFoodJson(upet.two);
+		uThree = food.getFoodJson(upet.three);
+		var ufdisplay = "";
+		var uBonusAtt= 0;
+		var uBonusHp = 0;
+		console.log(uOne);
+		if(uOne){ 
+			ufdisplay += uOne.key;
+			uBonusAtt += uOne.att;
+			uBonusHp += uOne.hp;
+		}else ufdisplay += dot;
+		if(uTwo){
+			ufdisplay += uTwo.key;
+			uBonusAtt += uTwo.att;
+			uBonusHp += uTwo.hp;
+		}else ufdisplay += dot;
+		if(uThree){
+			ufdisplay += uThree.key;
+			uBonusAtt += uThree.att;
+			uBonusHp += uThree.hp;
+		}else ufdisplay += dot;
+
+		oOne = food.getFoodJson(opet.one);
+		oTwo = food.getFoodJson(opet.two);
+		oThree = food.getFoodJson(opet.three);
+		var ofdisplay = "";
+		var oBonusAtt= 0;
+		var oBonusHp= 0;
+		if(oOne){ 
+			ufdisplay += oOne.key;
+			oBonusAtt += oOne.att;
+			oBonusHp += oOne.hp;
+		}else ofdisplay += dot;
+		if(oTwo){
+			ofdisplay += oTwo.key;
+			oBonusAtt += oTwo.att;
+			oBonusHp += oTwo.hp;
+		}else ofdisplay += dot;
+		if(oThree){
+			ofdisplay += oThree.key;
+			oBonusAtt += oThree.att;
+			oBonusHp += oThree.hp;
+		}else ofdisplay += dot;
+
 		var log = [];
 		var user1 = {
 			"username":msg.author.username,
@@ -126,11 +175,16 @@ function startBattle(con,msg,args){
 			"lvl":upet.lvl,
 			"attack":upet.att,
 			"mhp":upet.hp,
-			"hp":upet.hp,
+			"hp":upet.hp+uBonusHp,
 			"mxp":maxxp(upet.lvl),
 			"streak":upet.streak,
 			"xp":upet.xp,
-			"fdisplay":"<:dot:445070369917894666> <:dot:445070369917894666> <:dot:445070369917894666>"};
+			"fdisplay":ufdisplay,
+			"bonusatt":uBonusAtt,
+			"bonushp":uBonusHp,
+			"one":uOne,
+			"two":uTwo,
+			"three":uThree};
 		var user2 = {
 			"username":opponent,
 			"name":opet.nickname,
@@ -139,12 +193,17 @@ function startBattle(con,msg,args){
 			"lvl":opet.lvl,
 			"attack":opet.att,
 			"mhp":opet.hp,
-			"hp":opet.hp,
+			"hp":opet.hp+oBonusHp,
 			"xp":opet.xp,
-			"fdisplay":":apple: :grapes: <:dot:445070369917894666>"};
+			"fdisplay":ofdisplay,
+			"bonusatt":oBonusAtt,
+			"bonushp":oBonusHp,
+			"one":oOne,
+			"two":oTwo,
+			"three":oThree};
 		for(i = 0;i<3;i++){
-			dmg1 = Math.ceil(Math.random()*user1.attack);
-			dmg2 = Math.ceil(Math.random()*user2.attack);
+			dmg1 = Math.ceil(Math.random()*(user1.attack+user1.bonusatt));
+			dmg2 = Math.ceil(Math.random()*(user2.attack+user2.bonusatt));
 			log.push({"dmg1":dmg1,"dmg2":dmg2});
 		}
 		if(user1.name==null)
@@ -155,11 +214,11 @@ function startBattle(con,msg,args){
 			"color":4886754,
 			"fields": [{
 					"name": user1.username,
-					"value": "** "+user1.unicode+" "+user1.name+"**\n`Lvl "+user1.lvl+"` *`("+user1.xp+"/"+user1.mxp+")`*\n`████████████████████`\n**`HP`**`: "+user1.hp+"/"+user1.mhp+"`    **`ATT`**`: "+user1.attack+"`",
+					"value": "** "+user1.unicode+" "+user1.name+"**\n`Lvl "+user1.lvl+"` "+user1.fdisplay+"\n`████████████████████`\n**`HP`**`: "+user1.hp+"/"+(user1.mhp+user1.bonushp)+"`    **`ATT`**`: "+(user1.attack+user1.bonusatt)+"`",
 					"inline": true
 				},{
 					"name": user2.username,
-					"value": "** "+user2.unicode+" "+user2.name+"**\n`Lvl "+user2.lvl+"` "+user2.fdisplay+"\n`████████████████████`\n**`HP`**`: "+user2.hp+"/"+user2.mhp+"`    **`ATT`**`: "+user2.attack+"`",
+					"value": "** "+user2.unicode+" "+user2.name+"**\n`Lvl "+user2.lvl+"` "+user2.fdisplay+"\n`████████████████████`\n**`HP`**`: "+user2.hp+"/"+(user2.mhp+user2.bonushp)+"`    **`ATT`**`: "+(user2.attack+user2.bonusatt)+"`",
 					"inline": true
 				},{
 					"name": "Battle (0/3)! (Win Streak: "+user1.streak+")",
@@ -258,7 +317,7 @@ function display(con,id,eid,msg,user1,user2,log,count){
 	var percent2 = Math.ceil((user2.hp/user2.mhp)*20);
 	
 	//Sets up HP bar
-	var value1 = "** "+user1.unicode+" "+user1.name+"**\n`Lvl "+user1.lvl+"` *`("+user1.xp+"/"+user1.mxp+")`*\n`";
+	var value1 = "** "+user1.unicode+" "+user1.name+"**\n`Lvl "+user1.lvl+"` "+user1.fdisplay+"\n`";
 	var value2 = "** "+user2.unicode+" "+user2.name+"**\n`Lvl "+user2.lvl+"` "+user2.fdisplay+"\n`";
 	for(i=0;i<20;i++){
 		if(i<percent1)
@@ -270,8 +329,8 @@ function display(con,id,eid,msg,user1,user2,log,count){
 		else
 			value2 += "▁";
 	}
-	value1 += "`\n**`HP`**`: "+user1.hp+"/"+user1.mhp+"`    **`ATT`**`: "+user1.attack+"`";
-	value2 += "`\n**`HP`**`: "+user2.hp+"/"+user2.mhp+"`    **`ATT`**`: "+user2.attack+"`";
+	value1 += "`\n**`HP`**`: "+user1.hp+"/"+(user1.mhp+user1.bonushp)+"`    **`ATT`**`: "+(user1.attack+user1.bonusatt)+"`";
+	value2 += "`\n**`HP`**`: "+user2.hp+"/"+(user2.mhp+user2.bonushp)+"`    **`ATT`**`: "+(user2.attack+user2.bonusatt)+"`";
 
 	//Battle 
 	var title,actions;
