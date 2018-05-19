@@ -1,6 +1,9 @@
-const global = require('./global.js');
-const food = require('../json/food.json');
+const global = require('../../../util/global.js');
+const food = require('../../../json/food.json');
 const name_id = {};
+for(var key in food){
+	name_id[food[key].name] = key;
+}
 
 exports.buy = function(con,msg,food){
 	global.checkCowoncy(msg,food.price,function(){
@@ -100,10 +103,4 @@ exports.equip = function(con,msg,item){
 		});
 
 	});
-}
-
-exports.init = function(){
-	for(var key in food){
-		name_id[food[key].name] = key;
-	}
 }

@@ -1,13 +1,30 @@
-//Lottery!
+const CommandInterface = require('../../commandinterface.js');
 
-const global = require('./global.js');
+module.exports = new CommandInterface({
+	
+	alias:["lottery","bet"],
 
-var con;
+	args:"{amount}",
 
-/**
- * Bet in the lottery
- */
-exports.bet = function(con,msg,args){
+	desc:"Bet your money in the lottery! The more money you bet, the higher the chance to win!\nThe lottery ends at 12am PST everyday!",
+
+	example:["owo lottery 1000"],
+
+	related:["owo money"],
+
+	cooldown:5000,
+	half:80,
+	six:500,
+
+	execute: function(p){
+		if(p.args.length>0)
+			bet(p.con,p.msg,p.args,p.global);
+		else
+			display(p.con,p.msg);
+	}
+});
+
+function bet(con,msg,args,global){
 	var amount = 0;
 	var all = false;
 	if(args.length==1&&global.isInt(args[0]))
@@ -102,10 +119,7 @@ exports.bet = function(con,msg,args){
 	});
 }
 
-/**
- * Displays the lottery
- */
-exports.display = function(con,msg){
+function display(con,msg){
 	var sql = "SELECT SUM(amount) AS sum,COUNT(id) AS count FROM lottery WHERE valid = 1;"+
 		"SELECT * FROM lottery WHERE id = "+msg.author.id+" AND valid = 1;";
 	con.query(sql,function(err,result){
@@ -175,10 +189,6 @@ exports.display = function(con,msg){
 	});
 }
 
-
-exports.con= function(tcon){
-	con = tcon;
-}
 
 
 /**

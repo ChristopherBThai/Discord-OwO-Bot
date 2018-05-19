@@ -1,10 +1,28 @@
-//+=========================================+
-//||					   ||
-//||		ME METHODS		   ||
-//||					   ||
-//+==========================================+
+const CommandInterface = require('../../commandinterface.js');
 
-const global = require('./global.js');
+const global = require('../../../util/global.js');
+
+module.exports = new CommandInterface({
+	
+	alias:["my","me"],
+
+	args:"points|guild|zoo|money|cookie|pet [global]",
+
+	desc:"Displays your ranking of each catagory!\nYou can choose you rank within the server or globally!\nYou can also shorten the command like in the example!",
+
+	example:["owo my zoo","owo my cowoncy global","owo my p g"],
+
+	related:["owo top"],
+
+	cooldown:5000,
+	half:100,
+	six:500,
+
+	execute: function(p){
+		display(p.con,p.msg,p.args);
+	}
+
+})
 
 /**
  * Check for valid arguments to display leaderboards
@@ -12,7 +30,7 @@ const global = require('./global.js');
  * @param {discord.Message}	msg 	- Discord's message
  * @param {string[]}		args 	- Command arguments
  */
-exports.display = function(con, msg, args){
+function display(con, msg, args){
 	var channel = msg.channel;
 	var id = msg.author.id;
 

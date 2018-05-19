@@ -9,9 +9,15 @@ const client = new Discord.Client();
 
 const CommandClass = require('./methods/command.js');
 const command = new CommandClass(client);
+const macro = require('./util/macro.js');
 
 client.on('message',msg => {
-	command.execute(msg);
+	//Ignore if bot
+	if(msg.author.bot) return;
+
+	else if(msg.channel.type==="dm") macro.verify(msg,msg.content.trim());
+
+	else command.execute(msg);
 });
 
 //Discord login

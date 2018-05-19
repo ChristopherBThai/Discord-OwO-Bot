@@ -1,7 +1,33 @@
-const translate = require('translate-google');
+const CommandInterface = require('../../commandinterface.js');
 
-//Translates a text to a diff language
-exports.translate = function(msg,args){
+const gtranslate = require('translate-google');
+
+module.exports = new CommandInterface({
+	
+	alias:["translate","listlang"],
+
+	args:"{msg} -{language}",
+
+	desc:"Translates a message to a specific language. The default language will be english.\nUse 'owo listlang to list all the languages",
+
+	example:["owo translate Hello -ja","owo translate no hablo espanol -en"],
+
+	related:["owo listlang"],
+
+	cooldown:5000,
+	half:100,
+	six:500,
+
+	execute: function(p){
+		if(p.command=="listlang")
+			listlang(p.msg);
+		else
+			translate(p.msg,p.args);
+	}
+
+})
+
+function translate(msg,args){
 	if(args.length==0)
 		return;
 	//Get language
@@ -23,7 +49,7 @@ exports.translate = function(msg,args){
 	var ptext = text;
 	text = text.split(/(?=[?!.])/gi);
 	text.push("");
-	translate(text, {to: lang}).then(res => {
+	gtranslate(text, {to: lang}).then(res => {
 		const embed = {
 			"description":""+res.join(" "),
 			"color":4886754,
@@ -38,15 +64,14 @@ exports.translate = function(msg,args){
 	})
 }
 
-//Lists all languages
-exports.list = function(msg){
+function listlang(msg){
 	var text = "Available languages: \n";
 	var done = false;
-	for(key in translate.languages){
+	for(key in gtranslate.languages){
 		if(key == "zu")
 			done = true;
 		if(!done)
-			text += "`"+key+"`-"+translate.languages[key]+"  ";
+			text += "`"+key+"`-"+gtranslate.languages[key]+"  ";
 	}
 	msg.channel.send(text)
 		.catch(err => console.error(err));
