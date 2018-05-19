@@ -1,4 +1,4 @@
-const CommandInterface = require('../commandinterface.js');
+const CommandInterface = require('../../commandinterface.js');
 
 module.exports = new CommandInterface({
 	
@@ -10,7 +10,13 @@ module.exports = new CommandInterface({
 
 	example:["owo help cowoncy","owo help"],
 
-	execute: function(params){
+	related:[],
+
+	cooldown:5000,
+	half:100,
+	six:500,
+
+	execute: function(p){
 		params.msg.channel.send("Hello "+params.msg.author.username);
 	}
 

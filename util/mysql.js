@@ -1,5 +1,5 @@
 const mysql = require('mysql');
-const login = require('../tokens/owo-login.json');
+const login = require('../../tokens/owo-login.json');
 
 var con = mysql.createConnection({
 	host: "localhost",
@@ -14,6 +14,8 @@ var con = mysql.createConnection({
 
 con.connect(function(err){
 	if(err) throw err;
+	console.log("MySQL has connected");
 });
 
 exports.con = con;
+exports.mysql = mysql;

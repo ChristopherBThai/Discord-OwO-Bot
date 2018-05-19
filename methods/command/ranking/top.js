@@ -1,10 +1,28 @@
-//+=========================================+
-//||					   ||
-//||		RANKING METHODS		   ||
-//||					   ||
-//+=========================================+
+const CommandInterface = require('../../commandinterface.js');
 
-const global = require('./global.js');
+const global = require('../../../util/global.js');
+
+module.exports = new CommandInterface({
+	
+	alias:["top","rank","ranking"],
+
+	args:"points|guild|zoo|money|cookie|pet [global] {count}",
+
+	desc:"Displays the top ranking of each catagory!",
+
+	example:["owo top zoo","owo top cowoncy global","owo top p g"],
+
+	related:["owo my"],
+
+	cooldown:5000,
+	half:100,
+	six:500,
+
+	execute: function(p){
+		display(p.con,p.msg,p.args);
+	}
+
+})
 
 /**
  * Adds an owo point if 10s has passed for each user
@@ -38,7 +56,7 @@ exports.addPoint = function(con,msg){
  * @param {discord.Message}	msg 	- Discord's message
  * @param {string[]}		args 	- Command arguments
  */
-exports.display = function(con, msg, args){
+function display(con, msg, args){
 	var channel = msg.channel;
 	//check for args
 	var globala = false;
