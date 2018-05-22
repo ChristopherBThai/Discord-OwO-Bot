@@ -29,7 +29,7 @@ exports.check = async function(con,msg,command,callback,ignore){
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		if(rows[1][0]!=undefined){
-		}else if(rows[0][0]==undefined){
+		}else if(rows[0][0]==undefined||command=="points"){
 			callback();
 		}else
 			msg.channel.send("**🚫 |** That command is disabled on this channel!")

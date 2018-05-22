@@ -34,9 +34,11 @@ exports.check = function(msg,command,callback){
 					var mspercent = Math.trunc(((diff%1000)/1000)*100);
 					diff = Math.trunc(diff/1000);
 					var sec = diff%60;
-					msg.channel.send("⏱ **|** Sorry **"+msg.author.username+"**, Please wait **"+sec+"."+mspercent+"s** to try again!")
-						.then(message => message.delete(3000))
-						.catch(err => console.error(err));
+					if(command!="points"){
+						msg.channel.send("⏱ **|** Sorry **"+msg.author.username+"**, Please wait **"+sec+"."+mspercent+"s** to try again!")
+							.then(message => message.delete(3000))
+							.catch(err => console.error(err));
+					}
 				}
 				return;
 			}
