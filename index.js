@@ -1,8 +1,6 @@
 const debug = false;
-if(debug)
-	var auth = require('../tokens/scuttester-auth.json');
-else 
-	var auth = require('../tokens/owo-auth.json');
+if(debug) var auth = require('../tokens/scuttester-auth.json');
+else var auth = require('../tokens/owo-auth.json');
 
 const Discord = require('discord.js');
 const Manager = new Discord.ShardingManager('./owo.js',{
@@ -30,7 +28,7 @@ Manager.on('imessage', (shard, message) => {
 });
 
 function updateActivity(){
-	console.log("Done loading");
+	console.log("Done loading all the shards");
 	lottery.init();
 	if(!debug)
 		vote.setManager(Manager);

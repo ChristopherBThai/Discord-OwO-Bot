@@ -13,6 +13,7 @@ app.post('/scuttester',api.handler);
 api.on('upvote', (user,bot) => upvote(user));
 
 const global = require('./global.js');
+const logger = require('../util/logger.js');
 
 var con;
 var manager;
@@ -46,6 +47,7 @@ function upvote(id){
 			console.log("\x1b[33m",id+" tried to vote again"); 
 		}
 	});
+	logger.increment("votecount");
 }
 
 exports.setManager = function(manageri){
