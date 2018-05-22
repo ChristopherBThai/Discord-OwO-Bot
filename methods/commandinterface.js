@@ -11,6 +11,8 @@ module.exports = class CommandInterface{
 		this.half = args.half;
 		this.six = args.six;
 		this.distinctAlias = args.distinctAlias;
+		this.admin = args.admin;
+		this.dm = args.dm;
 	}
 
 	execute(params){
