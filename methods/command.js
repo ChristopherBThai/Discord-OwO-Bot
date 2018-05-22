@@ -61,7 +61,10 @@ class Command {
 			"mysql":mysql,
 			"con":con,
 			"send":sender.send(msg),
-			"global":global
+			"global":global,
+			"aliasToCommand":aliasToCommand,
+			"commands":commands,
+			"mcommands":mcommands
 		};
 
 		//Execute the command
@@ -69,7 +72,7 @@ class Command {
 			var name = aliasToCommand[command];
 			ban.check(con,msg,name,function(){
 				macro.check(msg,aliasToCommand[command],async function(){
-					await commands[command](param);
+					await commands[command].execute(param);
 					//log here
 					console.log(aliasToCommand[param.command]);
 					//user requests help of a command
@@ -84,12 +87,11 @@ class Command {
 }
 
 function addCommand(command){
-	var execute = command.execute;
 	var alias = command.alias;
 	var name = alias[0];
 	if(alias){
 		for(var i=0;i<alias.length;i++){
-			commands[alias[i]] = execute;
+			commands[alias[i]] = command;
 			if(command.distinctAlias){
 				aliasToCommand[alias[i]] = alias[i];
 				mcommands[alias[i]] = {cd:command.cooldown,ban:12,half:command.half,six:command.six};
