@@ -15,9 +15,14 @@ const ban = require('../util/ban.js');
 
 const prefix = 'owo';
 
+//Commands (including alias)
 var commands = {};
+//Change alias to main command name
 var aliasToCommand = {};
+//Only main command names
 var mcommands = {};
+//Admin commands
+var adminCommands = {};
 
 class Command {
 
@@ -84,11 +89,48 @@ class Command {
 		}
 	}
 
+	executeAdmin(msg){
+		var args;
+		if(msg.content.toLowerCase().indexOf(prefix) === 0)
+			args = msg.content.slice(prefix.length).trim().split(/ +/g);
+		else return;
+		var command = args.shift().toLowerCase();
+		var param = {
+			"msg":msg,
+			"args":args,
+			"command":command,
+			"client":this.client,
+			"mysql":mysql,
+			"con":con,
+			"send":sender.send(msg),
+			"global":global,
+			"aliasToCommand":aliasToCommand,
+			"commands":commands,
+			"mcommands":mcommands
+		};
+
+		if(msg.channel.type==="dm"){
+			if(adminCommands[command]&&adminCommands[command].dm)
+				adminCommands[command].execute(param);
+		}else{
+			if(adminCommands[command]&&!adminCommands[command].dm)
+				adminCommands[command].execute(param);
+			else
+				this.execute(msg);
+		}
+	}
+
 }
 
 function addCommand(command){
 	var alias = command.alias;
 	var name = alias[0];
+	if(command.admin){
+		for(var i=0;i<alias.length;i++){
+			adminCommands[alias[i]] = command;
+		}
+		return;
+	}
 	if(alias){
 		for(var i=0;i<alias.length;i++){
 			commands[alias[i]] = command;

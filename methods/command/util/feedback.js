@@ -55,7 +55,7 @@ module.exports = new CommandInterface({
 						"value": p.command,
 						"inline": true
 					},{
-						"name": "From "+sender.username+" ("+sender.id+")",
+						"name": "From "+p.msg.author.username+" ("+p.msg.author.id+")",
 						"value": "```"+message+"```\n\n==============================================="
 					}
 				]
