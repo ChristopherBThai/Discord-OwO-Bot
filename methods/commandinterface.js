@@ -5,6 +5,7 @@ module.exports = class CommandInterface{
 		this.desc = args.desc;
 		this.args = args.args;
 		this.example = args.example;
+		this.related = args.related;
 		this.execute = args.execute;
 		this.cooldown = args.cooldown;
 		this.half = args.half;

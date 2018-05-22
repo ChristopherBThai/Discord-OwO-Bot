@@ -32,7 +32,7 @@ exports.givexp = function(con,user){
 	}
 	if(user.result){
 		sql += ","+user.result+" = "+user.result+" + 1 ";
-		if(user.result=="win")
+		if(user.result=="won")
 			sql += ", streak = streak + 1 ";
 		else if(user.result=="lost")
 			sql += ", streak = 0 ";

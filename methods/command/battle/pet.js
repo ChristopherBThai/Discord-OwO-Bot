@@ -193,11 +193,11 @@ function pet(con,msg,send){
 			};
 
 			for(var i=0;i<pets.length;i++){
-				pet = pets[i];
-				var nickname = pet.nickname;
-				var one = food.getFoodJson(pet.one);
-				var two = food.getFoodJson(pet.two);
-				var three = food.getFoodJson(pet.three);
+				tpet = pets[i];
+				var nickname = tpet.nickname;
+				var one = food.getFoodJson(tpet.one);
+				var two = food.getFoodJson(tpet.two);
+				var three = food.getFoodJson(tpet.three);
 				var fdisplay = "";
 				var bonusAtt= 0;
 				var bonusHp = 0;
@@ -216,14 +216,14 @@ function pet(con,msg,send){
 					bonusAtt += three.att;
 					bonusHp += three.hp;
 				}else fdisplay += dot;
-				pet.hp += bonusHp;
-				pet.att += bonusAtt;
+				tpet.hp += bonusHp;
+				tpet.att += bonusAtt;
 
 				if(nickname == undefined)
 					nickname = "";
 				embed.fields.push({
-					"name": ((i==0)?":star:":"")+global.unicodeAnimal(pet.name) + " " + nickname,
-					"value": ((one||two||three)?fdisplay+"\n":"")+"`lvl: "+pet.lvl+" ("+pet.xp+"/"+petutil.maxxp(pet.lvl)+")`\n`hp:  "+pet.hp+"`\n`att: "+pet.att+"`",
+					"name": ((i==0)?":star:":"")+global.unicodeAnimal(tpet.name) + " " + nickname,
+					"value": ((one||two||three)?fdisplay+"\n":"")+"`lvl: "+tpet.lvl+" ("+tpet.xp+"/"+petutil.maxxp(tpet.lvl)+")`\n`hp:  "+tpet.hp+"`\n`att: "+tpet.att+"`",
 					"inline": true
 				});
 			}

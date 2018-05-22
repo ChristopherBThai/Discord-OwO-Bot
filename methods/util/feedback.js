@@ -16,61 +16,7 @@ const global = require('./global.js');
  *
  */
 exports.send = function(mysql, con, msg, admin, type, message){
-	var sender = msg.author;
-	var channel = msg.channel;
-	if(!message||message === ''){
-		channel.send("**🚫 |** Silly **"+sender+"**, you need to add a message!")
-			.catch(err => console.error(err));
-		return;
 	}
-	var sql = "INSERT INTO feedback (type,message,sender) values ('"+
-		type+"',?,"+
-		sender.id+");";
-	if(message.length > 250){
-		console.log("\tMessage too big");
-		channel.send("**🚫 |** Sorry, "+sender+"! Messages must be under 250 character!!!")
-			.catch(err => console.error(err));
-		return;
-	}
-	sql = mysql.format(sql,message);
-	try{
-	con.query(sql,function(err,rows,field){
-		if(err) throw err;
-		const embed = {
-			"color": 10590193,
-			"timestamp": new Date(),
-			"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
-			"author": {
-				"name": "OwO Bot Support",
-				"icon_url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"
-			},
-			"fields": [
-				{
-					"name":"A user sent a feedback!",
-					"value": "==============================================="
-				},{
-					"name": "Message ID",
-					"value": rows.insertId,
-					"inline": true
-				},{
-					"name": "Message Type",
-					"value": type,
-					"inline": true
-				},{
-					"name": "From "+sender.username+" ("+sender.id+")",
-					"value": "```"+message+"```\n\n==============================================="
-				}
-			]
-		};
-		channel.send("**📨 |** *OwO What's this?!*  "+sender+", Thanks for the "+type+"!")
-			.catch(err => console.error(err));
-		global.msgAdmin({embed});
-		console.log("\tNew "+type+" sent to admin's DM");
-	});
-	}catch(err){
-		console.error(err);
-	}
-}
 
 /**
  * Replies to a feedback 
