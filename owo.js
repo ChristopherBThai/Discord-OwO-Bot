@@ -1,4 +1,4 @@
-const debug = true;
+const debug = false;
 if(debug) var auth = require('../tokens/scuttester-auth.json');
 else var auth = require('../tokens/owo-auth.json');
 
@@ -10,6 +10,7 @@ const client = new Discord.Client();
 const CommandClass = require('./methods/command.js');
 const command = new CommandClass(client);
 const macro = require('./util/macro.js');
+const logger = require('./util/logger.js');
 
 client.on('message',msg => {
 	//Ignore if bot
@@ -31,34 +32,39 @@ client.login(auth.token);
 client.on('ready',()=>{
 	console.log('Logged in as '+client.user.tag+'!');
 	console.log('Bot has started, with '+client.users.size+' users, in '+client.channels.size+' channels of '+client.guilds.size+' guilds.');
+	logger.increment("ready");
 });
 
 //When bot disconnects
 client.on('disconnect', function(erMsg, code) {
-	    console.log('----- Bot disconnected from Discord with code', code, 'for reason:', erMsg, '-----');
-	    client.connect();
+	console.log('----- Bot disconnected from Discord with code', code, 'for reason:', erMsg, '-----');
+	client.connect();
+	logger.increment("disconnect");
 });
 
 //When bot reconnecting
 client.on('reconnecting', () => {
-	    console.log('--------------- Bot is reconnecting ---------------');
+	console.log('--------------- Bot is reconnecting ---------------');
 });
 
 //When bot resumes 
 client.on('reconnecting', function(replayed) {
-	    console.log('--------------- Bot has resumed ---------------');
+	console.log('--------------- Bot has resumed ---------------');
+	logger.increment("reconnecting");
 });
 
 //When bot joins a new guild
 client.on("guildCreate", guild => {
 	console.log('New guild joined: '+guild.name+' (id: '+guild.id+'). This guild has '+guild.memberCount+' members!');
 	updateActivity();
+	logger.increment("guildcount");
 });
 
 //When bot is kicked from a guild
 client.on("guildDelete", guild => {
 	console.log('I have been removed from: '+guild.name+' (id: '+guild.id+')');
 	updateActivity();
+	logger.decrement("guildcount");
 });
 
 function updateActivity(){

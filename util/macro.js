@@ -146,16 +146,16 @@ exports.verify = function(msg,text){
 }
 
 function checkInterval(user,now,diff){
+	//Check for patterns
+	if(Math.abs(user.prev-diff)<=1500) user.count++;
+	else user.count = 0;
+	user.prev = diff;
+
 	//Checks for macro count
 	if(user.count>=10){ 
 		user.count = 0;
 		return true;
 	}
-
-	//Check for patterns
-	if(Math.abs(user.prev-diff)<=1500) user.count++;
-	else{user.count = 0;}
-	user.prev = diff;
 }
 
 function checkHalf(user,now){
