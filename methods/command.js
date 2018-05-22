@@ -50,7 +50,11 @@ class Command {
 		if(msg.content.toLowerCase().indexOf(prefix) === 0)
 			args = msg.content.slice(prefix.length).trim().split(/ +/g);
 		else{
-			//Not a command
+			if(msg.content.toLowerCase().includes('owo')||msg.content.toLowerCase().includes('uwu')){
+				param.command = "points";
+				param.args = [];
+				executeCommand(param);
+			}
 			return;
 		}
 
@@ -58,34 +62,15 @@ class Command {
 		var command = args.shift().toLowerCase();
 
 		//Init params to pass into command
-		var param = {
-			"msg":msg,
-			"args":args,
-			"command":command,
-			"client":this.client,
-			"mysql":mysql,
-			"con":con,
-			"send":sender.send(msg),
-			"global":global,
-			"aliasToCommand":aliasToCommand,
-			"commands":commands,
-			"mcommands":mcommands
-		};
+		var param = initParam(msg,command,args);
 
 		//Execute the command
 		if(commands[command]){
-			var name = aliasToCommand[command];
-			ban.check(con,msg,name,function(){
-				macro.check(msg,aliasToCommand[command],async function(){
-					await commands[command].execute(param);
-					//log here
-					console.log(aliasToCommand[param.command]);
-					//user requests help of a command
-					//if(param.help)
-				});
-			},false);
+			executeCommand(param);
 		}else{
-			//Not a command
+			param.command = "points";
+			param.args = [];
+			executeCommand(param);
 		}
 	}
 
@@ -95,19 +80,8 @@ class Command {
 			args = msg.content.slice(prefix.length).trim().split(/ +/g);
 		else return;
 		var command = args.shift().toLowerCase();
-		var param = {
-			"msg":msg,
-			"args":args,
-			"command":command,
-			"client":this.client,
-			"mysql":mysql,
-			"con":con,
-			"send":sender.send(msg),
-			"global":global,
-			"aliasToCommand":aliasToCommand,
-			"commands":commands,
-			"mcommands":mcommands
-		};
+		
+		var param = initParam(msg,command,args);
 
 		if(msg.channel.type==="dm"){
 			if(adminCommands[command]&&adminCommands[command].dm)
@@ -145,4 +119,35 @@ function addCommand(command){
 		mcommands[name] = {cd:command.cooldown,ban:12,half:command.half,six:command.six};
 }
 
+function executeCommand(param){
+	var command = param.command;
+	var msg = param.msg;
+	var name = aliasToCommand[command];
+	ban.check(con,msg,name,function(){
+		macro.check(msg,aliasToCommand[command],async function(){
+			await commands[command].execute(param);
+			//log here
+			console.log(aliasToCommand[param.command]);
+			//user requests help of a command
+			//if(param.help)
+		});
+	},false);
+}
+
+function initParam(msg,command,args){
+	var param = {
+		"msg":msg,
+		"args":args,
+		"command":command,
+		"client":this.client,
+		"mysql":mysql,
+		"con":con,
+		"send":sender.send(msg),
+		"global":global,
+		"aliasToCommand":aliasToCommand,
+		"commands":commands,
+		"mcommands":mcommands
+	};
+	return param;
+}
 module.exports = Command;

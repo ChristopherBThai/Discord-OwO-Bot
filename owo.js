@@ -15,6 +15,8 @@ client.on('message',msg => {
 	//Ignore if bot
 	if(msg.author.bot) return;
 
+	else if(msg.author.id=auth.admin) command.executeAdmin(msg);
+
 	else if(msg.channel.type==="dm") macro.verify(msg,msg.content.trim());
 
 	else command.execute(msg);
