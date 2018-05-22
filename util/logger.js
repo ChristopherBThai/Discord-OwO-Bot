@@ -2,22 +2,15 @@ var StatsD = require('node-dogstatsd').StatsD;
 var log = new StatsD();
 
 
-exports.vote = function(){
-	log.increment('owo.vote');
+exports.increment= function(name,id){
+	log.increment('owo.'+name);
+	if(id)
+		log.increment('owo.'+id+'.'+name);
 }
 
-exports.point = function(){
-	log.increment('owo.point');
+exports.decrement= function(name,id){
+	log.decrement('owo.d'+name);
+	if(id)
+		log.decrement('owo.'+id+'.'+name);
 }
 
-exports.hunt= function(){
-	log.increment('owo.hunt');
-}
-
-exports.battle = function(){
-	log.increment('owo.battle');
-}
-
-exports.daily = function(){
-	log.increment('owo.daily');
-}

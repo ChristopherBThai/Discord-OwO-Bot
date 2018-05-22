@@ -5,6 +5,7 @@ const CommandInterface = require('./commandinterface');
 
 const sender = require('../util/sender.js');
 
+const logger = require('../util/logger.js');
 const mysql = require('../util/mysql.js');
 const con = mysql.con;
 const global = require('../util/global.js');
@@ -51,9 +52,7 @@ class Command {
 			args = msg.content.slice(prefix.length).trim().split(/ +/g);
 		else{
 			if(msg.content.toLowerCase().includes('owo')||msg.content.toLowerCase().includes('uwu')){
-				param.command = "points";
-				param.args = [];
-				executeCommand(param);
+				executeCommand(initParam(msg,"points",[]));
 			}
 			return;
 		}
@@ -78,9 +77,9 @@ class Command {
 		var args;
 		if(msg.content.toLowerCase().indexOf(prefix) === 0)
 			args = msg.content.slice(prefix.length).trim().split(/ +/g);
-		else return;
+		else {this.execute(msg);return;}
+
 		var command = args.shift().toLowerCase();
-		
 		var param = initParam(msg,command,args);
 
 		if(msg.channel.type==="dm"){
@@ -125,9 +124,27 @@ function executeCommand(param){
 	var name = aliasToCommand[command];
 	ban.check(con,msg,name,function(){
 		macro.check(msg,aliasToCommand[command],async function(){
-			await commands[command].execute(param);
-			//log here
-			console.log(aliasToCommand[param.command]);
+			var result = await commands[command].execute(param);
+			logger.increment(aliasToCommand[command],msg.author.id);
+			if(command!="points"){
+				console.log("\x1b[0m\x1b[4mCommand\x1b[0m: %s\x1b[0m \x1b[36m{%s}\x1b[0m \x1b[0m%s\x1b[36m[%s][%s][%s]",
+					command,
+					param.args,
+					msg.author.username,
+					msg.author.id,
+					msg.guild.name,
+					msg.channel.name);
+				if(result)
+					console.log("\t\x1b[36m%s\x1b[0m",result);
+			}else{
+				console.log("\x1b[0m\x1b[4mCommand\x1b[0m: %s\x1b[0m \x1b[36m{%s}\x1b[0m \x1b[0m%s\x1b[36m[%s][%s][%s]",
+					command,
+					msg.content.replace(/(\n)+/g," | "),
+					msg.author.username,
+					msg.author.id,
+					msg.guild.name,
+					msg.channel.name);
+			}
 			//user requests help of a command
 			//if(param.help)
 		});
