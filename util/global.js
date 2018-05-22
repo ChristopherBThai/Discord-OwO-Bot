@@ -1,0 +1,138 @@
+/**
+ * Global Variables and Methods
+ */
+
+var macro = require('./macro.js');
+var animaljson = require('../../tokens/owo-animals.json');
+var animalunicode = {};
+var commands = {};
+var animals = {};
+var client,con;
+
+/**
+ * Checks if its an integer
+ * @param {string}	value - value to check if integer
+ *
+ */
+exports.isInt = function(value){
+	return !isNaN(value) &&
+		parseInt(Number(value)) == value &&
+		!isNaN(parseInt(value,10));
+}
+
+/**
+ * Grabs all id from guild
+ */
+exports.getids = function(members){
+	var result = "";
+	members.keyArray().forEach(function(ele){
+		result += ele + ",";
+	});
+	return result.slice(0,-1);
+}
+
+/*
+ * Checks if its a user
+ */
+exports.isUser = function(id){
+	if(id==undefined)
+		return undefined;
+	return id.search(/<@!?[0-9]+>/)>=0;
+}
+
+/*
+ * gets a user
+ */
+exports.getUser = async function(mention){
+	id = mention.match(/[0-9]+/)[0];
+	return await client.fetchUser(id,true);
+}
+
+/*
+ * Gets name of guild
+ */
+exports.getGuildName = async function(id){
+	id = id.match(/[0-9]+/)[0];
+	var result = await client.shard.broadcastEval(`
+		var temp = this.guilds.get('${id}');
+		if(temp!=undefined)
+			temp = temp.name;
+		temp;
+	`);
+	var result = result.reduce((fin, val) => fin = (val)?val:fin);
+	return result;
+}
+
+/**
+ * Maps alts to their command names
+ */
+exports.client= function(tclient){
+	client = tclient;
+
+
+	var animallist = animaljson["list"];
+	for(var key in animallist){
+		var alt = animallist[key].alt;
+		animals[animallist[key].value] = key;
+		animals[key] = key;
+		for(i in alt){
+			animals[alt[i]] = key;
+		}
+	}
+	for (key in animallist){
+		if(animallist[key].uni!=undefined)
+			animalunicode[animallist[key].value] = animallist[key].uni;
+	}
+	
+	for(key in animaljson.ranks){
+		for(var i=1;i<animaljson[key].length;i++){
+			var name = animals[animaljson[key][i]];
+			animaljson.list[name].rank = key;
+			animaljson.list[name].price = animaljson.price[key];
+		}
+	}
+}
+
+/**
+ * Gets mysql con
+ */
+exports.con = function(tcon){
+	con = tcon;
+}
+
+/**
+ * Checks if its a valid animal
+ */
+exports.validAnimal = function(animal){
+	if(animal!=undefined)
+		animal = animal.toLowerCase();
+	var ranimal = animaljson.list[animals[animal]];
+	return ranimal
+}
+
+/**
+ * Changes animal to unicode
+ */
+exports.unicodeAnimal = function(animal){
+	var unicode = animalunicode[animal];
+	return (unicode==undefined)?animal:unicode;
+}
+
+/**
+ * Checks if user has enough cowoncy
+ */
+exports.checkCowoncy = function(msg,cowoncy,callback){
+	var sql = "SELECT id FROM cowoncy WHERE id = "+msg.author.id+" AND money >= "+cowoncy+";";
+	con.query(sql,function(err,rows,fields){
+		if(err){console.error(err);return;}
+		if(rows[0]==undefined){
+			msg.channel.send("**🚫 | "+msg.author.username+"**, You don't have enough cowoncy!")
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
+		}else{
+			callback();
+		}
+	});
+}
+
+
