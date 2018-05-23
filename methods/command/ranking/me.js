@@ -4,7 +4,7 @@ const global = require('../../../util/global.js');
 
 module.exports = new CommandInterface({
 	
-	alias:["my","me"],
+	alias:["my","me","guild"],
 
 	args:"points|guild|zoo|money|cookie|pet [global]",
 
@@ -19,7 +19,10 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: function(p){
-		display(p.con,p.msg,p.args);
+		if(p.command=="guild")
+			display(p.con,p.msg,["guild"]);
+		else
+			display(p.con,p.msg,p.args);
 	}
 
 })

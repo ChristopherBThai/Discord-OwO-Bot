@@ -23,11 +23,11 @@ module.exports = new CommandInterface({
 	half:100,
 	six:500,
 
-	execute: function(p){
+	execute: async function(p){
 		var global=p.global,args=p.args,msg=p.msg,client=p.client;
 		if(args.length!=1||!global.isUser(args[0]))
 			return;
-		var target = client.users.get(args[0].match(/[0-9]+/)[0]);
+		var target = await global.getUser(args[0]);
 		if(target == undefined){
 			p.send("**🚫 |** I couldn't find that user :c",3000);
 			return;

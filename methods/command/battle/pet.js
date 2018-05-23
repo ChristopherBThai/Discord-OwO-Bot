@@ -168,7 +168,6 @@ function rename(mysql,con,msg,args,send){
 
 //Displays pet
 function pet(con,msg,send){
-	var sql = "SELECT * FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND ispet = 1 ORDER BY lvl desc,xp desc LIMIT 24;";
 	var sql = "SELECT nickname,name,lvl,xp,hp,att, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 1 THEN fname ELSE NULL END)) AS one, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 2 THEN fname ELSE NULL END)) AS two, "+
@@ -176,7 +175,7 @@ function pet(con,msg,send){
 			"(CASE WHEN cowoncy.pet = animal.name THEN 1 ELSE 0 END) AS mainPet "+
 		"FROM (cowoncy NATURAL JOIN animal) LEFT JOIN (animal_food NATURAL JOIN food) "+
 		"ON animal.pid = animal_food.pid "+
-		"WHERE id = "+msg.author.id+" GROUP BY animal.pid ORDER BY mainPet DESC, lvl DESC, xp DESC;";
+		"WHERE id = "+msg.author.id+" AND ispet = 1 GROUP BY animal.pid ORDER BY mainPet DESC, lvl DESC, xp DESC;";
 
 	con.query(sql,function(err,pets,fields){
 		if(err){console.error(err);return;}
