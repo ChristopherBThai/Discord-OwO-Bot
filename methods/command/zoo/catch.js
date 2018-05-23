@@ -70,7 +70,7 @@ function randAnimal(){
 	var result = [];
 
 	if(rand<parseFloat(animals.special[0])){
-		rand = Math.ceil(Math.random()*(animals.special.length-1));
+		rand = 1;
 		result.push("**special**"+animals.ranks.special);
 		result.push(animals.special[rand]);
 		result.push("special");
