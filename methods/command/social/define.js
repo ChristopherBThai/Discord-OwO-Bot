@@ -21,14 +21,12 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 		var word = p.args.join(" ");
-		var def = await ud.term(word, function(error,entries,tags,sounds){
-				console.log(entries);
+		await ud.term(word, function(error,entries,tags,sounds){
 			if(word==""){
 				p.send("**🚫 |** Silly human! Makes sure to add a word to define!",3000);
 			}else if(error){
 				console.log(error);
-				//p.send("**🚫 |** I couldn't find that word! :c",3000);
-				p.send("**🚫 |** Sorry! `define` seems to be broken right now... :c",3000);
+				p.send("**🚫 |** I couldn't find that word! :c",3000);
 			}else{
 				var def = entries[0].definition;
 				var example = "\n*``"+entries[0].example+" ``*";
