@@ -20,7 +20,7 @@ module.exports = new CommandInterface({
 		var global=p.global,con=p.con,msg=p.msg,args=p.args;
 
 		var animal = global.validAnimal(args[0]);
-		var count = 1;
+		var count = "all";
 
 		//If arg1 is animal
 		if(temp=global.validAnimal(args[1])){
