@@ -1,6 +1,7 @@
 const CommandInterface = require('../../commandinterface.js');
 
 const ud = require('urban-dictionary');
+var count = 0;
 
 module.exports = new CommandInterface({
 	
@@ -18,9 +19,10 @@ module.exports = new CommandInterface({
 	half:100,
 	six:500,
 
-	execute: function(p){
+	execute: async function(p){
 		var word = p.args.join(" ");
-		ud.term(word, function(error,entries,tags,sounds){
+		var def = await ud.term(word, function(error,entries,tags,sounds){
+				console.log(entries);
 			if(word==""){
 				p.send("**🚫 |** Silly human! Makes sure to add a word to define!",3000);
 			}else if(error){
@@ -41,19 +43,17 @@ module.exports = new CommandInterface({
 						print = result;
 						run = false;
 					}
-
 					var embed = {
-						"description": print,
-						"color": 4886754,
-						"author": {
-							"name": "Definition of '"+entries[0].word+"'",
-							"icon_url": "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"
-							}
+					"description": print,
+					"color": 4886754,
+					"author": {
+						"name": "Definition of '"+entries[0].word+"'",
+						"icon_url": "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"
+						}
 					};
-
-					msg.channel.send({ embed })
+					p.msg.channel.send({ embed })
 						.catch(err => msg.channel.send("I don't have permission to send embedded links! :c")
-							.catch(err => console.error(err)));
+						.catch(err => console.error(err)));
 				}while(run);
 			}
 		});
