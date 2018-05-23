@@ -17,6 +17,10 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: function(p){
+		if(!p.msg.member.permissions.has('MANAGE_CHANNELS')){
+			p.send("**🚫 | "+p.msg.author.username+"**, You are not an admin!",3000);
+			return;
+		}
 		var msg=p.msg,con=p.con;
 		var command = p.args[0];
 		if(command == "all"){

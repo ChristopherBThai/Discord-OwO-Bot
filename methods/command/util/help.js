@@ -56,7 +56,7 @@ function display(send){
 				{"name":"Rankings",
 					"value":"`top`  `my`"},
 				{"name":"Economy",
-					"value":"`money`  `give`  `daily`  `vote`"},
+					"value":"`cowoncy`  `give`  `daily`  `vote`"},
 				{"name":"Animals",
 					"value":"`zoo`  `hunt`  `sell`  `battle`  `pets`"},
 				{"name":"Gambling",
@@ -79,9 +79,7 @@ function display(send){
 
 function describe(send,commandName,command){
 	if(command == undefined){
-		msg.channel.send("**🚫 |** Could not find that command :c")
-			.then(message => message.delete(3000))
-			.catch(err => console.error(err));
+		send("**🚫 |** Could not find that command :c");
 		return;
 	}
 	var desc = "\n# Description\n"+command.desc;

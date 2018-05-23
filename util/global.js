@@ -44,7 +44,11 @@ exports.isUser = function(id){
  * gets a user
  */
 exports.getUser = async function(mention){
-	id = mention.match(/[0-9]+/)[0];
+	id = mention.match(/[0-9]+/);
+	if(id)
+		id = id[0];
+	else 
+		return undefined;
 	return await client.fetchUser(id,true);
 }
 

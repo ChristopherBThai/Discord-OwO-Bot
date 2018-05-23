@@ -33,7 +33,7 @@ module.exports = new CommandInterface({
 		sql = p.mysql.mysql.format(sql,message);
 		p.con.query(sql,function(err,rows,field){
 			if(err){console.error(err);return;}
-			var avatar = p.client.user.displayAvatarURL;
+			var avatar = "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png";
 			const embed = {
 				"color": 10590193,
 				"timestamp": new Date(),

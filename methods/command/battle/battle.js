@@ -26,7 +26,7 @@ module.exports = new CommandInterface({
 			p.con.query(sql,function(err,result){
 				if(err){console.error(err);return;}
 				if(result[0]==undefined||result[0].money<5)
-					send("**🚫 | "+msg.author.username+"**, You don't have enough cowoncy!",3000);
+					p.send("**🚫 | "+p.msg.author.username+"**, You don't have enough cowoncy!",3000);
 				else
 					fight(p.con,p.msg,p.send);
 			});

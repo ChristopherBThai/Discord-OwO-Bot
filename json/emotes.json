@@ -127,13 +127,16 @@
 			"alt":"thinking"
 		},
 		"scoff":{
-			"alt":"scoff"
+			"alt":"smug"
 		},
 		"happy":{
 			"alt":"smile"
 		},
 		"thumbs":{
 			"alt":"thumbsup"
+		},
+		"grin":{
+			"alt":"smile"
 		}
 	},
 	"uEmote":{
@@ -340,7 +343,6 @@
 		"hold":{"alt":"handholding"},
 		"pats":{"alt":"pat"},
 		"wave":{"alt":"greet"},
-		"boop":{"alt":"poke"},
-		"grin":{"alt":"smile"}
+		"boop":{"alt":"poke"}
 	}
 }

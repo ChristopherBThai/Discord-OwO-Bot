@@ -33,7 +33,7 @@ exports.grab = function(msg,ptype,ftype,text,notsfw,retry){
 
 	}).catch(err => {
 		if(retryt&&(ftype=="jpg"||ftype=="png")){
-			grab(msg,ptype,(ftype=="jpg")?"png":"jpg",text,notsfw,false);		
+			this.grab(msg,ptype,(ftype=="jpg")?"png":"jpg",text,notsfw,false);		
 		}else
 			msg.channel.send("**🚫 |** I couldn't find that image type! :c\nType `owo help gif` for the list of types!")
 				.then(message => message.delete(3000))
