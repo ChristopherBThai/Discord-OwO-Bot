@@ -32,14 +32,20 @@ client.login(auth.token);
 client.on('ready',()=>{
 	console.log('Logged in as '+client.user.tag+'!');
 	console.log('Bot has started, with '+client.users.size+' users, in '+client.channels.size+' channels of '+client.guilds.size+' guilds.');
-	logger.increment("ready");
+	if(!debug){
+		logger.increment("ready");
+		setInterval(() => {
+			dbl.postStats(client.guilds.size,client.shard.id,client.shard.count);
+		}, 3200000)
+	}
 });
 
 //When bot disconnects
 client.on('disconnect', function(erMsg, code) {
 	console.log('----- Bot disconnected from Discord with code', code, 'for reason:', erMsg, '-----');
 	client.connect();
-	logger.increment("disconnect");
+	if(!debug)
+		logger.increment("disconnect");
 });
 
 //When bot reconnecting
@@ -50,21 +56,24 @@ client.on('reconnecting', () => {
 //When bot resumes 
 client.on('reconnecting', function(replayed) {
 	console.log('--------------- Bot has resumed ---------------');
-	logger.increment("reconnecting");
+	if(!debug)
+		logger.increment("reconnecting");
 });
 
 //When bot joins a new guild
 client.on("guildCreate", guild => {
 	console.log('New guild joined: '+guild.name+' (id: '+guild.id+'). This guild has '+guild.memberCount+' members!');
 	updateActivity();
-	logger.increment("guildcount");
+	if(!debug)
+		logger.increment("guildcount");
 });
 
 //When bot is kicked from a guild
 client.on("guildDelete", guild => {
 	console.log('I have been removed from: '+guild.name+' (id: '+guild.id+')');
 	updateActivity();
-	logger.decrement("guildcount");
+	if(!debug)
+		logger.decrement("guildcount");
 });
 
 function updateActivity(){
