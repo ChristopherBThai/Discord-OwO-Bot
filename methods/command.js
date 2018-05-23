@@ -52,7 +52,7 @@ class Command {
 			args = msg.content.slice(prefix.length).trim().split(/ +/g);
 		else{
 			if(msg.content.toLowerCase().includes('owo')||msg.content.toLowerCase().includes('uwu')){
-				executeCommand(initParam(msg,"points",[]));
+				executeCommand(initParam(msg,"points",[],this.client));
 			}
 			return;
 		}
@@ -61,7 +61,7 @@ class Command {
 		var command = args.shift().toLowerCase();
 
 		//Init params to pass into command
-		var param = initParam(msg,command,args);
+		var param = initParam(msg,command,args,this.client);
 
 		//Execute the command
 		if(commands[command]){
@@ -80,7 +80,7 @@ class Command {
 		else {this.execute(msg);return;}
 
 		var command = args.shift().toLowerCase();
-		var param = initParam(msg,command,args);
+		var param = initParam(msg,command,args,this.client);
 
 		if(msg.channel.type==="dm"){
 			if(adminCommands[command]&&adminCommands[command].dm)
@@ -151,12 +151,12 @@ function executeCommand(param){
 	},false);
 }
 
-function initParam(msg,command,args){
+function initParam(msg,command,args,client){
 	var param = {
 		"msg":msg,
 		"args":args,
 		"command":command,
-		"client":this.client,
+		"client":client,
 		"mysql":mysql,
 		"con":con,
 		"send":sender.send(msg),
