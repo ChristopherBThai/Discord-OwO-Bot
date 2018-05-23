@@ -116,10 +116,9 @@ module.exports = new CommandInterface({
 				con.query(sql, function(err,result){
 					if(err){console.error(err);return;}
 					if(result.affectedRows==0){
-						message.edit("**🚫 | "+msg.author.username+"**, Please don't cheese the system! >:c");
+						message.edit("**🚫 | "+msg.author.username+"**, Please don't cheese the system! >:c")
 						.catch(err =>  console.error(err));
 					}
-					console.log(result);
 				});
 
 				});
