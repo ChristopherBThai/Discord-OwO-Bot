@@ -110,11 +110,16 @@ module.exports = new CommandInterface({
 
 				var machine = "**`___SLOTS___  `**\n"+rslots[0]+" "+rslots[1]+" "+rslots[2]+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+amount+"\n`|         |`  and won "+winmsg+"\n`|         |`";
 				message.edit(machine)
-				.then(function(){
+				.then(function(message){
 
-				var sql = "UPDATE cowoncy SET money = money + "+(win-amount)+" WHERE id = "+msg.author.id+";";
+				var sql = "UPDATE cowoncy SET money = money + "+(win-amount)+" WHERE id = "+msg.author.id+" AND money >= "+amount+";";
 				con.query(sql, function(err,result){
 					if(err){console.error(err);return;}
+					if(result.affectedRows==0){
+						message.edit("**🚫 | "+msg.author.username+"**, Please don't cheese the system! >:c");
+						.catch(err =>  console.error(err));
+					}
+					console.log(result);
 				});
 
 				});
