@@ -157,7 +157,7 @@ exports.throwup = function(con,msg){
 		sql += "UPDATE user_food SET fcount = fcount-1 WHERE uid = "+rows[1][0].uid+" AND fid = "+rows[1][0].fid+";";
 		con.query(sql,function(err,rows2,fields){
 			if(err){console.error(err);return;}
-			msg.channel.send("**:pill: | "+msg.author.username+"**, **"+rows[0][0].name+" "+rows[0][0].nickname+" threw up "+items+"!")
+			msg.channel.send("**💊 | "+msg.author.username+"**, **"+rows[0][0].name+" "+rows[0][0].nickname+" threw up "+items+"!")
 				.catch(err => console.error(err));
 		});
 	});
