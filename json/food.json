@@ -89,7 +89,7 @@
 		"att":0,
 		"hp":40
 	},
-	":pill:":{
+	"💊":{
 		"id":11,
 		"name":"Pill",
 		"for":"battle",
