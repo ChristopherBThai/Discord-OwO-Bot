@@ -4,7 +4,7 @@
 		"name":"Eggplant",
 		"for":"att",
 		"price":100,
-		"desc":"Some eggplant joke goes here\n+5 att",
+		"desc":"Eating eggplants will give you strength!\n+5 att",
 		"att":5,
 		"hp":0	
 	},
@@ -13,7 +13,7 @@
 		"name":"Apple",
 		"for":"hp",
 		"price":100,
-		"desc":"Some apple joke goes here\n+5 hp",
+		"desc":"Any animal loves apples!\n+5 hp",
 		"att":0,
 		"hp":5
 	},
@@ -22,7 +22,7 @@
 		"name":"Potato",
 		"for":"att",
 		"price":2500,
-		"desc":"",
+		"desc":"Yum! Raw Potato.\n+15 att",
 		"att":15,
 		"hp":0	
 	},
@@ -31,7 +31,7 @@
 		"name":"Grape",
 		"for":"hp",
 		"price":2500,
-		"desc":"",
+		"desc":"Don't feed this to dogs!\n+15 hp",
 		"att":0,
 		"hp":15
 	},
@@ -40,7 +40,7 @@
 		"name":"Carrot",
 		"for":"att",
 		"price":10000,
-		"desc":"",
+		"desc":"Better eyesight = Stronger pet\n+20 att",
 		"att":20,
 		"hp":0	
 	},
@@ -49,7 +49,7 @@
 		"name":"Strawberry",
 		"for":"hp",
 		"price":10000,
-		"desc":"",
+		"desc":"Just one strawberry?\n+20 hp",
 		"att":0,
 		"hp":20
 	},
@@ -58,7 +58,7 @@
 		"name":"Croissant",
 		"for":"att",
 		"price":100000,
-		"desc":"",
+		"desc":"*French noises*\n+30 att",
 		"att":30,
 		"hp":0	
 	},
@@ -67,7 +67,7 @@
 		"name":"Avocado",
 		"for":"hp",
 		"price":100000,
-		"desc":"",
+		"desc":"Who doesn't like avacados?!\n+30 hp",
 		"att":0,
 		"hp":30
 	},
@@ -76,7 +76,7 @@
 		"name":"Bacon",
 		"for":"att",
 		"price":1000000,
-		"desc":"",
+		"desc":"The most sacred of foods\n+40 att",
 		"att":40,
 		"hp":0	
 	},
@@ -85,8 +85,16 @@
 		"name":"Meat",
 		"for":"hp",
 		"price":1000000,
-		"desc":"",
+		"desc":"Not for vegans\n+40 hp",
 		"att":0,
 		"hp":40
+	},
+	":pill:":{
+		"id":11,
+		"name":"Pill",
+		"for":"battle",
+		"price":100,
+		"desc":"Use this item to make your pet throwup food!\nFood that are thrown up are not reusable...",
+		"notFood":true
 	}
 }

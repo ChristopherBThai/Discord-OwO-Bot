@@ -112,9 +112,6 @@ exports.extractInfo = function(pet,owner,censor){
 		bonusHp += three.hp;
 	}else fdisplay += dot;
 
-	//Disabled until release
-	fdisplay = "";
-
 	var user = {
 		"username":owner.username,
 		"id":owner.id,
