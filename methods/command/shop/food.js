@@ -1,6 +1,8 @@
 const global = require('../../../util/global.js');
 const food = require('../../../json/food.json');
+const foodUtil = require('./food.js');
 const name_id = {};
+
 for(var key in food){
 	name_id[food[key].name] = key;
 }
@@ -38,6 +40,7 @@ exports.buy = function(con,msg,food){
 	});
 }
 
+//Gets whole inventory
 exports.getItems = function(con,id,callback){
 	var sql = "SELECT fname,fcount FROM user NATURAL JOIN user_food NATURAL JOIN food WHERE id = "+id+" AND fcount > 0 ORDER BY fid ASC;";
 	con.query(sql,function(err,rows,fields){
@@ -47,6 +50,7 @@ exports.getItems = function(con,id,callback){
 			var key = name_id[rows[i].fname];
 			var item = food[key];
 			item["key"] = key;
+			item["count"] = rows[i].fcount;
 			items[key] = item;
 		}
 		callback(items);
@@ -64,7 +68,6 @@ exports.getFoodJson = function(name){
 }
 
 exports.equip = function(con,msg,item){
-	
 	var sql = "SELECT COUNT(*) AS count FROM animal_food NATURAL JOIN animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name;";
 	sql += "SELECT * FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name;";
 	sql += "SELECT * FROM user_food NATURAL JOIN food NATURAL JOIN user WHERE fname = '"+item.name+"' AND id = "+msg.author.id+" AND fcount > 0;";
@@ -96,11 +99,66 @@ exports.equip = function(con,msg,item){
 			"("+userFood.fid+"),"+
 			"("+(foodCount+1)+"));";
 		sql += "UPDATE user_food SET fcount = fcount-1 WHERE uid = "+userFood.uid+" AND fid = "+userFood.fid+";";
-		console.log(sql);
 		con.query(sql,function(err,rows,fields){
 			if(err){console.error(err);return;}
-			msg.channel.send("**🌱 | "+msg.author.username+"**, You have successfully equipped **"+item.key+" "+item.name+"** on **"+global.unicodeAnimal(animal.name)+" "+animal.nickname+"**!");
+			var gain = "";
+			if(item.att)
+				gain = "+"+item.att+" att";
+			if(item.hp){
+				if(gain=="")
+					gain = "+"+item.hp+" hp";
+				else
+					gain = " and +"+item.hp+" hp";
+			}
+			if(gain!="")
+				gain = "\n**<:blank:427371936482328596> | "+animal.nickname+"** gains "+gain+"!";
+			msg.channel.send("**🌱 | "+msg.author.username+"**, **"+global.unicodeAnimal(animal.name)+" "+animal.nickname+"** ate the **"+item.key+" "+item.name+"**!"+gain);
 		});
 
+	});
+}
+
+exports.throwup = function(con,msg){
+	var sql = "SELECT id,money,nickname,name,lvl,att,hp,lvl,streak,xp, "+
+			"GROUP_CONCAT((CASE WHEN pfid = 1 THEN fname ELSE NULL END)) AS one, "+
+			"GROUP_CONCAT((CASE WHEN pfid = 2 THEN fname ELSE NULL END)) AS two, "+
+			"GROUP_CONCAT((CASE WHEN pfid = 3 THEN fname ELSE NULL END)) AS three "+
+		"FROM (cowoncy NATURAL JOIN animal) LEFT JOIN (animal_food NATURAL JOIN food) "+
+		"ON animal.pid = animal_food.pid "+
+		"WHERE id = "+msg.author.id+" AND pet = name GROUP BY animal.pid;";
+	sql += "SELECT * FROM user_food NATURAL JOIN food NATURAL JOIN user WHERE fname = 'Pill' AND id = "+msg.author.id+" AND fcount > 0;";
+	con.query(sql,function(err,rows,fields){
+		if(err){console.error(err);return;}
+		if(rows[0][0]==undefined){
+			msg.channel.send("**🚫 | "+msg.author.username+"**, You do not have a pet! Set one with `owo pet set {animal} {nickname}`")
+				.catch(err => console.error(err));
+			return
+		}
+		if(rows[1][0]==undefined){
+			msg.channel.send("**🚫 | "+msg.author.username+"**, You do not have this item in your inventory!")
+				.catch(err => console.error(err));
+			return
+		}
+		var items = "";
+		if(item = foodUtil.getFoodJson(rows[0][0].one))
+			items += item.key
+		if(item = foodUtil.getFoodJson(rows[0][0].two))
+			items += item.key
+		if(item = foodUtil.getFoodJson(rows[0][0].three))
+			items += item.key
+		if(items == ""){
+			msg.channel.send("**🚫 | "+msg.author.username+"**, Your pet doesn't have anything to throw up!")
+				.catch(err => console.error(err));
+			return
+		}
+			
+
+		sql = "DELETE FROM animal_food WHERE pid = (SELECT pid FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND pet = name);";
+		sql += "UPDATE user_food SET fcount = fcount-1 WHERE uid = "+rows[1][0].uid+" AND fid = "+rows[1][0].fid+";";
+		con.query(sql,function(err,rows2,fields){
+			if(err){console.error(err);return;}
+			msg.channel.send("**:pill: | "+msg.author.username+"**, **"+rows[0][0].name+" "+rows[0][0].nickname+" threw up "+items+"!")
+				.catch(err => console.error(err));
+		});
 	});
 }

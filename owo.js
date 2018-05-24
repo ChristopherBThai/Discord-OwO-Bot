@@ -6,6 +6,8 @@ const login = require('../tokens/owo-login.json');
 
 const Discord = require("discord.js");
 const client = new Discord.Client();
+const DBL = require("dblapi.js");
+const dbl = new DBL(auth.dbl);
 
 const CommandClass = require('./methods/command.js');
 const command = new CommandClass(client);

@@ -2,6 +2,7 @@
  * Global Variables and Methods
  */
 
+const numbers = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
 var macro = require('./macro.js');
 var animaljson = require('../../tokens/owo-animals.json');
 var animalunicode = {};
@@ -139,4 +140,13 @@ exports.checkCowoncy = function(msg,cowoncy,callback){
 	});
 }
 
-
+exports.toSmallNum = function(count,digits){
+	var result = "";
+	var num = count;
+	for(i=0;i<digits;i++){
+		var digit = count%10;
+		count = Math.trunc(count/10);
+		result = numbers[digit]+result;
+	}
+	return result;
+}
