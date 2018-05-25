@@ -22,7 +22,7 @@ module.exports = new CommandInterface({
 			"SELECT TIMESTAMPDIFF(DAY,daily,NOW()) AS day,patreonDaily,daily_streak FROM cowoncy NATURAL JOIN user WHERE id = "+msg.author.id+";";
 		con.query(sql,function(err,rows,fields){
 			if(err){console.error(err);return;}
-			if(rows[0][0]!=undefined&&false){
+			if(rows[0][0]!=undefined){
 				var hour = 22 - rows[0][0].hour;
 				var min= 59 - (rows[0][0].minute%60);
 				var sec = 59 - (rows[0][0].second%60);
