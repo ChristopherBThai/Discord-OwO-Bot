@@ -16,7 +16,7 @@ exports.getItem = function(args){
 	if(global.isInt(args[0])){
 		id = parseInt(args[0]);
 	}else{
-		return "Invalid arguments!";
+		return "Please identify the item by their item **ID**, not item name!";
 	}
 
 	var key = fid[id];

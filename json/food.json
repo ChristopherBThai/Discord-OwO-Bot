@@ -94,7 +94,7 @@
 		"name":"Pill",
 		"for":"battle",
 		"price":100,
-		"desc":"Use this item to make your pet throwup food!\nFood that are thrown up are not reusable...",
+		"desc":"Use this item to make your pet throwup food!\nAll equipped food on the pet will be gone! BE AWARE\nFood that are thrown up are not reusable...",
 		"notFood":true
 	}
 }
