@@ -6,7 +6,7 @@ const petUtil = require('./petutil.js');
 
 module.exports = new CommandInterface({
 	
-	alias:["battle","fight"],
+	alias:["battle","b","fight"],
 
 	args:"{@user} {bet}",
 

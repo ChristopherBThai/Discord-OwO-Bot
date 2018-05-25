@@ -78,10 +78,10 @@ function set(mysql,con,msg,args,send){
 			if(shortnick.includes(badwords[i]))
 				offensive = 1;
 		}
-		sql = "UPDATE cowoncy NATURAL JOIN animal SET pet = name, ispet = 1, nickname = ?, offensive = "+offensive+" WHERE id = "+msg.author.id+" AND name = '"+animal+"';";
+		sql = "UPDATE cowoncy NATURAL JOIN animal SET pet = name, ispet = 1, nickname = ?, offensive = "+offensive+", count = count - (CASE WHEN ispet=1 THEN 0 ELSE 1 END) WHERE id = "+msg.author.id+" AND name = '"+animal+"' AND (ispet=1 OR count>0);";
 		sql = mysql.format(sql,nickname);
 	}else{
-		sql = "UPDATE cowoncy NATURAL JOIN animal SET pet = name, ispet = 1, offensive = 0 WHERE id = "+msg.author.id+" AND name = '"+animal+"';";
+		sql = "UPDATE cowoncy NATURAL JOIN animal SET pet = name, ispet = 1, offensive = 0,count = count - (CASE WHEN ispet=1 THEN 0 ELSE 1 END) WHERE id = "+msg.author.id+" AND name = '"+animal+"' AND (ispet=1 OR count>0);";
 	}
 	sql  += "SELECT nickname FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND name = pet;";
 	con.query(sql,function(err,rows,fields){
@@ -111,7 +111,7 @@ function remove(con,msg,args,send){
 	var animal = animal.value;
 
 	var sql = "SELECT nickname,pet,name FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND name = '"+animal+"' AND ispet = 1;";
-	sql += "UPDATE animal SET ispet = 0 WHERE id = "+msg.author.id+" AND name = '"+animal+"' AND name != (SELECT pet FROM cowoncy WHERE id = "+msg.author.id+");";
+	sql += "UPDATE IGNORE animal SET ispet = 0,count = count +1 WHERE ispet = 1 AND id = "+msg.author.id+" AND name = '"+animal+"' AND name != (SELECT pet FROM cowoncy WHERE id = "+msg.author.id+");";
 
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
