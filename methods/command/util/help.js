@@ -70,7 +70,7 @@ function display(send){
 				{"name":"Actions",
 					"value":uEmotes},
 				{"name":"Utility",
-					"value":"`feedback`  `ping`  `stats`  `link`  `guildlink`  `disable`  `censor`"},
+					"value":"`feedback`  `ping`  `stats`  `link`  `guildlink`  `disable`  `censor`  `patreon`"},
 				]
 	};
 
