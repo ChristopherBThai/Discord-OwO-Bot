@@ -25,7 +25,6 @@ module.exports = new CommandInterface({
 			if(word==""){
 				p.send("**🚫 |** Silly human! Makes sure to add a word to define!",3000);
 			}else if(error){
-				console.log(error);
 				p.send("**🚫 |** I couldn't find that word! :c",3000);
 			}else{
 				var def = entries[0].definition;
