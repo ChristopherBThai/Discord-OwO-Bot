@@ -92,12 +92,16 @@ function fight(con,msg,send){
 					uXpGain = opet.lvl - upet.lvl;
 					if(uXpGain <= 0) uXpGain = 1;
 					uXpGain = (15+upet.streak)*uXpGain;
+					if(uXpGain>1000)
+						uXpGain = 1000;
 					oXpGain = 1;
 					battleInfo.line3 += " Your streak is now "+(upet.streak+1)+"!";
 				}else if(result=="lost"){
 					oXpGain = upet.lvl - opet.lvl;
 					if(oXpGain <= 0) oXpGain = 1;
 					oXpGain = (15+opet.streak)*oXpGain;
+					if(oXpGain>1000)
+						oXpGain = 1000;
 					uXpGain = 1;
 					battleInfo.line3 += " You lost your streak...";
 				}else if(result=="draw"){
@@ -122,6 +126,15 @@ function fight(con,msg,send){
 					xp:upet.xp,
 					gxp:uXpGain,
 					result:result
+				});
+
+				petUtil.givexp(con,{
+					id:opet.id,
+					pet:opet.animal,
+					lvl:opet.lvl,
+					xp:opet.xp,
+					gxp:oXpGain,
+					result:undefined
 				});
 
 				battleInfo.line4 = upet.name+" gained "+uXpGain+" xp!";
