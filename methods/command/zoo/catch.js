@@ -6,7 +6,7 @@ var pet = require('../battle/petutil.js');
 
 module.exports = new CommandInterface({
 	
-	alias:["hunt","catch"],
+	alias:["hunt","h","catch"],
 
 	args:"",
 
