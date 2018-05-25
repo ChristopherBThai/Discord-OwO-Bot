@@ -16,16 +16,21 @@ exports.grab = function(msg,ptype,ftype,text,notsfw,retry){
 		retryt = retry;
 	sh.getRandom({type:ptype,nsfw: nsfwt,filetype: ftype}).then(array => {
 
+		if(!array){
+			return;
+		}
 		const embed = {
 			"color": 4886754,
 			"image": {
-				"url": array[0]
+				"url": array.url
 			},
 			"author": {
 				"name" : text,
+				"url":array.url,
 				"icon_url": msg.author.avatarURL
 			}
 		};
+		console.log(array);
 
 		msg.channel.send({embed})
 			.catch(err => msg.channel.send("**🚫 |** I don't have permission to send embedded links! :c")

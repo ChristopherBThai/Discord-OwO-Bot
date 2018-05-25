@@ -32,6 +32,7 @@ module.exports = new CommandInterface({
 			if(err){console.error(err);return;}
 			var text = "🌿 🌱 🌳** "+msg.author.username+"'s zoo! **🌳 🌿 🌱\n";
 			text += display;
+			var additional0 = "";
 			var additional = "";
 			var additional2 = "";
 			var additional3 = "";
@@ -42,23 +43,25 @@ module.exports = new CommandInterface({
 				digits= Math.trunc(Math.log10(count.biggest)+1);
 			for(var i=0;i<row.length;i++){
 				text = text.replace("~"+row[i].name,global.unicodeAnimal(row[i].name)+toSmallNum(row[i].count,digits));
+				if(animals.patreon.indexOf(row[i].name)>0){
+					if(additional0=="") additional0 = patreon;
+					additional0 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
+				}
 				if(animals.legendary.indexOf(row[i].name)>0){
-					if(additional=="")
-						additional = secret;
+					if(additional=="") additional = secret;
 					additional += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 				}
 				else if(animals.fabled.indexOf(row[i].name)>0){
-					if(additional2=="")
-						additional2 = secret2;
+					if(additional2=="") additional2 = secret2;
 					additional2 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 				}
 				else if(animals.special.indexOf(row[i].name)>0){
-					if(additional3=="")
-						additional3 = secret3;
+					if(additional3=="") additional3 = secret3;
 					additional3 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 				}
 			}
 			text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question+toSmallNum(0,digits));
+			text += additional0;
 			text += additional;
 			text += additional2;
 			text += additional3;
@@ -109,6 +112,7 @@ function initDisplay(){
 	display += "\n"+animals.ranks.mythical+"   ";
 	for (i=1;i<animals.mythical.length;i++)
 		display += "~"+animals.mythical[i]+gap;
+	patreon = "\n"+animals.ranks.patreon+"    ";
 	secret = "\n"+animals.ranks.legendary+"    ";
 	secret2 = "\n"+animals.ranks.fabled+"    ";
 	secret3 = "\n"+animals.ranks.special+"    ";

@@ -53,7 +53,7 @@ module.exports = new CommandInterface({
 				if(streak>0)
 					text += "\n**<:blank:427371936482328596> |** You're on a **__"+streak+"__ daily streak**!";
 				if(extra>0)
-					text += "\n**<:blank:427371936482328596> |** You got an extra **"+extra+" Cowoncy** for being a <:patreon:449514540871450625> Patreon!";
+					text += "\n**<:blank:427371936482328596> |** You got an extra **"+extra+" Cowoncy** for being a <:patreon:449705754522419222> Patreon!";
 
 				sql = "INSERT INTO cowoncy (id,money) VALUES ("+msg.author.id+","+(gain+extra)+") ON DUPLICATE KEY UPDATE daily_streak = "+streak+", money = money + "+(gain+extra)+",daily = NOW();";
 				con.query(sql,function(err,rows,fields){
