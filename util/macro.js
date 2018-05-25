@@ -31,12 +31,15 @@ exports.check = function(msg,command,callback){
 					setCommand(id,command,cuser);
 				}else{
 					diff = mcommands[cuser.command].cd-diff;
+					var time = diff;
+					if(time<1000)
+						time = 1000;
 					var mspercent = Math.trunc(((diff%1000)/1000)*100);
 					diff = Math.trunc(diff/1000);
 					var sec = diff%60;
 					if(command!="points"){
 						msg.channel.send("⏱ **|** Sorry **"+msg.author.username+"**, Please wait **"+sec+"."+mspercent+"s** to try again!")
-							.then(message => message.delete(3000))
+							.then(message => message.delete(time))
 							.catch(err => console.error(err));
 					}
 				}

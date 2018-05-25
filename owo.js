@@ -1,4 +1,4 @@
-const debug = false;
+const debug = true;
 if(debug) var auth = require('../tokens/scuttester-auth.json');
 else var auth = require('../tokens/owo-auth.json');
 
@@ -13,6 +13,7 @@ const CommandClass = require('./methods/command.js');
 const command = new CommandClass(client);
 const macro = require('./util/macro.js');
 const logger = require('./util/logger.js');
+const patreon = require('./util/patreon.js');
 
 client.on('message',msg => {
 	//Ignore if bot
@@ -76,6 +77,11 @@ client.on("guildDelete", guild => {
 	updateActivity();
 	if(!debug)
 		logger.decrement("guildcount");
+});
+
+//Check patreons
+client.on("guildMemberUpdate", (oldMember,newMember) => {
+	patreon.update(oldMember,newMember);
 });
 
 function updateActivity(){

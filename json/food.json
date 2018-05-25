@@ -2,7 +2,7 @@
 	"🍆":{
 		"id":1,
 		"name":"Eggplant",
-		"for":"att",
+		"for":"+5 att",
 		"price":100,
 		"desc":"Eating eggplants will give you strength!\n+5 att",
 		"att":5,
@@ -11,7 +11,7 @@
 	"🍎":{
 		"id":2,
 		"name":"Apple",
-		"for":"hp",
+		"for":"+5 hp",
 		"price":100,
 		"desc":"Any animal loves apples!\n+5 hp",
 		"att":0,
@@ -20,7 +20,7 @@
 	"🥔":{
 		"id":3,
 		"name":"Potato",
-		"for":"att",
+		"for":"+15 att",
 		"price":2500,
 		"desc":"Yum! Raw Potato.\n+15 att",
 		"att":15,
@@ -29,7 +29,7 @@
 	"🍇":{
 		"id":4,
 		"name":"Grape",
-		"for":"hp",
+		"for":"+15 hp",
 		"price":2500,
 		"desc":"Don't feed this to dogs!\n+15 hp",
 		"att":0,
@@ -38,7 +38,7 @@
 	"🥕":{
 		"id":5,
 		"name":"Carrot",
-		"for":"att",
+		"for":"+20 att",
 		"price":10000,
 		"desc":"Better eyesight = Stronger pet\n+20 att",
 		"att":20,
@@ -47,7 +47,7 @@
 	"🍓":{
 		"id":6,
 		"name":"Strawberry",
-		"for":"hp",
+		"for":"+20 hp",
 		"price":10000,
 		"desc":"Just one strawberry?\n+20 hp",
 		"att":0,
@@ -56,7 +56,7 @@
 	"🥐":{
 		"id":7,
 		"name":"Croissant",
-		"for":"att",
+		"for":"+30 att",
 		"price":100000,
 		"desc":"*French noises*\n+30 att",
 		"att":30,
@@ -65,7 +65,7 @@
 	"🥑":{
 		"id":8,
 		"name":"Avocado",
-		"for":"hp",
+		"for":"+30 hp",
 		"price":100000,
 		"desc":"Who doesn't like avacados?!\n+30 hp",
 		"att":0,
@@ -74,7 +74,7 @@
 	"🥓":{
 		"id":9,
 		"name":"Bacon",
-		"for":"att",
+		"for":"+40 att",
 		"price":1000000,
 		"desc":"The most sacred of foods\n+40 att",
 		"att":40,
@@ -83,7 +83,7 @@
 	"🍖":{
 		"id":10,
 		"name":"Meat",
-		"for":"hp",
+		"for":"+40 hp",
 		"price":1000000,
 		"desc":"Not for vegans\n+40 hp",
 		"att":0,
