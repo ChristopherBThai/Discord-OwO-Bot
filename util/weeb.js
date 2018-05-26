@@ -30,7 +30,6 @@ exports.grab = function(msg,ptype,ftype,text,notsfw,retry){
 				"icon_url": msg.author.avatarURL
 			}
 		};
-		console.log(array);
 
 		msg.channel.send({embed})
 			.catch(err => msg.channel.send("**🚫 |** I don't have permission to send embedded links! :c")
