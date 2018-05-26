@@ -49,7 +49,7 @@ module.exports = new CommandInterface({
 						}
 					};
 					p.msg.channel.send({ embed })
-						.catch(err => msg.channel.send("I don't have permission to send embedded links! :c")
+						.catch(err => p.msg.channel.send("I don't have permission to send embedded links! :c")
 						.catch(err => console.error(err)));
 				}while(run);
 			}
