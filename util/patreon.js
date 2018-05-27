@@ -26,6 +26,24 @@ exports.update = function(oldMember,newMember){
 	}
 }
 
+exports.left = function(member){
+	if(member.guild.id != '420104212895105044')
+		return;
+	var patreon = false;
+	if(member.roles.has('449429255781351435')||member.roles.has('449429399217897473')){
+		patreon = true;
+	}
+
+	if(patreon){
+		var sql = "UPDATE IGNORE user SET patreonDaily = 0,patreonAnimal = 0 WHERE id = "+member.id+";";
+		console.log(sql);
+		con.query(sql,function(err,result){
+			if(err) {console.error(err);return;}
+			member.send("Just a heads up! Your Patreon benefits will not work if you leave the guild!");
+		});
+	}
+}
+
 function messageUser(user){
 	user.send("Thank you for supporting owo bot! Every dollar counts and I appreciate your donation!! If you encounter any problems, let me know!\n\nXOXO,\n**Scuttler#0001**")
 		.catch(err => console.error(err));
@@ -74,3 +92,4 @@ function lostAnimal(user){
 		console.log(user.user.username+"["+user.id+"] lost patreon animal perk!");
 	});
 }
+

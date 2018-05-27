@@ -83,6 +83,9 @@ client.on("guildDelete", guild => {
 client.on("guildMemberUpdate", (oldMember,newMember) => {
 	patreon.update(oldMember,newMember);
 });
+client.on("guildMemberRemove", (member) => {
+	patreon.left(member);
+});
 
 function updateActivity(){
 	client.shard.fetchClientValues('guilds.size')
