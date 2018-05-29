@@ -2,7 +2,7 @@ const CommandInterface = require('../../commandinterface.js');
 
 module.exports = new CommandInterface({
 	
-	alias:["lottery","bet"],
+	alias:["lottery","bet","lotto"],
 
 	args:"{amount}",
 
