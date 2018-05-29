@@ -44,7 +44,7 @@ module.exports = new CommandInterface({
 				if(gain > 1000) gain = 1000
 				if(patreon) extra = gain;
 
-				if(rows[1][0]&&rows[1][0].day>1)
+				if(rows[1][0]&&rows[1][0].day>2)
 					streak = 0;
 				else
 					streak++;

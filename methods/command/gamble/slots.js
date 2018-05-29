@@ -94,6 +94,11 @@ module.exports = new CommandInterface({
 					rslots.push(slots[slot3]);
 				}
 				var winmsg = (win==0)?"nothing... :c":"<:cowoncy:416043450337853441> "+win;
+				
+				var sql = "UPDATE cowoncy SET money = money + "+(win-amount)+" WHERE id = "+msg.author.id+" AND money >= "+amount+";";
+				con.query(sql, function(err,result){
+					if(err){console.error(err);return;}
+				});
 
 				//Display slots
 				var machine = "**`___SLOTS___  `**\n"+moving+" "+moving+" "+moving+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+amount+"\n`|         |`\n`|         |`";
@@ -109,19 +114,9 @@ module.exports = new CommandInterface({
 				.then(message => setTimeout(function(){
 
 				var machine = "**`___SLOTS___  `**\n"+rslots[0]+" "+rslots[1]+" "+rslots[2]+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+amount+"\n`|         |`  and won "+winmsg+"\n`|         |`";
-				message.edit(machine)
-				.then(function(message){
+				message.edit(machine);
 
-				var sql = "UPDATE cowoncy SET money = money + "+(win-amount)+" WHERE id = "+msg.author.id+" AND money >= "+amount+";";
-				con.query(sql, function(err,result){
-					if(err){console.error(err);return;}
-					if(result.affectedRows==0){
-						message.edit("**🚫 | "+msg.author.username+"**, Please don't cheese the system! >:c")
-						.catch(err =>  console.error(err));
-					}
-				});
-
-				});
+				
 				},1000));
 				},700));
 				},1000))
