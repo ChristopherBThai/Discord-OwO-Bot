@@ -24,7 +24,7 @@ module.exports = new CommandInterface({
 			return;
 		}
 
-		var sql = "UPDATE IGNORE timeout SET penalty = "+time+" WHERE id = "+args[0]+";";
+		var sql = "INSERT INTO timeout (id,time,count,penalty) VALUES ("+args[0]+",NOW(),1,"+time+") ON DUPLICATE KEY UPDATE time = NOW(),count=count+1,penalty = penalty*2 + "+time+";";
 		con.query(sql,async function(err,rows,fields){
 			if(err) throw err;
 			if(user = await sender.msgUser(args[0],"**☠ |** You have been banned for "+time+" hours!"))
