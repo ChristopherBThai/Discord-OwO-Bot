@@ -30,11 +30,13 @@ module.exports = new CommandInterface({
 			}else{
 				var amount = rows[0].amount;
 				var user1 = await global.getUser(rows[0].user1);
+				var pid1 = rows[0].pid1;
 				if(user1==undefined){
 					p.send("**🚫 | "+msg.author.username+"**, I could not find that user",3000);
 					return;
 				}
 				var user2 = await global.getUser(rows[0].user2);
+				var pid2 = rows[0].pid2;
 				if(user2==undefined){
 					p.send("**🚫 | "+msg.author.username+"**, I could not find that user",3000);
 					return;
@@ -50,7 +52,7 @@ module.exports = new CommandInterface({
 					if(rows[0].length<2){
 						p.send("**🚫 | "+msg.author.username+"**, Looks like someone doesn't have enough cowoncy!",3000);
 					}else{
-						startBattle(con,msg,user1,user2,amount,p.send);
+						startBattle(con,msg,user1,pid1,user2,pid2,amount,p.send);
 					}
 				});
 			}
@@ -59,21 +61,21 @@ module.exports = new CommandInterface({
 
 })
 
-function startBattle(con,msg,user1,user2,amount,send){
+function startBattle(con,msg,user1,pid1,user2,pid2,amount,send){
 	var sql = "SELECT id,money,nickname,name,lvl,att,hp,lvl,streak,xp, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 1 THEN fname ELSE NULL END)) AS one, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 2 THEN fname ELSE NULL END)) AS two, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 3 THEN fname ELSE NULL END)) AS three "+
 		"FROM (cowoncy NATURAL JOIN animal) LEFT JOIN (animal_food NATURAL JOIN food) "+
 		"ON animal.pid = animal_food.pid "+
-		"WHERE id = "+user1.id+" AND pet = name GROUP BY animal.pid;";
+		"WHERE id = "+user1.id+" AND animal.pid = "+pid1+" GROUP BY animal.pid;";
 	sql += "SELECT id,money,nickname,name,lvl,att,hp,lvl,streak,xp, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 1 THEN fname ELSE NULL END)) AS one, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 2 THEN fname ELSE NULL END)) AS two, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 3 THEN fname ELSE NULL END)) AS three "+
 		"FROM (cowoncy NATURAL JOIN animal) LEFT JOIN (animal_food NATURAL JOIN food) "+
 		"ON animal.pid = animal_food.pid "+
-		"WHERE id = "+user2.id+" AND pet = name GROUP BY animal.pid;";
+		"WHERE id = "+user2.id+" AND animal.pid = "+pid2+" GROUP BY animal.pid;";
 	sql += "UPDATE cowoncy SET money = money - "+amount+" WHERE id IN ("+user1.id+","+user2.id+");"
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
