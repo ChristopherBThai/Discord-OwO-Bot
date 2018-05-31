@@ -227,7 +227,15 @@ async function fightUser(con,msg,args,send){
 		}else if(result[3][0].name==undefined){
 			send("**🚫 | "+opponent.username+"** doesn't have a pet!",3000);
 		}else{
-			sql = "INSERT INTO battleuser (user1,user2,amount,sender) VALUES ("+smallerid+","+largerid+","+amount+","+sender+") ON DUPLICATE KEY UPDATE amount = "+amount+",time = NOW(),sender = "+sender+";";
+			var pid1,pid2;
+			if(result[1][0].id==smallerid){
+				pid1 = result[1][0].pid;
+				pid2 = result[3][0].pid;
+			}else{
+				pid1 = result[3][0].pid;
+				pid2 = result[1][0].pid;
+			}
+			sql = "INSERT INTO battleuser (user1,pid1,user2,pid2,amount,sender) VALUES ("+smallerid+","+pid1+","+largerid+","+pid2+","+amount+","+sender+") ON DUPLICATE KEY UPDATE pid1 = "+pid1+", pid2 = "+pid2+", amount = "+amount+",time = NOW(),sender = "+sender+";";
 			con.query(sql,function(err,result2){
 				if(err) throw err;
 				const embed = {
