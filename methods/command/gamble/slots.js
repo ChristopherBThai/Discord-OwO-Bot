@@ -5,13 +5,13 @@ var moving = "<a:slot_gif:417473893368987649>";
 
 module.exports = new CommandInterface({
 	
-	alias:["slots","slot"],
+	alias:["slots","slot","s"],
 
 	args:"{amount}",
 
 	desc:"Bet your money in the slot machine! Earn up to 10x your money!",
 
-	example:["owo slots 1000","owo slots all"],
+	example:["owo slots 1000","owo slots all","owo s 100"],
 
 	related:["owo money","owo lottery","owo coinflip"],
 

@@ -65,7 +65,7 @@ function fight(con,msg,send){
 
 		//Grab pet info
 		var upet = battleUtil.extractInfo(rows[0][0],msg.author,censor);
-		var opet = battleUtil.extractInfo(rows[2][0],await global.getUser(rows[2][0].id),censor);
+		var opet = battleUtil.extractInfo(rows[2][0],await global.getUser(rows[2][0].id,false),censor);
 
 		//Check if pets are valid
 		if(upet == undefined){
