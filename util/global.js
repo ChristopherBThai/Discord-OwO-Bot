@@ -44,13 +44,15 @@ exports.isUser = function(id){
 /*
  * gets a user
  */
-exports.getUser = async function(mention){
+exports.getUser = async function(mention,cache){
+	if(cache == undefined)
+		cache = true;
 	id = mention.match(/[0-9]+/);
 	if(id)
 		id = id[0];
 	else 
 		return undefined;
-	return await client.fetchUser(id,true);
+	return await client.fetchUser(id,cache);
 }
 
 /*
@@ -76,6 +78,8 @@ exports.client= function(tclient){
 
 
 	var animallist = animaljson["list"];
+
+	//Make nickname alias
 	for(var key in animallist){
 		var alt = animallist[key].alt;
 		animals[animallist[key].value] = key;
@@ -84,16 +88,20 @@ exports.client= function(tclient){
 			animals[alt[i]] = key;
 		}
 	}
+
+	//to unicode
 	for (key in animallist){
 		if(animallist[key].uni!=undefined)
 			animalunicode[animallist[key].value] = animallist[key].uni;
 	}
 	
+	//other info to animaljson
 	for(key in animaljson.ranks){
 		for(var i=1;i<animaljson[key].length;i++){
 			var name = animals[animaljson[key][i]];
 			animaljson.list[name].rank = key;
 			animaljson.list[name].price = animaljson.price[key];
+			animaljson.list[name].points = animaljson.points[key];
 		}
 	}
 }
