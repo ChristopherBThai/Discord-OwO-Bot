@@ -1,12 +1,16 @@
 //Checks for macro users
-var redis = require('redis');
-var redclient = redis.createClient();
+
+const mergeImages = require('merge-images');
+const canvas = require('canvas');
+
+const redis = require('redis');
+const redclient = redis.createClient();
 var users = {};
-var letters = "abcdefghijklmnopqrstuvwxyz";
+const letters = "abcdefghijklmnopqrstuvwxyz";
 var mcommands = {};
 var con;
-var global = require('./global.js');
-var sender = require('./sender.js');
+const global = require('./global.js');
+const sender = require('./sender.js');
 
 /**
  * Checks for macros
@@ -48,7 +52,7 @@ exports.check = function(msg,command,callback){
 
 			//Check if doing human check
 			if(user.validText&&user.validText!="ok"){
-				if(user.validCount>15&&user.banCount>0){
+				if(user.validMsgCount>=1&&user.validCount>15&&user.banCount>0){
 					ban(msg,user,"Ignoring warning messages*");
 					setUser(id,user);
 					return;
@@ -58,11 +62,13 @@ exports.check = function(msg,command,callback){
 					setUser(id,user);
 					return;
 				}
-				msg.channel.send("**⚠ | "+msg.author.username+"**! Please DM me the word `"+user.validText+"` to verify that you are human! ("+user.validMsgCount+"/3)");
+				msg.channel.send("**⚠ | "+msg.author.username+"**! Please DM me the verification text to verify that you are human! ("+user.validMsgCount+"/3)");
 				user.validMsgCount++;
 				setUser(id,user);
 				return;
 			}
+
+			
 
 			//Check for macros
 			if(checkInterval(cuser,now,diff)){
@@ -101,29 +107,48 @@ function humanCheck(user,msg,penalty,reason,callback){
 	if(user.validCount==undefined)
 		user.validCount = 0;
 	user.validCount++;
+	callback();
 
 	if(user.validCount<5){
-		msg.author.send("**⚠ |** Are you a real human? Please reply with `"+rand+"` so I can check!")
-			.then(message => {
-				callback();
-			})
-			.catch(err => {
-				msg.channel.send("**⚠ | "+msg.author.username+"**, please send me a DM with only the word `"+rand+"` to check that you are a human!")
+		generateBuffer(rand,function(buffer){
+			msg.author.send("**⚠ |** Are you a real human? Please reply with the following word so I can check!",buffer)
+				.catch(err => {
+					msg.channel.send("**⚠ | "+msg.author.username+"**, please DM me with only the following word to check that you are a human!",buffer)
+					.catch(err => {
+						ban(msg,user,"No possible permission");
+					});
+				});
+
+		});
+	}else{
+		generateBuffer(rand,function(buffer){
+			msg.channel.send("**⚠ | "+msg.author.username+"**, please DM me with only the following word to check that you are a human!",buffer)
 				.catch(err => {
 					ban(msg,user,"No possible permission");
 				});
-				callback();
-			});
-	}else{
-		msg.channel.send("**⚠ | "+msg.author.username+"**, please send me a DM with only the word `"+rand+"` to check that you are a human!")
-			.catch(err => {
-				ban(msg,user,"No possible permission");
-			});
-			callback();
+		});
 	}
 }
 
+function generateBuffer(word,callback){
+	mergeImages([
+		{src:'./util/letters/'+word.charAt(0)+'.png',x:0},
+		{src:'./util/letters/'+word.charAt(1)+'.png',x:25},
+		{src:'./util/letters/'+word.charAt(2)+'.png',x:50},
+		{src:'./util/letters/'+word.charAt(3)+'.png',x:75},
+		{src:'./util/letters/'+word.charAt(4)+'.png',x:100},
+	],
+		{Canvas: canvas,
+		width:125,height:25}
+	)
+	.then(b64 => {
+		var buffer = Buffer.from(b64.replace(/^data:image\/\w+;base64,/, ''),'base64');
+		callback({files:[buffer]});
+	});
+}
+
 exports.verify = function(msg,text){
+	text = text.toLowerCase();
 	getUser(msg.author.id,function(user){
 		if(!user||!user.validText||user.validText=="ok")
 			return;
