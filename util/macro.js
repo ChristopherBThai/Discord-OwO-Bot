@@ -131,16 +131,22 @@ function humanCheck(user,msg,penalty,reason,callback){
 }
 
 function generateBuffer(word,callback){
-	mergeImages([
-		{src:'./util/letters/'+word.charAt(0)+'.png',x:0},
-		{src:'./util/letters/'+word.charAt(1)+'.png',x:25},
-		{src:'./util/letters/'+word.charAt(2)+'.png',x:50},
-		{src:'./util/letters/'+word.charAt(3)+'.png',x:75},
-		{src:'./util/letters/'+word.charAt(4)+'.png',x:100},
-	],
-		{Canvas: canvas,
-		width:125,height:25}
-	)
+	var srcs = [];
+	var x = 5;
+
+	for(var i = 0;i<word.length;i++){
+		x += Math.floor(Math.random()*21) - 10;
+		var y = Math.floor(Math.random()*3) - 1;
+		srcs.push({src:'./util/letters/'+word.charAt(i)+'.png',x:x,y:y});
+		x += 25;
+	}
+	x += 12;
+	
+	var linex = Math.floor(Math.random()*31) - 15;
+	var liney = Math.floor(Math.random()*11) - 5;
+	srcs.push({src:'./util/lines/line'+Math.ceil(Math.random()*4)+'.png',x:linex,y:liney});
+
+	mergeImages(srcs,{Canvas: canvas,width:x,height:25})
 	.then(b64 => {
 		var buffer = Buffer.from(b64.replace(/^data:image\/\w+;base64,/, ''),'base64');
 		callback({files:[buffer]});
