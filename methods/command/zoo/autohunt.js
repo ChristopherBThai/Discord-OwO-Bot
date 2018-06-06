@@ -10,7 +10,7 @@ module.exports = new CommandInterface({
 
 	example:["TODO"],
 
-	related:["owo sacrafice","owo upgrade"],
+	related:["owo sacrifice","owo upgrade"],
 
 	cooldown:5000,
 	half:100,

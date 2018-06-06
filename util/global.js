@@ -3,7 +3,6 @@
  */
 
 const numbers = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
-var macro = require('./macro.js');
 var animaljson = require('../../tokens/owo-animals.json');
 var animalunicode = {};
 var commands = {};
@@ -27,7 +26,7 @@ exports.isInt = function(value){
 exports.getids = function(members){
 	var result = "";
 	members.keyArray().forEach(function(ele){
-		result += ele + ",";
+		result += "("+ele + ",'<a:glitchshark:452726339452272641>',1,1),";
 	});
 	return result.slice(0,-1);
 }

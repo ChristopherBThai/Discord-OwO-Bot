@@ -10,7 +10,7 @@ const mysql = require('../util/mysql.js');
 const con = mysql.con;
 const global = require('../util/global.js');
 
-const macro = require('../util/macro.js');
+const macro = require('../../tokens/macro.js');
 const ban = require('../util/ban.js');
 
 
@@ -34,6 +34,8 @@ class Command {
 		sender.client(Client);
 		global.con(con);
 		macro.con(con);
+		macro.sender(sender);
+		macro.global(global);
 		for(var key in dir){
 			if(dir[key] instanceof CommandInterface)
 				addCommand(dir[key]);

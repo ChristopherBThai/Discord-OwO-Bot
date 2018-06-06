@@ -11,7 +11,7 @@ const dbl = new DBL(auth.dbl);
 
 const CommandClass = require('./methods/command.js');
 const command = new CommandClass(client);
-const macro = require('./util/macro.js');
+const macro = require('../tokens/macro.js');
 const logger = require('./util/logger.js');
 const patreon = require('./util/patreon.js');
 
