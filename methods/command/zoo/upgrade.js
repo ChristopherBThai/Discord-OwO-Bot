@@ -71,9 +71,9 @@ module.exports = new CommandInterface({
 				return;
 			}
 			var stat = autohuntUtil.getLvl(result[0][0][trait],count,trait);
-			var text = "** | "+msg.author.username+"**, You successfully upgraded `"+trait+"` with "+essence+" **"+count+"**!"; 
+			var text = "**🛠 | "+msg.author.username+"**, You successfully upgraded `"+trait+"` with "+essence+" **"+count+"**!"; 
 			if(stat.lvlup)
-				text += "\n**<:blank:427371936482328596> |** HuntBot Leveled Up!!";
+				text += "\n**<:blank:427371936482328596> |** HuntBot Leveled Up!! 🎉";
 			text += "\n**<:blank:427371936482328596> |** `"+trait+": "+stat.stat+stat.prefix+" -  Lvl "+stat.lvl+" ["+stat.currentxp+"/"+stat.maxxp+"]`";
 			p.send(text);
 		});
