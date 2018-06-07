@@ -1,12 +1,9 @@
-var gain = 100;
 const traits= {"cooldown":{"inc":150,"base":60,"upg":-1,"max":45,"prefix":"s"},
 		"duration":{"inc":150,"base":.5,"upg":.5,"max":47,"prefix":"H"},
 		"cost":{"inc":5000,"base":10,"upg":-1,"max":5,"prefix":" cowoncy"}};
-
-test(traits.cooldown);
-test(traits.duration);
-test(traits.cost);
-
+//test(traits.cooldown);
+//test(traits.duration);
+//test(traits.cost);
 
 exports.getLvl = function(xp,gain,trait){
 	totalxp = 0;

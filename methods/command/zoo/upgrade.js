@@ -3,10 +3,10 @@ const CommandInterface = require('../../commandinterface.js');
 const autohuntUtil = require('./autohuntutil.js');
 const essence = "<a:essence:451638978299428875>";
 const traits = {};
-const cooldown = ["cooldown","timer"];
+const cooldown = ["cooldown","timer","cd"];
 for(var i=0;i<cooldown.length;i++)
 	traits[cooldown[i]] = "cooldown";
-const cost = ["cost","price"];
+const cost = ["cost","price","cowoncy"];
 for(var i=0;i<cost.length;i++)
 	traits[cost[i]] = "cost";
 const duration = ["duration","totaltime","time"];
@@ -16,7 +16,7 @@ for(var i=0;i<duration.length;i++)
 
 module.exports = new CommandInterface({
 	
-	alias:["upgrade"],
+	alias:["upgrade","upg"],
 
 	args:"{trait} {count}",
 
@@ -65,7 +65,6 @@ module.exports = new CommandInterface({
 		sql += "UPDATE autohunt SET essence = essence - "+count+","+trait+"="+trait+"+"+count+" WHERE id = "+msg.author.id+" AND essence >= "+count+";";
 		con.query(sql,function(err,result){
 			if(err){console.error(err);return;}
-			console.log(result);
 			if(!result[0][0]||result[1].affectedRows==0){
 				p.send("**🚫 | "+msg.author.username+"** You do not have enough animal essence!",3000);
 				return;
