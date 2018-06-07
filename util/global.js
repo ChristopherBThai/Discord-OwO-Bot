@@ -26,7 +26,7 @@ exports.isInt = function(value){
 exports.getids = function(members){
 	var result = "";
 	members.keyArray().forEach(function(ele){
-		result += "("+ele + ",'<a:glitchshark:452726339452272641>',1,1),";
+		result += ele+",";
 	});
 	return result.slice(0,-1);
 }
