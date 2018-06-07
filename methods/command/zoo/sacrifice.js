@@ -19,7 +19,6 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: function(p){
-		return;
 		var global=p.global,con=p.con,msg=p.msg,args=p.args;
 
 		var animal = global.validAnimal(args[0]);
