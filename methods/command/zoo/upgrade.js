@@ -31,7 +31,6 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: function(p){
-		return;
 		var global=p.global,con=p.con,msg=p.msg,args=p.args;
 
 		var count = undefined;
@@ -71,9 +70,11 @@ module.exports = new CommandInterface({
 				p.send("**🚫 | "+msg.author.username+"** You do not have enough animal essence!",3000);
 				return;
 			}
-			var stat = autohuntUtil.getLvl(result[0][0][trait]+count,trait);
+			var stat = autohuntUtil.getLvl(result[0][0][trait],count,trait);
 			var text = "** | "+msg.author.username+"**, You successfully upgraded `"+trait+"` with "+essence+" **"+count+"**!"; 
-			text += "\n**<:blank:427371936482328596> | ** `"+trait+": Lvl "+stat.lvl+" ["+stat.currentxp+"/"+stat.maxxp+"]`";
+			if(stat.lvlup)
+				text += "\n**<:blank:427371936482328596> |** HuntBot Leveled Up!!";
+			text += "\n**<:blank:427371936482328596> |** `"+trait+": "+stat.stat+stat.prefix+" -  Lvl "+stat.lvl+" ["+stat.currentxp+"/"+stat.maxxp+"]`";
 			p.send(text);
 		});
 
