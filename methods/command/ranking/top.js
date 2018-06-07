@@ -130,7 +130,7 @@ function getRanking(con, msg, count){
 
 	//Create an embeded message
 	con.query(sql,function(err,rows,fields){
-		if(err) throw err;
+		if(err) {console.error(err); return;}
 		var rank = 1;
 		var ranking = [];
 		var embed = "```md\n< Top "+count+" OwO Rankings for "+msg.guild.name+" >\n";
@@ -173,7 +173,7 @@ function getGlobalRanking(con, msg, count){
 
 	//Create an embeded message
 	con.query(sql,async function(err,rows,fields){
-		if(err) throw err;
+		if(err) {console.error(err); return;}
 		var rank = 1;
 		var ranking = [];
 		var embed = "```md\n< Top "+count+" Global OwO Rankings >\n";
@@ -217,7 +217,7 @@ function getGuildRanking(con, msg, count){
 
 	//Create an embeded message
 	con.query(sql,async function(err,rows,fields){
-		if(err) throw err;
+		if(err) {console.error(err); return;}
 		var rank = 1;
 		var ranking = [];
 		var embed = "```md\n< Top "+count+" Guild OwO Rankings >\n";
@@ -257,7 +257,7 @@ function getZooRanking(con, msg, count){
 
 	//Create an embeded message
 	con.query(sql,async function(err,rows,fields){
-		if(err) throw err;
+		if(err) {console.error(err); return;}
 		var rank = 1;
 		var ranking = [];
 		var embed = "```md\n< Top "+count+" Zoo Rankings for "+msg.guild.name+" >\n";
@@ -318,7 +318,7 @@ function getGlobalZooRanking(con, msg, count){
 
 	//Create an embeded message
 	con.query(sql,async function(err,rows,fields){
-		if(err) throw err;
+		if(err) {console.error(err); return;}
 		var rank = 1;
 		var ranking = [];
 		var embed = "```md\n< Top "+count+" Global Zoo Rankings >\n";
@@ -379,7 +379,7 @@ function getMoneyRanking(con, msg, count){
 
 	//Create an embeded message
 	con.query(sql,async function(err,rows,fields){
-		if(err) throw err;
+		if(err) {console.error(err); return;}
 		var rank = 1;
 		var ranking = [];
 		var embed = "```md\n< Top "+count+" Cowoncy Rankings for "+msg.guild.name+" >\n";
@@ -422,7 +422,7 @@ function getGlobalMoneyRanking(con, msg, count){
 
 	//Create an embeded message
 	con.query(sql,async function(err,rows,fields){
-		if(err) throw err;
+		if(err) {console.error(err); return;}
 		var rank = 1;
 		var ranking = [];
 		var embed = "```md\n< Top "+count+" Global Cowoncy Rankings >\n";
@@ -464,7 +464,7 @@ function getRepRanking(con, msg, count){
 
 	//Create an embeded message
 	con.query(sql,async function(err,rows,fields){
-		if(err) throw err;
+		if(err) {console.error(err); return;}
 		var rank = 1;
 		var ranking = [];
 		var embed = "```md\n< Top "+count+" Cookie Rankings for "+msg.guild.name+" >\n";
@@ -507,7 +507,7 @@ function getGlobalRepRanking(con, msg, count){
 
 	//Create an embeded message
 	con.query(sql,async function(err,rows,fields){
-		if(err) throw err;
+		if(err) {console.error(err); return;}
 		var rank = 1;
 		var ranking = [];
 		var embed = "```md\n< Top "+count+" Global Cookie Rankings >\n";
@@ -549,7 +549,7 @@ function getPetRanking(con, msg, count){
 
 	//Create an embeded message
 	con.query(sql,async function(err,rows,fields){
-		if(err) throw err;
+		if(err) {console.error(err); return;}
 		var rank = 1;
 		var ranking = [];
 		var embed = "```md\n< Top "+count+" Pet Rankings for "+msg.guild.name+" >\n";
@@ -595,7 +595,7 @@ function getGlobalPetRanking(con, msg, count){
 
 	//Create an embeded message
 	con.query(sql,async function(err,rows,fields){
-		if(err) throw err;
+		if(err) {console.error(err); return;}
 		var rank = 1;
 		var ranking = [];
 		var embed = "```md\n< Top "+count+" Global Pet Rankings >\n";
