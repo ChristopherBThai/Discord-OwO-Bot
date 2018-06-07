@@ -97,7 +97,7 @@ function autohunt(msg,con,args,global,send){
 			var timer = "";
 			if(hour>0) timer = hour+"H"+min+"M";
 			else timer = min+"M";
-			send("** |** `BEEP BOOP. `**`"+msg.author.username+"`**` YOU SPENT `**`"+cowoncy+"`**\n** |** `I WILL BE BACK IN `**`"+timer+"`**` WITH `**`"+huntcount+"`**` ANIMALS`");
+			send("**🤖 |** `BEEP BOOP. `**`"+msg.author.username+"`**` YOU SPENT `**`"+cowoncy+"`**\n** |** `I WILL BE BACK IN `**`"+timer+"`**` WITH `**`"+huntcount+"`**` ANIMALS`");
 		});
 	});
 }
