@@ -28,8 +28,9 @@ var adminCommands = {};
 class Command {
 
 	//Grabs all commands in ./command/
-	constructor(Client){
+	constructor(Client,dbl){
 		this.client = Client;
+		this.dbl = dbl;
 		global.client(Client);
 		sender.client(Client);
 		global.con(con);
@@ -54,7 +55,7 @@ class Command {
 			args = msg.content.slice(prefix.length).trim().split(/ +/g);
 		else{
 			if(msg.content.toLowerCase().includes('owo')||msg.content.toLowerCase().includes('uwu')){
-				executeCommand(initParam(msg,"points",[],this.client));
+				executeCommand(initParam(msg,"points",[],this.client,this.dbl));
 			}
 			return;
 		}
@@ -63,7 +64,7 @@ class Command {
 		var command = args.shift().toLowerCase();
 
 		//Init params to pass into command
-		var param = initParam(msg,command,args,this.client);
+		var param = initParam(msg,command,args,this.client,this.dbl);
 
 		//Execute the command
 		if(commands[command]){
@@ -82,7 +83,7 @@ class Command {
 		else {this.execute(msg);return;}
 
 		var command = args.shift().toLowerCase();
-		var param = initParam(msg,command,args,this.client);
+		var param = initParam(msg,command,args,this.client,this.dbl);
 
 		if(msg.channel.type==="dm"){
 			if(adminCommands[command]&&adminCommands[command].dm)
@@ -153,19 +154,21 @@ function executeCommand(param){
 	},false);
 }
 
-function initParam(msg,command,args,client){
+function initParam(msg,command,args,client,dbl){
 	var param = {
 		"msg":msg,
 		"args":args,
 		"command":command,
 		"client":client,
+		"dbl":dbl,
 		"mysql":mysql,
 		"con":con,
 		"send":sender.send(msg),
 		"global":global,
 		"aliasToCommand":aliasToCommand,
 		"commands":commands,
-		"mcommands":mcommands
+		"mcommands":mcommands,
+		"logger":logger
 	};
 	return param;
 }
