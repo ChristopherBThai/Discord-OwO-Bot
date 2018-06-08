@@ -19,6 +19,7 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: function(p){
+		return;
 		var args=p.args,con=p.con;
 		if(args.length==0)
 			display(p.msg,con,p.send);
@@ -93,11 +94,11 @@ function autohunt(msg,con,args,global,send){
 		con.query(sql,function(err,result){
 			if(err){console.error(err);return;}
 			var min = huntmin%60;
-			var hour = huntmin/60;
+			var hour = Math.trunc(huntmin/60);
 			var timer = "";
 			if(hour>0) timer = hour+"H"+min+"M";
 			else timer = min+"M";
-			send("**🤖 |** `BEEP BOOP. `**`"+msg.author.username+"`**` YOU SPENT `**`"+cowoncy+"`**\n** |** `I WILL BE BACK IN `**`"+timer+"`**` WITH `**`"+huntcount+"`**` ANIMALS`");
+			send("**🤖 |** `BEEP BOOP. `**`"+msg.author.username+"`**` YOU SPENT `**`"+cowoncy+"`**` cowoncy`\n**<:blank:427371936482328596> |** `I WILL BE BACK IN `**`"+timer+"`**` WITH `**`"+huntcount+"`**` ANIMALS`");
 		});
 	});
 }
@@ -126,7 +127,7 @@ function display(msg,con,send){
 		}
 		maxhunt = Math.floor((duration.stat*60*60)/cooldown.stat);
 		const embed = {
-			"title": " `BEEP. BOOP. I AM HUNTBOT. I WILL HUNT FOR YOU MASTER.`",
+			"title": "🤖 `BEEP. BOOP. I AM HUNTBOT. I WILL HUNT FOR YOU MASTER.`",
 		 	"description": "Use the command `owo autohunt {cowoncy}` to get started.\nYou can use `owo upgrade {trait}` to upgrade the traits below.\nTo obtain more essence, use `owo sacrifice {animal} {count}`.",
 			"color": 4886754,
 			"author": {

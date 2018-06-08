@@ -1,24 +1,6 @@
 var manager;
 const login = require('../../tokens/owo-login.json');
-
-//Establish mysql connection
-var mysql = require('mysql');
-var con = mysql.createConnection({
-	host: "localhost",
-	user: login.user,
-	password: login.pass,
-	database: "owo",
-	supportBigNumbers: true,
-	bigNumberStrings: true,
-	multipleStatements: true,
-	charset: "utf8mb4"
-});
-
-//Display log when connected to mysql
-con.connect(function(err){
-	if(err) throw err;
-	console.log("Vote sql Connected!");
-});
+const con = require('../util/mysql.js').con;
 
 exports.setManager = function(manageri){
 	manager = manageri;

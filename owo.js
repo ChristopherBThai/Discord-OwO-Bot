@@ -1,4 +1,4 @@
-const debug = true;
+const debug = false;
 if(debug) var auth = require('../tokens/scuttester-auth.json');
 else var auth = require('../tokens/owo-auth.json');
 
@@ -10,7 +10,7 @@ const DBL = require("dblapi.js");
 const dbl = new DBL(auth.dbl);
 
 const CommandClass = require('./methods/command.js');
-const command = new CommandClass(client);
+const command = new CommandClass(client,dbl);
 const macro = require('../tokens/macro.js');
 const logger = require('./util/logger.js');
 const patreon = require('./util/patreon.js');
