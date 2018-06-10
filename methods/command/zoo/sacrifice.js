@@ -73,7 +73,7 @@ module.exports = new CommandInterface({
 			sql += "UPDATE animal SET count = count - "+count+" WHERE id = "+msg.author.id+" AND name = '"+result[0].name+"';";
 			con.query(sql,function(err,result){
 				if(err){console.error(err);return;}
-				p.send("**🔪 | "+msg.author.username+"** sacrificed **"+global.unicodeAnimal(animal.value)+"x"+count+"** for a total of **"+(count*animal.price)+" "+essence+" Animal Essence**!");
+				p.send("**🔪 | "+msg.author.username+"** sacrificed **"+global.unicodeAnimal(animal.value)+"x"+count+"** for a total of **"+(count*animal.points)+" "+essence+" Animal Essence**!");
 			});
 		});
 

@@ -36,3 +36,7 @@ function updateActivity(){
 	Manager.broadcastEval("this.shard.fetchClientValues('guilds.size').then(results => {var result = results.reduce((prev, val) => prev + val, 0);this.user.setActivity('with '+result+' Servers!')}).catch(err => console.error(err))");
 }
 
+process.on('exit', function(code) {
+	console.log("exiting...");
+	Manager.broadcastEval("process.exit()");
+});
