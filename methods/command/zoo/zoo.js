@@ -66,7 +66,13 @@ module.exports = new CommandInterface({
 			text += additional2;
 			text += additional3;
 			if(count!=undefined){
-				var total = count.common*1+count.uncommon*5+count.rare*10+count.epic*50+count.mythical*500+count.legendary*1000+count.fabled*25000;
+				var total = count.common*animals.points.common+
+					count.uncommon*animals.points.uncommon+
+					count.rare*animals.points.rare+
+					count.epic*animals.points.epic+
+					count.mythical*animals.points.mythical+
+					count.legendary*animals.points.legendary+
+					count.fabled*animals.points.fabled;
 				text += "\n**Zoo Points: __"+total+"__**\n\t**";
 				if(count.fabled>0)
 					text += "F-"+count.fabled+", ";
