@@ -1,10 +1,10 @@
 const macro = require('../../../../tokens/macro.js');
-const traits= {"count":{"inc":10,"pow":2,"base":25,"upg":1,"max":215,"prefix":" animals/H"},
-		"duration":{"inc":10,"pow":2,"base":.5,"upg":.1,"max":235,"prefix":"H"},
-		"cost":{"inc":3000,"pow":2.6,"base":10,"upg":-1,"max":5,"prefix":" cowoncy"}};
-test(traits.count);
-test(traits.duration);
-test(traits.cost);
+const traits= {"efficiency":{"inc":10,"pow":1.748,"base":25,"upg":1,"max":215,"prefix":"/H"},
+		"duration":{"inc":10,"pow":1.7,"base":.5,"upg":.1,"max":235,"prefix":"H"},
+		"cost":{"inc":1000,"pow":3.4,"base":10,"upg":-1,"max":5,"prefix":" cowoncy"}};
+//test(traits.efficiency);
+//test(traits.duration);
+//test(traits.cost);
 
 exports.getLvl = function(xp,gain,trait){
 	totalxp = 0;
@@ -32,6 +32,7 @@ exports.getLvl = function(xp,gain,trait){
 					temp.gain = trait.upg;
 				}
 				temp.stat = trait.base + (trait.upg*temp.lvl);
+				temp.stat = Math.trunc(temp.stat*10)/10;
 				temp.prefix = trait.prefix;
 				return temp;
 			}

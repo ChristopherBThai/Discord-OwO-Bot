@@ -3,9 +3,9 @@ const CommandInterface = require('../../commandinterface.js');
 const autohuntUtil = require('./autohuntutil.js');
 const essence = "<a:essence:451638978299428875>";
 const traits = {};
-const cooldown = ["cooldown","timer","cd"];
-for(var i=0;i<cooldown.length;i++)
-	traits[cooldown[i]] = "cooldown";
+const efficiency = ["efficiency","timer","cd","cooldown"];
+for(var i=0;i<efficiency.length;i++)
+	traits[efficiency[i]] = "efficiency";
 const cost = ["cost","price","cowoncy"];
 for(var i=0;i<cost.length;i++)
 	traits[cost[i]] = "cost";
@@ -22,7 +22,7 @@ module.exports = new CommandInterface({
 
 	desc:"Use animal essence to upgrade autohunt!",
 
-	example:["owo upgrade cooldown 200","owo upgrade cost 5000"],
+	example:["owo upgrade efficiency 200","owo upgrade cost 5000"],
 
 	related:["owo autohunt","owo sacrifice"],
 
@@ -53,7 +53,7 @@ module.exports = new CommandInterface({
 		
 		//Check if valid args
 		if(!trait){
-			p.send("**🚫 |** I could not find that autohunt trait!\n**<:blank:427371936482328596> |** You can choose from: `cooldown`, `duration`, or `cost`",3000);
+			p.send("**🚫 |** I could not find that autohunt trait!\n**<:blank:427371936482328596> |** You can choose from: `efficiency`, `duration`, or `cost`",3000);
 			return;
 		}
 		if(!count||count<=0){
