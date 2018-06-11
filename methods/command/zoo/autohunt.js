@@ -146,19 +146,19 @@ function autohunt(msg,con,args,global,send){
 		}
 
 		//Extract info
-		var duration,cooldown,cost,essence,maxhunt;
+		var duration,efficiency,cost,essence,maxhunt;
 		if(result[0][0]){
 			duration = autohuntutil.getLvl(result[0][0].duration,0,"duration");
-			cooldown= autohuntutil.getLvl(result[0][0].cooldown,0,"cooldown");
+			efficiency= autohuntutil.getLvl(result[0][0].efficiency,0,"efficiency");
 			cost= autohuntutil.getLvl(result[0][0].cost,0,"cost");
 			essence = result[0][0].essence;
 		}else{
 			duration = autohuntutil.getLvl(0,0,"duration");
-			cooldown= autohuntutil.getLvl(0,0,"cooldown");
+			efficiency= autohuntutil.getLvl(0,0,"efficiency");
 			cost= autohuntutil.getLvl(0,0,"cost");
 			essence = 0;
 		}
-		maxhunt = Math.floor((duration.stat*60*60)/cooldown.stat);
+		maxhunt = Math.floor(duration.stat*efficiency.stat);
 
 		//Format cowoncy
 		cowoncy -= cowoncy%cost.stat;
@@ -166,7 +166,7 @@ function autohunt(msg,con,args,global,send){
 			cowoncy = maxhunt*cost.stat;
 
 		var huntcount = Math.trunc(cowoncy/cost.stat);
-		var huntmin = Math.ceil((huntcount*cooldown.stat)/60);
+		var huntmin = Math.ceil((huntcount/efficiency.stat)*60);
 
 		var sql = "UPDATE cowoncy SET money = money - "+cowoncy+" WHERE id = "+msg.author.id+";";
 		sql += "INSERT INTO autohunt (id,start,huntcount,huntmin,password) VALUES ("+msg.author.id+",NOW(),"+huntcount+","+huntmin+",'') ON DUPLICATE KEY UPDATE start = NOW(), huntcount = "+huntcount+",huntmin = "+huntmin+",password = '';";
@@ -177,7 +177,7 @@ function autohunt(msg,con,args,global,send){
 			var timer = "";
 			if(hour>0) timer = hour+"H"+min+"M";
 			else timer = min+"M";
-			send("**🤖 |** `BEEP BOOP. `**`"+msg.author.username+"`**` YOU SPENT `**`"+cowoncy+"`**` cowoncy`\n**<:blank:427371936482328596> |** `I WILL BE BACK IN `**`"+timer+"`**` WITH `**`"+huntcount+"`**` ANIMALS`");
+			send("**🤖 |** `BEEP BOOP. `**`"+msg.author.username+"`**`, YOU SPENT `**` "+cowoncy+" `**` cowoncy`\n**<:blank:427371936482328596> |** `I WILL BE BACK IN `**` "+timer+" `**` WITH `**` "+huntcount+" `**` ANIMALS`");
 		});
 	});
 }
@@ -192,31 +192,31 @@ function display(msg,con,send){
 			if(!hunting)
 				return;
 		}
-		var duration,cooldown,cost,essence,maxhunt;
+		var duration,efficiency,cost,essence,maxhunt;
 		if(result[0]){
 			duration = autohuntutil.getLvl(result[0].duration,0,"duration");
-			cooldown= autohuntutil.getLvl(result[0].cooldown,0,"cooldown");
+			efficiency= autohuntutil.getLvl(result[0].efficiency,0,"efficiency");
 			cost= autohuntutil.getLvl(result[0].cost,0,"cost");
 			essence = result[0].essence;
 		}else{
 			duration = autohuntutil.getLvl(0,0,"duration");
-			cooldown= autohuntutil.getLvl(0,0,"cooldown");
+			efficiency= autohuntutil.getLvl(0,0,"efficiency");
 			cost= autohuntutil.getLvl(0,0,"cost");
 			essence = 0;
 		}
 
 		duration.percent = generatePercent(duration.currentxp,duration.maxxp).bar;
-		cooldown.percent = generatePercent(cooldown.currentxp,cooldown.maxxp).bar;
+		efficiency.percent = generatePercent(efficiency.currentxp,efficiency.maxxp).bar;
 		cost.percent = generatePercent(cost.currentxp,cost.maxxp).bar;
 
 		if(duration.max) duration.value = "`Lvl "+duration.lvl+" [MAX]`\n"+generatePercent(1,1).bar;
 			else duration.value = "`Lvl "+duration.lvl+" ["+duration.currentxp+"/"+duration.maxxp+"]`\n"+duration.percent;
-		if(cooldown.max) cooldown.value = "`Lvl "+cooldown.lvl+" [MAX]`\n"+generatePercent(1,1).bar;
-			else cooldown.value = "`Lvl "+cooldown.lvl+" ["+cooldown.currentxp+"/"+cooldown.maxxp+"]`\n"+cooldown.percent;
+		if(efficiency.max) efficiency.value = "`Lvl "+efficiency.lvl+" [MAX]`\n"+generatePercent(1,1).bar;
+			else efficiency.value = "`Lvl "+efficiency.lvl+" ["+efficiency.currentxp+"/"+efficiency.maxxp+"]`\n"+efficiency.percent;
 		if(cost.max) cost.value = "`Lvl "+cost.lvl+" [MAX]`\n"+generatePercent(1,1).bar;
 			else cost.value = "`Lvl "+cost.lvl+" ["+cost.currentxp+"/"+cost.maxxp+"]`\n"+cost.percent;
 
-		maxhunt = Math.floor((duration.stat*60*60)/cooldown.stat);
+		maxhunt = Math.floor(duration.stat*efficiency.stat);
 		const embed = {
 			"title": "🤖 `BEEP. BOOP. I AM HUNTBOT. I WILL HUNT FOR YOU MASTER.`",
 		 	"description": "Use the command `owo autohunt {cowoncy}` to get started.\nYou can use `owo upgrade {trait}` to upgrade the traits below.\nTo obtain more essence, use `owo sacrifice {animal} {count}`.",
@@ -226,8 +226,8 @@ function display(msg,con,send){
 				"icon_url": msg.author.avatarURL
 				},
 			"fields": [{
-					"name": "⏱ Cooldown - `"+cooldown.stat+cooldown.prefix+"`",
-					"value": cooldown.value,
+					"name": "⏱ Efficiency - `"+efficiency.stat+efficiency.prefix+"`",
+					"value": efficiency.value,
 					"inline": true
 				},
 				{
