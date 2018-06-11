@@ -90,6 +90,9 @@ function autohunt(msg,con,args,global,send){
 		password = args[0];
 	}
 
+	if(password)
+		password = password.toLowerCase();
+
 	if(!cowoncy){
 		send("**🚫 | "+msg.author.username+"**, Wrong syntax!",3000);
 		return;

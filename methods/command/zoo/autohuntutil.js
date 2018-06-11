@@ -1,10 +1,10 @@
 const macro = require('../../../../tokens/macro.js');
-const traits= {"cooldown":{"inc":150,"base":60,"upg":-1,"max":45,"prefix":"s"},
-		"duration":{"inc":150,"base":.5,"upg":.5,"max":47,"prefix":"H"},
-		"cost":{"inc":2000,"base":10,"upg":-1,"max":5,"prefix":" cowoncy"}};
-//test(traits.cooldown);
-//test(traits.duration);
-//test(traits.cost);
+const traits= {"count":{"inc":10,"pow":2,"base":25,"upg":1,"max":215,"prefix":" animals/H"},
+		"duration":{"inc":10,"pow":2,"base":.5,"upg":.1,"max":235,"prefix":"H"},
+		"cost":{"inc":3000,"pow":2.6,"base":10,"upg":-1,"max":5,"prefix":" cowoncy"}};
+test(traits.count);
+test(traits.duration);
+test(traits.cost);
 
 exports.getLvl = function(xp,gain,trait){
 	totalxp = 0;
@@ -14,7 +14,7 @@ exports.getLvl = function(xp,gain,trait){
 	trait = traits[trait];
 
 	for(var i=1;i<=trait.max+1;i++){
-		var lvlxp = trait.inc*i*i;
+		var lvlxp = Math.trunc(trait.inc*Math.pow(i,trait.pow));
 		totalxp += lvlxp;
 		if(!hit&&totalxp>xp){
 			prevlvl = i-1;
@@ -40,13 +40,13 @@ exports.getLvl = function(xp,gain,trait){
 }
 
 exports.getMaxXp = function(lvl,trait){
-	return traits[trait].inc*lvl*lvl;
+	return Math.trunc(traits[trait].inc*Math.pow(lvl,trait.pow));
 }
 
 function test(trait){
 	var total = 0;
 	for(var i=1;i<=trait.max;i++){
-		var xp = trait.inc*i*i;
+		var xp = Math.trunc(trait.inc*Math.pow(i,trait.pow));
 		total += xp;
 		console.log("["+i+"] "+total +" | "+xp);
 	}

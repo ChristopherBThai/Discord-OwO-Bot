@@ -17,7 +17,10 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: function(p){
-		p.dbl.hasVoted(p.msg.author.id).then(voted => {
+		var con = p.con;
+		var id = p.msg.author.id;
+		p.dbl.hasVoted(""+p.msg.author.id).then(voted => {
+			console.log(voted);
 			if(voted){
 				var sql = "SELECT count,TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = "+id+";";
 				sql += "SELECT patreonDaily FROM cowoncy NATURAL JOIN user WHERE id = "+id+";";
@@ -65,7 +68,7 @@ module.exports = new CommandInterface({
 					}
 				});
 			}else{
-				var text = "**☑ |** Click the link to vote and gain 200+ cowoncy!\n";
+				var text = "**RETYPE `OWO VOTE` AFTER YOU VOTE TO CLAIM COWONCY (for now)**\n**☑ |** Click the link to vote and gain 200+ cowoncy!\n";
 				text += "**<:blank:427371936482328596> | Your daily vote is available!**\n";
 				text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 				p.send(text);
