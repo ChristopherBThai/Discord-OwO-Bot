@@ -1,6 +1,8 @@
 const CommandInterface = require('../../commandinterface.js');
 
 var animals = require('../../../../tokens/owo-animals.json');
+var patreon = "";
+var cpatreon = "";
 var secret = "";
 var secret2 = "";
 var secret3 = "";
@@ -36,6 +38,7 @@ module.exports = new CommandInterface({
 			var additional = "";
 			var additional2 = "";
 			var additional3 = "";
+			var additional4 = "";
 			var row = result[0];
 			var count = result[1][0];
 			var digits= 2;
@@ -46,6 +49,10 @@ module.exports = new CommandInterface({
 				if(animals.patreon.indexOf(row[i].name)>0){
 					if(additional0=="") additional0 = patreon;
 					additional0 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
+				}
+				if(animals.cpatreon.indexOf(row[i].name)>0){
+					if(additional4=="") additional4 = cpatreon;
+					additional4 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 				}
 				if(animals.legendary.indexOf(row[i].name)>0){
 					if(additional=="") additional = secret;
@@ -62,6 +69,7 @@ module.exports = new CommandInterface({
 			}
 			text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question+toSmallNum(0,digits));
 			text += additional0;
+			text += additional4;
 			text += additional;
 			text += additional2;
 			text += additional3;
@@ -119,6 +127,7 @@ function initDisplay(){
 	for (i=1;i<animals.mythical.length;i++)
 		display += "~"+animals.mythical[i]+gap;
 	patreon = "\n"+animals.ranks.patreon+"    ";
+	cpatreon = "\n"+animals.ranks.cpatreon+"    ";
 	secret = "\n"+animals.ranks.legendary+"    ";
 	secret2 = "\n"+animals.ranks.fabled+"    ";
 	secret3 = "\n"+animals.ranks.special+"    ";

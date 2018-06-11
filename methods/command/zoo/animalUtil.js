@@ -6,13 +6,21 @@ exports.randAnimal = function(patreon){
 	var rand = Math.random();
 	var result = [];
 
-	if(patreon&&rand<parseFloat(animals.patreon[0])){
-		rand = Math.ceil(Math.random()*(animals.patreon.length-1));
-		result.push("**patreon** "+animals.ranks.patreon);
-		result.push(animals.patreon[rand]);
-		result.push("patreon");
-		result.push(100);
-	}else if(animals.special[0]!="0"&&rand<parseFloat(animals.special[0])+((patreon)?parseFloat(animals.patreon[0]):0)){
+	if(patreon&&rand<parseFloat(animals.cpatreon[0])+parseFloat(animals.patreon[0])){
+		if(rand<parseFloat(animals.cpatreon[0])){
+			rand = Math.ceil(Math.random()*(animals.cpatreon.length-1));
+			result.push("**patreon** "+animals.ranks.cpatreon);
+			result.push(animals.cpatreon[rand]);
+			result.push("cpatreon");
+			result.push(100);
+		}else{
+			rand = Math.ceil(Math.random()*(animals.patreon.length-1));
+			result.push("**patreon** "+animals.ranks.patreon);
+			result.push(animals.patreon[rand]);
+			result.push("patreon");
+			result.push(100);
+		}
+	}else if(animals.special[0]!="0"&&rand<parseFloat(animals.special[0])+((patreon)?parseFloat(animals.cpatreon[0])+parseFloat(animals.patreon[0]):0)){
 		rand = 1;
 		result.push("**special** "+animals.ranks.special);
 		result.push(animals.special[rand]);
