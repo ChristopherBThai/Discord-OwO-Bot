@@ -241,7 +241,7 @@ async function fightUser(con,msg,args,send){
 				const embed = {
 					"color":4886754,
 					"footer": {
-						"text": "This invitation ends in 5 minute"
+						"text": "This invitation ends in 5 minutes"
 					},
 					"author": {
 						"name": opponent.username+"! You have been challenged by "+msg.author.username+"!",
