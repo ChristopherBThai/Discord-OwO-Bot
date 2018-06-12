@@ -177,7 +177,7 @@ function autohunt(msg,con,args,global,send){
 			var timer = "";
 			if(hour>0) timer = hour+"H"+min+"M";
 			else timer = min+"M";
-			send("**🤖 |** `BEEP BOOP. `**`"+msg.author.username+"`**`, YOU SPENT `**` "+cowoncy+" `**` cowoncy`\n**<:blank:427371936482328596> |** `I WILL BE BACK IN `**` "+timer+" `**` WITH `**` "+huntcount+" `**` ANIMALS`");
+			send("**🤖 |** `BEEP BOOP. `**`"+msg.author.username+"`**`, YOU SPENT "+cowoncy+" cowoncy`\n**<:blank:427371936482328596> |** `I WILL BE BACK IN "+timer+" WITH "+huntcount+" ANIMALS`");
 		});
 	});
 }
@@ -222,7 +222,7 @@ function display(msg,con,send){
 		 	"description": "Use the command `owo autohunt {cowoncy}` to get started.\nYou can use `owo upgrade {trait}` to upgrade the traits below.\nTo obtain more essence, use `owo sacrifice {animal} {count}`.",
 			"color": 4886754,
 			"author": {
-				"name": "Scuttler's HuntBot",
+				"name": msg.author.username+"'s HuntBot",
 				"icon_url": msg.author.avatarURL
 				},
 			"fields": [{

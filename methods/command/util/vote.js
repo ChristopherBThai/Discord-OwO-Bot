@@ -61,15 +61,14 @@ module.exports = new CommandInterface({
 						});
 					}else{
 						var text = "**☑ |** Click the link to vote and gain 200+ cowoncy!\n";
-						text += "**<:blank:427371936482328596> |** Your daily vote is available in **"+(24-result[0][0].time)+"**\n";
+						text += "**<:blank:427371936482328596> |** Your daily vote is available in **"+(24-result[0][0].time)+" H**\n";
 						text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 						p.send(text);
 						console.log("\x1b[33m",id+" tried to vote again"); 
 					}
 				});
 			}else{
-				var text = "**RETYPE `OWO VOTE` AFTER YOU VOTE TO CLAIM COWONCY (for now)**\n**☑ |** Click the link to vote and gain 200+ cowoncy!\n";
-				text += "**<:blank:427371936482328596> | Your daily vote is available!**\n";
+				var text += "**<:blank:427371936482328596> | Your daily vote is available!**\n";
 				text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 				p.send(text);
 			}
