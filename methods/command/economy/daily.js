@@ -19,7 +19,7 @@ module.exports = new CommandInterface({
 	execute: function(p){
 		var msg = p.msg,con = p.con;
 		var sql = "SELECT TIMESTAMPDIFF(HOUR,daily,NOW()) AS hour,TIMESTAMPDIFF(MINUTE,daily,NOW()) AS minute,TIMESTAMPDIFF(SECOND,daily,NOW()) AS second FROM cowoncy WHERE id = "+msg.author.id+" AND TIMESTAMPDIFF(HOUR,daily,NOW())<23;"+
-			"SELECT TIMESTAMPDIFF(DAY,daily,NOW()) AS day,patreonDaily,daily_streak FROM cowoncy NATURAL JOIN user WHERE id = "+msg.author.id+";";
+			"SELECT TIMESTAMPDIFF(DAY,daily,NOW()) AS day,patreonDaily,daily_streak FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id WHERE cowoncy.id = "+msg.author.id+";";
 		con.query(sql,function(err,rows,fields){
 			if(err){console.error(err);return;}
 			if(rows[0][0]!=undefined){
