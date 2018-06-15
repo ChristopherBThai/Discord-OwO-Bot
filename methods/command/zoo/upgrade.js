@@ -38,12 +38,14 @@ module.exports = new CommandInterface({
 
 		//if arg0 is an int
 		if(global.isInt(args[0])){
-			trait = traits[args[1].toLowerCase()];
+			if(args[1])
+				trait = traits[args[1].toLowerCase()];
 			count = parseInt(args[0]);
 
 		//if arg1 is an int
 		}else if(global.isInt(args[1])){
-			trait = traits[args[0].toLowerCase()];
+			if(args[0])
+				trait = traits[args[0].toLowerCase()];
 			count = parseInt(args[1]);
 
 		}else{
