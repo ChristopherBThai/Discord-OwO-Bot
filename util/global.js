@@ -7,6 +7,7 @@ var animaljson = require('../../tokens/owo-animals.json');
 var animalunicode = {};
 var commands = {};
 var animals = {};
+var ranks = {};
 var client,con;
 
 /**
@@ -96,12 +97,19 @@ exports.client= function(tclient){
 	
 	//other info to animaljson
 	for(key in animaljson.ranks){
+		ranks[key] = {};
+		var animalRank = [];
 		for(var i=1;i<animaljson[key].length;i++){
 			var name = animals[animaljson[key][i]];
+			animalRank.push(animaljson[key][i]);
 			animaljson.list[name].rank = key;
 			animaljson.list[name].price = animaljson.price[key];
 			animaljson.list[name].points = animaljson.points[key];
 		}
+		ranks[key].animals = animalRank;
+		ranks[key].price = animaljson.price[key];
+		ranks[key].points = animaljson.points[key];
+		ranks[key].emoji = animaljson.ranks[key];
 	}
 }
 
@@ -120,6 +128,12 @@ exports.validAnimal = function(animal){
 		animal = animal.toLowerCase();
 	var ranimal = animaljson.list[animals[animal]];
 	return ranimal
+}
+
+exports.validRank = function(rank){
+	if(rank)
+		rank.toLowerCase();
+	return ranks[rank]
 }
 
 /**
