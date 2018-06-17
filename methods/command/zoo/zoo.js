@@ -14,11 +14,11 @@ module.exports = new CommandInterface({
 	
 	alias:["zoo"],
 
-	args:"",
+	args:"{display}",
 
-	desc:"Displays your zoo! Some animals are rarer than others!",
+	desc:"Displays your zoo! Some animals are rarer than others! Use the 'display' args to display all your animals from your history!",
 
-	example:[],
+	example:["owo zoo","owo zoo display"],
 
 	related:["owo hunt","owo sell"],
 
@@ -28,8 +28,13 @@ module.exports = new CommandInterface({
 
 	execute: function(p){
 		var con=p.con,msg=p.msg,global=p.global;
-		var sql = "SELECT * FROM animal WHERE id = "+msg.author.id+";"+
-			"SELECT common,uncommon,rare,epic,mythical,legendary,fabled,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
+		var sql = "SELECT count,name FROM animal WHERE id = "+msg.author.id+";";
+		if(p.args[0]&&p.args[0].toLowerCase()=="display"){
+			sql = "SELECT (totalcount) as count,name FROM animal WHERE id = "+msg.author.id+";";
+			sql += "SELECT common,uncommon,rare,epic,mythical,legendary,fabled,MAX(totalcount) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
+		}else{
+			sql += "SELECT common,uncommon,rare,epic,mythical,legendary,fabled,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
+		}
 		con.query(sql,function(err,result){
 			if(err){console.error(err);return;}
 			var text = "🌿 🌱 🌳** "+msg.author.username+"'s zoo! **🌳 🌿 🌱\n";
