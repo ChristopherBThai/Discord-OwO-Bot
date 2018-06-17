@@ -41,6 +41,9 @@ module.exports = new CommandInterface({
 			name = args[0];
 		}
 
+		if(name)
+			name = name.toLowerCase();
+
 		//if its an animal...
 		if(animal = global.validAnimal(name)){
 			sellAnimal(msg,con,animal,count,p.send,global);
