@@ -19,6 +19,8 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: function(p){
+		p.send("Sacrifice is disabled for today. Sorry!",4000);
+		return;
 		var global=p.global,con=p.con,msg=p.msg,args=p.args;
 
 		var name = undefined;
@@ -64,21 +66,24 @@ function sellAnimal(msg,con,animal,count,send,global){
 		send("**🚫 |** You need to sacrifice more than 1 silly~",3000);
 		return;
 	}
-	var sql = "UPDATE autohunt NATURAL JOIN animal SET essence = essence + "+(count*animal.points)+", count = count - "+count+" WHERE id = "+msg.author.id+" AND name = '"+animal.value+"' AND count >= "+count+";";
-	if(count=="all"){
-		sql = "SELECT count FROM animal WHERE id = "+msg.author.id+" AND name = '"+animal.value+"';";
-		sql += "UPDATE autohunt NATURAL JOIN animal SET essence = essence + (count*"+animal.points+"), count = 0 WHERE id = "+msg.author.id+" AND name = '"+animal.value+"' AND count >= 1;";
+	var sql = "SELECT count FROM animal WHERE id = "+msg.author.id+" AND name = '"+animal.value+"';";
+	if(count=="all")
+		sql += "INSERT INTO autohunt (id,essence) VALUES ("+msg.author.id+",((SELECT COALESCE(SUM(count),0) FROM animal WHERE id = "+msg.author.id+" AND name = '"+animal.value+"')*"+animal.points+")) ON DUPLICATE KEY UPDATE essence = essence + ((SELECT COALESCE(SUM(count),0) FROM animal WHERE id = "+msg.author.id+" AND name = '"+animal.value+"')*"+animal.points+");";
+		sql += "UPDATE animal SET count = 0 WHERE id = "+msg.author.id+" AND name = '"+animal.value+"' AND count > 0;";
+	else{
+		sql += "INSERT INTO autohunt (id,essence) VALUES ("+msg.author.id+",((SELECT COALESCE(SUM(count),0) FROM animal WHERE id = "+msg.author.id+" AND name = '"+animal.value+"' AND count >= "+count+")*"+animal.points+")) ON DUPLICATE UPDATE essence = essence + ((SELECT COALESCE(SUM(count),0) FROM animal WHERE id = "+msg.author.id+" AND name = '"+animal.value+"' AND count >= "+count+")*"+animal.points+");";
+		sql += "UPDATE animal SET count = count - "+count+" WHERE id = "+msg.author.id+" AND name = '"+animal.value+"' AND count >= "+count+";";
 	}
 	con.query(sql,function(err,result){
 		if(err) {console.error(err);return;}
 		if(count=="all"){
-			if(result[1].affectedRows<=0){
+			if(!result[0][0]||result[0][0].count<=0){
 				send("**🚫 | "+msg.author.username+"**, You don't have enough animals! >:c",3000);
 			}else{
 				count = result[0][0].count;
 				send("**🔪 | "+msg.author.username+"** sacrificed **"+global.unicodeAnimal(animal.value)+"x"+count+"** for **"+essence+" "+(count*animal.points)+"**");
 			}
-		}else if(result.affectedRows>0){
+		}else if(result[3].affectedRows>0){
 			send("**🔪 | "+msg.author.username+"** sacrificed **"+global.unicodeAnimal(animal.value)+"x"+count+"** for **"+essence+" "+(count*animal.points)+"**");
 		}else{
 			send("**🚫 | "+msg.author.username+"**, You can't sacrifice more than you have silly! >:c",3000);
@@ -88,8 +93,10 @@ function sellAnimal(msg,con,animal,count,send,global){
 
 function sellRank(msg,con,rank,send,global){
 	var animals = "('"+rank.animals.join("','")+"')";
-	var sql = "SELECT SUM(count) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
-	sql += "UPDATE autohunt SET essence = essence + ((SELECT COALESCE(SUM(count),0) FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+")*"+rank.points+") WHERE id = "+msg.author.id+";";
+	var points = "((SELECT COALESCE(SUM(count),0) FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+")*"+rank.points+")";
+
+	var sql = "SELECT COALESCE(SUM(count),0) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
+	sql += "INSERT INTO autohunt (id,essence) VALUES ("+msg.author.id+","+points+") ON DUPLICATE KEY UPDATE essence = essence + "+points+";";
 	sql += "UPDATE animal SET count = 0 WHERE id = "+msg.author.id+" AND name IN "+animals+" AND count > 0;";
 	con.query(sql,function(err,result){
 		if(err) {console.error(err);return;}
