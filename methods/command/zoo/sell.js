@@ -46,7 +46,10 @@ module.exports = new CommandInterface({
 
 		//if its an animal...
 		if(animal = global.validAnimal(name)){
-			sellAnimal(msg,con,animal,count,p.send,global);
+			if(args.length<3)
+				sellAnimal(msg,con,animal,count,p.send,global);
+			else
+				p.send("**🚫 | "+msg.author.username+"**, The correct syntax for selling ranks is `owo sell {animal} {count}`!",3000);
 
 		//if rank...
 		}else if(rank = global.validRank(name)){
