@@ -62,12 +62,18 @@ exports.randAnimal = function(patreon){
 		result.push(animals.legendary[rand]);
 		result.push("legendary");
 		result.push(1500);
-	}else{
+	}else if(rand<parseFloat(animals.fabled[0])){
 		rand = Math.ceil(Math.random()*(animals.fabled.length-1));
 		result.push("**fabled** "+animals.ranks.fabled);
 		result.push(animals.fabled[rand]);
 		result.push("fabled");
-		result.push(25000);
+		result.push(50000);
+	}else{
+		rand = Math.ceil(Math.random()*(animals.hidden.length-1));
+		result.push("**hidden** "+animals.ranks.hidden);
+		result.push(animals.hidden[rand]);
+		result.push("hidden");
+		result.push(100000);
 	}
 	return result;
 }
@@ -81,4 +87,24 @@ exports.toSmallNum = function(count,digits){
 		result = animals.numbers[digit]+result;
 	}
 	return result;
+}
+
+exports.zooScore = function(zoo){
+	var text = "";
+	if(zoo.hidden>0)
+		text += "H-"+zoo.hidden+", ";
+	if(zoo.fabled>0)
+		text += "F-"+zoo.fabled+", ";
+	if(zoo.legendary>0)
+		text += "L-"+zoo.legendary+", ";
+	if(zoo.patreon>0||zoo.cpatreon>0)
+		text += "P-"+(zoo.patreon+zoo.cpatreon)+", ";
+	text += "M-"+zoo.mythical+", ";
+	if(zoo.special>0)
+		text += "S-"+zoo.special+", ";
+	text += "E-"+zoo.epic+", ";
+	text += "R-"+zoo.rare+", ";
+	text += "U-"+zoo.uncommon+", ";
+	text += "C-"+zoo.common;
+	return text;
 }

@@ -2,6 +2,7 @@ const CommandInterface = require('../../commandinterface.js');
 
 const global = require('../../../util/global.js');
 const animals = require('../../../../tokens/owo-animals.json');
+const animalUtil = require('../zoo/animalUtil.js');
 
 module.exports = new CommandInterface({
 	
@@ -243,6 +244,28 @@ function getGuildRanking(con, msg, count){
 	console.log("	Displaying top "+count+" guilds");
 }
 
+const points = "(common*"+animals.points.common+"+"+
+		"uncommon*"+animals.points.uncommon+"+"+
+		"rare*"+animals.points.rare+"+"+
+		"epic*"+animals.points.epic+"+"+
+		"mythical*"+animals.points.mythical+"+"+
+		"special*"+animals.points.special+"+"+
+		"patreon*"+animals.points.patreon+"+"+
+		"cpatreon*"+animals.points.cpatreon+"+"+
+		"hidden*"+animals.points.hidden+"+"+
+		"legendary*"+animals.points.legendary+"+"+
+		"fabled*"+animals.points.fabled+")";
+const apoints = "(a.common*"+animals.points.common+"+"+
+		"a.uncommon*"+animals.points.uncommon+"+"+
+		"a.rare*"+animals.points.rare+"+"+
+		"a.epic*"+animals.points.epic+"+"+
+		"a.mythical*"+animals.points.mythical+"+"+
+		"a.special*"+animals.points.special+"+"+
+		"a.patreon*"+animals.points.patreon+"+"+
+		"a.cpatreon*"+animals.points.cpatreon+"+"+
+		"a.hidden*"+animals.points.hidden+"+"+
+		"a.legendary*"+animals.points.legendary+"+"+
+		"a.fabled*"+animals.points.fabled+")";
 /**
  * displays zoo ranking
  * @param {mysql.Connection}	con 	- Mysql.createConnection()
@@ -252,20 +275,6 @@ function getGuildRanking(con, msg, count){
 function getZooRanking(con, msg, count){
 	var channel = msg.channel;
 	var users = global.getids(msg.guild.members);
-	var points = "(common*"+animals.points.common+"+"+
-			"uncommon*"+animals.points.uncommon+"+"+
-			"rare*"+animals.points.rare+"+"+
-			"epic*"+animals.points.epic+"+"+
-			"mythical*"+animals.points.mythical+"+"+
-			"legendary*"+animals.points.legendary+"+"+
-			"fabled*"+animals.points.fabled+")";
-	var apoints = "(a.common*"+animals.points.common+"+"+
-			"a.uncommon*"+animals.points.uncommon+"+"+
-			"a.rare*"+animals.points.rare+"+"+
-			"a.epic*"+animals.points.epic+"+"+
-			"a.mythical*"+animals.points.mythical+"+"+
-			"a.legendary*"+animals.points.legendary+"+"+
-			"a.fabled*"+animals.points.fabled+")";
 	//Grabs top 5
 	var sql = "SELECT *,"+points+" AS points FROM animal_count WHERE id IN ("+users+") ORDER BY points DESC LIMIT "+count+";";
 	sql   +=  "SELECT *,"+points+" AS points,(SELECT COUNT(*)+1 FROM animal_count WHERE "+points+" > "+apoints+" AND id IN ("+users+")) AS rank FROM animal_count a WHERE a.id = "+msg.author.id+";";
@@ -279,16 +288,7 @@ function getZooRanking(con, msg, count){
 		if(rows[1][0]!==undefined&&rows[1][0]!==null){
 			embed += "> Your Zoo Rank: "+rows[1][0].rank+"\n";
 			embed += ">\t\t"+rows[1][0].points+" zoo points: ";
-			if(rows[1][0].fabled>0)
-				embed += "F-"+rows[1][0].fabled+", ";
-			if(rows[1][0].legendary>0)
-				embed += "L-"+rows[1][0].legendary+", ";
-			embed += "M-"+rows[1][0].mythical+", ";
-			embed += "E-"+rows[1][0].epic+", ";
-			embed += "R-"+rows[1][0].rare+", ";
-			embed += "U-"+rows[1][0].uncommon+", ";
-			embed += "C-"+rows[1][0].common+"\n\n";
-
+			embed += animalUtil.zooScore(rows[1][0])+"\n\n";
 		}
 		for(let ele of rows[0]){
 			var id = String(ele.id);
@@ -300,15 +300,7 @@ function getZooRanking(con, msg, count){
 				name = ""+user.username;
 			name = name.replace("discord.gg","discord,gg");
 			embed += "#"+rank+"\t"+name+"\n\t\t"+ele.points+" zoo points: ";
-			if(ele.fabled>0)
-				embed += "F-"+ele.fabled+", ";
-			if(ele.legendary>0)
-				embed += "L-"+ele.legendary+", ";
-			embed += "M-"+ele.mythical+", ";
-			embed += "E-"+ele.epic+", ";
-			embed += "R-"+ele.rare+", ";
-			embed += "U-"+ele.uncommon+", ";
-			embed += "C-"+ele.common+"\n";
+			embed += animalUtil.zooScore(ele)+"\n";
 			rank++;
 		}
 		var date = new Date();
@@ -327,20 +319,6 @@ function getZooRanking(con, msg, count){
  */
 function getGlobalZooRanking(con, msg, count){
 	channel = msg.channel;
-	var points = "(common*"+animals.points.common+"+"+
-			"uncommon*"+animals.points.uncommon+"+"+
-			"rare*"+animals.points.rare+"+"+
-			"epic*"+animals.points.epic+"+"+
-			"mythical*"+animals.points.mythical+"+"+
-			"legendary*"+animals.points.legendary+"+"+
-			"fabled*"+animals.points.fabled+")";
-	var apoints = "(a.common*"+animals.points.common+"+"+
-			"a.uncommon*"+animals.points.uncommon+"+"+
-			"a.rare*"+animals.points.rare+"+"+
-			"a.epic*"+animals.points.epic+"+"+
-			"a.mythical*"+animals.points.mythical+"+"+
-			"a.legendary*"+animals.points.legendary+"+"+
-			"a.fabled*"+animals.points.fabled+")";
 	//Grabs top 5
 	var sql = "SELECT *,"+points+" AS points FROM animal_count ORDER BY points DESC LIMIT "+count+";";
 	sql   +=  "SELECT *,"+points+" AS points,(SELECT COUNT(*)+1 FROM animal_count WHERE "+points+" > "+apoints+" ) AS rank FROM animal_count a WHERE a.id = "+msg.author.id+";";
@@ -354,16 +332,7 @@ function getGlobalZooRanking(con, msg, count){
 		if(rows[1][0]!==undefined&&rows[1][0]!==null){
 			embed += "> Your Zoo Rank: "+rows[1][0].rank+"\n";
 			embed += ">\t\t"+rows[1][0].points+" zoo points: ";
-			if(rows[1][0].fabled>0)
-				embed += "F-"+rows[1][0].fabled+", ";
-			if(rows[1][0].legendary>0)
-				embed += "L-"+rows[1][0].legendary+", ";
-			embed += "M-"+rows[1][0].mythical+", ";
-			embed += "E-"+rows[1][0].epic+", ";
-			embed += "R-"+rows[1][0].rare+", ";
-			embed += "U-"+rows[1][0].uncommon+", ";
-			embed += "C-"+rows[1][0].common+"\n\n";
-
+			embed += animalUtil.zooScore(rows[1][0])+"\n\n";
 		}
 		for(let ele of rows[0]){
 			var id = String(ele.id);
@@ -375,15 +344,7 @@ function getGlobalZooRanking(con, msg, count){
 				name = ""+user.username;
 			name = name.replace("discord.gg","discord,gg");
 			embed += "#"+rank+"\t"+name+"\n\t\t"+ele.points+" zoo points: ";
-			if(ele.fabled>0)
-				embed += "F-"+ele.fabled+", ";
-			if(ele.legendary>0)
-				embed += "L-"+ele.legendary+", ";
-			embed += "M-"+ele.mythical+", ";
-			embed += "E-"+ele.epic+", ";
-			embed += "R-"+ele.rare+", ";
-			embed += "U-"+ele.uncommon+", ";
-			embed += "C-"+ele.common+"\n";
+			embed += animalUtil.zooScore(ele)+"\n";
 			rank++;
 		}
 		var date = new Date();
