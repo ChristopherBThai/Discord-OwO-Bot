@@ -1,11 +1,13 @@
 const CommandInterface = require('../../commandinterface.js');
 
+const animalUtil = require('./animalUtil.js');
 var animals = require('../../../../tokens/owo-animals.json');
 var patreon = "";
 var cpatreon = "";
 var secret = "";
 var secret2 = "";
 var secret3 = "";
+var secret4 = "";
 var display = "";
 initDisplay();
 
@@ -31,9 +33,9 @@ module.exports = new CommandInterface({
 		var sql = "SELECT count,name FROM animal WHERE id = "+msg.author.id+";";
 		if(p.args[0]&&p.args[0].toLowerCase()=="display"){
 			sql = "SELECT (totalcount) as count,name FROM animal WHERE id = "+msg.author.id+";";
-			sql += "SELECT common,uncommon,rare,epic,mythical,legendary,fabled,MAX(totalcount) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
+			sql += "SELECT common,uncommon,rare,epic,mythical,legendary,fabled,patreon,cpatreon,hidden,special,MAX(totalcount) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
 		}else{
-			sql += "SELECT common,uncommon,rare,epic,mythical,legendary,fabled,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
+			sql += "SELECT common,uncommon,rare,epic,mythical,legendary,fabled,patreon,cpatreon,hidden,special,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
 		}
 		con.query(sql,function(err,result){
 			if(err){console.error(err);return;}
@@ -44,6 +46,7 @@ module.exports = new CommandInterface({
 			var additional2 = "";
 			var additional3 = "";
 			var additional4 = "";
+			var additional5 = "";
 			var row = result[0];
 			var count = result[1][0];
 			var digits= 2;
@@ -55,11 +58,11 @@ module.exports = new CommandInterface({
 					if(additional0=="") additional0 = patreon;
 					additional0 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 				}
-				if(animals.cpatreon.indexOf(row[i].name)>0){
+				else if(animals.cpatreon.indexOf(row[i].name)>0){
 					if(additional4=="") additional4 = cpatreon;
 					additional4 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 				}
-				if(animals.legendary.indexOf(row[i].name)>0){
+				else if(animals.legendary.indexOf(row[i].name)>0){
 					if(additional=="") additional = secret;
 					additional += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 				}
@@ -71,6 +74,10 @@ module.exports = new CommandInterface({
 					if(additional3=="") additional3 = secret3;
 					additional3 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 				}
+				else if(animals.hidden.indexOf(row[i].name)>0){
+					if(additional5=="") additional5 = secret4;
+					additional5 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
+				}
 			}
 			text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question+toSmallNum(0,digits));
 			text += additional0;
@@ -78,24 +85,21 @@ module.exports = new CommandInterface({
 			text += additional;
 			text += additional2;
 			text += additional3;
+			text += additional5;
 			if(count!=undefined){
 				var total = count.common*animals.points.common+
 					count.uncommon*animals.points.uncommon+
 					count.rare*animals.points.rare+
 					count.epic*animals.points.epic+
 					count.mythical*animals.points.mythical+
+					count.patreon*animals.points.patreon+
+					count.cpatreon*animals.points.cpatreon+
+					count.special*animals.points.special+
 					count.legendary*animals.points.legendary+
-					count.fabled*animals.points.fabled;
+					count.fabled*animals.points.fabled+
+					count.hidden*animals.points.hidden;
 				text += "\n**Zoo Points: __"+total+"__**\n\t**";
-				if(count.fabled>0)
-					text += "F-"+count.fabled+", ";
-				if(count.legendary>0)
-					text += "L-"+count.legendary+", ";
-				text += "M-"+count.mythical+", ";
-				text += "E-"+count.epic+", ";
-				text += "R-"+count.rare+", ";
-				text += "U-"+count.uncommon+", ";
-				text += "C-"+count.common+"**";
+				text += animalUtil.zooScore(count)+"**";
 			}
 			p.send(text)
 		});
@@ -136,4 +140,5 @@ function initDisplay(){
 	secret = "\n"+animals.ranks.legendary+"    ";
 	secret2 = "\n"+animals.ranks.fabled+"    ";
 	secret3 = "\n"+animals.ranks.special+"    ";
+	secret4 = "\n"+animals.ranks.hidden+"    ";
 }

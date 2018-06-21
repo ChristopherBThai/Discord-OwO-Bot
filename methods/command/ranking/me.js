@@ -2,6 +2,7 @@ const CommandInterface = require('../../commandinterface.js');
 
 const global = require('../../../util/global.js');
 const animals = require('../../../../tokens/owo-animals.json');
+const animalUtil = require('../zoo/animalUtil.js');
 
 module.exports = new CommandInterface({
 	
@@ -344,18 +345,26 @@ function getGuildRanking(con, msg, id){
 	});
 }
 
-var points = "(common*"+animals.points.common+"+"+
+const points = "(common*"+animals.points.common+"+"+
 		"uncommon*"+animals.points.uncommon+"+"+
 		"rare*"+animals.points.rare+"+"+
 		"epic*"+animals.points.epic+"+"+
 		"mythical*"+animals.points.mythical+"+"+
+		"special*"+animals.points.special+"+"+
+		"patreon*"+animals.points.patreon+"+"+
+		"cpatreon*"+animals.points.cpatreon+"+"+
+		"hidden*"+animals.points.hidden+"+"+
 		"legendary*"+animals.points.legendary+"+"+
 		"fabled*"+animals.points.fabled+")";
-var apoints = "(a.common*"+animals.points.common+"+"+
+const apoints = "(a.common*"+animals.points.common+"+"+
 		"a.uncommon*"+animals.points.uncommon+"+"+
 		"a.rare*"+animals.points.rare+"+"+
 		"a.epic*"+animals.points.epic+"+"+
 		"a.mythical*"+animals.points.mythical+"+"+
+		"a.special*"+animals.points.special+"+"+
+		"a.patreon*"+animals.points.patreon+"+"+
+		"a.cpatreon*"+animals.points.cpatreon+"+"+
+		"a.hidden*"+animals.points.hidden+"+"+
 		"a.legendary*"+animals.points.legendary+"+"+
 		"a.fabled*"+animals.points.fabled+")";
 
@@ -399,15 +408,7 @@ function getGlobalZooRanking(con, msg, id){
 				else
 					name = ""+user.username;
 				embed += "#"+rank+"\t"+name+"\n\t\t"+ele.points+" zoo points: ";
-				if(ele.fabled>0)
-					embed += "F-"+ele.fabled+", ";
-				if(ele.legendary>0)
-					embed += "L-"+ele.legendary+", ";
-				embed += "M-"+ele.mythical+", ";
-				embed += "E-"+ele.epic+", ";
-				embed += "R-"+ele.rare+", ";
-				embed += "U-"+ele.uncommon+", ";
-				embed += "C-"+ele.common+"\n";
+				embed += animalUtil.zooScore(ele)+"\n";
 				rank++;
 			}else if(rank==0)
 				rank = 1;
@@ -421,15 +422,7 @@ function getGlobalZooRanking(con, msg, id){
 		else 
 			uname = "you";
 		embed += "< "+rank+"\t"+uname+" >\n\t\t"+me.points+" zoo points: ";
-		if(me.fabled>0)
-			embed += "F-"+me.fabled+", ";
-		if(me.legendary>0)
-			embed += "L-"+me.legendary+", ";
-		embed += "M-"+me.mythical+", ";
-		embed += "E-"+me.epic+", ";
-		embed += "R-"+me.rare+", ";
-		embed += "U-"+me.uncommon+", ";
-		embed += "C-"+me.common+"\n";
+		embed += animalUtil.zooScore(me)+"\n";
 		rank++;
 
 		//People below user
@@ -443,15 +436,7 @@ function getGlobalZooRanking(con, msg, id){
 				else
 					name = ""+user.username;
 				embed += "#"+rank+"\t"+name+"\n\t\t"+ele.points+" zoo points: ";
-				if(ele.fabled>0)
-					embed += "F-"+ele.fabled+", ";
-				if(ele.legendary>0)
-					embed += "L-"+ele.legendary+", ";
-				embed += "M-"+ele.mythical+", ";
-				embed += "E-"+ele.epic+", ";
-				embed += "R-"+ele.rare+", ";
-				embed += "U-"+ele.uncommon+", ";
-				embed += "C-"+ele.common+"\n";
+				embed += animalUtil.zooScore(ele)+"\n";
 				rank++;
 
 			}
@@ -515,15 +500,7 @@ function getZooRanking(con, msg, id){
 				else
 					name = ""+user.username;
 				embed += "#"+rank+"\t"+name+"\n\t\t"+ele.points+" zoo points: ";
-				if(ele.fabled>0)
-					embed += "F-"+ele.fabled+", ";
-				if(ele.legendary>0)
-					embed += "L-"+ele.legendary+", ";
-				embed += "M-"+ele.mythical+", ";
-				embed += "E-"+ele.epic+", ";
-				embed += "R-"+ele.rare+", ";
-				embed += "U-"+ele.uncommon+", ";
-				embed += "C-"+ele.common+"\n";
+				embed += animalUtil.zooScore(ele)+"\n";
 				rank++;
 			}else if(rank==0)
 				rank = 1;
@@ -538,15 +515,7 @@ function getZooRanking(con, msg, id){
 		else 
 			uname = "you";
 		embed += "< "+rank+"\t"+uname+" >\n\t\t"+me.points+" zoo points: ";
-		if(me.fabled>0)
-			embed += "F-"+me.fabled+", ";
-		if(me.legendary>0)
-			embed += "L-"+me.legendary+", ";
-		embed += "M-"+me.mythical+", ";
-		embed += "E-"+me.epic+", ";
-		embed += "R-"+me.rare+", ";
-		embed += "U-"+me.uncommon+", ";
-		embed += "C-"+me.common+"\n";
+		embed += animalUtil.zooScore(me)+"\n";
 		rank++;
 
 		//People below user
@@ -560,15 +529,7 @@ function getZooRanking(con, msg, id){
 				else
 					name = ""+user.username;
 				embed += "#"+rank+"\t"+name+"\n\t\t"+ele.points+" zoo points: ";
-				if(ele.fabled>0)
-					embed += "F-"+ele.fabled+", ";
-				if(ele.legendary>0)
-					embed += "L-"+ele.legendary+", ";
-				embed += "M-"+ele.mythical+", ";
-				embed += "E-"+ele.epic+", ";
-				embed += "R-"+ele.rare+", ";
-				embed += "U-"+ele.uncommon+", ";
-				embed += "C-"+ele.common+"\n";
+				embed += animalUtil.zooScore(ele)+"\n";
 				rank++;
 
 			}
