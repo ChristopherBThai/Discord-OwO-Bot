@@ -4,6 +4,7 @@ const autohuntutil = require('./autohuntutil.js');
 const animalUtil = require('./animalUtil.js');
 const global = require('../../../util/global.js');
 const letters = "abcdefghijklmnopqrstuvwxyz";
+const botrank = "SELECT (COUNT(*)+1) AS rank, (SELECT COUNT(*) FROM autohunt) AS total FROM autohunt WHERE (essence+duration+efficiency+cost) > (SELECT (essence+duration+efficiency+cost) AS total FROM autohunt WHERE id = ";
 
 module.exports = new CommandInterface({
 	
@@ -31,7 +32,7 @@ module.exports = new CommandInterface({
 
 });
 
-function claim(msg,con,query){
+function claim(msg,con,query,bot){
 	var timer = parseInt(query.timer);
 	if(timer<query.huntmin){
 		var time = query.huntmin-timer;
@@ -61,7 +62,7 @@ function claim(msg,con,query){
 			}
 		}
 		digits= Math.trunc(Math.log10(digits)+1);
-		var text = "**🤖 |** `BEEP BOOP. I AM BACK WITH "+query.huntcount+" ANIMALS`";
+		var text = "**"+bot+" |** `BEEP BOOP. I AM BACK WITH "+query.huntcount+" ANIMALS`";
 		var count = 0;
 		sql = "";
 		for(var animal in total){
@@ -105,15 +106,19 @@ function autohunt(msg,con,args,global,send){
 
 	var sql = "SELECT *,TIMESTAMPDIFF(MINUTE,start,NOW()) AS timer,TIMESTAMPDIFF(MINUTE,passwordtime,NOW()) AS pwtime FROM autohunt WHERE id = "+msg.author.id+";";
 	sql += "SELECT * FROM cowoncy WHERE id = "+msg.author.id+";";
+	sql += botrank + msg.author.id+");";
 	con.query(sql,function(err,result){
 		if(err){console.error(err);return;}
+
+		//Get emoji
+		var bot = autohuntutil.getBot(result[2][0]);
 
 		//Check if still hunting
 		var hunting;
 		if(result[0][0]&&result[0][0].huntmin!=0){
-			hunting = claim(msg,con,result[0][0]);
+			hunting = claim(msg,con,result[0][0],bot);
 			if(hunting)
-				send("**🤖 |** `BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN "+hunting.time+"`\n**<:blank:427371936482328596> |** `"+hunting.percent+"% DONE | "+hunting.count+" ANIMALS CAPTURED`\n**<:blank:427371936482328596> |** "+hunting.bar);
+				send("**"+bot+" |** `BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN "+hunting.time+"`\n**<:blank:427371936482328596> |** `"+hunting.percent+"% DONE | "+hunting.count+" ANIMALS CAPTURED`\n**<:blank:427371936482328596> |** "+hunting.bar);
 			return;
 		}
 
@@ -132,7 +137,7 @@ function autohunt(msg,con,args,global,send){
 			sql = "INSERT INTO autohunt (id,start,huntcount,huntmin,password,passwordtime) VALUES ("+msg.author.id+",NOW(),0,0,'"+rand+"',NOW()) ON DUPLICATE KEY UPDATE password = '"+rand+"',passwordtime = NOW();";
 			con.query(sql,function(err,result){
 				if(err){console.error(err);return;}
-				autohuntutil.captcha(msg,rand,"**🤖 | "+msg.author.username+"**, Here is your password!\n**<:blank:427371936482328596> |** Use the command `owo autohunt "+cowoncy+" {password}`");
+				autohuntutil.captcha(msg,rand,"**"+bot+" | "+msg.author.username+"**, Here is your password!\n**<:blank:427371936482328596> |** Use the command `owo autohunt "+cowoncy+" {password}`");
 			});
 			return;
 		}
@@ -177,27 +182,32 @@ function autohunt(msg,con,args,global,send){
 			var timer = "";
 			if(hour>0) timer = hour+"H"+min+"M";
 			else timer = min+"M";
-			send("**🤖 |** `BEEP BOOP. `**`"+msg.author.username+"`**`, YOU SPENT "+cowoncy+" cowoncy`\n**<:blank:427371936482328596> |** `I WILL BE BACK IN "+timer+" WITH "+huntcount+" ANIMALS`");
+			send("**"+bot+" |** `BEEP BOOP. `**`"+msg.author.username+"`**`, YOU SPENT "+cowoncy+" cowoncy`\n**<:blank:427371936482328596> |** `I WILL BE BACK IN "+timer+" WITH "+huntcount+" ANIMALS`");
 		});
 	});
 }
 
 function display(msg,con,send){
 	var sql = "SELECT *,TIMESTAMPDIFF(MINUTE,start,NOW()) AS timer FROM autohunt WHERE id = "+msg.author.id+";";
+	sql += botrank + msg.author.id+");";
 	con.query(sql,function(err,result){
 		if(err){console.error(err);return;}
+		
+		//Get emoji
+		var bot = autohuntutil.getBot(result[1][0]);
+
 		var hunting;
-		if(result[0]&&result[0].huntmin!=0){
-			hunting = claim(msg,con,result[0]);
+		if(result[0][0]&&result[0][0].huntmin!=0){
+			hunting = claim(msg,con,result[0][0],bot);
 			if(!hunting)
 				return;
 		}
 		var duration,efficiency,cost,essence,maxhunt;
-		if(result[0]){
-			duration = autohuntutil.getLvl(result[0].duration,0,"duration");
-			efficiency= autohuntutil.getLvl(result[0].efficiency,0,"efficiency");
-			cost= autohuntutil.getLvl(result[0].cost,0,"cost");
-			essence = result[0].essence;
+		if(result[0][0]){
+			duration = autohuntutil.getLvl(result[0][0].duration,0,"duration");
+			efficiency= autohuntutil.getLvl(result[0][0].efficiency,0,"efficiency");
+			cost= autohuntutil.getLvl(result[0][0].cost,0,"cost");
+			essence = result[0][0].essence;
 		}else{
 			duration = autohuntutil.getLvl(0,0,"duration");
 			efficiency= autohuntutil.getLvl(0,0,"efficiency");
@@ -218,7 +228,7 @@ function display(msg,con,send){
 
 		maxhunt = Math.floor(duration.stat*efficiency.stat);
 		const embed = {
-			"title": "🤖 `BEEP. BOOP. I AM HUNTBOT. I WILL HUNT FOR YOU MASTER.`",
+			"title": bot+" `BEEP. BOOP. I AM HUNTBOT. I WILL HUNT FOR YOU MASTER.`",
 		 	"description": "Use the command `owo autohunt {cowoncy}` to get started.\nYou can use `owo upgrade {trait}` to upgrade the traits below.\nTo obtain more essence, use `owo sacrifice {animal} {count}`.",
 			"color": 4886754,
 			"author": {
@@ -249,7 +259,7 @@ function display(msg,con,send){
 		};
 		if(hunting){
 			embed.fields.push({
-				"name":"🤖 HUNTBOT is currently hunting!",
+				"name": bot+" HUNTBOT is currently hunting!",
 				"value": "`BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN "+hunting.time+"`\n`"+hunting.percent+"% DONE | "+hunting.count+" ANIMALS CAPTURED`\n"+hunting.bar
 			});
 		}
