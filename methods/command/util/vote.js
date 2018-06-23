@@ -68,7 +68,7 @@ module.exports = new CommandInterface({
 					}
 				});
 			}else{
-				var text = "**<:blank:427371936482328596> | Your daily vote is available!**\n";
+				var text = "**☑ | Your daily vote is available!**\n";
 				text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 				p.send(text);
 			}
