@@ -2,6 +2,7 @@ const macro = require('../../../../tokens/macro.js');
 const traits= {"efficiency":{"inc":10,"pow":1.748,"base":25,"upg":1,"max":215,"prefix":"/H"},
 		"duration":{"inc":10,"pow":1.7,"base":.5,"upg":.1,"max":235,"prefix":"H"},
 		"cost":{"inc":1000,"pow":3.4,"base":10,"upg":-1,"max":5,"prefix":" cowoncy"}};
+const bots = ["<:cbot:459996048379609098>","<:ubot:459996048660889600>","<:rbot:459996049361338379>","<:ebot:459996050174902272>","<:mbot:459996049784963073>","<a:lbot:459996050883608576>"];
 //test(traits.efficiency);
 //test(traits.duration);
 //test(traits.cost);
@@ -57,4 +58,28 @@ exports.captcha = function(msg,word,text){
 	macro.generateBuffer(word,function(buffer){
 		msg.channel.send(text,buffer);
 	});
+}
+
+exports.getBot = function(result){
+	if(result==undefined) return bots[0];
+	console.log(result);
+
+	var rank = result.rank;
+	var total = result.total;
+	if(rank==undefined||total==undefined) return bots[0];
+	if(rank<=1) return bots[5];
+
+	var percent = (rank/total)*100;
+	console.log(percent);
+
+	if(percent>=61) // Common 39%
+		return bots[0];
+	else if(percent>=31) // Uncommon 30%
+		return bots[1];
+	else if(percent>=11) // Rare 20%
+		return bots[2];
+	else if(percent>=1) // Epic 10%
+		return bots[3];
+	else // Mythic 1%
+		return bots[4];
 }
