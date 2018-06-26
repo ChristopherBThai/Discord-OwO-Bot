@@ -4,7 +4,7 @@ const autohuntutil = require('./autohuntutil.js');
 const animalUtil = require('./animalUtil.js');
 const global = require('../../../util/global.js');
 const letters = "abcdefghijklmnopqrstuvwxyz";
-const botrank = "SELECT (COUNT(*)+1) AS rank, (SELECT COUNT(*) FROM autohunt) AS total FROM autohunt WHERE (essence+duration+efficiency+cost) > (SELECT (essence+duration+efficiency+cost) AS total FROM autohunt WHERE id = ";
+const botrank = "SELECT (COUNT(*)+1) AS rank, (SELECT COUNT(*) FROM autohunt) AS total FROM autohunt WHERE (essence+duration+efficiency+cost) > COALESCE((SELECT (essence+duration+efficiency+cost) AS total FROM autohunt WHERE id = ";
 
 module.exports = new CommandInterface({
 	
@@ -106,7 +106,7 @@ function autohunt(msg,con,args,global,send){
 
 	var sql = "SELECT *,TIMESTAMPDIFF(MINUTE,start,NOW()) AS timer,TIMESTAMPDIFF(MINUTE,passwordtime,NOW()) AS pwtime FROM autohunt WHERE id = "+msg.author.id+";";
 	sql += "SELECT * FROM cowoncy WHERE id = "+msg.author.id+";";
-	sql += botrank + msg.author.id+");";
+	sql += botrank + msg.author.id+"),0);";
 	con.query(sql,function(err,result){
 		if(err){console.error(err);return;}
 
@@ -189,7 +189,7 @@ function autohunt(msg,con,args,global,send){
 
 function display(msg,con,send){
 	var sql = "SELECT *,TIMESTAMPDIFF(MINUTE,start,NOW()) AS timer FROM autohunt WHERE id = "+msg.author.id+";";
-	sql += botrank + msg.author.id+");";
+	sql += botrank + msg.author.id+"),0);";
 	con.query(sql,function(err,result){
 		if(err){console.error(err);return;}
 		
