@@ -13,7 +13,7 @@ const global = require('./parent_methods/global.js');
 const vote = require('./parent_methods/vote.js');
 const lottery = require('./parent_methods/lottery.js');
 
-Manager.spawn();
+Manager.spawn(2);
 
 Manager.on('launch', function(shard){
 	console.log(`Launched shard ${shard.id}`);
