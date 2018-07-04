@@ -343,6 +343,17 @@
 		"hold":{"alt":"handholding"},
 		"pats":{"alt":"pat"},
 		"wave":{"alt":"greet"},
-		"boop":{"alt":"poke"}
+		"boop":{"alt":"poke"},
+		"fuck":{
+			"name":"handholding",
+			"msg":[
+				"? does lewd things to ?... ;o",
+				"?... What are you doing to ?! Oh my..."
+			],
+			"self":[
+				"You can do that privately..."
+			]
+		},
+		"sex":{"alt":"fuck"}
 	}
 }
