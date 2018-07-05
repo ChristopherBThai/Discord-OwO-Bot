@@ -4,7 +4,7 @@ const autohuntutil = require('./autohuntutil.js');
 const animalUtil = require('./animalUtil.js');
 const global = require('../../../util/global.js');
 const letters = "abcdefghijklmnopqrstuvwxyz";
-const botrank = "SELECT (COUNT(*)+1) AS rank, (SELECT COUNT(*) FROM autohunt) AS total FROM autohunt WHERE (essence+duration+efficiency+cost) > COALESCE((SELECT (essence+duration+efficiency+cost) AS total FROM autohunt WHERE id = ";
+const botrank = "SELECT (COUNT(*)+1) AS rank, (SELECT COUNT(*) FROM autohunt) AS total FROM autohunt WHERE (essence+duration+efficiency+cost) >= COALESCE((SELECT (essence+duration+efficiency+cost) AS total FROM autohunt WHERE id = ";
 
 module.exports = new CommandInterface({
 	
@@ -228,14 +228,17 @@ function display(msg,con,send){
 
 		maxhunt = Math.floor(duration.stat*efficiency.stat);
 		const embed = {
-			"title": bot+" `BEEP. BOOP. I AM HUNTBOT. I WILL HUNT FOR YOU MASTER.`",
-		 	"description": "Use the command `owo autohunt {cowoncy}` to get started.\nYou can use `owo upgrade {trait}` to upgrade the traits below.\nTo obtain more essence, use `owo sacrifice {animal} {count}`.",
 			"color": 4886754,
 			"author": {
 				"name": msg.author.username+"'s HuntBot",
 				"icon_url": msg.author.avatarURL
 				},
 			"fields": [{
+					"name": bot+" `BEEP. BOOP. I AM HUNTBOT. I WILL HUNT FOR YOU MASTER.`",
+					"value": "Use the command `owo autohunt {cowoncy}` to get started.\nYou can use `owo upgrade {trait}` to upgrade the traits below.\nTo obtain more essence, use `owo sacrifice {animal} {count}`.\n\n",
+					"inline":false 
+				},
+				{
 					"name": "⏱ Efficiency - `"+efficiency.stat+efficiency.prefix+"`",
 					"value": efficiency.value,
 					"inline": true
