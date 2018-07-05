@@ -14,3 +14,6 @@ Session.vim
 tags
 # Persistent undo
 [._]*.un~
+
+# misc
+node_modules
