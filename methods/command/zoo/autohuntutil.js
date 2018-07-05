@@ -62,7 +62,6 @@ exports.captcha = function(msg,word,text){
 
 exports.getBot = function(result){
 	if(result==undefined) return bots[0];
-	console.log(result);
 
 	var rank = result.rank;
 	var total = result.total;
@@ -70,7 +69,6 @@ exports.getBot = function(result){
 	if(rank<=1) return bots[5];
 
 	var percent = (rank/total)*100;
-	console.log(percent);
 
 	if(percent>=61) // Common 39%
 		return bots[0];
