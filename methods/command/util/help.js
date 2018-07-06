@@ -8,6 +8,8 @@ sEmotes = "`"+sEmotes.join("`  `")+"`";
 var uEmotes= [];
 for(var key in emotes.uEmote)
 	uEmotes.push(key);
+uEmotes.pop();
+uEmotes.pop();
 uEmotes = "`"+uEmotes.join("`  `")+"`";
 
 
