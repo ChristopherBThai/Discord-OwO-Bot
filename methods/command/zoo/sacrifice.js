@@ -79,10 +79,8 @@ function sellAnimal(msg,con,animal,count,send,global){
 		sql += "INSERT INTO autohunt (id,essence) VALUES ("+msg.author.id+","+points+"*"+animal.points+") ON DUPLICATE KEY UPDATE essence = essence + ("+points+"*"+animal.points+");";
 		sql += "UPDATE animal SET count = count - "+count+" WHERE id = "+msg.author.id+" AND name = '"+animal.value+"' AND count >= "+count+";";
 	}
-	console.log(sql);
 	con.query(sql,function(err,result){
 		if(err) {console.error(err);return;}
-		console.log(result);
 		if(count=="all"){
 			if(!result[0][0]||result[0][0].count<=0){
 				send("**🚫 | "+msg.author.username+"**, You don't have enough animals! >:c",3000);
