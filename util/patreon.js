@@ -36,7 +36,6 @@ exports.left = function(member){
 
 	if(patreon){
 		var sql = "UPDATE IGNORE user SET patreonDaily = 0,patreonAnimal = 0 WHERE id = "+member.id+";";
-		console.log(sql);
 		con.query(sql,function(err,result){
 			if(err) {console.error(err);return;}
 			member.send("Just a heads up! Your Patreon benefits will not work if you leave the guild!");
