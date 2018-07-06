@@ -8,7 +8,7 @@ const app = express();
 const dblapi = require('dbl-api');
 const api = new dblapi();
 
-app.post('/scuttester',api.handler);
+app.post('/owo',api.handler);
 
 api.on('upvote', (user,bot) => upvote(user));
 
