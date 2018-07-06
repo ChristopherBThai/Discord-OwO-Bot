@@ -7,10 +7,6 @@ var admin;
  */
 exports.send = function(msg){
 	return function(message,del,embed){
-		if(!embed)
-			embed = {split:true};
-		else if(!embed.split)
-			embed.split = true;
 		if(del)
 			msg.channel.send(message,embed)
 				.then(message => message.delete(del))
