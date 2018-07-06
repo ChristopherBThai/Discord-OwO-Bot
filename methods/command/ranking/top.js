@@ -73,7 +73,7 @@ function display(con, msg, args){
 	var invalid = false;
 	var count = 5;
 
-	for(var i in args){
+	for(var i=0;i<args.length;i++){
 		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet){
 			if(args[i]=== "points"||args[i]==="point"||args[i]==="p") points = true;
 			else if(args[i]==="guild"||args[i]==="server"||args[i]==="s"||args[i]==="g") guild = true;

@@ -36,6 +36,7 @@ exports.getids = function(members){
  * Checks if its a user
  */
 exports.isUser = function(id){
+	console.log(id);
 	if(id==undefined)
 		return undefined;
 	return id.search(/<@!?[0-9]+>/)>=0;

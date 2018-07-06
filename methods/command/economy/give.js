@@ -21,7 +21,8 @@ module.exports = new CommandInterface({
 		var amount=-1, id="", invalid=false;
 
 		//Grab ID and Amount
-		for(i in args){
+		for(var i = 0;i<args.length;i++){
+			console.log(args[i]);
 			if(global.isInt(args[i])&&amount==-1)
 				amount = parseInt(args[i]);
 			else if(global.isUser(args[i])&&id=="")
