@@ -29,6 +29,7 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: function(p){
+		return;
 		var args=p.args,msg=p.msg,con=p.con;
 
 		//Check if there is a bet amount
