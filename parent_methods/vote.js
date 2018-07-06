@@ -22,6 +22,7 @@ var manager;
  * Listens to upvote webhooks
  */
 function upvote(id){
+	console.log(id);
 	var sql = "SELECT count,TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = "+id+";";
 	sql += "SELECT patreonDaily FROM cowoncy NATURAL JOIN user WHERE id = "+id+";";
 	con.query(sql,function(err,result){
