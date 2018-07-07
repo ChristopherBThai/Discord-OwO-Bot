@@ -10,7 +10,7 @@ const api = new dblapi();
 
 app.post('/owo',api.handler);
 
-api.on('upvote', (user,bot) => upvote(user));
+api.on('upvote', (user,bot) => upvote(user,bot));
 
 const global = require('./global.js');
 const logger = require('../util/logger.js');
@@ -21,8 +21,8 @@ var manager;
 /**
  * Listens to upvote webhooks
  */
-function upvote(id){
-	console.log(id);
+function upvote(id,bot){
+	console.log("Webhooks for "+id);
 	var sql = "SELECT count,TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = "+id+";";
 	sql += "SELECT patreonDaily FROM cowoncy NATURAL JOIN user WHERE id = "+id+";";
 	con.query(sql,function(err,result){
@@ -65,7 +65,9 @@ function upvote(id){
 exports.setManager = function(manageri){
 	manager = manageri;
 	con = global.con();
-	app.listen(3000);
+	app.listen(3001,() => {
+		console.log("\x1b[33m","Voting is listening on port 3001!"); 
+	});
 }
 
 function patreonMsg(amount){
