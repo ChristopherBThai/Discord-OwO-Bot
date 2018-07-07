@@ -102,13 +102,13 @@ function describe(send,commandName,command){
 	}
 	if(command.example[0]!=undefined){
 		example = "\n# Example Command(s)\n";
-		for(i in command.example)
+		for(var i=0;i<command.example.length;i++)
 			example += command.example[i]+" , ";
 		example = example.substr(0,example.length-3);
 	}
 	if(command.related[0]!=undefined){
 		related = "\n# Related Command(s)\n";
-		for(i in command.related)
+		for(var i=0;i<command.related.length;i++)
 			related += command.related[i]+" , ";
 		related = related.substr(0,related.length-3);
 	}

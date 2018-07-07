@@ -62,6 +62,8 @@ module.exports = new CommandInterface({
 					}else{
 						var text = "**☑ |** Click the link to vote and gain 200+ cowoncy!\n";
 						text += "**<:blank:427371936482328596> |** Your daily vote is available in **"+(24-result[0][0].time)+" H**\n";
+						//text += "**⚠ |** Automatic votes are currently broken!\n";
+						//text += "**<:blank:427371936482328596> |** Please retype `owo vote` 1-10min after you vote!\n";
 						text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 						p.send(text);
 						console.log("\x1b[33m",id+" tried to vote again"); 
@@ -69,6 +71,8 @@ module.exports = new CommandInterface({
 				});
 			}else{
 				var text = "**☑ | Your daily vote is available!**\n";
+				//text += "**⚠ |** Automatic votes are currently broken!\n";
+				//text += "**<:blank:427371936482328596> |** Please retype `owo vote` 1-10min after you vote!\n";
 				text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 				p.send(text);
 			}
