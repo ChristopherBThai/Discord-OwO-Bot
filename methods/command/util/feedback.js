@@ -22,11 +22,11 @@ module.exports = new CommandInterface({
 	execute: function(p){
 		var message = p.args.join(" ");
 		if(!message||message === ''){
-			p.send("**🚫 |** Silly **"+sender+"**, you need to add a message!",3000);
+			p.send("**🚫 |** Silly **"+p.msg.author.username+"**, you need to add a message!",3000);
 			return;
 		}
 		if(message.length > 250){
-			p.send("**🚫 |** Sorry, "+sender+"! Messages must be under 250 character!!!",3000);
+			p.send("**🚫 |** Sorry, "+p.msg.author.username+"! Messages must be under 250 character!!!",3000);
 			return;
 		}
 		var sql = "INSERT INTO feedback (type,message,sender) values ('"+p.command+"',?,"+p.msg.author.id+");";
