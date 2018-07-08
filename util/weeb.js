@@ -51,7 +51,7 @@ exports.grab = function(msg,ptype,ftype,text,notsfw,retry){
 exports.getTypes = function(msg){
 	sh.getTypes().then(array => {
 		var txt = "Available Image Types:\n";
-		for (i in array)
+		for (var i=0;i<array.length;i++)
 			txt += "`"+array[i]+"`, ";
 		txt += "`nsfw`";
 		txt += "\n*Some types will not work on pic*";
