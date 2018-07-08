@@ -29,7 +29,6 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: function(p){
-		return;
 		var args=p.args,msg=p.msg,con=p.con;
 
 		//Check if there is a bet amount
@@ -47,7 +46,7 @@ module.exports = new CommandInterface({
 		}
 
 		var sql = "SELECT money FROM cowoncy WHERE id = "+msg.author.id+";";
-		sql += "SELECT * FROM cowoncy WHERE id = "+msg.author.id+";";
+		sql += "SELECT * FROM blackjack LEFT JOIN blackjack_card ON blackjack.bjid = blackjack_card.bjid WHERE id = "+msg.author.id+" AND active = 1;";
 		con.query(sql,function(err,result){
 			if(err){console.error(err);return;}
 			//Check for existing match
@@ -59,12 +58,12 @@ module.exports = new CommandInterface({
 					if(money<=0)
 						p.send("**🚫 | "+msg.author.username+"**, You do not have enough cowoncy!",3000);
 					else
-						blackjack(p,deck,money);
+						initBlackjack(p,money,result[1]);
 				}else{
 					if(money<amount)
 						p.send("**🚫 | "+msg.author.username+"**, You do not have enough cowoncy!",3000);
 					else
-						blackjack(p,deck,amount);
+						initBlackjack(p,amount,result[1]);
 				}
 			}else{
 				p.send("**🚫 | "+msg.author.username+"**, You do not have enough cowoncy!",3000);
@@ -74,10 +73,41 @@ module.exports = new CommandInterface({
 
 });
 
-Array.prototype.diff = function(a) {
-	    return this.filter(function(i) {return a.indexOf(i) < 0;});
-};
-
 function blackjack(p,deck,bet){
 	p.send(bet);
 }
+
+function initBlackjack(p,bet){
+	//If existing match
+	if(false){
+
+	}else{
+		var tdeck = deck.slice(0);
+		var hand = [randCard(tdeck),randCard(tdeck)];
+		var dealer = [randCard(tdeck),randCard(tdeck)];
+		var sql = "INSERT INTO blackjack (id,bet,date,active) VALUES ("+p.msg.author.id+","+bet+",NOW(),1) ON DUPLICATE KEY UPDATE bet = "+bet+",date = NOW(), active = 1;";
+		sql += generateSQL(hand,dealer,p.msg.author.id);
+		p.con.query(sql,function(err,result){
+			if(err){console.error(err);p.send("Something went wrong...");return;}
+		});
+	}
+}
+
+function randCard(deck){
+	return deck.splice(Math.floor(Math.random()*deck.length),1)[0];
+}
+
+function generateSQL(hand,dealer,id){
+	id = "(SELECT bjid FROM blackjack WHERE id = "+id+")";
+	var sql = "";
+	for(var i=0;i<hand.length;i++)
+		sql += "INSERT INTO blackjack_card (bjid,card,dealer) VALUES ("+id+","+hand[i]+",0);";
+	for(var i=0;i<dealer.length;i++)
+		sql += "INSERT INTO blackjack_card (bjid,card,dealer) VALUES ("+id+","+dealer[i]+","+(i+1)+");";
+	return sql;
+}
+
+function diff(a,b){
+	    return a.filter(function(i) {return b.indexOf(i) < 0;});
+}
+
