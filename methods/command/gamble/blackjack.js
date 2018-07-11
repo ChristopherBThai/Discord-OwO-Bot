@@ -70,14 +70,15 @@ function blackjack(p,player,dealer,bet){
 	p.msg.channel.send({embed})
 		.then(message => {
 			message.react('🚫').catch(error => message.edit("I don't have permission to react with emojis!"));
-			const collector = message.createReactionCollector(filter,{time:10000});
+			const collector = message.createReactionCollector(filter,{time:60000});
 			collector.on('collect',r => {
 				//HIT
 				//STOP
+				stop(p,player,dealer,message,bet);
 			});
 			collector.on('end',collected => {
-				embed.footer.text = "~ expired";
-				message.edit({embed});
+				//embed.footer.text = "~ expired";
+				//message.edit({embed});
 			});
 		})
 		.catch(console.error);
@@ -97,7 +98,7 @@ function initBlackjack(p,bet,existing){
 	}else{
 		var tdeck = deck.slice(0);
 		var player= [bjUtil.randCard(tdeck,'f'),bjUtil.randCard(tdeck,'f')];
-		var dealer = [bjUtil.randCard(tdeck,'b'),bjUtil.randCard(tdeck,'f')];
+		var dealer = [bjUtil.randCard(tdeck,'f'),bjUtil.randCard(tdeck,'b')];
 		var sql = "INSERT INTO blackjack (id,bet,date,active) VALUES ("+p.msg.author.id+","+bet+",NOW(),1) ON DUPLICATE KEY UPDATE bet = "+bet+",date = NOW(), active = 1;";
 		sql += bjUtil.generateSQL(player,dealer,p.msg.author.id);
 		p.con.query(sql,function(err,result){
@@ -105,6 +106,56 @@ function initBlackjack(p,bet,existing){
 			blackjack(p,player,dealer,bet);
 		});
 	}
+}
+
+function stop(p,player,dealer,msg,bet){
+	for(var i=0;i<player.length;i++)
+		player[i].type = 'c';
+	for(var i=0;i<dealer.length;i++){
+		if(dealer[i].type == 'b')
+			dealer[i].type = 'f';
+		else
+			dealer[i].type = 'c';
+	}
+
+	var ppoints = bjUtil.cardValue(player).points;
+	var dpoints = bjUtil.cardValue(dealer).points;
+	var tdeck = bjUtil.initDeck(deck.slice(0),player,dealer);
+
+	while(dpoints<17){
+		dealer.push(bjUtil.randCard(tdeck,'f'));
+		dpoints = bjUtil.cardValue(dealer).points;
+	}
+
+	//sql get winner
+	winner = undefined;
+	//both bust
+	if(ppoints>21&&dpoints>21)
+		winner = 't';
+	//tie
+	else if(ppoints==dpoints)
+		winner = 'l';
+	//player bust
+	else if(ppoints>21)
+		winner = 'l';
+	//dealer bust
+	else if(dpoints>21)
+		winner = 'w';
+	//player win
+	else if(ppoints>dpoints)
+		winner = 'w';
+	//dealer win
+	else
+		winner = 'l';
+	
+	var sql = "UPDATE blackjack SET active = 0 WHERE id = "+p.msg.author.id+";";
+	sql += "DELETE FROM blackjack_card WHERE bjid = (SELECT bjid FROM blackjack WHERE id = "+p.msg.author.id+");";
+	p.con.query(sql,function(err,result){
+		if(err){console.error(err);msg.edit("Something went wrong...");return;}
+		var embed = bjUtil.generateEmbed(p.msg.author,dealer,player,bet,winner);
+		msg.edit({embed})
+			.catch(console.error);
+	});
 }
 
 function parseQuery(query,callback){

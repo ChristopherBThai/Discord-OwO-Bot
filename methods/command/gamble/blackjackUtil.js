@@ -30,6 +30,14 @@ function generateSQL(hand,dealer,id){
 function diff(a,b){
 	    return a.filter(function(i) {return b.indexOf(i) < 0;});
 }
+exports.initDeck = initDeck;
+function initDeck(deck,player,dealer){
+	for(var i=0;i<player.length;i++)
+		deck.splice(deck.indexOf(player[i].card),1);
+	for(var i=0;i<dealer.length;i++)
+		deck.splice(deck.indexOf(dealer[i].card),1);
+	return deck;
+}
 
 exports.generateEmbed = generateEmbed;
 function generateEmbed(author,dealer,player,bet,end){
@@ -38,12 +46,15 @@ function generateEmbed(author,dealer,player,bet,end){
 	var dealerValue = cardValue(dealer);
 	var playerValue = cardValue(player);
 ;
-	if(end===1){
+	if(end=='w'){
 		color = 65280;
 		footer = "You won!";
-	}else if (end===-1) {
+	}else if (end=='l') {
 		color = 16711680;
 		footer = "You lost!";
+	}else if (end=='t'){
+		color = 6381923;
+		footer = "You both bust!";
 	}else
 		dealerValue.points = "?";
 
@@ -70,6 +81,7 @@ function generateEmbed(author,dealer,player,bet,end){
 	return embed;
 }
 
+exports.cardValue = cardValue;
 function cardValue(deck){
 	var text = "";
 	var points = 0;
@@ -82,7 +94,7 @@ function cardValue(deck){
 		else
 			text += cards[0] + " ";
 		var value = deck[i].card%13;
-		if(value>=10)
+		if(value>=10||value==0)
 			points += 10;
 		else if(value>1)
 			points += value;
