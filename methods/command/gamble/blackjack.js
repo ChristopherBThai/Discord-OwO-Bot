@@ -15,9 +15,9 @@ module.exports = new CommandInterface({
 
 	related:["owo money"],
 
-	cooldown:1000,
-	half:80,
-	six:500,
+	cooldown:15000,
+	half:100,
+	six:600,
 
 	execute: function(p){
 		var args=p.args,msg=p.msg,con=p.con;
