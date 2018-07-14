@@ -21,9 +21,9 @@ function generateSQL(hand,dealer,id){
 	id = "(SELECT bjid FROM blackjack WHERE id = "+id+")";
 	var sql = "";
 	for(var i=0;i<hand.length;i++)
-		sql += "INSERT INTO blackjack_card (bjid,card,dealer) VALUES ("+id+","+hand[i].card+",0) ON DUPLICATE KEY UPDATE dealer = 0;";
+		sql += "INSERT INTO blackjack_card (bjid,card,dealer,sort) VALUES ("+id+","+hand[i].card+",0,"+(i+1)+") ON DUPLICATE KEY UPDATE dealer = 0,sort= "+(i+1)+";";
 	for(var i=0;i<dealer.length;i++)
-		sql += "INSERT INTO blackjack_card (bjid,card,dealer) VALUES ("+id+","+dealer[i].card+","+(i+1)+") ON DUPLICATE KEY UPDATE dealer = 2;";
+		sql += "INSERT INTO blackjack_card (bjid,card,dealer) VALUES ("+id+","+dealer[i].card+","+(dealer.length-i)+") ON DUPLICATE KEY UPDATE dealer = 2,sort=0;";
 	return sql;
 }
 
@@ -56,7 +56,7 @@ function generateEmbed(author,dealer,player,bet,end){
 		color = 6381923;
 		footer = "You both bust!";
 	}else
-		dealerValue.points = "?";
+		dealerValue.points = dealerValue.shownPoints+"+?";
 
 	const embed = {
 		"color": color,
@@ -85,20 +85,29 @@ exports.cardValue = cardValue;
 function cardValue(deck){
 	var text = "";
 	var points = 0;
+	var unhiddenPoints = 0;
 	var aces = 0;
 	for(var i=0;i<deck.length;i++){
+		var value = deck[i].card%13;
+
 		if(deck[i].type=='f')
 			text += cardsf[deck[i].card] + " ";
 		else if(deck[i].type=='c')
 			text += cards[deck[i].card] + " ";
 		else
 			text += cards[0] + " ";
-		var value = deck[i].card%13;
-		if(value>=10||value==0)
+
+		if(value>=10||value==0){
 			points += 10;
-		else if(value>1)
+			if(deck[i].type=='f'||deck[i].type=='c')
+				unhiddenPoints += 10;
+		}else if(value>1){
 			points += value;
-		else{
+			if(deck[i].type=='f'||deck[i].type=='c')
+				unhiddenPoints += value;
+		}else{
+			if(deck[i].type=='f'||deck[i].type=='c')
+				unhiddenPoints++;
 			points++;
 			aces++;
 		}
@@ -109,5 +118,5 @@ function cardValue(deck){
 		if(points>21)
 			points -= 10;
 	}
-	return {"display":text,"points":points};
+	return {"display":text,"points":points,"shownPoints":unhiddenPoints};
 }
