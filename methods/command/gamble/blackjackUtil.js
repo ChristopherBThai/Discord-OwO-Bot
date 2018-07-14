@@ -42,19 +42,19 @@ function initDeck(deck,player,dealer){
 exports.generateEmbed = generateEmbed;
 function generateEmbed(author,dealer,player,bet,end,winnings){
 	var color = 4886754;
-	var footer = "í¾² ~ game in progress"
+	var footer = "ðŸŽ² ~ game in progress"
 	var dealerValue = cardValue(dealer);
 	var playerValue = cardValue(player);
 ;
 	if(end=='w'){
 		color = 65280;
-		footer = "You won "+winnings+" cowoncy!";
+		footer = "ðŸŽ² ~ You won "+winnings+" cowoncy!";
 	}else if (end=='l') {
 		color = 16711680;
-		footer = "You lost!";
+		footer = "ðŸŽ² ~ You lost!";
 	}else if (end=='t'){
 		color = 6381923;
-		footer = "You both bust!";
+		footer = "ðŸŽ² ~ You both bust!";
 	}else
 		dealerValue.points = dealerValue.shownPoints+"+?";
 
