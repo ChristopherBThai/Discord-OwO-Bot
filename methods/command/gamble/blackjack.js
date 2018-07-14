@@ -23,7 +23,7 @@ module.exports = new CommandInterface({
 		var args=p.args,msg=p.msg,con=p.con;
 
 		//Check if there is a bet amount
-		var amount = undefined;
+		var amount = 1;
 		if(p.global.isInt(args[0]))
 			amount = parseInt(args[0]);
 		if(args[0]=='all')
@@ -38,6 +38,10 @@ module.exports = new CommandInterface({
 
 		var sql = "SELECT money FROM cowoncy WHERE id = "+msg.author.id+";";
 		sql += "SELECT * FROM blackjack LEFT JOIN blackjack_card ON blackjack.bjid = blackjack_card.bjid WHERE id = "+msg.author.id+" AND active = 1 ORDER BY sort ASC, dealer DESC;";
+		if(amount=="all")
+			sql += "UPDATE cowoncy NATURAL JOIN blackjack SET money = 0 WHERE id = "+msg.author.id+" AND money > 0 AND active = 0;";
+		else
+			sql += "UPDATE cowoncy NATURAL JOIN blackjack SET money = money - "+amount+" WHERE id = "+msg.author.id+" AND money >= "+amount+" AND active = 0;";
 		con.query(sql,function(err,result){
 			if(err){console.error(err);return;}
 			//Check for existing match
@@ -64,36 +68,48 @@ module.exports = new CommandInterface({
 
 });
 
-function blackjack(p,player,dealer,bet){
+function blackjack(p,player,dealer,bet,resume){
 	var embed = bjUtil.generateEmbed(p.msg.author,dealer,player,bet);
 	const filter = (reaction, user) => (reaction.emoji.name === '👊'||reaction.emoji.name === '🛑') && user.id === p.msg.author.id;
+	if(resume)
+		embed.footer.text = "~ resuming previous game";
 	p.msg.channel.send({embed})
 		.then(message => {
-			message.react('👊').catch(error => message.edit("**🚫 |** I don't have permission to react with emojis!"));
-			message.react('🛑').catch(error => message.edit("**🚫 |** I don't have permission to react with emojis!"));
+
+			message.react('👊')
+				.then(mr => {
+
+			message.react('🛑')
+				.then(mr => {
+
 			const collector = message.createReactionCollector(filter,{time:60000});
+
 			collector.on('collect',r => {
 				parseQuery({con:p.con,id:p.msg.author.id},function(nPlayer,nDealer){
 					if(!nPlayer||!nDealer){
-						collector.stop();
+						collector.stop("done");
 						message.edit("**🚫 |** This match is already finished");
 						return;
 					}
 					//HIT
-					if(true)
-						hit(p,nPlayer,nDealer,message,bet);
+					if(r.emoji.name=='👊')
+						hit(p,nPlayer,nDealer,message,bet,collector);
 
 					//STOP
-					else if(false)
+					else if(r.emoji.name=='🛑'){
+						collector.stop("done");
 						stop(p,nPlayer,nDealer,message,bet);
+					}
 				});
 			});
-			collector.on('end',collected => {
-				//embed.footer.text = "~ expired";
-				//message.edit({embed});
+
+			collector.on('end',(collected,reason) => {
+				if(reason=="time")
+					message.edit("**⏱ |** This session has expired. Retype `owo blackjack` to resume");
 			});
-		})
-		.catch(console.error);
+		}).catch(error => message.edit("**🚫 |** I don't have permission to react with emojis!"));
+		}).catch(error => message.edit("**🚫 |** I don't have permission to react with emojis!"));
+		}).catch(console.error);
 }
 
 function initBlackjack(p,bet,existing){
@@ -105,7 +121,7 @@ function initBlackjack(p,bet,existing){
 				return;
 			}
 			bet = existing[0].bet;
-			blackjack(p,player,dealer,bet);
+			blackjack(p,player,dealer,bet,true);
 		});
 	}else{
 		var tdeck = deck.slice(0);
@@ -120,7 +136,7 @@ function initBlackjack(p,bet,existing){
 	}
 }
 
-function hit(p,player,dealer,msg,bet){
+function hit(p,player,dealer,msg,bet,collector){
 	for(var i=0;i<player.length;i++)
 		player[i].type = 'c';
 	for(var i=0;i<dealer.length;i++){
@@ -134,8 +150,10 @@ function hit(p,player,dealer,msg,bet){
 	var ppoints = bjUtil.cardValue(player).points;
 	var dpoints = bjUtil.cardValue(dealer).points;
 
-	if(ppoints>21)
+	if(ppoints>21){
+		collector.stop("done");
 		stop(p,player,dealer,msg,bet,true);
+	}
 	else{
 		var sql = "INSERT INTO blackjack_card (bjid,card,dealer,sort) VALUES ((SELECT bjid FROM blackjack WHERE id = "+p.msg.author.id+"),"+card.card+",0,"+player.length+") ON DUPLICATE KEY UPDATE dealer = 0,sort= "+player.length+";";
 		p.con.query(sql,function(err,result){
@@ -187,12 +205,18 @@ function stop(p,player,dealer,msg,bet,fromHit){
 	//dealer win
 	else
 		winner = 'l';
+
+
 	
 	var sql = "UPDATE blackjack SET active = 0 WHERE id = "+p.msg.author.id+";";
 	sql += "DELETE FROM blackjack_card WHERE bjid = (SELECT bjid FROM blackjack WHERE id = "+p.msg.author.id+");";
+	if(winner=='w')
+		sql += "UPDATE cowoncy SET money = money + "+Math.ceil(bet*1.5)+" WHERE id = "+p.msg.author.id+";";
+	else if(winner=='t')
+		sql += "UPDATE cowoncy SET money = money + "+bet+" WHERE id = "+p.msg.author.id+";";
 	p.con.query(sql,function(err,result){
 		if(err){console.error(err);msg.edit("Something went wrong...");return;}
-		var embed = bjUtil.generateEmbed(p.msg.author,dealer,player,bet,winner);
+		var embed = bjUtil.generateEmbed(p.msg.author,dealer,player,bet,winner,Math.ceil(bet*1.5));
 		msg.edit({embed})
 			.catch(console.error);
 	});
