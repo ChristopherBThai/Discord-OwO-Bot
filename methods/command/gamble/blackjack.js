@@ -66,10 +66,11 @@ module.exports = new CommandInterface({
 
 function blackjack(p,player,dealer,bet){
 	var embed = bjUtil.generateEmbed(p.msg.author,dealer,player,bet);
-	const filter = (reaction, user) => reaction.emoji.name === '🚫' && user.id === p.msg.author.id;
+	const filter = (reaction, user) => (reaction.emoji.name === '👊'||reaction.emoji.name === '🛑') && user.id === p.msg.author.id;
 	p.msg.channel.send({embed})
 		.then(message => {
-			message.react('🚫').catch(error => message.edit("**🚫 |** I don't have permission to react with emojis!"));
+			message.react('👊').catch(error => message.edit("**🚫 |** I don't have permission to react with emojis!"));
+			message.react('🛑').catch(error => message.edit("**🚫 |** I don't have permission to react with emojis!"));
 			const collector = message.createReactionCollector(filter,{time:60000});
 			collector.on('collect',r => {
 				parseQuery({con:p.con,id:p.msg.author.id},function(nPlayer,nDealer){
