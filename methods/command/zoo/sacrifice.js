@@ -4,7 +4,7 @@ const essence = "<a:essence:451638978299428875>";
 
 module.exports = new CommandInterface({
 	
-	alias:["sacrifice","essence","butcher"],
+	alias:["sacrifice","essence","butcher","sac","sc"],
 
 	args:"{animal|rank} {count}",
 
