@@ -72,7 +72,7 @@ function blackjack(p,player,dealer,bet,resume){
 	var embed = bjUtil.generateEmbed(p.msg.author,dealer,player,bet);
 	const filter = (reaction, user) => (reaction.emoji.name === '👊'||reaction.emoji.name === '🛑') && user.id === p.msg.author.id;
 	if(resume)
-		embed.footer.text = "~ resuming previous game";
+		embed.footer.text = "🎲 ~ resuming previous game";
 	p.msg.channel.send({embed})
 		.then(message => {
 
