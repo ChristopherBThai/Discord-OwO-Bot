@@ -9,7 +9,7 @@ module.exports = new CommandInterface({
 
 	args:"{bet}",
 
-	desc:"Gamble your money away in blackjack! If the command stops responding, retype the command to resume the game!",
+	desc:"Gamble your money away in blackjack!\nYou can hit or stand by reacting with emojis! If the command stops responding, retype the command to resume the game!",
 
 	example:[],
 
