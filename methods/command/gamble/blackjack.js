@@ -15,7 +15,7 @@ module.exports = new CommandInterface({
 
 	related:["owo money"],
 
-	cooldown:1000,
+	cooldown:15000,
 	half:80,
 	six:500,
 
@@ -189,10 +189,10 @@ function stop(p,player,dealer,msg,bet,fromHit){
 	winner = undefined;
 	//both bust
 	if(ppoints>21&&dpoints>21)
-		winner = 't';
+		winner = 'tb';
 	//tie
 	else if(ppoints==dpoints)
-		winner = 'l';
+		winner = 't';
 	//player bust
 	else if(ppoints>21)
 		winner = 'l';
@@ -211,12 +211,12 @@ function stop(p,player,dealer,msg,bet,fromHit){
 	var sql = "UPDATE blackjack SET active = 0 WHERE id = "+p.msg.author.id+";";
 	sql += "DELETE FROM blackjack_card WHERE bjid = (SELECT bjid FROM blackjack WHERE id = "+p.msg.author.id+");";
 	if(winner=='w')
-		sql += "UPDATE cowoncy SET money = money + "+Math.ceil(bet*1.5)+" WHERE id = "+p.msg.author.id+";";
-	else if(winner=='t')
+		sql += "UPDATE cowoncy SET money = money + "+bet*2+" WHERE id = "+p.msg.author.id+";";
+	else if(winner=='t'||winner=='tb')
 		sql += "UPDATE cowoncy SET money = money + "+bet+" WHERE id = "+p.msg.author.id+";";
 	p.con.query(sql,function(err,result){
 		if(err){console.error(err);msg.edit("Something went wrong...");return;}
-		var embed = bjUtil.generateEmbed(p.msg.author,dealer,player,bet,winner,Math.ceil(bet*1.5));
+		var embed = bjUtil.generateEmbed(p.msg.author,dealer,player,bet,winner,bet);
 		msg.edit({embed})
 			.catch(console.error);
 	});
