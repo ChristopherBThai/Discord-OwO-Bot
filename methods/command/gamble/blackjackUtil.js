@@ -51,10 +51,13 @@ function generateEmbed(author,dealer,player,bet,end,winnings){
 		footer = "🎲 ~ You won "+winnings+" cowoncy!";
 	}else if (end=='l') {
 		color = 16711680;
-		footer = "🎲 ~ You lost!";
-	}else if (end=='t'){
+		footer = "🎲 ~ You lost "+bet+" cowoncy!";
+	}else if (end=='tb'){
 		color = 6381923;
 		footer = "🎲 ~ You both bust!";
+	}else if (end=='t'){
+		color = 6381923;
+		footer = "🎲 ~ You tied!";
 	}else
 		dealerValue.points = dealerValue.shownPoints+"+?";
 
@@ -72,7 +75,7 @@ function generateEmbed(author,dealer,player,bet,end,winnings){
 			"value": dealerValue.display,
 			"inline": true
 		},{
-			"name": author.username+" `["+playerValue.points+"]`",
+			"name": author.username+" `["+playerValue.points+"]"+((playerValue.ace)?"*":"")+"`",
 			"value": playerValue.display,
 			"inline": true
 		}
@@ -112,11 +115,19 @@ function cardValue(deck){
 			aces++;
 		}
 	}
-
+	
+	var usedAces = 0;
 	for(var i = 0;i<aces;i++){
 		points += 10;
-		if(points>21)
+		if(points>21){
+			usedAces++;
 			points -= 10;
+		}
 	}
-	return {"display":text,"points":points,"shownPoints":unhiddenPoints};
+
+	var ace = false;
+	if(aces>0 && usedAces<aces) 
+		ace = true;
+
+	return {"display":text,"points":points,"shownPoints":unhiddenPoints,"ace":ace};
 }
