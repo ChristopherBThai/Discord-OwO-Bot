@@ -62,7 +62,7 @@ function display(send){
 				{"name":"Animals",
 					"value":"`zoo`  `hunt`  `sell`  `battle`  `pets`  `inv`  `shop`  `equip`  `buy`  `autohunt`"},
 				{"name":"Gambling",
-					"value":"`slots`  `coinflip`  `lottery`"},
+					"value":"`slots`  `coinflip`  `lottery`  `blackjack`"},
 				{"name":"Fun",
 					"value":"`8b`  `define`  `gif`  `pic`  `translate`"},
 				{"name":"Social",
