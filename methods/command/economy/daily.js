@@ -1,7 +1,7 @@
 const CommandInterface = require('../../commandinterface.js');
 
 module.exports = new CommandInterface({
-	
+
 	alias:["daily"],
 
 	args:"",
@@ -36,7 +36,7 @@ module.exports = new CommandInterface({
 					if(rows[1][0].patreonDaily==1)
 						patreon = true;
 				}
-				
+
 				//Calculate daily amount
 				var gain = 100 + Math.floor(Math.random()*100);
 				var extra = 0;
@@ -58,7 +58,7 @@ module.exports = new CommandInterface({
 				sql = "INSERT INTO cowoncy (id,money) VALUES ("+msg.author.id+","+(gain+extra)+") ON DUPLICATE KEY UPDATE daily_streak = "+streak+", money = money + "+(gain+extra)+",daily = NOW();";
 				con.query(sql,function(err,rows,fields){
 					if(err){console.error(err);return;}
-					p.logger.value('cowoncy',(gain+extra),['command:daily','id:'+msg.author.id,'amount:'+(gain+extra)]);
+					p.logger.value('cowoncy',(gain+extra),['command:daily','id:'+msg.author.id]);
 					p.send(text);
 				});
 			}

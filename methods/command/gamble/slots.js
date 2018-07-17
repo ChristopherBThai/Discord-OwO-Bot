@@ -4,7 +4,7 @@ var slots = ["<:eggplant:417475705719226369>","<:heart:417475705899712522>","<:c
 var moving = "<a:slot_gif:417473893368987649>";
 
 module.exports = new CommandInterface({
-	
+
 	alias:["slots","slot","s"],
 
 	args:"{amount}",
@@ -94,11 +94,11 @@ module.exports = new CommandInterface({
 					rslots.push(slots[slot3]);
 				}
 				var winmsg = (win==0)?"nothing... :c":"<:cowoncy:416043450337853441> "+win;
-				
+
 				var sql = "UPDATE cowoncy SET money = money + "+(win-amount)+" WHERE id = "+msg.author.id+" AND money >= "+amount+";";
 				con.query(sql, function(err,result){
 					if(err){console.error(err);return;}
-					p.logger.value('cowoncy',(win-amount),['command:slots','id:'+msg.author.id,'amount:'+(win-amount)]);
+					p.logger.value('cowoncy',(win-amount),['command:slots','id:'+msg.author.id]);
 				});
 
 				//Display slots
@@ -117,7 +117,7 @@ module.exports = new CommandInterface({
 				var machine = "**`___SLOTS___  `**\n"+rslots[0]+" "+rslots[1]+" "+rslots[2]+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+amount+"\n`|         |`  and won "+winmsg+"\n`|         |`";
 				message.edit(machine);
 
-				
+
 				},1000));
 				},700));
 				},1000))
@@ -127,4 +127,3 @@ module.exports = new CommandInterface({
 		});
 	}
 });
-

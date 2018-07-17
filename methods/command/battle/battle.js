@@ -5,7 +5,7 @@ const battleUtil = require('./battleutil.js');
 const petUtil = require('./petutil.js');
 
 module.exports = new CommandInterface({
-	
+
 	alias:["battle","b","fight"],
 
 	args:"{@user} {bet}",
@@ -59,9 +59,9 @@ function fight(con,msg,send,p){
 
 	con.query(sql,async function(err,rows,fields){
 		if(err){ console.error(err);return;}
-		p.logger.value('cowoncy',-5,['command:battle','id:'+msg.author.id,'amount:-5']);
+		p.logger.value('cowoncy',-5,['command:battle','id:'+msg.author.id]);
 
-		//Check if guild is kid friendly 
+		//Check if guild is kid friendly
 		var censor = (rows[3][0]!=undefined && rows[3][0].young)
 
 		//Grab pet info
@@ -149,7 +149,7 @@ function fight(con,msg,send,p){
 			var embed = battleUtil.createDisplay(upet,opet,battleInfo);
 			battleLog.push(embed);
 		}
-		
+
 		//Display the fight
 		msg.channel.send("**"+msg.author.username+"** spent <:cowoncy:416043450337853441> 5 to fight!",battleLog[0])
 		.then(message => setTimeout(function(){
@@ -169,7 +169,7 @@ function fight(con,msg,send,p){
 
 		},1000)).catch(err => msg.channel.send("**🚫 | "+msg.author.username+"**, I don't have permission to send embeded messages!")
 		.catch(err => console.error(err)));
-		
+
 
 	});
 }
@@ -271,5 +271,3 @@ async function fightUser(con,msg,args,send){
 		}
 	});
 }
-
-

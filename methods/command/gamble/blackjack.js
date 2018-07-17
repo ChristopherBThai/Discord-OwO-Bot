@@ -4,7 +4,7 @@ const deck = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,
 const bjUtil = require('./blackjackUtil.js');
 
 module.exports = new CommandInterface({
-	
+
 	alias:["blackjack","bj","21"],
 
 	args:"{bet}",
@@ -207,7 +207,7 @@ function stop(p,player,dealer,msg,bet,fromHit){
 		winner = 'l';
 
 
-	
+
 	var sql = "UPDATE blackjack SET active = 0 WHERE id = "+p.msg.author.id+";";
 	sql += "DELETE FROM blackjack_card WHERE bjid = (SELECT bjid FROM blackjack WHERE id = "+p.msg.author.id+");";
 	if(winner=='w')
@@ -217,9 +217,9 @@ function stop(p,player,dealer,msg,bet,fromHit){
 	p.con.query(sql,function(err,result){
 		if(err){console.error(err);msg.edit("Something went wrong...");return;}
 		if(winner=='w')
-			p.logger.value('cowoncy',(bet),['command:blackjack','id:'+p.msg.author.id,'amount:'+(bet)]);
+			p.logger.value('cowoncy',(bet),['command:blackjack','id:'+p.msg.author.id]);
 		else if(winner=='l')
-			p.logger.value('cowoncy',(bet*-1),['command:blackjack','id:'+p.msg.author.id,'amount:'+(bet*-1)]);
+			p.logger.value('cowoncy',(bet*-1),['command:blackjack','id:'+p.msg.author.id]);
 		var embed = bjUtil.generateEmbed(p.msg.author,dealer,player,bet,winner,bet);
 		msg.edit({embed})
 			.catch(console.error);
@@ -239,7 +239,7 @@ function parseQuery(info,callback){
 					player.push({"card":query[i].card,"type":'c'});
 				else if(query[i].dealer==1)
 					dealer.push({"card":query[i].card,"type":'b'});
-				else 
+				else
 					dealer.push({"card":query[i].card,"type":'c'});
 			}
 			callback(player,dealer);
@@ -258,7 +258,7 @@ function parseQuery(info,callback){
 						player.push({"card":result[i].card,"type":'c'});
 					else if(result[i].dealer==1)
 						dealer.push({"card":result[i].card,"type":'b'});
-					else 
+					else
 						dealer.push({"card":result[i].card,"type":'c'});
 				}
 				callback(player,dealer);

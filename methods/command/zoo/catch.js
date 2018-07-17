@@ -6,7 +6,7 @@ var pet = require('../battle/petutil.js');
 const animalUtil = require('./animalUtil.js');
 
 module.exports = new CommandInterface({
-	
+
 	alias:["hunt","h","catch"],
 
 	args:"",
@@ -49,7 +49,7 @@ module.exports = new CommandInterface({
 				}
 				con.query(sql,function(err,result2){
 					if(err) throw err;
-					p.logger.value('cowoncy',-5,['command:hunt','id:'+msg.author.id,'amount:-5']);
+					p.logger.value('cowoncy',-5,['command:hunt','id:'+msg.author.id]);
 					var text = "**🌱 | "+msg.author.username+"** spent **<:cowoncy:416043450337853441> 5**, and found a "+animal[0]+" "+global.unicodeAnimal(animal[1])+"!";
 					if(result[1][0]){
 						text += "\n**<:blank:427371936482328596> |** "+result[1][0].name+" "+((result[1][0].nickname==null)?"":"**"+result[1][0].nickname+"**")+" gained **"+animal[3]+" xp**";
@@ -83,7 +83,7 @@ function givexp(xpgain,cxp,clvl,id,animal){
 		att = animal.attr;
 		hp = animal.hpr;
 	}
-	
+
 	var result = ["UPDATE animal NATURAL JOIN cowoncy SET lvl = lvl + "+lvlup+",xp = "+totalxp+",att = att + "+att+",hp = hp + "+hp+" WHERE id = "+id+" AND name = pet;",
 		lvlup]
 
