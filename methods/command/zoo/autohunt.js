@@ -5,6 +5,7 @@ const animalUtil = require('./animalUtil.js');
 const global = require('../../../util/global.js');
 const letters = "abcdefghijklmnopqrstuvwxyz";
 const botrank = "SELECT (COUNT(*)) AS rank, (SELECT COUNT(*) FROM autohunt) AS total FROM autohunt WHERE (essence+duration+efficiency+cost) >= COALESCE((SELECT (essence+duration+efficiency+cost) AS total FROM autohunt WHERE id = ";
+const logger = require('../../../util/logger.js');
 
 module.exports = new CommandInterface({
 	
@@ -177,6 +178,7 @@ function autohunt(msg,con,args,global,send){
 		sql += "INSERT INTO autohunt (id,start,huntcount,huntmin,password) VALUES ("+msg.author.id+",NOW(),"+huntcount+","+huntmin+",'') ON DUPLICATE KEY UPDATE start = NOW(), huntcount = "+huntcount+",huntmin = "+huntmin+",password = '';";
 		con.query(sql,function(err,result){
 			if(err){console.error(err);return;}
+			logger.value('cowoncy',cowoncy,['command:autohunt','id:'+msg.author.id,'amount:'+cowoncy]);
 			var min = huntmin%60;
 			var hour = Math.trunc(huntmin/60);
 			var timer = "";

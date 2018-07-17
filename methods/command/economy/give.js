@@ -61,6 +61,8 @@ module.exports = new CommandInterface({
 					"INSERT INTO cowoncy (id,money) VALUES ("+id+","+amount+") ON DUPLICATE KEY UPDATE money = money + "+amount+";";
 				con.query(sql,function(err,rows,fields){
 					if(err){console.error(err);return;}
+					p.logger.value('cowoncy',(amount),['command:given','id:'+id,'amount:'+(amount)]);
+					p.logger.value('cowoncy',(amount*-1),['command:give','id:'+msg.author.id,'amount:'+(amount*-1)]);
 					p.send("**💳 | "+msg.author.username+"** sent **"+amount+" cowoncy** to **"+user+"**!");
 				});
 			}

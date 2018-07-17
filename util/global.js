@@ -8,6 +8,7 @@ var animalunicode = {};
 var commands = {};
 var animals = {};
 var ranks = {};
+var rankAlias = {};
 var client,con;
 
 /**
@@ -111,6 +112,13 @@ exports.client= function(tclient){
 		ranks[key].points = animaljson.points[key];
 		ranks[key].emoji = animaljson.ranks[key];
 	}
+
+	for(key in animaljson.alias){
+		rankAlias[key] = key;
+		for(var i=0;i<animaljson.alias[key].length;i++){
+			rankAlias[animaljson.alias[key][i]] = key;
+		}
+	}
 }
 
 /**
@@ -131,8 +139,8 @@ exports.validAnimal = function(animal){
 }
 
 exports.validRank = function(rank){
-	if(rank)
-		rank.toLowerCase();
+	if(rank) rank.toLowerCase();
+	rank = rankAlias[rank];
 	return ranks[rank]
 }
 

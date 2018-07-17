@@ -18,13 +18,13 @@ module.exports = new CommandInterface({
 
 	execute: function(p){
 		if(p.args.length>0)
-			bet(p.con,p.msg,p.args,p.global);
+			bet(p.con,p.msg,p.args,p.global,p);
 		else
 			display(p.con,p.msg);
 	}
 });
 
-function bet(con,msg,args,global){
+function bet(con,msg,args,global,p){
 	var amount = 0;
 	var all = false;
 	if(args.length==1&&global.isInt(args[0]))
@@ -63,6 +63,8 @@ function bet(con,msg,args,global){
 				"UPDATE cowoncy SET money = money - "+amount+" WHERE id = "+msg.author.id+";";
 			con.query(sql,function(err,result){
 				if(err) throw err;
+
+				p.logger.value('cowoncy',(amount*-1),['command:lottery','id:'+msg.author.id,'amount:'+(amount*-1)]);
 
 				var sum = parseInt(result[1][0].sum);
 				var count = result[1][0].count;

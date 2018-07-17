@@ -98,6 +98,7 @@ module.exports = new CommandInterface({
 				var sql = "UPDATE cowoncy SET money = money + "+(win-amount)+" WHERE id = "+msg.author.id+" AND money >= "+amount+";";
 				con.query(sql, function(err,result){
 					if(err){console.error(err);return;}
+					p.logger.value('cowoncy',(win-amount),['command:slots','id:'+msg.author.id,'amount:'+(win-amount)]);
 				});
 
 				//Display slots

@@ -83,6 +83,7 @@ module.exports = new CommandInterface({
 				var sql = "UPDATE cowoncy SET money = money "+((win)?"+":"-")+" "+bet+" WHERE id = "+msg.author.id+";";
 				con.query(sql, function(err,result){
 					if(err){console.error(err);return;}
+					p.logger.value('cowoncy',(bet*((win)?(1):(-1))),['command:coinflip','id:'+msg.author.id,'amount:'+(bet*((win)?(1):(-1)))]);
 					var text = "**"+msg.author.username+"** spent **"+cowoncy+" "+bet+"** and chose "+((choice=='h')?"**heads**":"**tails**");
 					var text2 = "\nThe coin spins... "+spin;
 					msg.channel.send(text+text2)

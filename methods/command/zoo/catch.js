@@ -49,6 +49,7 @@ module.exports = new CommandInterface({
 				}
 				con.query(sql,function(err,result2){
 					if(err) throw err;
+					p.logger.value('cowoncy',-5,['command:hunt','id:'+msg.author.id,'amount:-5']);
 					var text = "**🌱 | "+msg.author.username+"** spent **<:cowoncy:416043450337853441> 5**, and found a "+animal[0]+" "+global.unicodeAnimal(animal[1])+"!";
 					if(result[1][0]){
 						text += "\n**<:blank:427371936482328596> |** "+result[1][0].name+" "+((result[1][0].nickname==null)?"":"**"+result[1][0].nickname+"**")+" gained **"+animal[3]+" xp**";

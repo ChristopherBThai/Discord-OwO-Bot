@@ -29,6 +29,7 @@ module.exports = new CommandInterface({
 
 			p.con.query(sql,function(err,result){
 				if(err) console.error(err);
+				p.logger.value('cowoncy',2,['command:points','id:'+id,'amount:2']);
 			});
 		}catch(err){
 			console.error(err);
