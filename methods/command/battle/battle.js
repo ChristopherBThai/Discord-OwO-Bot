@@ -28,7 +28,7 @@ module.exports = new CommandInterface({
 				if(result[0]==undefined||result[0].money<5)
 					p.send("**🚫 | "+p.msg.author.username+"**, You don't have enough cowoncy!",3000);
 				else
-					fight(p.con,p.msg,p.send);
+					fight(p.con,p.msg,p.send,p);
 			});
 		}else
 			fightUser(p.con,p.msg,p.args,p.send);
@@ -36,7 +36,7 @@ module.exports = new CommandInterface({
 
 })
 
-function fight(con,msg,send){
+function fight(con,msg,send,p){
 	var sql = "SELECT id,money,nickname,name,lvl,att,hp,lvl,streak,xp, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 1 THEN fname ELSE NULL END)) AS one, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 2 THEN fname ELSE NULL END)) AS two, "+
