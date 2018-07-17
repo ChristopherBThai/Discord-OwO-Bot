@@ -40,7 +40,7 @@ function pickWinner(){
 				sql += "UPDATE lottery SET valid = 0,amount = 0 WHERE valid = 1";
 				con.query(sql,function(err,result){
 					if(err) console.log(err);
-					logger.value('cowoncy',prize,['command:lottery','id:'+id,'amount:'+prize]);
+					logger.value('cowoncy',prize,['command:lottery','id:'+id]);
 				});
 			} else {
 				loser.push(id);

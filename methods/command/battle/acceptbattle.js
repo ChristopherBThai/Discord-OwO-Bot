@@ -5,7 +5,7 @@ const battleUtil = require('./battleutil.js');
 const petUtil = require('./petutil.js');
 
 module.exports = new CommandInterface({
-	
+
 	alias:["ab","acceptbattle"],
 
 	args:"",
@@ -78,8 +78,8 @@ function startBattle(con,msg,user1,pid1,user2,pid2,amount,send,p){
 		"WHERE id = "+user2.id+" AND animal.pid = "+pid2+" GROUP BY animal.pid;";
 	sql += "UPDATE cowoncy SET money = money - "+amount+" WHERE id IN ("+user1.id+","+user2.id+");"
 	con.query(sql,function(err,rows,fields){
-		p.logger.value('cowoncy',(amount*-1),['command:battleuser','id:'+user1.id,'amount:'+(amount*-1)]);
-		p.logger.value('cowoncy',(amount*-1),['command:battleuser','id:'+user2.id,'amount:'+(amount*-1)]);
+		p.logger.value('cowoncy',(amount*-1),['command:battleuser','id:'+user1.id]);
+		p.logger.value('cowoncy',(amount*-1),['command:battleuser','id:'+user2.id]);
 		if(err) throw err;
 
 		//Grab pet info
@@ -150,15 +150,15 @@ function startBattle(con,msg,user1,pid1,user2,pid2,amount,send,p){
 				sql += "UPDATE cowoncy SET money = money + "+prize2+" WHERE id = "+user2.id+";";
 				con.query(sql,function(err,rows,fields){
 					if(err){console.error(err);return;}
-					p.logger.value('cowoncy',prize1,['command:battleuser','id:'+user1.id,'amount:'+prize1]);
-					p.logger.value('cowoncy',prize2,['command:battleuser','id:'+user2.id,'amount:'+prize2]);
+					p.logger.value('cowoncy',prize1,['command:battleuser','id:'+user1.id]);
+					p.logger.value('cowoncy',prize2,['command:battleuser','id:'+user2.id]);
 				});
 
 			}
 			var embed = battleUtil.createDisplay(upet,opet,battleInfo);
 			battleLog.push(embed);
 		}
-		
+
 		//Display the fight
 		msg.channel.send(betmsg,battleLog[0])
 		.then(message => setTimeout(function(){

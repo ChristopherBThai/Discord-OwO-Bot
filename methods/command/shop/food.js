@@ -15,7 +15,7 @@ exports.buy = function(con,msg,food){
 
 		con.query(sql,function(err,rows,fields){
 			if(err){console.error(err);return;}
-			logger.value('cowoncy',(food.price*-1),['command:shop','id:'+msg.author.id,'amount:'+(food.price*-1)]);
+			logger.value('cowoncy',(food.price*-1),['command:shop','id:'+msg.author.id]);
 			if(rows[0].warningCount>0){
 				msg.channel.send("**🚫 | "+msg.author.username+"**, An unexpected error occured...")
 					.then(message => message.delete(3000))
@@ -153,7 +153,7 @@ exports.throwup = function(con,msg){
 				.catch(err => console.error(err));
 			return
 		}
-			
+
 
 		sql = "DELETE FROM animal_food WHERE pid = (SELECT pid FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND pet = name);";
 		sql += "UPDATE user_food SET fcount = fcount-1 WHERE uid = "+rows[1][0].uid+" AND fid = "+rows[1][0].fid+";";

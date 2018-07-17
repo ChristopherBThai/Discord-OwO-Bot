@@ -39,9 +39,9 @@ function upvote(id,bot){
 				"UPDATE IGNORE cowoncy SET money = money+"+(reward+patreonBonus)+" WHERE id = "+id+";";
 			con.query(sql,function(err,result){
 				if(err) throw err;
-				logger.value('cowoncy',(reward+patreonBonus),['command:vote','id:'+id,'amount:'+(reward+patreonBonus)]);
+				logger.value('cowoncy',(reward+patreonBonus),['command:vote','id:'+id]);
 				global.msgUser(id,"**☑ |** You have received **"+reward+"** cowoncy for voting!"+patreonMsg(patreonBonus));
-				console.log("\x1b[33m",id+" has voted for the first time!"); 
+				console.log("\x1b[33m",id+" has voted for the first time!");
 			});
 		}else if(result[0][0].time>=23){
 			var bonus = 200 + (result[0][0].count*5);
@@ -52,13 +52,13 @@ function upvote(id,bot){
 			"UPDATE IGNORE cowoncy SET money = money+"+(bonus+patreonBonus)+" WHERE id = "+id+";";
 			con.query(sql,function(err,result){
 				if(err) throw err;
-				logger.value('cowoncy',(bonus+patreonBonus),['command:vote','id:'+id,'amount:'+(bonus+patreonBonus)]);
+				logger.value('cowoncy',(bonus+patreonBonus),['command:vote','id:'+id]);
 				global.msgUser(id,"**☑ |** You have received **"+bonus+"** cowoncy for voting!"+patreonMsg(patreonBonus));
-				console.log("\x1b[33m",id+" has voted and  received cowoncy!"); 
+				console.log("\x1b[33m",id+" has voted and  received cowoncy!");
 			});
 		}else{
 			global.msgUser(id,"You wait need to wait "+(23-result[0][0].time)+" hours before voting again!")
-			console.log("\x1b[33m",id+" tried to vote again"); 
+			console.log("\x1b[33m",id+" tried to vote again");
 		}
 	});
 	logger.increment("votecount");
@@ -68,7 +68,7 @@ exports.setManager = function(manageri){
 	manager = manageri;
 	con = global.con();
 	app.listen(3001,() => {
-		console.log("\x1b[33m","Voting is listening on port 3001!"); 
+		console.log("\x1b[33m","Voting is listening on port 3001!");
 	});
 }
 

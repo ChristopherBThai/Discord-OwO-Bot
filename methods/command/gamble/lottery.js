@@ -1,7 +1,7 @@
 const CommandInterface = require('../../commandinterface.js');
 
 module.exports = new CommandInterface({
-	
+
 	alias:["lottery","bet","lotto"],
 
 	args:"{amount}",
@@ -36,7 +36,7 @@ function bet(con,msg,args,global,p){
 			.catch(err => console.error(err));
 		return;
 	}
-	
+
 	if(amount == 0&&!all){
 		msg.channel.send("**🚫 | "+msg.author.username+"**, You bet... nothing?")
 			.catch(err => console.error(err));
@@ -64,7 +64,7 @@ function bet(con,msg,args,global,p){
 			con.query(sql,function(err,result){
 				if(err) throw err;
 
-				p.logger.value('cowoncy',(amount*-1),['command:lottery','id:'+msg.author.id,'amount:'+(amount*-1)]);
+				p.logger.value('cowoncy',(amount*-1),['command:lottery','id:'+msg.author.id]);
 
 				var sum = parseInt(result[1][0].sum);
 				var count = result[1][0].count;

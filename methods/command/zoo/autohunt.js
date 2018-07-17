@@ -8,7 +8,7 @@ const botrank = "SELECT (COUNT(*)) AS rank, (SELECT COUNT(*) FROM autohunt) AS t
 const logger = require('../../../util/logger.js');
 
 module.exports = new CommandInterface({
-	
+
 	alias:["autohunt","huntbot","hb"],
 
 	args:"{cowoncy}",
@@ -99,7 +99,7 @@ function autohunt(msg,con,args,global,send){
 		send("**🚫 | "+msg.author.username+"**, Wrong syntax!",3000);
 		return;
 	}
-	
+
 	if(cowoncy<=0){
 		send("**🚫 | "+msg.author.username+"**, Invalid cowoncy amount!",3000);
 		return;
@@ -178,7 +178,7 @@ function autohunt(msg,con,args,global,send){
 		sql += "INSERT INTO autohunt (id,start,huntcount,huntmin,password) VALUES ("+msg.author.id+",NOW(),"+huntcount+","+huntmin+",'') ON DUPLICATE KEY UPDATE start = NOW(), huntcount = "+huntcount+",huntmin = "+huntmin+",password = '';";
 		con.query(sql,function(err,result){
 			if(err){console.error(err);return;}
-			logger.value('cowoncy',cowoncy,['command:autohunt','id:'+msg.author.id,'amount:'+cowoncy]);
+			logger.value('cowoncy',cowoncy,['command:autohunt','id:'+msg.author.id]);
 			var min = huntmin%60;
 			var hour = Math.trunc(huntmin/60);
 			var timer = "";
@@ -194,7 +194,7 @@ function display(msg,con,send){
 	sql += botrank + msg.author.id+"),0);";
 	con.query(sql,function(err,result){
 		if(err){console.error(err);return;}
-		
+
 		//Get emoji
 		var bot = autohuntutil.getBot(result[1][0]);
 
@@ -238,7 +238,7 @@ function display(msg,con,send){
 			"fields": [{
 					"name": bot+" `BEEP. BOOP. I AM HUNTBOT. I WILL HUNT FOR YOU MASTER.`",
 					"value": "Use the command `owo autohunt {cowoncy}` to get started.\nYou can use `owo upgrade {trait}` to upgrade the traits below.\nTo obtain more essence, use `owo sacrifice {animal} {count}`.\n\n",
-					"inline":false 
+					"inline":false
 				},
 				{
 					"name": "⏱ Efficiency - `"+efficiency.stat+efficiency.prefix+"`",
@@ -258,7 +258,7 @@ function display(msg,con,send){
 				{
 					"name": "<a:essence:451638978299428875> Animal Essence - `"+essence+"`",
 					"value": "`Current Max Autohunt: "+maxhunt+" animals for "+(maxhunt*cost.stat)+" cowoncy`",
-					"inline": false 
+					"inline": false
 				}
 				]
 		};

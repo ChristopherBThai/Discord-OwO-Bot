@@ -1,7 +1,7 @@
 const CommandInterface = require('../../commandinterface.js');
 
 module.exports = new CommandInterface({
-	
+
 	alias:["vote"],
 
 	args:"",
@@ -38,11 +38,11 @@ module.exports = new CommandInterface({
 							"UPDATE IGNORE cowoncy SET money = money+"+(reward+patreonBonus)+" WHERE id = "+id+";";
 						con.query(sql,function(err,result){
 							if(err) {console.error(err);return;}
-							p.logger.value('cowoncy',(reward+patreonBonus),['command:vote','id:'+id,'amount:'+(reward+patreonBonus)]);
+							p.logger.value('cowoncy',(reward+patreonBonus),['command:vote','id:'+id]);
 							var text = "**☑ |** You have received **"+reward+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
-							console.log("\x1b[33m",id+" has voted for the first time!"); 
+							console.log("\x1b[33m",id+" has voted for the first time!");
 							p.logger.increment("votecount");
 						});
 					}else if(result[0][0].time>=24){
@@ -54,11 +54,11 @@ module.exports = new CommandInterface({
 						"UPDATE IGNORE cowoncy SET money = money+"+(bonus+patreonBonus)+" WHERE id = "+id+";";
 						con.query(sql,function(err,result){
 							if(err) {console.error(err);return;}
-							p.logger.value('cowoncy',(bonus+patreonBonus),['command:vote','id:'+id,'amount:'+(bonus+patreonBonus)]);
+							p.logger.value('cowoncy',(bonus+patreonBonus),['command:vote','id:'+id]);
 							var text = "**☑ |** You have received **"+bonus+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
-							console.log("\x1b[33m",id+" has voted and  received cowoncy!"); 
+							console.log("\x1b[33m",id+" has voted and  received cowoncy!");
 							p.logger.increment("votecount");
 						});
 					}else{
@@ -68,7 +68,7 @@ module.exports = new CommandInterface({
 						//text += "**<:blank:427371936482328596> |** Please retype `owo vote` 1-10min after you vote!\n";
 						text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 						p.send(text);
-						console.log("\x1b[33m",id+" tried to vote again"); 
+						console.log("\x1b[33m",id+" tried to vote again");
 					}
 				});
 			}else{

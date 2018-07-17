@@ -1,7 +1,7 @@
 const CommandInterface = require('../commandinterface.js');
 
 module.exports = new CommandInterface({
-	
+
 	alias:["points"],
 
 	args:"",
@@ -29,7 +29,7 @@ module.exports = new CommandInterface({
 
 			p.con.query(sql,function(err,result){
 				if(err) console.error(err);
-				p.logger.value('cowoncy',2,['command:points','id:'+id,'amount:2']);
+				p.logger.value('cowoncy',2,['command:points','id:'+id]);
 			});
 		}catch(err){
 			console.error(err);
@@ -37,4 +37,3 @@ module.exports = new CommandInterface({
 	}
 
 })
-
