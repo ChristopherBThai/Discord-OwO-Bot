@@ -52,7 +52,7 @@ module.exports = new CommandInterface({
 					if(rows[0].length<2){
 						p.send("**🚫 | "+msg.author.username+"**, Looks like someone doesn't have enough cowoncy!",3000);
 					}else{
-						startBattle(con,msg,user1,pid1,user2,pid2,amount,p.send);
+						startBattle(con,msg,user1,pid1,user2,pid2,amount,p.send,p);
 					}
 				});
 			}
@@ -61,7 +61,7 @@ module.exports = new CommandInterface({
 
 })
 
-function startBattle(con,msg,user1,pid1,user2,pid2,amount,send){
+function startBattle(con,msg,user1,pid1,user2,pid2,amount,send,p){
 	var sql = "SELECT id,money,nickname,name,lvl,att,hp,lvl,streak,xp, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 1 THEN fname ELSE NULL END)) AS one, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 2 THEN fname ELSE NULL END)) AS two, "+
@@ -78,6 +78,8 @@ function startBattle(con,msg,user1,pid1,user2,pid2,amount,send){
 		"WHERE id = "+user2.id+" AND animal.pid = "+pid2+" GROUP BY animal.pid;";
 	sql += "UPDATE cowoncy SET money = money - "+amount+" WHERE id IN ("+user1.id+","+user2.id+");"
 	con.query(sql,function(err,rows,fields){
+		p.logger.value('cowoncy',(amount*-1),['command:battleuser','id:'+user1.id,'amount:'+(amount*-1)]);
+		p.logger.value('cowoncy',(amount*-1),['command:battleuser','id:'+user2.id,'amount:'+(amount*-1)]);
 		if(err) throw err;
 
 		//Grab pet info
@@ -148,6 +150,8 @@ function startBattle(con,msg,user1,pid1,user2,pid2,amount,send){
 				sql += "UPDATE cowoncy SET money = money + "+prize2+" WHERE id = "+user2.id+";";
 				con.query(sql,function(err,rows,fields){
 					if(err){console.error(err);return;}
+					p.logger.value('cowoncy',prize1,['command:battleuser','id:'+user1.id,'amount:'+prize1]);
+					p.logger.value('cowoncy',prize2,['command:battleuser','id:'+user2.id,'amount:'+prize2]);
 				});
 
 			}

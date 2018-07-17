@@ -59,6 +59,7 @@ function fight(con,msg,send){
 
 	con.query(sql,async function(err,rows,fields){
 		if(err){ console.error(err);return;}
+		p.logger.value('cowoncy',-5,['command:battle','id:'+msg.author.id,'amount:-5']);
 
 		//Check if guild is kid friendly 
 		var censor = (rows[3][0]!=undefined && rows[3][0].young)

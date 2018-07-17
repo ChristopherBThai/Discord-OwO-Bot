@@ -38,6 +38,7 @@ module.exports = new CommandInterface({
 							"UPDATE IGNORE cowoncy SET money = money+"+(reward+patreonBonus)+" WHERE id = "+id+";";
 						con.query(sql,function(err,result){
 							if(err) {console.error(err);return;}
+							p.logger.value('cowoncy',(reward+patreonBonus),['command:vote','id:'+id,'amount:'+(reward+patreonBonus)]);
 							var text = "**☑ |** You have received **"+reward+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
@@ -53,6 +54,7 @@ module.exports = new CommandInterface({
 						"UPDATE IGNORE cowoncy SET money = money+"+(bonus+patreonBonus)+" WHERE id = "+id+";";
 						con.query(sql,function(err,result){
 							if(err) {console.error(err);return;}
+							p.logger.value('cowoncy',(bonus+patreonBonus),['command:vote','id:'+id,'amount:'+(bonus+patreonBonus)]);
 							var text = "**☑ |** You have received **"+bonus+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);

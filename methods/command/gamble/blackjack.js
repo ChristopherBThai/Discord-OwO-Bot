@@ -216,6 +216,10 @@ function stop(p,player,dealer,msg,bet,fromHit){
 		sql += "UPDATE cowoncy SET money = money + "+bet+" WHERE id = "+p.msg.author.id+";";
 	p.con.query(sql,function(err,result){
 		if(err){console.error(err);msg.edit("Something went wrong...");return;}
+		if(winner=='w')
+			p.logger.value('cowoncy',(bet),['command:blackjack','id:'+p.msg.author.id,'amount:'+(bet)]);
+		else if(winner=='l')
+			p.logger.value('cowoncy',(bet*-1),['command:blackjack','id:'+p.msg.author.id,'amount:'+(bet*-1)]);
 		var embed = bjUtil.generateEmbed(p.msg.author,dealer,player,bet,winner,bet);
 		msg.edit({embed})
 			.catch(console.error);

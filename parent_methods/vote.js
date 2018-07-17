@@ -39,6 +39,7 @@ function upvote(id,bot){
 				"UPDATE IGNORE cowoncy SET money = money+"+(reward+patreonBonus)+" WHERE id = "+id+";";
 			con.query(sql,function(err,result){
 				if(err) throw err;
+				logger.value('cowoncy',(reward+patreonBonus),['command:vote','id:'+id,'amount:'+(reward+patreonBonus)]);
 				global.msgUser(id,"**☑ |** You have received **"+reward+"** cowoncy for voting!"+patreonMsg(patreonBonus));
 				console.log("\x1b[33m",id+" has voted for the first time!"); 
 			});
@@ -51,6 +52,7 @@ function upvote(id,bot){
 			"UPDATE IGNORE cowoncy SET money = money+"+(bonus+patreonBonus)+" WHERE id = "+id+";";
 			con.query(sql,function(err,result){
 				if(err) throw err;
+				logger.value('cowoncy',(bonus+patreonBonus),['command:vote','id:'+id,'amount:'+(bonus+patreonBonus)]);
 				global.msgUser(id,"**☑ |** You have received **"+bonus+"** cowoncy for voting!"+patreonMsg(patreonBonus));
 				console.log("\x1b[33m",id+" has voted and  received cowoncy!"); 
 			});

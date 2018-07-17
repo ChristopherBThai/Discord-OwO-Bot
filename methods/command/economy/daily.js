@@ -58,6 +58,7 @@ module.exports = new CommandInterface({
 				sql = "INSERT INTO cowoncy (id,money) VALUES ("+msg.author.id+","+(gain+extra)+") ON DUPLICATE KEY UPDATE daily_streak = "+streak+", money = money + "+(gain+extra)+",daily = NOW();";
 				con.query(sql,function(err,rows,fields){
 					if(err){console.error(err);return;}
+					p.logger.value('cowoncy',(gain+extra),['command:daily','id:'+msg.author.id,'amount:'+(gain+extra)]);
 					p.send(text);
 				});
 			}

@@ -47,7 +47,7 @@ module.exports = new CommandInterface({
 		//if its an animal...
 		if(animal = global.validAnimal(name)){
 			if(args.length<3)
-				sellAnimal(msg,con,animal,count,p.send,global);
+				sellAnimal(msg,con,animal,count,p.send,global,p);
 			else
 				p.send("**🚫 | "+msg.author.username+"**, The correct syntax for selling ranks is `owo sell {animal} {count}`!",3000);
 
@@ -56,7 +56,7 @@ module.exports = new CommandInterface({
 			if(args.length!=1)
 				p.send("**🚫 | "+msg.author.username+"**, The correct syntax for selling ranks is `owo sell {rank}`!",3000);
 			else
-				sellRank(msg,con,rank,p.send,global);
+				sellRank(msg,con,rank,p.send,global,p);
 
 		//if neither...
 		}else{
@@ -66,7 +66,7 @@ module.exports = new CommandInterface({
 
 })
 
-function sellAnimal(msg,con,animal,count,send,global){
+function sellAnimal(msg,con,animal,count,send,global,p){
 	if(count!="all"&&count<=0){
 		send("**🚫 |** You need to sell more than 1 silly~",3000);
 		return;
@@ -84,16 +84,18 @@ function sellAnimal(msg,con,animal,count,send,global){
 			}else{
 				count = result[0][0].count;
 				send("**🔪 | "+msg.author.username+"** sold **"+global.unicodeAnimal(animal.value)+"x"+count+"** for a total of **<:cowoncy:416043450337853441> "+(count*animal.price)+"**");
+				p.logger.value('cowoncy',(count*animal.price),['command:sell','id:'+msg.author.id,'amount:'+(count*animal.price)]);
 			}
 		}else if(result.affectedRows>0){
 			send("**🔪 | "+msg.author.username+"** sold **"+global.unicodeAnimal(animal.value)+"x"+count+"** for a total of **<:cowoncy:416043450337853441> "+(count*animal.price)+"**");
+				p.logger.value('cowoncy',(count*animal.price),['command:sell','id:'+msg.author.id,'amount:'+(count*animal.price)]);
 		}else{
 			send("**🚫 | "+msg.author.username+"**, You can't sell more than you have silly! >:c",3000);
 		}
 	});
 }
 
-function sellRank(msg,con,rank,send,global){
+function sellRank(msg,con,rank,send,global,p){
 	var animals = "('"+rank.animals.join("','")+"')";
 	var sql = "SELECT SUM(count) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
 	sql += "UPDATE cowoncy SET money = money + ((SELECT COALESCE(SUM(count),0) FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+")*"+rank.price+") WHERE id = "+msg.author.id+";";
@@ -105,6 +107,7 @@ function sellRank(msg,con,rank,send,global){
 		}else{
 			count = result[0][0].total;
 			send("**🔪 | "+msg.author.username+"** sold **"+rank.emoji+"x"+count+"** for a total of **<:cowoncy:416043450337853441> "+(count*rank.price)+"**");
+			p.logger.value('cowoncy',(count*rank.price),['command:sell','id:'+msg.author.id,'amount:'+(count*rank.price)]);
 		}
 	});
 }

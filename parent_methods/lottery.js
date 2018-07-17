@@ -1,6 +1,7 @@
 //Lottery!
 
 const global = require('./global.js');
+const logger = require('../util/logger.js');
 var con;
 
 /**
@@ -37,7 +38,10 @@ function pickWinner(){
 
 				sql = "INSERT INTO cowoncy (id,money) VALUES ("+id+","+prize+") ON DUPLICATE KEY UPDATE money = money + "+prize+";";
 				sql += "UPDATE lottery SET valid = 0,amount = 0 WHERE valid = 1";
-				con.query(sql,function(err,result){if(err) console.log(err);});
+				con.query(sql,function(err,result){
+					if(err) console.log(err);
+					logger.value('cowoncy',prize,['command:lottery','id:'+id,'amount:'+prize]);
+				});
 			} else {
 				loser.push(id);
 				loserchance.push(chance);

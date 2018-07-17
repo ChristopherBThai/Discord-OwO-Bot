@@ -1,4 +1,5 @@
 const global = require('../../../util/global.js');
+const logger = require('../../../util/logger.js');
 const food = require('../../../json/food.json');
 const foodUtil = require('./food.js');
 const name_id = {};
@@ -14,6 +15,7 @@ exports.buy = function(con,msg,food){
 
 		con.query(sql,function(err,rows,fields){
 			if(err){console.error(err);return;}
+			logger.value('cowoncy',(food.price*-1),['command:shop','id:'+msg.author.id,'amount:'+(food.price*-1)]);
 			if(rows[0].warningCount>0){
 				msg.channel.send("**🚫 | "+msg.author.username+"**, An unexpected error occured...")
 					.then(message => message.delete(3000))
