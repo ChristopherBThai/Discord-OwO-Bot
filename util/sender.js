@@ -45,6 +45,7 @@ exports.msgAdmin = async function (message){
 
 exports.msgLogChannel = async function (message){
 	if(!message) return;
+	message = message.replace(/`/g,"\\`");
 	client.shard.broadcastEval(`
 		var channel = this.channels.get('${logChannel}');
 		if(channel!=undefined)
