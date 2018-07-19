@@ -1,6 +1,7 @@
 var client;
 var auth = require('../../tokens/owo-auth.json');
 var admin;
+var logChannel = "469352773314412555";
 
 /**
  * Sends a msg to channel
@@ -40,6 +41,15 @@ exports.msgAdmin = async function (message){
 	if(admin!=undefined)
 		admin.send(message)
 			.catch(err => console.error(err));
+}
+
+exports.msgLogChannel = async function (message){
+	if(!message) return;
+	client.shard.broadcastEval(`
+		var channel = this.channels.get('${logChannel}');
+		if(channel!=undefined)
+			channel.send(\`${message}\`);
+	`);
 }
 
 exports.client = function(tClient){

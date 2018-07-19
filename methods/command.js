@@ -112,13 +112,13 @@ function addCommand(command){
 			commands[alias[i]] = command;
 			if(command.distinctAlias){
 				aliasToCommand[alias[i]] = alias[i];
-				mcommands[alias[i]] = {cd:command.cooldown,ban:12,half:command.half,six:command.six};
+				mcommands[alias[i]] = {botcheck:command.bot,cd:command.cooldown,ban:12,half:command.half,six:command.six};
 			}else
 				aliasToCommand[alias[i]] = name;
 		}
 	}
 	if(!command.distinctAlias)
-		mcommands[name] = {cd:command.cooldown,ban:12,half:command.half,six:command.six};
+		mcommands[name] = {botcheck:command.bot,cd:command.cooldown,ban:12,half:command.half,six:command.six};
 }
 
 function executeCommand(param){
@@ -126,7 +126,7 @@ function executeCommand(param){
 	var msg = param.msg;
 	var name = aliasToCommand[command];
 	ban.check(con,msg,name,function(){
-		macro.check(msg,aliasToCommand[command],commands[command].bot,async function(){
+		macro.check(msg,aliasToCommand[command],async function(){
 			var result = await commands[command].execute(param);
 			logger.increment("command",['command:'+aliasToCommand[command],'id:'+msg.author.id]);
 			if(command!="points"){
