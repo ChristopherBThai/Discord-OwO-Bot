@@ -19,6 +19,7 @@ module.exports = new CommandInterface({
 	cooldown:15000,
 	half:80,
 	six:500,
+	bot:true,
 
 	execute: function(p){
 		if(p.args.length==0){

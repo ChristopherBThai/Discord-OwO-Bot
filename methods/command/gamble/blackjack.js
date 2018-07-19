@@ -18,6 +18,7 @@ module.exports = new CommandInterface({
 	cooldown:15000,
 	half:100,
 	six:600,
+	bot:true,
 
 	execute: function(p){
 		var args=p.args,msg=p.msg,con=p.con;
@@ -216,10 +217,13 @@ function stop(p,player,dealer,msg,bet,fromHit){
 		sql += "UPDATE cowoncy SET money = money + "+bet+" WHERE id = "+p.msg.author.id+";";
 	p.con.query(sql,function(err,result){
 		if(err){console.error(err);msg.edit("Something went wrong...");return;}
-		if(winner=='w')
+		if(winner=='w'){
 			p.logger.value('cowoncy',(bet),['command:blackjack','id:'+p.msg.author.id]);
-		else if(winner=='l')
+			p.logger.value('gamble',1,['command:blackjack','id:'+p.msg.author.id]);
+		}else if(winner=='l'){
 			p.logger.value('cowoncy',(bet*-1),['command:blackjack','id:'+p.msg.author.id]);
+			p.logger.value('gamble',-1,['command:blackjack','id:'+p.msg.author.id]);
+		}
 		var embed = bjUtil.generateEmbed(p.msg.author,dealer,player,bet,winner,bet);
 		msg.edit({embed})
 			.catch(console.error);

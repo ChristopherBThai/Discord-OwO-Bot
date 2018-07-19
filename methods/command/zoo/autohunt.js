@@ -178,7 +178,7 @@ function autohunt(msg,con,args,global,send){
 		sql += "INSERT INTO autohunt (id,start,huntcount,huntmin,password) VALUES ("+msg.author.id+",NOW(),"+huntcount+","+huntmin+",'') ON DUPLICATE KEY UPDATE start = NOW(), huntcount = "+huntcount+",huntmin = "+huntmin+",password = '';";
 		con.query(sql,function(err,result){
 			if(err){console.error(err);return;}
-			logger.value('cowoncy',cowoncy,['command:autohunt','id:'+msg.author.id]);
+			logger.value('cowoncy',(cowoncy*-1),['command:autohunt','id:'+msg.author.id]);
 			var min = huntmin%60;
 			var hour = Math.trunc(huntmin/60);
 			var timer = "";

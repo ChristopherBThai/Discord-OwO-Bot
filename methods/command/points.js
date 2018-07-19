@@ -15,6 +15,7 @@ module.exports = new CommandInterface({
 	cooldown:10000,
 	half:90,
 	six:700,
+	bot:true,
 
 	execute: function(p){
 		var id = p.msg.author.id;
