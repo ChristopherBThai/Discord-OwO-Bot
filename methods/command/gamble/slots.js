@@ -18,6 +18,7 @@ module.exports = new CommandInterface({
 	cooldown:15000,
 	half:80,
 	six:500,
+	bot:true,
 
 	execute: function(p){
 		var global=p.global,msg=p.msg,args=p.args,con=p.con;
@@ -56,32 +57,39 @@ module.exports = new CommandInterface({
 				var rslots = [];
 				var rand = Math.random();
 				var win = 0;
+				var logging = 0;
 				if(rand<=.19){//1x 19%
 					win = amount;
 					rslots.push(slots[0]);
 					rslots.push(slots[0]);
 					rslots.push(slots[0]);
+					logging = 0;
 				}else if(rand<=.33){ //2x 14%
 					win = amount*2;
 					rslots.push(slots[1]);
 					rslots.push(slots[1]);
 					rslots.push(slots[1]);
+					logging = 1;
 				}else if(rand<=.42){ //3x 9%
 					win = amount*3;
 					rslots.push(slots[2]);
 					rslots.push(slots[2]);
 					rslots.push(slots[2]);
+					logging = 2;
 				}else if(rand<=.46){ //4x 4%
 					win = amount*4;
 					rslots.push(slots[3]);
 					rslots.push(slots[3]);
 					rslots.push(slots[3]);
+					logging = 3;
 				}else if(rand<=.47){ //10x 1%
 					win = amount*10;
 					rslots.push(slots[4]);
 					rslots.push(slots[5]);
 					rslots.push(slots[4]);
+					logging = 9;
 				}else{
+					logging = -1;
 					var slot1 = Math.floor(Math.random()*(slots.length-1));
 					var slot2 = Math.floor(Math.random()*(slots.length-1));
 					var slot3 = Math.floor(Math.random()*(slots.length-1));
@@ -99,6 +107,7 @@ module.exports = new CommandInterface({
 				con.query(sql, function(err,result){
 					if(err){console.error(err);return;}
 					p.logger.value('cowoncy',(win-amount),['command:slots','id:'+msg.author.id]);
+					p.logger.value('gamble',logging,['command:slots','id:'+msg.author.id]);
 				});
 
 				//Display slots

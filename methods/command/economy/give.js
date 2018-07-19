@@ -15,6 +15,7 @@ module.exports = new CommandInterface({
 	cooldown:5000,
 	half:100,
 	six:500,
+	bot:true,
 
 	execute: async function(p){
 		var msg=p.msg, args=p.args, con=p.con, global=p.global;
@@ -61,8 +62,8 @@ module.exports = new CommandInterface({
 					"INSERT INTO cowoncy (id,money) VALUES ("+id+","+amount+") ON DUPLICATE KEY UPDATE money = money + "+amount+";";
 				con.query(sql,function(err,rows,fields){
 					if(err){console.error(err);return;}
-					p.logger.value('cowoncy',(amount),['command:given','id:'+id]);
-					p.logger.value('cowoncy',(amount*-1),['command:give','id:'+msg.author.id]);
+					p.logger.value('cowoncy',(amount),['command:given','id:'+id,'by:'+msg.author.id]);
+					p.logger.value('cowoncy',(amount*-1),['command:give','id:'+msg.author.id,'to:'+id]);
 					p.send("**💳 | "+msg.author.username+"** sent **"+amount+" cowoncy** to **"+user+"**!");
 				});
 			}

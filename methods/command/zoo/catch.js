@@ -20,6 +20,7 @@ module.exports = new CommandInterface({
 	cooldown:15000,
 	half:80,
 	six:500,
+	bot:true,
 
 	execute: function(p){
 		var msg=p.msg,con=p.con;

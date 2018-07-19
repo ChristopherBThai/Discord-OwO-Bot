@@ -126,7 +126,7 @@ function executeCommand(param){
 	var msg = param.msg;
 	var name = aliasToCommand[command];
 	ban.check(con,msg,name,function(){
-		macro.check(msg,aliasToCommand[command],async function(){
+		macro.check(msg,aliasToCommand[command],commands[command].bot,async function(){
 			var result = await commands[command].execute(param);
 			logger.increment("command",['command:'+aliasToCommand[command],'id:'+msg.author.id]);
 			if(command!="points"){

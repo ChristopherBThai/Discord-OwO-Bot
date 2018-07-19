@@ -20,6 +20,7 @@ module.exports = new CommandInterface({
 	cooldown:15000,
 	half:80,
 	six:500,
+	bot:true,
 
 	execute: function(p){
 		var global=p.global,msg=p.msg,con=p.con,args=p.args;
@@ -84,6 +85,7 @@ module.exports = new CommandInterface({
 				con.query(sql, function(err,result){
 					if(err){console.error(err);return;}
 					p.logger.value('cowoncy',(bet*((win)?(1):(-1))),['command:coinflip','id:'+msg.author.id]);
+					p.logger.value('gamble',((win)?(1):(-1)),['command:coinflip','id:'+msg.author.id]);
 					var text = "**"+msg.author.username+"** spent **"+cowoncy+" "+bet+"** and chose "+((choice=='h')?"**heads**":"**tails**");
 					var text2 = "\nThe coin spins... "+spin;
 					msg.channel.send(text+text2)

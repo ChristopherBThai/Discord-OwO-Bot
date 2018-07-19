@@ -13,6 +13,7 @@ module.exports = class CommandInterface{
 		this.distinctAlias = args.distinctAlias;
 		this.admin = args.admin;
 		this.dm = args.dm;
+		this.bot = args.bot;
 	}
 
 	execute(params){

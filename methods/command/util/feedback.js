@@ -18,6 +18,7 @@ module.exports = new CommandInterface({
 	cooldown:60000,
 	half:15,
 	six:30,
+	bot:true,
 
 	execute: function(p){
 		var message = p.args.join(" ");
