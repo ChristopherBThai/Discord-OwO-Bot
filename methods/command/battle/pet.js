@@ -143,7 +143,6 @@ function rename(mysql,con,msg,args,send){
 
 	var offensive = 0;
 	var shortnick = name.replace(/\s/g,"").toLowerCase();
-	console.log(shortnick);
 	for(var i=0;i<badwords.length;i++){
 		if(shortnick.includes(badwords[i]))
 			offensive = 1;

@@ -41,18 +41,17 @@ module.exports = new CommandInterface({
 				//Calculate daily amount
 				var gain = 100 + Math.floor(Math.random()*100);
 				var extra = 0;
+
+				if(rows[1][0]&&rows[1][0].day>2) streak = 0;
+				else streak++;
+
 				gain = gain+(streak*25);
 				if(gain > 1000) gain = 1000
 				if(patreon) extra = gain;
 
-				if(rows[1][0]&&rows[1][0].day>2)
-					streak = 0;
-				else
-					streak++;
-
 				var text = "**💰 |** Here's your daily **<:cowoncy:416043450337853441> __"+gain+" Cowoncy__, "+msg.author.username+"**!";
-				if(streak>0)
-					text += "\n**<:blank:427371936482328596> |** You're on a **__"+streak+"__ daily streak**!";
+				if((streak-1)>0)
+					text += "\n**<:blank:427371936482328596> |** You're on a **__"+(streak-1)+"__ daily streak**!";
 				if(extra>0)
 					text += "\n**<:blank:427371936482328596> |** You got an extra **"+extra+" Cowoncy** for being a <:patreon:449705754522419222> Patreon!";
 
