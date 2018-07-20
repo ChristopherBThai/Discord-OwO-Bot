@@ -10,7 +10,7 @@ const api = new dblapi();
 
 app.post('/owo',api.handler);
 
-api.on('upvote', (user,bot) => upvote(user,bot));
+api.on('upvote', (user,bot,json) => upvote(user,bot,json));
 
 const global = require('./global.js');
 const logger = require('../util/logger.js');
@@ -21,7 +21,8 @@ var manager;
 /**
  * Listens to upvote webhooks
  */
-function upvote(id,bot){
+function upvote(id,bot,json){
+	console.log(json);
 	console.log("Webhooks for "+id);
 	var sql = "SELECT count,TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = "+id+";";
 	sql += "SELECT patreonDaily FROM cowoncy NATURAL JOIN user WHERE id = "+id+";";
@@ -43,7 +44,7 @@ function upvote(id,bot){
 				global.msgUser(id,"**☑ |** You have received **"+reward+"** cowoncy for voting!"+patreonMsg(patreonBonus));
 				console.log("\x1b[33m",id+" has voted for the first time!");
 			});
-		}else if(result[0][0].time>=23){
+		}else if(result[0][0].time>=11){
 			var bonus = 200 + (result[0][0].count*5);
 			var patreonBonus = 0;
 			if(patreon)
@@ -57,7 +58,7 @@ function upvote(id,bot){
 				console.log("\x1b[33m",id+" has voted and  received cowoncy!");
 			});
 		}else{
-			global.msgUser(id,"You wait need to wait "+(23-result[0][0].time)+" hours before voting again!")
+			global.msgUser(id,"You wait need to wait "+(12-result[0][0].time)+" hours before voting again!")
 			console.log("\x1b[33m",id+" tried to vote again");
 		}
 	});

@@ -6,6 +6,7 @@ const global = require('../../../util/global.js');
 const letters = "abcdefghijklmnopqrstuvwxyz";
 const botrank = "SELECT (COUNT(*)) AS rank, (SELECT COUNT(*) FROM autohunt) AS total FROM autohunt WHERE (essence+duration+efficiency+cost) >= COALESCE((SELECT (essence+duration+efficiency+cost) AS total FROM autohunt WHERE id = ";
 const logger = require('../../../util/logger.js');
+const animals = require('../../../../tokens/owo-animals.json');
 
 module.exports = new CommandInterface({
 
@@ -47,6 +48,8 @@ function claim(msg,con,query,bot){
 	sql += "UPDATE autohunt SET huntmin = 0,huntcount=0 WHERE id = "+msg.author.id+";";
 	con.query(sql,function(err,result){
 		if(err) {console.error(err);return;}
+
+		//Check if patreon 
 		var patreon = false;
 		if(result[0][0]&&result[0][0].patreonAnimal==1)
 			patreon = true;
@@ -64,16 +67,26 @@ function claim(msg,con,query,bot){
 		}
 		digits= Math.trunc(Math.log10(digits)+1);
 		var text = "**"+bot+" |** `BEEP BOOP. I AM BACK WITH "+query.huntcount+" ANIMALS`";
+		var tempText = [];
 		var count = 0;
 		sql = "";
 		for(var animal in total){
-			if(count%5==0)
-				text += "\n**<:blank:427371936482328596> |** ";
-			text += animal+animalUtil.toSmallNum(total[animal].count,digits)+"  ";
+			var animalString = animal+animalUtil.toSmallNum(total[animal].count,digits)+"  ";
+			var animalLoc = animals.order.indexOf(total[animal].rank);
+			if(animalLoc||animalLoc===0){
+				if(!tempText[animalLoc])
+					tempText[animalLoc] = "\n"+animals.ranks[animals.order[animalLoc]] + "**|**";
+				tempText[animalLoc] += " "+animalString;
+			}
 			count++;
 			sql += "INSERT INTO animal (id,name,count,totalcount) VALUES ("+msg.author.id+",'"+animal+"',"+total[animal].count+","+total[animal].count+") ON DUPLICATE KEY UPDATE count = count + "+total[animal].count+",totalcount = totalcount + "+total[animal].count+";";
 			sql += "INSERT INTO animal_count (id,"+total[animal].rank+") VALUES ("+msg.author.id+","+total[animal].count+") ON DUPLICATE KEY UPDATE "+total[animal].rank+" = "+total[animal].rank+"+"+total[animal].count+";";
 		}
+
+		for(var i=0;i<tempText.length;i++)
+			if(tempText[i])
+				text += tempText[i];
+
 		con.query(sql,function(err,result){
 			if(err) {console.error(err);return;}
 			msg.channel.send(text).catch(err => {console.error(err)});
