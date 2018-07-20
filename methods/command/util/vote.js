@@ -42,7 +42,7 @@ module.exports = new CommandInterface({
 							p.logger.value('cowoncy',(reward+patreonBonus+weekendBonus),['command:vote','id:'+id]);
 							var text = "**☑ |** You have received **"+reward+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
 							if(weekend)
-								text += "** |** It's the weekend! You also earned a bonus of "+weekendBonus+" cowoncy!\n";
+								text += "**⛱ |** It's the weekend! You also earned a bonus of "+weekendBonus+" cowoncy!\n";
 							text += "**⚠ |** You can now vote every 12H!\n";
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
@@ -62,7 +62,7 @@ module.exports = new CommandInterface({
 							p.logger.value('cowoncy',(bonus+patreonBonus+weekendBonus),['command:vote','id:'+id]);
 							var text = "**☑ |** You have received **"+bonus+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
 							if(weekend)
-								text += "** |** It's the weekend! You also earned a bonus of "+weekendBonus+" cowoncy!\n";
+								text += "**⛱ |** It's the weekend! You also earned a bonus of "+weekendBonus+" cowoncy!\n";
 							text += "**⚠ |** You can now vote every 12H!\n";
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
