@@ -20,8 +20,8 @@ module.exports = new CommandInterface({
 		var con = p.con;
 		var id = p.msg.author.id;
 		p.dbl.hasVoted(""+p.msg.author.id).then(voted => {
-		p.dbl.isWeekend().then(weekend => {
 			if(voted){
+			p.dbl.isWeekend().then(weekend => {
 				var sql = "SELECT count,TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = "+id+";";
 				sql += "SELECT patreonDaily FROM cowoncy NATURAL JOIN user WHERE id = "+id+";";
 				con.query(sql,function(err,result){
@@ -30,7 +30,7 @@ module.exports = new CommandInterface({
 					if(result[1][0]&&result[1][0].patreonDaily==1)
 						patreon = true;
 					if(result[0][0]==undefined){
-						var reward = 200;
+						var reward = 100;
 						var patreonBonus = 0;
 						var weekendBonus = ((weekend)?reward:0);
 						if(patreon)
@@ -42,7 +42,7 @@ module.exports = new CommandInterface({
 							p.logger.value('cowoncy',(reward+patreonBonus+weekendBonus),['command:vote','id:'+id]);
 							var text = "**☑ |** You have received **"+reward+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
 							if(weekend)
-								text += "**⛱ |** It's the weekend! You also earned a bonus of "+weekendBonus+" cowoncy!\n";
+								text += "**⛱ |** It's the weekend! You also earned a bonus of **"+weekendBonus+"** cowoncy!\n";
 							text += "**⚠ |** You can now vote every 12H!\n";
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
@@ -50,9 +50,9 @@ module.exports = new CommandInterface({
 							p.logger.increment("votecount");
 						});
 					}else if(result[0][0].time>=12){
-						var bonus = 200 + (result[0][0].count*5);
+						var bonus = 100 + (result[0][0].count*3);
 						var patreonBonus = 0;
-						var weekendBonus = ((weekend)?reward:0);
+						var weekendBonus = ((weekend)?bonus:0);
 						if(patreon)
 							patreonBonus= bonus;
 						sql = "UPDATE vote SET date = NOW(),count = count+1 WHERE id = "+id+";"+
@@ -62,7 +62,7 @@ module.exports = new CommandInterface({
 							p.logger.value('cowoncy',(bonus+patreonBonus+weekendBonus),['command:vote','id:'+id]);
 							var text = "**☑ |** You have received **"+bonus+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
 							if(weekend)
-								text += "**⛱ |** It's the weekend! You also earned a bonus of "+weekendBonus+" cowoncy!\n";
+								text += "**⛱ |** It's the weekend! You also earned a bonus of **"+weekendBonus+"** cowoncy!\n";
 							text += "**⚠ |** You can now vote every 12H!\n";
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
@@ -79,6 +79,7 @@ module.exports = new CommandInterface({
 						console.log("\x1b[33m",id+" tried to vote again");
 					}
 				});
+			});
 			}else{
 				var text = "**☑ | Your daily vote is available!**\n";
 				text += "**⚠ |** You can now vote every 12H!\n";
@@ -87,7 +88,6 @@ module.exports = new CommandInterface({
 				text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 				p.send(text);
 			}
-		});
 		});
 	}
 

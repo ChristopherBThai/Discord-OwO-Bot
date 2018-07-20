@@ -32,7 +32,7 @@ function upvote(id,bot,json){
 		if(result[1][0]&&result[1][0].patreonDaily==1)
 			patreon = true;
 		if(result[0][0]==undefined){
-			var reward = 200;
+			var reward = 100;
 			var patreonBonus = 0;
 			var weekendBonus = ((weekend)?reward:0);
 			if(patreon)
@@ -44,12 +44,12 @@ function upvote(id,bot,json){
 				logger.value('cowoncy',(reward+patreonBonus+weekendBonus),['command:vote','id:'+id]);
 				var reply = "**☑ |** You have received **"+reward+"** cowoncy for voting!"+patreonMsg(patreonBonus);
 				if(weekend)
-					reply += "\n**⛱ |** It's the weekend! You also earned a bonus of "+weekendBonus+" cowoncy!";
+					reply += "\n**⛱ |** It's the weekend! You also earned a bonus of **"+weekendBonus+"** cowoncy!";
 				global.msgUser(id,reply);
 				console.log("\x1b[33m",id+" has voted for the first time!");
 			});
 		}else if(result[0][0].time>=11){
-			var bonus = 200 + (result[0][0].count*5);
+			var bonus = 100 + (result[0][0].count*3);
 			var patreonBonus = 0;
 			var weekendBonus = ((weekend)?bonus:0);
 			if(patreon)
@@ -61,7 +61,7 @@ function upvote(id,bot,json){
 				logger.value('cowoncy',(bonus+patreonBonus,weekendBonus),['command:vote','id:'+id]);
 				var reply = "**☑ |** You have received **"+bonus+"** cowoncy for voting!"+patreonMsg(patreonBonus);
 				if(weekend)
-					reply += "\n**⛱ |** It's the weekend! You also earned a bonus of "+weekendBonus+" cowoncy!";
+					reply += "\n**⛱ |** It's the weekend! You also earned a bonus of **"+weekendBonus+"** cowoncy!";
 				global.msgUser(id,reply);
 				console.log("\x1b[33m",id+" has voted and  received cowoncy!");
 			});
