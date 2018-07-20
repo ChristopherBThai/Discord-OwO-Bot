@@ -66,7 +66,7 @@ function display(send){
 				{"name":"Fun",
 					"value":"`8b`  `define`  `gif`  `pic`  `translate`"},
 				{"name":"Social",
-					"value":"`cookie` `ship`"},
+					"value":"`cookie` `ship`  `pray`  `curse`"},
 				{"name":"Emotes",
 					"value":sEmotes},
 				{"name":"Actions",
