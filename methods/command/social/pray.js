@@ -29,15 +29,15 @@ module.exports = new CommandInterface({
 		if(p.command=="pray"){
 			const prayLine = prayLines[Math.floor(Math.random()*prayLines.length)];
 			if(user)
-				p.send("** | "+p.msg.author.username+"** prays for **"+user.username+"**! "+prayLine);
+				p.send("**🙏 | "+p.msg.author.username+"** prays for **"+user.username+"**! "+prayLine);
 			else
-				p.send("** | "+p.msg.author.username+"** prays... "+prayLine);
+				p.send("**🙏 | "+p.msg.author.username+"** prays... "+prayLine);
 		}else{
 			const curseLine = curseLines[Math.floor(Math.random()*curseLines.length)];
 			if(user)
-				p.send("** | "+p.msg.author.username+"** puts a curse on **"+user.username+"**! "+curseLine);
+				p.send("**👻 | "+p.msg.author.username+"** puts a curse on **"+user.username+"**! "+curseLine);
 			else
-				p.send("** | "+p.msg.author.username+"** is now cursed. "+curseLine);
+				p.send("**👻 | "+p.msg.author.username+"** is now cursed. "+curseLine);
 		}
 	}
 
