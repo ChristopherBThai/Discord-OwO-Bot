@@ -20,7 +20,7 @@ module.exports = new CommandInterface({
 		var con = p.con;
 		var id = p.msg.author.id;
 		p.dbl.hasVoted(""+p.msg.author.id).then(voted => {
-			console.log(voted);
+		p.dbl.isWeekend().then(weekend => {
 			if(voted){
 				var sql = "SELECT count,TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = "+id+";";
 				sql += "SELECT patreonDaily FROM cowoncy NATURAL JOIN user WHERE id = "+id+";";
@@ -32,14 +32,17 @@ module.exports = new CommandInterface({
 					if(result[0][0]==undefined){
 						var reward = 200;
 						var patreonBonus = 0;
+						var weekendBonus = ((weekend)?reward:0);
 						if(patreon)
 							patreonBonus*=2;
 						sql = "INSERT IGNORE INTO vote (id,date,count) VALUES ("+id+",NOW(),1);"+
-							"UPDATE IGNORE cowoncy SET money = money+"+(reward+patreonBonus)+" WHERE id = "+id+";";
+							"UPDATE IGNORE cowoncy SET money = money+"+(reward+patreonBonus+weekendBonus)+" WHERE id = "+id+";";
 						con.query(sql,function(err,result){
 							if(err) {console.error(err);return;}
-							p.logger.value('cowoncy',(reward+patreonBonus),['command:vote','id:'+id]);
+							p.logger.value('cowoncy',(reward+patreonBonus+weekendBonus),['command:vote','id:'+id]);
 							var text = "**☑ |** You have received **"+reward+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
+							if(weekend)
+								text += "** |** It's the weekend! You also earned a bonus of "+weekendBonus+" cowoncy!\n";
 							text += "**⚠ |** You can now vote every 12H!\n";
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
@@ -49,14 +52,17 @@ module.exports = new CommandInterface({
 					}else if(result[0][0].time>=12){
 						var bonus = 200 + (result[0][0].count*5);
 						var patreonBonus = 0;
+						var weekendBonus = ((weekend)?reward:0);
 						if(patreon)
 							patreonBonus= bonus;
 						sql = "UPDATE vote SET date = NOW(),count = count+1 WHERE id = "+id+";"+
-						"UPDATE IGNORE cowoncy SET money = money+"+(bonus+patreonBonus)+" WHERE id = "+id+";";
+						"UPDATE IGNORE cowoncy SET money = money+"+(bonus+patreonBonus+weekendBonus)+" WHERE id = "+id+";";
 						con.query(sql,function(err,result){
 							if(err) {console.error(err);return;}
-							p.logger.value('cowoncy',(bonus+patreonBonus),['command:vote','id:'+id]);
+							p.logger.value('cowoncy',(bonus+patreonBonus+weekendBonus),['command:vote','id:'+id]);
 							var text = "**☑ |** You have received **"+bonus+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
+							if(weekend)
+								text += "** |** It's the weekend! You also earned a bonus of "+weekendBonus+" cowoncy!\n";
 							text += "**⚠ |** You can now vote every 12H!\n";
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
@@ -75,11 +81,13 @@ module.exports = new CommandInterface({
 				});
 			}else{
 				var text = "**☑ | Your daily vote is available!**\n";
+				text += "**⚠ |** You can now vote every 12H!\n";
 				//text += "**⚠ |** Automatic votes are currently broken!\n";
 				//text += "**<:blank:427371936482328596> |** Please retype `owo vote` 1-10min after you vote!\n";
 				text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 				p.send(text);
 			}
+		});
 		});
 	}
 

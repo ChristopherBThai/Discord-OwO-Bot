@@ -22,8 +22,8 @@ var manager;
  * Listens to upvote webhooks
  */
 function upvote(id,bot,json){
-	console.log(json);
 	console.log("Webhooks for "+id);
+	var weekend = json.isWeekend;
 	var sql = "SELECT count,TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = "+id+";";
 	sql += "SELECT patreonDaily FROM cowoncy NATURAL JOIN user WHERE id = "+id+";";
 	con.query(sql,function(err,result){
@@ -34,27 +34,35 @@ function upvote(id,bot,json){
 		if(result[0][0]==undefined){
 			var reward = 200;
 			var patreonBonus = 0;
+			var weekendBonus = ((weekend)?reward:0);
 			if(patreon)
 				patreonBonus*=2;
 			sql = "INSERT IGNORE INTO vote (id,date,count) VALUES ("+id+",NOW(),1);"+
-				"UPDATE IGNORE cowoncy SET money = money+"+(reward+patreonBonus)+" WHERE id = "+id+";";
+				"UPDATE IGNORE cowoncy SET money = money+"+(reward+patreonBonus+weekendBonus)+" WHERE id = "+id+";";
 			con.query(sql,function(err,result){
 				if(err) throw err;
-				logger.value('cowoncy',(reward+patreonBonus),['command:vote','id:'+id]);
-				global.msgUser(id,"**☑ |** You have received **"+reward+"** cowoncy for voting!"+patreonMsg(patreonBonus));
+				logger.value('cowoncy',(reward+patreonBonus+weekendBonus),['command:vote','id:'+id]);
+				var reply = "**☑ |** You have received **"+reward+"** cowoncy for voting!"+patreonMsg(patreonBonus);
+				if(weekend)
+					reply += "\n** |** It's the weekend! You also earned a bonus of "+weekendBonus+" cowoncy!";
+				global.msgUser(id,reply);
 				console.log("\x1b[33m",id+" has voted for the first time!");
 			});
 		}else if(result[0][0].time>=11){
 			var bonus = 200 + (result[0][0].count*5);
 			var patreonBonus = 0;
+			var weekendBonus = ((weekend)?bonus:0);
 			if(patreon)
 				patreonBonus= bonus;
 			sql = "UPDATE vote SET date = NOW(),count = count+1 WHERE id = "+id+";"+
-			"UPDATE IGNORE cowoncy SET money = money+"+(bonus+patreonBonus)+" WHERE id = "+id+";";
+			"UPDATE IGNORE cowoncy SET money = money+"+(bonus+patreonBonus+weekendBonus)+" WHERE id = "+id+";";
 			con.query(sql,function(err,result){
 				if(err) throw err;
-				logger.value('cowoncy',(bonus+patreonBonus),['command:vote','id:'+id]);
-				global.msgUser(id,"**☑ |** You have received **"+bonus+"** cowoncy for voting!"+patreonMsg(patreonBonus));
+				logger.value('cowoncy',(bonus+patreonBonus,weekendBonus),['command:vote','id:'+id]);
+				var reply = "**☑ |** You have received **"+bonus+"** cowoncy for voting!"+patreonMsg(patreonBonus);
+				if(weekend)
+					reply += "\n** |** It's the weekend! You also earned a bonus of "+weekendBonus+" cowoncy!";
+				global.msgUser(id,reply);
 				console.log("\x1b[33m",id+" has voted and  received cowoncy!");
 			});
 		}else{
