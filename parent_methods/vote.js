@@ -44,7 +44,7 @@ function upvote(id,bot,json){
 				logger.value('cowoncy',(reward+patreonBonus+weekendBonus),['command:vote','id:'+id]);
 				var reply = "**☑ |** You have received **"+reward+"** cowoncy for voting!"+patreonMsg(patreonBonus);
 				if(weekend)
-					reply += "\n** |** It's the weekend! You also earned a bonus of "+weekendBonus+" cowoncy!";
+					reply += "\n**⛱ |** It's the weekend! You also earned a bonus of "+weekendBonus+" cowoncy!";
 				global.msgUser(id,reply);
 				console.log("\x1b[33m",id+" has voted for the first time!");
 			});
@@ -61,7 +61,7 @@ function upvote(id,bot,json){
 				logger.value('cowoncy',(bonus+patreonBonus,weekendBonus),['command:vote','id:'+id]);
 				var reply = "**☑ |** You have received **"+bonus+"** cowoncy for voting!"+patreonMsg(patreonBonus);
 				if(weekend)
-					reply += "\n** |** It's the weekend! You also earned a bonus of "+weekendBonus+" cowoncy!";
+					reply += "\n**⛱ |** It's the weekend! You also earned a bonus of "+weekendBonus+" cowoncy!";
 				global.msgUser(id,reply);
 				console.log("\x1b[33m",id+" has voted and  received cowoncy!");
 			});
