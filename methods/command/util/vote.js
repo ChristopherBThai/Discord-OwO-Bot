@@ -40,12 +40,13 @@ module.exports = new CommandInterface({
 							if(err) {console.error(err);return;}
 							p.logger.value('cowoncy',(reward+patreonBonus),['command:vote','id:'+id]);
 							var text = "**☑ |** You have received **"+reward+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
+							text += "**⚠ |** You can now vote every 12H!\n";
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
 							console.log("\x1b[33m",id+" has voted for the first time!");
 							p.logger.increment("votecount");
 						});
-					}else if(result[0][0].time>=24){
+					}else if(result[0][0].time>=12){
 						var bonus = 200 + (result[0][0].count*5);
 						var patreonBonus = 0;
 						if(patreon)
@@ -56,6 +57,7 @@ module.exports = new CommandInterface({
 							if(err) {console.error(err);return;}
 							p.logger.value('cowoncy',(bonus+patreonBonus),['command:vote','id:'+id]);
 							var text = "**☑ |** You have received **"+bonus+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
+							text += "**⚠ |** You can now vote every 12H!\n";
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
 							console.log("\x1b[33m",id+" has voted and  received cowoncy!");
@@ -63,8 +65,8 @@ module.exports = new CommandInterface({
 						});
 					}else{
 						var text = "**☑ |** Click the link to vote and gain 200+ cowoncy!\n";
-						text += "**<:blank:427371936482328596> |** Your daily vote is available in **"+(24-result[0][0].time)+" H**\n";
-						//text += "**⚠ |** Automatic votes are currently broken!\n";
+						text += "**<:blank:427371936482328596> |** Your daily vote is available in **"+(12-result[0][0].time)+" H**\n";
+						text += "**⚠ |** You can now vote every 12H!\n";
 						//text += "**<:blank:427371936482328596> |** Please retype `owo vote` 1-10min after you vote!\n";
 						text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 						p.send(text);
