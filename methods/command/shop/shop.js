@@ -35,7 +35,7 @@ module.exports = new CommandInterface({
 		for(var key in food){
 			embed.fields.push({
 					"name": key+" "+food[key].name+" ",
-					"value": "```ID:    "+food[key].id+"\nPrice: "+food[key].price+"\nFor:   "+food[key]["for"]+"```",
+					"value": "```ID:    "+food[key].id+"\nPrice: "+(p.global.toFancyNum(food[key].price))+"\nFor:   "+food[key]["for"]+"```",
 					"inline": true
 			});
 		}

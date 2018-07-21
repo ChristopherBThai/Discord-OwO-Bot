@@ -104,7 +104,7 @@ module.exports = new CommandInterface({
 					rslots.push(slots[slot2]);
 					rslots.push(slots[slot3]);
 				}
-				var winmsg = (win==0)?"nothing... :c":"<:cowoncy:416043450337853441> "+win;
+				var winmsg = (win==0)?"nothing... :c":"<:cowoncy:416043450337853441> "+(p.global.toFancyNum(win));
 
 				var sql = "UPDATE cowoncy SET money = money + "+(win-amount)+" WHERE id = "+msg.author.id+" AND money >= "+amount+";";
 				con.query(sql, function(err,result){
@@ -114,19 +114,19 @@ module.exports = new CommandInterface({
 				});
 
 				//Display slots
-				var machine = "**`___SLOTS___  `**\n"+moving+" "+moving+" "+moving+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+amount+"\n`|         |`\n`|         |`";
+				var machine = "**`___SLOTS___  `**\n"+moving+" "+moving+" "+moving+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+(p.global.toFancyNum(amount))+"\n`|         |`\n`|         |`";
 				msg.channel.send(machine)
 				.then(message => setTimeout(function(){
 
-				var machine = "**`___SLOTS___  `**\n"+rslots[0]+" "+moving+" "+moving+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+amount+"\n`|         |`\n`|         |`";
+				var machine = "**`___SLOTS___  `**\n"+rslots[0]+" "+moving+" "+moving+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+(p.global.toFancyNum(amount))+"\n`|         |`\n`|         |`";
 				message.edit(machine)
 				.then(message => setTimeout(function(){
 
-				var machine = "**`___SLOTS___  `**\n"+rslots[0]+" "+moving+" "+rslots[2]+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+amount+"\n`|         |`\n`|         |`";
+				var machine = "**`___SLOTS___  `**\n"+rslots[0]+" "+moving+" "+rslots[2]+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+(p.global.toFancyNum(amount))+"\n`|         |`\n`|         |`";
 				message.edit(machine)
 				.then(message => setTimeout(function(){
 
-				var machine = "**`___SLOTS___  `**\n"+rslots[0]+" "+rslots[1]+" "+rslots[2]+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+amount+"\n`|         |`  and won "+winmsg+"\n`|         |`";
+				var machine = "**`___SLOTS___  `**\n"+rslots[0]+" "+rslots[1]+" "+rslots[2]+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+(p.global.toFancyNum(amount))+"\n`|         |`  and won "+winmsg+"\n`|         |`";
 				message.edit(machine);
 
 

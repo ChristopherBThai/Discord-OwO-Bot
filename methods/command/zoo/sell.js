@@ -84,11 +84,11 @@ function sellAnimal(msg,con,animal,count,send,global,p){
 				send("**🚫 | "+msg.author.username+"**, You don't have enough animals! >:c",3000);
 			}else{
 				count = result[0][0].count;
-				send("**🔪 | "+msg.author.username+"** sold **"+global.unicodeAnimal(animal.value)+"x"+count+"** for a total of **<:cowoncy:416043450337853441> "+(count*animal.price)+"**");
+				send("**🔪 | "+msg.author.username+"** sold **"+global.unicodeAnimal(animal.value)+"x"+count+"** for a total of **<:cowoncy:416043450337853441> "+(global.toFancyNum(count*animal.price))+"**");
 				p.logger.value('cowoncy',(count*animal.price),['command:sell','id:'+msg.author.id]);
 			}
 		}else if(result.affectedRows>0){
-			send("**🔪 | "+msg.author.username+"** sold **"+global.unicodeAnimal(animal.value)+"x"+count+"** for a total of **<:cowoncy:416043450337853441> "+(count*animal.price)+"**");
+			send("**🔪 | "+msg.author.username+"** sold **"+global.unicodeAnimal(animal.value)+"x"+count+"** for a total of **<:cowoncy:416043450337853441> "+(global.toFancyNum(count*animal.price))+"**");
 				p.logger.value('cowoncy',(count*animal.price),['command:sell','id:'+msg.author.id]);
 		}else{
 			send("**🚫 | "+msg.author.username+"**, You can't sell more than you have silly! >:c",3000);
@@ -107,7 +107,7 @@ function sellRank(msg,con,rank,send,global,p){
 			send("**🚫 | "+msg.author.username+"**, You don't have enough animals! >:c",3000);
 		}else{
 			count = result[0][0].total;
-			send("**🔪 | "+msg.author.username+"** sold **"+rank.emoji+"x"+count+"** for a total of **<:cowoncy:416043450337853441> "+(count*rank.price)+"**");
+			send("**🔪 | "+msg.author.username+"** sold **"+rank.emoji+"x"+count+"** for a total of **<:cowoncy:416043450337853441> "+(global.toFancyNum(count*rank.price))+"**");
 			p.logger.value('cowoncy',(count*rank.price),['command:sell','id:'+msg.author.id]);
 		}
 	});

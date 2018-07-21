@@ -8,6 +8,7 @@ const cardsf = ["<:cardback:457084762230751254>",
 	"<a:acf:467565462566338561>","<a:2cf:467565449736093696>","<a:3cf:467565457566859265>","<a:4cf:467565460401946654>","<a:5cf:467565461010251778>","<a:6cf:467565462868197376>","<a:7cf:467565460892942357>","<a:8cf:467565463333765130>","<a:9cf:467565463262461963>","<a:10cf:467565463996465162>","<a:jcf:467565462163685396>","<a:qcf:467565463757520896>","<a:kcf:467565462775922697>",
 	"<a:ahf:467565462063022110>","<a:2hf:467565456463495169>","<a:3hf:467565459756154890>","<a:4hf:467565462335782932>","<a:5hf:467565460422918145>","<a:6hf:467565460590690315>","<a:7hf:467565460938948608>","<a:8hf:467565461517762560>","<a:9hf:467565461895118877>","<a:10hf:467565463317250049>","<a:jhf:467565461702443008>","<a:qhf:467565462902013972>","<a:khf:467565462192914433>",
 	"<a:adf:467565463992401920>","<a:2df:467565459756285962>","<a:3df:467565462071410708>","<a:4df:467565462180593665>","<a:5df:467565463195484180>","<a:6df:467565463556325376>","<a:7df:467565463170187264>","<a:8df:467565464017436672>","<a:9df:467565463518314497>","<a:10df:467565463979687947>","<a:jdf:467565463631691784>","<a:qdf:467565463665115138>","<a:kdf:467565463891607573>"];
+const global = require('../../../util/global.js');
 //back = b, flip = f, card = c
 
 exports.randCard = randCard;
@@ -48,10 +49,10 @@ function generateEmbed(author,dealer,player,bet,end,winnings){
 ;
 	if(end=='w'){
 		color = 65280;
-		footer = "🎲 ~ You won "+winnings+" cowoncy!";
+		footer = "🎲 ~ You won "+(global.toFancyNum(winnings))+" cowoncy!";
 	}else if (end=='l') {
 		color = 16711680;
-		footer = "🎲 ~ You lost "+bet+" cowoncy!";
+		footer = "🎲 ~ You lost "+(global.toFancyNum(bet))+" cowoncy!";
 	}else if (end=='tb'){
 		color = 6381923;
 		footer = "🎲 ~ You both bust!";
@@ -67,7 +68,7 @@ function generateEmbed(author,dealer,player,bet,end,winnings){
 			"text": footer
 		},
 		"author": {
-		"name": author.username+", you bet "+bet+" to play blackjack",
+		"name": author.username+", you bet "+(global.toFancyNum(bet))+" to play blackjack",
 		"icon_url": author.avatarURL
 		},
 		"fields": [{

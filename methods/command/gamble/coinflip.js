@@ -44,7 +44,7 @@ module.exports = new CommandInterface({
 		}
 
 		//Get user choice
-		var choice = undefined;
+		var choice = 'h';
 		if(arg1!=undefined)
 			arg1 = arg1.toLowerCase();
 		if(arg1=='heads'||arg1=='h'||arg1=='head')
@@ -90,13 +90,13 @@ module.exports = new CommandInterface({
 					if(err){console.error(err);return;}
 					p.logger.value('cowoncy',(bet*((win)?(1):(-1))),['command:coinflip','id:'+msg.author.id]);
 					p.logger.value('gamble',((win)?(1):(-1)),['command:coinflip','id:'+msg.author.id]);
-					var text = "**"+msg.author.username+"** spent **"+cowoncy+" "+bet+"** and chose "+((choice=='h')?"**heads**":"**tails**");
+					var text = "**"+msg.author.username+"** spent **"+cowoncy+" "+(p.global.toFancyNum(bet))+"** and chose "+((choice=='h')?"**heads**":"**tails**");
 					var text2 = "\nThe coin spins... "+spin;
 					msg.channel.send(text+text2)
 						.then(message => setTimeout(function(){
 							var text2 = "\nThe coin spins... "+((win)?((choice=='h')?heads:tails):((choice=='h')?tails:heads))+" and you ";
 							if(win)
-								text2 += "won **"+cowoncy+" "+(bet*2)+"**!!";
+								text2 += "won **"+cowoncy+" "+(p.global.toFancyNum(bet*2))+"**!!";
 							else
 								text2 += "lost it all... :c";
 							message.edit(text+text2)

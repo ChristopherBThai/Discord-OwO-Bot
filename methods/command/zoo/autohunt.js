@@ -197,7 +197,7 @@ function autohunt(msg,con,args,global,send){
 			var timer = "";
 			if(hour>0) timer = hour+"H"+min+"M";
 			else timer = min+"M";
-			send("**"+bot+" |** `BEEP BOOP. `**`"+msg.author.username+"`**`, YOU SPENT "+cowoncy+" cowoncy`\n**<:blank:427371936482328596> |** `I WILL BE BACK IN "+timer+" WITH "+huntcount+" ANIMALS`");
+			send("**"+bot+" |** `BEEP BOOP. `**`"+msg.author.username+"`**`, YOU SPENT "+(global.toFancyNum(cowoncy))+" cowoncy`\n**<:blank:427371936482328596> |** `I WILL BE BACK IN "+timer+" WITH "+huntcount+" ANIMALS`");
 		});
 	});
 }
@@ -269,8 +269,8 @@ function display(msg,con,send){
 					"inline": true
 				},
 				{
-					"name": "<a:essence:451638978299428875> Animal Essence - `"+essence+"`",
-					"value": "`Current Max Autohunt: "+maxhunt+" animals for "+(maxhunt*cost.stat)+" cowoncy`",
+					"name": "<a:essence:451638978299428875> Animal Essence - `"+(global.toFancyNum(essence))+"`",
+					"value": "`Current Max Autohunt: "+maxhunt+" animals for "+(global.toFancyNum(maxhunt*cost.stat))+" cowoncy`",
 					"inline": false
 				}
 				]
