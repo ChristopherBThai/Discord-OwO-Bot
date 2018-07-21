@@ -1,5 +1,6 @@
 const CommandInterface = require('../../commandinterface.js');
 
+const maxBet = 50000;
 var slots = ["<:eggplant:417475705719226369>","<:heart:417475705899712522>","<:cherry:417475705178161162>","<:cowoncy:417475705912426496>","<:o_:417475705899843604>","<:w_:417475705920684053>"];
 var moving = "<a:slot_gif:417473893368987649>";
 
@@ -50,6 +51,8 @@ module.exports = new CommandInterface({
 			if(err){console.error(err);return;}
 			if(all&&result[0]!=undefined)
 				amount = result[0].money
+			if(maxBet&&amount>maxBet)
+				amount = maxBet;
 			if(result[0]==undefined||result[0].money<amount||result[0].money<=0){
 				p.send("**🚫 | "+msg.author.username+"**, You don't have enough cowoncy!",3000);
 			}else{
