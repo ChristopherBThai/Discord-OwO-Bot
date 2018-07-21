@@ -96,5 +96,23 @@
 		"price":100,
 		"desc":"Use this item to make your pet throwup food!\nAll equipped food on the pet will be gone! BE AWARE\nFood that are thrown up are not reusable...",
 		"notFood":true
+	},
+	"":{
+		"id":12,
+		"name":"Coffee",
+		"for":"+55 hp",
+		"price":10000000,
+		"desc":"Energizing!\n+40 hp",
+		"att":55,
+		"hp":0
+	},
+	"":{
+		"id":13,
+		"name":"Milk",
+		"for":"+55 hp",
+		"price":10000000,
+		"desc":"Tough bones!\n+40 hp",
+		"att":0,
+		"hp":55
 	}
 }
