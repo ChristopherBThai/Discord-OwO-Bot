@@ -98,7 +98,7 @@ module.exports = new CommandInterface({
 					count.legendary*animals.points.legendary+
 					count.fabled*animals.points.fabled+
 					count.hidden*animals.points.hidden;
-				text += "\n**Zoo Points: __"+total+"__**\n\t**";
+				text += "\n**Zoo Points: __"+(p.global.toFancyNum(total))+"__**\n\t**";
 				text += animalUtil.zooScore(count)+"**";
 			}
 			p.send(text)

@@ -42,7 +42,7 @@ module.exports = new CommandInterface({
 		sql += "SELECT * FROM blackjack LEFT JOIN blackjack_card ON blackjack.bjid = blackjack_card.bjid WHERE id = "+msg.author.id+" AND active = 1 ORDER BY sort ASC, dealer DESC;";
 		if(amount=="all")
 			if(maxBet)
-				sql += "UPDATE cowoncy NATURAL JOIN blackjack SET money = (IF((SELECT COALESCE(money,0) FROM cowoncy WHERE id = "+msg.author.id+")>"+maxBet+",money - "+maxBet+",0)) WHERE id = "+msg.author.id+" AND money > 0 AND active = 0;";
+				sql += "UPDATE cowoncy NATURAL JOIN blackjack SET money = (IF(money >"+maxBet+",money - "+maxBet+",0)) WHERE id = "+msg.author.id+" AND money > 0 AND active = 0;";
 			else
 				sql += "UPDATE cowoncy NATURAL JOIN blackjack SET money = 0 WHERE id = "+msg.author.id+" AND money > 0 AND active = 0;";
 		else{

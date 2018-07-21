@@ -25,7 +25,7 @@ module.exports = new CommandInterface({
 			if(rows[0]==undefined)
 				p.send("**💰 | "+msg.author.username+"**, you currently have **<:cowoncy:416043450337853441> __0__ cowoncy!**");
 			else
-				p.send("**💰 | "+msg.author.username+"**, you currently have **<:cowoncy:416043450337853441> __"+rows[0].money+"__ cowoncy!**");
+				p.send("**💰 | "+msg.author.username+"**, you currently have **<:cowoncy:416043450337853441> __"+(p.global.toFancyNum(rows[0].money))+"__ cowoncy!**");
 		});
 	}
 

@@ -96,7 +96,7 @@ function startBattle(con,msg,user1,pid1,user2,pid2,amount,send,p){
 			return;
 		}
 
-		var betmsg = "**"+user1.username+"** and **"+user2.username+"** bet <:cowoncy:416043450337853441> "+amount+" to fight!";
+		var betmsg = "**"+user1.username+"** and **"+user2.username+"** bet <:cowoncy:416043450337853441> "+(global.toFancyNum(amount))+" to fight!";
 		if(amount==0)
 			betmsg = "**"+user1.username+"** and **"+user2.username+"** goes into battle!";
 
@@ -117,14 +117,14 @@ function startBattle(con,msg,user1,pid1,user2,pid2,amount,send,p){
 					if(amount==0)
 						battleInfo.line4 = user1.username+" earned bragging rights!";
 					else
-						battleInfo.line4 = user1.username+" won "+(amount*2)+" cowoncy!";
+						battleInfo.line4 = user1.username+" won "+(global.toFancyNum(amount*2))+" cowoncy!";
 				}else if(result=="lost"){
 					prize1 = 0;
 					prize2 = amount*2;
 					if(amount==0)
 						battleInfo.line4 = user2.username+" earned bragging rights!";
 					else
-						battleInfo.line4 = user2.username+" won "+(amount*2)+" cowoncy!";
+						battleInfo.line4 = user2.username+" won "+(global.toFancyNum(amount*2))+" cowoncy!";
 				}else{
 					if(upet.hp>opet.hp){
 						prize1 = amount*2;
@@ -132,14 +132,14 @@ function startBattle(con,msg,user1,pid1,user2,pid2,amount,send,p){
 						if(amount==0)
 							battleInfo.line4 = user1.username+" earned bragging rights!";
 						else
-							battleInfo.line4 = user1.username+" won "+(amount*2)+" cowoncy!";
+							battleInfo.line4 = user1.username+" won "+(global.toFancyNum(amount*2))+" cowoncy!";
 					}else if(opet.hp>upet.hp){
 						prize1 = 0;
 						prize2 = amount*2;
 						if(amount==0)
 							battleInfo.line4 = user2.username+" earned bragging rights!";
 						else
-							battleInfo.line4 = user2.username+" won "+(amount*2)+" cowoncy!";
+							battleInfo.line4 = user2.username+" won "+(global.toFancyNum(amount*2))+" cowoncy!";
 					}else{
 						battleInfo.line4 = "No one wins cowoncy!";
 					}

@@ -262,7 +262,7 @@ async function fightUser(con,msg,args,send){
 						"value": "**"+global.unicodeAnimal(result[3][0].name)+" "+result[3][0].nickname+"**\n`Lvl "+result[3][0].lvl+"`\n**`HP`**`: "+result[3][0].hp+"  `\n**`ATT`**`: "+result[3][0].att+"`",
 						"inline": true
 						},{
-						"name": "The fight requires <:cowoncy:416043450337853441> "+amount+" cowoncy to start!",
+						"name": "The fight requires <:cowoncy:416043450337853441> "+(global.toFancyNum(amount))+" cowoncy to start!",
 						"value": "To accept the battle type `owo acceptbattle` or `owo ab`.\nTo decline the battle type `owo declinebattle` or `owo db`.",
 					}]
 				};
