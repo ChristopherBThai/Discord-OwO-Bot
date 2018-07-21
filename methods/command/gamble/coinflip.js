@@ -1,9 +1,10 @@
 const CommandInterface = require('../../commandinterface.js');
 
-var cowoncy = "<:cowoncy:416043450337853441>";
-var spin = "<a:coinflip:436677458339823636>";
-var heads = "<:head:436677933977960478>";
-var tails = "<:tail:436677926398853120>";
+const maxBet = 50000;
+const cowoncy = "<:cowoncy:416043450337853441>";
+const spin = "<a:coinflip:436677458339823636>";
+const heads = "<:head:436677933977960478>";
+const tails = "<:tail:436677926398853120>";
 
 module.exports = new CommandInterface({
 
@@ -71,6 +72,9 @@ module.exports = new CommandInterface({
 				return;
 			}else{
 				if(bet=="all") bet = result[0].money;
+
+				if(maxBet&&bet>maxBet)
+					bet = maxBet;
 
 				var rand = Math.random();
 				var win = false;

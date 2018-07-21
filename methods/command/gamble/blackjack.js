@@ -1,5 +1,6 @@
 const CommandInterface = require('../../commandinterface.js');
 
+const maxBet = 50000;
 const deck = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52];
 const bjUtil = require('./blackjackUtil.js');
 
@@ -40,9 +41,15 @@ module.exports = new CommandInterface({
 		var sql = "SELECT money FROM cowoncy WHERE id = "+msg.author.id+";";
 		sql += "SELECT * FROM blackjack LEFT JOIN blackjack_card ON blackjack.bjid = blackjack_card.bjid WHERE id = "+msg.author.id+" AND active = 1 ORDER BY sort ASC, dealer DESC;";
 		if(amount=="all")
-			sql += "UPDATE cowoncy NATURAL JOIN blackjack SET money = 0 WHERE id = "+msg.author.id+" AND money > 0 AND active = 0;";
-		else
+			if(maxBet)
+				sql += "UPDATE cowoncy NATURAL JOIN blackjack SET money = (IF((SELECT COALESCE(money,0) FROM cowoncy WHERE id = "+msg.author.id+")>"+maxBet+",money - "+maxBet+",0)) WHERE id = "+msg.author.id+" AND money > 0 AND active = 0;";
+			else
+				sql += "UPDATE cowoncy NATURAL JOIN blackjack SET money = 0 WHERE id = "+msg.author.id+" AND money > 0 AND active = 0;";
+		else{
+			if(maxBet&&amount>maxBet)
+				amount = maxBet;
 			sql += "UPDATE cowoncy NATURAL JOIN blackjack SET money = money - "+amount+" WHERE id = "+msg.author.id+" AND money >= "+amount+" AND active = 0;";
+		}
 		con.query(sql,function(err,result){
 			if(err){console.error(err);return;}
 			//Check for existing match
@@ -50,6 +57,7 @@ module.exports = new CommandInterface({
 				initBlackjack(p,money,result[1]);
 			}else if(result[0][0]&&result[0][0].money){
 				var money = result[0][0].money;
+				if(maxBet&&money>maxBet) money = maxBet;
 				if(amount=="all"){
 					if(money<=0)
 						p.send("**🚫 | "+msg.author.username+"**, You do not have enough cowoncy!",3000);
