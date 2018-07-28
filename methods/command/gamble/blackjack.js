@@ -42,13 +42,13 @@ module.exports = new CommandInterface({
 		sql += "SELECT * FROM blackjack LEFT JOIN blackjack_card ON blackjack.bjid = blackjack_card.bjid WHERE id = "+msg.author.id+" AND active = 1 ORDER BY sort ASC, dealer DESC;";
 		if(amount=="all")
 			if(maxBet)
-				sql += "UPDATE cowoncy NATURAL JOIN blackjack SET money = (IF(money >"+maxBet+",money - "+maxBet+",0)) WHERE id = "+msg.author.id+" AND money > 0 AND active = 0;";
+				sql += "UPDATE cowoncy LEFT JOIN blackjack ON cowoncy.id = blackjack.id SET money = (IF(money >"+maxBet+",money - "+maxBet+",0)) WHERE cowoncy.id = "+msg.author.id+" AND money > 0 AND (active = 0 OR active IS NULL);";
 			else
-				sql += "UPDATE cowoncy NATURAL JOIN blackjack SET money = 0 WHERE id = "+msg.author.id+" AND money > 0 AND active = 0;";
+				sql += "UPDATE cowoncy LEFT JOIN blackjack ON cowoncy.id = blackjack.id SET money = 0 WHERE cowoncy.id = "+msg.author.id+" AND money > 0 AND (active = 0 OR active IS NULL);";
 		else{
 			if(maxBet&&amount>maxBet)
 				amount = maxBet;
-			sql += "UPDATE cowoncy NATURAL JOIN blackjack SET money = money - "+amount+" WHERE id = "+msg.author.id+" AND money >= "+amount+" AND active = 0;";
+			sql += "UPDATE cowoncy LEFT JOIN blackjack ON cowoncy.id = blackjack.id SET money = money - "+amount+" WHERE cowoncy.id = "+msg.author.id+" AND money >= "+amount+" AND (active = 0 OR active IS NULL);";
 		}
 		con.query(sql,function(err,result){
 			if(err){console.error(err);return;}
