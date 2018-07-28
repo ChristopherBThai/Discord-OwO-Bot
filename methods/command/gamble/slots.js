@@ -61,31 +61,31 @@ module.exports = new CommandInterface({
 				var rand = Math.random();
 				var win = 0;
 				var logging = 0;
-				if(rand<=.19){//1x 19%
+				if(rand<=.15){//1x 15%
 					win = amount;
 					rslots.push(slots[0]);
 					rslots.push(slots[0]);
 					rslots.push(slots[0]);
 					logging = 0;
-				}else if(rand<=.33){ //2x 14%
+				}else if(rand<=.30){ //2x 15%
 					win = amount*2;
 					rslots.push(slots[1]);
 					rslots.push(slots[1]);
 					rslots.push(slots[1]);
 					logging = 1;
-				}else if(rand<=.42){ //3x 9%
+				}else if(rand<=.38){ //3x 8%
 					win = amount*3;
 					rslots.push(slots[2]);
 					rslots.push(slots[2]);
 					rslots.push(slots[2]);
 					logging = 2;
-				}else if(rand<=.46){ //4x 4%
+				}else if(rand<=.42){ //4x 3%
 					win = amount*4;
 					rslots.push(slots[3]);
 					rslots.push(slots[3]);
 					rslots.push(slots[3]);
 					logging = 3;
-				}else if(rand<=.47){ //10x 1%
+				}else if(rand<=.43){ //10x 1%
 					win = amount*10;
 					rslots.push(slots[4]);
 					rslots.push(slots[5]);

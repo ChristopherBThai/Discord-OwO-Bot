@@ -15,9 +15,13 @@ const macro = require('../tokens/macro.js');
 const logger = require('./util/logger.js');
 const patreon = require('./util/patreon.js');
 
+const modChannel = "471579186059018241";
+
 client.on('message',msg => {
 	//Ignore if bot
 	if(msg.author.bot) return;
+
+	else if(msg.channel.id==modChannel) command.executeMod(msg);
 
 	else if(msg.author.id==auth.admin) command.executeAdmin(msg);
 

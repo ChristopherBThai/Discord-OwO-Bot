@@ -7,6 +7,7 @@ module.exports = new CommandInterface({
 	alias:["ban"],
 
 	admin:true,
+	mod:true,
 	dm:true,
 
 	execute: function(p){

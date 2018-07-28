@@ -2,6 +2,7 @@ var client;
 var auth = require('../../tokens/owo-auth.json');
 var admin;
 var logChannel = "469352773314412555";
+var modLogChannel = "471579186059018241";
 
 /**
  * Sends a msg to channel
@@ -48,6 +49,16 @@ exports.msgLogChannel = async function (message){
 	message = message.replace(/`/g,"\\`");
 	client.shard.broadcastEval(`
 		var channel = this.channels.get('${logChannel}');
+		if(channel!=undefined)
+			channel.send(\`${message}\`);
+	`);
+}
+
+exports.msgModLogChannel = async function (message){
+	if(!message) return;
+	message = message.replace(/`/g,"\\`");
+	client.shard.broadcastEval(`
+		var channel = this.channels.get('${modLogChannel}');
 		if(channel!=undefined)
 			channel.send(\`${message}\`);
 	`);

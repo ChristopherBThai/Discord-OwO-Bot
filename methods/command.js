@@ -24,6 +24,7 @@ var aliasToCommand = {};
 var mcommands = {};
 //Admin commands
 var adminCommands = {};
+var modCommands = {};
 
 class Command {
 
@@ -96,14 +97,29 @@ class Command {
 		}
 	}
 
+	executeMod(msg){
+		var args;
+		if(msg.content.toLowerCase().indexOf(prefix) === 0)
+			args = msg.content.slice(prefix.length).trim().split(/ +/g);
+		else return;
+
+		var command = args.shift().toLowerCase();
+		var param = initParam(msg,command,args,this.client,this.dbl);
+
+		if(modCommands[command]) modCommands[command].execute(param);
+	}
+
+
 }
 
 function addCommand(command){
 	var alias = command.alias;
 	var name = alias[0];
-	if(command.admin){
+	if(command.admin||command.mod){
 		for(var i=0;i<alias.length;i++){
 			adminCommands[alias[i]] = command;
+			if(command.mod)
+				modCommands[alias[i]] = command;
 		}
 		return;
 	}

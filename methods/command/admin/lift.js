@@ -7,6 +7,7 @@ module.exports = new CommandInterface({
 	alias:["lift"],
 
 	admin:true,
+	mod:true,
 	dm:true,
 
 	execute: function(p){
