@@ -100,9 +100,9 @@
 	"☕":{
 		"id":12,
 		"name":"Coffee",
-		"for":"+55 hp",
+		"for":"+55 att",
 		"price":10000000,
-		"desc":"Energizing!\n+40 hp",
+		"desc":"Energizing!\n+55 att",
 		"att":55,
 		"hp":0
 	},
@@ -111,7 +111,7 @@
 		"name":"Milk",
 		"for":"+55 hp",
 		"price":10000000,
-		"desc":"Tough bones!\n+40 hp",
+		"desc":"Tough bones!\n+55 hp",
 		"att":0,
 		"hp":55
 	}
