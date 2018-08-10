@@ -25,13 +25,17 @@ module.exports = new CommandInterface({
 			return;
 		}
 
-		var sql = "INSERT INTO timeout (id,time,count,penalty) VALUES ("+args[0]+",NOW(),1,"+time+") ON DUPLICATE KEY UPDATE time = NOW(),count=count+1,penalty = penalty*2 + "+time+";";
+		var reason = args.slice(2).join(" ");
+		if(reason&&reason!="")
+			reason = "\n**<:blank:427371936482328596> | Reason:** "+reason;
+
+		var sql = "INSERT INTO timeout (id,time,count,penalty) VALUES ("+args[0]+",NOW(),1,"+time+") ON DUPLICATE KEY UPDATE time = NOW(),count=count+1,penalty = "+time+";";
 		con.query(sql,async function(err,rows,fields){
 			if(err) throw err;
-			if(user = await sender.msgUser(args[0],"**☠ |** You have been banned for "+time+" hours!"))
-				p.send("Penalty has been set to "+time+" for "+user.username);
+			if(user = await sender.msgUser(args[0],"**☠ |** You have been banned for "+time+" hours!"+reason))
+				p.send("**☠ |** Penalty has been set to "+time+" for "+user.username+reason);
 			else
-				p.send("Failed to set penalty for that user");
+				p.send("Failed to send a message to user");
 		});
 	}
 
