@@ -8,7 +8,7 @@ module.exports = new CommandInterface({
 	
 	alias:["top","rank","ranking"],
 
-	args:"points|guild|zoo|money|cookie|pet [global] {count}",
+	args:"points|guild|zoo|money|cookie|pet|huntbot [global] {count}",
 
 	desc:"Displays the top ranking of each catagory!",
 
@@ -27,32 +27,6 @@ module.exports = new CommandInterface({
 })
 
 /**
- * Adds an owo point if 10s has passed for each user
- * @param {mysql.Connection}	con - Mysql.createConnection()
- * @param {discord.Message}	msg - Discord's message
- *
- */
-exports.addPoint = function(con,msg){
-	var id = msg.author.id;
-	var guild = msg.guild;
-	var text = msg.content.replace(/(\n)+/g," | ");
-	try{
-		//Adds points
-		var sql = "INSERT INTO user (id,count) VALUES ("+id+",1) ON DUPLICATE KEY "+
-			"UPDATE count = count + 1;";
-		sql += "INSERT INTO guild (id,count) VALUES ("+guild.id+",1) ON DUPLICATE KEY UPDATE count = count + 1;";
-		sql += "INSERT INTO cowoncy (id,money) VALUES ("+id+",2) ON DUPLICATE KEY UPDATE money = money + 2;";
-
-		con.query(sql,function(err,result){
-			if(err){ console.error(err); return;}
-			console.log("\x1b[0m%s\x1b[36m[%s][%s][%s]",msg.author.username+" typed '"+text+"'",msg.author.id,msg.guild,msg.channel.name); 
-		});
-	}catch(err){
-
-	}
-}
-
-/**
  * Check for valid arguments to display leaderboards
  * @param {mysql.Connection}	con 	- Mysql.createConnection()
  * @param {discord.Message}	msg 	- Discord's message
@@ -69,6 +43,7 @@ function display(con, msg, args){
 	var zoo = false;
 	var rep = false;
 	var pet = false;
+	var huntbot,luck,curse;
 
 	var invalid = false;
 	var count = 5;
@@ -81,6 +56,9 @@ function display(con, msg, args){
 			else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="m"||args[i]==="c") money = true;
 			else if(args[i]==="cookies"||args[i]==="cookie"||args[i]==="rep"||args[i]==="r") rep = true;
 			else if(args[i]==="pets"||args[i]==="pet") pet = true;
+			//else if(args[i]==="huntbot"||args[i]==="hb") huntbot = true;
+			//else if(args[i]==="luck") luck = true;
+			//else if(args[i]==="curse") curse = true;
 			else if(args[i]==="global"||args[i]==="g") globala = true;
 			else if(global.isInt(args[i])) count = parseInt(args[i]);
 			else invalid = true;
@@ -91,119 +69,253 @@ function display(con, msg, args){
 	if (count>25) count = 25;
 	else if (count<1) count = 5;
 
-	if(invalid)
+	if(invalid){
 		msg.channel.send("**🚫 |** Invalid ranking type!")
 			.catch(err => console.error(err));
-
-	else if(globala){
-		if(points) getGlobalRanking(con,msg,count);
-		else if(guild) getGuildRanking(con,msg,count);
-		else if(zoo) getGlobalZooRanking(con,msg,count);
-		else if(money) getGlobalMoneyRanking(con,msg,count);
-		else if(rep) getGlobalRepRanking(con,msg,count);
-		else if(pet) getGlobalPetRanking(con,msg,count);
-		else getGlobalRanking(con,msg,count);
 	}else{
-		if(points) getRanking(con,msg,count);
+		if(points) getRanking(globala,con,msg,count);
 		else if(guild) getGuildRanking(con,msg,count);
-		else if(zoo) getZooRanking(con,msg,count);
-		else if(money) getMoneyRanking(con,msg,count);
-		else if(rep) getRepRanking(con,msg,count);
-		else if(pet) getPetRanking(con,msg,count);
-		else getRanking(con,msg,count);
+		else if(zoo) getZooRanking(globala,con,msg,count);
+		else if(money) getMoneyRanking(globala,con,msg,count);
+		else if(rep) getRepRanking(globala,con,msg,count);
+		else if(pet) getPetRanking(globala,con,msg,count);
+		else if(huntbot) getHuntbotRanking(globala,con,msg,count);
+		else if(luck) getLuckRanking(globala,con,msg,count);
+		else if(curse) getCurseRanking(globala,con,msg,count);
+		else getRanking(globala,con,msg,count);
 	}
 }
 
-/**
- * displays guild ranking
- * @param {mysql.Connection}	con 	- Mysql.createConnection()
- * @param {discord.User[]}	members	- Guild's members
- * @param {discord.Message}	msg	- User's message
- * @param {int} 		count 	- number of ranks to display
- */
-function getRanking(con, msg, count){
-	var userids = global.getids(msg.guild.members);
-	var channel = msg.channel;
-	var guildId = msg.guild.id;
-
-	//Grabs top 5
-	var sql = "SELECT * FROM user WHERE id IN ( "+userids+ " ) ORDER BY count DESC LIMIT "+count+";";
-	sql   +=  "SELECT id,count,(SELECT COUNT(*)+1 FROM user WHERE id IN ("+userids+") AND count > u.count) AS rank FROM user u WHERE u.id = "+msg.author.id+";";
-
-	//Create an embeded message
-	con.query(sql,function(err,rows,fields){
-		if(err) {console.error(err); return;}
-		var rank = 1;
-		var ranking = [];
-		var embed = "```md\n< Top "+count+" OwO Rankings for "+msg.guild.name+" >\n";
-		if(rows[1][0]!==undefined&&rows[1][0]!==null){
-			embed += "> Your Rank: "+rows[1][0].rank+"\n";
-			embed += ">\t\tyou said owo "+rows[1][0].count+" times!\n\n";
-		}
-		rows[0].forEach(function(ele){
-			var id = String(ele.id);
-			var nickname = msg.guild.members.get(id).nickname;
-			var name = "";
-			if(nickname)
-				name = nickname+" ("+msg.guild.members.get(id).user.username+")";
-			else
-				name = ""+msg.guild.members.get(id).user.username;
-			name = name.replace("discord.gg","discord,gg");
-			embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
-			rank++;
-		});
-		var date = new Date();
-		embed += ("\n*Spamming owo will not count!!!* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
-		channel.send(embed)
-			.catch(err => console.error(err));
-
-	});
-	console.log("	Displaying top "+count);
-}
-
-/**
- * displays global ranking
- * @param {mysql.Connection}	con 	- Mysql.createConnection()
- * @param {discord.Message}	msg	- User's message
- * @param {int} 		count 	- number of ranks to display
- */
-function getGlobalRanking(con, msg, count){
-	var channel = msg.channel;
-	//Grabs top 5
-	var sql = "SELECT * FROM user ORDER BY count DESC LIMIT "+count+";";
-	sql   +=  "SELECT id,count,(SELECT COUNT(*)+1 FROM user WHERE count > u.count) AS rank FROM user u WHERE u.id = "+msg.author.id+";";
-
-	//Create an embeded message
+function displayRanking(con,msg,count,globalRank,sql,title,subText){
 	con.query(sql,async function(err,rows,fields){
 		if(err) {console.error(err); return;}
 		var rank = 1;
 		var ranking = [];
-		var embed = "```md\n< Top "+count+" Global OwO Rankings >\n";
+		var embed = "```md\n< "+title+" >\n";
 		if(rows[1][0]!==undefined&&rows[1][0]!==null){
-			embed += "> Your Global Rank: "+rows[1][0].rank+"\n";
-			embed += ">\t\tyou said owo "+rows[1][0].count+" times!\n\n";
+			embed += "> Your Rank: "+rows[1][0].rank+"\n";
+			embed += subText(rows[1][0],0);
 		}
 		for(let ele of rows[0]){
 			var id = String(ele.id);
-			var user = await global.getUser(id);
-			var name = "";
-			if(user === undefined || user.username === undefined)
-				name = "User Left Bot";
-			else
-				name = ""+user.username;
+
+			if(!globalRank){
+				var user = msg.guild.members.get(id);
+				var name = "";
+				if(user&&user.nickname) 
+					name = user.nickname+" ("+user.user.username+")";
+				else if(user&&user.user.username)
+					name = ""+user.user.username;
+				else
+					name = "User not found";
+			}else{
+				var user = await global.getUser(id);
+				var name = "";
+				if(user === undefined || user.username === undefined)
+					name = "User Left Bot";
+				else
+					name = ""+user.username;
+			}
+
 			name = name.replace("discord.gg","discord,gg");
-			embed += "#"+rank+"\t"+name+"\n\t\tsaid owo "+ele.count+" times!\n";
+			embed += "#"+rank+"\t"+name+subText(ele,rank);
 			rank++;
-		}
+		};
 		var date = new Date();
-		embed += ("\n*Spamming owo will not count!!!* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
-		channel.send(embed)
+		embed += (date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		msg.channel.send(embed)
 			.catch(err => console.error(err));
+
 	});
-	console.log("	Displaying top "+count+" global");
 }
 
+/**
+ * Top OwO Rankings
+ * @param {boolean}		globalRank	- Global rankings 
+ * @param {mysql.Connection}	con 	- Mysql.createConnection()
+ * @param {discord.Message}	msg	- User's message
+ * @param {int} 		count 	- number of ranks to display
+ */
+function getRanking(globalRank, con, msg, count){
+	var sql;
+	if(globalRank){
+		sql = "SELECT * FROM user ORDER BY count DESC LIMIT "+count+";";
+		sql += "SELECT id,count,(SELECT COUNT(*)+1 FROM user WHERE count > u.count) AS rank FROM user u WHERE u.id = "+msg.author.id+";";
+	}else{
+		var userids = global.getids(msg.guild.members);
+		sql = "SELECT * FROM user WHERE id IN ( "+userids+ " ) ORDER BY count DESC LIMIT "+count+";";
+		sql += "SELECT id,count,(SELECT COUNT(*)+1 FROM user WHERE id IN ("+userids+") AND count > u.count) AS rank FROM user u WHERE u.id = "+msg.author.id+";";
+	}
 
+	displayRanking(con,msg,count,globalRank,sql,
+		"Top "+count+" "+((globalRank)?"Global OwO Rankings":"OwO Rankings for "+msg.guild.name),
+		function(query,rank){
+			if(rank==0) return ">\t\tyou said owo "+query.count+" times!\n\n";
+			else return "\n\t\tsaid owo "+query.count+" times!\n"
+		}
+	);
+}
+
+/**
+ * displays zoo ranking
+ */
+function getZooRanking(globalRank, con, msg, count){
+	var sql;
+	if(globalRank){
+		sql = "SELECT *,"+points+" AS points FROM animal_count ORDER BY points DESC LIMIT "+count+";";
+		sql   +=  "SELECT *,"+points+" AS points,(SELECT COUNT(*)+1 FROM animal_count WHERE "+points+" > "+apoints+" ) AS rank FROM animal_count a WHERE a.id = "+msg.author.id+";";
+	}else{
+		var users = global.getids(msg.guild.members);
+		sql = "SELECT *,"+points+" AS points FROM animal_count WHERE id IN ("+users+") ORDER BY points DESC LIMIT "+count+";";
+		sql   +=  "SELECT *,"+points+" AS points,(SELECT COUNT(*)+1 FROM animal_count WHERE "+points+" > "+apoints+" AND id IN ("+users+")) AS rank FROM animal_count a WHERE a.id = "+msg.author.id+";";
+	}
+
+	displayRanking(con,msg,count,globalRank,sql,
+		"Top "+count+" "+((globalRank)?"Global Zoo Rankings":"Zoo Rankings for "+msg.guild.name),
+		function(query,rank){
+			if(rank==0) return ">\t\t"+query.points+" zoo points: "+animalUtil.zooScore(query)+"\n\n";
+			else return "\n\t\t"+query.points+" zoo points: "+animalUtil.zooScore(query)+"\n";
+		}
+	);
+}
+
+/**
+ * displays cowoncy ranking
+ */
+function getMoneyRanking(globalRank, con, msg, count){
+	var sql;
+	if(globalRank){
+		sql = "SELECT * FROM cowoncy ORDER BY money DESC LIMIT "+count+";";
+		sql +=  "SELECT id,money,(SELECT COUNT(*)+1 FROM cowoncy WHERE money > c.money) AS rank FROM cowoncy c WHERE c.id = "+msg.author.id+";";
+	}else{
+		var users = global.getids(msg.guild.members);
+		sql = "SELECT * FROM cowoncy WHERE id IN ("+users+") ORDER BY money DESC LIMIT "+count+";";
+		sql +=  "SELECT id,money,(SELECT COUNT(*)+1 FROM cowoncy WHERE id IN ("+users+") AND money > c.money) AS rank FROM cowoncy c WHERE c.id = "+msg.author.id+";";
+	}
+
+	displayRanking(con,msg,count,globalRank,sql,
+		"Top "+count+" "+((globalRank)?"Global Money Rankings":"Cookie Rankings for "+msg.guild.name),
+		function(query,rank){
+			if(rank==0) return ">\t\tCowoncy: "+query.money+"\n\n";
+			else return "\n\t\tCowoncy: "+query.money+"\n";
+		}
+	);
+}
+
+/**
+ * displays rep ranking
+ */
+function getRepRanking(globalRank, con, msg, count){
+	var sql;
+	if(globalRank){
+		sql = "SELECT * FROM rep ORDER BY count DESC LIMIT "+count+";";
+		sql +=  "SELECT id,count,(SELECT COUNT(*)+1 FROM rep WHERE count > c.count) AS rank FROM rep c WHERE c.id = "+msg.author.id+";";
+	}else{
+		var users = global.getids(msg.guild.members);
+		sql = "SELECT * FROM rep WHERE id IN ("+users+") ORDER BY count DESC LIMIT "+count+";";
+		sql +=  "SELECT id,count,(SELECT COUNT(*)+1 FROM rep WHERE id IN ("+users+") AND count > c.count) AS rank FROM rep c WHERE c.id = "+msg.author.id+";";
+	}
+
+	displayRanking(con,msg,count,globalRank,sql,
+		"Top "+count+" "+((globalRank)?"Global Cookie Rankings":"Cookie Rankings for "+msg.guild.name),
+		function(query,rank){
+			if(rank==0) return ">\t\tCookies: "+query.count+"\n\n";
+			else return "\n\t\tCookies: "+query.count+"\n";
+		}
+	);
+}
+
+/**
+ * displays pet ranking
+ */
+function getPetRanking(globalRank, con, msg, count){
+	var sql;
+	if(globalRank){
+		sql = "SELECT * FROM animal  ORDER BY lvl DESC, xp DESC LIMIT "+count+";";
+		sql +=  "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY lvl DESC, xp DESC LIMIT 1;";
+	}else{
+		var users = global.getids(msg.guild.members);
+		sql = "SELECT * FROM animal WHERE id IN ("+users+") ORDER BY lvl DESC, xp DESC LIMIT "+count+";";
+		sql +=  "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE id IN ("+users+") AND ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY lvl DESC, xp DESC LIMIT 1;";
+	}
+
+	displayRanking(con,msg,count,globalRank,sql,
+		"Top "+count+" "+((globalRank)?"Global Pet Rankings":"Pet Rankings for "+msg.guild.name),
+		function(query,rank){
+			if(rank==0) return ">\t\t"+query.nickname+" Lvl:"+query.lvl+" Att:"+query.att+" Hp:"+query.hp+"\n\n";
+			else return "\n\t\tLvl:"+query.lvl+" Att:"+query.att+" Hp:"+query.hp+"\n";
+		}
+	);
+}
+
+/**
+ * Top HuntBot Rankings
+ */
+function getHuntbotRanking(globalRank, con, msg, count){
+	var sql;
+	if(globalRank){
+		sql = "SELECT id,(essence+efficiency+duration+cost) as total FROM autohunt ORDER BY total DESC LIMIT "+count+";";
+		sql +=  "SELECT id,(essence+efficiency+duration+cost) as total, (SELECT COUNT(*)+1 FROM animal WHERE (essence+efficiency+duration+cost) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+" ORDER BY total DESC LIMIT 1;";
+	}else{
+		var users = global.getids(msg.guild.members);
+		sql = "SELECT id,(essence+efficiency+duration+cost) as total FROM autohunt WHERE id IN ("+users+") ORDER BY total DESC LIMIT "+count+";";
+		sql +=  "SELECT id,(essence+efficiency+duration+cost) as total, (SELECT COUNT(*)+1 FROM animal WHERE id IN ("+users+") AND (essence+efficiency+duration+cost) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+" ORDER BY total DESC LIMIT 1;";
+	}
+
+	displayRanking(con,msg,count,globalRank,sql,
+		"Top "+count+" "+((globalRank)?"Global HuntBot Rankings":"HuntBot Rankings for "+msg.guild.name),
+		function(query,rank){
+			if(rank==0) return ">\t\tEssence: "+query.total+"\n\n";
+			else return "\n\t\tEssence: "+query.total+"\n";
+		}
+	);
+}
+
+/**
+ * Top HuntBot Rankings
+ */
+function getLuckRanking(globalRank, con, msg, count){
+	var sql;
+	if(globalRank){
+		sql = "SELECT * FROM luck ORDER BY lcount DESC LIMIT "+count+";";
+		sql +=  "SELECT *, (SELECT COUNT(*)+1 FROM luck WHERE lcount > c.lcount) AS rank FROM luck c WHERE c.id = "+msg.author.id+" ORDER BY lcount DESC LIMIT 1;";
+	}else{
+		var users = global.getids(msg.guild.members);
+		sql = "SELECT * FROM luck WHERE id IN ("+users+") ORDER BY lcount DESC LIMIT "+count+";";
+		sql +=  "SELECT *, (SELECT COUNT(*)+1 FROM luck WHERE id IN ("+users+") AND lcount > c.lcount) AS rank FROM luck c WHERE c.id = "+msg.author.id+" ORDER BY lcount DESC LIMIT 1;";
+	}
+
+	displayRanking(con,msg,count,globalRank,sql,
+		"Top "+count+" "+((globalRank)?"Global Luck Rankings":"Luck Rankings for "+msg.guild.name),
+		function(query,rank){
+			if(rank==0) return ">\t\tLuck: "+query.lcount+"\n\n";
+			else return "\n\t\tLuck: "+query.lcount+"\n";
+		}
+	);
+}
+
+/**
+ * Top HuntBot Rankings
+ */
+function getCurseRanking(globalRank, con, msg, count){
+	var sql;
+	if(globalRank){
+		sql = "SELECT * FROM luck ORDER BY lcount ASC LIMIT "+count+";";
+		sql +=  "SELECT *, (SELECT COUNT(*)+1 FROM luck WHERE lcount < c.lcount) AS rank FROM luck c WHERE c.id = "+msg.author.id+" ORDER BY lcount DESC LIMIT 1;";
+	}else{
+		var users = global.getids(msg.guild.members);
+		sql = "SELECT * FROM luck WHERE id IN ("+users+") ORDER BY lcount ASC LIMIT "+count+";";
+		sql +=  "SELECT *, (SELECT COUNT(*)+1 FROM luck WHERE id IN ("+users+") AND lcount < c.lcount) AS rank FROM luck c WHERE c.id = "+msg.author.id+" ORDER BY lcount DESC LIMIT 1;";
+	}
+
+	displayRanking(con,msg,count,globalRank,sql,
+		"Top "+count+" "+((globalRank)?"Global Curse Rankings":"Curse Rankings for "+msg.guild.name),
+		function(query,rank){
+			if(rank==0) return ">\t\tLuck: "+query.lcount+"\n\n";
+			else return "\n\t\tLuck: "+query.lcount+"\n";
+		}
+	);
+}
 
 /**
  * displays guild ranking
@@ -241,7 +353,6 @@ function getGuildRanking(con, msg, count){
 		channel.send(embed)
 			.catch(err => console.error(err));
 	});
-	console.log("	Displaying top "+count+" guilds");
 }
 
 const points = "(common*"+animals.points.common+"+"+
@@ -266,352 +377,4 @@ const apoints = "(a.common*"+animals.points.common+"+"+
 		"a.hidden*"+animals.points.hidden+"+"+
 		"a.legendary*"+animals.points.legendary+"+"+
 		"a.fabled*"+animals.points.fabled+")";
-/**
- * displays zoo ranking
- * @param {mysql.Connection}	con 	- Mysql.createConnection()
- * @param {discord.Message}	msg	- User's message
- * @param {int} 		count 	- number of ranks to display
- */
-function getZooRanking(con, msg, count){
-	var channel = msg.channel;
-	var users = global.getids(msg.guild.members);
-	//Grabs top 5
-	var sql = "SELECT *,"+points+" AS points FROM animal_count WHERE id IN ("+users+") ORDER BY points DESC LIMIT "+count+";";
-	sql   +=  "SELECT *,"+points+" AS points,(SELECT COUNT(*)+1 FROM animal_count WHERE "+points+" > "+apoints+" AND id IN ("+users+")) AS rank FROM animal_count a WHERE a.id = "+msg.author.id+";";
 
-	//Create an embeded message
-	con.query(sql,async function(err,rows,fields){
-		if(err) {console.error(err); return;}
-		var rank = 1;
-		var ranking = [];
-		var embed = "```md\n< Top "+count+" Zoo Rankings for "+msg.guild.name+" >\n";
-		if(rows[1][0]!==undefined&&rows[1][0]!==null){
-			embed += "> Your Zoo Rank: "+rows[1][0].rank+"\n";
-			embed += ">\t\t"+rows[1][0].points+" zoo points: ";
-			embed += animalUtil.zooScore(rows[1][0])+"\n\n";
-		}
-		for(let ele of rows[0]){
-			var id = String(ele.id);
-			var user = await global.getUser(id);
-			var name = "";
-			if(user === undefined || user.username === undefined)
-				name = "User Left Bot";
-			else
-				name = ""+user.username;
-			name = name.replace("discord.gg","discord,gg");
-			embed += "#"+rank+"\t"+name+"\n\t\t"+ele.points+" zoo points: ";
-			embed += animalUtil.zooScore(ele)+"\n";
-			rank++;
-		}
-		var date = new Date();
-		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
-		channel.send(embed)
-			.catch(err => console.error(err));
-	});
-	console.log("	Displaying top "+count+" zoo");
-}
-
-/**
- * displays global zoo ranking
- * @param {mysql.Connection}	con 	- Mysql.createConnection()
- * @param {discord.Message}	msg	- User's message
- * @param {int} 		count 	- number of ranks to display
- */
-function getGlobalZooRanking(con, msg, count){
-	channel = msg.channel;
-	//Grabs top 5
-	var sql = "SELECT *,"+points+" AS points FROM animal_count ORDER BY points DESC LIMIT "+count+";";
-	sql   +=  "SELECT *,"+points+" AS points,(SELECT COUNT(*)+1 FROM animal_count WHERE "+points+" > "+apoints+" ) AS rank FROM animal_count a WHERE a.id = "+msg.author.id+";";
-
-	//Create an embeded message
-	con.query(sql,async function(err,rows,fields){
-		if(err) {console.error(err); return;}
-		var rank = 1;
-		var ranking = [];
-		var embed = "```md\n< Top "+count+" Global Zoo Rankings >\n";
-		if(rows[1][0]!==undefined&&rows[1][0]!==null){
-			embed += "> Your Zoo Rank: "+rows[1][0].rank+"\n";
-			embed += ">\t\t"+rows[1][0].points+" zoo points: ";
-			embed += animalUtil.zooScore(rows[1][0])+"\n\n";
-		}
-		for(let ele of rows[0]){
-			var id = String(ele.id);
-			var user = await global.getUser(id);
-			var name = "";
-			if(user === undefined || user.username === undefined)
-				name = "User Left Bot";
-			else
-				name = ""+user.username;
-			name = name.replace("discord.gg","discord,gg");
-			embed += "#"+rank+"\t"+name+"\n\t\t"+ele.points+" zoo points: ";
-			embed += animalUtil.zooScore(ele)+"\n";
-			rank++;
-		}
-		var date = new Date();
-		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
-		channel.send(embed)
-			.catch(err => console.error(err));
-	});
-	console.log("	Displaying top "+count+" global zoo");
-}
-
-/**
- * displays cowoncy ranking
- * @param {mysql.Connection}	con 	- Mysql.createConnection()
- * @param {discord.Message}	msg	- User's message
- * @param {int} 		count 	- number of ranks to display
- */
-function getMoneyRanking(con, msg, count){
-	var users = global.getids(msg.guild.members);
-	var channel = msg.channel;
-	var sql = "SELECT * FROM cowoncy WHERE id IN ("+users+") ORDER BY money DESC LIMIT "+count+";";
-	sql +=  "SELECT id,money,(SELECT COUNT(*)+1 FROM cowoncy WHERE id IN ("+users+") AND money > c.money) AS rank FROM cowoncy c WHERE c.id = "+msg.author.id+";";
-
-	//Create an embeded message
-	con.query(sql,async function(err,rows,fields){
-		if(err) {console.error(err); return;}
-		var rank = 1;
-		var ranking = [];
-		var embed = "```md\n< Top "+count+" Cowoncy Rankings for "+msg.guild.name+" >\n";
-		if(rows[1][0]!==undefined&&rows[1][0]!==null){
-			embed += "> Your Rank: "+rows[1][0].rank+"\n";
-			embed += ">\t\tCowoncy: "+rows[1][0].money+"\n\n";
-		}
-		for(let ele of rows[0]){
-			var id = String(ele.id);
-			var user = await global.getUser(id);
-			var name = "";
-			if(user === undefined || user.username === undefined)
-				name = "User Left Bot";
-			else
-				name = ""+user.username;
-			name = name.replace("discord.gg","discord,gg");
-			embed += "#"+rank+"\t"+name+"\n\t\tCowoncy: "+ele.money+"\n";
-			rank++;
-		}
-		var date = new Date();
-		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
-		channel.send(embed)
-			.catch(err => console.error(err));
-	});
-	console.log("	Displaying top "+count+" cowoncy");
-}
-
-
-/**
- * displays global cowoncy ranking
- * @param {mysql.Connection}	con 	- Mysql.createConnection()
- * @param {discord.Message}	msg	- User's message
- * @param {int} 		count 	- number of ranks to display
- */
-function getGlobalMoneyRanking(con, msg, count){
-	var channel = msg.channel;
-	//Grabs top 5
-	var sql = "SELECT * FROM cowoncy ORDER BY money DESC LIMIT "+count+";";
-	sql +=  "SELECT id,money,(SELECT COUNT(*)+1 FROM cowoncy WHERE money > c.money) AS rank FROM cowoncy c WHERE c.id = "+msg.author.id+";";
-
-	//Create an embeded message
-	con.query(sql,async function(err,rows,fields){
-		if(err) {console.error(err); return;}
-		var rank = 1;
-		var ranking = [];
-		var embed = "```md\n< Top "+count+" Global Cowoncy Rankings >\n";
-		if(rows[1][0]!==undefined&&rows[1][0]!==null){
-			embed += "> Your Rank: "+rows[1][0].rank+"\n";
-			embed += ">\t\tCowoncy: "+rows[1][0].money+"\n\n";
-		}
-		for(let ele of rows[0]){
-			var id = String(ele.id);
-			var user = await global.getUser(id);
-			var name = "";
-			if(user === undefined || user.username === undefined)
-				name = "User Left Bot";
-			else
-				name = ""+user.username;
-			name = name.replace("discord.gg","discord,gg");
-			embed += "#"+rank+"\t"+name+"\n\t\tCowoncy: "+ele.money+"\n";
-			rank++;
-		}
-		var date = new Date();
-		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
-		channel.send(embed)
-			.catch(err => console.error(err));
-	});
-	console.log("	Displaying top "+count+" global cowoncy");
-}
-
-/**
- * displays rep ranking
- * @param {mysql.Connection}	con 	- Mysql.createConnection()
- * @param {discord.Message}	msg	- User's message
- * @param {int} 		count 	- number of ranks to display
- */
-function getRepRanking(con, msg, count){
-	var users = global.getids(msg.guild.members);
-	var channel = msg.channel;
-	var sql = "SELECT * FROM rep WHERE id IN ("+users+") ORDER BY count DESC LIMIT "+count+";";
-	sql +=  "SELECT id,count,(SELECT COUNT(*)+1 FROM rep WHERE id IN ("+users+") AND count > c.count) AS rank FROM rep c WHERE c.id = "+msg.author.id+";";
-
-	//Create an embeded message
-	con.query(sql,async function(err,rows,fields){
-		if(err) {console.error(err); return;}
-		var rank = 1;
-		var ranking = [];
-		var embed = "```md\n< Top "+count+" Cookie Rankings for "+msg.guild.name+" >\n";
-		if(rows[1][0]!==undefined&&rows[1][0]!==null){
-			embed += "> Your Rank: "+rows[1][0].rank+"\n";
-			embed += ">\t\tCookies: "+rows[1][0].count+"\n\n";
-		}
-		for(let ele of rows[0]){
-			var id = String(ele.id);
-			var user = await global.getUser(id);
-			var name = "";
-			if(user === undefined || user.username === undefined)
-				name = "User Left Bot";
-			else
-				name = ""+user.username;
-			name = name.replace("discord.gg","discord,gg");
-			embed += "#"+rank+"\t"+name+"\n\t\tCookies: "+ele.count+"\n";
-			rank++;
-		}
-		var date = new Date();
-		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
-		channel.send(embed)
-			.catch(err => console.error(err));
-	});
-	console.log("	Displaying top "+count+" cookies");
-}
-
-
-/**
- * displays global rep ranking
- * @param {mysql.Connection}	con 	- Mysql.createConnection()
- * @param {discord.Message}	msg	- User's message
- * @param {int} 		count 	- number of ranks to display
- */
-function getGlobalRepRanking(con, msg, count){
-	var channel = msg.channel;
-	//Grabs top 5
-	var sql = "SELECT * FROM rep ORDER BY count DESC LIMIT "+count+";";
-	sql +=  "SELECT id,count,(SELECT COUNT(*)+1 FROM rep WHERE count > c.count) AS rank FROM rep c WHERE c.id = "+msg.author.id+";";
-
-	//Create an embeded message
-	con.query(sql,async function(err,rows,fields){
-		if(err) {console.error(err); return;}
-		var rank = 1;
-		var ranking = [];
-		var embed = "```md\n< Top "+count+" Global Cookie Rankings >\n";
-		if(rows[1][0]!==undefined&&rows[1][0]!==null){
-			embed += "> Your Rank: "+rows[1][0].rank+"\n";
-			embed += ">\t\tCookies: "+rows[1][0].count+"\n\n";
-		}
-		for(let ele of rows[0]){
-			var id = String(ele.id);
-			var user = await global.getUser(id);
-			var name = "";
-			if(user === undefined || user.username === undefined)
-				name = "User Left Bot";
-			else
-				name = ""+user.username;
-			name = name.replace("discord.gg","discord,gg");
-			embed += "#"+rank+"\t"+name+"\n\t\tCookies: "+ele.count+"\n";
-			rank++;
-		}
-		var date = new Date();
-		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
-		channel.send(embed)
-			.catch(err => console.error(err));
-	});
-	console.log("	Displaying top "+count+" global cookie");
-}
-
-/**
- * displays pet ranking
- * @param {mysql.Connection}	con 	- Mysql.createConnection()
- * @param {discord.Message}	msg	- User's message
- * @param {int} 		count 	- number of ranks to display
- */
-function getPetRanking(con, msg, count){
-	var users = global.getids(msg.guild.members);
-	var channel = msg.channel;
-	var sql = "SELECT * FROM animal WHERE id IN ("+users+") ORDER BY lvl DESC, xp DESC LIMIT "+count+";";
-	sql +=  "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE id IN ("+users+") AND ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY lvl DESC, xp DESC LIMIT 1;";
-
-	//Create an embeded message
-	con.query(sql,async function(err,rows,fields){
-		if(err) {console.error(err); return;}
-		var rank = 1;
-		var ranking = [];
-		var embed = "```md\n< Top "+count+" Pet Rankings for "+msg.guild.name+" >\n";
-		if(rows[1][0]!==undefined&&rows[1][0]!==null){
-			embed += "> Your Rank: "+rows[1][0].rank+"\n";
-			embed += ">\t\t"+rows[1][0].nickname+" Lvl:"+rows[1][0].lvl+" Att:"+rows[1][0].att+" Hp:"+rows[1][0].hp+"\n\n";
-		}
-		for(let ele of rows[0]){
-			var id = String(ele.id);
-			var user = await global.getUser(id);
-			var name = "";
-			if(user === undefined || user.username === undefined)
-				name = "User Left Bot";
-			else
-				name = ""+user.username;
-			name = name.replace("discord.gg","discord,gg");
-			if(ele.nickname!=null)
-				embed += "#"+rank+"\t"+ele.nickname+" ("+name+")\n\t\tLvl:"+ele.lvl+" Att:"+ele.att+" Hp:"+ele.hp+"\n";
-			else
-				embed += "#"+rank+"\t"+name+"\n\t\tLvl:"+ele.lvl+" Att:"+ele.att+" Hp:"+ele.hp+"\n";
-			rank++;
-		}
-		var date = new Date();
-		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
-		channel.send(embed)
-			.catch(err => console.error(err));
-	});
-	console.log("	Displaying top "+count+" pets");
-}
-
-
-/**
- * displays global rep ranking
- * @param {mysql.Connection}	con 	- Mysql.createConnection()
- * @param {discord.Message}	msg	- User's message
- * @param {int} 		count 	- number of ranks to display
- */
-function getGlobalPetRanking(con, msg, count){
-	var channel = msg.channel;
-	//Grabs top 5
-	var sql = "SELECT * FROM animal  ORDER BY lvl DESC, xp DESC LIMIT "+count+";";
-	sql +=  "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY lvl DESC, xp DESC LIMIT 1;";
-
-	//Create an embeded message
-	con.query(sql,async function(err,rows,fields){
-		if(err) {console.error(err); return;}
-		var rank = 1;
-		var ranking = [];
-		var embed = "```md\n< Top "+count+" Global Pet Rankings >\n";
-		if(rows[1][0]!==undefined&&rows[1][0]!==null){
-			embed += "> Your Rank: "+rows[1][0].rank+"\n";
-			embed += ">\t\t"+rows[1][0].nickname+" Lvl:"+rows[1][0].lvl+" Att:"+rows[1][0].att+" Hp:"+rows[1][0].hp+"\n\n";
-		}
-		for(let ele of rows[0]){
-			var id = String(ele.id);
-			var user = await global.getUser(id);
-			var name = "";
-			if(user === undefined || user.username === undefined)
-				name = "User Left Bot";
-			else
-				name = ""+user.username;
-			name = name.replace("discord.gg","discord,gg");
-			if(ele.nickname!=null)
-				embed += "#"+rank+"\t"+ele.nickname+" ("+name+")\n\t\tLvl:"+ele.lvl+" Att:"+ele.att+" Hp:"+ele.hp+"\n";
-			else
-				embed += "#"+rank+"\t"+name+"\n\t\tLvl:"+ele.lvl+" Att:"+ele.att+" Hp:"+ele.hp+"\n";
-			rank++;
-		}
-		var date = new Date();
-		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
-		channel.send(embed)
-			.catch(err => console.error(err));
-	});
-	console.log("	Displaying top "+count+" global pet");
-}
