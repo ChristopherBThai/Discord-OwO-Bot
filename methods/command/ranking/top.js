@@ -56,9 +56,9 @@ function display(con, msg, args){
 			else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="m"||args[i]==="c") money = true;
 			else if(args[i]==="cookies"||args[i]==="cookie"||args[i]==="rep"||args[i]==="r") rep = true;
 			else if(args[i]==="pets"||args[i]==="pet") pet = true;
-			//else if(args[i]==="huntbot"||args[i]==="hb") huntbot = true;
-			//else if(args[i]==="luck") luck = true;
-			//else if(args[i]==="curse") curse = true;
+			else if(args[i]==="huntbot"||args[i]==="hb") huntbot = true;
+			else if(args[i]==="luck") luck = true;
+			else if(args[i]==="curse") curse = true;
 			else if(args[i]==="global"||args[i]==="g") globala = true;
 			else if(global.isInt(args[i])) count = parseInt(args[i]);
 			else invalid = true;
@@ -150,8 +150,8 @@ function getRanking(globalRank, con, msg, count){
 	displayRanking(con,msg,count,globalRank,sql,
 		"Top "+count+" "+((globalRank)?"Global OwO Rankings":"OwO Rankings for "+msg.guild.name),
 		function(query,rank){
-			if(rank==0) return ">\t\tyou said owo "+query.count+" times!\n\n";
-			else return "\n\t\tsaid owo "+query.count+" times!\n"
+			if(rank==0) return ">\t\tyou said owo "+global.toFancyNum(query.count)+" times!\n\n";
+			else return "\n\t\tsaid owo "+global.toFancyNum(query.count)+" times!\n"
 		}
 	);
 }
@@ -173,8 +173,8 @@ function getZooRanking(globalRank, con, msg, count){
 	displayRanking(con,msg,count,globalRank,sql,
 		"Top "+count+" "+((globalRank)?"Global Zoo Rankings":"Zoo Rankings for "+msg.guild.name),
 		function(query,rank){
-			if(rank==0) return ">\t\t"+query.points+" zoo points: "+animalUtil.zooScore(query)+"\n\n";
-			else return "\n\t\t"+query.points+" zoo points: "+animalUtil.zooScore(query)+"\n";
+			if(rank==0) return ">\t\t"+global.toFancyNum(query.points)+" zoo points: "+animalUtil.zooScore(query)+"\n\n";
+			else return "\n\t\t"+global.toFancyNum(query.points)+" zoo points: "+animalUtil.zooScore(query)+"\n";
 		}
 	);
 }
@@ -196,8 +196,8 @@ function getMoneyRanking(globalRank, con, msg, count){
 	displayRanking(con,msg,count,globalRank,sql,
 		"Top "+count+" "+((globalRank)?"Global Money Rankings":"Cookie Rankings for "+msg.guild.name),
 		function(query,rank){
-			if(rank==0) return ">\t\tCowoncy: "+query.money+"\n\n";
-			else return "\n\t\tCowoncy: "+query.money+"\n";
+			if(rank==0) return ">\t\tCowoncy: "+global.toFancyNum(query.money)+"\n\n";
+			else return "\n\t\tCowoncy: "+global.toFancyNum(query.money)+"\n";
 		}
 	);
 }
@@ -219,8 +219,8 @@ function getRepRanking(globalRank, con, msg, count){
 	displayRanking(con,msg,count,globalRank,sql,
 		"Top "+count+" "+((globalRank)?"Global Cookie Rankings":"Cookie Rankings for "+msg.guild.name),
 		function(query,rank){
-			if(rank==0) return ">\t\tCookies: "+query.count+"\n\n";
-			else return "\n\t\tCookies: "+query.count+"\n";
+			if(rank==0) return ">\t\tCookies: "+global.toFancyNum(query.count)+"\n\n";
+			else return "\n\t\tCookies: "+global.toFancyNum(query.count)+"\n";
 		}
 	);
 }
@@ -243,7 +243,7 @@ function getPetRanking(globalRank, con, msg, count){
 		"Top "+count+" "+((globalRank)?"Global Pet Rankings":"Pet Rankings for "+msg.guild.name),
 		function(query,rank){
 			if(rank==0) return ">\t\t"+query.nickname+" Lvl:"+query.lvl+" Att:"+query.att+" Hp:"+query.hp+"\n\n";
-			else return "\n\t\tLvl:"+query.lvl+" Att:"+query.att+" Hp:"+query.hp+"\n";
+			else return "\n\t\t"+query.nickname+" Lvl:"+query.lvl+" Att:"+query.att+" Hp:"+query.hp+"\n";
 		}
 	);
 }
@@ -265,8 +265,8 @@ function getHuntbotRanking(globalRank, con, msg, count){
 	displayRanking(con,msg,count,globalRank,sql,
 		"Top "+count+" "+((globalRank)?"Global HuntBot Rankings":"HuntBot Rankings for "+msg.guild.name),
 		function(query,rank){
-			if(rank==0) return ">\t\tEssence: "+query.total+"\n\n";
-			else return "\n\t\tEssence: "+query.total+"\n";
+			if(rank==0) return ">\t\tEssence: "+global.toFancyNum(query.total)+"\n\n";
+			else return "\n\t\tEssence: "+global.toFancyNum(query.total)+"\n";
 		}
 	);
 }
@@ -288,8 +288,8 @@ function getLuckRanking(globalRank, con, msg, count){
 	displayRanking(con,msg,count,globalRank,sql,
 		"Top "+count+" "+((globalRank)?"Global Luck Rankings":"Luck Rankings for "+msg.guild.name),
 		function(query,rank){
-			if(rank==0) return ">\t\tLuck: "+query.lcount+"\n\n";
-			else return "\n\t\tLuck: "+query.lcount+"\n";
+			if(rank==0) return ">\t\tLuck: "+global.toFancyNum(query.lcount)+"\n\n";
+			else return "\n\t\tLuck: "+global.toFancyNum(query.lcount)+"\n";
 		}
 	);
 }
@@ -311,8 +311,8 @@ function getCurseRanking(globalRank, con, msg, count){
 	displayRanking(con,msg,count,globalRank,sql,
 		"Top "+count+" "+((globalRank)?"Global Curse Rankings":"Curse Rankings for "+msg.guild.name),
 		function(query,rank){
-			if(rank==0) return ">\t\tLuck: "+query.lcount+"\n\n";
-			else return "\n\t\tLuck: "+query.lcount+"\n";
+			if(rank==0) return ">\t\tLuck: "+global.toFancyNum(query.lcount)+"\n\n";
+			else return "\n\t\tLuck: "+global.toFancyNum(query.lcount)+"\n";
 		}
 	);
 }
@@ -337,7 +337,7 @@ function getGuildRanking(con, msg, count){
 		var embed = "```md\n< Top "+count+" Guild OwO Rankings >\n";
 		if(rows[1][0]!==undefined&&rows[1][0]!==null){
 			embed += "> Your Guild Rank: "+rows[1][0].rank+"\n";
-			embed += ">\t\tcollectively said owo "+rows[1][0].count+" times!\n\n";
+			embed += ">\t\tcollectively said owo "+global.toFancyNum(rows[1][0].count)+" times!\n\n";
 		}
 		for(let ele of rows[0]){
 			var id = String(ele.id);
@@ -345,7 +345,7 @@ function getGuildRanking(con, msg, count){
 			if(name == null|| name == "")
 				name = "Guild Left Bot";
 			name = name.replace("discord.gg","discord,gg");
-			embed += "#"+rank+"\t"+name+"\n\t\tcollectively said owo "+ele.count+" times!\n";
+			embed += "#"+rank+"\t"+name+"\n\t\tcollectively said owo "+global.toFancyNum(ele.count)+" times!\n";
 			rank++;
 		}
 		var date = new Date();
