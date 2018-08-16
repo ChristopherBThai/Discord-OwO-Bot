@@ -47,6 +47,7 @@ function display(con, msg, args){
 	var money = false;
 	var rep = false;
 	var pet = false;
+	var huntbot,luck,curse;
 
 	for(var i=0;i<args.length;i++){
 		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet){
@@ -56,6 +57,9 @@ function display(con, msg, args){
 			else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="c"||args[i]==="m") money = true;
 			else if(args[i]==="cookies"||args[i]==="cookie"||args[i]=== "rep"||args[i]==="r") rep = true;
 			else if(args[i]==="pets"||args[i]==="pet") pet = true;
+			else if(args[i]==="huntbot"||args[i]==="hb"||args[i]==="autohunt") huntbot= true;
+			else if(args[i]==="luck") luck = true;
+			else if(args[i]==="curse") curse = true;
 			else if(args[i]==="global"||args[i]==="g") aglobal = true;
 			else invalid = true;
 		}else if(args[i]==="global"||args[i]==="g") aglobal = true;
@@ -72,6 +76,9 @@ function display(con, msg, args){
 		else if(money) getMoneyRanking(aglobal,con,msg);
 		else if(rep) getRepRanking(aglobal,con,msg);
 		else if(pet) getPetRanking(aglobal,con,msg);
+		else if(huntbot) getHuntbotRanking(aglobal,con,msg);
+		else if(luck) getLuckRanking(aglobal,con,msg);
+		else if(curse) getCurseRanking(aglobal,con,msg);
 		else getPointRanking(aglobal,con,msg);
 	}
 }
@@ -135,7 +142,7 @@ function displayRanking(con,msg,sql,title,subText){
 		}
 
 		//Add top and bottom
-		embed = "```md\n< "+uname+"'s "+title+" >\nYour rank is: "+userRank+"\n>"+subText(rows[2][0])+"\n\n"+((userRank>3)?">...\n":"")+ embed;
+		embed = "```md\n< "+uname+"'s "+title+" >\n> Your rank is: "+userRank+"\n>"+subText(rows[2][0])+"\n\n"+((userRank>3)?">...\n":"")+ embed;
 		if(rank-userRank==3) embed += ">...\n";
 
 		var date = new Date();
@@ -183,7 +190,7 @@ function getZooRanking(globalRank,con,msg){
 	displayRanking(con,msg,sql,
 			((globalRank)?"Global ":"")+"Zoo Ranking",
 			function(query){
-				return "\t\t"+query.points+" zoo points: "+animalUtil.zooScore(query);
+				return "\t\t"+global.toFancyNum(query.points)+" zoo points: "+animalUtil.zooScore(query);
 			});
 }
 
@@ -203,7 +210,7 @@ function getMoneyRanking(globalRank,con,msg){
 	displayRanking(con,msg,sql,
 			((globalRank)?"Global ":"")+"Money Ranking",
 			function(query){
-				return "\t\tCowoncy: "+query.money;
+				return "\t\tCowoncy: "+global.toFancyNum(query.money);
 			});
 }
 
@@ -223,23 +230,21 @@ function getRepRanking(globalRank,con,msg){
 	displayRanking(con,msg,sql,
 			((globalRank)?"Global ":"")+"Cookie Ranking",
 			function(query){
-				return "\t\tCookies: "+query.count;
+				return "\t\tCookies: "+global.toFancyNum(query.count);
 			});
 }
 
 function getPetRanking(globalRank,con,msg){
-	msg.channel.send("Currently Disabled");
-	return;
 	var sql;
 	if(globalRank){
-		sql = "SELECT u.id,u.lvl,u.xp,u.att,u.hp,u.nickname, u1.id,u1.lvl,u1.xp,u1.att,u1.hp,u1.nickname FROM animal AS u LEFT JOIN ( SELECT id,lvl,xp,att,hp,nickname FROM animal ORDER BY lvl DESC, xp DESC) AS u1 ON u1.lvl > u.lvl OR (u1.lvl = u.lvl AND u1.xp > u.xp) WHERE u.id = "+msg.author.id+" ORDER BY u.lvl DESC, u.xp DESC,u1.lvl ASC, u1.xp ASC LIMIT 2;";
-		sql += "SELECT u.id,u.lvl,u.xp,u.att,u.hp,u.nickname, u1.id,u1.lvl,u1.xp,u1.att,u1.hp,u1.nickname FROM animal AS u LEFT JOIN ( SELECT id,lvl,xp,att,hp,nickname FROM animal ORDER BY lvl ASC, xp ASC) AS u1 ON u1.lvl < u.lvl OR (u1.lvl = u.lvl AND u1.xp < u.xp) WHERE u.id = "+msg.author.id+" ORDER BY u.lvl DESC, u.xp DESC,u1.lvl DESC, u1.xp DESC LIMIT 2;";
-		sql += "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY lvl DESC, xp DESC LIMIT 1;";
+		sql = "SELECT * FROM animal WHERE (lvl,xp) > (SELECT lvl,xp FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name) ORDER BY lvl ASC, xp ASC LIMIT 2;";
+		sql += "SELECT * FROM animal WHERE (lvl,xp)  < (SELECT lvl,xp FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name) ORDER BY lvl DESC, xp DESC LIMIT 2;";
+		sql += "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c NATURAL JOIN cowoncy WHERE c.id = "+msg.author.id+" AND c.name = pet  ORDER BY lvl DESC, xp DESC LIMIT 1;";
 	}else{
 		var users = global.getids(msg.guild.members);
-		sql = "SELECT u.id,u.lvl,u.xp,u.att,u.hp,u.nickname, u1.id,u1.lvl,u1.xp,u1.att,u1.hp,u1.nickname FROM animal AS u LEFT JOIN ( SELECT id,lvl,xp,att,hp,nickname FROM animal WHERE id IN ("+users+") ORDER BY lvl DESC, xp DESC) AS u1 ON u1.lvl > u.lvl OR (u1.lvl = u.lvl AND u1.xp > u.xp) WHERE u.id = "+msg.author.id+" ORDER BY u.lvl DESC, u.xp DESC,u1.lvl ASC, u1.xp ASC LIMIT 2;";
-		sql += "SELECT u.id,u.lvl,u.xp,u.att,u.hp,u.nickname, u1.id,u1.lvl,u1.xp,u1.att,u1.hp,u1.nickname FROM animal AS u LEFT JOIN ( SELECT id,lvl,xp,att,hp,nickname FROM animal WHERE id IN ("+users+") ORDER BY lvl ASC, xp ASC) AS u1 ON u1.lvl < u.lvl OR (u1.lvl = u.lvl AND u1.xp < u.xp) WHERE u.id = "+msg.author.id+" ORDER BY u.lvl DESC, u.xp DESC,u1.lvl DESC, u1.xp DESC LIMIT 2;";
-		sql += "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE id IN ("+users+") AND ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY lvl DESC, xp DESC LIMIT 1;";
+		sql = "SELECT * FROM animal WHERE id IN ("+users+") AND (lvl,xp) > (SELECT lvl,xp FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name) ORDER BY lvl ASC, xp ASC LIMIT 2;";
+		sql += "SELECT * FROM animal WHERE id IN ("+users+") AND (lvl,xp) < (SELECT lvl,xp FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name) ORDER BY lvl DESC, xp DESC LIMIT 2;";
+		sql += "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE id IN ("+users+") AND ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c NATURAL JOIN cowoncy WHERE c.id = "+msg.author.id+" AND c.name = pet ORDER BY lvl DESC, xp DESC LIMIT 1;";
 	}
 
 	displayRanking(con,msg,sql,
@@ -247,7 +252,7 @@ function getPetRanking(globalRank,con,msg){
 			function(query){
 				var result = "\t\t";
 				if(query.nickname!=null)
-					result = query.nickname+" ";
+					result += query.nickname+" ";
 				result += "Lvl:"+query.lvl+" Att:"+query.att+" Hp:"+query.hp;
 				return result;
 			});
@@ -256,46 +261,60 @@ function getPetRanking(globalRank,con,msg){
 function getHuntbotRanking(globalRank,con,msg){
 	var sql;
 	if(globalRank){
-		sql = "SELECT u.id,u.count ,u1.id,u1.count FROM rep AS u LEFT JOIN ( SELECT id,count FROM rep ORDER BY count ASC ) AS u1 ON u1.count > u.count WHERE u.id = "+msg.author.id+" ORDER BY u1.count ASC LIMIT 2;";
-		sql += "SELECT u.id,u.count ,u1.id,u1.count FROM rep AS u LEFT JOIN ( SELECT id,count FROM rep ORDER BY count DESC ) AS u1 ON u1.count < u.count WHERE u.id = "+msg.author.id+" ORDER BY u1.count DESC LIMIT 2;";
-		sql += "SELECT id,count,(SELECT COUNT(*)+1 FROM rep WHERE count > u.count ) AS rank FROM rep u WHERE u.id = "+msg.author.id+";";
+		sql = "SELECT id,(essence+cost+efficiency+duration) as total FROM autohunt WHERE (essence+cost+efficiency+duration) > (SELECT (essence+cost+efficiency+duration) FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total ASC LIMIT 2;"
+		sql += "SELECT id,(essence+cost+efficiency+duration) as total FROM autohunt WHERE (essence+cost+efficiency+duration) < (SELECT (essence+cost+efficiency+duration) FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total DESC LIMIT 2;"
+		sql += "SELECT id,(essence+efficiency+duration+cost) as total, (SELECT COUNT(*)+1 FROM autohunt WHERE (essence+efficiency+duration+cost) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+";";
 	}else{
 		var users = global.getids(msg.guild.members);
-		sql = "SELECT u.id,u.count ,u1.id,u1.count FROM rep AS u LEFT JOIN ( SELECT id,count FROM rep WHERE id IN ("+users+") ORDER BY count ASC ) AS u1 ON u1.count > u.count WHERE u.id = "+msg.author.id+" ORDER BY u1.count ASC LIMIT 2;";
-		sql   +=  "SELECT u.id,u.count ,u1.id,u1.count FROM rep AS u LEFT JOIN ( SELECT id,count FROM rep WHERE id IN ("+users+") ORDER BY count DESC ) AS u1 ON u1.count < u.count WHERE u.id = "+msg.author.id+" ORDER BY u1.count DESC LIMIT 2;";
-		sql   +=  "SELECT id,count,(SELECT COUNT(*)+1 FROM rep WHERE count > u.count AND id IN ("+users+") ) AS rank FROM rep u WHERE u.id = "+msg.author.id+";";
+		sql = "SELECT id,(essence+cost+efficiency+duration) as total FROM autohunt WHERE id IN ("+users+") AND (essence+cost+efficiency+duration) > (SELECT (essence+cost+efficiency+duration) FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total ASC LIMIT 2;"
+		sql += "SELECT id,(essence+cost+efficiency+duration) as total FROM autohunt WHERE id IN ("+users+") AND (essence+cost+efficiency+duration) < (SELECT (essence+cost+efficiency+duration) FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total DESC LIMIT 2;"
+		sql += "SELECT id,(essence+efficiency+duration+cost) as total, (SELECT COUNT(*)+1 FROM autohunt WHERE id IN ("+users+") AND (essence+efficiency+duration+cost) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+";";
 	}
 
 	displayRanking(con,msg,sql,
 			((globalRank)?"Global ":"")+"HuntBot Ranking",
 			function(query){
-				return;
+				return "\t\tEssence: "+global.toFancyNum(query.total);
 			});
 }
 
 function getLuckRanking(globalRank,con,msg){
 	var sql;
 	if(globalRank){
+		sql = "SELECT id,lcount FROM luck WHERE lcount > (SELECT lcount FROM luck WHERE id = "+msg.author.id+") ORDER BY lcount ASC LIMIT 2;"
+		sql += "SELECT id,lcount FROM luck WHERE lcount < (SELECT lcount FROM luck WHERE id = "+msg.author.id+") ORDER BY lcount DESC LIMIT 2;"
+		sql += "SELECT id,lcount,(SELECT COUNT(*)+1 FROM luck WHERE lcount > u.lcount ) AS rank FROM luck u WHERE u.id = "+msg.author.id+";";
 	}else{
+		var users = global.getids(msg.guild.members);
+		sql =  "SELECT id,lcount FROM luck WHERE id IN ("+users+") AND lcount > (SELECT lcount FROM luck WHERE id = "+msg.author.id+") ORDER BY lcount ASC LIMIT 2;"
+		sql += "SELECT id,lcount FROM luck WHERE id IN ("+users+") AND lcount < (SELECT lcount FROM luck WHERE id = "+msg.author.id+") ORDER BY lcount DESC LIMIT 2;"
+		sql += "SELECT id,lcount,(SELECT COUNT(*)+1 FROM luck WHERE lcount > u.lcount AND id IN ("+users+") ) AS rank FROM luck u WHERE u.id = "+msg.author.id+";";
 	}
 
 	displayRanking(con,msg,sql,
 			((globalRank)?"Global ":"")+"Luck Ranking",
 			function(query){
-				return;
+				return "\t\tLuck: "+global.toFancyNum(query.lcount);
 			});
 }
 
 function getCurseRanking(globalRank,con,msg){
 	var sql;
 	if(globalRank){
+		sql = "SELECT id,lcount FROM luck WHERE lcount < (SELECT lcount FROM luck WHERE id = "+msg.author.id+") ORDER BY lcount DESC LIMIT 2;"
+		sql += "SELECT id,lcount FROM luck WHERE lcount > (SELECT lcount FROM luck WHERE id = "+msg.author.id+") ORDER BY lcount ASC LIMIT 2;"
+		sql += "SELECT id,lcount,(SELECT COUNT(*)+1 FROM luck WHERE lcount < u.lcount ) AS rank FROM luck u WHERE u.id = "+msg.author.id+";";
 	}else{
+		var users = global.getids(msg.guild.members);
+		sql =  "SELECT id,lcount FROM luck WHERE id IN ("+users+") AND lcount < (SELECT lcount FROM luck WHERE id = "+msg.author.id+") ORDER BY lcount DESC LIMIT 2;"
+		sql += "SELECT id,lcount FROM luck WHERE id IN ("+users+") AND lcount > (SELECT lcount FROM luck WHERE id = "+msg.author.id+") ORDER BY lcount ASC LIMIT 2;"
+		sql += "SELECT id,lcount,(SELECT COUNT(*)+1 FROM luck WHERE lcount < u.lcount AND id IN ("+users+") ) AS rank FROM luck u WHERE u.id = "+msg.author.id+";";
 	}
 
 	displayRanking(con,msg,sql,
 			((globalRank)?"Global ":"")+"Curse Ranking",
 			function(query){
-				return;
+				return "\t\tLuck: "+global.toFancyNum(query.lcount);
 			});
 }
 
@@ -335,7 +354,7 @@ function getGuildRanking(con, msg, id){
 				if(name == null|| name == "")
 					name = "Guild Left Bot";
 				name = name.replace("discord.gg","discord,gg");
-				embed += "#"+rank+"\t"+name+"\n\t\tcollectively said owo "+ele.count+" times!\n";
+				embed += "#"+rank+"\t"+name+"\n\t\tcollectively said owo "+global.toFancyNum(ele.count)+" times!\n";
 				rank++;
 			}else if(rank==0)
 				rank = 1;
@@ -347,7 +366,7 @@ function getGuildRanking(con, msg, id){
 		if(uname == null|| uname == "")
 			uname = "Guild Left Bot";
 		uname = uname.replace("discord.gg","discord,gg");
-		embed += "< "+rank+"   "+uname+" >\n\t\tcollectively said owo "+me.count+" times!\n";
+		embed += "< "+rank+"   "+uname+" >\n\t\tcollectively said owo "+global.toFancyNum(me.count)+" times!\n";
 		rank++;
 
 		//People below user
@@ -358,7 +377,7 @@ function getGuildRanking(con, msg, id){
 				if(name == null|| name == "")
 					name = "Guild Left Bot";
 				name = name.replace("discord.gg","discord,gg");
-				embed += "#"+rank+"\t"+name+"\n\t\tcollectively said owo "+ele.count+" times!\n";
+				embed += "#"+rank+"\t"+name+"\n\t\tcollectively said owo "+global.toFancyNum(ele.count)+" times!\n";
 				rank++;
 			}
 
@@ -366,9 +385,9 @@ function getGuildRanking(con, msg, id){
 
 		//Add top and bottom
 		if(guildRank>3)
-			embed = "```md\n< "+uname+"'s Global Ranking >\nYour guild rank is: "+guildRank+"\n>\t\tcollectively said owo "+rows[2][0].count+" times!\n\n>...\n" + embed;
+			embed = "```md\n< "+uname+"'s Global Ranking >\n> Your guild rank is: "+guildRank+"\n>\t\tcollectively said owo "+global.toFancyNum(rows[2][0].count)+" times!\n\n>...\n" + embed;
 		else
-			embed = "```md\n< "+uname+"'s Global Ranking >\nYour guild rank is: "+guildRank+"\n\n>\t\tcollectively said owo "+rows[2][0].count+" times!\n\n" + embed;
+			embed = "```md\n< "+uname+"'s Global Ranking >\n> Your guild rank is: "+guildRank+"\n>\t\tcollectively said owo "+global.toFancyNum(rows[2][0].count)+" times!\n\n" + embed;
 
 		if(rank-guildRank==3)
 			embed += ">...\n";
