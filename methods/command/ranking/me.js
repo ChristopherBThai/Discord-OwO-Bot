@@ -8,7 +8,7 @@ module.exports = new CommandInterface({
 	
 	alias:["my","me","guild"],
 
-	args:"points|guild|zoo|money|cookie|pet [global]",
+	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse [global]",
 
 	desc:"Displays your ranking of each catagory!\nYou can choose you rank within the server or globally!\nYou can also shorten the command like in the example!",
 
@@ -50,7 +50,7 @@ function display(con, msg, args){
 	var huntbot,luck,curse;
 
 	for(var i=0;i<args.length;i++){
-		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet){
+		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet&&!huntbot&&!luck&&!curse){
 			if(args[i]=== "points"||args[i]==="point"||args[i]==="p") points = true;
 			else if(args[i]==="guild"||args[i]==="server"||args[i]==="g"||args[i]==="s") guild = true;
 			else if(args[i]=== "zoo"||args[i]==="z") zoo = true;

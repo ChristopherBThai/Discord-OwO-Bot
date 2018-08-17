@@ -8,7 +8,7 @@ module.exports = new CommandInterface({
 	
 	alias:["top","rank","ranking"],
 
-	args:"points|guild|zoo|money|cookie|pet|huntbot [global] {count}",
+	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse [global] {count}",
 
 	desc:"Displays the top ranking of each catagory!",
 
@@ -49,7 +49,7 @@ function display(con, msg, args){
 	var count = 5;
 
 	for(var i=0;i<args.length;i++){
-		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet){
+		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet&&!huntbot&&!luck&&!curse){
 			if(args[i]=== "points"||args[i]==="point"||args[i]==="p") points = true;
 			else if(args[i]==="guild"||args[i]==="server"||args[i]==="s"||args[i]==="g") guild = true;
 			else if(args[i]=== "zoo"||args[i]==="z") zoo = true;
@@ -255,11 +255,11 @@ function getHuntbotRanking(globalRank, con, msg, count){
 	var sql;
 	if(globalRank){
 		sql = "SELECT id,(essence+efficiency+duration+cost) as total FROM autohunt ORDER BY total DESC LIMIT "+count+";";
-		sql +=  "SELECT id,(essence+efficiency+duration+cost) as total, (SELECT COUNT(*)+1 FROM animal WHERE (essence+efficiency+duration+cost) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+" ORDER BY total DESC LIMIT 1;";
+		sql +=  "SELECT id,(essence+efficiency+duration+cost) as total, (SELECT COUNT(*)+1 FROM autohunt WHERE (essence+efficiency+duration+cost) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+" ORDER BY total DESC LIMIT 1;";
 	}else{
 		var users = global.getids(msg.guild.members);
 		sql = "SELECT id,(essence+efficiency+duration+cost) as total FROM autohunt WHERE id IN ("+users+") ORDER BY total DESC LIMIT "+count+";";
-		sql +=  "SELECT id,(essence+efficiency+duration+cost) as total, (SELECT COUNT(*)+1 FROM animal WHERE id IN ("+users+") AND (essence+efficiency+duration+cost) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+" ORDER BY total DESC LIMIT 1;";
+		sql +=  "SELECT id,(essence+efficiency+duration+cost) as total, (SELECT COUNT(*)+1 FROM autohunt WHERE id IN ("+users+") AND (essence+efficiency+duration+cost) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+" ORDER BY total DESC LIMIT 1;";
 	}
 
 	displayRanking(con,msg,count,globalRank,sql,
