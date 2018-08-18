@@ -123,7 +123,7 @@ function displayRanking(con,msg,count,globalRank,sql,title,subText){
 		};
 		var date = new Date();
 		embed += (date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
-		msg.channel.send(embed)
+		msg.channel.send(embed,{split:{prepend:'```md\n',append:'```'}})
 			.catch(err => console.error(err));
 
 	});
@@ -194,7 +194,7 @@ function getMoneyRanking(globalRank, con, msg, count){
 	}
 
 	displayRanking(con,msg,count,globalRank,sql,
-		"Top "+count+" "+((globalRank)?"Global Money Rankings":"Cookie Rankings for "+msg.guild.name),
+		"Top "+count+" "+((globalRank)?"Global Cowoncy Rankings":"Cowoncy Rankings for "+msg.guild.name),
 		function(query,rank){
 			if(rank==0) return ">\t\tCowoncy: "+global.toFancyNum(query.money)+"\n\n";
 			else return "\n\t\tCowoncy: "+global.toFancyNum(query.money)+"\n";

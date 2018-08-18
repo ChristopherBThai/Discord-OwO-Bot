@@ -37,6 +37,8 @@ module.exports = new CommandInterface({
 			return;
 		}
 
+		if(amount>1000000) amount = 1000000;
+
 
 		//Check if valid user
 		var user = await global.getUser(id);
@@ -52,20 +54,18 @@ module.exports = new CommandInterface({
 		}
 
 		//Gives money
-		var sql = "SELECT money FROM cowoncy WHERE id = "+msg.author.id+";";
+		var sql = `SELECT money FROM cowoncy WHERE id = ${msg.author.id} AND money > ${amount};
+			CALL CowoncyTransfer(${msg.author.id},${id},${amount})`;
 		con.query(sql,function(err,rows,fields){
 			if(err){console.error(err);return;}
+			if(rows[0][0]&&rows[0][0].money)
+				p.logger.value('total_cowoncy',rows[0][0].money,['id:'+msg.author.id]);
 			if(rows[0]==undefined||rows[0].money<amount){
 				p.send("**🚫 |** Silly **"+msg.author.username+"**, you don't have enough cowoncy!",3000);
 			}else{
-				sql = "UPDATE cowoncy SET money = money - "+amount+" WHERE id = "+msg.author.id+";"+
-					"INSERT INTO cowoncy (id,money) VALUES ("+id+","+amount+") ON DUPLICATE KEY UPDATE money = money + "+amount+";";
-				con.query(sql,function(err,rows,fields){
-					if(err){console.error(err);return;}
-					p.logger.value('cowoncy',(amount),['command:given','id:'+id,'by:'+msg.author.id]);
-					p.logger.value('cowoncy',(amount*-1),['command:give','id:'+msg.author.id,'to:'+id]);
-					p.send("**💳 | "+msg.author.username+"** sent **"+(p.global.toFancyNum(amount))+" cowoncy** to **"+user+"**!");
-				});
+				p.logger.value('cowoncy',(amount),['command:given','id:'+id,'by:'+msg.author.id]);
+				p.logger.value('cowoncy',(amount*-1),['command:give','id:'+msg.author.id,'to:'+id]);
+				p.send("**💳 | "+msg.author.username+"** sent **"+(p.global.toFancyNum(amount))+" cowoncy** to **"+user+"**!");
 			}
 		});
 	}

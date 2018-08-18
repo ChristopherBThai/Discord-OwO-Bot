@@ -24,18 +24,20 @@ module.exports = new CommandInterface({
 		var global=p.global,con=p.con,msg=p.msg,args=p.args;
 
 		var name = undefined;
-		var count = "all";
+		var count = 1;
 
 		//if arg0 is a count
 		if(global.isInt(args[0])||args[0]=="all"){
 			if(args[0]!="all") count = parseInt(args[0]);
+			else count = "all";
 			name = args[1];
 
 		//if arg1 is a count (or not)
 		}else{
-			if(global.isInt(args[1])||args[1]=="all")
+			if(global.isInt(args[1])||args[1]=="all"){
 				if(args[1]!="all") count = parseInt(args[1]);
-			else if(args.length==2){
+				else count = "all";
+			}else if(args.length==2){
 				p.send("**🚫 | "+msg.author.username+"**, Invalid arguments!",3000);
 				return;
 			}
@@ -72,10 +74,10 @@ function sellAnimal(msg,con,animal,count,send,global,p){
 		send("**🚫 |** You need to sell more than 1 silly~",3000);
 		return;
 	}
-	var sql = "UPDATE cowoncy NATURAL JOIN animal SET money = money + "+(count*animal.price)+", count = count - "+count+" WHERE id = "+msg.author.id+" AND name = '"+animal.value+"' AND count >= "+count+";";
+	var sql = "UPDATE cowoncy NATURAL JOIN animal SET money = money + "+(count*animal.price)+", count = count - "+count+", sellcount = sellcount + "+count+" WHERE id = "+msg.author.id+" AND name = '"+animal.value+"' AND count >= "+count+";";
 	if(count=="all"){
 		sql = "SELECT count FROM animal WHERE id = "+msg.author.id+" AND name = '"+animal.value+"';";
-		sql += "UPDATE cowoncy NATURAL JOIN animal SET money = money + (count*"+animal.price+"), count = 0 WHERE id = "+msg.author.id+" AND name = '"+animal.value+"' AND count >= 1;";
+		sql += "UPDATE cowoncy NATURAL JOIN animal SET money = money + (count*"+animal.price+"), sellcount = sellcount + count, count = 0 WHERE id = "+msg.author.id+" AND name = '"+animal.value+"' AND count >= 1;";
 	}
 	con.query(sql,function(err,result){
 		if(err) {console.error(err);return;}
@@ -100,7 +102,7 @@ function sellRank(msg,con,rank,send,global,p){
 	var animals = "('"+rank.animals.join("','")+"')";
 	var sql = "SELECT SUM(count) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
 	sql += "UPDATE cowoncy SET money = money + ((SELECT COALESCE(SUM(count),0) FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+")*"+rank.price+") WHERE id = "+msg.author.id+";";
-	sql += "UPDATE animal SET count = 0 WHERE id = "+msg.author.id+" AND name IN "+animals+" AND count > 0;";
+	sql += "UPDATE animal SET sellcount = sellcount + count, count = 0 WHERE id = "+msg.author.id+" AND name IN "+animals+" AND count > 0;";
 	con.query(sql,function(err,result){
 		if(err) {console.error(err);return;}
 		if(result[2].affectedRows<=0){
