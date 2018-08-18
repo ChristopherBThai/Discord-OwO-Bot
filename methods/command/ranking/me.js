@@ -90,7 +90,7 @@ function displayRanking(con,msg,sql,title,subText){
 		var below = rows[1];
 		var me = rows[2][0];
 		if(me===null||me===undefined){
-			channel.send("You're at the very bottom c:")
+			msg.channel.send("You're at the very bottom c:")
 				.catch(err => console.error(err));
 			return;
 		}
@@ -147,7 +147,8 @@ function displayRanking(con,msg,sql,title,subText){
 
 		var date = new Date();
 		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
-		msg.channel.send(embed).catch(err => console.error(err));
+		msg.channel.send(embed,{split:{prepend:'```md\n',append:'```'}})
+			.catch(err => console.error(err));
 	});
 }
 

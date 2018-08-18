@@ -107,7 +107,8 @@ module.exports = new CommandInterface({
 				text += "\n**Zoo Points: __"+(p.global.toFancyNum(total))+"__**\n\t**";
 				text += animalUtil.zooScore(count)+"**";
 			}
-			p.send(text)
+			p.msg.channel.send(text,{split:true})
+				.catch(err => console.error(err));
 		});
 	}
 
