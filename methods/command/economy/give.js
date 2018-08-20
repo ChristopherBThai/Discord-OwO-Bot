@@ -60,7 +60,7 @@ module.exports = new CommandInterface({
 			if(err){console.error(err);return;}
 			if(rows[0][0]&&rows[0][0].money)
 				p.logger.value('total_cowoncy',rows[0][0].money,['id:'+msg.author.id]);
-			if(rows[0]==undefined||rows[0].money<amount){
+			if(rows[0][0]==undefined||rows[0][0].money<amount){
 				p.send("**🚫 |** Silly **"+msg.author.username+"**, you don't have enough cowoncy!",3000);
 			}else{
 				p.logger.value('cowoncy',(amount),['command:given','id:'+id,'by:'+msg.author.id]);
