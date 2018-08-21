@@ -53,7 +53,11 @@ exports.getUser = async function(mention,cache){
 		id = id[0];
 	else 
 		return undefined;
-	return await client.fetchUser(id,cache);
+	try{
+		return await client.fetchUser(id,cache);
+	}catch(e) {
+		return undefined;
+	}
 }
 
 /*
@@ -135,6 +139,8 @@ exports.validAnimal = function(animal){
 	if(animal!=undefined)
 		animal = animal.toLowerCase();
 	var ranimal = animaljson.list[animals[animal]];
+	if(ranimal)
+		ranimal["name"] = animals[animal];
 	return ranimal
 }
 
