@@ -42,9 +42,10 @@ module.exports = new CommandInterface({
 				return;
 			}
 			var emoji = ((animal.uni)?animal.uni:animal.value);
-			if(emoji.search(/:[0-9]+>/)>=0)
-				emoji = emoji.match(/[0-9]+/);
+			if(temp = emoji.match(/:[0-9]+>/))
+				emoji = temp[0].match(/[0-9]+/);
 			if(emoji) emoji = emoji[0];
+			console.log(emoji);
 			emoji = p.client.emojis.get(emoji);
 
 			var rankEmoji = animals.ranks[animal.rank];
@@ -71,7 +72,7 @@ module.exports = new CommandInterface({
 			if(result[0][0].nickname)
 				nickname = "**Nickname:** "+result[0][0].nickname+"\n";
 
-			var desc = "";
+			var desc = "*No description created\nHave a fun/creative description?\nUse 'owo feedback'!*";
 			if(animal.desc){
 				desc = "*"+animal.desc+"*";
 				if(descID = desc.match(/\?[0-9]+\?/))
