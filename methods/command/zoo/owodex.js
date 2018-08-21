@@ -42,11 +42,13 @@ module.exports = new CommandInterface({
 				return;
 			}
 			var emoji = ((animal.uni)?animal.uni:animal.value);
-			if(temp = emoji.match(/:[0-9]+>/))
-				emoji = temp[0].match(/[0-9]+/);
-			if(emoji) emoji = emoji[0];
-			console.log(emoji);
-			emoji = p.client.emojis.get(emoji);
+			if(temp = emoji.match(/:[0-9]+>/)){
+				temp = "https://cdn.discordapp.com/emojis/"+temp[0].match(/[0-9]+/)[0]+".";
+				if(emoji.match(/<a:/))
+					temp += "gif";
+				else
+					temp += "png";
+			}
 
 			var rankEmoji = animals.ranks[animal.rank];
 
