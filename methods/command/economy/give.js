@@ -54,7 +54,7 @@ module.exports = new CommandInterface({
 		}
 
 		//Gives money
-		var sql = `SELECT money FROM cowoncy WHERE id = ${msg.author.id} AND money > ${amount};
+		var sql = `SELECT money FROM cowoncy WHERE id = ${msg.author.id} AND money >= ${amount};
 			CALL CowoncyTransfer(${msg.author.id},${id},${amount})`;
 		con.query(sql,function(err,rows,fields){
 			if(err){console.error(err);return;}
