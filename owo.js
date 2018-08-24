@@ -5,7 +5,21 @@ else var auth = require('../tokens/owo-auth.json');
 const login = require('../tokens/owo-login.json');
 
 const Discord = require("discord.js");
-const client = new Discord.Client();
+const client = new Discord.Client({
+	messageCacheMaxSize:100,
+	messageCacheLifetime:1800,
+	messageSweepInterval:3600,
+	disabledEvents:[
+		"TYPEING_START",
+		"VOICE_SERVER_UPDATE",
+		"VOICE_STATE_UPDATE",
+		"USER_NOTE_UPDATE",
+		"CHANNEL_PINS_UPDATE",
+		"MESSAGE_UPDATE",
+		"RELATIONSHIP_ADD",
+		"RELATIONSHIP_REMOVE"
+	],
+});
 const DBL = require("dblapi.js");
 const dbl = new DBL(auth.dbl);
 
