@@ -1,5 +1,7 @@
 const CommandInterface = require('../../commandinterface.js');
 
+const maxBet = 100000;
+
 module.exports = new CommandInterface({
 
 	alias:["lottery","bet","lotto"],
@@ -20,7 +22,7 @@ module.exports = new CommandInterface({
 		if(p.args.length>0)
 			bet(p.con,p.msg,p.args,p.global,p);
 		else
-			display(p.con,p.msg);
+			display(p.con,p.msg,p);
 	}
 });
 
@@ -48,18 +50,24 @@ function bet(con,msg,args,global,p){
 	}
 
 	var sql = "SELECT money FROM cowoncy WHERE id = "+msg.author.id+";";
+	sql += "SELECT * FROM lottery WHERE id = "+msg.author.id+" AND valid = 1;";
 	con.query(sql,function(err,result){
 		if(err) throw err;
-		if(result[0]==undefined||result[0].money<amount||result[0]==0){
-			msg.channel.send("**🚫 | "+msg.author.username+"**,  You don't have enough cowoncy!")
-				.then(message => message.delete(3000))
-				.catch(err => console.error(err));
+		if(!result[0][0]||result[0][0].money<amount){
+			p.send("**🚫 | "+msg.author.username+"**,  You don't have enough cowoncy!",3000)
 		}else{
-			if(all)
-				amount = parseInt(result[0].money);
+			if(all) amount = parseInt(result[0][0].money);
+
+			var prevBet = 0;
+			if(result[1][0]) prevBet = result[1][0].amount;
+			if(prevBet>=maxBet){
+				p.send("**🚫 | "+msg.author.username+"**,  You can only bet up to "+p.global.toFancyNum(maxBet)+" cowoncy!",3000);
+				return;
+			}
+
+			if(amount>maxBet-prevBet) amount = maxBet-prevBet;
 			var sql = "INSERT INTO lottery (id,channel,amount,valid) VALUES ("+msg.author.id+","+msg.channel.id+","+amount+",1) ON DUPLICATE KEY UPDATE amount = amount +"+amount+", valid = 1, channel = "+msg.channel.id+";"+
 				"SELECT SUM(amount) AS sum,COUNT(id) AS count FROM lottery WHERE valid = 1;"+
-				"SELECT * FROM lottery WHERE id = "+msg.author.id+";"+
 				"UPDATE cowoncy SET money = money - "+amount+" WHERE id = "+msg.author.id+";";
 			con.query(sql,function(err,result){
 				if(err) throw err;
@@ -68,13 +76,13 @@ function bet(con,msg,args,global,p){
 
 				var sum = parseInt(result[1][0].sum);
 				var count = result[1][0].count;
-				var bet = parseInt(result[2][0].amount);
+				var bet = prevBet + amount;
 				var chance = (bet/sum)*100;
 				if(chance>=.01)
 					chance = Math.trunc(chance*100)/100
 
 				const embed = {
-					  "description": "Lottery ends every day at 12AM PST! Good Luck!!",
+					  "description": "Lottery ends once a day! The maximum lottery submission is 100K cowoncy!",
 					  "color": 4886754,
 					  "timestamp": new Date(),
 					  "footer": {
@@ -87,12 +95,12 @@ function bet(con,msg,args,global,p){
 					  "fields": [
 						      {
 							            "name": "You added",
-							            "value": "```fix\n"+amount+" Cowoncy```",
+							            "value": "```fix\n"+p.global.toFancyNum(amount)+" Cowoncy```",
 							            "inline": true
 							          },
 						      {
 							            "name": "Your Total Submission",
-							            "value": "```fix\n"+bet+" Cowoncy```",
+							            "value": "```fix\n"+p.global.toFancyNum(bet)+" Cowoncy```",
 							            "inline": true
 							          },
 						      {
@@ -102,7 +110,7 @@ function bet(con,msg,args,global,p){
 							          },
 						      {
 							            "name": "Current Jackpot",
-							            "value": "```fix\n"+(sum+500)+" Cowoncy```",
+							            "value": "```fix\n"+p.global.toFancyNum(sum+500)+" Cowoncy```",
 							            "inline": true
 							          },
 						      {
@@ -121,7 +129,7 @@ function bet(con,msg,args,global,p){
 	});
 }
 
-function display(con,msg){
+function display(con,msg,p){
 	var sql = "SELECT SUM(amount) AS sum,COUNT(id) AS count FROM lottery WHERE valid = 1;"+
 		"SELECT * FROM lottery WHERE id = "+msg.author.id+" AND valid = 1;";
 	con.query(sql,function(err,result){
@@ -159,7 +167,7 @@ function display(con,msg){
 				"fields": [
 					{
 							"name": "Your Total Submission",
-							"value": "```fix\n"+bet+" Cowoncy```",
+							"value": "```fix\n"+p.global.toFancyNum(bet)+" Cowoncy```",
 							"inline": true
 							},
 					{
@@ -169,13 +177,13 @@ function display(con,msg){
 							},
 					{
 							"name": "Number of Risk Takers",
-							"value": "```fix\n"+count+" users```",
+							"value": "```fix\n"+p.global.toFancyNum(count)+" users```",
 							"inline": true
 							},
 
 					{
 							"name": "Current Jackpot",
-							"value": "```fix\n"+(sum+500)+" Cowoncy```",
+							"value": "```fix\n"+p.global.toFancyNum(sum+500)+" Cowoncy```",
 							"inline": true
 							},
 					{

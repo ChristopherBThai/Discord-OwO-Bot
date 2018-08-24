@@ -29,7 +29,7 @@ module.exports = new CommandInterface({
 		var sql = "INSERT INTO guild (id,count,young) VALUES ("+p.msg.guild.id+",0,1) ON DUPLICATE KEY UPDATE young = 1;";
 		p.con.query(sql,function(err,result){
 			if(err){ console.error(err); return;}
-				p.send("**⚙ |** This guild is now kid friendly! Any offensive words will be censored!");
+				p.send("**⚙ |** This guild is now kid friendly! Any offensive names in `battle` will be censored!");
 		});
 	}
 
