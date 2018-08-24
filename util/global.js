@@ -45,9 +45,7 @@ exports.isUser = function(id){
 /*
  * gets a user
  */
-exports.getUser = async function(mention,cache){
-	if(cache == undefined)
-		cache = false;
+exports.getUser = async function(mention,cache = false){
 	id = mention.match(/[0-9]+/);
 	if(id)
 		id = id[0];
