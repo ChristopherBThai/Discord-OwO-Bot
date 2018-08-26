@@ -1,11 +1,15 @@
 const macro = require('../../../../tokens/macro.js');
 const traits= {"efficiency":{"inc":10,"pow":1.748,"base":25,"upg":1,"max":215,"prefix":"/H"},
 		"duration":{"inc":10,"pow":1.7,"base":.5,"upg":.1,"max":235,"prefix":"H"},
-		"cost":{"inc":1000,"pow":3.4,"base":10,"upg":-1,"max":5,"prefix":" cowoncy"}};
+		"cost":{"inc":1000,"pow":3.4,"base":10,"upg":-1,"max":5,"prefix":" cowoncy"},
+		"gain":{"inc":10,"pow":1.8,"base":0,"upg":25,"max":200,"prefix":" essence/H"},
+		"exp":{"inc":10,"pow":1.8,"base":0,"upg":35,"max":200,"prefix":" xp/H"}};
 const bots = ["<:cbot:459996048379609098>","<:ubot:459996048660889600>","<:rbot:459996049361338379>","<:ebot:459996050174902272>","<:mbot:459996049784963073>","<a:lbot:459996050883608576>"];
 //test(traits.efficiency);
 //test(traits.duration);
 //test(traits.cost);
+//test(traits.exp);
+//test(traits.gain);
 
 exports.getLvl = function(xp,gain,trait){
 	totalxp = 0;
@@ -47,10 +51,12 @@ exports.getMaxXp = function(lvl,trait){
 
 function test(trait){
 	var total = 0;
+	var result = trait.base;
 	for(var i=1;i<=trait.max;i++){
 		var xp = Math.trunc(trait.inc*Math.pow(i,trait.pow));
 		total += xp;
-		console.log("["+i+"] "+total +" | "+xp);
+		result += trait.upg;
+		console.log("["+i+"] "+total +" | "+xp+"xp - "+result+trait.prefix);
 	}
 }
 

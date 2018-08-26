@@ -254,12 +254,12 @@ function getPetRanking(globalRank, con, msg, count){
 function getHuntbotRanking(globalRank, con, msg, count){
 	var sql;
 	if(globalRank){
-		sql = "SELECT id,(essence+efficiency+duration+cost) as total FROM autohunt ORDER BY total DESC LIMIT "+count+";";
-		sql +=  "SELECT id,(essence+efficiency+duration+cost) as total, (SELECT COUNT(*)+1 FROM autohunt WHERE (essence+efficiency+duration+cost) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+" ORDER BY total DESC LIMIT 1;";
+		sql = "SELECT id,(essence+efficiency+duration+cost+gain+exp) as total FROM autohunt ORDER BY total DESC LIMIT "+count+";";
+		sql +=  "SELECT id,(essence+efficiency+duration+cost+gain+exp) as total, (SELECT COUNT(*)+1 FROM autohunt WHERE (essence+efficiency+duration+cost+gain+exp) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+" ORDER BY total DESC LIMIT 1;";
 	}else{
 		var users = global.getids(msg.guild.members);
-		sql = "SELECT id,(essence+efficiency+duration+cost) as total FROM autohunt WHERE id IN ("+users+") ORDER BY total DESC LIMIT "+count+";";
-		sql +=  "SELECT id,(essence+efficiency+duration+cost) as total, (SELECT COUNT(*)+1 FROM autohunt WHERE id IN ("+users+") AND (essence+efficiency+duration+cost) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+" ORDER BY total DESC LIMIT 1;";
+		sql = "SELECT id,(essence+efficiency+duration+cost+gain+exp) as total FROM autohunt WHERE id IN ("+users+") ORDER BY total DESC LIMIT "+count+";";
+		sql +=  "SELECT id,(essence+efficiency+duration+cost+gain+exp) as total, (SELECT COUNT(*)+1 FROM autohunt WHERE id IN ("+users+") AND (essence+efficiency+duration+cost+gain+exp) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+" ORDER BY total DESC LIMIT 1;";
 	}
 
 	displayRanking(con,msg,count,globalRank,sql,
