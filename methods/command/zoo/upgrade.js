@@ -12,6 +12,12 @@ for(var i=0;i<cost.length;i++)
 const duration = ["duration","totaltime","time"];
 for(var i=0;i<duration.length;i++)
 	traits[duration[i]] = "duration";
+const gain = ["gain","essence"];
+for(var i=0;i<gain.length;i++)
+	traits[gain[i]] = "gain";
+const exp= ["exp","experience","pet"];
+for(var i=0;i<exp.length;i++)
+	traits[exp[i]] = "exp";
 
 
 module.exports = new CommandInterface({
@@ -56,7 +62,7 @@ module.exports = new CommandInterface({
 		
 		//Check if valid args
 		if(!trait){
-			p.send("**🚫 |** I could not find that autohunt trait!\n**<:blank:427371936482328596> |** You can choose from: `efficiency`, `duration`, or `cost`",3000);
+			p.send("**🚫 |** I could not find that autohunt trait!\n**<:blank:427371936482328596> |** You can choose from: `efficiency`, `duration`, `cost`, `gain`, or `exp`",5000);
 			return;
 		}
 		if(!count||count<=0){

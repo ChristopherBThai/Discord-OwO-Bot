@@ -44,8 +44,13 @@ function claim(msg,con,query,bot){
 		return {time:(((hour>0)?hour+"H ":"")+min+"M"),bar:percent.bar,percent:percent.percent,count:Math.trunc(query.huntcount*(timer/query.huntmin))};
 	}
 
+	var duration = query.huntmin/60;
+	//Get Total essence
+	var totalGain = Math.floor(autohuntutil.getLvl(query.gain,0,"gain").stat*duration);
+
 	var sql = "SELECT patreonAnimal FROM user WHERE id = "+msg.author.id+";";
-	sql += "UPDATE autohunt SET huntmin = 0,huntcount=0 WHERE id = "+msg.author.id+";";
+	sql += "UPDATE autohunt SET huntmin = 0,huntcount=0,essence = essence +"+totalGain+" WHERE id = "+msg.author.id+";";
+	sql += "SELECT * FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND pet = name;";
 	con.query(sql,function(err,result){
 		if(err) {console.error(err);return;}
 
@@ -53,6 +58,13 @@ function claim(msg,con,query,bot){
 		var patreon = false;
 		if(result[0][0]&&result[0][0].patreonAnimal==1)
 			patreon = true;
+
+		sql = "";
+		//Get total exp
+		var totalExp = Math.floor(autohuntutil.getLvl(query.exp,0,"exp").stat*duration);
+		sql += "UPDATE IGNORE cowoncy NATURAL JOIN animal SET xp = xp + "+totalExp+" WHERE id = "+msg.author.id+" AND pet = name;";
+
+		//Get all animal
 		var total = {};
 		var digits = 1;
 		for(var i=0;i<query.huntcount;i++){
@@ -66,10 +78,9 @@ function claim(msg,con,query,bot){
 			}
 		}
 		digits= Math.trunc(Math.log10(digits)+1);
-		var text = "**"+bot+" |** `BEEP BOOP. I AM BACK WITH "+query.huntcount+" ANIMALS`";
+		var text = "**"+bot+" |** `BEEP BOOP. I AM BACK WITH "+query.huntcount+" ANIMALS,`\n**<:blank:427371936482328596> |** `"+totalGain+" ESSENCE, AND "+totalExp+" EXPERIENCE`";
 		var tempText = [];
 		var count = 0;
-		sql = "";
 		for(var animal in total){
 			var animalString = animal+animalUtil.toSmallNum(total[animal].count,digits)+"  ";
 			var animalLoc = animals.order.indexOf(total[animal].rank);
@@ -165,19 +176,25 @@ function autohunt(msg,con,args,global,send){
 		}
 
 		//Extract info
-		var duration,efficiency,cost,essence,maxhunt;
+		var duration,efficiency,cost,essence,maxhunt,gain,exp;
 		if(result[0][0]){
 			duration = autohuntutil.getLvl(result[0][0].duration,0,"duration");
 			efficiency= autohuntutil.getLvl(result[0][0].efficiency,0,"efficiency");
 			cost= autohuntutil.getLvl(result[0][0].cost,0,"cost");
+			gain= autohuntutil.getLvl(result[0][0].gain,0,"gain");
+			exp= autohuntutil.getLvl(result[0][0].exp,0,"exp");
 			essence = result[0][0].essence;
 		}else{
 			duration = autohuntutil.getLvl(0,0,"duration");
 			efficiency= autohuntutil.getLvl(0,0,"efficiency");
 			cost= autohuntutil.getLvl(0,0,"cost");
+			gain= autohuntutil.getLvl(0,0,"gain");
+			exp= autohuntutil.getLvl(0,0,"exp");
 			essence = 0;
 		}
 		maxhunt = Math.floor(duration.stat*efficiency.stat);
+		maxgain = Math.floor(gain.stat*duration.stat);
+		maxexp = Math.floor(exp.stat*duration.stat);
 
 		//Format cowoncy
 		cowoncy -= cowoncy%cost.stat;
@@ -186,6 +203,9 @@ function autohunt(msg,con,args,global,send){
 
 		var huntcount = Math.trunc(cowoncy/cost.stat);
 		var huntmin = Math.ceil((huntcount/efficiency.stat)*60);
+		var tempPercent = huntmin/(duration.stat*60);
+		var huntgain = Math.floor(tempPercent*maxgain);
+		var huntexp = Math.floor(tempPercent*maxexp);
 
 		var sql = "UPDATE cowoncy SET money = money - "+cowoncy+" WHERE id = "+msg.author.id+";";
 		sql += "INSERT INTO autohunt (id,start,huntcount,huntmin,password) VALUES ("+msg.author.id+",NOW(),"+huntcount+","+huntmin+",'') ON DUPLICATE KEY UPDATE start = NOW(), huntcount = "+huntcount+",huntmin = "+huntmin+",password = '';";
@@ -197,7 +217,7 @@ function autohunt(msg,con,args,global,send){
 			var timer = "";
 			if(hour>0) timer = hour+"H"+min+"M";
 			else timer = min+"M";
-			send("**"+bot+" |** `BEEP BOOP. `**`"+msg.author.username+"`**`, YOU SPENT "+(global.toFancyNum(cowoncy))+" cowoncy`\n**<:blank:427371936482328596> |** `I WILL BE BACK IN "+timer+" WITH "+huntcount+" ANIMALS`");
+			send("**"+bot+" |** `BEEP BOOP. `**`"+msg.author.username+"`**`, YOU SPENT "+(global.toFancyNum(cowoncy))+" cowoncy`\n**<:blank:427371936482328596> |** `I WILL BE BACK IN "+timer+" WITH "+huntcount+" ANIMALS,`\n**<:blank:427371936482328596> |** `"+huntgain+" ESSENCE, AND "+huntexp+" EXPERIENCE`");
 		});
 	});
 }
@@ -217,29 +237,29 @@ function display(msg,con,send){
 			if(!hunting)
 				return;
 		}
-		var duration,efficiency,cost,essence,maxhunt;
+		var duration,efficiency,cost,essence,maxhunt,gain,exp;
 		if(result[0][0]){
 			duration = autohuntutil.getLvl(result[0][0].duration,0,"duration");
 			efficiency= autohuntutil.getLvl(result[0][0].efficiency,0,"efficiency");
 			cost= autohuntutil.getLvl(result[0][0].cost,0,"cost");
+			gain= autohuntutil.getLvl(result[0][0].gain,0,"gain");
+			exp= autohuntutil.getLvl(result[0][0].exp,0,"exp");
 			essence = result[0][0].essence;
 		}else{
 			duration = autohuntutil.getLvl(0,0,"duration");
 			efficiency= autohuntutil.getLvl(0,0,"efficiency");
 			cost= autohuntutil.getLvl(0,0,"cost");
+			gain= autohuntutil.getLvl(0,0,"gain");
+			exp= autohuntutil.getLvl(0,0,"exp");
 			essence = 0;
 		}
 
-		duration.percent = generatePercent(duration.currentxp,duration.maxxp).bar;
-		efficiency.percent = generatePercent(efficiency.currentxp,efficiency.maxxp).bar;
-		cost.percent = generatePercent(cost.currentxp,cost.maxxp).bar;
-
-		if(duration.max) duration.value = "`Lvl "+duration.lvl+" [MAX]`\n"+generatePercent(1,1).bar;
-			else duration.value = "`Lvl "+duration.lvl+" ["+duration.currentxp+"/"+duration.maxxp+"]`\n"+duration.percent;
-		if(efficiency.max) efficiency.value = "`Lvl "+efficiency.lvl+" [MAX]`\n"+generatePercent(1,1).bar;
-			else efficiency.value = "`Lvl "+efficiency.lvl+" ["+efficiency.currentxp+"/"+efficiency.maxxp+"]`\n"+efficiency.percent;
-		if(cost.max) cost.value = "`Lvl "+cost.lvl+" [MAX]`\n"+generatePercent(1,1).bar;
-			else cost.value = "`Lvl "+cost.lvl+" ["+cost.currentxp+"/"+cost.maxxp+"]`\n"+cost.percent;
+		var traits = [duration,efficiency,cost,gain,exp];
+		for(var i=0;i<traits.length;i++){
+			traits[i].percent = generatePercent(traits[i].currentxp,traits[i].maxxp).bar;
+			if(traits[i].max) traits[i].value = "`Lvl "+traits[i].lvl+" [MAX]`\n"+generatePercent(1,1).bar;
+				else traits[i].value = "`Lvl "+traits[i].lvl+" ["+traits[i].currentxp+"/"+traits[i].maxxp+"]`\n"+traits[i].percent;
+		}
 
 		maxhunt = Math.floor(duration.stat*efficiency.stat);
 		const embed = {
@@ -269,8 +289,18 @@ function display(msg,con,send){
 					"inline": true
 				},
 				{
+					"name": " Gain - `"+gain.stat+gain.prefix+"`",
+					"value": gain.value,
+					"inline": true
+				},
+				{
+					"name": " Experience - `"+exp.stat+exp.prefix+"`",
+					"value": exp.value,
+					"inline": true
+				},
+				{
 					"name": "<a:essence:451638978299428875> Animal Essence - `"+(global.toFancyNum(essence))+"`",
-					"value": "`Current Max Autohunt: "+maxhunt+" animals for "+(global.toFancyNum(maxhunt*cost.stat))+" cowoncy`",
+					"value": "`Current Max Autohunt: "+global.toFancyNum(maxhunt)+" animals, "+global.toFancyNum(Math.floor(gain.stat*duration.stat))+" essences, and "+global.toFancyNum(Math.floor(exp.stat*duration.stat))+" xp for "+(global.toFancyNum(maxhunt*cost.stat))+" cowoncy`",
 					"inline": false
 				}
 				]
