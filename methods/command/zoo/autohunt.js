@@ -289,12 +289,12 @@ function display(msg,con,send){
 					"inline": true
 				},
 				{
-					"name": " Gain - `"+gain.stat+gain.prefix+"`",
+					"name": "🔧 Gain - `"+gain.stat+gain.prefix+"`",
 					"value": gain.value,
 					"inline": true
 				},
 				{
-					"name": " Experience - `"+exp.stat+exp.prefix+"`",
+					"name": "⚔ Experience - `"+exp.stat+exp.prefix+"`",
 					"value": exp.value,
 					"inline": true
 				},
