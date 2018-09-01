@@ -37,8 +37,6 @@ function drop(p){
 		p.send("**🚫 | "+p.msg.author.username+"**, Invalid arguments!",3000);
 		return;
 	}
-	var sql = "INSERT INTO cowoncydrop (channel,amount) VALUES ("+p.msg.channel.id+","+amount+") ON DUPLICATE KEY UPDATE amount = amount + "+amount+";";
-	sql += "SELECT * FROM cowoncydrop WHERE channel = "+p.msg.channel.id+";";
 	var sql = `SELECT money FROM cowoncy WHERE id = ${p.msg.author.id};
 		CALL CowoncyDrop(${p.msg.author.id},${p.msg.channel.id},${amount});
 		SELECT amount FROM cowoncydrop WHERE channel = ${p.msg.channel.id};`;
