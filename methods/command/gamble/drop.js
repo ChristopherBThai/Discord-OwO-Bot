@@ -54,7 +54,7 @@ function drop(p){
 		}
 		var totalAmount = result[2][0].amount;
 		p.logger.value('cowoncy',(amount*-1),['command:drop','id:'+p.msg.author.id]);
-		p.send("** | "+p.msg.author.username+"** dropped **"+p.global.toFancyNum(amount)+"** cowoncy! Use `owo pickup` to pick it up!\n**<:blank:427371936482328596> |** There is a total of **"+totalAmount+"** cowoncy in this channel!");
+		p.send("**💰 | "+p.msg.author.username+"** dropped **"+p.global.toFancyNum(amount)+"** cowoncy! Use `owo pickup` to pick it up!\n**<:blank:427371936482328596> |** There is a total of **"+totalAmount+"** cowoncy in this channel!");
 	});
 }
 
@@ -81,7 +81,7 @@ function pickup(p){
 		}else{
 			var amount = result[0][0].amount;
 			p.logger.value('cowoncy',amount,['command:drop','id:'+p.msg.author.id]);
-			p.send("** | "+p.msg.author.username+"**, you picked up **"+amount+"** cowoncy from this channel!");
+			p.send("**💰 | "+p.msg.author.username+"**, you picked up **"+amount+"** cowoncy from this channel!");
 		}
 	});
 }
