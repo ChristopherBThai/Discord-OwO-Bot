@@ -43,7 +43,6 @@ module.exports = new CommandInterface({
 							var text = "**☑ |** You have received **"+reward+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
 							if(weekend)
 								text += "**⛱ |** It's the weekend! You also earned a bonus of **"+weekendBonus+"** cowoncy!\n";
-							text += "**⚠ |** You can now vote every 12H!\n";
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
 							console.log("\x1b[33m",id+" has voted for the first time!");
@@ -63,16 +62,15 @@ module.exports = new CommandInterface({
 							var text = "**☑ |** You have received **"+bonus+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
 							if(weekend)
 								text += "**⛱ |** It's the weekend! You also earned a bonus of **"+weekendBonus+"** cowoncy!\n";
-							text += "**⚠ |** You can now vote every 12H!\n";
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
 							console.log("\x1b[33m",id+" has voted and  received cowoncy!");
 							p.logger.increment("votecount");
 						});
 					}else{
-						var text = "**☑ |** Click the link to vote and gain 200+ cowoncy!\n";
+						var text = "**☑ |** Click the link to vote and gain 100+ cowoncy!\n";
+						text += "**<:blank:427371936482328596> |** You can vote every 12 hours!\n";
 						text += "**<:blank:427371936482328596> |** Your daily vote is available in **"+(12-result[0][0].time)+" H**\n";
-						text += "**⚠ |** You can now vote every 12H!\n";
 						//text += "**<:blank:427371936482328596> |** Please retype `owo vote` 1-10min after you vote!\n";
 						text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 						p.send(text);
@@ -82,7 +80,7 @@ module.exports = new CommandInterface({
 			});
 			}else{
 				var text = "**☑ | Your daily vote is available!**\n";
-				text += "**⚠ |** You can now vote every 12H!\n";
+				text += "**<:blank:427371936482328596> |** You can vote every 12 hours!\n";
 				//text += "**⚠ |** Automatic votes are currently broken!\n";
 				//text += "**<:blank:427371936482328596> |** Please retype `owo vote` 1-10min after you vote!\n";
 				text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";

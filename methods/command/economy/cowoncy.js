@@ -23,9 +23,9 @@ module.exports = new CommandInterface({
 		p.con.query(sql,function(err,rows,fields){
 			if(err){console.error(err);return;}
 			if(rows[0]==undefined)
-				p.send("**💰 | "+msg.author.username+"**, you currently have **<:cowoncy:416043450337853441> __0__ cowoncy!**");
+				p.send("**<:cowoncy:416043450337853441> | "+msg.author.username+"**, you currently have **__0__ cowoncy!**");
 			else
-				p.send("**💰 | "+msg.author.username+"**, you currently have **<:cowoncy:416043450337853441> __"+(p.global.toFancyNum(rows[0].money))+"__ cowoncy!**");
+				p.send("**<:cowoncy:416043450337853441> | "+msg.author.username+"**, you currently have **__"+(p.global.toFancyNum(rows[0].money))+"__ cowoncy!**");
 		});
 	}
 
