@@ -141,7 +141,7 @@ function executeCommand(param){
 	var command = param.command;
 	var msg = param.msg;
 	var name = aliasToCommand[command];
-	ban.check(con,msg,name,function(){
+	ban.check(con,msg,param.client,name,function(){
 		macro.check(msg,aliasToCommand[command],async function(){
 			var result = await commands[command].execute(param);
 			logger.increment("command",['command:'+aliasToCommand[command],'id:'+msg.author.id]);
