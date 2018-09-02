@@ -1,6 +1,10 @@
 var cooldown = {};
+const permissions = require('../json/permissions.json');
 
-exports.check = async function(con,msg,command,callback,ignore){
+exports.check = async function(con,msg,client,command,callback,ignore){
+	//Check if the channel has all the valid permissions
+	if(command!="points"&&!checkPermissions(msg,client)) return;
+
 	//If its a global command (no cooldown/disable)
 	if(ignore){
 		callback();
@@ -38,3 +42,18 @@ exports.check = async function(con,msg,command,callback,ignore){
 	});
 }
 
+function checkPermissions(msg,client){
+	if(msg.channel.type!="text")
+		return true;
+	var perm = msg.channel.memberPermissions(client.user);
+	perm = perm.toArray();
+	for(var i=0;i<permissions.length;i++){
+		if(!perm.includes(permissions[i])){
+			msg.channel.send("**🚫 |** I don't have permissions for: `"+permissions[i]+"`!\n**<:blank:427371936482328596> |** Please contact an admin on your server or reinvite me with `owo invite`!")
+				.catch(err => console.error(err));
+			console.error("Missing permission "+permissions[i]+" for "+msg.channel.id);
+			return false;
+		}
+	}
+	return true;
+}
