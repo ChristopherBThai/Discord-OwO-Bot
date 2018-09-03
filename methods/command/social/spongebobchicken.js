@@ -53,7 +53,7 @@ module.exports = new CommandInterface({
 			ctx.fillText(text,355,83-(lines*22));
 
 			buf = canvas.toBuffer();
-			p.msg.channel.send("** | "+p.msg.author.username+"** generated a meme!",{files:[buf]})
+			p.msg.channel.send("**🖼 | "+p.msg.author.username+"** generated a meme!",{files:[buf]})
 				.catch(err => console.error(err));
 		});
 	}
