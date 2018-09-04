@@ -10,7 +10,7 @@ module.exports = new CommandInterface({
 
 	args:"{text}",
 
-	desc:"Creates a spongebob chicken meme! You can also use '\\n' to specify a new line!",
+	desc:"Creates a spongebob chicken meme!",
 
 	example:["owo spongebobchicken I don't like owo bot!"],
 
@@ -22,10 +22,6 @@ module.exports = new CommandInterface({
 	bot:true,
 
 	execute: function(p){
-		var text = p.args.join(" ").toLowerCase().split("");
-		for (var i=1;i<text.length;i+=2)
-			text[i] = text[i].toUpperCase();
-		text = text.join("").replace(/\\n/gi,"\n");
 		fs.readFile('./json/images/spongebob_chicken.jpg',function(err,image){
 			if(err){ console.error(err); return;}
 
@@ -34,23 +30,29 @@ module.exports = new CommandInterface({
 			canvas = new Canvas(img.width,img.height);
 			ctx = canvas.getContext('2d');
 			ctx.drawImage(img,0,0,img.width,img.height);
+			ctx.textAlign = "left";
+
+			//Format text
+			var tempText = p.args.join(" ").toLowerCase().split("");
+			if(tempText.length>120) ctx.font = '20px Impact';
+			else ctx.font = '30px Impact';
+			for (var i=1;i<tempText.length;i+=2)
+				tempText[i] = tempText[i].toUpperCase();
+			tempText = tempText.join("").split(" ");
+			var text = "";
+			for (var i = 0;i<tempText.length;i++){
+				if(ctx.measureText(text+tempText[i]).width > 700 && i>0)
+					text += "\n";
+				text += tempText[i]+" ";
+			}
 
 			lines = text.split(/\r\n|\r|\n/).length -1 ;
-			if(lines>1||text.length>20)
-				ctx.font = '30px Impact';
-			else
-				ctx.font = '40px Impact';
 			te = ctx.measureText(text);
-			ctx.textAlign = "center";
-			if(lines>2){
-				p.send("**🚫 | "+p.msg.author.username+"**, I can only send up to three lines!");
-				return;
-			}
-			if(te.width>700){
+			if(lines>4){
 				p.send("**🚫 | "+p.msg.author.username+"**, The text is too long!");
 				return;
 			}
-			ctx.fillText(text,355,83-(lines*22));
+			ctx.fillText(text,10,80-(lines*15));
 
 			buf = canvas.toBuffer();
 			p.msg.channel.send("**🖼 | "+p.msg.author.username+"** generated a meme!",{files:[buf]})
