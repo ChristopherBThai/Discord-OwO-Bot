@@ -50,7 +50,7 @@ function checkPermissions(msg,client){
 	for(var i=0;i<permissions.length;i++){
 		if(!perm.includes(permissions[i])){
 			msg.channel.send("**🚫 |** I don't have permissions for: `"+permissions[i]+"`!\n**<:blank:427371936482328596> |** Please contact an admin on your server or reinvite me with `owo invite`!")
-				.catch(err => console.error(err));
+				.catch(err => {console.error("I can't send messange in this channel! [ban.js/checkPermissions]")});
 			console.error("Missing permission "+permissions[i]+" for "+msg.channel.id);
 			return false;
 		}
