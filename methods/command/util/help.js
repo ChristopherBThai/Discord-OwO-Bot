@@ -68,7 +68,7 @@ function display(send){
 				{"name":"Social",
 					"value":"`cookie` `ship`  `pray`  `curse`"},
 				{"name":"Meme Generation",
-					"value":"`spongebobchicken`"},
+					"value":"`spongebobchicken`  `slapcar`"},
 				{"name":"Emotes",
 					"value":sEmotes},
 				{"name":"Actions",
