@@ -10,11 +10,11 @@ module.exports = new CommandInterface({
 	
 	alias:["slapcar","slaproof"],
 
-	args:"{text} | {@user}",
+	args:"{text} {@user}",
 
-	desc:"Creates a *slaps roof of car* meme! You can also tag a user after the '|' to use their image instead",
+	desc:"Creates a *slaps roof of car* meme! You can also tag a user after your text to use their image instead",
 
-	example:["owo slapcar This badboy can fit so much coffee | @Scuttler","owo slapcar I slap cars"],
+	example:["owo slapcar This badboy can fit so much coffee @Scuttler","owo slapcar I slap cars"],
 
 	related:[],
 
@@ -24,7 +24,7 @@ module.exports = new CommandInterface({
 	bot:true,
 
 	execute: function(p){
-		if(p.args[p.args.length-2] == "|"&&p.global.isUser(p.args[p.args.length-1]))
+		if(p.global.isUser(p.args[p.args.length-1]))
 			user(p);
 		else
 			car(p);
@@ -95,10 +95,9 @@ function user(p){
 				ctx.textAlign = "left";
 
 				//Format text
-				var tempText = p.args.join(" ").replace(/\|.*$/g,"");
-				if(tempText.length>120) ctx.font = '20px Impact';
+				var tempText = p.args.slice(0,p.args.length-1);
+				if(tempText.join(" ").length>120) ctx.font = '20px Impact';
 				else ctx.font = '30px Impact';
-				tempText = tempText.split(" ");
 				var text = "";
 				for (var i = 0;i<tempText.length;i++){
 					if(ctx.measureText(text+tempText[i]).width > 700 && i>0)
