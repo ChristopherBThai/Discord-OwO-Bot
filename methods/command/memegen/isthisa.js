@@ -23,11 +23,20 @@ module.exports = new CommandInterface({
 	bot:true,
 
 	execute: function(p){
-		var args = p.args.join(" ").replace(/\s*\|\s*/g,"\n");
-		args = args.split("\n");
+		var args = p.args.slice();
+		if(p.global.isUser(args[args.length-1])){
+			args[args.length-1] = "\n"+args[args.length-1];
+			if(p.global.isUser(args[args.length-2]))
+				args[args.length-2] = "\n"+args[args.length-2]
+		}
+		var args = args.join(" ").replace(/\s*\|\s*/g,"\n");
+		args = args.split(/\n+/g);
+		console.log(args);
 		if(args.length>3){
+			p.send("**🚫 | "+p.msg.author.username+"**, you have more than 3 arguments!",3000);
 			return;
 		}else if(args.length<1){
+			p.send("**🚫 | "+p.msg.author.username+"**, you need at least 1 argument!",3000);
 			return;
 		}
 		fs.readFile('./json/images/isthisa.jpg',function(err,image){

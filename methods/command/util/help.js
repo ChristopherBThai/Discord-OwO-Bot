@@ -68,13 +68,13 @@ function display(send){
 				{"name":"Social",
 					"value":"`cookie` `ship`  `pray`  `curse`"},
 				{"name":"Meme Generation",
-					"value":"`spongebobchicken`  `slapcar`"},
+					"value":"`spongebobchicken`  `slapcar`  `isthisa`"},
 				{"name":"Emotes",
 					"value":sEmotes},
 				{"name":"Actions",
 					"value":uEmotes},
 				{"name":"Utility",
-					"value":"`feedback`  `ping`  `stats`  `link`  `guildlink`  `disable`  `censor`  `patreon`"},
+					"value":"`feedback`  `stats`  `link`  `guildlink`  `disable`  `censor`  `patreon`  `avatar`"},
 				]
 	};
 
