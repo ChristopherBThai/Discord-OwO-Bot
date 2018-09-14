@@ -24,14 +24,13 @@ module.exports = new CommandInterface({
 
 	execute: function(p){
 		var args = p.args.slice();
-		if(p.global.isUser(args[args.length-1])){
+		if(p.global.isUser(args[args.length-1])||args[args.length-1].search(/<a?:[a-zA-Z0-9]+:[0-9]+>/gi)>=0){
 			args[args.length-1] = "\n"+args[args.length-1];
-			if(p.global.isUser(args[args.length-2]))
+			if(p.global.isUser(args[args.length-2])||args[args.length-2].search(/<a?:[a-zA-Z0-9]+:[0-9]+>/gi)>=0)
 				args[args.length-2] = "\n"+args[args.length-2]
 		}
 		var args = args.join(" ").replace(/\s*\|\s*/g,"\n");
 		args = args.split(/\n+/g);
-		console.log(args);
 		if(args.length>3){
 			p.send("**🚫 | "+p.msg.author.username+"**, you have more than 3 arguments!",3000);
 			return;
@@ -91,6 +90,19 @@ async function addButterflyText(p,text,ctx,canvas,callback){
 			console.error(err);
 			p.send("**🚫 | "+p.msg.author.username+"**, could not grab the image",3000);
 		}
+	}else if(text.search(/<a?:[a-zA-Z0-9]+:[0-9]+>/gi)>=0){
+		var url = text.match(/:[0-9]+>/gi);
+		if(!url[0]){
+			p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the emoji",3000); 
+			return;
+		}
+		url = "https://cdn.discordapp.com/emojis/"+url[0].slice(1,url[0].length-1)+".png";
+		try{
+			request.get(url,callbackImage(ctx,537,75,90,callback));
+		}catch(err){
+			console.error(err);
+			p.send("**🚫 | "+p.msg.author.username+"**, could not grab the image",3000);
+		}
 	}else{
 		ctx.font = '30px Impact'
 		if(ctx.measureText(text).width>300) 
@@ -98,7 +110,7 @@ async function addButterflyText(p,text,ctx,canvas,callback){
 		var tempText = text.split(" ");
 		text = "";
 		for (var i = 0;i<tempText.length;i++){
-			if(ctx.measureText(text+tempText[i]).width > 300 && i>0)
+			if(ctx.measureText(text+tempText[i]+" ").width > 300 && i>0)
 				text += "\n";
 			text += tempText[i]+" ";
 		}
@@ -121,6 +133,19 @@ async function addPersonText(p,text,ctx,canvas,callback){
 		ctx.font = '20px Impact';
 		writeText(270,350,ctx,url.username,3);
 		url = url.avatarURL;
+		try{
+			request.get(url,callbackImage(ctx,195,170,150,callback));
+		}catch(err){
+			console.error(err);
+			p.send("**🚫 | "+p.msg.author.username+"**, could not grab the image",3000);
+		}
+	}else if(text.search(/<a?:[a-zA-Z0-9]+:[0-9]+>/gi)>=0){
+		var url = text.match(/:[0-9]+>/gi);
+		if(!url[0]){
+			p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the emoji",3000); 
+			return;
+		}
+		url = "https://cdn.discordapp.com/emojis/"+url[0].slice(1,url[0].length-1)+".png";
 		try{
 			request.get(url,callbackImage(ctx,195,170,150,callback));
 		}catch(err){
