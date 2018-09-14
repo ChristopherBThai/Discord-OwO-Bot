@@ -10,7 +10,7 @@ module.exports = new CommandInterface({
 	
 	alias:["slapcar","slaproof"],
 
-	args:"{text} {@user}",
+	args:"{text} {@user|emoji}",
 
 	desc:"Creates a *slaps roof of car* meme! You can also tag a user after your text to use their image instead",
 
