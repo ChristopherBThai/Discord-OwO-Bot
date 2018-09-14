@@ -33,11 +33,12 @@ module.exports = new CommandInterface({
 		}
 
 		const embed = {
-			//"url":user.user.avatarURL,
+			"fields": [{
+					"name":user.user.tag+((user.user.bot)?" <:bot:489278383646048286>":"")+"  `"+user.presence.status+"`",
+					"value":((user.nickname)?"`Nickname: "+user.nickname+"`\n":"")+"`ID: "+user.user.id+"`"+((user.colorRole)?"\n`RoleColor: "+user.displayHexColor+"`":"")
+			}],
 			"color": 4886754,
 			"image":{"url":user.user.avatarURL},
-			"title":user.user.tag+((user.user.bot)?" <:bot:489278383646048286>":"")+"  `"+user.presence.status+"`",
-			"description":((user.nickname)?"`Nickname: "+user.nickname+"`":"")+"`ID: "+user.user.id+"`"+((user.colorRole)?"\n`RoleColor: "+user.displayHexColor+"`":"")
 		}
 		p.send({embed});
 	}
