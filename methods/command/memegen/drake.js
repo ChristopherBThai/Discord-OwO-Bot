@@ -8,7 +8,7 @@ module.exports = new CommandInterface({
 	
 	alias:["drake"],
 
-	args:"{topText|@user} | {bottomText|@user}",
+	args:"{topText|@user|emoji} | {bottomText|@user|emoji}",
 
 	desc:"Generate a Drake meme! Seperate the two arguments with a '|' bar, or press 'Shift+Enter' between arguments",
 

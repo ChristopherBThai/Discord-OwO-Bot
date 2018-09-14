@@ -9,7 +9,7 @@ module.exports = new CommandInterface({
 	
 	alias:["isthisa"],
 
-	args:"{bottomText} | {butterflyText|@user} | {personText|@user}",
+	args:"{bottomText} | {butterflyText|@user|emoji} | {personText|@user|emoji}",
 
 	desc:"Creates a 'is this a ___?' meme! You can also tag a user to use their image!",
 
