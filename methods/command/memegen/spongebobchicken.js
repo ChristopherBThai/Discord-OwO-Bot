@@ -41,7 +41,7 @@ module.exports = new CommandInterface({
 			tempText = tempText.join("").split(" ");
 			var text = "";
 			for (var i = 0;i<tempText.length;i++){
-				if(ctx.measureText(text+tempText[i]).width > 700 && i>0)
+				if(ctx.measureText(text+tempText[i]+" ").width > 700 && i>0)
 					text += "\n";
 				text += tempText[i]+" ";
 			}

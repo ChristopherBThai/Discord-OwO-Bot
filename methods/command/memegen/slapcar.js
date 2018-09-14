@@ -26,6 +26,8 @@ module.exports = new CommandInterface({
 	execute: function(p){
 		if(p.global.isUser(p.args[p.args.length-1]))
 			user(p);
+		else if(p.args[p.args.length-1].search(/<a?:[a-zA-Z0-9]+:[0-9]+>/gi)>=0)
+			emoji(p);
 		else
 			car(p);
 	}
@@ -100,7 +102,64 @@ function user(p){
 				else ctx.font = '30px Impact';
 				var text = "";
 				for (var i = 0;i<tempText.length;i++){
-					if(ctx.measureText(text+tempText[i]).width > 700 && i>0)
+					if(ctx.measureText(text+tempText[i]+" ").width > 700 && i>0)
+						text += "\n";
+					text += tempText[i]+" ";
+				}
+
+				lines = text.split(/\r\n|\r|\n/).length -1 ;
+				te = ctx.measureText(text);
+				if(lines>4){
+					p.send("**🚫 | "+p.msg.author.username+"**, The text is too long!");
+					return;
+				}
+				ctx.fillText(text,10,80-(lines*15));
+
+				buf = canvas.toBuffer();
+				p.msg.channel.send("**🖼 | "+p.msg.author.username+"** generated a meme!",{files:[buf]})
+					.catch(err => console.error(err));
+			}
+			img2.onerror = function(){p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the image",3000);}
+			img2.src = body;
+			}else p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the image",3000); 
+		});
+	});
+}
+
+function emoji(p){
+	fs.readFile('./json/images/slap_transparent.png',async function(err,image){
+		if(err){ console.error(err); return;}
+
+		var url = p.args[p.args.length-1].match(/:[0-9]+>/gi);
+		if(!url[0]){
+			p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the emoji",3000); 
+			return;
+		}
+		url = "https://cdn.discordapp.com/emojis/"+url[0].slice(1,url[0].length-1)+".png";
+
+		request({url:url,method:'GET',encoding:null},function(err,response,body){
+			if(!err && response.statusCode==200){
+			img2 = new Image;
+			img2.onload = function(){
+				img = new Image;
+				img.src = image;
+				canvas = new Canvas(img.width,img.height+textBoxHeight);
+				canvas.backgroundColor = 'white';
+				ctx = canvas.getContext('2d');
+				ctx.fillStyle = "white";
+				ctx.fillRect(0,0,img.width,img.height+textBoxHeight);
+				ctx.fillStyle = "black";
+				ctx.drawImage(img2,0,canvas.height-330,330,330);
+				ctx.drawImage(img,0,textBoxHeight,img.width,img.height);
+				ctx.textAlign = "left";
+
+				//Format text
+				var tempText = p.args.slice(0,p.args.length-1);
+				if(tempText.join(" ").length>120) ctx.font = '20px Impact';
+				else ctx.font = '30px Impact';
+				var text = "";
+				for (var i = 0;i<tempText.length;i++){
+					if(ctx.measureText(text+tempText[i]+" ").width > 700 && i>0)
 						text += "\n";
 					text += tempText[i]+" ";
 				}
