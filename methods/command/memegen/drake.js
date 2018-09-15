@@ -23,7 +23,7 @@ module.exports = new CommandInterface({
 
 	execute: function(p){
 		var args = p.args.slice();
-		if(p.global.isUser(args[args.length-1])||args[args.length-1].search(/<a?:[a-zA-Z0-9]+:[0-9]+>/gi)>=0){
+		if(p.global.isUser(args[args.length-1])||(/^\s*<a?:[a-zA-Z0-9]+:[0-9]+>\s*$/gi).test(args[args.length-1])){
 			args[args.length-1] = "\n"+args[args.length-1];
 		}
 		var args = args.join(" ").replace(/\s*\|\s*/g,"\n");
