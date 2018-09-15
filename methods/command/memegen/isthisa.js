@@ -24,9 +24,9 @@ module.exports = new CommandInterface({
 
 	execute: function(p){
 		var args = p.args.slice();
-		if(p.global.isUser(args[args.length-1])||args[args.length-1].search(/<a?:[a-zA-Z0-9]+:[0-9]+>/gi)>=0){
+		if(p.global.isUser(args[args.length-1])||(/^\s*<a?:[a-zA-Z0-9]+:[0-9]+>\s*$/gi).test(args[args.length-1])){
 			args[args.length-1] = "\n"+args[args.length-1];
-			if(p.global.isUser(args[args.length-2])||args[args.length-2].search(/<a?:[a-zA-Z0-9]+:[0-9]+>/gi)>=0)
+			if(p.global.isUser(args[args.length-2])||(/^\s*<a?:[a-zA-Z0-9]+:[0-9]+>\s*$/gi).test(args[args.length-2]))
 				args[args.length-2] = "\n"+args[args.length-2]
 		}
 		var args = args.join(" ").replace(/\s*\|\s*/g,"\n");
@@ -62,6 +62,8 @@ module.exports = new CommandInterface({
 
 function addBottomText(p,text,ctx,canvas){
 	if(!text) return false;
+	text = text.replace(/<a?:/gi,"");
+	text = text.replace(/:[0-9]+>/gi,"");
 	ctx.textAlign = "center";
 	ctx.font = '40px Impact';
 	if(ctx.measureText(text).width>730) 
@@ -90,9 +92,9 @@ async function addButterflyText(p,text,ctx,canvas,callback){
 			console.error(err);
 			p.send("**🚫 | "+p.msg.author.username+"**, could not grab the image",3000);
 		}
-	}else if(text.search(/<a?:[a-zA-Z0-9]+:[0-9]+>/gi)>=0){
+	}else if((/^\s*<a?:[a-zA-Z0-9]+:[0-9]+>\s*$/gi).test(text)){
 		var url = text.match(/:[0-9]+>/gi);
-		if(!url[0]){
+		if(!url||!url[0]){
 			p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the emoji",3000); 
 			return;
 		}
@@ -104,6 +106,8 @@ async function addButterflyText(p,text,ctx,canvas,callback){
 			p.send("**🚫 | "+p.msg.author.username+"**, could not grab the image",3000);
 		}
 	}else{
+		text = text.replace(/<a?:/gi,"");
+		text = text.replace(/:[0-9]+>/gi,"");
 		ctx.font = '30px Impact'
 		if(ctx.measureText(text).width>300) 
 			ctx.font = '15px Impact';
@@ -139,9 +143,9 @@ async function addPersonText(p,text,ctx,canvas,callback){
 			console.error(err);
 			p.send("**🚫 | "+p.msg.author.username+"**, could not grab the image",3000);
 		}
-	}else if(text.search(/<a?:[a-zA-Z0-9]+:[0-9]+>/gi)>=0){
+	}else if((/^\s*<a?:[a-zA-Z0-9]+:[0-9]+>\s*$/gi).test(text)){
 		var url = text.match(/:[0-9]+>/gi);
-		if(!url[0]){
+		if(!url||!url[0]){
 			p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the emoji",3000); 
 			return;
 		}
@@ -153,6 +157,8 @@ async function addPersonText(p,text,ctx,canvas,callback){
 			p.send("**🚫 | "+p.msg.author.username+"**, could not grab the image",3000);
 		}
 	}else{
+		text = text.replace(/<a?:/gi,"");
+		text = text.replace(/:[0-9]+>/gi,"");
 		ctx.font = '30px Impact'
 		if(ctx.measureText(text).width>300) 
 			ctx.font = '15px Impact';

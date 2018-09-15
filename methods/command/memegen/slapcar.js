@@ -26,7 +26,7 @@ module.exports = new CommandInterface({
 	execute: function(p){
 		if(p.global.isUser(p.args[p.args.length-1]))
 			user(p);
-		else if(p.args[p.args.length-1].search(/<a?:[a-zA-Z0-9]+:[0-9]+>/gi)>=0)
+		else if((/^\s*<a?:[a-zA-Z0-9]+:[0-9]+>\s*$/gi).test(args[args.length-1]))
 			emoji(p);
 		else
 			car(p);
@@ -131,7 +131,7 @@ function emoji(p){
 		if(err){ console.error(err); return;}
 
 		var url = p.args[p.args.length-1].match(/:[0-9]+>/gi);
-		if(!url[0]){
+		if(!url||!url[0]){
 			p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the emoji",3000); 
 			return;
 		}
