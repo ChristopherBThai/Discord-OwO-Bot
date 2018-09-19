@@ -80,6 +80,7 @@ function set(mysql,con,msg,args,send){
 		}
 		nickname = nickname.replace("https:","https;");
 		nickname = nickname.replace("http:","http;");
+		nickname = nickname.replace("@everyone","everyone");
 		nickname = nickname.replace(/<!?[0-9]+>/gi,"User");
 		sql = "UPDATE cowoncy NATURAL JOIN animal SET pet = name, ispet = 1, nickname = ?, offensive = "+offensive+", count = count - (CASE WHEN ispet=1 THEN 0 ELSE 1 END) WHERE id = "+msg.author.id+" AND name = '"+animal+"' AND (ispet=1 OR count>0);";
 		sql = mysql.format(sql,nickname);
@@ -153,6 +154,7 @@ function rename(mysql,con,msg,args,send){
 
 	name = name.replace("https:","https;");
 	name = name.replace("http:","http;");
+	name = name.replace("@everyone","everyone");
 	name = name.replace(/<@!?[0-9]+>/gi,"User");
 
 	sql = "UPDATE cowoncy NATURAL JOIN animal SET nickname = ?, offensive = "+offensive+" WHERE id = "+msg.author.id+" AND pet = name;";
