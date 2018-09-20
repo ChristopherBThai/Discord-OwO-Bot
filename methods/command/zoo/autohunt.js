@@ -4,7 +4,7 @@ const autohuntutil = require('./autohuntutil.js');
 const animalUtil = require('./animalUtil.js');
 const global = require('../../../util/global.js');
 const letters = "abcdefghijklmnopqrstuvwxyz";
-const botrank = "SELECT (COUNT(*)) AS rank, (SELECT COUNT(*) FROM autohunt) AS total FROM autohunt WHERE (essence+duration+efficiency+cost) >= COALESCE((SELECT (essence+duration+efficiency+cost) AS total FROM autohunt WHERE id = ";
+const botrank = "SELECT (COUNT(*)) AS rank, (SELECT COUNT(*) FROM autohunt) AS total FROM autohunt WHERE (essence+duration+efficiency+cost+gain+exp) >= COALESCE((SELECT (essence+duration+efficiency+cost+gain+exp) AS total FROM autohunt WHERE id = ";
 const logger = require('../../../util/logger.js');
 const animals = require('../../../../tokens/owo-animals.json');
 
