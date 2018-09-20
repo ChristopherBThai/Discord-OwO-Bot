@@ -26,7 +26,7 @@ module.exports = new CommandInterface({
 	execute: function(p){
 		if(p.global.isUser(p.args[p.args.length-1]))
 			user(p);
-		else if((/^\s*<a?:[a-zA-Z0-9]+:[0-9]+>\s*$/gi).test(args[args.length-1]))
+		else if((/^\s*<a?:[a-zA-Z0-9]+:[0-9]+>\s*$/gi).test(p.args[p.args.length-1]))
 			emoji(p);
 		else
 			car(p);
