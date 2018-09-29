@@ -30,7 +30,7 @@
 			"chance":0.20,
 			"type":"Multiplier",
 			"amount":6,
-			"length":50
+			"length":75
 		},
 		"mgem1":{
 			"emoji":"<:mgem1:492572122590478356>",
@@ -38,7 +38,7 @@
 			"chance":0.10,
 			"type":"Multiplier",
 			"amount":7,
-			"length":50
+			"length":75
 		},
 		"lgem1":{
 			"emoji":"<a:lgem1:492572124251422720>",
@@ -75,21 +75,21 @@
 			"id":60,
 			"chance":0.20,
 			"type":"Patreon",
-			"length":200
+			"length":250
 		},
 		"egem2":{
 			"emoji":"<:egem2:492803121245061131>",
 			"id":61,
 			"chance":0.20,
 			"type":"Patreon",
-			"length":400
+			"length":450
 		},
 		"mgem2":{
 			"emoji":"<:mgem2:492803121840521276>",
 			"id":62,
 			"chance":0.10,
 			"type":"Patreon",
-			"length":600
+			"length":525
 		},
 		"lgem2":{
 			"emoji":"<a:lgem2:492803122503352321>",
