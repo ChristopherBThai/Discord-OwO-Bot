@@ -3,6 +3,8 @@ const CommandInterface = require('../../commandinterface.js');
 const food = require('../../../json/food.json');
 const shopUtil = require('./shopUtil.js');
 const cowoncy = "<:cowoncy:416043450337853441>";
+const lootboxUtil = require('../zoo/lootboxUtil.js');
+const gemUtil = require('../zoo/gemUtil.js');
 
 module.exports = new CommandInterface({
 	
@@ -28,11 +30,20 @@ module.exports = new CommandInterface({
 			return;
 		}
 
-		p.send("**🛒 | "+item.key+" "+item.name+"**\n"+
-			"**<:blank:427371936482328596> | ID:** `"+item.id+"`\n"+
-			"**<:blank:427371936482328596> | Price:** `"+item.price+"`\n"+
-			"__**<:blank:427371936482328596> | Used For:** `owo battle`                __\n"+
-			"**<:blank:427371936482328596> |** `"+item.desc.replace(/(?:\r\n|\r|\n)/g, "`\n**<:blank:427371936482328596> |** `")+"`");
+		if(item.name=="lootbox"){
+			lootboxUtil.desc(p);
+		}else if(item.name=="gem"){
+			gemUtil.desc(p,item.id);
+		}else{
+			var embed = {
+			"color": 4886754,
+			"fields":[{
+				"name":item.key+" "+item.name,
+				"value":"**ID:** "+item.id+"\n**Price:** "+item.price+"\nUsed to upgrade pets!\n"+item.desc
+				}]
+			};
+			p.send({embed});
+		}
 	}
 
 })
