@@ -57,7 +57,6 @@ exports.getItems = function(con,id,callback){
 		}
 		callback(items);
 	});
-
 }
 
 exports.getFoodJson = function(name){

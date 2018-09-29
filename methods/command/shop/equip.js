@@ -2,6 +2,8 @@ const CommandInterface = require('../../commandinterface.js');
 
 const foodUtil = require('./food.js');
 const shopUtil = require('./shopUtil.js');
+const lootbox = require('../zoo/lootbox.js');
+const gemUtil = require('../zoo/gemUtil.js');
 
 module.exports = new CommandInterface({
 	
@@ -29,6 +31,10 @@ module.exports = new CommandInterface({
 
 		if(item.name=="Pill"){
 			foodUtil.throwup(con,msg);
+		}else if(item.name=="lootbox"){
+			lootbox.execute(p);
+		}else if(item.name=="gem"){
+			gemUtil.use(p,item.id);
 		}else
 			foodUtil.equip(con,msg,item);
 	}

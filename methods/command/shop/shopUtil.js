@@ -19,13 +19,14 @@ exports.getItem = function(args){
 		return "Please identify the item by their item **ID**, not item name!";
 	}
 
-	var key = fid[id];
-	if(!key){return "That id is wrong!";}
-	item = food[key];
-	if(!item){return "I could not find that item!";}
-	item.key = key;
-	return item;
+	if(id<50)
+		return getFood(id);
+	if(id==50)
+		return {name:"lootbox"};
+	if(id>50)
+		return {name:"gem",id:id};
 }
+
 exports.toSmallNum = function(count,digits){
 		var result = "";
 		var num = count;
@@ -35,4 +36,13 @@ exports.toSmallNum = function(count,digits){
 					result = numbers[digit]+result;
 				}
 		return result;
+}
+
+function getFood(id){
+	var key = fid[id];
+	if(!key){return "That id is wrong!";}
+	item = food[key];
+	if(!item){return "I could not find that item!";}
+	item.key = key;
+	return item;
 }
