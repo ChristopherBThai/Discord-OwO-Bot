@@ -61,49 +61,49 @@
 			"id":58,
 			"chance":0.22,
 			"type":"Patreon",
-			"length":25
+			"length":50
 		},
 		"ugem2":{
 			"emoji":"<:ugem2:492803121970413569>",
 			"id":59,
 			"chance":0.22,
 			"type":"Patreon",
-			"length":50
+			"length":100
 		},
 		"rgem2":{
 			"emoji":"<:rgem2:492803121420959746>",
 			"id":60,
 			"chance":0.20,
 			"type":"Patreon",
-			"length":75
+			"length":200
 		},
 		"egem2":{
 			"emoji":"<:egem2:492803121245061131>",
 			"id":61,
 			"chance":0.20,
 			"type":"Patreon",
-			"length":100
+			"length":400
 		},
 		"mgem2":{
 			"emoji":"<:mgem2:492803121840521276>",
 			"id":62,
 			"chance":0.10,
 			"type":"Patreon",
-			"length":150
+			"length":600
 		},
 		"lgem2":{
 			"emoji":"<a:lgem2:492803122503352321>",
 			"id":63,
 			"chance":0.05,
 			"type":"Patreon",
-			"length":200
+			"length":800
 		},
 		"fgem2":{
 			"emoji":"<a:fgem2:492804215408820225>",
 			"id":64,
 			"chance":0.01,
 			"type":"Patreon",
-			"length":300
+			"length":1000
 		}
 	}
 }
