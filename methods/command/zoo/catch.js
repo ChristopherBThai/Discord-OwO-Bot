@@ -77,15 +77,16 @@ module.exports = new CommandInterface({
 
 function getAnimals(p,result,mGem,pGem){
 	var patreon = (result[0][0].patreonAnimal==1);
-	if(!patreon)
-		if(pGem) patreon = true;
+	var patreonGem = (pGem)?true:false;
 	if(mGem)
 		var gem = gemUtil.getGem(mGem.gname);
 	if(!gem){
-		var animal = [animalUtil.randAnimal(patreon)];
+		var animal = [animalUtil.randAnimal((patreon||patreonGem))];
+		if(pGem) animal.push(animalUtil.randAnimal(true));
 	}else{
-		var animal = [];
-		for(var i=0;i<gem.amount;i++)
+		var animal = [animalUtil.randAnimal((patreon||patreonGem))];
+		if(pGem) animal.push(animalUtil.randAnimal(true));
+		for(var i=1;i<gem.amount;i++)
 			animal.push(animalUtil.randAnimal(patreon));
 	}
 	var sql = "";
@@ -97,8 +98,8 @@ function getAnimals(p,result,mGem,pGem){
 		sql += "INSERT INTO animal_count (id,"+type+") VALUES ("+p.msg.author.id+",1) ON DUPLICATE KEY UPDATE "+type+" = "+type+"+1;";
 	}
 	sql += "UPDATE cowoncy SET money = money - 5 WHERE id = "+p.msg.author.id+";";
-	if(result[0][0].patreonAnimal==0&&pGem)
-		sql += "UPDATE user_gem SET activecount = activecount - "+animal.length+" WHERE uid = "+pGem.uid+" AND gname = '"+pGem.gname+"';";
+	if(pGem)
+		sql += "UPDATE user_gem SET activecount = activecount - 1 WHERE uid = "+pGem.uid+" AND gname = '"+pGem.gname+"';";
 	if(mGem)
 		sql += "UPDATE user_gem SET activecount = activecount - 1 WHERE uid = "+mGem.uid+" AND gname = '"+mGem.gname+"';";
 	var text = "**🌱 | "+p.msg.author.username+"** caught a(n) "+animal[0][0]+" "+global.unicodeAnimal(animal[0][1])+"!"
