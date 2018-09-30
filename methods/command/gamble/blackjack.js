@@ -22,6 +22,8 @@ module.exports = new CommandInterface({
 	bot:true,
 
 	execute: function(p){
+		p.send("currently disabled");
+		return;
 		var args=p.args,msg=p.msg,con=p.con;
 
 		//Check if there is a bet amount

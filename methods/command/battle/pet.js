@@ -152,9 +152,9 @@ function rename(mysql,con,msg,args,send){
 			offensive = 1;
 	}
 
-	nickname = nickname.replace(/https:/gi,"https;");
-	nickname = nickname.replace(/http:/gi,"http;");
-	nickname = nickname.replace(/@everyone/gi,"everyone");
+	name = name.replace(/https:/gi,"https;");
+	name = name.replace(/http:/gi,"http;");
+	name = name.replace(/@everyone/gi,"everyone");
 	name = name.replace(/<@!?[0-9]+>/gi,"User");
 
 	sql = "UPDATE cowoncy NATURAL JOIN animal SET nickname = ?, offensive = "+offensive+" WHERE id = "+msg.author.id+" AND pet = name;";

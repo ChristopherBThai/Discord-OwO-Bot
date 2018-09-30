@@ -5,7 +5,7 @@ var global = require('../../../util/global.js');
 var pet = require('../battle/petutil.js');
 const gemUtil = require('./gemUtil.js');
 const animalUtil = require('./animalUtil.js');
-const lootboxChance = 0.10;
+const lootboxChance = 0.05;
 
 module.exports = new CommandInterface({
 
