@@ -58,7 +58,7 @@ exports.use = function(p,id){
 		if(gem.type=="Multiplier")
 			text += "will be multiplied by "+gem.amount;
 		else if(gem.type=="Patreon")
-			text += "will have chance to contain custom/patreon pets!";
+			text += "will catch an extra animal and have a chance to contain Patreon exclusive animals!";
 		else
 			text += "ERROR!";
 		p.send(text);
@@ -82,7 +82,7 @@ exports.desc = function(p,id){
 		if(gem.type=="Multiplier")
 			text += "A(n) "+ranks[gem.key[0]]+" Multiplier Gem!\nWhen activated, this gem will increase your manual hunt by "+gem.amount+" for the next "+gem.length+" hunts!\nCannot stack with other Multiplier gems.";
 		else if(gem.type=="Patreon")
-			text += "A(n) "+ranks[gem.key[0]]+" Patreon Gem!\nWhen activated, this gem will allow you to find Patreon/Custom pets when manually hunting for the next "+gem.length+" hunts!\nCannot stack with other Patreon gems.";
+			text += "A(n) "+ranks[gem.key[0]]+" Patreon Gem!\nWhen activated, this gem will allow you to find Patreon/Custom pets when manually hunting for the next "+gem.length+" hunts!\nYou will also hunt 1 extra animal per hunt!\nCannot stack with other Patreon gems.";
 		var embed = {
 		"color": 4886754,
 		"fields":[{

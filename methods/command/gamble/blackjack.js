@@ -22,8 +22,6 @@ module.exports = new CommandInterface({
 	bot:true,
 
 	execute: function(p){
-		p.send("currently disabled");
-		return;
 		var args=p.args,msg=p.msg,con=p.con;
 
 		//Check if there is a bet amount
@@ -40,7 +38,7 @@ module.exports = new CommandInterface({
 			return;
 		}
 
-		var sql = "SELECT money FROM cowoncy WHERE id = "+msg.author.id+";";
+		var sql = "START TRANSACTION; SELECT money FROM cowoncy WHERE id = "+msg.author.id+";";
 		sql += "SELECT * FROM blackjack LEFT JOIN blackjack_card ON blackjack.bjid = blackjack_card.bjid WHERE id = "+msg.author.id+" AND active = 1 ORDER BY sort ASC, dealer DESC;";
 		if(amount=="all")
 			if(maxBet)
@@ -52,13 +50,14 @@ module.exports = new CommandInterface({
 				amount = maxBet;
 			sql += "UPDATE cowoncy LEFT JOIN blackjack ON cowoncy.id = blackjack.id SET money = money - "+amount+" WHERE cowoncy.id = "+msg.author.id+" AND money >= "+amount+" AND (active = 0 OR active IS NULL);";
 		}
+		sql += "COMMIT;"
 		con.query(sql,function(err,result){
 			if(err){console.error(err);return;}
 			//Check for existing match
-			if(result[1][0]){
-				initBlackjack(p,money,result[1]);
-			}else if(result[0][0]&&result[0][0].money){
-				var money = result[0][0].money;
+			if(result[2][0]){
+				initBlackjack(p,money,result[2]);
+			}else if(result[1][0]&&result[1][0].money){
+				var money = result[1][0].money;
 				if(maxBet&&money>maxBet) money = maxBet;
 				if(amount=="all"){
 					if(money<=0)
@@ -219,12 +218,14 @@ function stop(p,player,dealer,msg,bet,fromHit){
 
 
 
-	var sql = "UPDATE blackjack SET active = 0 WHERE id = "+p.msg.author.id+";";
-	sql += "DELETE FROM blackjack_card WHERE bjid = (SELECT bjid FROM blackjack WHERE id = "+p.msg.author.id+");";
+	var sql = "START TRANSACTION;";
 	if(winner=='w')
-		sql += "UPDATE cowoncy SET money = money + "+bet*2+" WHERE id = "+p.msg.author.id+";";
+		sql += "UPDATE cowoncy NATURAL JOIN blackjack SET money = money + "+bet*2+" WHERE id = "+p.msg.author.id+" AND active = 1;";
 	else if(winner=='t'||winner=='tb')
-		sql += "UPDATE cowoncy SET money = money + "+bet+" WHERE id = "+p.msg.author.id+";";
+		sql += "UPDATE cowoncy NATURAL JOIN blackjack SET money = money + "+bet+" WHERE id = "+p.msg.author.id+" AND active = 1;";
+	sql += "UPDATE blackjack SET active = 0 WHERE id = "+p.msg.author.id+";";
+	sql += "DELETE FROM blackjack_card WHERE bjid = (SELECT bjid FROM blackjack WHERE id = "+p.msg.author.id+");";
+	sql += "COMMIT;";
 	p.con.query(sql,function(err,result){
 		if(err){console.error(err);msg.edit("Something went wrong...");return;}
 		if(winner=='w'){
