@@ -91,13 +91,22 @@ function getAnimals(p,result,mGem,pGem){
 	}
 	var sql = "";
 	var xp = 0;
+	var insertAnimal = "INSERT INTO animal (count,totalcount,id,name) VALUES ";
+	var typeCount = {};
 	for(var i=0;i<animal.length;i++){
 		var type = animal[i][2];
 		xp += animal[i][3];
-		sql += "INSERT INTO animal (id,name,count,totalcount) VALUES ("+p.msg.author.id+",'"+animal[i][1]+"',1,1) ON DUPLICATE KEY UPDATE count = count + 1,totalcount = totalcount + 1;";
-		sql += "INSERT INTO animal_count (id,"+type+") VALUES ("+p.msg.author.id+",1) ON DUPLICATE KEY UPDATE "+type+" = "+type+"+1;";
+		insertAnimal += "(1,1,"+p.msg.author.id+","+animal[0][1]+"),";
+		if(!typeCount[type]) typeCount[type] = 0;
+		typeCount[type] += 1;
 	}
-	sql += "UPDATE cowoncy SET money = money - 5 WHERE id = "+p.msg.author.id+";";
+	sql += insertanimal.slice(0,-1)+" ON DUPLICATE KEY UPDATE count = count +1,totalcount = totalcount+1;";
+
+	var insertCount = ""; 
+	for(var key in typeCount){
+		var insertCount = "INSERT INTO animal_count (id,"+key+") VALUES ("+p.msg.author.id+","+typeCount[key]+") ON DUPLICATE KEY UPDATE "+type+" = "+type+"+"+typeCount[key]+";";
+	}
+	sql += insertCount+"UPDATE cowoncy SET money = money - 5 WHERE id = "+p.msg.author.id+";";
 	if(pGem)
 		sql += "UPDATE user_gem SET activecount = activecount - 1 WHERE uid = "+pGem.uid+" AND gname = '"+pGem.gname+"';";
 	if(mGem)
