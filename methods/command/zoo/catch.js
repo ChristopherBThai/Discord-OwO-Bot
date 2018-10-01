@@ -28,7 +28,7 @@ module.exports = new CommandInterface({
 		var msg=p.msg,con=p.con;
 		var sql = "SELECT money,patreonAnimal FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id WHERE cowoncy.id = "+msg.author.id+";";
 		sql += "SELECT name,nickname,lvl,xp FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND name = pet;";
-		sql += "SELECT * FROM lootbox WHERE id = "+msg.author.id+" AND TIMESTAMPDIFF(HOUR,NOW(),claim)<24 AND claimcount >=3;";
+		sql += "SELECT * FROM lootbox WHERE id = "+msg.author.id+" AND TIMESTAMPDIFF(HOUR,claim,NOW())<24 AND claimcount >=3;";
 		sql += "SELECT uid,activecount,gname,type FROM user NATURAL JOIN user_gem NATURAL JOIN gem WHERE id = "+msg.author.id+" AND activecount > 0;";
 		con.query(sql,function(err,result){
 			if(err) {console.error(err);return;}
@@ -119,7 +119,7 @@ function getLootbox(p){
 	var rand = Math.random();
 	if(rand <= lootboxChance){
 		return {
-			"sql":"INSERT INTO lootbox (id,boxcount,claimcount,claim) VALUES ("+p.msg.author.id+",1,1,NOW()) ON DUPLICATE KEY UPDATE boxcount = boxcount + 1, claimcount = IF(TIMESTAMPDIFF(HOUR,NOW(),claim)<24,claimcount+1,1), claim = IF(TIMESTAMPDIFF(HOUR,NOW(),claim)<24,claim,NOW());",
+			"sql":"INSERT INTO lootbox (id,boxcount,claimcount,claim) VALUES ("+p.msg.author.id+",1,1,NOW()) ON DUPLICATE KEY UPDATE boxcount = boxcount + 1, claimcount = IF(TIMESTAMPDIFF(HOUR,claim,NOW())<24,claimcount+1,1), claim = IF(TIMESTAMPDIFF(HOUR,claim,NOW())<24,claim,NOW());",
 			"text":"\n**<:box:427352600476647425> |** You found a **lootbox**!"
 		};
 	}else return {"sql":"","text":""};
