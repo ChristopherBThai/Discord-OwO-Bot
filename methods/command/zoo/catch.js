@@ -108,7 +108,7 @@ function getAnimals(p,result,mGem,pGem){
 		if(gem)
 			text += gem.emoji+"`["+(mGem.activecount-1)+"/"+gem.length+"]`";
 		if(pGem&&(gem2 = gemUtil.getGem(pGem.gname)))
-			text += gem2.emoji+"`["+(pGem.activecount-animal.length)+"/"+gem2.length+"]`";
+			text += gem2.emoji+"`["+(pGem.activecount-1)+"/"+gem2.length+"]`";
 		text += " !\n**<:blank:427371936482328596> |** You found: "+global.unicodeAnimal(animal[0][1]); 
 		for(var i=1;i<animal.length;i++) text += " "+global.unicodeAnimal(animal[i][1]);
 	}
