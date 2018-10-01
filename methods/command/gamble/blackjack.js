@@ -38,7 +38,7 @@ module.exports = new CommandInterface({
 			return;
 		}
 
-		var sql = "START TRANSACTION; SELECT money FROM cowoncy WHERE id = "+msg.author.id+";";
+		var sql = "SELECT money FROM cowoncy WHERE id = "+msg.author.id+";";
 		sql += "SELECT * FROM blackjack LEFT JOIN blackjack_card ON blackjack.bjid = blackjack_card.bjid WHERE id = "+msg.author.id+" AND active = 1 ORDER BY sort ASC, dealer DESC;";
 		if(amount=="all")
 			if(maxBet)
@@ -50,29 +50,38 @@ module.exports = new CommandInterface({
 				amount = maxBet;
 			sql += "UPDATE cowoncy LEFT JOIN blackjack ON cowoncy.id = blackjack.id SET money = money - "+amount+" WHERE cowoncy.id = "+msg.author.id+" AND money >= "+amount+" AND (active = 0 OR active IS NULL);";
 		}
-		sql += "COMMIT;"
-		con.query(sql,function(err,result){
+		con.beginTransaction(function(err){
 			if(err){console.error(err);return;}
-			//Check for existing match
-			if(result[2][0]){
-				initBlackjack(p,money,result[2]);
-			}else if(result[1][0]&&result[1][0].money){
-				var money = result[1][0].money;
-				if(maxBet&&money>maxBet) money = maxBet;
-				if(amount=="all"){
-					if(money<=0)
-						p.send("**🚫 | "+msg.author.username+"**, You do not have enough cowoncy!",3000);
-					else
-						initBlackjack(p,money);
+			con.query(sql,function(err,result){
+				if(err){console.error(err);connection.rollback(function(){return;});}
+				//Check for existing match
+				if(result[1][0]){
+					initBlackjack(p,money,result[1]);
+				}else if(result[0][0]&&result[0][0].money){
+					var money = result[0][0].money;
+					if(maxBet&&money>maxBet) money = maxBet;
+					if(amount=="all"){
+						if(money<=0)
+							p.send("**🚫 | "+msg.author.username+"**, You do not have enough cowoncy!",3000);
+						else
+							initBlackjack(p,money);
+					}else{
+						if(money<amount)
+							p.send("**🚫 | "+msg.author.username+"**, You do not have enough cowoncy!",3000);
+						else
+							initBlackjack(p,amount);
+					}
 				}else{
-					if(money<amount)
-						p.send("**🚫 | "+msg.author.username+"**, You do not have enough cowoncy!",3000);
-					else
-						initBlackjack(p,amount);
+					p.send("**🚫 | "+msg.author.username+"**, You do not have enough cowoncy!",3000);
 				}
-			}else{
-				p.send("**🚫 | "+msg.author.username+"**, You do not have enough cowoncy!",3000);
-			}
+				con.commit(function(err){
+					if(err){
+						con.rollback(function(){
+							console.error(err);
+						});
+					}
+				});
+			});
 		});
 	}
 
@@ -218,26 +227,35 @@ function stop(p,player,dealer,msg,bet,fromHit){
 
 
 
-	var sql = "START TRANSACTION;";
+	var sql = "";
 	if(winner=='w')
 		sql += "UPDATE cowoncy NATURAL JOIN blackjack SET money = money + "+bet*2+" WHERE id = "+p.msg.author.id+" AND active = 1;";
 	else if(winner=='t'||winner=='tb')
 		sql += "UPDATE cowoncy NATURAL JOIN blackjack SET money = money + "+bet+" WHERE id = "+p.msg.author.id+" AND active = 1;";
 	sql += "UPDATE blackjack SET active = 0 WHERE id = "+p.msg.author.id+";";
 	sql += "DELETE FROM blackjack_card WHERE bjid = (SELECT bjid FROM blackjack WHERE id = "+p.msg.author.id+");";
-	sql += "COMMIT;";
-	p.con.query(sql,function(err,result){
-		if(err){console.error(err);msg.edit("Something went wrong...");return;}
-		if(winner=='w'){
-			p.logger.value('cowoncy',(bet),['command:blackjack','id:'+p.msg.author.id]);
-			p.logger.value('gamble',1,['command:blackjack','id:'+p.msg.author.id]);
-		}else if(winner=='l'){
-			p.logger.value('cowoncy',(bet*-1),['command:blackjack','id:'+p.msg.author.id]);
-			p.logger.value('gamble',-1,['command:blackjack','id:'+p.msg.author.id]);
-		}
-		var embed = bjUtil.generateEmbed(p.msg.author,dealer,player,bet,winner,bet);
-		msg.edit({embed})
-			.catch(console.error);
+	p.con.beginTransaction(function(err){
+		if(err){console.error(err);return;}
+		p.con.query(sql,function(err,result){
+			if(err){console.error(err);msg.edit("Something went wrong...");p.con.rollback(function(){});return;}
+			if(winner=='w'){
+				p.logger.value('cowoncy',(bet),['command:blackjack','id:'+p.msg.author.id]);
+				p.logger.value('gamble',1,['command:blackjack','id:'+p.msg.author.id]);
+			}else if(winner=='l'){
+				p.logger.value('cowoncy',(bet*-1),['command:blackjack','id:'+p.msg.author.id]);
+				p.logger.value('gamble',-1,['command:blackjack','id:'+p.msg.author.id]);
+			}
+			var embed = bjUtil.generateEmbed(p.msg.author,dealer,player,bet,winner,bet);
+			msg.edit({embed})
+				.catch(console.error);
+			p.con.commit(function(err){
+				if(err){
+					p.con.rollback(function(){
+						console.error(err);
+					});
+				}
+			});
+		});
 	});
 }
 

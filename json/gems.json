@@ -54,35 +54,35 @@
 			"chance":0.01,
 			"type":"Multiplier",
 			"amount":10,
-			"length":25
+			"length":100
 		},
 		"cgem2":{
 			"emoji":"<:cgem2:492803120267788298>",
 			"id":58,
 			"chance":0.22,
 			"type":"Patreon",
-			"length":50
+			"length":25
 		},
 		"ugem2":{
 			"emoji":"<:ugem2:492803121970413569>",
 			"id":59,
 			"chance":0.22,
 			"type":"Patreon",
-			"length":75
+			"length":50
 		},
 		"rgem2":{
 			"emoji":"<:rgem2:492803121420959746>",
 			"id":60,
 			"chance":0.20,
 			"type":"Patreon",
-			"length":100
+			"length":75
 		},
 		"egem2":{
 			"emoji":"<:egem2:492803121245061131>",
 			"id":61,
 			"chance":0.20,
 			"type":"Patreon",
-			"length":150
+			"length":100
 		},
 		"mgem2":{
 			"emoji":"<:mgem2:492803121840521276>",

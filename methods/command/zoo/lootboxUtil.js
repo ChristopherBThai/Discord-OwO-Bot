@@ -22,6 +22,7 @@ exports.getItems = function(con,id,callback){
 }
 
 exports.getRandomGem = function(id,patreon){
+	patreon = true;
 	var type = Math.trunc(Math.random()*(typeCount-((patreon)?1:0)));
 	var count = 0;
 	for (var key in gems){
