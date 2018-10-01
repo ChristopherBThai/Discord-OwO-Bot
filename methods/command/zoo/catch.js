@@ -96,11 +96,11 @@ function getAnimals(p,result,mGem,pGem){
 	for(var i=0;i<animal.length;i++){
 		var type = animal[i][2];
 		xp += animal[i][3];
-		insertAnimal += "(1,1,"+p.msg.author.id+","+animal[0][1]+"),";
+		insertAnimal += "(1,1,"+p.msg.author.id+",'"+animal[0][1]+"'),";
 		if(!typeCount[type]) typeCount[type] = 0;
 		typeCount[type] += 1;
 	}
-	sql += insertanimal.slice(0,-1)+" ON DUPLICATE KEY UPDATE count = count +1,totalcount = totalcount+1;";
+	sql += insertAnimal.slice(0,-1)+" ON DUPLICATE KEY UPDATE count = count +1,totalcount = totalcount+1;";
 
 	var insertCount = ""; 
 	for(var key in typeCount){
