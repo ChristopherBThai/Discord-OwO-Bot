@@ -220,13 +220,15 @@ function stop(p,player,dealer,msg,bet,fromHit){
 	var sql = "UPDATE blackjack SET active = 0 WHERE id = "+p.msg.author.id+" AND active > 0;";
 	var sql2 = "DELETE FROM blackjack_card WHERE bjid = (SELECT bjid FROM blackjack WHERE id = "+p.msg.author.id+");";
 	if(winner=='w')
-		sql2 += "UPDATE cowoncy NATURAL JOIN blackjack SET money = money + "+bet*2+" WHERE id = "+p.msg.author.id+" AND active = 1;";
+		sql2 += "UPDATE cowoncy SET money = money + "+bet*2+" WHERE id = "+p.msg.author.id+";";
 	else if(winner=='t'||winner=='tb')
-		sql2 += "UPDATE cowoncy NATURAL JOIN blackjack SET money = money + "+bet+" WHERE id = "+p.msg.author.id+" AND active = 1;";
+		sql2 += "UPDATE cowoncy SET money = money + "+bet+" WHERE id = "+p.msg.author.id+";";
 	p.con.query(sql,function(err,result){
 		if(err){console.error(err);msg.edit("Something went wrong...");return;}
+		console.log(result);
 		if(result.changedRows>0){
 			p.con.query(sql2,function(err,result){
+				console.log(result);
 				if(err){console.error(err);msg.edit("Something went wrong...");return;}
 				if(winner=='w'){
 					p.logger.value('cowoncy',(bet),['command:blackjack','id:'+p.msg.author.id]);
