@@ -24,12 +24,13 @@ module.exports = new CommandInterface({
 	execute: function(p){
 		if(p.args.length==0){
 			var sql = "SELECT money FROM cowoncy WHERE id = "+p.msg.author.id+";";
+			sql += "SELECT COUNT(*) as count FROM animal WHERE ispet > 0;"
 			p.con.query(sql,function(err,result){
 				if(err){console.error(err);return;}
-				if(result[0]==undefined||result[0].money<5)
+				if(result[0][0]==undefined||result[0][0].money<5)
 					p.send("**🚫 | "+p.msg.author.username+"**, You don't have enough cowoncy!",3000);
 				else
-					fight(p.con,p.msg,p.send,p);
+					fight(p.con,p.msg,p.send,p,((result[1][0])?result[1][0].count:0);
 			});
 		}else
 			fightUser(p.con,p.msg,p.args,p.send);
@@ -37,7 +38,7 @@ module.exports = new CommandInterface({
 
 })
 
-function fight(con,msg,send,p){
+function fight(con,msg,send,p,count){
 	var sql = "SELECT id,money,nickname,name,lvl,att,hp,lvl,streak,xp, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 1 THEN fname ELSE NULL END)) AS one, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 2 THEN fname ELSE NULL END)) AS two, "+
@@ -45,13 +46,12 @@ function fight(con,msg,send,p){
 		"FROM (cowoncy NATURAL JOIN animal) LEFT JOIN (animal_food NATURAL JOIN food) "+
 		"ON animal.pid = animal_food.pid "+
 		"WHERE id = "+msg.author.id+" AND pet = name GROUP BY animal.pid;";
-	sql += "SET @rand = (CEIL(RAND()*(SELECT COUNT(*) FROM animal WHERE ispet = 1 AND id != "+msg.author.id+")));"+
-		"SELECT id,nickname,name,lvl,att,hp,lvl,streak,xp, "+
+	sql += "SELECT id,nickname,name,lvl,att,hp,lvl,streak,xp, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 1 THEN fname ELSE NULL END)) AS one, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 2 THEN fname ELSE NULL END)) AS two, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 3 THEN fname ELSE NULL END)) AS three "+
 		"FROM ("+
-			"SELECT * FROM (SELECT animal.*,@rownum := @rownum + 1 AS rank FROM animal ,(SELECT @rownum := 0) r WHERE ispet = 1 AND id != "+msg.author.id+") d WHERE rank <= @rand ORDER BY rank DESC LIMIT 1"+
+			"SELECT * FROM animal WHERE ispet > 1 LIMIT 1 OFFSET "+(Math.trunc(Math.rand()*count))+";"+
 		") as opponent "+
 		"LEFT JOIN (animal_food NATURAL JOIN food) ON opponent.pid = animal_food.pid "+
 		"GROUP BY opponent.pid;";
@@ -63,11 +63,11 @@ function fight(con,msg,send,p){
 		p.logger.value('cowoncy',-5,['command:battle','id:'+msg.author.id]);
 
 		//Check if guild is kid friendly
-		var censor = (rows[3][0]!=undefined && rows[3][0].young)
+		var censor = (rows[2][0]!=undefined && rows[2][0].young)
 
 		//Grab pet info
 		var upet = battleUtil.extractInfo(rows[0][0],msg.author,censor);
-		var opet = battleUtil.extractInfo(rows[2][0],await global.getUser(rows[2][0].id,false),censor);
+		var opet = battleUtil.extractInfo(rows[1][0],await global.getUser(rows[1][0].id,false),censor);
 
 		//Check if pets are valid
 		if(upet == undefined){

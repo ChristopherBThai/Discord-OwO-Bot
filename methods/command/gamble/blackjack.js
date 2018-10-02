@@ -225,10 +225,8 @@ function stop(p,player,dealer,msg,bet,fromHit){
 		sql2 += "UPDATE cowoncy SET money = money + "+bet+" WHERE id = "+p.msg.author.id+";";
 	p.con.query(sql,function(err,result){
 		if(err){console.error(err);msg.edit("Something went wrong...");return;}
-		console.log(result);
 		if(result.changedRows>0){
 			p.con.query(sql2,function(err,result){
-				console.log(result);
 				if(err){console.error(err);msg.edit("Something went wrong...");return;}
 				if(winner=='w'){
 					p.logger.value('cowoncy',(bet),['command:blackjack','id:'+p.msg.author.id]);
