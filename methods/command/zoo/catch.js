@@ -66,7 +66,7 @@ module.exports = new CommandInterface({
 				}
 
 				con.query(sql,function(err,result2){
-					if(err) throw err;
+					if(err) {console.error(err); return;}
 					p.logger.value('cowoncy',-5,['command:hunt','id:'+msg.author.id]);
 					p.send(text);
 				});
