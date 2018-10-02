@@ -6,7 +6,7 @@ const login = require('../tokens/owo-login.json');
 
 const Discord = require("discord.js");
 const client = new Discord.Client({
-	messageCacheMaxSize:100,
+	messageCacheMaxSize:50,
 	messageCacheLifetime:1800,
 	messageSweepInterval:3600,
 	disabledEvents:[
@@ -64,7 +64,7 @@ client.on('ready',()=>{
 //When bot disconnects
 client.on('disconnect', function(erMsg, code) {
 	console.log('----- Bot disconnected from Discord with code', code, 'for reason:', erMsg, '-----');
-	client.connect();
+	//client.connect();
 	if(!debug)
 		logger.increment("disconnect");
 });

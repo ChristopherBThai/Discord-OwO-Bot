@@ -96,7 +96,7 @@ function getAnimals(p,result,mGem,pGem){
 	for(var i=0;i<animal.length;i++){
 		var type = animal[i][2];
 		xp += animal[i][3];
-		insertAnimal += "(1,1,"+p.msg.author.id+",'"+animal[0][1]+"'),";
+		insertAnimal += "(1,1,"+p.msg.author.id+",'"+animal[i][1]+"'),";
 		if(!typeCount[type]) typeCount[type] = 0;
 		typeCount[type] += 1;
 	}
@@ -104,7 +104,7 @@ function getAnimals(p,result,mGem,pGem){
 
 	var insertCount = ""; 
 	for(var key in typeCount){
-		var insertCount = "INSERT INTO animal_count (id,"+key+") VALUES ("+p.msg.author.id+","+typeCount[key]+") ON DUPLICATE KEY UPDATE "+type+" = "+type+"+"+typeCount[key]+";";
+		insertCount += "INSERT INTO animal_count (id,"+key+") VALUES ("+p.msg.author.id+","+typeCount[key]+") ON DUPLICATE KEY UPDATE "+key+" = "+key+"+"+typeCount[key]+";";
 	}
 	sql += insertCount+"UPDATE cowoncy SET money = money - 5 WHERE id = "+p.msg.author.id+";";
 	if(pGem)

@@ -51,17 +51,13 @@ function claim(msg,con,query,bot){
 	var sql = "SELECT patreonAnimal FROM user WHERE id = "+msg.author.id+";";
 	sql += "UPDATE autohunt SET huntmin = 0,huntcount=0,essence = essence +"+totalGain+" WHERE id = "+msg.author.id+" AND huntmin > 0;";
 	sql += "SELECT * FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND pet = name;";
-	con.beginTransaction(function(err){
-		if(err){console.error(err);return;}
 	con.query(sql,function(err,result){
 		if(err) {
 			console.error(err);
-			con.rollback(function(){console.error(err);});
 			return;
 		}
 
 		if(result[1].changedRows<=0){
-			con.rollback(function(){console.error(err);});
 			return;
 		}
 
@@ -113,17 +109,9 @@ function claim(msg,con,query,bot){
 			if(err) {
 				console.error(err);
 				return;
-				con.rollback(function(){console.error(err);});
 			}
 			msg.channel.send(text).catch(err => {console.error(err)});
-			con.commit(function(err){
-				if(err){
-					console.error(err);
-					con.rollback(function(){console.error(err);});
-				}
-			});
 		});
-	});
 	});
 }
 
