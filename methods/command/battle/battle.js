@@ -30,7 +30,7 @@ module.exports = new CommandInterface({
 				if(result[0][0]==undefined||result[0][0].money<5)
 					p.send("**🚫 | "+p.msg.author.username+"**, You don't have enough cowoncy!",3000);
 				else
-					fight(p.con,p.msg,p.send,p,((result[1][0])?result[1][0].count:0);
+					fight(p.con,p.msg,p.send,p,((result[1][0])?result[1][0].count:0));
 			});
 		}else
 			fightUser(p.con,p.msg,p.args,p.send);
@@ -51,7 +51,7 @@ function fight(con,msg,send,p,count){
 			"GROUP_CONCAT((CASE WHEN pfid = 2 THEN fname ELSE NULL END)) AS two, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 3 THEN fname ELSE NULL END)) AS three "+
 		"FROM ("+
-			"SELECT * FROM animal WHERE ispet > 1 LIMIT 1 OFFSET "+(Math.trunc(Math.rand()*count))+";"+
+			"SELECT * FROM animal WHERE ispet > 0 LIMIT 1 OFFSET "+(Math.trunc(Math.random()*count))+
 		") as opponent "+
 		"LEFT JOIN (animal_food NATURAL JOIN food) ON opponent.pid = animal_food.pid "+
 		"GROUP BY opponent.pid;";
@@ -67,7 +67,7 @@ function fight(con,msg,send,p,count){
 
 		//Grab pet info
 		var upet = battleUtil.extractInfo(rows[0][0],msg.author,censor);
-		var opet = battleUtil.extractInfo(rows[1][0],await global.getUser(rows[1][0].id,false),censor);
+		var opet = battleUtil.extractInfo(rows[1][0],await global.getUser((rows[1][0])?rows[1][0].id:undefined,false),censor);
 
 		//Check if pets are valid
 		if(upet == undefined){
