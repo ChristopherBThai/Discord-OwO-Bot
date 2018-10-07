@@ -6,7 +6,7 @@ const login = require('../tokens/owo-login.json');
 
 const Discord = require("discord.js");
 const client = new Discord.Client({
-	messageCacheMaxSize:50,
+	messageCacheMaxSize:20,
 	messageCacheLifetime:1800,
 	messageSweepInterval:3600,
 	disabledEvents:[
