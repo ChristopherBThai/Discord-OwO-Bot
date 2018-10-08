@@ -5,6 +5,7 @@ var global = require('../../../util/global.js');
 var pet = require('../battle/petutil.js');
 const gemUtil = require('./gemUtil.js');
 const animalUtil = require('./animalUtil.js');
+const alterHunt = require('./../patreon/alterHunt.js');
 const lootboxChance = 0.05;
 
 module.exports = new CommandInterface({
@@ -19,7 +20,7 @@ module.exports = new CommandInterface({
 
 	related:["owo zoo","owo sell","owo lootbox"],
 
-	cooldown:15000,
+	cooldown:1500,
 	half:80,
 	six:500,
 	bot:true,
@@ -28,7 +29,7 @@ module.exports = new CommandInterface({
 		var msg=p.msg,con=p.con;
 		var sql = "SELECT money,patreonAnimal FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id WHERE cowoncy.id = "+msg.author.id+";";
 		sql += "SELECT name,nickname,lvl,xp FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND name = pet;";
-		sql += "SELECT * FROM lootbox WHERE id = "+msg.author.id+" AND TIMESTAMPDIFF(HOUR,claim,NOW())<24 AND claimcount >=3;";
+		sql += "SELECT *,TIMESTAMPDIFF(HOUR,claim,NOW()) as time FROM lootbox WHERE id = "+msg.author.id+";";
 		sql += "SELECT uid,activecount,gname,type FROM user NATURAL JOIN user_gem NATURAL JOIN gem WHERE id = "+msg.author.id+" AND activecount > 0;";
 		con.query(sql,function(err,result){
 			if(err) {console.error(err);return;}
@@ -59,11 +60,14 @@ module.exports = new CommandInterface({
 				}
 
 				//Get Lootbox
-				if(!result[2][0]){
-					var lootbox = getLootbox(p);
+				if(!result[2][0]||result[2][0].claimcount<3||result[2][0].time>=23){
+					var lootbox = getLootbox(p,result[2][0]);
 					sql += lootbox.sql;
 					text += lootbox.text;
 				}
+
+				//Alter text for legendary tier patreons
+				text = alterHunt.alter(p.msg.author.id,text);
 
 				con.query(sql,function(err,result2){
 					if(err) {console.error(err); return;}
@@ -111,7 +115,7 @@ function getAnimals(p,result,mGem,pGem){
 		sql += "UPDATE user_gem SET activecount = activecount - 1 WHERE uid = "+pGem.uid+" AND gname = '"+pGem.gname+"';";
 	if(mGem)
 		sql += "UPDATE user_gem SET activecount = activecount - 1 WHERE uid = "+mGem.uid+" AND gname = '"+mGem.gname+"';";
-	var text = "**🌱 | "+p.msg.author.username+"** caught a(n) "+animal[0][0]+" "+global.unicodeAnimal(animal[0][1])+"!"
+	var text = "**🌱 | "+p.msg.author.username+"** spent 5 <:cowoncy:416043450337853441> and caught a(n) "+animal[0][0]+" "+global.unicodeAnimal(animal[0][1])+"!"
 	if(mGem||pGem){
 		text = "**🌱 | "+p.msg.author.username+"**, hunt is empowered by ";
 		if(gem)
@@ -124,12 +128,19 @@ function getAnimals(p,result,mGem,pGem){
 	return {"sql":sql,"xp":xp,"animal":animal,"text":text};
 }
 
-function getLootbox(p){
+function getLootbox(p,query){
 	var rand = Math.random();
+	var resetsIn = 23,count = 1; 
+	if(!query||query.time>=23)
+		rand = 0;
+	else{
+		resetsIn = 23 - query.time;
+		count = query.claimcount + 1;
+	}
 	if(rand <= lootboxChance){
 		return {
 			"sql":"INSERT INTO lootbox (id,boxcount,claimcount,claim) VALUES ("+p.msg.author.id+",1,1,NOW()) ON DUPLICATE KEY UPDATE boxcount = boxcount + 1, claimcount = IF(TIMESTAMPDIFF(HOUR,claim,NOW())<24,claimcount+1,1), claim = IF(TIMESTAMPDIFF(HOUR,claim,NOW())<24,claim,NOW());",
-			"text":"\n**<:box:427352600476647425> |** You found a **lootbox**!"
+			"text":"\n**<:box:427352600476647425> |** You found a **lootbox**! `["+count+"/3] RESETS IN: "+resetsIn+"H`"
 		};
 	}else return {"sql":"","text":""};
 }
