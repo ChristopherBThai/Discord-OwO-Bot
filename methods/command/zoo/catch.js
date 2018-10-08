@@ -60,7 +60,7 @@ module.exports = new CommandInterface({
 				}
 
 				//Get Lootbox
-				if(false&&(!result[2][0]||result[2][0].claimcount<3||result[2][0].time>=23)){
+				if(!result[2][0]||result[2][0].claimcount<3||result[2][0].time>=23){
 					var lootbox = getLootbox(p,result[2][0]);
 					sql += lootbox.sql;
 					text += lootbox.text;
