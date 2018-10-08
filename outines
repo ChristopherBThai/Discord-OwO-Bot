@@ -45,7 +45,7 @@ CREATE TABLE `animal` (
   UNIQUE KEY `pid` (`pid`),
   UNIQUE KEY `pid_2` (`pid`),
   UNIQUE KEY `pid_3` (`pid`)
-) ENGINE=InnoDB AUTO_INCREMENT=21932061 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21930402 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -150,7 +150,7 @@ CREATE TABLE `blackjack` (
   `active` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `bjid` (`bjid`)
-) ENGINE=InnoDB AUTO_INCREMENT=717855 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=717841 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -397,7 +397,7 @@ CREATE TABLE `transaction` (
   PRIMARY KEY (`sender`,`reciever`,`time`),
   UNIQUE KEY `tid` (`tid`),
   CONSTRAINT `transaction_ibfk_1` FOREIGN KEY (`sender`) REFERENCES `cowoncy` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=106820 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=106817 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -415,7 +415,7 @@ CREATE TABLE `user` (
   `patreonDaily` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uid` (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=9631784 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9631669 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -469,135 +469,6 @@ CREATE TABLE `vote` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping routines for database 'owo'
---
-/*!50003 DROP PROCEDURE IF EXISTS `CowoncyDrop` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
-/*!50003 SET collation_connection  = utf8_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `CowoncyDrop`(
-IN tid BIGINT UNSIGNED,
-IN tchannel BIGINT UNSIGNED,
-IN tamount INT UNSIGNED)
-BEGIN
-
-DECLARE exit handler for sqlexception
-  BEGIN
-  ROLLBACK;
-END;
-
-DECLARE exit handler for sqlwarning
- BEGIN
- ROLLBACK;
-END;
-
-START TRANSACTION;
-IF (SELECT COALESCE(money,0) FROM cowoncy WHERE id = tid) < tamount THEN
-ROLLBACK;
-END IF;
-UPDATE cowoncy SET money = money - tamount WHERE id = tid;
-INSERT INTO cowoncydrop (channel,amount) VALUES (tchannel,tamount) ON DUPLICATE KEY UPDATE amount = amount + tamount;
-COMMIT;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `CowoncyPickup` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
-/*!50003 SET collation_connection  = utf8_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `CowoncyPickup`(
-IN tid BIGINT UNSIGNED,
-IN tchannel BIGINT UNSIGNED,
-IN tamount INT UNSIGNED)
-BEGIN
-
-DECLARE exit handler for sqlexception
-  BEGIN
-  ROLLBACK;
-END;
-
-DECLARE exit handler for sqlwarning
- BEGIN
- ROLLBACK;
-END;
-
-START TRANSACTION;
-IF (SELECT COALESCE(money,0) FROM cowoncy WHERE id = tid) < tamount THEN
-ROLLBACK;
-ELSEIF (((SELECT COALESCE(amount,0) FROM cowoncydrop WHERE channel = tchannel) >= tamount) AND ((SELECT COALESCE(money,0) FROM cowoncy WHERE id = tid) >= tamount)) THEN
-INSERT INTO cowoncy (id,money) VALUES (tid,tamount) ON DUPLICATE KEY UPDATE money = money + tamount;
-UPDATE cowoncydrop SET amount = amount - tamount WHERE channel = tchannel;
-ELSE
-UPDATE cowoncy SET money = money - tamount WHERE id = tid;
-INSERT INTO cowoncydrop (channel,amount) VALUES (tchannel,tamount) ON DUPLICATE KEY UPDATE amount = amount + tamount;
-END IF;
-COMMIT;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `CowoncyTransfer` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
-/*!50003 SET collation_connection  = utf8_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `CowoncyTransfer`(
-IN send BIGINT UNSIGNED,
-IN rec BIGINT UNSIGNED,
-IN tamount INT UNSIGNED)
-BEGIN
-
-DECLARE exit handler for sqlexception
-  BEGIN
-  ROLLBACK;
-END;
-
-DECLARE exit handler for sqlwarning
- BEGIN
- ROLLBACK;
-END;
-
-START TRANSACTION;
-IF (SELECT money FROM cowoncy WHERE id = send) < tamount THEN
-ROLLBACK;
-END IF;
-UPDATE cowoncy SET money = money - tamount WHERE id = send;
-INSERT INTO cowoncy (id,money) VALUES (rec,tamount) ON DUPLICATE KEY UPDATE money = money + tamount;
-INSERT INTO transaction (sender,reciever,amount) VALUES (send,rec,tamount);
-COMMIT;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -608,4 +479,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-10-07 21:45:27
+-- Dump completed on 2018-10-07 21:43:41

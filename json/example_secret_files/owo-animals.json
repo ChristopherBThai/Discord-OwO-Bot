@@ -29,6 +29,7 @@
 	"list":{
 		"bee":{
 			"value":":bee:",
+			"desc":"How do bees go to school?\n~   On the school buzz!",
 			"uni":"🐝",
 			"alt":["wasp"],
 			"attr":4,
@@ -36,6 +37,7 @@
 		},
 		"bug":{
 			"value":":bug:",
+			"desc":"It's a worm.",
 			"uni":"🐛",
 			"alt":["worm","caterpillar"],
 			"attr":2,
@@ -43,6 +45,7 @@
 		},
 		"snail":{
 			"value":":snail:",
+			"desc":"The slowest animal, but the toughest in the zoo",
 			"uni":"🐌",
 			"alt":["slug"],
 			"attr":1,
@@ -50,6 +53,7 @@
 		},
 		"beetle":{
 			"value":":beetle:",
+			"desc":"Are they all female?",
 			"uni":"🐞",
 			"alt":["ladybug"],
 			"attr":3,
@@ -57,6 +61,7 @@
 		},
 		"butterfly":{
 			"value":":butterfly:",
+			"desc":"Why did you throw butter out the window?\n~ To see a butter fly!",
 			"uni":"🦋",
 			"alt":[],
 			"attr":3,
@@ -64,6 +69,7 @@
 		},
 		"chick":{
 			"value":":baby_chick:",
+			"desc":"chirp chirp! It's so cute!",
 			"uni":"🐤",
 			"alt":["baby_chick"],
 			"attr":2,
@@ -71,6 +77,7 @@
 		},
 		"mouse":{
 			"value":":mouse2:",
+			"desc":"sqeak!",
 			"uni":"🐁",
 			"alt":["mouse2","rat"],
 			"attr":3,
@@ -78,6 +85,7 @@
 		},
 		"chicken":{
 			"value":":rooster:",
+			"desc":"The alarm cluck",
 			"uni":"🐓",
 			"alt":["rooster"],
 			"attr":4,
@@ -85,6 +93,7 @@
 		},
 		"rabbit":{
 			"value":":rabbit2:",
+			"desc":"There's a ton of them.",
 			"uni":"🐇",
 			"alt":["rabbit2","bunny"],
 			"attr":3,
@@ -92,6 +101,7 @@
 		},
 		"chipmunk":{
 			"value":":chipmunk:",
+			"desc":"Don't mess with them.",
 			"uni":"🐿",
 			"alt":["squirrel"],
 			"attr":3,
