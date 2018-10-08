@@ -20,7 +20,7 @@ module.exports = new CommandInterface({
 
 	related:["owo zoo","owo sell","owo lootbox"],
 
-	cooldown:1500,
+	cooldown:15000,
 	half:80,
 	six:500,
 	bot:true,
@@ -60,7 +60,7 @@ module.exports = new CommandInterface({
 				}
 
 				//Get Lootbox
-				if(!result[2][0]||result[2][0].claimcount<3||result[2][0].time>=23){
+				if(false&&(!result[2][0]||result[2][0].claimcount<3||result[2][0].time>=23)){
 					var lootbox = getLootbox(p,result[2][0]);
 					sql += lootbox.sql;
 					text += lootbox.text;
@@ -131,15 +131,17 @@ function getAnimals(p,result,mGem,pGem){
 function getLootbox(p,query){
 	var rand = Math.random();
 	var resetsIn = 23,count = 1; 
+	var sql = "INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES ("+p.msg.author.id+",1,1,NOW()) ON DUPLICATE KEY UPDATE boxcount = boxcount + 1, claimcount = 1, claim = NOW();";
 	if(!query||query.time>=23)
 		rand = 0;
 	else{
+		sql = "UPDATE IGNORE lootbox SET boxcount = boxcount + 1, claimcount = claimcount + 1 WHERE id = "+p.msg.author.id+";";
 		resetsIn = 23 - query.time;
 		count = query.claimcount + 1;
 	}
 	if(rand <= lootboxChance){
 		return {
-			"sql":"INSERT INTO lootbox (id,boxcount,claimcount,claim) VALUES ("+p.msg.author.id+",1,1,NOW()) ON DUPLICATE KEY UPDATE boxcount = boxcount + 1, claimcount = IF(TIMESTAMPDIFF(HOUR,claim,NOW())<24,claimcount+1,1), claim = IF(TIMESTAMPDIFF(HOUR,claim,NOW())<24,claim,NOW());",
+			"sql":sql,
 			"text":"\n**<:box:427352600476647425> |** You found a **lootbox**! `["+count+"/3] RESETS IN: "+resetsIn+"H`"
 		};
 	}else return {"sql":"","text":""};
