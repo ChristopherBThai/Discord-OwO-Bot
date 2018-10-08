@@ -72,7 +72,7 @@ function display(send){
 				{"name":"Emotes",
 					"value":sEmotes},
 				{"name":"Actions",
-					"value":uEmotes},
+					"value":uEmotes+"  `bully`"},
 				{"name":"Utility",
 					"value":"`feedback`  `stats`  `link`  `guildlink`  `disable`  `censor`  `patreon`  `avatar`"},
 				]
