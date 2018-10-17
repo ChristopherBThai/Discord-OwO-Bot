@@ -117,7 +117,7 @@ function displayRanking(con,msg,count,globalRank,sql,title,subText){
 					name = ""+user.username;
 			}
 
-			name = name.replace("discord.gg","discord,gg");
+			name = name.replace("discord.gg","discord,gg").replace(/(```)/g, "`\u200b``");
 			embed += "#"+rank+"\t"+name+subText(ele,rank);
 			rank++;
 		};
