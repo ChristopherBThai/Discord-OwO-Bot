@@ -8,16 +8,12 @@ exports.setManager = function(manageri){
 
 exports.msgUser = function(id,msg){
 	var rand = Math.floor(Math.random()*manager.totalShards);
-	manager.broadcastEval(`
-		if(this.shard.id==${rand}){
-			this.fetchUser('${id}')
-			.then(user => {
-				if(user!=undefined)
-					user.send(\`${msg}\`)
-					.catch(err => console.error(err));
-			}).catch(err => console.error(err));
-		}
-	`);
+	manager.broadcast({
+		type:"sendDM",
+		shard:rand,
+		to:id,
+		msg:msg
+	});
 }
 
 exports.getUsername = async function(id){
@@ -31,11 +27,11 @@ exports.getUsername = async function(id){
 }
 
 exports.msgChannel = function(id,msg){
-	manager.broadcastEval(`
-		var channel = this.channels.get('${id}');
-		if(channel!=undefined)
-			channel.send(\`${msg}\`);
-	`);
+	manager.broadcast({
+		type:"sendChannel",
+		to:id,
+		msg:msg
+	});
 }
 
 exports.con = function(){
