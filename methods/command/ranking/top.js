@@ -103,7 +103,7 @@ function displayRanking(con,msg,count,globalRank,sql,title,subText){
 				var user = msg.guild.members.get(id);
 				var name = "";
 				if(user&&user.nickname) 
-					name = user.nickname.replace(/(```)/g, "`\u200b``")+" ("+user.user.username+")";
+					name = user.nickname+" ("+user.user.username+")";
 				else if(user&&user.user.username)
 					name = ""+user.user.username;
 				else
@@ -117,7 +117,7 @@ function displayRanking(con,msg,count,globalRank,sql,title,subText){
 					name = ""+user.username;
 			}
 
-			name = name.replace("discord.gg","discord,gg");
+			name = name.replace("discord.gg","discord,gg").replace(/(```)/g, "`\u200b``");
 			embed += "#"+rank+"\t"+name+subText(ele,rank);
 			rank++;
 		};

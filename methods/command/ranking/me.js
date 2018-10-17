@@ -108,7 +108,7 @@ function displayRanking(con,msg,sql,title,subText){
 					name = "User Left Discord";
 				else
 					name = ""+user.username;
-				name = name.replace("discord.gg","discord,gg");
+				name = name.replace("discord.gg","discord,gg").replace(/(```)/g, "`\u200b``");
 				embed += "#"+rank+"\t"+name+"\n"+subText(ele)+"\n";
 				rank++;
 			}else if(rank==0)
@@ -121,7 +121,7 @@ function displayRanking(con,msg,sql,title,subText){
 			uname = uname.username;
 		else 
 			uname = "you";
-		uname = uname.replace("discord.gg","discord,gg");
+		uname = uname.replace("discord.gg","discord,gg").replace(/(```)/g, "`\u200b``");
 		embed += "< "+rank+"   "+uname+" >\n"+subText(me)+"\n";
 		rank++;
 
