@@ -28,6 +28,7 @@ const command = new CommandClass(client,dbl);
 const macro = require('../tokens/macro.js');
 const logger = require('./util/logger.js');
 const patreon = require('./util/patreon.js');
+const broadcastHandler = require('./handler/broadcastHandler');
 
 const modChannel = "471579186059018241";
 
@@ -112,3 +113,7 @@ function updateActivity(){
 		})
 		.catch(err => console.error(err));
 }
+
+process.on('message',message => {
+	broadcastHandler.handle(client,message)
+});
