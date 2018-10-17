@@ -6,9 +6,10 @@ const login = require('../tokens/owo-login.json');
 
 const Discord = require("discord.js");
 const client = new Discord.Client({
-	messageCacheMaxSize:20,
-	messageCacheLifetime:1800,
-	messageSweepInterval:3600,
+	messageCacheMaxSize:100,
+	messageCacheLifetime:300,
+	messageSweepInterval:500,
+	disableEveryone:true,
 	disabledEvents:[
 		"TYPEING_START",
 		"VOICE_SERVER_UPDATE",
