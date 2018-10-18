@@ -143,7 +143,11 @@ function executeCommand(param){
 	var name = aliasToCommand[command];
 	ban.check(con,msg,param.client,name,function(){
 		macro.check(msg,aliasToCommand[command],async function(){
-			var result = await commands[command].execute(param);
+			try{
+				var result = await commands[command].execute(param);
+			}catch(err){
+				console.error(err);
+			}
 			logger.increment("command",['command:'+aliasToCommand[command],'id:'+msg.author.id]);
 			if(command!="points"){
 				console.log("\x1b[0m\x1b[4mCommand\x1b[0m: %s\x1b[0m \x1b[36m{%s}\x1b[0m \x1b[0m%s\x1b[36m[%s][%s][%s]",
