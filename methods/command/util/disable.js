@@ -58,23 +58,30 @@ module.exports = new CommandInterface({
 			}
 		}
 		sql = sql.slice(0,-1) + ";";
+		if(!validCommand) sql = "";
 		sql += "SELECT * FROM disabled WHERE channel = "+msg.channel.id+";";
 
 		/* Query */
 		con.query(sql,function(err,rows,field){
 			if(err){console.error(err);return;}
 
+			if(validCommand)
+				rows = rows[1];
+
 			/* Construct message */
-			var enabled = p.mcommands.slice();
+			var enabled = Object.keys(p.mcommands);
 			var disabled = [];
 
-			for(let i=0;i<rows[1].length;i++){
-				let command = rows[1][i].command;
-				if(let index = enabled.indexOf(command)>=0){
+			for(let i=0;i<rows.length;i++){
+				let command = rows[i].command;
+				if(enabled.includes(command)){
 					disabled.push(command);
-					enabled.splice(index,1);
+					enabled.splice(enabled.indexOf(command),1);
 				}
 			}
+
+			if(enabled.length==0) enabled.push("NONE");
+			if(disabled.length==0) disabled.push("NONE");
 
 			const embed = {
 				"color":4886754,
@@ -86,7 +93,7 @@ module.exports = new CommandInterface({
 					"value": "`"+enabled.join("`  `")+"`",
 				}]
 			}
-			p.send("**⚙ |** The command **"+command+"** has been **disabled** for this channel!");
+			p.send({embed});
 		});
 	}
 
