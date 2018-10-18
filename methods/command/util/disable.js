@@ -4,11 +4,11 @@ module.exports = new CommandInterface({
 	
 	alias:["disable"],
 
-	args:"{command}",
+	args:"{command1, command2, ...}",
 
-	desc:"Disable a command in the current channel",
+	desc:"Disable a command in the current channel. You can list multiple commands to disable multiple at once.",
 
-	example:["owo disable hunt","owo disable all"],
+	example:["owo disable hunt battle zoo","owo disable all"],
 
 	related:["owo enable"],
 
@@ -17,13 +17,21 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: function(p){
+		/* Checks if the user has permission */
 		if(!p.msg.member.permissions.has('MANAGE_CHANNELS')){
 			p.send("**🚫 | "+p.msg.author.username+"**, You are not an admin!",3000);
 			return;
 		}
+
 		var msg=p.msg,con=p.con;
-		var command = p.args[0];
-		if(command == "all"){
+
+		/* Parse commands */
+		var commands = p.args.slice();
+		for(let i = 0;i<commands.length;i++)
+			commands[i] = commands[i].toLowerCase();
+
+		/* If the user wants to disable all commands */
+		if(commands.includes("all")){
 			var list = "";
 			for(var key in p.mcommands){
 				if(key!="disable"&&key!="enable")
@@ -37,16 +45,47 @@ module.exports = new CommandInterface({
 			});
 			return;
 		}
-		command = p.aliasToCommand[command];
-		if(command == undefined)
-			return;
-		if(command=="disable"||command=="enable"){
-			p.send("You cant disable that silly!",3000);
-			return;
+
+		/* Construct query statement */
+		var sql = "INSERT IGNORE INTO disabled (channel,command) VALUES ";
+		var validCommand = false;
+		for(let i=0;i<commands.length;i++){
+			/* Convert command name to proper name */
+			let command = p.aliasToCommand[commands[i]];
+			if(command&&command!="disabled"&&command!="enable"){
+				validCommand = true;
+				sql += "("+msg.channel.id+",'"+command+"'),";
+			}
 		}
-		var sql = "INSERT IGNORE INTO disabled (channel,command) VALUES ("+msg.channel.id+",'"+command+"');";
+		sql = sql.slice(0,-1) + ";";
+		sql += "SELECT * FROM disabled WHERE channel = "+msg.channel.id+";";
+
+		/* Query */
 		con.query(sql,function(err,rows,field){
 			if(err){console.error(err);return;}
+
+			/* Construct message */
+			var enabled = p.mcommands.slice();
+			var disabled = [];
+
+			for(let i=0;i<rows[1].length;i++){
+				let command = rows[1][i].command;
+				if(let index = enabled.indexOf(command)>=0){
+					disabled.push(command);
+					enabled.splice(index,1);
+				}
+			}
+
+			const embed = {
+				"color":4886754,
+				"fields": [{
+					"name": "⚙ Disabled Commands for this channel:",
+					"value": "`"+disabled.join("`  `")+"`",
+					},{
+					"name": "Enabled Commands for this channel:",
+					"value": "`"+enabled.join("`  `")+"`",
+				}]
+			}
 			p.send("**⚙ |** The command **"+command+"** has been **disabled** for this channel!");
 		});
 	}

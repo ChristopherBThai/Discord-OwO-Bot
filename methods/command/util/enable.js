@@ -46,7 +46,17 @@ module.exports = new CommandInterface({
 		var sql = "DELETE FROM disabled WHERE channel = "+msg.channel.id+" AND command = '"+command+"';";
 		con.query(sql,function(err,rows,field){
 			if(err){console.error(err);return;}
-			p.send("**⚙ |** The command **"+command+"** has been **enabled** for this channel!");
+			const embed = {
+				"color":4886754,
+				"fields": [{
+					"name": "⚙ Disabled Commands for this channel:",
+					"value": disabled,
+					},{
+					"name": "Disabled Commands for this channel:",
+					"value": enabled,
+				}]
+			}
+			p.send({embed});
 		});
 	}
 
