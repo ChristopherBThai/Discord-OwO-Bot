@@ -86,10 +86,10 @@ module.exports = new CommandInterface({
 			const embed = {
 				"color":4886754,
 				"fields": [{
-					"name": "⚙ Disabled Commands for this channel:",
+					"name": "❎ Disabled Commands for this channel:",
 					"value": "`"+disabled.join("`  `")+"`",
 					},{
-					"name": "Enabled Commands for this channel:",
+					"name": "✅ Enabled Commands for this channel:",
 					"value": "`"+enabled.join("`  `")+"`",
 				}]
 			}
