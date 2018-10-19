@@ -9,8 +9,6 @@ exports.handle = function(client,msg){
 	if(msg.shard!=undefined&&msg.shard!=client.shard.id)
 		return;
 
-	console.log(msg);
-
 	/* Determine the type of broadcast message */
 	try{
 		switch(msg.type){
