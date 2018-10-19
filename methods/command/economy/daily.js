@@ -1,5 +1,12 @@
 const CommandInterface = require('../../commandinterface.js');
 
+/*
+ * Daily command.
+ * Users can claim a daily once per day after midnight
+ */
+
+const dateUtil = require('../../../util/dateUtil.js');
+
 module.exports = new CommandInterface({
 
 	alias:["daily"],
@@ -18,23 +25,28 @@ module.exports = new CommandInterface({
 	bot:true,
 
 	execute: function(p){
+		/* Query for user info */
 		var msg = p.msg,con = p.con;
-		var sql = "SELECT TIMESTAMPDIFF(HOUR,daily,NOW()) AS hour,TIMESTAMPDIFF(MINUTE,daily,NOW()) AS minute,TIMESTAMPDIFF(SECOND,daily,NOW()) AS second FROM cowoncy WHERE id = "+msg.author.id+" AND TIMESTAMPDIFF(HOUR,daily,NOW())<23;"+
-			"SELECT TIMESTAMPDIFF(DAY,daily,NOW()) AS day,patreonDaily,daily_streak FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id WHERE cowoncy.id = "+msg.author.id+";";
+		var sql = "SELECT daily,patreonDaily,daily_streak FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id WHERE cowoncy.id = "+msg.author.id+";";
 		con.query(sql,function(err,rows,fields){
 			if(err){console.error(err);return;}
-			if(rows[0][0]!=undefined){
-				var hour = 22 - rows[0][0].hour;
-				var min= 59 - (rows[0][0].minute%60);
-				var sec = 59 - (rows[0][0].second%60);
-				p.send("**⏱ | Nu! "+msg.author.username+"! You need to wait __"+hour+" H "+min+" M "+sec+" S__**");
+
+			/* Parse user's date info */
+			var afterMid = (rows[0])?dateUtil.afterMidnight(rows[0].daily):undefined;
+
+			/* If it's not past midnight */
+			if(afterMid&&!afterMid.after){
+				p.send("**⏱ |** Nu! **"+msg.author.username+"**! You need to wait **"+afterMid.hours+" H "+afterMid.minutes+" M "+afterMid.seconds+" S**");
+
+			/* Past midnight */
 			}else{
+				
+				/* Grab streak/patreon status */
 				var streak = 0;
 				var patreon = false;
-
-				if(rows[1][0]!=undefined){
-					streak = rows[1][0].daily_streak;
-					if(rows[1][0].patreonDaily==1)
+				if(rows[0]){
+					streak = rows[0].daily_streak;
+					if(rows[0].patreonDaily==1)
 						patreon = true;
 				}
 
@@ -42,10 +54,12 @@ module.exports = new CommandInterface({
 				var gain = 100 + Math.floor(Math.random()*100);
 				var extra = 0;
 
-				if(rows[1][0]&&rows[1][0].day>2) streak = 0;
-				else streak++;
+				/* Reset streak if its over 1 whole day */
+				if(afterMid&&afterMid.withinDay) streak++;
+				else streak = 1;
 
-				gain = gain+(streak*25);
+				/* Calculate streak/patreon cowoncy */
+				gain += (streak*25);
 				if(gain > 1000) gain = 1000
 				if(patreon) extra = gain;
 

@@ -1,8 +1,9 @@
 const CommandInterface = require('../../commandinterface.js');
 
-var animals = require('../../../../tokens/owo-animals.json');
-var global = require('../../../util/global.js');
-var pet = require('../battle/petutil.js');
+const animals = require('../../../../tokens/owo-animals.json');
+const global = require('../../../util/global.js');
+const dateUtil = require('../../../util/dateUtil.js');
+const pet = require('../battle/petutil.js');
 const gemUtil = require('./gemUtil.js');
 const animalUtil = require('./animalUtil.js');
 const alterHunt = require('./../patreon/alterHunt.js');
@@ -60,8 +61,9 @@ module.exports = new CommandInterface({
 				}
 
 				//Get Lootbox
-				if(!result[2][0]||result[2][0].claimcount<3||result[2][0].time>=23){
-					var lootbox = getLootbox(p,result[2][0]);
+				var lbReset = dateUtil.afterMidnight((result[2][0])?result[2][0].claim:undefined);
+				if(!result[2][0]||result[2][0].claimcount<3||lbReset.after){
+					var lootbox = getLootbox(p,result[2][0],lbReset);
 					sql += lootbox.sql;
 					text += lootbox.text;
 				}
@@ -128,21 +130,20 @@ function getAnimals(p,result,mGem,pGem){
 	return {"sql":sql,"xp":xp,"animal":animal,"text":text};
 }
 
-function getLootbox(p,query){
+function getLootbox(p,query,lbReset){
 	var rand = Math.random();
-	var resetsIn = 23,count = 1; 
 	var sql = "INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES ("+p.msg.author.id+",1,1,NOW()) ON DUPLICATE KEY UPDATE boxcount = boxcount + 1, claimcount = 1, claim = NOW();";
-	if(!query||query.time>=23)
+	var count = 1;
+	if(!query||lbReset.after)
 		rand = 0;
 	else{
 		sql = "UPDATE IGNORE lootbox SET boxcount = boxcount + 1, claimcount = claimcount + 1 WHERE id = "+p.msg.author.id+";";
-		resetsIn = 23 - query.time;
 		count = query.claimcount + 1;
 	}
 	if(rand <= lootboxChance){
 		return {
 			"sql":sql,
-			"text":"\n**<:box:427352600476647425> |** You found a **lootbox**! `["+count+"/3] RESETS IN: "+resetsIn+"H`"
+			"text":"\n**<:box:427352600476647425> |** You found a **lootbox**! `["+count+"/3] RESETS IN: "+lbReset.hours+"H"+lbReset.minutes+"M"+lbReset.seconds+"S`"
 		};
 	}else return {"sql":"","text":""};
 }
