@@ -4,6 +4,9 @@ const dir = requireDir('./command',{recurse:true});
 const CommandInterface = require('./commandinterface');
 
 const sender = require('../util/sender.js');
+const Error = require("../handler/errorHandler.js");
+const mysqlHandler = require("../handler/mysqlHandler.js");
+var query;
 
 const logger = require('../util/logger.js');
 const mysql = require('../util/mysql.js');
@@ -38,6 +41,7 @@ class Command {
 		macro.con(con);
 		macro.sender(sender);
 		macro.global(global);
+		query = new mysqlHandler(con).query;
 		for(var key in dir){
 			if(dir[key] instanceof CommandInterface)
 				addCommand(dir[key]);
@@ -183,7 +187,9 @@ function initParam(msg,command,args,client,dbl){
 		"dbl":dbl,
 		"mysql":mysql,
 		"con":con,
+		"query":query,
 		"send":sender.send(msg),
+		"Error":Error,
 		"global":global,
 		"aliasToCommand":aliasToCommand,
 		"commands":commands,

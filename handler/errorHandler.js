@@ -3,7 +3,7 @@
  */
 
 module.exports = class CustomError extends Error {
-	constructor(message,type) {
+	constructor(message,type,extra) {
 
 		super(message);
 
@@ -11,6 +11,7 @@ module.exports = class CustomError extends Error {
 
 		Error.captureStackTrace(this, this.constructor);
 
-		this.type = type || "Not given";
+		if(type) this.type = type;
+		if(extra) this.extra = extra;
 	}
 }
