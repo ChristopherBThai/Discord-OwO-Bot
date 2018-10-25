@@ -151,10 +151,10 @@ function parseQuests(id,result,afterMid,quest){
 function parseQuest(questInfo){
 	var quest = questJson[questInfo.qname];
 	if(questInfo.prize=="cowoncy"){
-		var reward = global.toFancyNum(quest.cowoncy[questInfo.level]) + " m";//" <:cowoncy:416043450337853441>";
+		var reward = global.toFancyNum(quest.cowoncy[questInfo.level]) + " 💵";//" <:cowoncy:416043450337853441>";
 	}else if(questInfo.prize=="lootbox"){
 		//var reward = "<:box:427352600476647425>".repeat(quest.lootbox[questInfo.level]);
-		var reward = "b ".repeat(quest.lootbox[questInfo.level]);
+		var reward = "📦 ".repeat(quest.lootbox[questInfo.level]);
 	}
 	if(global.isInt(quest.count[questInfo.level]))
 		var progress = questInfo.count+"/"+quest.count[questInfo.level];
