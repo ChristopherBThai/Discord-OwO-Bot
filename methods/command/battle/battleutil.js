@@ -113,7 +113,7 @@ exports.extractInfo = function(pet,owner,censor){
 	}else fdisplay += dot;
 
 	var user = {
-		"username":owner.username,
+		"username":"Enemy",//owner.username,
 		"id":owner.id,
 		"name":pet.nickname,
 		"animal":pet.name,

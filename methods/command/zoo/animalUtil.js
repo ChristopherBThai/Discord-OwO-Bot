@@ -12,7 +12,7 @@ exports.randAnimal = function(patreon){
 			result.push("**patreon** "+animals.ranks.cpatreon);
 			result.push(animals.cpatreon[rand]);
 			result.push("cpatreon");
-			result.push(100);
+			result.push(5000);
 		}else{
 			rand = Math.ceil(Math.random()*(animals.patreon.length-1));
 			result.push("**patreon** "+animals.ranks.patreon);
@@ -25,7 +25,7 @@ exports.randAnimal = function(patreon){
 		result.push("**special** "+animals.ranks.special);
 		result.push(animals.special[rand]);
 		result.push("special");
-		result.push(100);
+		result.push(250);
 	}else if(rand<parseFloat(animals.common[0])){
 		rand = Math.ceil(Math.random()*(animals.common.length-1));
 		result.push("**common** "+animals.ranks.common);
@@ -95,10 +95,12 @@ exports.zooScore = function(zoo){
 		text += "H-"+zoo.hidden+", ";
 	if(zoo.fabled>0)
 		text += "F-"+zoo.fabled+", ";
+	if(zoo.cpatreon>0)
+		text += "CP-"+zoo.cpatreon+", ";
 	if(zoo.legendary>0)
 		text += "L-"+zoo.legendary+", ";
 	if(zoo.patreon>0||zoo.cpatreon>0)
-		text += "P-"+(zoo.patreon+zoo.cpatreon)+", ";
+		text += "P-"+zoo.patreon+", ";
 	text += "M-"+zoo.mythical+", ";
 	if(zoo.special>0)
 		text += "S-"+zoo.special+", ";
