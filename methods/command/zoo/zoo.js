@@ -50,6 +50,7 @@ module.exports = new CommandInterface({
 			var row = result[0];
 			var count = result[1][0];
 			var cpatreonCount = 0;
+			var specialCount = 0;
 			var digits= 2;
 			if(count!=undefined)
 				digits= Math.trunc(Math.log10(count.biggest)+1);
@@ -78,7 +79,12 @@ module.exports = new CommandInterface({
 				}
 				else if(animals.special.indexOf(row[i].name)>0){
 					if(additional3=="") additional3 = secret3;
+					if(specialCount>=5){
+						specialCount=0;
+						additional3 += "\n<:blank:427371936482328596>    ";
+					}
 					additional3 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
+					specialCount++;
 				}
 				else if(animals.hidden.indexOf(row[i].name)>0){
 					if(additional5=="") additional5 = secret4;

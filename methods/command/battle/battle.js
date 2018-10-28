@@ -170,8 +170,8 @@ function fight(con,msg,send,p,count){
 
 		},1000)).catch(err => msg.channel.send("**🚫 | "+msg.author.username+"**, I don't have permission to send embeded messages!")
 		.catch(err => console.error(err)));
-
-
+		
+		p.quest("battle");
 	});
 }
 

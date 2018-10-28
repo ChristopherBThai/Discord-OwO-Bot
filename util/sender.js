@@ -24,7 +24,7 @@ exports.send = function(msg){
  */
 exports.msgUser = async function(id,msg){
 	id = id.match(/[0-9]+/)[0];
-	var user = await client.fetchUser(id,true);
+	var user = await client.fetchUser(id,false).catch((err)=>{});
 	var success;
 	if(user)
 		await user.send(msg)

@@ -48,7 +48,7 @@ module.exports = new CommandInterface({
 			var afterMid = dateUtil.afterMidnight((result[0][0])?result[0][0].questTime:undefined);
 
 			/* Check if its past midnight and number of quest < 3, if so add 1 quest */
-			if(afterMid&&afterMid.after&&result[0].length<3)
+			if(afterMid&&afterMid.after&&result[1].length<3)
 				var quest = getQuest(p.msg.author.id);
 
 			var quests = parseQuests(p.msg.author.id,result[1],afterMid,quest);
@@ -134,16 +134,18 @@ function parseQuests(id,result,afterMid,quest){
 		for(let i=0;i<order.length;i++){
 			sql += "UPDATE quest SET qid = "+i+" WHERE qid = "+order[i]+" AND uid = (SELECT uid FROM user WHERE id = "+id+");";
 		}
-		result.append({qname:quest.key,level:quest.level,prize:quest.prize,count:0});
+		result.push({qname:quest.key,level:quest.level,prize:quest.prize,count:0});
 	}
 	
 	var text = "";
 	for(let i=0;i<result.length;i++){
 		texts = parseQuest(result[i]);
 		text += "**"+(i+1)+". "+texts.text+"**";
-		text += "\n<:blank:427371936482328596>`‣ Reward: `"+texts.reward;
+		text += "\n<:blank:427371936482328596>`‣ Reward:` "+texts.reward;
 		text += "\n<:blank:427371936482328596>`‣ Progress: ["+texts.progress+"]`\n";
 	}
+
+	if(text=="") text = "UwU You finished all of your quests! Come back tomorrow! <3";
 
 	return {sql:sql,text:text};
 }
@@ -151,14 +153,44 @@ function parseQuests(id,result,afterMid,quest){
 function parseQuest(questInfo){
 	var quest = questJson[questInfo.qname];
 	if(questInfo.prize=="cowoncy"){
-		var reward = global.toFancyNum(quest.cowoncy[questInfo.level]) + " 💵";//" <:cowoncy:416043450337853441>";
+		//var reward = global.toFancyNum(quest.cowoncy[questInfo.level]) + " 💵";
+		var reward = global.toFancyNum(quest.cowoncy[questInfo.level]) + " <:cowoncy:416043450337853441>";
 	}else if(questInfo.prize=="lootbox"){
-		//var reward = "<:box:427352600476647425>".repeat(quest.lootbox[questInfo.level]);
-		var reward = "📦 ".repeat(quest.lootbox[questInfo.level]);
+		var reward = "<:box:427352600476647425>".repeat(quest.lootbox[questInfo.level]);
+		//var reward = "📦 ".repeat(quest.lootbox[questInfo.level]);
 	}
-	if(global.isInt(quest.count[questInfo.level]))
-		var progress = questInfo.count+"/"+quest.count[questInfo.level];
+	var count = quest.count[questInfo.level];
+	if(global.isInt(count))
+		var progress = questInfo.count+"/"+count;
 	else
-		var progress = questInfo.count+"/1";
-	return {text:"test",reward:reward,progress:progress};
+		var progress = questInfo.count+"/3";
+
+	switch(questInfo.qname){
+		case "hunt":
+			var text = "Manually hunt "+count+" times!";
+			break;
+		case "battle":
+			var text = "Battle "+count+" times!";
+			break;
+		case "gamble":
+			var text = "Gamble "+count+" times!";
+			break;
+		case "drop":
+			var text = "Drop cowoncy "+count+" times!";
+			break;
+		case "emoteTo":
+			var text = "Use an emote on someone "+count+" times!";
+			break;
+		case "emoteBy":
+			var text = "Have a friend emote to you "+count+" times!";
+			break;
+		case "find":
+			var text = "Find 3 animals that are "+count+" rank!";
+			break;
+		default:
+			var text = "Invalid Quest";
+			break;
+	}
+
+	return {text:text,reward:reward,progress:progress};
 }

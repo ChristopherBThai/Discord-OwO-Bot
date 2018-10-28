@@ -48,6 +48,8 @@ module.exports = new CommandInterface({
 		text = text.replace(/\?/,msg.author.username);
 		text = text.replace(/\?/,target.username);
 		weeb.grab(msg,emote.name,"gif",text);
+		p.quest("emoteTo");
+		p.quest("emoteBy",1,target);
 	}
 
 })
