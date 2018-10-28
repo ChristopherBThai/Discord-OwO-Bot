@@ -103,6 +103,7 @@ module.exports = new CommandInterface({
 								.catch(err => console.error(err));
 						},2000))
 						.catch(err => console.error(err));
+					p.quest("gamble");
 				});
 			}
 		});

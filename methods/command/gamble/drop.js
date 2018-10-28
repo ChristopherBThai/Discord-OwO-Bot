@@ -47,6 +47,7 @@ function drop(p){
 		}
 		p.logger.value('cowoncy',(amount*-1),['command:drop','id:'+p.msg.author.id]);
 		p.send("**💰 | "+p.msg.author.username+"** dropped **"+p.global.toFancyNum(amount)+"** cowoncy!\n**<:blank:427371936482328596> |** Use `owo pickup` to pick it up! ",8000);
+		p.quest("drop");
 	});
 }
 

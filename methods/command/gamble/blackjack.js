@@ -142,6 +142,7 @@ function initBlackjack(p,bet,existing){
 			if(err){console.error(err);p.send("Something went wrong...");return;}
 			blackjack(p,player,dealer,bet);
 		});
+		p.quest("gamble");
 	}
 }
 

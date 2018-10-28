@@ -74,6 +74,8 @@ module.exports = new CommandInterface({
 				con.query(sql,function(err,result2){
 					if(err) {console.error(err); return;}
 					p.logger.value('cowoncy',-5,['command:hunt','id:'+msg.author.id]);
+					p.quest("hunt");
+					p.quest("find",1,animal.typeCount);
 					p.send(text);
 				});
 			}
@@ -127,7 +129,7 @@ function getAnimals(p,result,mGem,pGem){
 		text += " !\n**<:blank:427371936482328596> |** You found: "+global.unicodeAnimal(animal[0][1]); 
 		for(var i=1;i<animal.length;i++) text += " "+global.unicodeAnimal(animal[i][1]);
 	}
-	return {"sql":sql,"xp":xp,"animal":animal,"text":text};
+	return {"sql":sql,"xp":xp,"animal":animal,"text":text,"typeCount":typeCount};
 }
 
 function getLootbox(p,query,lbReset){

@@ -6,6 +6,7 @@ const CommandInterface = require('./commandinterface');
 const sender = require('../util/sender.js');
 const Error = require("../handler/errorHandler.js");
 const mysqlHandler = require("../handler/mysqlHandler.js");
+const questHandler = new (require("../handler/questHandler.js"))();
 var query;
 
 const logger = require('../util/logger.js');
@@ -194,7 +195,8 @@ function initParam(msg,command,args,client,dbl){
 		"aliasToCommand":aliasToCommand,
 		"commands":commands,
 		"mcommands":mcommands,
-		"logger":logger
+		"logger":logger,
+		"quest":function(questName,count,extra){questHandler.increment(msg,questName,count,extra).catch(console.error)}
 	};
 	return param;
 }

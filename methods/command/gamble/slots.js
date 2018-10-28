@@ -135,6 +135,7 @@ module.exports = new CommandInterface({
 				},1000))
 
 				.catch(err => console.error(err));
+				p.quest("gamble");
 			}
 		});
 	}

@@ -29,7 +29,7 @@ exports.check = async function(con,msg,client,command,callback,ignore){
 
 	//Check if the command is enabled
 	var sql = "SELECT * FROM disabled WHERE command = '"+command+"' AND channel = "+channel+";";
-	sql += "SELECT id FROM timeout WHERE id = "+msg.author.id+" AND TIMESTAMPDIFF(HOUR,time,NOW()) < penalty;";
+	sql += "SELECT id FROM timeout WHERE id IN ("+msg.author.id+","+msg.guild.id+") AND TIMESTAMPDIFF(HOUR,time,NOW()) < penalty;";
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		if(rows[1][0]!=undefined){
