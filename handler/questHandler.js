@@ -55,7 +55,7 @@ async function check(msg,questName,result,count,extra){
 	if(current >= needed){
 		var sql = "DELETE FROM quest WHERE qid = ? AND qname = ? AND uid = (SELECT uid FROM user WHERE id = ?);";
 		var variables = [result[0].qid,questName,BigInt((questName=="emoteBy")?extra.id:msg.author.id)];
-		var text = "** | "+((questName=="emoteBy")?extra.username:msg.author.username)+"**! You finished a quest and earned: ";
+		var text = "**📜 | "+((questName=="emoteBy")?extra.username:msg.author.username)+"**! You finished a quest and earned: ";
 		if(rewardType=="lootbox"){
 			text += "<:box:427352600476647425>".repeat(reward);
 			rewardSql = "INSERT INTO lootbox (id,boxcount,claim) VALUES (?,?,'2017-01-01 10:10:10') ON DUPLICATE KEY UPDATE boxcount = boxcount + ?;";
