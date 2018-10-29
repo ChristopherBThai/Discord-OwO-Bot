@@ -58,7 +58,7 @@ function display(send){
 				{"name":"Rankings",
 					"value":"`top`  `my`"},
 				{"name":"Economy",
-					"value":"`cowoncy`  `give`  `daily`  `vote`"},
+					"value":"`cowoncy`  `give`  `daily`  `vote`  `quest`"},
 				{"name":"Animals",
 					"value":"`zoo`  `hunt`  `sell`  `battle`  `pets`  `inv`  `shop`  `equip`  `buy`  `autohunt`  `owodex`  `lootbox`"},
 				{"name":"Gambling",
