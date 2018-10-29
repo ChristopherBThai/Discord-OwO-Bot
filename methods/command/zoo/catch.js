@@ -145,7 +145,7 @@ function getLootbox(p,query,lbReset){
 	if(rand <= lootboxChance){
 		return {
 			"sql":sql,
-			"text":"\n**<:box:427352600476647425> |** You found a **lootbox**! `["+count+"/3] RESETS IN: "+lbReset.hours+"H"+lbReset.minutes+"M"+lbReset.seconds+"S`"
+			"text":"\n**<:box:427352600476647425> |** You found a **lootbox**! `["+count+"/3] RESETS IN: "+lbReset.hours+"H "+lbReset.minutes+"M "+lbReset.seconds+"S`"
 		};
 	}else return {"sql":"","text":""};
 }

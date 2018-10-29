@@ -13,7 +13,7 @@ module.exports = new CommandInterface({
 
 	args:"",
 
-	desc:"Grab you daily cowoncy every 23H! Daily streaks will give you extra cowoncy!",
+	desc:"Grab you daily cowoncy every day after 12am PST! Daily streaks will give you extra cowoncy!",
 
 	example:[],
 
@@ -36,7 +36,7 @@ module.exports = new CommandInterface({
 
 			/* If it's not past midnight */
 			if(afterMid&&!afterMid.after){
-				p.send("**⏱ |** Nu! **"+msg.author.username+"**! You need to wait **"+afterMid.hours+" H "+afterMid.minutes+" M "+afterMid.seconds+" S**");
+				p.send("**⏱ |** Nu! **"+msg.author.username+"**! You need to wait **"+afterMid.hours+"H "+afterMid.minutes+"M "+afterMid.seconds+"S**");
 
 			/* Past midnight */
 			}else{
@@ -68,6 +68,7 @@ module.exports = new CommandInterface({
 					text += "\n**<:blank:427371936482328596> |** You're on a **__"+(streak-1)+"__ daily streak**!";
 				if(extra>0)
 					text += "\n**<:blank:427371936482328596> |** You got an extra **"+extra+" Cowoncy** for being a <:patreon:449705754522419222> Patreon!";
+				text += "\n**⏱ |** Your next daily is in: "+afterMid.hours+"H "+afterMid.minutes+"M "+afterMid.seconds+"S";
 
 				sql = "INSERT INTO cowoncy (id,money) VALUES ("+msg.author.id+","+(gain+extra)+") ON DUPLICATE KEY UPDATE daily_streak = "+streak+", money = money + "+(gain+extra)+",daily = NOW();";
 				con.query(sql,function(err,rows,fields){
