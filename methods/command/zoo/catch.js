@@ -120,7 +120,7 @@ function getAnimals(p,result,mGem,pGem){
 	if(mGem)
 		sql += "UPDATE user_gem SET activecount = activecount - 1 WHERE uid = "+mGem.uid+" AND gname = '"+mGem.gname+"';";
 	var text = "**🌱 | "+p.msg.author.username+"** spent 5 <:cowoncy:416043450337853441> and caught a(n) "+animal[0][0]+" "+global.unicodeAnimal(animal[0][1])+"!"
-	if(animal[0][0].chatAt(0).equals("u") || animal[0][0].chatAt(0).equals("e")) text.replace(" a ", " an ");
+	if(animal[0][0].charAt(0).equals("u") || animal[0][0].charAt(0).equals("e")) text.replace(" a ", " an ");
 	if(mGem||pGem){
 		text = "**🌱 | "+p.msg.author.username+"**, hunt is empowered by ";
 		if(gem)
