@@ -32,7 +32,7 @@ module.exports = new CommandInterface({
 			if(err){console.error(err);return;}
 
 			/* Parse user's date info */
-			var afterMid = (rows[0])?dateUtil.afterMidnight(rows[0].daily):undefined;
+			var afterMid = dateUtil.afterMidnight((rows[0])?rows[0].daily:undefined);
 
 			/* If it's not past midnight */
 			if(afterMid&&!afterMid.after){
