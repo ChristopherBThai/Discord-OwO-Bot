@@ -26,7 +26,8 @@ module.exports = class Quest{
 		
 		if(!result[0]) return;
 
-		check(msg,questName,result,count,extra);
+		for(var i=0;i<result.length;i++)
+			await check(msg,questName,result[i],count,extra);
 	}
 }
 
@@ -34,11 +35,11 @@ module.exports = class Quest{
 async function check(msg,questName,result,count,extra){
 	/* Parse data for quest */
 	var quest = quests[questName];
-	if(!quest||!result[0]) return;
-	var current = result[0].count + count;
-	var level = result[0].level;
+	if(!quest||!result) return;
+	var current = result.count + count;
+	var level = result.level;
 	var needed = quest.count[level];
-	var rewardType = result[0].prize;
+	var rewardType = result.prize;
 	var reward = quest[rewardType][level];
 
 	/* Check if valid */
@@ -54,7 +55,7 @@ async function check(msg,questName,result,count,extra){
 	var text,rewardSql;
 	if(current >= needed){
 		var sql = "DELETE FROM quest WHERE qid = ? AND qname = ? AND uid = (SELECT uid FROM user WHERE id = ?);";
-		var variables = [result[0].qid,questName,BigInt((questName=="emoteBy")?extra.id:msg.author.id)];
+		var variables = [result.qid,questName,BigInt((questName=="emoteBy")?extra.id:msg.author.id)];
 		var text = "**📜 | "+((questName=="emoteBy")?extra.username:msg.author.username)+"**! You finished a quest and earned: ";
 		if(rewardType=="lootbox"){
 			text += "<:box:427352600476647425>".repeat(reward);
@@ -68,14 +69,14 @@ async function check(msg,questName,result,count,extra){
 		text += "!";
 	}else{
 		var sql = "UPDATE IGNORE quest SET count = count + ? WHERE qid = ? AND qname = ? AND uid = (SELECT uid FROM user WHERE id = ?);";
-		var variables = [count,result[0].qid,questName,BigInt((questName=="emoteBy")?extra.id:msg.author.id)];
+		var variables = [count,result.qid,questName,BigInt((questName=="emoteBy")?extra.id:msg.author.id)];
 	}
 
 	/* Query sql */
 	var result = await mysql.query(sql,variables).catch(console.error);
 	if(result.affectedRows==1&&rewardSql){
 		await mysql.query(rewardSql,rewardVar).then(
-				msg.channel.send(text).catch(console.error)
+				await msg.channel.send(text).catch(console.error)
 			).catch(console.error);
 	}
 }
