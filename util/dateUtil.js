@@ -8,7 +8,7 @@ exports.afterMidnight = function(date){
 	var midnight = new Date(now.getFullYear(),now.getMonth(),now.getDate());
 
 	/* Calculate time until midnight */
-	var temp = Math.trunc(((midnight-now)+86400000)/1000);
+	var temp = Math.trunc(((midnight-now)+91800000)/1000);
 	var seconds = temp%60;
 	temp = Math.trunc(temp/60);
 	var minutes = temp%60
