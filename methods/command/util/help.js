@@ -64,7 +64,7 @@ function display(send){
 				{"name":"Gambling",
 					"value":"`slots`  `coinflip`  `lottery`  `blackjack`  `drop`"},
 				{"name":"Fun",
-					"value":"`8b`  `define`  `gif`  `pic`  `translate`"},
+					"value":"`8b`  `define`  `gif`  `pic`  `translate`  `roll`"},
 				{"name":"Social",
 					"value":"`cookie` `ship`  `pray`  `curse`"},
 				{"name":"Meme Generation",
