@@ -8,7 +8,7 @@ exports.afterMidnight = function(date){
 	var midnight = new Date(now.getFullYear(),now.getMonth(),now.getDate());
 
 	/* Calculate time until midnight */
-	var temp = Math.trunc(((midnight-now)+91800000)/1000);
+	var temp = Math.trunc(((midnight-now)+86400000)/1000);
 	var seconds = temp%60;
 	temp = Math.trunc(temp/60);
 	var minutes = temp%60
@@ -28,7 +28,7 @@ exports.afterMidnight = function(date){
 	if(diff<0) return {after:false,diff:diff,seconds:seconds,minutes:minutes,hours:hours,days:days};
 
 	/* Within 1 day */
-	else if(diff<=86400000) return {after:true,diff:diff,withinDay:true,seconds:seconds,minutes:minutes,hours:hours,days:days};
+	else if(diff<=91800000) return {after:true,diff:diff,withinDay:true,seconds:seconds,minutes:minutes,hours:hours,days:days};
 
 	/* Over 1 full day */
 	else return {after:true,diff:diff,withinDay:false,seconds:seconds,minutes:minutes,hours:hours,days:days};
