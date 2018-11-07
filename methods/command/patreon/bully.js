@@ -66,6 +66,8 @@ module.exports = new CommandInterface({
 			}
 		};
 		p.send({embed});
+		p.quest("emoteTo");
+		p.quest("emoteBy",1,target);
 	}
 
 })
