@@ -34,7 +34,7 @@ module.exports = new CommandInterface({
 			if(err) throw err;
 			if(user = await sender.msgUser(args[0],"**☠ |** You have been banned for "+time+" hours!"+reason))
 				p.send("**☠ |** Penalty has been set to "+time+" for "+user.username+reason);
-			if(guild = await p.global.getGuildName(args[0]))
+			else if(guild = await p.global.getGuildName(args[0]))
 				p.send("**☠ |** Penalty has been set to "+time+" for guild: "+guild);
 			else
 				p.send("Failed to send a message to user|guild");
