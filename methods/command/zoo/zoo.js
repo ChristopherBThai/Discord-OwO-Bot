@@ -8,6 +8,7 @@ var secret = "";
 var secret2 = "";
 var secret3 = "";
 var secret4 = "";
+var secret5 = "";
 var display = "";
 initDisplay();
 
@@ -47,6 +48,7 @@ module.exports = new CommandInterface({
 			var additional3 = "";
 			var additional4 = "";
 			var additional5 = "";
+			var additional6 = "";
 			var row = result[0];
 			var count = result[1][0];
 			var cpatreonCount = 0;
@@ -68,6 +70,10 @@ module.exports = new CommandInterface({
 					}
 					additional4 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 					cpatreonCount++;
+				}
+				else if(animals.gem.indexOf(row[i].name)>0){
+					if(additional6=="") additional6 = secret5;
+					additional6 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 				}
 				else if(animals.legendary.indexOf(row[i].name)>0){
 					if(additional=="") additional = secret;
@@ -94,6 +100,7 @@ module.exports = new CommandInterface({
 			text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question+toSmallNum(0,digits));
 			text += additional0;
 			text += additional4;
+			text += additional6;
 			text += additional;
 			text += additional2;
 			text += additional3;
@@ -154,4 +161,5 @@ function initDisplay(){
 	secret2 = "\n"+animals.ranks.fabled+"    ";
 	secret3 = "\n"+animals.ranks.special+"    ";
 	secret4 = "\n"+animals.ranks.hidden+"    ";
+	secret5 = "\n"+animals.ranks.gem+"    ";
 }

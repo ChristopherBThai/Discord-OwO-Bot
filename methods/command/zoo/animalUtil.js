@@ -2,12 +2,21 @@ var animals = require('../../../../tokens/owo-animals.json');
 /**
  * Picks a random animal from secret json file
  */
-exports.randAnimal = function(patreon){
+exports.randAnimal = function(patreon,gem,lucky){
 	var rand = Math.random();
 	var result = [];
 
-	if(patreon&&rand<parseFloat(animals.cpatreon[0])+parseFloat(animals.patreon[0])){
-		if(rand<parseFloat(animals.cpatreon[0])){
+	/* Calculate percentage */
+	var patreonPercent = animals.cpatreon[0]+animals.patreon[0];
+	if(!patreon) patreonPercent = 0;
+	var specialPercent = animals.special[0];
+	if(animals.special[0]=="0") specialPercent = 0;
+	var gemPercent = animals.gem[0];
+	if(!gem) gemPercent = 0;
+	else if(lucky) gemPercent += gemPercent*lucky.amount;
+
+	if(patreonPercent&&rand<patreonPercent){
+		if(rand<animals.cpatreon[0]){
 			rand = Math.ceil(Math.random()*(animals.cpatreon.length-1));
 			result.push("**patreon** "+animals.ranks.cpatreon);
 			result.push(animals.cpatreon[rand]);
@@ -20,49 +29,55 @@ exports.randAnimal = function(patreon){
 			result.push("patreon");
 			result.push(100);
 		}
-	}else if(animals.special[0]!="0"&&rand<parseFloat(animals.special[0])+((patreon)?parseFloat(animals.cpatreon[0])+parseFloat(animals.patreon[0]):0)){
+	}else if(specialPercent&&rand<specialPercent+patreonPercent){
 		rand = 1;
 		result.push("**special** "+animals.ranks.special);
 		result.push(animals.special[rand]);
 		result.push("special");
 		result.push(250);
-	}else if(rand<parseFloat(animals.common[0])){
+	}else if(gemPercent&&rand<gemPercent+specialPercent+patreonPercent){
+		rand = Math.ceil(Math.random()*(animals.gem.length-1));
+		result.push("**gem** "+animals.ranks.gem);
+		result.push(animals.gem[rand]);
+		result.push("gem");
+		result.push(1000);
+	}else if(rand<animals.common[0]){
 		rand = Math.ceil(Math.random()*(animals.common.length-1));
 		result.push("**common** "+animals.ranks.common);
 		result.push(animals.common[rand]);
 		result.push("common");
 		result.push(1);
-	}else if(rand<parseFloat(animals.uncommon[0])){
+	}else if(rand<animals.uncommon[0]){
 		rand = Math.ceil(Math.random()*(animals.uncommon.length-1));
 		result.push("**uncommon** "+animals.ranks.uncommon);
 		result.push(animals.uncommon[rand]);
 		result.push("uncommon");
 		result.push(3);
-	}else if(rand<parseFloat(animals.rare[0])){
+	}else if(rand<animals.rare[0]){
 		rand = Math.ceil(Math.random()*(animals.rare.length-1));
 		result.push("**rare** "+animals.ranks.rare);
 		result.push(animals.rare[rand]);
 		result.push("rare");
 		result.push(8);
-	}else if(rand<parseFloat(animals.epic[0])){
+	}else if(rand<animals.epic[0]){
 		rand = Math.ceil(Math.random()*(animals.epic.length-1));
 		result.push("**epic** "+animals.ranks.epic);
 		result.push(animals.epic[rand]);
 		result.push("epic");
 		result.push(25);
-	}else if(rand<parseFloat(animals.mythical[0])){
+	}else if(rand<animals.mythical[0]){
 		rand = Math.ceil(Math.random()*(animals.mythical.length-1));
 		result.push("**mythic** "+animals.ranks.mythical);
 		result.push(animals.mythical[rand]);
 		result.push("mythical");
 		result.push(500);
-	}else if(rand<parseFloat(animals.legendary[0])){
+	}else if(rand<animals.legendary[0]){
 		rand = Math.ceil(Math.random()*(animals.legendary.length-1));
 		result.push("**legendary** "+animals.ranks.legendary);
 		result.push(animals.legendary[rand]);
 		result.push("legendary");
 		result.push(1500);
-	}else if(rand<parseFloat(animals.fabled[0])){
+	}else if(rand<animals.fabled[0]){
 		rand = Math.ceil(Math.random()*(animals.fabled.length-1));
 		result.push("**fabled** "+animals.ranks.fabled);
 		result.push(animals.fabled[rand]);
@@ -99,6 +114,8 @@ exports.zooScore = function(zoo){
 		text += "CP-"+zoo.cpatreon+", ";
 	if(zoo.legendary>0)
 		text += "L-"+zoo.legendary+", ";
+	if(zoo.gem>0)
+		text += "G-"+zoo.gem+", ";
 	if(zoo.patreon>0||zoo.cpatreon>0)
 		text += "P-"+zoo.patreon+", ";
 	text += "M-"+zoo.mythical+", ";
