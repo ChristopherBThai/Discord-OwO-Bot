@@ -28,7 +28,8 @@ function getGemByID(id){
 }
 
 exports.getGem = function(key){
-	return gems.gems[key];
+	/* Copy the gem object */
+	return {...gems.gems[key]};
 }
 
 exports.use = function(p,id){
@@ -55,10 +56,14 @@ exports.use = function(p,id){
 		}
 		var text = "**"+gem.emoji+" | "+p.msg.author.username+"**, you activated a(n) **"+ranks[gem.key[0]]+" "+gem.type+" Gem!**\n";
 		text += "**<:blank:427371936482328596> |** Your next "+gem.length+" manual hunts ";
-		if(gem.type=="Multiplier")
-			text += "will be multiplied by "+gem.amount;
+		if(gem.type=="Hunting")
+			text += "will be increased by "+gem.amount;
 		else if(gem.type=="Patreon")
 			text += "will catch an extra animal and have a chance to contain Patreon exclusive animals!";
+		else if(gem.type=="Empowering")
+			text += "will be doubled! It Can stack with Hunting gems!";
+		else if(gem.type=="Lucky")
+			text += "will catch an extra animal and have a "+gem.amount+"x higher chance of finding gem tiers!";
 		else
 			text += "ERROR!";
 		p.send(text);
@@ -79,10 +84,14 @@ exports.desc = function(p,id){
 			return;
 		}
 		var text = "**ID:** "+gem.id+"\n";
-		if(gem.type=="Multiplier")
-			text += "A(n) "+ranks[gem.key[0]]+" Multiplier Gem!\nWhen activated, this gem will increase your manual hunt by "+gem.amount+" for the next "+gem.length+" hunts!\nCannot stack with other Multiplier gems.";
+		if(gem.type=="Hunting")
+			text += "A(n) "+ranks[gem.key[0]]+" Hunting Gem!\nWhen activated, this gem will increase your manual hunt by "+gem.amount+" for the next "+gem.length+" hunts!\nCannot stack with other Hunting gems.";
 		else if(gem.type=="Patreon")
 			text += "A(n) "+ranks[gem.key[0]]+" Patreon Gem!\nWhen activated, this gem will allow you to find Patreon/Custom pets when manually hunting for the next "+gem.length+" hunts!\nYou will also hunt 1 extra animal per hunt!\nCannot stack with other Patreon gems.";
+		else if(gem.type=="Empowering")
+			text += "A(n) "+ranks[gem.key[0]]+" Empowering Gem!\nWhen activated, this gem will double your next "+gem.length+" hunts!\nCannot stack with other Empowering gems, but can stack with Hunting gems.";
+		else if(gem.type=="Lucky")
+			text += "A(n) "+ranks[gem.key[0]]+" Lucky Gem!\nWhen activated, this gem will increase your chance of finding gem pets by "+gem.amount+"x for the next "+gem.length+" hunts!\nCannot stack with other Lucky gems.";
 		var embed = {
 		"color": 4886754,
 		"fields":[{

@@ -4,7 +4,7 @@
 			"emoji":"<:cgem1:492572122120585240>",
 			"id":51,
 			"chance":0.22,
-			"type":"Multiplier",
+			"type":"Hunting",
 			"amount":2,
 			"length":25
 		},
@@ -12,7 +12,7 @@
 			"emoji":"<:ugem1:492572122514980864>",
 			"id":52,
 			"chance":0.22,
-			"type":"Multiplier",
+			"type":"Hunting",
 			"amount":4,
 			"length":25
 		},
@@ -20,7 +20,7 @@
 			"emoji":"<:rgem1:492572122888011776>",
 			"id":53,
 			"chance":0.20,
-			"type":"Multiplier",
+			"type":"Hunting",
 			"amount":5,
 			"length":50
 		},
@@ -28,7 +28,7 @@
 			"emoji":"<:egem1:492572122477101056>",
 			"id":54,
 			"chance":0.20,
-			"type":"Multiplier",
+			"type":"Hunting",
 			"amount":6,
 			"length":75
 		},
@@ -36,7 +36,7 @@
 			"emoji":"<:mgem1:492572122590478356>",
 			"id":55,
 			"chance":0.10,
-			"type":"Multiplier",
+			"type":"Hunting",
 			"amount":7,
 			"length":75
 		},
@@ -44,7 +44,7 @@
 			"emoji":"<a:lgem1:492572124251422720>",
 			"id":56,
 			"chance":0.05,
-			"type":"Multiplier",
+			"type":"Hunting",
 			"amount":8,
 			"length":100
 		},
@@ -52,7 +52,7 @@
 			"emoji":"<a:fgem1:492572124070936586>",
 			"id":57,
 			"chance":0.01,
-			"type":"Multiplier",
+			"type":"Hunting",
 			"amount":10,
 			"length":100
 		},
@@ -104,6 +104,111 @@
 			"chance":0.01,
 			"type":"Patreon",
 			"length":500
+		},
+		"cgem3":{
+			"emoji":"<:cgem3:510366792024195072>",
+			"id":65,
+			"chance":0.22,
+			"type":"Empowering",
+			"length":50
+		},
+		"ugem3":{
+			"emoji":"<:ugem3:510366792095367189>",
+			"id":66,
+			"chance":0.22,
+			"type":"Empowering",
+			"length":100
+		},
+		"rgem3":{
+			"emoji":"<:rgem3:510366792653340674>",
+			"id":67,
+			"chance":0.20,
+			"type":"Empowering",
+			"length":250
+		},
+		"egem3":{
+			"emoji":"<:egem3:510366792800272394>",
+			"id":68,
+			"chance":0.20,
+			"type":"Empowering",
+			"length":450
+		},
+		"mgem3":{
+			"emoji":"<:mgem3:510366792447819777>",
+			"id":69,
+			"chance":0.10,
+			"type":"Empowering",
+			"length":525
+		},
+		"lgem3":{
+			"emoji":"<a:lgem3:510366794729652224>",
+			"id":70,
+			"chance":0.05,
+			"type":"Empowering",
+			"length":800
+		},
+		"fgem3":{
+			"emoji":"<a:fgem3:510366794792566785>",
+			"id":71,
+			"chance":0.01,
+			"type":"Empowering",
+			"length":1000
+		},
+		"cgem4":{
+			"emoji":"<:cgem4:510366763255463936>",
+			"id":72,
+			"chance":0.22,
+			"type":"Lucky",
+			"length":50,
+			"amount":0.5
+		},
+		"ugem4":{
+			"emoji":"<:ugem4:510366764249382922>",
+			"id":73,
+			"chance":0.22,
+			"type":"Lucky",
+			"length":100,
+			"amount":1
+		},
+		"rgem4":{
+			"emoji":"<:rgem4:510366763884478464>",
+			"id":74,
+			"chance":0.20,
+			"type":"Lucky",
+			"length":250,
+			"amount":1.5
+		},
+		"egem4":{
+			"emoji":"<:egem4:510366763972558848>",
+			"id":75,
+			"chance":0.20,
+			"type":"Lucky",
+			"length":450,
+			"amount":2
+		},
+		"mgem4":{
+			"emoji":"<:mgem4:510366763993661440>",
+			"id":76,
+			"chance":0.10,
+			"type":"Lucky",
+			"length":525,
+			"amount":2.5
+		},
+		"lgem4":{
+			"emoji":"<a:lgem4:510366765826572295>",
+			"id":77,
+			"chance":0.05,
+			"type":"Lucky",
+			"length":800,
+			"amount":3
+		},
+		"fgem4":{
+			"emoji":"<a:fgem4:510366765340033025>",
+			"id":78,
+			"chance":0.01,
+			"type":"Lucky",
+			"length":1000,
+			"amount":3.5
 		}
 	}
 }
