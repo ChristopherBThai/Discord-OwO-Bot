@@ -55,15 +55,15 @@ exports.use = function(p,id){
 			return;
 		}
 		var text = "**"+gem.emoji+" | "+p.msg.author.username+"**, you activated a(n) **"+ranks[gem.key[0]]+" "+gem.type+" Gem!**\n";
-		text += "**<:blank:427371936482328596> |** Your next "+gem.length+" manual hunts ";
+		text += "**<:blank:427371936482328596> |** Your next "+gem.length+" ";
 		if(gem.type=="Hunting")
-			text += "will be increased by "+gem.amount;
+			text += "manual hunts will be increased by "+gem.amount;
 		else if(gem.type=="Patreon")
-			text += "will catch an extra animal and have a chance to contain Patreon exclusive animals!";
+			text += "manual hunts will catch an extra animal and have a chance to contain Patreon exclusive animals!";
 		else if(gem.type=="Empowering")
-			text += "will be doubled! It Can stack with Hunting gems!";
+			text += " animals will be doubled! It Can stack with Hunting gems!";
 		else if(gem.type=="Lucky")
-			text += "will catch an extra animal and have a "+gem.amount+"x higher chance of finding gem tiers!";
+			text += " animals will catch an extra animal and have a "+gem.amount+"x higher chance of finding gem tiers!";
 		else
 			text += "ERROR!";
 		p.send(text);
