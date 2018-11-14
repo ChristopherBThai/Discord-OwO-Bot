@@ -22,9 +22,12 @@ module.exports = new CommandInterface({
 		sql += "SELECT SUM(common) AS common, SUM(uncommon) AS uncommon, SUM(rare) AS rare, SUM(epic) AS epic, SUM(mythical) AS mythical, SUM(legendary) AS legendary FROM animal_count;"
 		sql += "SELECT command FROM disabled WHERE channel = "+msg.channel.id+";";
 		
-		var guilds = await client.shard.fetchClientValues('guilds.size')
-		var channels = await client.shard.fetchClientValues('channels.size')
-		var users = await client.shard.fetchClientValues('users.size')
+		var guilds = await client.shard.fetchClientValues('guilds.size');
+		guilds.reduce((prev,val) => prev + val,0);
+		var channels = await client.shard.fetchClientValues('channels.size');
+		channels.reduce((prev,val) => prev + val,0);
+		var users = await client.shard.fetchClientValues('users.size');
+		users.reduce((prev,val) => prev + val,0);
 		con.query(sql,function(err,rows,field){
 			if(err) throw err;
 			var totalAnimals = parseInt(rows[1][0].common)+parseInt(rows[1][0].uncommon)+parseInt(rows[1][0].rare)+parseInt(rows[1][0].epic)+parseInt(rows[1][0].mythical)+parseInt(rows[1][0].legendary);
@@ -46,9 +49,9 @@ module.exports = new CommandInterface({
 				"fields": [{"name":"Current Guild",
 						"value":"```md\n<userID:  "+msg.author.id+">\n<channelID: "+msg.channel.id+">\n<guildID:   "+msg.guild.id+">``````md\n< Disabled commands >\n"+disabled+"```"},
 					{"name": "Global information",
-						"value": "```md\n<TotalOwOs:  "+rows[0][0].total+">\n<OwOUsers:   "+rows[0][0].user+">``````md\n<animalsCaught: "+totalAnimals+">\n<common: "+rows[1][0].common+">\n<uncommon: "+rows[1][0].uncommon+">\n<rare: "+rows[1][0].rare+">\n<epic: "+rows[1][0].epic+">\n<mythical: "+rows[1][0].mythical+">\n<legendary: "+rows[1][0].legendary+">```"},
+						"value": "```md\n<TotalOwOs:  "+p.global.toFancyNum(rows[0][0].total)+">\n<OwOUsers:   "+p.global.toFancyNum(rows[0][0].user)+">``````md\n<animalsCaught: "+p.global.toFancyNum(totalAnimals)+">\n<common: "+p.global.toFancyNum(rows[1][0].common)+">\n<uncommon: "+p.global.toFancyNum(rows[1][0].uncommon)+">\n<rare: "+p.global.toFancyNum(rows[1][0].rare)+">\n<epic: "+p.global.toFancyNum(rows[1][0].epic)+">\n<mythical: "+p.global.toFancyNum(rows[1][0].mythical)+">\n<legendary: "+p.global.toFancyNum(rows[1][0].legendary)+">```"},
 					{"name": "Bot Information",
-						"value": "```md\n<Guilds:    "+guilds+">\n<Channels:  "+channels+">\n<Users:     "+users+">``````md\n<Ping:       "+client.ping+"ms>\n<UpdatedOn:  "+client.readyAt+">\n<Uptime:     "+client.uptime+">```"
+						"value": "```md\n<Guilds:    "+p.global.toFancyNum(guilds)+">\n<Channels:  "+p.global.toFancyNum(channels)+">\n<Users:     "+p.global.toFancyNum(users)+">``````md\n<Ping:       "+client.ping+"ms>\n<UpdatedOn:  "+client.readyAt+">\n<Uptime:     "+client.uptime+">```"
 					}]
 			};
 			msg.channel.send({embed})
