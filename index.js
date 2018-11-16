@@ -1,4 +1,4 @@
-const debug = false;
+const debug = true;
 if(debug) var auth = require('../tokens/scuttester-auth.json');
 else var auth = require('../tokens/owo-auth.json');
 
@@ -9,7 +9,7 @@ const Manager = new Discord.ShardingManager('./owo.js',{
 
 var loaded = false;
 const global = require('./parent_methods/global.js');
-
+const ramCheck = require('./parent_methods/ramCheck.js');
 const vote = require('./parent_methods/vote.js');
 const lottery = require('./parent_methods/lottery.js');
 
@@ -40,3 +40,5 @@ process.on('exit', function(code) {
 	console.log("exiting...");
 	Manager.broadcastEval("process.exit()");
 });
+
+ramCheck.check(Manager);

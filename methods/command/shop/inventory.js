@@ -40,14 +40,18 @@ module.exports = new CommandInterface({
 
 })
 
+/* Converts an array of items to strings */
 function addToString(items){
 	var sorted = [];
 	var itemsID = {};
+	var maxCount = 0;
+	/* Sort items by id and get largest count*/
 	for(var i=0;i<items.length;i++){
 		var itemList = items[i];
 		for(var key in itemList){
 			sorted.push(itemList[key].id);
 			itemsID[itemList[key].id] = itemList[key];
+			if(itemList[key].count > maxCount) maxCount = itemList[key].count;
 		}
 	}
 	sorted.sort((a,b) => a-b);
@@ -55,11 +59,14 @@ function addToString(items){
 	for(var i=0;i<sorted.length;i++){
 		items.push(itemsID[sorted[i]]);
 	}
+	var digits = Math.trunc(Math.log10(maxCount)+1);
+	
+	/* Add to text */
 	var text = "";
 	var count = 0;
 	for(var i=0;i<items.length;i++){
 		var item = items[i];
-		text += "`"+((item.id<9)?"0":"")+item.id+"`"+item.key + shopUtil.toSmallNum(item.count,2);
+		text += "`"+((item.id<9)?"0":"")+item.id+"`"+item.key + shopUtil.toSmallNum(item.count,digits);
 		count++;
 		if(count==4){
 			text += "\n";
@@ -67,5 +74,6 @@ function addToString(items){
 		}else
 			text += "    ";
 	}
+
 	return text;
 }
