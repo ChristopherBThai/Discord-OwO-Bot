@@ -11,7 +11,7 @@ const resetbyte = 805306368;
 const resetDelay = 15000;
 
 /* Initial constrution */
-exports.check = function(ShardingManager){
+exports.check = async function(ShardingManager){
 	Manager = ShardingManager;
 	setInterval(ramCheck,interval);
 }
