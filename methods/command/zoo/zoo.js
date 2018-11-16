@@ -34,9 +34,9 @@ module.exports = new CommandInterface({
 		var sql = "SELECT count,name FROM animal WHERE id = "+msg.author.id+";";
 		if(p.args[0]&&p.args[0].toLowerCase()=="display"){
 			sql = "SELECT (totalcount) as count,name FROM animal WHERE id = "+msg.author.id+";";
-			sql += "SELECT common,uncommon,rare,epic,mythical,legendary,fabled,patreon,cpatreon,hidden,special,MAX(totalcount) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
+			sql += "SELECT common,uncommon,rare,epic,mythical,gem,legendary,fabled,patreon,cpatreon,hidden,special,MAX(totalcount) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
 		}else{
-			sql += "SELECT common,uncommon,rare,epic,mythical,legendary,fabled,patreon,cpatreon,hidden,special,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
+			sql += "SELECT common,uncommon,rare,epic,mythical,gem,legendary,fabled,patreon,cpatreon,hidden,special,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
 		}
 		con.query(sql,function(err,result){
 			if(err){console.error(err);return;}
@@ -114,6 +114,7 @@ module.exports = new CommandInterface({
 					count.patreon*animals.points.patreon+
 					count.cpatreon*animals.points.cpatreon+
 					count.special*animals.points.special+
+					count.gem*animals.points.gem+
 					count.legendary*animals.points.legendary+
 					count.fabled*animals.points.fabled+
 					count.hidden*animals.points.hidden;

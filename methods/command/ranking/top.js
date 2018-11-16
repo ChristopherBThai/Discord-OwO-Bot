@@ -364,6 +364,7 @@ const points = "(common*"+animals.points.common+"+"+
 		"patreon*"+animals.points.patreon+"+"+
 		"cpatreon*"+animals.points.cpatreon+"+"+
 		"hidden*"+animals.points.hidden+"+"+
+		"gem*"+animals.points.gem+"+"+
 		"legendary*"+animals.points.legendary+"+"+
 		"fabled*"+animals.points.fabled+")";
 const apoints = "(a.common*"+animals.points.common+"+"+
@@ -375,6 +376,7 @@ const apoints = "(a.common*"+animals.points.common+"+"+
 		"a.patreon*"+animals.points.patreon+"+"+
 		"a.cpatreon*"+animals.points.cpatreon+"+"+
 		"a.hidden*"+animals.points.hidden+"+"+
+		"a.gem*"+animals.points.gem+"+"+
 		"a.legendary*"+animals.points.legendary+"+"+
 		"a.fabled*"+animals.points.fabled+")";
 

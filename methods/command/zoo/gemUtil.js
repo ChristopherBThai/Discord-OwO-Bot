@@ -89,9 +89,9 @@ exports.desc = function(p,id){
 		else if(gem.type=="Patreon")
 			text += "A(n) "+ranks[gem.key[0]]+" Patreon Gem!\nWhen activated, this gem will allow you to find Patreon/Custom pets when manually hunting for the next "+gem.length+" hunts!\nYou will also hunt 1 extra animal per hunt!\nCannot stack with other Patreon gems.";
 		else if(gem.type=="Empowering")
-			text += "A(n) "+ranks[gem.key[0]]+" Empowering Gem!\nWhen activated, this gem will double your next "+gem.length+" hunts!\nCannot stack with other Empowering gems, but can stack with Hunting gems.";
+			text += "A(n) "+ranks[gem.key[0]]+" Empowering Gem!\nWhen activated, this gem will double your next "+gem.length+" animals!\nCannot stack with other Empowering gems, but can stack with Hunting gems.";
 		else if(gem.type=="Lucky")
-			text += "A(n) "+ranks[gem.key[0]]+" Lucky Gem!\nWhen activated, this gem will increase your chance of finding gem pets by "+gem.amount+"x for the next "+gem.length+" hunts!\nCannot stack with other Lucky gems.";
+			text += "A(n) "+ranks[gem.key[0]]+" Lucky Gem!\nWhen activated, this gem will increase your chance of finding gem pets by "+gem.amount+"x for the next "+gem.length+" animals!\nCannot stack with other Lucky gems.";
 		var embed = {
 		"color": 4886754,
 		"fields":[{

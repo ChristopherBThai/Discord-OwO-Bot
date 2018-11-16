@@ -23,11 +23,23 @@ exports.getItems = function(con,id,callback){
 
 exports.getRandomGem = function(id,patreon){
 	patreon = true;
-	var type = Math.trunc(Math.random()*(typeCount-((patreon)?1:0)));
+	var rand= Math.trunc(Math.random()*(typeCount-1));//(typeCount-((patreon)?1:0)));
 	var count = 0;
+	var type = "Hunting";
 	for (var key in gems){
+		/*
 		if(!(patreon&&key=="Patreon")){
 			if(count==type) type = key;
+			count++;
+		}
+		*/
+		if(key=="Patreon"){
+			count++;
+			rand++;
+		}else if(count==rand){
+			type = key;
+			count++;
+		}else{
 			count++;
 		}
 	}
