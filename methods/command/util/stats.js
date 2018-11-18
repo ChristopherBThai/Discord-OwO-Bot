@@ -47,7 +47,7 @@ module.exports = new CommandInterface({
 					"url": "https://discordapp.com/api/oauth2/authorize?client_id=408785106942164992&permissions=444480&scope=bot",
 					"icon_url": "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
 				"fields": [{"name":"Current Guild",
-						"value":"```md\n<userID:  "+msg.author.id+">\n<channelID: "+msg.channel.id+">\n<guildID:   "+msg.guild.id+">``````md\n< Disabled commands >\n"+disabled+"```"},
+						"value":"```md\n<userID:  "+msg.author.id+">\n<channelID: "+msg.channel.id+">\n<guildID:   "+msg.guild.id+">```"},
 					{"name": "Global information",
 						"value": "```md\n<TotalOwOs:  "+p.global.toFancyNum(rows[0][0].total)+">\n<OwOUsers:   "+p.global.toFancyNum(rows[0][0].user)+">``````md\n<animalsCaught: "+p.global.toFancyNum(totalAnimals)+">\n<common: "+p.global.toFancyNum(rows[1][0].common)+">\n<uncommon: "+p.global.toFancyNum(rows[1][0].uncommon)+">\n<rare: "+p.global.toFancyNum(rows[1][0].rare)+">\n<epic: "+p.global.toFancyNum(rows[1][0].epic)+">\n<mythical: "+p.global.toFancyNum(rows[1][0].mythical)+">\n<legendary: "+p.global.toFancyNum(rows[1][0].legendary)+">```"},
 					{"name": "Bot Information",
@@ -55,7 +55,7 @@ module.exports = new CommandInterface({
 					}]
 			};
 			msg.channel.send({embed})
-				.catch(err => msg.channel.send("**🚫 |** I don't have permission to send embedded links! :c")
+				.catch(err => msg.channel.send("**🚫 |** Hrmm.. something went wrong.. :c")
 					.catch(err => console.error(err)));
 		});
 	}

@@ -63,7 +63,7 @@ exports.use = function(p,id){
 		else if(gem.type=="Empowering")
 			text += " animals will be doubled! It Can stack with Hunting gems!";
 		else if(gem.type=="Lucky")
-			text += " animals will catch an extra animal and have a "+gem.amount+"x higher chance of finding gem tiers!";
+			text += " animals will have a +"+gem.amount+"x higher chance of finding gem tiers!";
 		else
 			text += "ERROR!";
 		p.send(text);
