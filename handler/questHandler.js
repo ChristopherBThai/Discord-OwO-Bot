@@ -46,8 +46,10 @@ async function check(msg,questName,result,count,extra){
 	if(questName=="find"){
 		needed = 3;
 		/* Check if the tier matches */
-		if(quest.count[level] in extra)
+		if(quest.count[level] in extra){
 			current += extra[quest.count[level]] -1;
+			count = extra[quest.count[level]];
+		}
 		else return;
 	}
 

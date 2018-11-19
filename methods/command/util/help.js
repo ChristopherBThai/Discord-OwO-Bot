@@ -74,7 +74,7 @@ function display(send){
 				{"name":"Actions",
 					"value":uEmotes+"  `bully`"},
 				{"name":"Utility",
-					"value":"`feedback`  `stats`  `link`  `guildlink`  `disable`  `censor`  `patreon`  `avatar`"},
+					"value":"`feedback`  `stats`  `link`  `guildlink`  `disable`  `censor`  `patreon`  `avatar`  `announcement`  `rules`"},
 				]
 	};
 

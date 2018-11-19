@@ -3,24 +3,10 @@ if(debug) var auth = require('../tokens/scuttester-auth.json');
 else var auth = require('../tokens/owo-auth.json');
 
 const login = require('../tokens/owo-login.json');
+const config = require('./json/botConfig.json');
 
 const Discord = require("discord.js");
-const client = new Discord.Client({
-	messageCacheMaxSize:100,
-	messageCacheLifetime:300,
-	messageSweepInterval:500,
-	disableEveryone:true,
-	disabledEvents:[
-		"TYPEING_START",
-		"VOICE_SERVER_UPDATE",
-		"VOICE_STATE_UPDATE",
-		"USER_NOTE_UPDATE",
-		"CHANNEL_PINS_UPDATE",
-		"MESSAGE_UPDATE",
-		"RELATIONSHIP_ADD",
-		"RELATIONSHIP_REMOVE"
-	],
-});
+const client = new Discord.Client(config.client);
 const DBL = require("dblapi.js");
 const dbl = new DBL(auth.dbl);
 

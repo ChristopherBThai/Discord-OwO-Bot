@@ -7,18 +7,18 @@ const sender = require('../util/sender.js');
 const Error = require("../handler/errorHandler.js");
 const mysqlHandler = require("../handler/mysqlHandler.js");
 const questHandler = new (require("../handler/questHandler.js"))();
-var query;
 
 const logger = require('../util/logger.js');
 const mysql = require('../util/mysql.js');
 const con = mysql.con;
 const global = require('../util/global.js');
+const config = require('../json/botConfig.json');
 
 const macro = require('../../tokens/macro.js');
 const ban = require('../util/ban.js');
 
-
-const prefix = 'owo';
+const prefix = config.prefix;
+var query;
 
 //Commands (including alias)
 var commands = {};
@@ -196,6 +196,7 @@ function initParam(msg,command,args,client,dbl){
 		"commands":commands,
 		"mcommands":mcommands,
 		"logger":logger,
+		"config":config,
 		"quest":function(questName,count,extra){questHandler.increment(msg,questName,count,extra).catch(console.error)}
 	};
 	return param;
