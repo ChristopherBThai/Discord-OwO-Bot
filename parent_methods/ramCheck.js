@@ -3,10 +3,10 @@
  */
 const si = require('systeminformation');
 var Manager;
-/* Interval to check (1H) */
-const interval = 3600000;
-/* Minimum ram (0.75GB) */
-const resetbyte = 805306368;
+/* Interval to check (0.5H) */
+const interval = 3600000/2;
+/* Minimum ram (1GB) */
+const resetbyte = 1024*1024*1024;
 /* Shard reset delay (15s) */
 const resetDelay = 15000;
 
