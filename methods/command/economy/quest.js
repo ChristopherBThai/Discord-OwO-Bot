@@ -63,7 +63,7 @@ module.exports = new CommandInterface({
 
 			/*Create embed */
 			var embed = {
-				"color":4886754,
+				"color":p.config.embed_color,
 				"footer":{
 					"text": "Next quest in: "+afterMid.hours+" H "+afterMid.minutes+" M "+afterMid.seconds+" S"
 				},

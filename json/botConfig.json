@@ -1,0 +1,24 @@
+{
+	"client":{
+		"messageCacheMaxSize":100,
+		"messageCacheLifetime":300,
+		"messageSweepInterval":500,
+		"disableEveryone":true,
+		"disabledEvents":[
+			"TYPEING_START",
+			"VOICE_SERVER_UPDATE",
+			"VOICE_STATE_UPDATE",
+			"USER_NOTE_UPDATE",
+			"CHANNEL_PINS_UPDATE",
+			"MESSAGE_UPDATE",
+			"RELATIONSHIP_ADD",
+			"RELATIONSHIP_REMOVE"
+		]
+	},
+	"prefix":"owo",
+	"embed_color":4886754,
+	"emoji":{
+		"cowoncy":"<:cowoncy:416043450337853441>",
+		"blank":"<:blank:427371936482328596>"
+	}
+}
