@@ -28,7 +28,7 @@ module.exports = new CommandInterface({
 		/* Query for user info */
 		var msg = p.msg,con = p.con;
 		var sql = "SELECT daily,patreonDaily,daily_streak,uid FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id WHERE cowoncy.id = "+msg.author.id+";";
-		sql += "SELECT * FROM user_announcement where uid = (SELECT uid FROM user WHERE id = 184587051943985152) AND (aid = (SELECT aid FROM announcement ORDER BY aid DESC limit 1) OR disabled = 1);"
+		sql += "SELECT * FROM user_announcement where uid = (SELECT uid FROM user WHERE id = "+msg.author.id+") AND (aid = (SELECT aid FROM announcement ORDER BY aid DESC limit 1) OR disabled = 1);"
 		con.query(sql,function(err,rows,fields){
 			if(err){console.error(err);return;}
 
