@@ -3,6 +3,8 @@ const CommandInterface = require('../../commandinterface.js');
 const global = require('../../../util/global.js');
 const sender = require('../../../util/sender.js');
 
+const feedbackChannel = "420999274789208064";
+
 module.exports = new CommandInterface({
 	
 	alias:["feedback","question","report","suggest"],
@@ -26,8 +28,15 @@ module.exports = new CommandInterface({
 			p.send("**🚫 |** Silly **"+p.msg.author.username+"**, you need to add a message!",3000);
 			return;
 		}
-		if(message.length > 250){
+		if(p.command!="suggest"&&message.length > 250){
 			p.send("**🚫 |** Sorry, "+p.msg.author.username+"! Messages must be under 250 character!!!",3000);
+			return;
+		}else if(message.length > 1500){
+			p.send("**🚫 |** Sorry, "+p.msg.author.username+"! Suggestions must be under 1500 character!!!",3000);
+			return;
+		}
+		if(p.command == "suggest"){
+			suggest(p,message);
 			return;
 		}
 		var sql = "INSERT INTO feedback (type,message,sender) values ('"+p.command+"',?,"+p.msg.author.id+");";
@@ -67,4 +76,17 @@ module.exports = new CommandInterface({
 	}
 
 })
+
+function suggest(p,message){
+	const embed = {
+		"color": p.config.embed_color,
+		"timestamp": new Date(),
+		"author": {
+			"name": p.msg.author.username+"'s suggestion",
+			"icon_url":p.msg.author.avatarURL,
+		},
+		"description":message
+	};
+	p.sender.msgChannel(feedbackChannel,{embed},{react:['👍','👎']});
+}
 

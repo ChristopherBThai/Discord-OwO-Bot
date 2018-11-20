@@ -190,6 +190,7 @@ function initParam(msg,command,args,client,dbl){
 		"con":con,
 		"query":query,
 		"send":sender.send(msg),
+		"sender":sender,
 		"Error":Error,
 		"global":global,
 		"aliasToCommand":aliasToCommand,

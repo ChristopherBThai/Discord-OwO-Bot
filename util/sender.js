@@ -44,24 +44,33 @@ exports.msgAdmin = async function (message){
 			.catch(err => console.error(err));
 }
 
+exports.msgChannel = async function (id,message,options){
+	if(!message||!id) return;
+	id = id.match(/[0-9]+/)[0];
+	process.send({
+		type:"sendChannel",
+		to:id,
+		msg:message,
+		options
+	});
+}
+
 exports.msgLogChannel = async function (message){
 	if(!message) return;
-	message = message.replace(/`/g,"\\`");
-	client.shard.broadcastEval(`
-		var channel = this.channels.get('${logChannel}');
-		if(channel!=undefined)
-			channel.send(\`${message}\`);
-	`);
+	process.send({
+		type:"sendChannel",
+		to:logChannel,
+		msg:message
+	});
 }
 
 exports.msgModLogChannel = async function (message){
 	if(!message) return;
-	message = message.replace(/`/g,"\\`");
-	client.shard.broadcastEval(`
-		var channel = this.channels.get('${modLogChannel}');
-		if(channel!=undefined)
-			channel.send(\`${message}\`);
-	`);
+	process.send({
+		type:"sendChannel",
+		to:modLogChannel,
+		msg:message
+	});
 }
 
 exports.client = function(tClient){
