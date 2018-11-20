@@ -10,11 +10,12 @@ A fun bot for you Discord! Earn virtual cowoncy to hunt and battle animals! Keep
 | Catagory | Commands |
 | --- | --- |
 | Rankings | `top` `my` |
-| Economy | `cowoncy` `give` `daily` `vote` |
-| Animals | `zoo` `hunt` `sell` `battle` `pets` `inv` `shop` `equip` `buy` `autohunt` |
-| Gambling | `slots` `coinflip` `lottery` `blackjack` |
+| Economy | `cowoncy` `give` `daily` `vote` `quest` |
+| Animals | `zoo` `hunt` `sell` `battle` `pets` `inv` `shop` `equip` `buy` `autohunt` `owodex` `lootbox` |
+| Gambling | `slots` `coinflip` `lottery` `blackjack` `drop` |
 | Fun | `8b` `define` `gif` `pic` `translate` |
 | Social | `cookies` `ship` `pray` `curse` |
+| Meme Generation | `spongebobchicken` `slapcar` `isthisa` `drake` `distractedbf` |
 | Emotes | `blush` `cry` `dance` `lewd` `pout` `shrug` `sleepy` `smile` `smug` `thumbsup` `wag` `thinking` `triggered` `teehee` `deredere` `thonking` `scoff` `happy` `thumbs` `grin` |
 | Actions | `cuddle` `hug` `insult` `kiss` `lick` `nom` `pat` `poke` `slap` `stare` `highfive` `bite` `greet` `punch` `handholding` `tickle` `kill` `hold` `pats` `wave` `boop` |
 | Utility | `feedback` `ping` `stats` `link` `guildlink` `disable` `censor` `patreon` `help` |

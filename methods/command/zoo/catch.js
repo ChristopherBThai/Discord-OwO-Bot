@@ -137,7 +137,8 @@ function getAnimals(p,result,gems,uid){
 	if(gems["Lucky"]) sql += "UPDATE user_gem SET activecount = activecount - "+animal.length+" WHERE uid = "+uid+" AND gname = '"+gems["Lucky"].gname+"';";
 
 	/* Construct output message for user */
-	var text = "**🌱 | "+p.msg.author.username+"** spent 5 <:cowoncy:416043450337853441> and caught a(n) "+animal[0][0]+" "+global.unicodeAnimal(animal[0][1])+"!"
+	var text = "**🌱 | "+p.msg.author.username+"** spent 5 <:cowoncy:416043450337853441> and caught a "+animal[0][0]+" "+global.unicodeAnimal(animal[0][1])+"!"
+	if(animal[0][0].charAt(0).equals("u") || animal[0][0].charAt(0).equals("e")) text.replace(" a ", " an ");
 	if(gemLength>0){
 		text = "**🌱 | "+p.msg.author.username+"**, hunt is empowered by ";
 		for(let i in gems){
