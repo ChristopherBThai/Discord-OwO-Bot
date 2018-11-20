@@ -1,8 +1,8 @@
 {
 	"_comment":"This json file holds all the animals and ranks. Yes it's messy. I'll clean it up in the future!",
 
-	"common":[".50",":bee:",":bug:",":snail:",":beetle:",":butterfly:"],
-	"uncommon":["1",":baby_chick:",":mouse2:",":rooster:",":rabbit2:",":chipmunk:"],
+	"common":[0.50,":bee:",":bug:",":snail:",":beetle:",":butterfly:"],
+	"uncommon":[1,":baby_chick:",":mouse2:",":rooster:",":rabbit2:",":chipmunk:"],
     	
 	"numbers":["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"],
 	"question":"<:question:416100711412137984>",
