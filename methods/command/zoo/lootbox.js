@@ -33,7 +33,7 @@ module.exports = new CommandInterface({
 			}
 			var gem = lootboxUtil.getRandomGem(p.msg.author.id,(result[1][0]&&result[1][0].patreonAnimal==1));
 			var text1 = blank+" **| "+p.msg.author.username+"** opens a lootbox\n"+boxShake+" **|** and finds a ...";
-			var text2 = gem.gem.emoji+" **| "+p.msg.author.username+"** opens a lootbox\n"+boxOpen+" **|** and finds a **"+gem.name+"**!";
+			var text2 = gem.gem.emoji+" **| "+p.msg.author.username+"** opens a lootbox\n"+boxOpen+" **|** and finds a" + ((gem.name.charAt(0).equals("E") || gem.name.charAt(0).equals("U")) ? "n" : "") + " **"+gem.name+"**!";
 			p.con.query(gem.sql,function(err,result){
 				if(err){
 					console.error(err);
