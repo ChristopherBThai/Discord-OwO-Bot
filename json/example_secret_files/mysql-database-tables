@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.23, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.24, for Linux (x86_64)
 --
 -- Host: localhost    Database: owo
 -- ------------------------------------------------------
--- Server version	5.7.23-0ubuntu0.16.04.1
+-- Server version	5.7.24-0ubuntu0.16.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -45,7 +45,7 @@ CREATE TABLE `animal` (
   UNIQUE KEY `pid` (`pid`),
   UNIQUE KEY `pid_2` (`pid`),
   UNIQUE KEY `pid_3` (`pid`)
-) ENGINE=InnoDB AUTO_INCREMENT=21932061 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=81957769 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -68,6 +68,7 @@ CREATE TABLE `animal_count` (
   `patreon` int(5) NOT NULL DEFAULT '0',
   `cpatreon` int(5) NOT NULL DEFAULT '0',
   `hidden` int(5) NOT NULL DEFAULT '0',
+  `gem` int(5) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -88,6 +89,21 @@ CREATE TABLE `animal_food` (
   CONSTRAINT `animal_food_ibfk_1` FOREIGN KEY (`pid`) REFERENCES `animal` (`pid`),
   CONSTRAINT `animal_food_ibfk_2` FOREIGN KEY (`fid`) REFERENCES `food` (`fid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `announcement`
+--
+
+DROP TABLE IF EXISTS `announcement`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `announcement` (
+  `aid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `url` varchar(75) NOT NULL,
+  `adate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`aid`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -150,7 +166,7 @@ CREATE TABLE `blackjack` (
   `active` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `bjid` (`bjid`)
-) ENGINE=InnoDB AUTO_INCREMENT=717855 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1191875 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -256,7 +272,7 @@ CREATE TABLE `feedback` (
   `message` varchar(255) NOT NULL,
   `sender` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3228 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3916 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -351,6 +367,26 @@ CREATE TABLE `luck` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `quest`
+--
+
+DROP TABLE IF EXISTS `quest`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `quest` (
+  `uid` int(11) NOT NULL,
+  `qid` int(11) NOT NULL,
+  `qname` varchar(30) NOT NULL,
+  `level` tinyint(4) NOT NULL DEFAULT '0',
+  `prize` varchar(25) NOT NULL,
+  `count` int(11) NOT NULL DEFAULT '0',
+  `claimed` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`uid`,`qid`),
+  CONSTRAINT `quest_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `rep`
 --
 
@@ -362,6 +398,21 @@ CREATE TABLE `rep` (
   `count` int(20) NOT NULL,
   `lasttime` timestamp NOT NULL DEFAULT '2017-01-01 18:10:10',
   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `rules`
+--
+
+DROP TABLE IF EXISTS `rules`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `rules` (
+  `uid` int(11) NOT NULL,
+  `opinion` tinyint(4) DEFAULT '0',
+  PRIMARY KEY (`uid`),
+  CONSTRAINT `rules_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -382,6 +433,38 @@ CREATE TABLE `timeout` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `timers`
+--
+
+DROP TABLE IF EXISTS `timers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `timers` (
+  `uid` int(11) NOT NULL,
+  `questTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `dailyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `lootboxTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`uid`),
+  CONSTRAINT `user_timers` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `tracker`
+--
+
+DROP TABLE IF EXISTS `tracker`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tracker` (
+  `uid` int(11) NOT NULL,
+  `questCount` int(11) DEFAULT '0',
+  PRIMARY KEY (`uid`),
+  CONSTRAINT `tracker_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `transaction`
 --
 
@@ -397,7 +480,7 @@ CREATE TABLE `transaction` (
   PRIMARY KEY (`sender`,`reciever`,`time`),
   UNIQUE KEY `tid` (`tid`),
   CONSTRAINT `transaction_ibfk_1` FOREIGN KEY (`sender`) REFERENCES `cowoncy` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=106820 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=201080 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -415,7 +498,25 @@ CREATE TABLE `user` (
   `patreonDaily` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uid` (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=9631784 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=13894578 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `user_announcement`
+--
+
+DROP TABLE IF EXISTS `user_announcement`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_announcement` (
+  `uid` int(11) NOT NULL,
+  `aid` int(10) unsigned DEFAULT NULL,
+  `disabled` tinyint(4) DEFAULT '0',
+  PRIMARY KEY (`uid`),
+  KEY `aid` (`aid`),
+  CONSTRAINT `user_announcement_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`),
+  CONSTRAINT `user_announcement_ibfk_2` FOREIGN KEY (`aid`) REFERENCES `announcement` (`aid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -481,7 +582,7 @@ CREATE TABLE `vote` (
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `CowoncyDrop`(
 IN tid BIGINT UNSIGNED,
@@ -500,11 +601,12 @@ DECLARE exit handler for sqlwarning
 END;
 
 START TRANSACTION;
-IF (SELECT COALESCE(money,0) FROM cowoncy WHERE id = tid) < tamount THEN
+IF (SELECT IFNULL((SELECT money FROM cowoncy WHERE id = tid),0) < tamount) THEN
 ROLLBACK;
-END IF;
+ELSE
 UPDATE cowoncy SET money = money - tamount WHERE id = tid;
 INSERT INTO cowoncydrop (channel,amount) VALUES (tchannel,tamount) ON DUPLICATE KEY UPDATE amount = amount + tamount;
+END IF;
 COMMIT;
 
 END ;;
@@ -521,7 +623,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `CowoncyPickup`(
 IN tid BIGINT UNSIGNED,
@@ -540,9 +642,9 @@ DECLARE exit handler for sqlwarning
 END;
 
 START TRANSACTION;
-IF (SELECT COALESCE(money,0) FROM cowoncy WHERE id = tid) < tamount THEN
+IF (SELECT IFNULL((SELECT money FROM cowoncy WHERE id = tid),0)) < tamount THEN
 ROLLBACK;
-ELSEIF (((SELECT COALESCE(amount,0) FROM cowoncydrop WHERE channel = tchannel) >= tamount) AND ((SELECT COALESCE(money,0) FROM cowoncy WHERE id = tid) >= tamount)) THEN
+ELSEIF ((SELECT IFNULL((SELECT amount FROM cowoncydrop WHERE channel = tchannel),0) >= tamount) AND (SELECT IFNULL((SELECT money FROM cowoncy WHERE id = tid),0) >= tamount)) THEN
 INSERT INTO cowoncy (id,money) VALUES (tid,tamount) ON DUPLICATE KEY UPDATE money = money + tamount;
 UPDATE cowoncydrop SET amount = amount - tamount WHERE channel = tchannel;
 ELSE
@@ -565,7 +667,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `CowoncyTransfer`(
 IN send BIGINT UNSIGNED,
@@ -608,4 +710,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-10-07 21:45:27
+-- Dump completed on 2018-11-19 17:12:54
