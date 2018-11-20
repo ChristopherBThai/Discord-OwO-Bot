@@ -43,11 +43,11 @@ async function announcementSetting(p){
 	if(p.args[0]=='enable'){
 		var sql = "INSERT INTO user_announcement (uid,aid,disabled) values ((SELECT uid FROM user WHERE id = ?),(SELECT aid FROM announcement ORDER BY aid ASC LIMIT 1),0) ON DUPLICATE KEY UPDATE disabled = 0;";
 		p.query(sql,[BigInt(p.msg.author.id)]).then(result => {
-			p.send("**📮 | "+p.msg.author.username+"** You will now recieve announcements in your daily command!");
+			p.send("**📮 | "+p.msg.author.username+"** You will now receive announcements in your daily command!");
 		}).catch(err => {
 			sql = "INSERT IGNORE INTO user (id,count) VALUES (?,0);"+sql;
 			p.query(sql,[BigInt(p.msg.author.id),BigInt(p.msg.author.id)]).then(result => {
-				p.send("**📮 | "+p.msg.author.username+"** You will now recieve announcements in your daily command!");
+				p.send("**📮 | "+p.msg.author.username+"** You will now receive announcements in your daily command!");
 			}).catch(console.error);
 		});
 	}else{

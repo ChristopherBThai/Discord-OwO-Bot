@@ -12,6 +12,7 @@ const global = require('./parent_methods/global.js');
 const ramCheck = require('./parent_methods/ramCheck.js');
 const vote = require('./parent_methods/vote.js');
 const lottery = require('./parent_methods/lottery.js');
+const messageHandler = require('./parent_methods/messageHandler.js');
 
 Manager.spawn();
 
@@ -23,8 +24,8 @@ Manager.on('launch', function(shard){
 	}
 });
 
-Manager.on('imessage', (shard, message) => {
-	    console.log(`Shard[${shard.id}] : ${message._eval} : ${message._result}`);
+Manager.on('message', (shard, message) => {
+	messageHandler.handle(Manager,shard,message);
 });
 
 function updateActivity(){

@@ -4,7 +4,6 @@ const global = require("../util/global.js");
 const Error = require("./errorHandler.js");
 
 exports.handle = function(client,msg){
-
 	/* Check if the message is ment for this shard */
 	if(msg.shard!=undefined&&msg.shard!=client.shard.id)
 		return;
@@ -36,6 +35,16 @@ async function sendDM(msg){
 }
 
 async function sendChannel(client,msg){
-	var channel = client.channels.get(msg.to);
-	if(channel) channel.send(msg.msg);
+	var channel = await client.channels.get(msg.to);
+	if(channel){
+		channel.send(msg.msg).then(message => {
+			if(msg.options){
+				if(msg.options.react){
+					for(var i=0;i<msg.options.react.length;i++){
+						message.react(msg.options.react[i]);
+					}
+				}
+			}
+		}).catch(console.error);
+	}
 }
