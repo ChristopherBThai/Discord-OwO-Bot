@@ -26,6 +26,8 @@
     "require-dir": "^1.1.0",
     "translate-google": "^1.1.0",
     "urban-dictionary": "^2.2.1",
-    "weeb.js": "^1.6.2"
+    "weeb.js": "^1.6.2",
+	"patreon":"^0.4.1",
+	"systeminformation":"^3.47.0"
   }
 }
