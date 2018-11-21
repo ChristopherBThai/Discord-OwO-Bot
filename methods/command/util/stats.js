@@ -23,11 +23,11 @@ module.exports = new CommandInterface({
 		sql += "SELECT command FROM disabled WHERE channel = "+msg.channel.id+";";
 		
 		var guilds = await client.shard.fetchClientValues('guilds.size');
-		guilds.reduce((prev,val) => prev + val,0);
+		guildsTotal = guilds.reduce((prev,val) => prev + val);
 		var channels = await client.shard.fetchClientValues('channels.size');
-		channels.reduce((prev,val) => prev + val,0);
+		channelsTotal = channels.reduce((prev,val) => prev + val);
 		var users = await client.shard.fetchClientValues('users.size');
-		users.reduce((prev,val) => prev + val,0);
+		usersTotal = users.reduce((prev,val) => prev + val);
 		con.query(sql,function(err,rows,field){
 			if(err) throw err;
 			var totalAnimals = parseInt(rows[1][0].common)+parseInt(rows[1][0].uncommon)+parseInt(rows[1][0].rare)+parseInt(rows[1][0].epic)+parseInt(rows[1][0].mythical)+parseInt(rows[1][0].legendary);
@@ -51,7 +51,7 @@ module.exports = new CommandInterface({
 					{"name": "Global information",
 						"value": "```md\n<TotalOwOs:  "+p.global.toFancyNum(rows[0][0].total)+">\n<OwOUsers:   "+p.global.toFancyNum(rows[0][0].user)+">``````md\n<animalsCaught: "+p.global.toFancyNum(totalAnimals)+">\n<common: "+p.global.toFancyNum(rows[1][0].common)+">\n<uncommon: "+p.global.toFancyNum(rows[1][0].uncommon)+">\n<rare: "+p.global.toFancyNum(rows[1][0].rare)+">\n<epic: "+p.global.toFancyNum(rows[1][0].epic)+">\n<mythical: "+p.global.toFancyNum(rows[1][0].mythical)+">\n<legendary: "+p.global.toFancyNum(rows[1][0].legendary)+">```"},
 					{"name": "Bot Information",
-						"value": "```md\n<Guilds:    "+p.global.toFancyNum(guilds)+">\n<Channels:  "+p.global.toFancyNum(channels)+">\n<Users:     "+p.global.toFancyNum(users)+">``````md\n<Ping:       "+client.ping+"ms>\n<UpdatedOn:  "+client.readyAt+">\n<Uptime:     "+client.uptime+">```"
+						"value": "```md\n<Guilds:    "+p.global.toFancyNum(guildsTotal)+">\n<Channels:  "+p.global.toFancyNum(channelsTotal)+">\n<Users:     "+p.global.toFancyNum(usersTotal)+">``````md\n<Ping:       "+client.ping+"ms>\n<UpdatedOn:  "+client.readyAt+">\n<Uptime:     "+client.uptime+">```"
 					}]
 			};
 			msg.channel.send({embed})
