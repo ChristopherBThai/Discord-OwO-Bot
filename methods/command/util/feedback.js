@@ -88,5 +88,6 @@ function suggest(p,message){
 		"description":message
 	};
 	p.sender.msgChannel(feedbackChannel,{embed},{react:['👍','👎']});
+	p.send("**📨 |** *OwO What's this?!*  "+p.msg.author+", Thanks for the suggestion! Your suggestion can be viewed in our server! Come join!\n"+p.config.guildlink);
 }
 

@@ -18,7 +18,7 @@ module.exports = new CommandInterface({
 
 	execute: function(p){
 		var text = "**<:owo:448256976141549568> |** Come join our discord to ask for help or just have fun!\n";
-		text += "**<:blank:427371936482328596> |** https://discord.gg/VKesv7J"
+		text += "**<:blank:427371936482328596> |** "+p.config.guildlink;
 		p.send(text);
 	}
 

@@ -41,7 +41,7 @@ async function sendChannel(client,msg){
 			if(msg.options){
 				if(msg.options.react){
 					for(var i=0;i<msg.options.react.length;i++){
-						message.react(msg.options.react[i]);
+						await message.react(msg.options.react[i]);
 					}
 				}
 			}
