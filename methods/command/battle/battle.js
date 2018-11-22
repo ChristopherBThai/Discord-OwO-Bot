@@ -66,7 +66,6 @@ function fight(con,msg,send,p,count){
 		var censor = (rows[2][0]!=undefined && rows[2][0].young)
 
 		//Grab pet info
-		console.log(rows[0][0])
 		var upet = battleUtil.extractInfo(rows[0][0],msg.author,censor);
 		var opet = battleUtil.extractInfo(rows[1][0],{id:rows[1][0].id},censor);//await global.getUser((rows[1][0])?rows[1][0].id:undefined,false),censor);
 
