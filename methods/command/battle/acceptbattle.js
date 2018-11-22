@@ -76,15 +76,19 @@ function startBattle(con,msg,user1,pid1,user2,pid2,amount,send,p){
 		"FROM (cowoncy NATURAL JOIN animal) LEFT JOIN (animal_food NATURAL JOIN food) "+
 		"ON animal.pid = animal_food.pid "+
 		"WHERE id = "+user2.id+" AND animal.pid = "+pid2+" GROUP BY animal.pid;";
+	sql += "SELECT young FROM guild WHERE id = "+msg.guild.id+";";
 	sql += "UPDATE cowoncy SET money = money - "+amount+" WHERE id IN ("+user1.id+","+user2.id+");"
 	con.query(sql,function(err,rows,fields){
 		p.logger.value('cowoncy',(amount*-1),['command:battleuser','id:'+user1.id]);
 		p.logger.value('cowoncy',(amount*-1),['command:battleuser','id:'+user2.id]);
 		if(err) throw err;
 
+		//Check if guild is kid friendly
+		var censor = (rows[2][0]!=undefined && rows[2][0].young)
+
 		//Grab pet info
-		var upet = battleUtil.extractInfo(rows[0][0],user1);
-		var opet = battleUtil.extractInfo(rows[1][0],user2);
+		var upet = battleUtil.extractInfo(rows[0][0],user1,censor);
+		var opet = battleUtil.extractInfo(rows[1][0],user2,censor);
 
 		//Check if pets are valid
 		if(upet == undefined){
