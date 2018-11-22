@@ -39,14 +39,14 @@ module.exports = new CommandInterface({
 })
 
 function fight(con,msg,send,p,count){
-	var sql = "SELECT id,money,nickname,name,lvl,att,hp,lvl,streak,xp, "+
+	var sql = "SELECT id,money,nickname,name,lvl,att,hp,lvl,streak,xp,offensive, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 1 THEN fname ELSE NULL END)) AS one, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 2 THEN fname ELSE NULL END)) AS two, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 3 THEN fname ELSE NULL END)) AS three "+
 		"FROM (cowoncy NATURAL JOIN animal) LEFT JOIN (animal_food NATURAL JOIN food) "+
 		"ON animal.pid = animal_food.pid "+
 		"WHERE id = "+msg.author.id+" AND pet = name GROUP BY animal.pid;";
-	sql += "SELECT id,nickname,name,lvl,att,hp,lvl,streak,xp, "+
+	sql += "SELECT id,nickname,name,lvl,att,hp,lvl,streak,xp,offensive, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 1 THEN fname ELSE NULL END)) AS one, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 2 THEN fname ELSE NULL END)) AS two, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 3 THEN fname ELSE NULL END)) AS three "+
@@ -66,6 +66,7 @@ function fight(con,msg,send,p,count){
 		var censor = (rows[2][0]!=undefined && rows[2][0].young)
 
 		//Grab pet info
+		console.log(rows[0][0])
 		var upet = battleUtil.extractInfo(rows[0][0],msg.author,censor);
 		var opet = battleUtil.extractInfo(rows[1][0],{id:rows[1][0].id},censor);//await global.getUser((rows[1][0])?rows[1][0].id:undefined,false),censor);
 
