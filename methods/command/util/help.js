@@ -39,43 +39,33 @@ module.exports = new CommandInterface({
 })
 
 function display(send){
-	var text = "**Command List**"+
-		"\n\n**Rankings:** "+
-		"\n**Economy:** "+
-		"\n**Animals:** "+
-		"\n**Gambling:** "+
-		"\n**Fun:** "+
-		"\n**Social:** "+
-		"\n**Utility:** "+
-		"\n\nUse `owo help {command}` for further details!"+
-		"\nUse `owo {command}` to execute a command!";
-		var embed = {
-		"description": "Here is the list of commands!\nFor more info on a specific command, use `owo help {command}`",
-			"color": 4886754,
-			"author": {"name": "Command List",
-				"icon_url": "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
-			"fields": [
-				{"name":"Rankings",
-					"value":"`top`  `my`"},
-				{"name":"Economy",
-					"value":"`cowoncy`  `give`  `daily`  `vote`  `quest`"},
-				{"name":"Animals",
-					"value":"`zoo`  `hunt`  `sell`  `battle`  `pets`  `inv`  `shop`  `equip`  `buy`  `autohunt`  `owodex`  `lootbox`"},
-				{"name":"Gambling",
-					"value":"`slots`  `coinflip`  `lottery`  `blackjack`  `drop`"},
-				{"name":"Fun",
-					"value":"`8b`  `define`  `gif`  `pic`  `translate`  `roll`"},
-				{"name":"Social",
-					"value":"`cookie` `ship`  `pray`  `curse`"},
-				{"name":"Meme Generation",
-					"value":"`spongebobchicken`  `slapcar`  `isthisa`  `drake`  `distractedbf`"},
-				{"name":"Emotes",
-					"value":sEmotes},
-				{"name":"Actions",
-					"value":uEmotes+"  `bully`"},
-				{"name":"Utility",
-					"value":"`feedback`  `stats`  `link`  `guildlink`  `disable`  `censor`  `patreon`  `avatar`  `announcement`  `rules`  `suggestion`"},
-				]
+	var embed = {
+	"description": "Here is the list of commands!\nFor more info on a specific command, use `owo help {command}`",
+		"color": 4886754,
+		"author": {"name": "Command List",
+			"icon_url": "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
+		"fields": [
+			{"name":"🎖 Rankings",
+				"value":"`top`  `my`"},
+			{"name":"💰 Economy",
+				"value":"`cowoncy`  `give`  `daily`  `vote`  `quest`"},
+			{"name":"🌱 Animals",
+				"value":"`zoo`  `hunt`  `sell`  `battle`  `pets`  `inv`  `shop`  `equip`  `buy`  `autohunt`  `owodex`  `lootbox`"},
+			{"name":"🎲 Gambling",
+				"value":"`slots`  `coinflip`  `lottery`  `blackjack`  `drop`"},
+			{"name":"🎱 Fun",
+				"value":"`8b`  `define`  `gif`  `pic`  `translate`  `roll`"},
+			{"name":"🎭 Social",
+				"value":"`cookie` `ship`  `pray`  `curse`"},
+			{"name":"😂 Meme Generation",
+				"value":"`spongebobchicken`  `slapcar`  `isthisa`  `drake`  `distractedbf`"},
+			{"name":"🙂 Emotes",
+				"value":sEmotes},
+			{"name":"🤗 Actions",
+				"value":uEmotes+"  `bully`"},
+			{"name":"🔧 Utility",
+				"value":"`feedback`  `stats`  `link`  `guildlink`  `disable`  `censor`  `patreon`  `avatar`  `announcement`  `rules`  `suggestion`"},
+		]
 	};
 
 	send({embed});
