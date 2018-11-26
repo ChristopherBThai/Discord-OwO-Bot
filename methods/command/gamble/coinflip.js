@@ -31,12 +31,12 @@ module.exports = new CommandInterface({
 		if(global.isInt(arg1)){
 			bet = parseInt(arg1);
 			arg1 = args[1];
-		}else if(arg1=='all'){
+		}else if(arg1&&arg1.toLowerCase()=='all'){
 			bet = "all";
 			arg1 = args[1];
 		}else if(global.isInt(args[1])){
 			bet = parseInt(args[1]);
-		}else if(args[1]=='all'){
+		}else if(args[1]&&args[1].toLowerCase()=='all'){
 			bet = "all";
 		}else if(args.length!=1){
 			p.send("**🚫 | "+msg.author.username+"**, Invalid arguments!!",3000);

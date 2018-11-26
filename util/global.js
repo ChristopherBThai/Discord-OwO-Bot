@@ -115,6 +115,7 @@ exports.client= function(tclient){
 		ranks[key].price = animaljson.price[key];
 		ranks[key].points = animaljson.points[key];
 		ranks[key].emoji = animaljson.ranks[key];
+		ranks[key].rank = key;
 	}
 
 	for(key in animaljson.alias){
@@ -148,6 +149,10 @@ exports.validRank = function(rank){
 	if(rank) rank.toLowerCase();
 	rank = rankAlias[rank];
 	return ranks[rank]
+}
+
+exports.getAllRanks = function(){
+	return ranks;
 }
 
 /**
