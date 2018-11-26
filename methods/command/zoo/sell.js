@@ -11,7 +11,7 @@ module.exports = new CommandInterface({
 
 	desc:"Sell animals from your zoo! Selling animals will NOT affect your zoo score!",
 
-	example:["owo sell dog","owo sell cat 1","owo sell ladybug all","owo sell uncommon"],
+	example:["owo sell dog","owo sell cat 1","owo sell ladybug all","owo sell uncommon","owo sell all"],
 
 	related:["owo hunt"],
 
@@ -25,30 +25,55 @@ module.exports = new CommandInterface({
 
 		var name = undefined;
 		var count = 1;
+		var ranks;
+		
+		/* If no args */
+		if(args.length==0){
+			p.send("**🚫 | "+msg.author.username+"**, Please specify what rank/animal to sell!",3000);
+			return;
 
-		//if arg0 is a count
-		if(global.isInt(args[0])||args[0]=="all"){
-			if(args[0]!="all") count = parseInt(args[0]);
+		/* if arg0 is a count */
+		}else if(args.length==2&&(global.isInt(args[0])||args[0].toLowerCase()=="all")){
+			if(args[0].toLowerCase()!="all") count = parseInt(args[0]);
 			else count = "all";
 			name = args[1];
 
-		//if arg1 is a count (or not)
-		}else{
-			if(global.isInt(args[1])||args[1]=="all"){
-				if(args[1]!="all") count = parseInt(args[1]);
-				else count = "all";
-			}else if(args.length==2){
-				p.send("**🚫 | "+msg.author.username+"**, Invalid arguments!",3000);
-				return;
-			}
+		/* if arg1 is a count (or not) */
+		}else if(args.length==2&&(global.isInt(args[1])||args[1].toLowerCase()=="all")){
+			if(args[1].toLowerCase()!="all") count = parseInt(args[1]);
+			else count = "all";
 			name = args[0];
+
+		/* Only one argument */
+		}else if(args.length==1){
+			if(args[0].toLowerCase()=="all")
+				ranks = global.getAllRanks();
+			else
+				name = args[0];
+
+		/* Multiple ranks */
+		}else{
+			ranks = {}
+			for(i=0;i<args.length;i++){
+				let tempRank = global.validRank(args[i].toLowerCase());
+				if(!tempRank){
+					p.send("**🚫 | "+msg.author.username+"**, Invalid arguments!",3000);
+					return;
+				}
+				if(!(tempRank in ranks)){
+					ranks[tempRank.rank] = tempRank;
+				}
+			}
 		}
 
-		if(name)
-			name = name.toLowerCase();
+		if(name) name = name.toLowerCase();
+
+		/* If multiple ranks */
+		if(ranks){
+			sellRanks(msg,con,ranks,p.send,global,p);
 
 		//if its an animal...
-		if(animal = global.validAnimal(name)){
+		}else if(animal = global.validAnimal(name)){
 			if(args.length<3)
 				sellAnimal(msg,con,animal,count,p.send,global,p);
 			else
@@ -112,5 +137,37 @@ function sellRank(msg,con,rank,send,global,p){
 			send("**🔪 | "+msg.author.username+"** sold **"+rank.emoji+"x"+count+"** for a total of **<:cowoncy:416043450337853441> "+(global.toFancyNum(count*rank.price))+"**");
 			p.logger.value('cowoncy',(count*rank.price),['command:sell','id:'+msg.author.id]);
 		}
+	});
+}
+
+function sellRanks(msg,con,ranks,send,global,p){
+	var sql = "";
+	for(i in ranks){
+		let rank = ranks[i];
+		var animals = "('"+rank.animals.join("','")+"')";
+		sql += "SELECT SUM(count) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
+		sql += "UPDATE cowoncy SET money = money + ((SELECT COALESCE(SUM(count),0) FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+")*"+rank.price+") WHERE id = "+msg.author.id+";";
+		sql += "UPDATE animal SET sellcount = sellcount + count, count = 0 WHERE id = "+msg.author.id+" AND name IN "+animals+" AND count > 0;";
+	}
+	con.query(sql,function(err,result){
+		if(err) {console.error(err);return;}
+		let sold = "";
+		let total = 0;
+		let count = 0;
+		for(i in ranks){
+			let rank = ranks[i];
+			let sellCount = result[count*3][0].total;
+			if(sellCount>0){
+				sold += rank.emoji+"x"+result[count*3][0].total+" ";
+				total += sellCount * rank.price;
+			}
+			count++;
+		}
+		if(sold!=""){
+			sold = sold.slice(0,-1);
+			send("**🔪 | "+msg.author.username+"** sold **"+sold+"** for a total of **<:cowoncy:416043450337853441> "+(global.toFancyNum(total))+"**");
+			p.logger.value('cowoncy',(total),['command:sell','id:'+msg.author.id]);
+		}else
+			send("**🚫 | "+msg.author.username+"**, You don't have enough animals! >:c",3000);
 	});
 }
