@@ -8,11 +8,14 @@ module.exports = new CommandInterface({
 	admin:true,
 
 	execute: async function(p){
-		var sql = "SELECT COUNT(*) as count FROM animal WHERE ispet > 0;"
+		/*
+		var sql = "SELECT COUNT(*) as count FROM animal;"
 		var result = await p.query(sql);
-		sql = "SELECT * FROM animal WHERE ispet > 0 LIMIT 1 OFFSET "+(Math.trunc(Math.random()*result[0].count))+";";
-		sql += "SELECT * FROM animal WHERE ispet > 0 LIMIT 1 OFFSET "+(Math.trunc(Math.random()*result[0].count))+";";
-		sql += "SELECT * FROM animal WHERE ispet > 0 LIMIT 1 OFFSET "+(Math.trunc(Math.random()*result[0].count))+";";
+		*/
+		var result = [{"count":600000}];
+		sql = "SELECT t.* FROM (SELECT id,name FROM animal LIMIT 1 OFFSET "+(Math.trunc(Math.random()*result[0].count))+") q JOIN animal t ON q.id = t.id AND q.name = t.name;";
+		sql += "SELECT t.* FROM (SELECT id,name FROM animal LIMIT 1 OFFSET "+(Math.trunc(Math.random()*result[0].count))+") q JOIN animal t ON q.id = t.id AND q.name = t.name;";
+		sql += "SELECT t.* FROM (SELECT id,name FROM animal LIMIT 1 OFFSET "+(Math.trunc(Math.random()*result[0].count))+") q JOIN animal t ON q.id = t.id AND q.name = t.name;";
 		result = await p.query(sql);
 		var player = [];
 		for(i=0;i<result.length;i++)

@@ -51,7 +51,7 @@ function fight(con,msg,send,p,count){
 			"GROUP_CONCAT((CASE WHEN pfid = 2 THEN fname ELSE NULL END)) AS two, "+
 			"GROUP_CONCAT((CASE WHEN pfid = 3 THEN fname ELSE NULL END)) AS three "+
 		"FROM ("+
-			"SELECT * FROM animal WHERE ispet > 0 LIMIT 1 OFFSET "+(Math.trunc(Math.random()*count))+
+			"SELECT t.* FROM (SELECT id,name FROM animal WHERE ispet > 0 LIMIT 1 OFFSET "+(Math.trunc(Math.random()*count))+") q JOIN animal t ON q.name = t.name AND q.id = t.id"+
 		") as opponent "+
 		"LEFT JOIN (animal_food NATURAL JOIN food) ON opponent.pid = animal_food.pid "+
 		"GROUP BY opponent.pid;";
