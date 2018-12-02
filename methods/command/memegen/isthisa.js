@@ -2,8 +2,7 @@ const CommandInterface = require('../../commandinterface.js');
 
 const fs = require('fs');
 const request = require('request').defaults({encoding:null});
-const Canvas = require('canvas'),
-	  Image = Canvas.Image;
+const {createCanvas, Canvas, Image} = require('canvas')
 
 module.exports = new CommandInterface({
 	

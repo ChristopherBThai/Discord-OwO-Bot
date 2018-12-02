@@ -1,8 +1,7 @@
 const CommandInterface = require('../../commandinterface.js');
 
 const fs = require('fs');
-const Canvas = require('canvas'),
-	  Image = Canvas.Image;
+const {createCanvas, Canvas, Image} = require('canvas')
 
 module.exports = new CommandInterface({
 	
@@ -27,7 +26,7 @@ module.exports = new CommandInterface({
 
 			img = new Image;
 			img.src = image;
-			canvas = new Canvas(img.width,img.height);
+			canvas = createCanvas(img.width,img.height);
 			ctx = canvas.getContext('2d');
 			ctx.drawImage(img,0,0,img.width,img.height);
 			ctx.textAlign = "left";

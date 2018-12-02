@@ -2,8 +2,7 @@ const CommandInterface = require('../../commandinterface.js');
 
 const fs = require('fs');
 const request = require('request');
-const Canvas = require('canvas'),
-	  Image = Canvas.Image;
+const {createCanvas, Canvas, Image} = require('canvas')
 const textBoxHeight = 100;
 
 module.exports = new CommandInterface({
@@ -40,7 +39,7 @@ function car(p){
 
 		img = new Image;
 		img.src = image;
-		canvas = new Canvas(img.width,img.height+textBoxHeight);
+		canvas = createCanvas(img.width,img.height+textBoxHeight);
 		canvas.backgroundColor = 'white';
 		ctx = canvas.getContext('2d');
 		ctx.fillStyle = "white";
@@ -86,7 +85,7 @@ function user(p){
 			img2.onload = function(){
 				img = new Image;
 				img.src = image;
-				canvas = new Canvas(img.width,img.height+textBoxHeight);
+				canvas = createCanvas(img.width,img.height+textBoxHeight);
 				canvas.backgroundColor = 'white';
 				ctx = canvas.getContext('2d');
 				ctx.fillStyle = "white";
@@ -143,7 +142,7 @@ function emoji(p){
 			img2.onload = function(){
 				img = new Image;
 				img.src = image;
-				canvas = new Canvas(img.width,img.height+textBoxHeight);
+				canvas = createCanvas(img.width,img.height+textBoxHeight);
 				canvas.backgroundColor = 'white';
 				ctx = canvas.getContext('2d');
 				ctx.fillStyle = "white";
