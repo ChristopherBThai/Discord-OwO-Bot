@@ -1,7 +1,6 @@
 const CommandInterface = require('../../commandinterface.js');
 
-const Canvas = require('canvas'),
-	  Image = Canvas.Image;
+const {createCanvas, Canvas, Image} = require('canvas')
 const canvasUtil = require('./canvasUtil.js');
 
 module.exports = new CommandInterface({

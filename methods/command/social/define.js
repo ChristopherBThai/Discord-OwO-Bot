@@ -21,6 +21,7 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 		var word = p.args.join(" ");
+		try{
 		await ud.term(word, function(error,entries,tags,sounds){
 			if(word==""){
 				p.send("**🚫 |** Silly human! Makes sure to add a word to define!",3000);
@@ -54,6 +55,7 @@ module.exports = new CommandInterface({
 				}while(run);
 			}
 		});
+		}catch(err){}
 	}
 
 })

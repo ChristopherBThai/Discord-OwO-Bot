@@ -160,7 +160,7 @@
 			"chance":0.22,
 			"type":"Lucky",
 			"length":50,
-			"amount":0.5
+			"amount":1
 		},
 		"ugem4":{
 			"emoji":"<:ugem4:510366764249382922>",
@@ -168,7 +168,7 @@
 			"chance":0.22,
 			"type":"Lucky",
 			"length":100,
-			"amount":1
+			"amount":2
 		},
 		"rgem4":{
 			"emoji":"<:rgem4:510366763884478464>",
@@ -176,7 +176,7 @@
 			"chance":0.20,
 			"type":"Lucky",
 			"length":250,
-			"amount":1.5
+			"amount":3
 		},
 		"egem4":{
 			"emoji":"<:egem4:510366763972558848>",
@@ -184,7 +184,7 @@
 			"chance":0.20,
 			"type":"Lucky",
 			"length":450,
-			"amount":2
+			"amount":4
 		},
 		"mgem4":{
 			"emoji":"<:mgem4:510366763993661440>",
@@ -192,7 +192,7 @@
 			"chance":0.10,
 			"type":"Lucky",
 			"length":525,
-			"amount":2.5
+			"amount":5
 		},
 		"lgem4":{
 			"emoji":"<a:lgem4:510366765826572295>",
@@ -200,7 +200,7 @@
 			"chance":0.05,
 			"type":"Lucky",
 			"length":800,
-			"amount":3
+			"amount":6
 		},
 		"fgem4":{
 			"emoji":"<a:fgem4:510366765340033025>",
@@ -208,7 +208,7 @@
 			"chance":0.01,
 			"type":"Lucky",
 			"length":1000,
-			"amount":3.5
+			"amount":7
 		}
 	}
 }

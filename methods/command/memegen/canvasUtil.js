@@ -1,14 +1,13 @@
 const fs = require('fs');
 const request = require('request').defaults({encoding:null});
-const Canvas = require('canvas'),
-	  Image = Canvas.Image;
+const {createCanvas, Canvas, Image} = require('canvas')
 
 exports.loadBackground = async function(file,callback){
 	fs.readFile(file,function(err,image){
 		if(err){ console.error("Could not grab drake.jpg [drake.js|execute]"); callback(true); return;}
 		img = new Image;
 		img.src = image;
-		canvas = new Canvas(img.width,img.height);
+		canvas = new createCanvas(img.width,img.height);
 		canvas.backgroundColor = 'white';
 		ctx = canvas.getContext('2d');
 		ctx.textAlign = "left";

@@ -20,7 +20,7 @@ module.exports = new CommandInterface({
 
 	execute: function(p){
 		var sides = 6;
-		if(p.command="d20")
+		if(p.command=="d20")
 			sides = 20;
 		if(p.args.length>0&&p.global.isInt(p.args[0]))
 			sides = parseInt(p.args[0]);
