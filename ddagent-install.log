@@ -1,0 +1,132 @@
+[34m
+* Installing apt-transport-https
+[0m
+Hit:1 http://ppa.launchpad.net/scaleway/stable/ubuntu xenial InRelease
+Hit:2 http://archive.ubuntu.com/ubuntu xenial InRelease
+Get:3 http://archive.ubuntu.com/ubuntu xenial-updates InRelease [109 kB]
+Get:4 http://archive.ubuntu.com/ubuntu xenial-backports InRelease [107 kB]
+Get:5 http://security.ubuntu.com/ubuntu xenial-security InRelease [107 kB]
+Fetched 323 kB in 0s (357 kB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following package was automatically installed and is no longer required:
+  python3-jsonschema
+Use 'sudo apt autoremove' to remove it.
+The following NEW packages will be installed:
+  apt-transport-https
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Need to get 26.2 kB of archives.
+After this operation, 216 kB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 apt-transport-https amd64 1.2.29 [26.2 kB]
+Fetched 26.2 kB in 0s (327 kB/s)
+Selecting previously unselected package apt-transport-https.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 47668 files and directories currently installed.)
+Preparing to unpack .../apt-transport-https_1.2.29_amd64.deb ...
+Unpacking apt-transport-https (1.2.29) ...
+Setting up apt-transport-https (1.2.29) ...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following package was automatically installed and is no longer required:
+  python3-jsonschema
+Use 'sudo apt autoremove' to remove it.
+The following additional packages will be installed:
+  libassuan0 libksba8 libnpth0
+The following NEW packages will be installed:
+  dirmngr libassuan0 libksba8 libnpth0
+0 upgraded, 4 newly installed, 0 to remove and 0 not upgraded.
+Need to get 368 kB of archives.
+After this operation, 1,041 kB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu xenial/main amd64 libassuan0 amd64 2.4.2-2 [34.6 kB]
+Get:2 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 libksba8 amd64 1.3.3-1ubuntu0.16.04.1 [90.2 kB]
+Get:3 http://archive.ubuntu.com/ubuntu xenial/main amd64 libnpth0 amd64 1.2-3 [7,998 B]
+Get:4 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 dirmngr amd64 2.1.11-6ubuntu2.1 [235 kB]
+Fetched 368 kB in 0s (1,977 kB/s)
+Selecting previously unselected package libassuan0:amd64.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 47674 files and directories currently installed.)
+Preparing to unpack .../libassuan0_2.4.2-2_amd64.deb ...
+Unpacking libassuan0:amd64 (2.4.2-2) ...
+Selecting previously unselected package libksba8:amd64.
+Preparing to unpack .../libksba8_1.3.3-1ubuntu0.16.04.1_amd64.deb ...
+Unpacking libksba8:amd64 (1.3.3-1ubuntu0.16.04.1) ...
+Selecting previously unselected package libnpth0:amd64.
+Preparing to unpack .../libnpth0_1.2-3_amd64.deb ...
+Unpacking libnpth0:amd64 (1.2-3) ...
+Selecting previously unselected package dirmngr.
+Preparing to unpack .../dirmngr_2.1.11-6ubuntu2.1_amd64.deb ...
+Unpacking dirmngr (2.1.11-6ubuntu2.1) ...
+Processing triggers for libc-bin (2.23-0ubuntu10) ...
+Processing triggers for man-db (2.7.5-1) ...
+Setting up libassuan0:amd64 (2.4.2-2) ...
+Setting up libksba8:amd64 (1.3.3-1ubuntu0.16.04.1) ...
+Setting up libnpth0:amd64 (1.2-3) ...
+Setting up dirmngr (2.1.11-6ubuntu2.1) ...
+Processing triggers for libc-bin (2.23-0ubuntu10) ...
+[34m
+* Installing APT package sources for Datadog
+[0m
+Executing: /tmp/tmp.y0cjbI4aWI/gpg.1.sh --recv-keys
+--keyserver
+hkp://keyserver.ubuntu.com:80
+382E94DE
+gpg: requesting key 382E94DE from hkp server keyserver.ubuntu.com
+gpg: key 382E94DE: public key "Datadog, Inc <package@datadoghq.com>" imported
+gpg: Total number processed: 1
+gpg:               imported: 1  (RSA: 1)
+[34m
+* Installing the Datadog Agent package
+[0m
+Ign:1 https://apt.datadoghq.com stable InRelease
+Get:2 https://apt.datadoghq.com stable Release [4,525 B]
+Get:3 https://apt.datadoghq.com stable Release.gpg [819 B]
+Get:4 https://apt.datadoghq.com stable/6 amd64 Packages [5,005 B]
+Fetched 10.3 kB in 0s (10.9 kB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following package was automatically installed and is no longer required:
+  python3-jsonschema
+Use 'sudo apt autoremove' to remove it.
+The following NEW packages will be installed:
+  datadog-agent
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Need to get 103 MB of archives.
+After this operation, 359 MB of additional disk space will be used.
+Get:1 https://apt.datadoghq.com stable/6 amd64 datadog-agent amd64 1:6.7.0-1 [103 MB]
+Fetched 103 MB in 4s (22.0 MB/s)
+Selecting previously unselected package datadog-agent.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 47709 files and directories currently installed.)
+Preparing to unpack .../datadog-agent_1%3a6.7.0-1_amd64.deb ...
+Unpacking datadog-agent (1:6.7.0-1) ...
+Processing triggers for systemd (229-4ubuntu21.10) ...
+Setting up datadog-agent (1:6.7.0-1) ...
+Creating dd-agent group
+Creating dd-agent user
+Enabling service datadog-agent
+Created symlink from /etc/systemd/system/multi-user.target.wants/datadog-agent.service to /lib/systemd/system/datadog-agent.service.
+Created symlink from /etc/systemd/system/multi-user.target.wants/datadog-agent-process.service to /lib/systemd/system/datadog-agent-process.service.
+Created symlink from /etc/systemd/system/multi-user.target.wants/datadog-agent-trace.service to /lib/systemd/system/datadog-agent-trace.service.
+No datadog.yaml file detected, not starting the agent
+W: --force-yes is deprecated, use one of the options starting with --allow instead.
+[34m
+* Adding your API key to the Agent configuration: /etc/datadog-agent/datadog.yaml
+[0m
+[34m* Starting the Agent...
+[0m
+[32m
+
+Your Agent is running and functioning properly. It will continue to run in the
+background and submit metrics to Datadog.
+
+If you ever want to stop the Agent, run:
+
+    sudo systemctl stop datadog-agent
+
+And to run it again run:
+
+    sudo systemctl start datadog-agent
+
+[0m
