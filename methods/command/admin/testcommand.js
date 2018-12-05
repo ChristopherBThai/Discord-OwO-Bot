@@ -21,6 +21,8 @@ module.exports = new CommandInterface({
 		for(i=0;i<result.length;i++)
 			player.push(result[i][0])
 		var enemy = []
+		for(i=0;i<result.length;i++)
+			enemy.push(result[i][0])
 		try{
 			var image = await imagegen.generateImage(player,enemy);
 			p.send({file:image});
