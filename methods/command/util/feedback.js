@@ -4,6 +4,7 @@ const global = require('../../../util/global.js');
 const sender = require('../../../util/sender.js');
 
 const feedbackChannel = "519778148888346635";
+const supportGuild = "420104212895105044";
 
 module.exports = new CommandInterface({
 	
@@ -68,10 +69,7 @@ module.exports = new CommandInterface({
 						"name": "From "+p.msg.author.username+" ("+p.msg.author.id+")",
 						"value": "```"+message+"```\n\n==============================================="
 					}
-				],
-				"footer": {
-					"text": p.msg.author.id
-				},
+				]
 			};
 			p.send("**📨 |** *OwO What's this?!*  "+p.msg.author+", Thanks for the "+p.command+"!");
 			sender.msgAdmin({embed});
@@ -88,9 +86,16 @@ function suggest(p,message){
 			"name": p.msg.author.username+"'s suggestion",
 			"icon_url":p.msg.author.avatarURL,
 		},
-		"description":message
+		"description":message,
+		"footer": {
+			"text": p.msg.author.id
+		},
 	};
 	p.sender.msgChannel(feedbackChannel,{embed},{react:['👍','🔁','👎']});
-	p.send("**📨 |** *OwO What's this?!*  "+p.msg.author+", Thanks for the suggestion! Your suggestion can be viewed in our server! Come join!\n"+p.config.guildlink);
+
+	if(p.msg.guild.id==supportGuild)
+		p.send("**📨 |** *OwO What's this?!*  "+p.msg.author+", Thanks for the suggestion\nAbuse of this command will result in a ban.\n"+p.config.guildlink);
+	else
+		p.send("**📨 |** *OwO What's this?!*  "+p.msg.author+", Thanks for the suggestion! Your suggestion can be viewed in our server! Come join!\n"+p.config.emoji.blank+" **|** Abuse of this command will result in a ban.\n"+p.config.emoji.blank+" **|** "+p.config.guildlink);
 }
 
