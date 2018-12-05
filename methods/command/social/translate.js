@@ -19,8 +19,6 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: function(p){
-		p.send("Currently fixing!",3000);
-		return;
 		if(p.command=="listlang")
 			listlang(p.msg);
 		else
@@ -52,7 +50,6 @@ function translate(msg,args){
 	text = text.split(/(?=[?!.])/gi);
 	text.push("");
 	gtranslate(text, {to: lang}).then(res => {
-		console.log(res);
 		const embed = {
 			"description":""+res.join(" "),
 			"color":4886754,
