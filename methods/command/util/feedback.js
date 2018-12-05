@@ -3,7 +3,7 @@ const CommandInterface = require('../../commandinterface.js');
 const global = require('../../../util/global.js');
 const sender = require('../../../util/sender.js');
 
-const feedbackChannel = "420999274789208064";
+const feedbackChannel = "519778148888346635";
 
 module.exports = new CommandInterface({
 	
@@ -17,7 +17,7 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	cooldown:60000,
+	cooldown:300000,
 	half:15,
 	six:30,
 	bot:true,
@@ -68,7 +68,10 @@ module.exports = new CommandInterface({
 						"name": "From "+p.msg.author.username+" ("+p.msg.author.id+")",
 						"value": "```"+message+"```\n\n==============================================="
 					}
-				]
+				],
+				"footer": {
+					"text": p.msg.author.id
+				},
 			};
 			p.send("**📨 |** *OwO What's this?!*  "+p.msg.author+", Thanks for the "+p.command+"!");
 			sender.msgAdmin({embed});

@@ -19,7 +19,8 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: function(p){
-		send("Currently fixing!",3000);
+		p.send("Currently fixing!",3000);
+		return;
 		if(p.command=="listlang")
 			listlang(p.msg);
 		else

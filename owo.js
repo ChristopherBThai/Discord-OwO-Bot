@@ -93,6 +93,8 @@ client.on("guildMemberRemove", (member) => {
 	patreon.left(member);
 });
 
+client.on('error',console.error);
+
 function updateActivity(){
 	client.shard.fetchClientValues('guilds.size')
 		.then(results => {
