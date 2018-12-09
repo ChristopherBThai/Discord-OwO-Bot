@@ -196,7 +196,7 @@ function stop(p,player,dealer,msg,bet,fromHit){
 	}
 
 	//sql get winner
-	winner = undefined;
+	var winner = undefined;
 	//both bust
 	if(ppoints>21&&dpoints>21)
 		winner = 'tb';

@@ -155,6 +155,18 @@ function executeCommand(param){
 			}
 			logger.increment("command",['command:'+aliasToCommand[command],'id:'+msg.author.id]);
 			if(command!="points"){
+				/*
+				param.log.verbose({
+					msg:msg.content,
+					command:aliasToCommand[command],
+					args:param.args,
+					from:msg.author.username,
+					id:msg.author.id,
+					channel:msg.channel.id,
+					guild:msg.guild.id,
+					alias:command
+				});
+				*/
 				console.log("\x1b[0m\x1b[4mCommand\x1b[0m: %s\x1b[0m \x1b[36m{%s}\x1b[0m \x1b[0m%s\x1b[36m[%s][%s][%s]",
 					command,
 					param.args,
@@ -197,6 +209,7 @@ function initParam(msg,command,args,client,dbl){
 		"commands":commands,
 		"mcommands":mcommands,
 		"logger":logger,
+		"log":logger.log,
 		"config":config,
 		"quest":function(questName,count,extra){questHandler.increment(msg,questName,count,extra).catch(console.error)}
 	};
