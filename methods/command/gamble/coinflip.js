@@ -1,4 +1,5 @@
 const CommandInterface = require('../../commandinterface.js');
+const altercoinflip = require('../patreon/altercoinflip.js');
 
 const maxBet = 50000;
 const cowoncy = "<:cowoncy:416043450337853441>";
@@ -91,15 +92,21 @@ module.exports = new CommandInterface({
 					p.logger.value('cowoncy',(bet*((win)?(1):(-1))),['command:coinflip','id:'+msg.author.id]);
 					p.logger.value('gamble',((win)?(1):(-1)),['command:coinflip','id:'+msg.author.id]);
 					var text = "**"+msg.author.username+"** spent **"+cowoncy+" "+(p.global.toFancyNum(bet))+"** and chose "+((choice=='h')?"**heads**":"**tails**");
-					var text2 = "\nThe coin spins... "+spin;
-					msg.channel.send(text+text2)
+					var text2 = text;
+					text2 += "\nThe coin spins... "+((win)?((choice=='h')?heads:tails):((choice=='h')?tails:heads))+" and you ";
+					if(win)
+						text2 += "won **"+cowoncy+" "+(p.global.toFancyNum(bet*2))+"**!!";
+					else
+						text2 += "lost it all... :c";
+					text += "\nThe coin spins... "+spin;
+
+					/* Legendary patreon stuff */
+					text = altercoinflip.alter(p.msg.author.id,text);
+					text2 = altercoinflip.alter(p.msg.author.id,text2);
+
+					msg.channel.send(text)
 						.then(message => setTimeout(function(){
-							var text2 = "\nThe coin spins... "+((win)?((choice=='h')?heads:tails):((choice=='h')?tails:heads))+" and you ";
-							if(win)
-								text2 += "won **"+cowoncy+" "+(p.global.toFancyNum(bet*2))+"**!!";
-							else
-								text2 += "lost it all... :c";
-							message.edit(text+text2)
+							message.edit(text2)
 								.catch(err => console.error(err));
 						},2000))
 						.catch(err => console.error(err));
