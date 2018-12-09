@@ -1,5 +1,5 @@
 exports.alter = function(id,text){
-	if(true||id==220934553861226498)
+	if(id==220934553861226498)
 		return geist(text);
 	else
 		return text;

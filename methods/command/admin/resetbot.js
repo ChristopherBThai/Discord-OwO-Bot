@@ -1,6 +1,6 @@
 const CommandInterface = require('../../commandinterface.js');
 
-const delay = 15000;
+const delay = 30000;
 
 module.exports = new CommandInterface({
 	
