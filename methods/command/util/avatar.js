@@ -20,7 +20,7 @@ module.exports = new CommandInterface({
 		var user = undefined;
 		if(p.msg.mentions.members.first()){
 			if(p.msg.mentions.members.size>1){
-				send("**🚫 |"+p.msg.author.username+"**, I can only do one person at a time!",3000);
+				p.send("**🚫 |"+p.msg.author.username+"**, I can only do one person at a time!",3000);
 				return;
 			}
 			user = p.msg.mentions.members.first();
@@ -28,7 +28,7 @@ module.exports = new CommandInterface({
 			user = p.msg.member;
 		}
 		if(!user){
-			send("**🚫 |"+p.msg.author.username+"**, Hmm.... Something went wrong...",3000);
+			p.send("**🚫 |"+p.msg.author.username+"**, Hmm.... Something went wrong...",3000);
 			return;
 		}
 

@@ -98,7 +98,7 @@ function callbackImage(ctx,x,y,size,callback){
 				p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the image",3000);
 			}
 			img.src = body;
-		}else p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the image",3000); 
+		}else console.error(err);
 	}
 }
 
