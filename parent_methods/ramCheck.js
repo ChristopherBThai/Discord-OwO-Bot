@@ -8,7 +8,7 @@ const interval = 3600000/2;
 /* Minimum ram (1GB) */
 const resetbyte = 1024*1024*1024;
 /* Shard reset delay (15s) */
-const resetDelay = 15000;
+const resetDelay = 30000;
 
 /* Initial constrution */
 exports.check = async function(ShardingManager){

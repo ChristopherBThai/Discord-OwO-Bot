@@ -42,7 +42,7 @@ process.on('exit', function(code) {
 });
 
 try{
-	Manager.spawn(Manager.totalShards,15000);
+	Manager.spawn(Manager.totalShards,15000).catch(console.error);
 }catch(err){console.error(err);}
 
 ramCheck.check(Manager);
