@@ -14,7 +14,6 @@ const vote = require('./parent_methods/vote.js');
 const lottery = require('./parent_methods/lottery.js');
 const messageHandler = require('./parent_methods/messageHandler.js');
 
-Manager.spawn(Manager.totalShards,15000);
 
 Manager.on('launch', function(shard){
 	console.log(`Launched shard ${shard.id}`);
@@ -41,5 +40,9 @@ process.on('exit', function(code) {
 	console.log("exiting...");
 	Manager.broadcastEval("process.exit()");
 });
+
+try{
+	Manager.spawn(Manager.totalShards,15000);
+}catch(err){console.error(err);}
 
 ramCheck.check(Manager);
