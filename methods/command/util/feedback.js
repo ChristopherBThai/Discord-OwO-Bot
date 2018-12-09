@@ -94,7 +94,7 @@ function suggest(p,message){
 	p.sender.msgChannel(feedbackChannel,{embed},{react:['👍','🔁','👎']});
 
 	if(p.msg.guild.id==supportGuild)
-		p.send("**📨 |** *OwO What's this?!*  "+p.msg.author+", Thanks for the suggestion\nAbuse of this command will result in a ban.\n"+p.config.guildlink);
+		p.send("**📨 |** *OwO What's this?!*  "+p.msg.author+", Thanks for the suggestion!\n"+p.config.emoji.blank+" **|** Abuse of this command will result in a ban.");
 	else
 		p.send("**📨 |** *OwO What's this?!*  "+p.msg.author+", Thanks for the suggestion! Your suggestion can be viewed in our server! Come join!\n"+p.config.emoji.blank+" **|** Abuse of this command will result in a ban.\n"+p.config.emoji.blank+" **|** "+p.config.guildlink);
 }
