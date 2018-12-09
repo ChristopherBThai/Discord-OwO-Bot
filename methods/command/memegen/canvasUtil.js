@@ -55,8 +55,10 @@ async function addUser(args,p,ctx,canvas,callback){
 	ctx.restore();
 
 	url = url.avatarURL;
+	if(!url){  p.send("**🚫 | "+p.msg.author.username+"**, I could not find that user",3000); return;}
+
 	try{
-		request.get(url,callbackImage(ctx,x,y,args.imageSize,callback));
+		await request.get(url,callbackImage(ctx,x,y,args.imageSize,callback));
 	}catch(err){
 		console.error(err);
 		p.send("**🚫 | "+p.msg.author.username+"**, could not grab the image",3000);

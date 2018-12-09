@@ -85,8 +85,9 @@ async function addButterflyText(p,text,ctx,canvas,callback){
 		ctx.font = '20px Impact';
 		writeText(582,210,ctx,url.username,3);
 		url = url.avatarURL;
+		if(!url){  p.send("**🚫 | "+p.msg.author.username+"**, I could not find that user",3000); return;}
 		try{
-			request.get(url,callbackImage(ctx,537,75,90,callback));
+			await request.get(url,callbackImage(p,ctx,537,75,90,callback));
 		}catch(err){
 			console.error(err);
 			p.send("**🚫 | "+p.msg.author.username+"**, could not grab the image",3000);
@@ -99,7 +100,7 @@ async function addButterflyText(p,text,ctx,canvas,callback){
 		}
 		url = "https://cdn.discordapp.com/emojis/"+url[0].slice(1,url[0].length-1)+".png";
 		try{
-			request.get(url,callbackImage(ctx,537,75,90,callback));
+			await request.get(url,callbackImage(p,ctx,537,75,90,callback));
 		}catch(err){
 			console.error(err);
 			p.send("**🚫 | "+p.msg.author.username+"**, could not grab the image",3000);
@@ -136,8 +137,9 @@ async function addPersonText(p,text,ctx,canvas,callback){
 		ctx.font = '20px Impact';
 		writeText(270,350,ctx,url.username,3);
 		url = url.avatarURL;
+		if(!url){  p.send("**🚫 | "+p.msg.author.username+"**, I could not find that user",3000); return;}
 		try{
-			request.get(url,callbackImage(ctx,195,170,150,callback));
+			await request.get(url,callbackImage(p,ctx,195,170,150,callback));
 		}catch(err){
 			console.error(err);
 			p.send("**🚫 | "+p.msg.author.username+"**, could not grab the image",3000);
@@ -150,7 +152,7 @@ async function addPersonText(p,text,ctx,canvas,callback){
 		}
 		url = "https://cdn.discordapp.com/emojis/"+url[0].slice(1,url[0].length-1)+".png";
 		try{
-			request.get(url,callbackImage(ctx,195,170,150,callback));
+			await request.get(url,callbackImage(p,ctx,195,170,150,callback));
 		}catch(err){
 			console.error(err);
 			p.send("**🚫 | "+p.msg.author.username+"**, could not grab the image",3000);
@@ -178,7 +180,7 @@ async function addPersonText(p,text,ctx,canvas,callback){
 	}
 }
 
-function callbackImage(ctx,x,y,size,callback){
+function callbackImage(p,ctx,x,y,size,callback){
 	return function(err,response,body){
 		if(!err && response.statusCode==200){
 			img = new Image;
