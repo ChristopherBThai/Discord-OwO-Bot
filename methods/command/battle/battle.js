@@ -152,6 +152,7 @@ function fight(con,msg,send,p,count){
 		}
 
 		//Display the fight
+		try{
 		msg.channel.send("**"+msg.author.username+"** spent <:cowoncy:416043450337853441> 5 to fight!",battleLog[0])
 		.then(message => setTimeout(function(){
 
@@ -170,6 +171,7 @@ function fight(con,msg,send,p,count){
 
 		},1000)).catch(err => msg.channel.send("**🚫 | "+msg.author.username+"**, I don't have permission to send embeded messages!")
 		.catch(err => console.error(err)));
+		}catch(err){console.error(err);}
 		
 		p.quest("battle");
 	});
