@@ -110,10 +110,12 @@ exports.client= function(tclient){
 			animaljson.list[name].rank = key;
 			animaljson.list[name].price = animaljson.price[key];
 			animaljson.list[name].points = animaljson.points[key];
+			animaljson.list[name].essence= animaljson.essence[key];
 		}
 		ranks[key].animals = animalRank;
 		ranks[key].price = animaljson.price[key];
 		ranks[key].points = animaljson.points[key];
+		ranks[key].essence = animaljson.essence[key];
 		ranks[key].emoji = animaljson.ranks[key];
 		ranks[key].rank = key;
 	}
