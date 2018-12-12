@@ -202,6 +202,8 @@ function initParam(msg,command,args,client,dbl){
 		"con":con,
 		"query":query,
 		"send":sender.send(msg),
+		"replyMsg":sender.reply(msg),
+		"errorMsg":sender.error(config.emoji.invalid,msg),
 		"sender":sender,
 		"Error":Error,
 		"global":global,

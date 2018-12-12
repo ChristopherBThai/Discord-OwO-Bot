@@ -20,6 +20,39 @@ exports.send = function(msg){
 }
 
 /**
+ * Sends a msg to channel
+ */
+exports.reply = function(msg){
+	return function(emoji,message,del,embed){
+		var username = msg.author.username;
+		if(del)
+			msg.channel.send(`**${emoji} | ${username}**`+message,embed)
+				.then(message => message.delete(del))
+				.catch(err => console.error(err));
+		else
+			msg.channel.send(`**${emoji} | ${username}**`+message,embed)
+				.catch(err => console.error(err));
+	}
+}
+
+/**
+ * Sends a msg to channel
+ */
+exports.error = function(errorEmoji,msg){
+	return function(message,del,embed){
+		var username = msg.author.username;
+		var emoji = errorEmoji;
+		if(del)
+			msg.channel.send(`**${emoji} | ${username}**`+message,embed)
+				.then(message => message.delete(del))
+				.catch(err => console.error(err));
+		else
+			msg.channel.send(`**${emoji} | ${username}**`+message,embed)
+				.catch(err => console.error(err));
+	}
+}
+
+/**
  * DM a user
  */
 exports.msgUser = async function(id,msg){
