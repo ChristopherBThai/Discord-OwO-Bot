@@ -28,11 +28,11 @@ module.exports = new CommandInterface({
 			subcommand = subcommand.toLowerCase();
 
 		/* Display team */
-		if(p.args.length==0)
+		if(p.args.length==0||subcommand=="display")
 			displayTeam(p);
 
 		/* Add a new team member */
-		if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a"||subcommand=="replace")
+		else if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a"||subcommand=="replace")
 			add(p);
 
 		/* Remove a team member */
@@ -56,7 +56,13 @@ module.exports = new CommandInterface({
 
 })
 
-function displayTeam(p){
+async function displayTeam(p){
+	try{
+		await teamUtil.displayTeam(p);
+	}catch(err){
+		console.error(err);
+		p.errorMsg(`, something went wrong... Try again!`,5000);
+	}
 }
 
 /*
@@ -141,28 +147,10 @@ async function rename(p){
 	/* grab name */
 	var name = p.args.slice(1).join(" ");
 
-	/* Name filter */
-	var offensive = false;
-	var shortnick = name.replace(/\s/g,"").toLowerCase();
-	for(var i=0;i<badwords.length;i++){
-		if(shortnick.includes(badwords[i]))
-			offensive = true;
-	}
-	name = name.replace(/https:/gi,"https;");
-	name = name.replace(/http:/gi,"http;");
-	name = name.replace(/@everyone/gi,"everyone");
-	name = name.replace(/<@!?[0-9]+>/gi,"User");
-
-	/* Validation check */
-	if(name.length>50){
-		p.errorMsg(", The team name is too long!",3000);
-		return;
-	}
-
 	try{
 		await teamUtil.renameTeam(p,name);
 	}catch(err){
-		console.log(error);
+		console.error(err);
 		p.errorMsg(`, something went wrong... Try again!`,5000);
 	}
 

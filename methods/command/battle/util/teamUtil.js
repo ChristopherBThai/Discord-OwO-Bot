@@ -1,3 +1,6 @@
+const badwords = require('../../../../../tokens/badwords.json');
+const battleEmoji = "";
+
 /*
  * Adds a member to the user's team
  * We will assume that all parameters are valid
@@ -69,7 +72,7 @@ exports.addMember = async function(p,animal,pos){
 
 	result[0].push({name:animal.value,pos:pos});
 	text = parseTeam(result[0]);
-	p.replyMsg("",`, Your team has been updated!\n**${p.config.emoji.blank} |** Your team: ${text}`);
+	p.replyMsg(battleEmoji,`, Your team has been updated!\n**${p.config.emoji.blank} |** Your team: ${text}`);
 }
 
 /*
@@ -85,21 +88,29 @@ exports.removeMember = async function(p,remove){
 	if(p.global.isInt(remove)){
 		sql = `DELETE FROM pet_team_animal WHERE 
 			pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id})) AND
-			pos = ?;${sql}`;
+			pos = ? AND
+			(SELECT count FROM (SELECT COUNT(pid) as count FROM pet_team_animal WHERE pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}))) as a) > 1;
+		${sql}`;
 
 	/* If its an animal */
 	}else{
-		var sql = `DELETE FROM pet_team_animal WHERE 
+		sql = `DELETE FROM pet_team_animal WHERE 
 			pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id})) AND
-			pid = (SELECT pid FROM animal WHERE name = ? AND id = ${p.msg.author.id});${sql}`;
+			pid = (SELECT pid FROM animal WHERE name = ? AND id = ${p.msg.author.id}) AND
+			(SELECT count FROM (SELECT COUNT(pid) as count FROM pet_team_animal WHERE pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}))) as a) > 1;
+		${sql}`;
 	}
 
 	var result = await p.query(sql,remove);
 	var team = parseTeam(result[1]);
 	if(result[0].affectedRows>0){
-		p.replyMsg("",`, Successfully changed the team!\n**${p.config.emoji.blank} |** Your team: ${team}`);
+		p.replyMsg(battleEmoji,`, Successfully changed the team!\n**${p.config.emoji.blank} |** Your team: ${team}`);
+	}else if(!result[1]){
+		p.errorMsg(`, You do not have a team!`,3000);
+	}else if(result[1].length==1){
+		p.errorMsg(`, You need to keep at least one animal in the team!`,3000);
 	}else{
-		p.errorMsg(`, I failed to remove that animal\n**${p.config.emoji.blank} |** Your team: ${team}`);
+		p.errorMsg(`, I failed to remove that animal\n**${p.config.emoji.blank} |** Your team: ${team}`,3000);
 	}
 }
 
@@ -107,7 +118,48 @@ exports.removeMember = async function(p,remove){
  * Renames the team
  * (Error check before calling this function
  */
-exports.removeMember = async function(p,name){
+exports.renameTeam = async function(p,name){
+
+	/* Name filter */
+	var offensive = false;
+	var shortnick = name.replace(/\s/g,"").toLowerCase();
+	for(var i=0;i<badwords.length;i++){
+		if(shortnick.includes(badwords[i]))
+			offensive = true;
+	}
+	name = name.replace(/https:/gi,"https;");
+	name = name.replace(/http:/gi,"http;");
+	name = name.replace(/@everyone/gi,"everyone");
+	name = name.replace(/<@!?[0-9]+>/gi,"User");
+	name = name.replace(/[*`]+/gi,"");
+
+	/* Validation check */
+	if(name.length>20){
+		p.errorMsg(", The team name is too long!",3000);
+		return;
+	}else if(name.length<=0){
+		p.errorMsg(", The name has invalid characters!",3000);
+		return;
+	}
+
+	var sql = `UPDATE IGNORE pet_team SET tname = ? WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id})`;
+	var result = await p.query(sql,name);
+	if(result.affectedRows>0){
+		p.replyMsg(battleEmoji,`, You successfully changed your team name to: **${name}**`);
+	}else{
+		p.errorMsg(", You don't have a team! Please set one with `owo team add {animal}`",5000);
+	}
+}
+
+/*
+ * Displays the team
+ */
+exports.displayTeam = async function(p){
+	var sql = `SELECT tname,pos,name FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
+	var result = await p.query(sql);
+	var team = parseTeam(result);
+	var name = (result[0])?", **"+result[0].tname+"** ":": ";
+	p.replyMsg(battleEmoji,"'s Team"+name+team);
 }
 
 function parseTeam(animals){
