@@ -53,13 +53,15 @@ module.exports = new CommandInterface({
 
 			var rankEmoji = animals.ranks[animal.rank];
 
+			var points = animal.points;
+
 			var sell = "???";
 			if(result[0][0].sellcount>0)
 				sell = animal.price+" Cowoncy | "+global.toFancyNum(result[0][0].sellcount)+" sold";
 
 			var sac = "???";
 			if(result[0][0].saccount>0)
-				sac = animal.points+" Essence | "+global.toFancyNum(result[0][0].saccount)+" killed";
+				sac = animal.essence+" Essence | "+global.toFancyNum(result[0][0].saccount)+" killed";
 
 			var alias = "None";
 			if(animal.alt.length>0)
@@ -91,7 +93,7 @@ module.exports = new CommandInterface({
 				"thumbnail": {
 					"url": (emoji)?emoji:p.client.user.displayAvatarURL
 				},
-				"description": desc+"\n\n"+nickname+"**Count:** "+result[0][0].count+"/"+result[0][0].totalcount+"\n**Rank:** "+rankEmoji+" "+animal.rank+"\n**Rarity:** "+rarity+"\n**Alias:** "+alias+"\n**Att|Hp:** "+atthp+"\n**Sell:** "+sell+"\n**Sacrifice:** "+sac
+				"description": desc+"\n\n"+nickname+"**Count:** "+result[0][0].count+"/"+result[0][0].totalcount+"\n**Rank:** "+rankEmoji+" "+animal.rank+"\n**Rarity:** "+rarity+"\n**Alias:** "+alias+"\n**Att|Hp:** "+atthp+"\n**Points:** "+points+"\n**Sell:** "+sell+"\n**Sacrifice:** "+sac
 			};
 			msg.channel.send({ embed });
 		});
