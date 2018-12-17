@@ -12,7 +12,7 @@ exports.addMember = async function(p,animal,pos){
 
 	/* Get team and animal pid */
 	var sql = `SELECT pos,pet_team.pgid,pid,name FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
-	sql += `SELECT pid FROM animal WHERE name = ? AND ID = ${p.msg.author.id};`;
+	sql += `SELECT pid,count FROM animal WHERE name = ? AND ID = ${p.msg.author.id};`;
 	var result = await p.query(sql,[animal.value]);
 	
 	/* Check if its not a duplicate animal in team */
@@ -44,6 +44,9 @@ exports.addMember = async function(p,animal,pos){
 	/* Check if user owns animal */
 	if(!result[1][0]){
 		p.errorMsg(`, you do not own this animal!`,3000);
+		return;
+	}else if(result[1][0].count<1){
+		p.errorMsg(`, you need at least 1 animal in the zoo!`,3000);
 		return;
 	}
 
