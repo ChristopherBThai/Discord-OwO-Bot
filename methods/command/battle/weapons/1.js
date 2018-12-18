@@ -8,7 +8,7 @@ module.exports = new WeaponInterface({
 	id:1,
 	name:"Scuttler's Debugging Sword",
 	desc:"Used by Scuttler to debug stuff",
-	emoji:"",
+	emoji:"<:csword:523707188674560010>",
 
 	passives:[1],
 	passiveCount:1,

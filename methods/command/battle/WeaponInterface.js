@@ -10,6 +10,7 @@ for(var key in passiveDir){
 			passives[passive.id] = passive;
 	}
 }
+const ranks = [[0.20,"Common","<:common:416520037713838081>"],[0.20,"Uncommon","<:uncommon:416520056269176842>"],[0.20,"Rare","<:rare:416520066629107712>"],[0.20,"Epic","<:epic:416520722987614208>"],[0.14,"Mythical","<:mythic:416520808501084162>"],[0.05,"Legendary","<a:legendary:417955061801680909>"],[0.01,"Fabled","<a:fabled:438857004493307907>"]];
 
 module.exports = class WeaponInterface{
 
@@ -72,6 +73,7 @@ module.exports = class WeaponInterface{
 	}
 
 	clone(passives,qualities,stats,desc){
+		/* Get the quality of the weapon */
 		let avgQuality = 0;
 		if(passives.length>0){
 			let combinedQuality = passives[0].qualities;
@@ -82,13 +84,32 @@ module.exports = class WeaponInterface{
 		}else{
 			avgQuality = qualities.reduce((a,b)=>a+b,0)/qualities.length;
 		}
-		return {id:this.id,name:this.name,desc:this.desc,
+		
+		/* Determine rank */
+		var rank = 0;
+		for(var i=0;i<ranks.length;i++){
+			rank += ranks[i][0];
+			if(avgQuality/100<=rank){
+				rank =  ranks[i];
+				i = ranks.length;
+			}else if(i==ranks.length-1){
+				rank = ranks[0];
+			}
+		}
+		rank = {
+			name: rank[1],
+			emoji: rank[2]
+		}
+
+		/* Construct dict and return */
+		return {id:this.id,name:this.name,desc:this.desc,emoji:this.emoji,
 			qualities,
 			sqlStat:qualities.join(","),
 			avgQuality,
 			desc,
 			stats,
-			passives
+			passives,
+			rank
 		}
 	}
 }
