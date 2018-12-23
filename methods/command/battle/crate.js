@@ -3,7 +3,7 @@ const CommandInterface = require('../../commandinterface.js');
 const crate = "<:crate:523771259302182922>";
 const crateShake = "<a:crateshake:523771259172028420>";
 const crateOpen = "<a:crateopen:523771437408845852>";
-const crateUtil = require('./util/crateUtil.js');
+const weaponUtil = require('./util/weaponUtil.js');
 
 module.exports = new CommandInterface({
 	
@@ -41,10 +41,13 @@ module.exports = new CommandInterface({
 		}
 
 		/* Get random weapon and construct sql */
-		var weapon = crateUtil.getRandomWeapon(p.msg.author.id);
+		var weapon = weaponUtil.getRandomWeapon(p.msg.author.id);
 
-		var text1 = p.config.emoji.blank+p.config.emoji.blank+" **| "+p.msg.author.username+"** opens a weapon crate\n"+p.config.emoji.blank+crateShake+" **|** and finds a ...";
-		var text2 = weapon.rank.emoji+weapon.emoji+" **| "+p.msg.author.username+"** opens a weapon crate\n"+p.config.emoji.blank+crateOpen+" **|** and finds a" + ((weapon.rank.name.charAt(0)=='E' || weapon.rank.name.charAt(0)=='U') ? "n" : "") + " **"+weapon.rank.name+" "+weapon.name+"**!";
+		var text1 = p.config.emoji.blank+" **| "+p.msg.author.username+"** opens a weapon crate\n"+crateShake+" **|** and finds a ...";
+		var text2 = weapon.emoji+" **| "+p.msg.author.username+"** opens a weapon crate\n"+crateOpen+" **|** and finds a "+weapon.rank.emoji+" "+weapon.emoji;
+		for(var i=0;i<weapon.passives.length;i++){
+			text2 += " "+weapon.passives[i].emoji;
+		}
 
 		/* construct sql */
 		sql = `INSERT INTO user_weapon (uid,wid,stat) VALUES (${uid},${weapon.id},${weapon.sqlStat});`;

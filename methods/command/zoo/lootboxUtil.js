@@ -11,14 +11,11 @@ for (var key in tempGem.gems){
 var typeCount = Object.keys(gems).length;
 const ranks = {"c":"Common","u":"Uncommon","r":"Rare","e":"Epic","m":"Mythical","l":"Legendary","f":"Fabled"};
 
-exports.getItems = function(con,id,callback){
-	var sql = "SELECT * FROM lootbox WHERE id = "+id+" AND boxcount > 0;";
-	con.query(sql,function(err,result){
-		if(err){console.error(err);callback({});return}
-		if(!result[0]){callback({});return;}
-		var item = {key:box,id:50,count:result[0].boxcount}
-		callback({box:item});
-	});
+exports.getItems = async function(p){
+	var sql = `SELECT boxcount FROM lootbox WHERE id = ${p.msg.author.id} AND boxcount > 0;`;
+	var result = await p.query(sql);
+	if(!result[0]){return {}}
+	return {box:{emoji:box,id:50,count:result[0].boxcount}};
 }
 
 exports.getRandomGem = function(id,patreon){
