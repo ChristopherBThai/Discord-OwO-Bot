@@ -1,3 +1,4 @@
+ranks = [0.20,0.20,0.20,0.20,0.14,0.05,0.01];
 module.exports = class PassiveInterface{
 
 	constructor(args){
@@ -9,6 +10,9 @@ module.exports = class PassiveInterface{
 		this.desc = args.desc 
 		/* Number of rand stats */
 		this.qualityList = args.qualityList;
+		/* Emoji */
+		this.emojis= args.emojis;
+		if(this.emojis.length!=7) throw new Error(`[${args.id}] does not have 7 emojis`);
 
 		/* Initializes passive */
 		/* Needs to return itself + random quality */
@@ -31,13 +35,35 @@ module.exports = class PassiveInterface{
 
 	clone(qualities,stats,desc){
 		let avgQuality = qualities.reduce((a,b)=>a+b,0)/qualities.length;
+		var emoji = this.getEmoji(avgQuality);
 		return {id:this.id,name:this.name,desc:this.desc,
 			qualities,
 			sqlStat:qualities.join(","),
 			avgQuality,
 			desc,
-			stats
+			stats,
+			emoji
 		}
+	}
+
+	getEmoji(quality){
+		/* If there are multiple quality, get avg */
+		if(typeof quality == "string"){
+			quality = parseInt(quality.split(','));
+			quality = quality.reduce((a,b)=>a+b,0)/quality.length;
+		}
+		
+		quality /= 100;
+
+		/* Get correct rank */
+		var count = 0;
+		for(var i=0;i<ranks.length;i++){
+			count += ranks[i];
+			if(quality <= count)
+				return this.emojis[i];
+		}
+		return this.emojis[0];
+
 	}
 
 	toStats(qualities){
