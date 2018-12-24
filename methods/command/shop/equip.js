@@ -4,6 +4,8 @@ const foodUtil = require('./food.js');
 const shopUtil = require('./shopUtil.js');
 const lootbox = require('../zoo/lootbox.js');
 const gemUtil = require('../zoo/gemUtil.js');
+const weapon = require('../battle/weapon.js');
+const crate = require('../battle/crate.js');
 
 module.exports = new CommandInterface({
 	
@@ -35,6 +37,10 @@ module.exports = new CommandInterface({
 			lootbox.execute(p);
 		}else if(item.name=="gem"){
 			gemUtil.use(p,item.id);
+		}else if(item.name=="crate"){
+			crate.execute(p);
+		}else if(item.name=="weapon"){
+			weapon.execute(p);
 		}else
 			foodUtil.equip(con,msg,item);
 	}
