@@ -10,6 +10,8 @@ module.exports = new WeaponInterface({
 	desc:"Used by Scuttler to debug stuff",
 	emoji:"<:csword:523707188674560010>",
 
+	statDesc:"Deals ?% weapon damage to a random opponent!",
+
 	passives:[1],
 	passiveCount:1,
 	qualityList:[[100,150]],
@@ -17,9 +19,7 @@ module.exports = new WeaponInterface({
 	init:function(){
 		let passive = this.randomPassives();
 		let qualities = this.randomQualities();
-		let stats = this.toStats(qualities);
-		let desc = `Deals ${stats[0]}% weapon damage to a random opponent`;
-		return this.clone(passive,qualities,stats,desc);
+		return this.clone(passive,qualities);
 	}
 
 });
