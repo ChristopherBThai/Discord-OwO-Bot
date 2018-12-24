@@ -86,14 +86,14 @@ exports.parseWeaponQuery = function(query){
 
 exports.display = async function(p){
 	/* Query all weapons */
-	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY a.uwid DESC;`;
+	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY a.uwid DESC LIMIT 25;`;
 	var result = await p.query(sql);
 
 	/* Parse all weapons */
 	let weapons = this.parseWeaponQuery(result);
 
 	/* Parse actual weapon data for each weapon */
-	let desc = "Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`";
+	let desc = "Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\n";
 	for(var key in weapons){
 		let weapon = this.parseWeapon(weapons[key]);
 		let emoji = `${weapon.rank.emoji}${weapon.emoji}`;
