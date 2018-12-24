@@ -14,7 +14,9 @@ const ranks = [[0.20,"Common","<:common:416520037713838081>"],[0.20,"Uncommon","
 
 module.exports = class WeaponInterface{
 
+
 	constructor(args){
+		this.passives = passives;
 		this.id = args.id; 
 		this.name = args.name; 
 		this.desc = args.desc; 
@@ -23,6 +25,7 @@ module.exports = class WeaponInterface{
 		this.emoji = args.emoji;
 		this.init = args.init;
 		this.qualityList= args.qualityList;
+		this.statDesc = args.statDesc;
 
 		for(var i in this)
 			if(this[i]==undefined)
@@ -72,15 +75,20 @@ module.exports = class WeaponInterface{
 		return stats;
 	}
 
-	clone(passives,qualities,stats,desc){
+	clone(passives,qualities){
+		/* Construct stats */
+		var stats = this.toStats(qualities);
+
 		/* Get the quality of the weapon */
 		let avgQuality = 0;
 		if(passives.length>0){
-			let combinedQuality = passives[0].qualities;
-			for(var i=1;i<passives.length;i++)
-				combinedQuality = combinedQuality.concat(passives[i]);
-			combinedQuality = combinedQuality.concat(qualities);
-			avgQuality = combinedQuality.reduce((a,b)=>a+b,0)/combinedQuality.length;
+			let totalQualities = qualities.reduce((a,b)=>a+b,0);
+			let qualityCount = qualities.length;
+			for(var i=1;i<passives.length;i++){
+				totalQualities += passives[i].qualities.reduce((a,b)=>a+b,0);
+				qualityCount += passives[i].qualities.length;
+			}
+			avgQuality = totalQualities/qualityCount;
 		}else{
 			avgQuality = qualities.reduce((a,b)=>a+b,0)/qualities.length;
 		}
@@ -101,8 +109,15 @@ module.exports = class WeaponInterface{
 			emoji: rank[2]
 		}
 
+		/* Construct desc */
+		var desc = this.statDesc;
+		for(var i=0;i<stats.length;i++){
+			desc = desc.replace('?',stats[i]);
+		}
+
 		/* Construct dict and return */
 		return {id:this.id,name:this.name,desc:this.desc,emoji:this.emoji,
+			weaponQuality:qualities.reduce((a,b)=>a+b,0)/qualities.length,
 			qualities,
 			sqlStat:qualities.join(","),
 			avgQuality,
@@ -114,3 +129,4 @@ module.exports = class WeaponInterface{
 	}
 }
 
+module.exports.passives = passives;

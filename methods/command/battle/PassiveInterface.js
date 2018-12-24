@@ -14,6 +14,8 @@ module.exports = class PassiveInterface{
 		this.emojis= args.emojis;
 		if(this.emojis.length!=7) throw new Error(`[${args.id}] does not have 7 emojis`);
 
+		this.statDesc = args.statDesc;
+
 		/* Initializes passive */
 		/* Needs to return itself + random quality */
 		this.init = args.init
@@ -36,6 +38,14 @@ module.exports = class PassiveInterface{
 	clone(qualities,stats,desc){
 		let avgQuality = qualities.reduce((a,b)=>a+b,0)/qualities.length;
 		var emoji = this.getEmoji(avgQuality);
+		var stats = this.toStats(qualities);
+
+		/* Construct desc */
+		var desc = this.statDesc;
+		for(var i=0;i<stats.length;i++){
+			desc = desc.replace('?',stats[i]);
+		}
+
 		return {id:this.id,name:this.name,desc:this.desc,
 			qualities,
 			sqlStat:qualities.join(","),
