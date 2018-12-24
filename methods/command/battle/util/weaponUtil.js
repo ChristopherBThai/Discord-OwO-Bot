@@ -1,6 +1,8 @@
 const requireDir = require('require-dir');
 const WeaponInterface = require('../WeaponInterface.js');
 
+const weaponEmoji = "";
+
 /* Initialize all the weapons */
 const weaponsDir = requireDir('../weapons');
 var weapons = {};
@@ -20,7 +22,6 @@ exports.getRandomWeapon = function(id){
 
 	/* Initialize random stats */
 	weapon = weapon.init();
-	console.log(weapon);
 
 	return weapon;
 }
@@ -60,16 +61,21 @@ exports.parseWeaponQuery = function(query){
 	/* Group weapons by uwid and add their respective passives */
 	let weapons = {};
 	for(var i=0;i<query.length;i++){
-		var uwid = query[i].uwid;
-		if(!(uwid in weapons))
-			weapons[uwid] = {
+		var key = "_"+query[i].uwid;
+		if(!(key in weapons)){
+			weapons[key] = {
 				uwid:query[i].uwid,
 				id:query[i].wid,
 				stat:query[i].stat,
+				animal:{
+					name:query[i].name,
+					nickname:query[i].nickname
+				},
 				passives:[]
 			};
+		}
 		if(query[i].wpid)
-			weapons[uwid].passives.push({
+			weapons[key].passives.push({
 				id:query[i].wpid,
 				pcount:query[i].pcount,
 				stat:query[i].pstat
@@ -80,22 +86,26 @@ exports.parseWeaponQuery = function(query){
 
 exports.display = async function(p){
 	/* Query all weapons */
-	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
+	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY a.uwid DESC;`;
 	var result = await p.query(sql);
 
 	/* Parse all weapons */
-	var weapons = this.parseWeaponQuery(result);
+	let weapons = this.parseWeaponQuery(result);
 
 	/* Parse actual weapon data for each weapon */
-	let desc = "";
-	for(var uwid in weapons){
-		let weapon = this.parseWeapon(weapons[uwid]);
+	let desc = "Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`";
+	for(var key in weapons){
+		let weapon = this.parseWeapon(weapons[key]);
 		let emoji = `${weapon.rank.emoji}${weapon.emoji}`;
 		for(var i=0;i<weapon.passives.length;i++){
 			let passive = weapon.passives[i];
 			emoji += passive.emoji;
 		}
-		desc += `\n\`${uwid}\` ${emoji} **${weapon.name}** | Quality: ${weapon.avgQuality}%`;
+		desc += `\n\`${weapons[key].uwid}\` ${emoji} **${weapon.name}** | Quality: ${weapon.avgQuality}%`;
+		if(weapons[key].animal.name){
+			let animal = p.global.validAnimal(weapons[key].animal.name);
+			desc += ` | ${(animal.uni)?animal.uni:animal.value} ${(weapons[key].animal.nickname)?weapons[key].animal.nickname:""}`;
+		}
 	}
 
 	/* Construct msg */
@@ -118,7 +128,7 @@ exports.describe = async function(p,uwid){
 
 	/* Check if valid */
 	if(!result[0]){
-		p.errorMsg(", I could not find a weapon with that unique weapon id!");
+		p.errorMsg(", I could not find a weapon with that unique weapon id! Please use `owo weapon`");
 		return;
 	}
 
@@ -164,12 +174,66 @@ exports.describe = async function(p,uwid){
 	p.send({embed});
 }
 
-exports.equip = function(p,uwid,pet){
+exports.equip = async function(p,uwid,pet){
 	/* Construct sql depending in pet parameter */
 	if(p.global.isInt(pet)){
-
+		var pid = `(SELECT pid FROM user a LEFT JOIN pet_team b ON a.uid = b.uid LEFT JOIN pet_team_animal c ON b.pgid = c.pgid WHERE a.id = ${p.msg.author.id} AND pos = ${pet})`
 	}else{
-
+		var pid = `(SELECT pid FROM animal WHERE name = '${pet.value}' AND id = ${p.msg.author.id})`;
 	}
+	let sql = `UPDATE IGNORE user_weapon SET pid = NULL WHERE 
+			uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND
+			pid = ${pid} AND
+			(SELECT * FROM (SELECT uwid FROM user_weapon WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND uwid = ${uwid}) a) IS NOT NULL;`
+	sql += `UPDATE IGNORE user_weapon SET
+			pid = ${pid}
+		WHERE
+			uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND
+			uwid = ${uwid} AND
+			${pid} IS NOT NULL;`;
+	sql += `SELECT wid,name,nickname FROM user_weapon a LEFT JOIN animal b ON a.pid = b.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND uwid = ${uwid};`;
+	let result = await p.query(sql);
 
+	/* Success */
+	if(result[1].changedRows>0){
+		let animal = p.global.validAnimal(result[2][0].name);
+		let nickname = result[2][0].nickname;
+		let weapon = weapons[result[2][0].wid];
+		p.replyMsg(weaponEmoji,`, ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}** is now wielding ${weapon.emoji} **${weapon.name}**!`);
+
+	/* Already equipped */
+	}else if(result[1].affectedRows>0){
+		let animal = p.global.validAnimal(result[2][0].name);
+		let nickname = result[2][0].nickname;
+		let weapon = weapons[result[2][0].wid];
+		p.replyMsg(weaponEmoji,`, ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}** is already wielding ${weapon.emoji} **${weapon.name}**!`);
+
+	/* A Failure (like me!) */
+	}else{
+		p.errorMsg(", could not find that weapon or animal! The correct command is `owo weapon {weaponID} {animal}`");
+	}
+}
+
+exports.unequip = async function(p,uwid){
+	let sql = `SELECT wid,name,nickname FROM user_weapon a LEFT JOIN animal b ON a.pid = b.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND uwid = ${uwid};`;
+	sql += `UPDATE IGNORE user_weapon SET pid = NULL WHERE uwid = ${uwid} AND uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
+	let result =  await p.query(sql);
+
+	/* Success */
+	if(result[1].changedRows>0){
+		let animal = p.global.validAnimal(result[0][0].name);
+		let nickname = result[0][0].nickname;
+		let weapon = weapons[result[0][0].wid];
+		p.replyMsg(weaponEmoji,`, Unequipped ${weapon.emoji} **${weapon.name}** from ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}**`);
+
+
+	/* No body using weapon */
+	}else if(result[1].affectedRows>0){
+		let weapon = weapons[result[0][0].wid];
+		p.replyMsg(weaponEmoji,`, No animal is using ${weapon.emoji} **${weapon.name}**`);
+
+	/* Invalid */
+	}else{
+		p.errorMsg(`, Could not find a weapon with that id!`);
+	}
 }

@@ -23,8 +23,12 @@ exports.getItem = function(args){
 		return getFood(id);
 	if(id==50)
 		return {name:"lootbox"};
-	if(id>50)
+	if(id>50&&id<100)
 		return {name:"gem",id:id};
+	if(id==100)
+		return {name:"crate"};
+	if(id>100)
+		return {name:"weapon"};
 }
 
 exports.toSmallNum = function(count,digits){

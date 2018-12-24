@@ -32,6 +32,14 @@ module.exports = new CommandInterface({
 			else
 				p.errorMsg(", Invalid arguments! Use `owo weapon {uniqueWeaponId}`");
 
+		/* Unequip weapon */
+		}else if(p.args.length==2&&(p.args[0]=="unequip"||p.args[0]=="ue")){
+			var uwid = p.args[1];
+			if(p.global.isInt(uwid))
+				await weaponUtil.unequip(p,uwid);
+			else
+				p.errorMsg(", Invalid arguments! Use `owo weapon unequip {weaponId}`");
+
 		/* Equip weapon */
 		}else if(p.args.length==2){
 			var uwid = p.args[0];
@@ -44,7 +52,7 @@ module.exports = new CommandInterface({
 					return;
 				}
 			}else{
-				pet = global.validAnimal(pet);
+				pet = p.global.validAnimal(pet);
 				if(!pet){
 					p.errorMsg(", Invalid arguments! Use `owo weapon {uniqueWeaponId} {animalPos|animal}`");
 					return;
