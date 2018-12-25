@@ -52,7 +52,7 @@ exports.parseWeapon = function(data){
 	}
 
 	/* Convert data to actual weapon data */
-	data = weapons[data.id].clone(data.passives,data.stat);
+	data = {...data,...weapons[data.id].clone(data.passives,data.stat)};
 
 	return data;
 }
@@ -65,6 +65,7 @@ exports.parseWeaponQuery = function(query){
 		if(!(key in weapons)){
 			weapons[key] = {
 				uwid:query[i].uwid,
+				pid:query[i].pid,
 				id:query[i].wid,
 				stat:query[i].stat,
 				animal:{

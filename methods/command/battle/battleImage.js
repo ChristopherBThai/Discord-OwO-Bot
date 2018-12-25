@@ -2,9 +2,10 @@ const request = require('request');
 const imagegenAuth = require('../../../../tokens/imagegen.json');
 
 /* Generates a battle image by my battle image generation api */
-exports.generateImage = function(player,enemy){
+exports.generateImage = function(player,teams){
 	/* Construct json for POST request */
-	var info = generateJson(player,enemy);
+	var info = generateJson(teams);
+	info.password = imagegenAuth.password;
 	console.log(info);
 
 	/* Returns a promise to avoid callback hell */
@@ -27,22 +28,22 @@ exports.generateImage = function(player,enemy){
 }
 
 /* Generates a json depending on the battle info */
-function generateJson(player,enemy){
+function generateJson(teams){
 	var json = {
 		player:{
-			teamName:"Team 1",
+			teamName:teams.player.name,
 			animals:[]
 		},
 		enemy:{
-			teamName:"Team 2",
+			teamName:teams.enemy.name,
 			animals:[]
 		}
 	};
 
-	for(i=0;i<player.length;i++)
-		json.player.animals.push(generateAnimalJson(player[i]));
-	for(i=0;i<enemy.length;i++)
-		json.enemy.animals.push(generateAnimalJson(enemy[i]));
+	for(i=0;i<teams.player.team.length;i++)
+		json.player.animals.push(generateAnimalJson(teams.player.team[i]));
+	for(i=0;i<teams.enemy.team.length;i++)
+		json.enemy.animals.push(generateAnimalJson(teams.enemy.team[i]));
 	return json;
 }
 
