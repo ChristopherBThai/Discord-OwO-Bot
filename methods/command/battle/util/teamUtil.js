@@ -1,5 +1,6 @@
 const badwords = require('../../../../../tokens/badwords.json');
 const battleEmoji = "";
+const weaponUtil = require('./weaponUtil.js');
 
 /*
  * Adds a member to the user's team
@@ -158,19 +159,87 @@ exports.renameTeam = async function(p,name){
  * Displays the team
  */
 exports.displayTeam = async function(p){
-	var sql = `SELECT tname,pos,name FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
-	var result = await p.query(sql);
-	var team = parseTeam(result);
-	var name = (result[0])?", **"+result[0].tname+"** ":": ";
-	p.replyMsg(battleEmoji,"'s Team"+name+team);
+	/* Query info */
+	let sql = `SELECT tname,pos,name,nickname,pid FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
+	sql += `SELECT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND a.pid IN (SELECT pid FROM pet_team LEFT JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}));`;
+	let result = await p.query(sql);
+	console.log(result);
+	if(!result[0][0]){
+		p.errorMsg(", you don't have a team! Make one with `owo team add {animal}`");
+		return;
+	}
+
+	/* Parse query */
+	let team = parseTeam(p,result[0],result[1]);
+
+	/* Convert data to user readable strings */
+	let fields = [];
+	for(var i=1;i<=3;i++){
+		let title = `[${i}] `;
+		let body = "";
+		let animal;
+		for(var j=0;j<team.length;j++)
+			if(team[j].pos==i)
+				animal = team[j];
+		if(!animal){
+			title += "none";
+			body = "*`owo team add {animal} "+i+"`*";
+		}else{
+			title += `${(animal.animal.uni)?animal.animal.uni:animal.animal.value} **${(animal.animal.nickname)?animal.animal.nickname:animal.animal.name}** `;
+			body = `Lvl ? [???/???]\nSTATS GO HERE\nSTATS GO HERE\n`;
+			let weapon = animal.weapon;
+			if(weapon){
+				body += `\`${weapon.uwid}\` ${weapon.rank.emoji} ${weapon.emoji} `;
+				for(var j=0;j<weapon.passives.length;j++){
+					body += `${weapon.passives[j].emoji} `;
+				}
+				body += `${weapon.avgQuality}%`;
+			}
+		}
+		fields.push({"name":title,"value":body,"inline":true});
+	}
+
+	/* Construct msg */
+	const embed = {
+		"author":{
+			"name":p.msg.author.username+"'s "+result[0][0].tname,
+			"icon_url":p.msg.author.avatarURL
+		},
+		"description":"Desc",
+		"color": p.config.embed_color,
+		fields
+	};
+	p.send({embed});
 }
 
-function parseTeam(animals){
-	var result = [];
+exports.parseTeam = parseTeam;
+function parseTeam(p,animals,weapons){
+	let result = [];
+
+	/* get basic animal info */
 	for(var i=0;i<animals.length;i++){
 		let animal = animals[i];
-		if(animal&&animal.name)
-			result.splice(animal.pos-1,0,`[${animal.pos}]${animal.name}`);
+		result.push({
+			pid:animal.pid,
+			nickname:animal.nickname,
+			pos:animal.pos,
+			animal:p.global.validAnimal(animal.name)
+		});
 	}
-	return result.join(" ");
+
+	/* get weapon info */
+	let weps = weaponUtil.parseWeaponQuery(weapons);
+
+	/* Combine the two json */
+	for(var key in weps){
+		let pid = weps[key].pid;
+		for(var i=0;i<result.length;i++)
+			if(result[i].pid == pid)
+				result[i].weapon = weaponUtil.parseWeapon(weps[key]);
+	}
+
+	return result;
+}
+
+exports.parseAnimal = function(p,animal){
 }
