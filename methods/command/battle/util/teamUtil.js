@@ -223,6 +223,7 @@ function parseTeam(p,animals,weapons){
 			pid:animal.pid,
 			nickname:animal.nickname,
 			pos:animal.pos,
+			xp:animal.xp,
 			animal:p.global.validAnimal(animal.name)
 		});
 	}

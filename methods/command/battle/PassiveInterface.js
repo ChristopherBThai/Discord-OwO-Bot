@@ -1,31 +1,30 @@
-ranks = [0.20,0.20,0.20,0.20,0.14,0.05,0.01];
+const ranks = [0.20,0.20,0.20,0.20,0.14,0.05,0.01];
 module.exports = class PassiveInterface{
 
-	constructor(args){
-		/* Passive id */
-		this.id = args.id 
-		/* Passive name */
-		this.name = args.name 
-		/* Passive description*/
-		this.desc = args.desc 
-		/* Number of rand stats */
-		this.qualityList = args.qualityList;
-		/* Emoji */
-		this.emojis= args.emojis;
+	constructor(qualities,noCreate){
+
+		this.init();
+		if(noCreate) return;
+
+		if(!qualities) qualities = this.randomQualities();
+
+		let avgQuality = qualities.reduce((a,b)=>a+b,0)/qualities.length;
+		let emoji = this.getEmoji(avgQuality);
+		let stats = this.toStats(qualities);
+		/* Construct desc */
+		let desc = this.statDesc;
+		for(var i=0;i<stats.length;i++){
+			desc = desc.replace('?',stats[i]);
+		}
+		/* Check if it has enough emojis */
 		if(this.emojis.length!=7) throw new Error(`[${args.id}] does not have 7 emojis`);
 
-		this.statDesc = args.statDesc;
-
-		/* Initializes passive */
-		/* Needs to return itself + random quality */
-		this.init = args.init
-
-		/* Check if args exists */
-		for(var i in this)
-			if(this[i]==undefined)
-				throw new Error("Cound not initialize weapon with id"+args.id);
-
-		this.disabled = args.disabled
+		this.avgQuality = avgQuality;
+		this.qualities = qualities;
+		this.emoji = emoji;
+		this.stats = stats;
+		this.desc = desc;
+		this.sqlStat = qualities.join(",");
 	}
 
 	randomQualities(){
@@ -33,27 +32,6 @@ module.exports = class PassiveInterface{
 		for(var i=0;i<this.qualityList.length;i++)
 			qualities.push(Math.trunc(Math.random()*101));
 		return qualities;
-	}
-
-	clone(qualities,stats,desc){
-		let avgQuality = qualities.reduce((a,b)=>a+b,0)/qualities.length;
-		var emoji = this.getEmoji(avgQuality);
-		var stats = this.toStats(qualities);
-
-		/* Construct desc */
-		var desc = this.statDesc;
-		for(var i=0;i<stats.length;i++){
-			desc = desc.replace('?',stats[i]);
-		}
-
-		return {id:this.id,name:this.name,desc:this.desc,
-			qualities,
-			sqlStat:qualities.join(","),
-			avgQuality,
-			desc,
-			stats,
-			emoji
-		}
 	}
 
 	getEmoji(quality){
@@ -92,5 +70,7 @@ module.exports = class PassiveInterface{
 		}
 		return stats;
 	}
+
+	static get getID(){return new this(null,true).id}
 }
 

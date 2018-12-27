@@ -2,11 +2,10 @@ const request = require('request');
 const imagegenAuth = require('../../../../tokens/imagegen.json');
 
 /* Generates a battle image by my battle image generation api */
-exports.generateImage = function(player,teams){
+exports.generateImage = function(teams){
 	/* Construct json for POST request */
 	var info = generateJson(teams);
 	info.password = imagegenAuth.password;
-	console.log(info);
 
 	/* Returns a promise to avoid callback hell */
 	return new Promise( (resolve, reject) => {
@@ -48,29 +47,38 @@ function generateJson(teams){
 }
 
 function generateAnimalJson(animal){
-	var animalID = animal.name.match(/:[0-9]+>/g);
+	let weapon = animal.weapon;
+	let stat = animal.stats;
+	
+	/* Parse animal info */
+	let animalID = animal.animal.value.match(/:[0-9]+>/g);
 	if(animalID) animalID = animalID[0].match(/[0-9]+/g)[0];
-	else animalID = animal.name.substring(1,animal.name.length-1);
-	if(!animal.nickname) animal.nickname = animal.name.match(/:[\w]+:/gi)[0].match(/[\w]+/gi)[0];
+	else animalID = animal.animal.value.substring(1,animal.animal.value.length-1);
+	if(!animal.animal.nickname) animal.animal.nickname = animal.animal.value;
+
+	/* Parse weapon info */
+	let weaponID = weapon.emoji.match(/:[0-9]+>/g);
+	if(weaponID) weaponID = weaponID[0].match(/[0-9]+/g)[0];
+
 	return {
-		animal_name:animal.nickname,
+		animal_name:animal.animal.nickname,
 		animal_image:animalID,
-		weapon_image:"307922660741087235",
-		animal_level:animal.lvl,
+		weapon_image:weaponID,
+		animal_level:stat.lvl,
 		animal_hp:{
-			current:1423,
-			max:2000,
-			previous:1500
+			current:stat.hp[0],
+			max:stat.hp[1],
+			previous:stat.hp[2]
 		},
 		animal_wp:{
-			current:341,
-			max:1000,
-			previous:500
+			current:stat.wp[0],
+			max:stat.wp[1],
+			previous:stat.wp[2]
 		},
-		animal_att:100,
-		animal_mag:250,
-		animal_pr:100,
-		animal_mr:100,
+		animal_att:stat.att[0]+stat.att[1],
+		animal_mag:stat.mag[0]+stat.mag[1],
+		animal_pr:stat.pr[0]+stat.pr[1],
+		animal_mr:stat.mr[0]+stat.mr[1],
 		animal_debuff:{}
 	}
 }
