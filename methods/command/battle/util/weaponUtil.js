@@ -7,11 +7,8 @@ const weaponEmoji = "";
 const weaponsDir = requireDir('../weapons');
 var weapons = {};
 for(var key in weaponsDir){
-	if(weaponsDir[key] instanceof WeaponInterface){
-		let weapon = weaponsDir[key];
-		if(!weapon.disabled)
-			weapons[weapon.id] = weapon;
-	}
+	let weapon = weaponsDir[key];
+	if(!weapon.disabled) weapons[weapon.getID] = weapon;
 }
 
 exports.getRandomWeapon = function(id){
@@ -21,7 +18,7 @@ exports.getRandomWeapon = function(id){
 	let weapon = weapons[random];
 
 	/* Initialize random stats */
-	weapon = weapon.init();
+	weapon = new weapon();
 
 	return weapon;
 }
@@ -32,7 +29,7 @@ exports.getItems = async function(p){
 	var items = {};
 	for(var i = 0;i<result.length;i++){
 		var key = result[i].wid;
-		items[key] = {id:(key+100),count:result[i].count,emoji:weapons[key].emoji};
+		items[key] = {id:(key+100),count:result[i].count,emoji:weapons[key].getEmoji};
 	}
 	return items;
 }
@@ -48,11 +45,13 @@ exports.parseWeapon = function(data){
 		let stats = data.passives[i].stat.split(",");
 		for(var j=0;j<stats.length;j++)
 			stats[j] = parseInt(stats[j]);
-		data.passives[i] = WeaponInterface.passives[data.passives[i].id].clone(stats);
+		let passive = new (WeaponInterface.allPassives[data.passives[i].id])(stats);
+		data.passives[i] = passive; 
 	}
 
 	/* Convert data to actual weapon data */
-	data = {...data,...weapons[data.id].clone(data.passives,data.stat)};
+	let weapon = new (weapons[data.id])(data.passives,data.stat);
+	data = {...data,...weapon};
 
 	return data;
 }
@@ -87,7 +86,7 @@ exports.parseWeaponQuery = function(query){
 
 exports.display = async function(p){
 	/* Query all weapons */
-	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY a.uwid DESC LIMIT 25;`;
+	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY a.uwid DESC LIMIT 15;`;
 	var result = await p.query(sql);
 
 	/* Parse all weapons */
@@ -200,14 +199,14 @@ exports.equip = async function(p,uwid,pet){
 		let animal = p.global.validAnimal(result[2][0].name);
 		let nickname = result[2][0].nickname;
 		let weapon = weapons[result[2][0].wid];
-		p.replyMsg(weaponEmoji,`, ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}** is now wielding ${weapon.emoji} **${weapon.name}**!`);
+		p.replyMsg(weaponEmoji,`, ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}** is now wielding ${weapon.getEmoji} **${weapon.getName}**!`);
 
 	/* Already equipped */
 	}else if(result[1].affectedRows>0){
 		let animal = p.global.validAnimal(result[2][0].name);
 		let nickname = result[2][0].nickname;
 		let weapon = weapons[result[2][0].wid];
-		p.replyMsg(weaponEmoji,`, ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}** is already wielding ${weapon.emoji} **${weapon.name}**!`);
+		p.replyMsg(weaponEmoji,`, ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}** is already wielding ${weapon.getEmoji} **${weapon.getName}**!`);
 
 	/* A Failure (like me!) */
 	}else{
@@ -225,13 +224,13 @@ exports.unequip = async function(p,uwid){
 		let animal = p.global.validAnimal(result[0][0].name);
 		let nickname = result[0][0].nickname;
 		let weapon = weapons[result[0][0].wid];
-		p.replyMsg(weaponEmoji,`, Unequipped ${weapon.emoji} **${weapon.name}** from ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}**`);
+		p.replyMsg(weaponEmoji,`, Unequipped ${weapon.getEmoji} **${weapon.getName}** from ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}**`);
 
 
 	/* No body using weapon */
 	}else if(result[1].affectedRows>0){
 		let weapon = weapons[result[0][0].wid];
-		p.replyMsg(weaponEmoji,`, No animal is using ${weapon.emoji} **${weapon.name}**`);
+		p.replyMsg(weaponEmoji,`, No animal is using ${weapon.getEmoji} **${weapon.getName}**`);
 
 	/* Invalid */
 	}else{
