@@ -54,14 +54,18 @@ function generateAnimalJson(animal){
 	let animalID = animal.animal.value.match(/:[0-9]+>/g);
 	if(animalID) animalID = animalID[0].match(/[0-9]+/g)[0];
 	else animalID = animal.animal.value.substring(1,animal.animal.value.length-1);
-	if(!animal.animal.nickname) animal.animal.nickname = animal.animal.value;
+	let nickname = animal.nickname;
+	if(!nickname) nickname = animal.animal.name;
 
 	/* Parse weapon info */
-	let weaponID = weapon.emoji.match(/:[0-9]+>/g);
-	if(weaponID) weaponID = weaponID[0].match(/[0-9]+/g)[0];
+	let weaponID;
+	if(weapon){
+		weaponID = weapon.emoji.match(/:[0-9]+>/g);
+		if(weaponID) weaponID = weaponID[0].match(/[0-9]+/g)[0];
+	}
 
 	return {
-		animal_name:animal.animal.nickname,
+		animal_name:nickname,
 		animal_image:animalID,
 		weapon_image:weaponID,
 		animal_level:stat.lvl,
