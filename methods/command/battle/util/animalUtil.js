@@ -16,7 +16,7 @@ exports.stats = function(animal){
 
 exports.weaponStats = function(stats,weapon){
 	/* Add Bonus Stats */
-	weapon.alterStats(stats);
+	if(weapon) weapon.alterStats(stats);
 }
 
 exports.parseStats = function(animal,lvl){
