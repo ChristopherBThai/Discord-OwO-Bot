@@ -51,9 +51,11 @@ exports.parseWeapon = function(data){
 
 	/* Convert data to actual weapon data */
 	let weapon = new (weapons[data.id])(data.passives,data.stat);
-	data = {...data,...weapon};
+	weapon.uwid = data.uwid;
+	weapon.pid = data.pid;
+	weapon.animal = data.animal;
 
-	return data;
+	return weapon;
 }
 
 exports.parseWeaponQuery = function(query){

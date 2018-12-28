@@ -11,7 +11,7 @@ exports.stats = function(animal){
 	this.weaponStats(stats,animal.weapon);
 
 	animal.stats = stats;
-	console.log(animal);
+	//console.log(animal.stats);
 }
 
 exports.weaponStats = function(stats,weapon){

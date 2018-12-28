@@ -66,19 +66,19 @@ function generateAnimalJson(animal){
 		weapon_image:weaponID,
 		animal_level:stat.lvl,
 		animal_hp:{
-			current:stat.hp[0],
-			max:stat.hp[1],
-			previous:stat.hp[2]
+			current:Math.ceil(stat.hp[0]),
+			max:Math.ceil(stat.hp[1]),
+			previous:Math.ceil(stat.hp[2])
 		},
 		animal_wp:{
-			current:stat.wp[0],
-			max:stat.wp[1],
-			previous:stat.wp[2]
+			current:Math.ceil(stat.wp[0]),
+			max:Math.ceil(stat.wp[1]),
+			previous:Math.ceil(stat.wp[2])
 		},
-		animal_att:stat.att[0]+stat.att[1],
-		animal_mag:stat.mag[0]+stat.mag[1],
-		animal_pr:stat.pr[0]+stat.pr[1],
-		animal_mr:stat.mr[0]+stat.mr[1],
+		animal_att:Math.ceil(stat.att[0]+stat.att[1]),
+		animal_mag:Math.ceil(stat.mag[0]+stat.mag[1]),
+		animal_pr:Math.ceil(stat.pr[0]+stat.pr[1]),
+		animal_mr:Math.ceil(stat.mr[0]+stat.mr[1]),
 		animal_debuff:{}
 	}
 }

@@ -71,6 +71,8 @@ module.exports = class PassiveInterface{
 		return stats;
 	}
 
+	alterStats(stats){}
+
 	static get getID(){return new this(null,true).id}
 }
 
