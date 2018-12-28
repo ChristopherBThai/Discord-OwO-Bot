@@ -72,8 +72,8 @@ module.exports = class WeaponInterface{
 
 	/* Alters the animal's stats */
 	alterStats(stats){
-		for(var i=0;i<weapon.passives.length;i++)
-			passives[i].alterStats(passives[i],stats);
+		for(var i=0;i<this.passives.length;i++)
+			this.passives[i].alterStats(stats);
 	}
 
 	/* Grabs a random passive(s) */

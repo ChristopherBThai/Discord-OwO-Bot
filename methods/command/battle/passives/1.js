@@ -13,4 +13,10 @@ module.exports = class Strength extends PassiveInterface{
 		this.qualityList = [[5,20]];
 	}
 
+	alterStats(stats){
+		let bonus = stats.att[0]*(this.stats[0]/100);
+		console.log(this.stats);
+		stats.att[1] += bonus;
+	}
+
 }
