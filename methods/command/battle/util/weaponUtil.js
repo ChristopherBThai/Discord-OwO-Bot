@@ -35,18 +35,21 @@ exports.getItems = async function(p){
 }
 
 exports.parseWeapon = function(data){
-	/* Parse stats */
-	data.stat = data.stat.split(",");
-	for(var i=0;i<data.stat.length;i++)
-		data.stat[i] = parseInt(data.stat[i]);
+	if(!data.parsed){
+		/* Parse stats */
+		data.stat = data.stat.split(",");
+		for(var i=0;i<data.stat.length;i++)
+			data.stat[i] = parseInt(data.stat[i]);
 
-	/* Grab all passives */
-	for(var i=0;i<data.passives.length;i++){
-		let stats = data.passives[i].stat.split(",");
-		for(var j=0;j<stats.length;j++)
-			stats[j] = parseInt(stats[j]);
-		let passive = new (WeaponInterface.allPassives[data.passives[i].id])(stats);
-		data.passives[i] = passive; 
+		/* Grab all passives */
+		for(var i=0;i<data.passives.length;i++){
+			let stats = data.passives[i].stat.split(",");
+			for(var j=0;j<stats.length;j++)
+				stats[j] = parseInt(stats[j]);
+			let passive = new (WeaponInterface.allPassives[data.passives[i].id])(stats);
+			data.passives[i] = passive; 
+		}
+		data.parsed = true;
 	}
 
 	/* Convert data to actual weapon data */
@@ -62,26 +65,28 @@ exports.parseWeaponQuery = function(query){
 	/* Group weapons by uwid and add their respective passives */
 	let weapons = {};
 	for(var i=0;i<query.length;i++){
-		var key = "_"+query[i].uwid;
-		if(!(key in weapons)){
-			weapons[key] = {
-				uwid:query[i].uwid,
-				pid:query[i].pid,
-				id:query[i].wid,
-				stat:query[i].stat,
-				animal:{
-					name:query[i].name,
-					nickname:query[i].nickname
-				},
-				passives:[]
-			};
+		if(query[i].uwid){
+			var key = "_"+query[i].uwid;
+			if(!(key in weapons)){
+				weapons[key] = {
+					uwid:query[i].uwid,
+					pid:query[i].pid,
+					id:query[i].wid,
+					stat:query[i].stat,
+					animal:{
+						name:query[i].name,
+						nickname:query[i].nickname
+					},
+					passives:[]
+				};
+			}
+			if(query[i].wpid)
+				weapons[key].passives.push({
+					id:query[i].wpid,
+					pcount:query[i].pcount,
+					stat:query[i].pstat
+				});
 		}
-		if(query[i].wpid)
-			weapons[key].passives.push({
-				id:query[i].wpid,
-				pcount:query[i].pcount,
-				stat:query[i].pstat
-			});
 	}
 	return weapons;
 }

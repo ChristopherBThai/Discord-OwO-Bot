@@ -216,15 +216,19 @@ function parseTeam(p,animals,weapons){
 	let result = [];
 
 	/* get basic animal info */
+	let used = [];
 	for(var i=0;i<animals.length;i++){
 		let animal = animals[i];
-		result.push({
-			pid:animal.pid,
-			nickname:animal.nickname,
-			pos:animal.pos,
-			xp:animal.xp,
-			animal:p.global.validAnimal(animal.name)
-		});
+		if(!(animal.pid in used)){
+			used.push(animal.pid);
+			result.push({
+				pid:animal.pid,
+				nickname:animal.nickname,
+				pos:animal.pos,
+				xp:animal.xp,
+				animal:p.global.validAnimal(animal.name)
+			});
+		}
 	}
 
 	/* get weapon info */
