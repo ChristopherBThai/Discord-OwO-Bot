@@ -21,14 +21,18 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 
+		let resume = true;
 		/* Get battle info */
 		let battle = await battleUtil.getBattle(p);
-		if(!battle) battle = await battleUtil.initBattle(p);
+		if(!battle){
+			resume = false;
+			battle = await battleUtil.initBattle(p);
+		}
 
 		//const embed = await battleUtil.display(battle);
 		//p.send({embed});
 		var image = await battleUtil.display(battle);
-		p.send({file:image});
+		p.send(resume,null,{file:image});
 
 	}
 
