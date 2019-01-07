@@ -71,12 +71,12 @@ function generateAnimalJson(animal){
 		animal_level:stat.lvl,
 		animal_hp:{
 			current:Math.ceil(stat.hp[0]),
-			max:Math.ceil(stat.hp[1]),
+			max:Math.ceil(stat.hp[1]+stat.hp[3]),
 			previous:Math.ceil(stat.hp[2])
 		},
 		animal_wp:{
 			current:Math.ceil(stat.wp[0]),
-			max:Math.ceil(stat.wp[1]),
+			max:Math.ceil(stat.wp[1]+stat.wp[3]),
 			previous:Math.ceil(stat.wp[2])
 		},
 		animal_att:Math.ceil(stat.att[0]+stat.att[1]),

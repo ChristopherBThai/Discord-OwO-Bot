@@ -1,6 +1,7 @@
 const badwords = require('../../../../../tokens/badwords.json');
-const battleEmoji = "";
+const battleEmoji = "🛋";
 const weaponUtil = require('./weaponUtil.js');
+const animalUtil= require('./animalUtil.js');
 
 /*
  * Adds a member to the user's team
@@ -74,8 +75,16 @@ exports.addMember = async function(p,animal,pos){
 	/* Query and send message */
 	await p.query(sql);
 
-	result[0].push({name:animal.value,pos:pos});
-	text = parseTeam(result[0]);
+	for(var i=0;i<result[0].length;i++){
+		if(result[0][i].pos == pos)
+			result[0].splice(i,1);
+	}
+	result[0].splice(pos-1,0,{name:animal.value,pos:pos});
+	let team = parseTeam(p,result[0]);
+	let text = "";
+	for(var i=0;i<team.length;i++){
+		text += "["+team[i].pos+"]"+((team[i].animal.uni)?team[i].animal.uni:team[i].animal.value)+" ";
+	}
 	p.replyMsg(battleEmoji,`, Your team has been updated!\n**${p.config.emoji.blank} |** Your team: ${text}`);
 }
 
@@ -86,7 +95,7 @@ exports.addMember = async function(p,animal,pos){
  * remove = must be either 1-3 or an animal 
  */
 exports.removeMember = async function(p,remove){
-	var sql = `SELECT pos,name FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
+	var sql = `SELECT pos,animal.pid,name FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE user.id = ${p.msg.author.id} ORDER BY pos ASC;`;
 
 	/* If its a position */
 	if(p.global.isInt(remove)){
@@ -106,15 +115,19 @@ exports.removeMember = async function(p,remove){
 	}
 
 	var result = await p.query(sql,remove);
-	var team = parseTeam(result[1]);
+	var team = parseTeam(p,result[1]);
+	let text = "";
+	for(var i=0;i<team.length;i++){
+		text += "["+team[i].pos+"]"+((team[i].animal.uni)?team[i].animal.uni:team[i].animal.value)+" ";
+	}
 	if(result[0].affectedRows>0){
-		p.replyMsg(battleEmoji,`, Successfully changed the team!\n**${p.config.emoji.blank} |** Your team: ${team}`);
+		p.replyMsg(battleEmoji,`, Successfully changed the team!\n**${p.config.emoji.blank} |** Your team: ${text}`);
 	}else if(!result[1]){
 		p.errorMsg(`, You do not have a team!`,3000);
 	}else if(result[1].length==1){
 		p.errorMsg(`, You need to keep at least one animal in the team!`,3000);
 	}else{
-		p.errorMsg(`, I failed to remove that animal\n**${p.config.emoji.blank} |** Your team: ${team}`,3000);
+		p.errorMsg(`, I failed to remove that animal\n**${p.config.emoji.blank} |** Your team: ${text}`,5000);
 	}
 }
 
@@ -160,7 +173,7 @@ exports.renameTeam = async function(p,name){
  */
 exports.displayTeam = async function(p){
 	/* Query info */
-	let sql = `SELECT tname,pos,name,nickname,pid FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
+	let sql = `SELECT tname,pos,name,nickname,pid,xp FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
 	sql += `SELECT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND a.pid IN (SELECT pid FROM pet_team LEFT JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}));`;
 	let result = await p.query(sql);
 	if(!result[0][0]){
@@ -170,6 +183,23 @@ exports.displayTeam = async function(p){
 
 	/* Parse query */
 	let team = parseTeam(p,result[0],result[1]);
+	let digits = 1;
+	for(let i in team){ 
+		animalUtil.stats(team[i]);
+		let tempDigit = Math.log10(team[i].stats.hp[1]+team[i].stats.hp[3])+1;
+		if(tempDigit>digits) digits = tempDigit;
+		tempDigit = Math.log10(team[i].stats.wp[1]+team[i].stats.wp[3])+1;
+		if(tempDigit>digits) digits = tempDigit;
+		tempDigit = Math.log10(team[i].stats.att[0]+team[i].stats.att[1])+1;
+		if(tempDigit>digits) digits = tempDigit;
+		tempDigit = Math.log10(team[i].stats.mag[0]+team[i].stats.mag[1])+1;
+		if(tempDigit>digits) digits = tempDigit;
+		tempDigit = Math.log10(team[i].stats.pr[0]+team[i].stats.pr[1])+1;
+		if(tempDigit>digits) digits = tempDigit;
+		tempDigit = Math.log10(team[i].stats.mr[0]+team[i].stats.mr[1])+1;
+		if(tempDigit>digits) digits = tempDigit;
+	}
+	digits = Math.trunc(digits);
 
 	/* Convert data to user readable strings */
 	let fields = [];
@@ -184,8 +214,14 @@ exports.displayTeam = async function(p){
 			title += "none";
 			body = "*`owo team add {animal} "+i+"`*";
 		}else{
-			title += `${(animal.animal.uni)?animal.animal.uni:animal.animal.value} **${(animal.animal.nickname)?animal.animal.nickname:animal.animal.name}** `;
-			body = `Lvl ? [???/???]\nSTATS GO HERE\nSTATS GO HERE\n`;
+			let hp = (''+Math.ceil(animal.stats.hp[1]+animal.stats.hp[3])).padStart(digits,"0");
+			let wp = (''+Math.ceil(animal.stats.wp[1]+animal.stats.wp[3])).padStart(digits,"0");
+			let att = (''+Math.ceil(animal.stats.att[0]+animal.stats.att[1])).padStart(digits,"0");
+			let mag = (''+Math.ceil(animal.stats.mag[0]+animal.stats.mag[1])).padStart(digits,"0");
+			let pr = (''+Math.ceil(animal.stats.pr[0]+animal.stats.pr[1])).padStart(digits,"0");
+			let mr = (''+Math.ceil(animal.stats.mr[0]+animal.stats.mr[1])).padStart(digits,"0");
+			title += `${(animal.animal.uni)?animal.animal.uni:animal.animal.value} **${(animal.nickname)?animal.nickname:animal.animal.name}** `;
+			body = `Lvl ${animal.stats.lvl} [${animal.stats.xp[0]}/${animal.stats.xp[1]}]\n<:hp:531620120410456064> \`${hp}\` <:wp:531620120976687114> \`${wp}\`\n<:att:531616155450998794> \`${att}\` <:mag:531616156231139338> \`${mag}\`\n<:pr:531616156222488606> \`${pr}\` <:mr:531616156226945024> \`${mr}\`\n`;
 			let weapon = animal.weapon;
 			if(weapon){
 				body += `\`${weapon.uwid}\` ${weapon.rank.emoji} ${weapon.emoji} `;
@@ -204,7 +240,7 @@ exports.displayTeam = async function(p){
 			"name":p.msg.author.username+"'s "+result[0][0].tname,
 			"icon_url":p.msg.author.avatarURL
 		},
-		"description":"Desc",
+		"description":"`owo team add {animal} {pos}` Add an animal to your team\n`owo team remove {pos}` Removes an animal from your team\n`owo team rename {name}` Renames your team\n`owo rename {animal} {name}` Rename an animal",
 		"color": p.config.embed_color,
 		fields
 	};
@@ -219,7 +255,7 @@ function parseTeam(p,animals,weapons){
 	let used = [];
 	for(var i=0;i<animals.length;i++){
 		let animal = animals[i];
-		if(!(animal.pid in used)){
+		if(!used.includes(animal.pid)){
 			used.push(animal.pid);
 			result.push({
 				pid:animal.pid,
@@ -231,15 +267,17 @@ function parseTeam(p,animals,weapons){
 		}
 	}
 
-	/* get weapon info */
-	let weps = weaponUtil.parseWeaponQuery(weapons);
+	if(weapons){
+		/* get weapon info */
+		let weps = weaponUtil.parseWeaponQuery(weapons);
 
-	/* Combine the two json */
-	for(var key in weps){
-		let pid = weps[key].pid;
-		for(var i=0;i<result.length;i++)
-			if(result[i].pid == pid)
-				result[i].weapon = weaponUtil.parseWeapon(weps[key]);
+		/* Combine the two json */
+		for(var key in weps){
+			let pid = weps[key].pid;
+			for(var i=0;i<result.length;i++)
+				if(result[i].pid == pid)
+					result[i].weapon = weaponUtil.parseWeapon(weps[key]);
+		}
 	}
 
 	return result;

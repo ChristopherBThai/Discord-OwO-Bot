@@ -1,5 +1,6 @@
 const CommandInterface = require('../../commandinterface.js');
 const imagegen = require('../battle/battleImage.js');
+const patreon = require('../../../handler/patreonHandler.js');
 
 module.exports = new CommandInterface({
 	

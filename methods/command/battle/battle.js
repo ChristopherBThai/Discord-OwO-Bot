@@ -29,10 +29,8 @@ module.exports = new CommandInterface({
 			battle = await battleUtil.initBattle(p);
 		}
 
-		//const embed = await battleUtil.display(battle);
-		//p.send({embed});
-		var image = await battleUtil.display(battle);
-		p.send(resume,null,{file:image});
+		let embed = await battleUtil.display(p,battle);
+		p.send(embed);
 
 	}
 

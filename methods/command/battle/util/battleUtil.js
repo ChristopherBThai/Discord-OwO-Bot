@@ -1,3 +1,4 @@
+const Discord = require('discord.js');
 const Error = require('../../../../handler/errorHandler.js');
 const teamUtil = require('./teamUtil.js');
 const weaponUtil = require('./weaponUtil.js');
@@ -121,7 +122,55 @@ exports.initBattle = async function(p){
 	return teams;
 }
 
-exports.display = async function(team){
+exports.display = async function(p,team){
 	let image = await battleImageUtil.generateImage(team);
-	return image;
+	/* TODO add team info+image in embed */
+	let pTeam = "";
+	for(var i=0;i<team.player.team.length;i++){
+		let player = team.player.team[i];
+		pTeam += player.animal.value;
+		if(player.weapon){
+			pTeam += " - "+player.weapon.rank.emoji+player.weapon.emoji;
+			let passives = player.weapon.passives;
+			for(var j in passives){
+				pTeam += passives[j].emoji;
+			}
+		}else
+			pTeam += " - *no weapon*";
+		pTeam += "\n";
+	}
+	let eTeam = "";
+	for(var i=0;i<team.enemy.team.length;i++){
+		let enemy = team.enemy.team[i];
+		eTeam += enemy.animal.value;
+		if(enemy.weapon){
+			eTeam += " - "+enemy.weapon.rank.emoji+enemy.weapon.emoji;
+			let passives = enemy.weapon.passives;
+			for(var j in passives){
+				eTeam+= passives[j].emoji;
+			}
+		}else
+			eTeam += " - *no weapon*";
+		eTeam += "\n";
+
+	}
+	let embed = {
+		"color":p.config.embed_color,
+		"author":{
+			"name":p.msg.author.username+" goes into battle!",
+			"icon_url":p.msg.author.avatarURL
+		},
+		"fields":[
+		{
+			"name":team.player.name,
+			"value":pTeam,
+			"inline":true
+		},{
+			"name":team.enemy.name,
+			"value":eTeam,
+			"inline":true
+		}
+		]
+	}
+	return {file:image,embed};
 }

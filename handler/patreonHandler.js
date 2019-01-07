@@ -8,7 +8,7 @@ const auth = require('../../tokens/owo-auth.json');
 var CLIENT_ID = auth.patreonID;
 var CLIENT_SECRET = auth.patreonSecret;
 
-//ar patreonOAuthClient = patreonOAuth(CLIENT_ID, CLIENT_SECRET);
+//var patreonOAuthClient = patreonOAuth(CLIENT_ID, CLIENT_SECRET);
 
 //var patreon_client = patreonAPI(auth.patreonAccessToken);
 
