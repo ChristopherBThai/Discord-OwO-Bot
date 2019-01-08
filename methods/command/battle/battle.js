@@ -30,8 +30,8 @@ module.exports = new CommandInterface({
 		}
 
 		let embed = await battleUtil.display(p,battle);
-		p.send(embed);
-
+		let msg = await p.msg.channel.send(embed);
+		await battleUtil.reactionCollector(p,msg,battle);
 	}
 
 })

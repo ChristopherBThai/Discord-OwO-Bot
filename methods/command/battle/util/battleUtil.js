@@ -4,8 +4,13 @@ const teamUtil = require('./teamUtil.js');
 const weaponUtil = require('./weaponUtil.js');
 const animalUtil = require('./animalUtil.js');
 const battleImageUtil = require('../battleImage.js');
+const WeaponInterface = require('../WeaponInterface.js');
+const imagegenAuth = require('../../../../../tokens/imagegen.json');
 
-exports.getBattle = async function(p){
+const attack = '👊🏼';
+const weapon = '🗡';
+
+var getBattle = exports.getBattle = async function(p){
 	/* And our team */
 	let sql = `SELECT pet_team_battle.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
 		FROM user 
@@ -122,7 +127,7 @@ exports.initBattle = async function(p){
 	return teams;
 }
 
-exports.display = async function(p,team){
+var display = exports.display = async function(p,team){
 	let image = await battleImageUtil.generateImage(team);
 	/* TODO add team info+image in embed */
 	let pTeam = "";
@@ -170,7 +175,88 @@ exports.display = async function(p,team){
 			"value":eTeam,
 			"inline":true
 		}
-		]
+		],
+		"image":{
+			"url":imagegenAuth.imageGenUrl+"/battleimage/uuid/"+image
+		}
 	}
-	return {file:image,embed};
+	//return {file:image,embed};
+	return {embed}
+}
+
+exports.reactionCollector = async function(p,msg,battle){
+	/* Add initial reactions */
+	await msg.react(attack);
+	await msg.react(weapon);
+	let team = battle.player.team;
+	var current = 0;
+	if(!team[current]) return;
+	var emoji  = team[current].animal.uni?team[current].animal.uni:await p.client.emojis.get(p.global.parseID(team[current].animal.value));
+	var emojiReaction = await msg.react(emoji);
+
+	/* Construct reaction collector */
+	var filter = (reaction,user) => (reaction.emoji.name===attack||reaction.emoji.name===weapon)&&user.id===p.msg.author.id;
+	var collector = msg.createReactionCollector(filter,{time:60000});
+	var action = {};
+	collector.on('collect', async function(r){
+		/* Save the animal's action */
+		if(r.emoji.name===attack) action[current] = attack;
+		else action[current] = weapon;
+
+		current++;
+		emojiReaction.remove();
+		/* Check if we need to gather more actions */
+		if(!team[current]){
+			/* If not, execute the actions */
+			collector.stop();
+			try{
+				await executeBattle(p,msg,action);
+			}catch(err){
+				console.error(err);
+			}
+		}else{
+			/* Else, gather more actions */
+			emoji  = team[current].animal.uni?team[current].animal.uni:await p.client.emojis.get(p.global.parseID(team[current].animal.value));
+			emojiReaction = await msg.react(emoji);
+		}
+	});
+
+	collector.on('end',collected => {});
+}
+
+async function executeBattle(p,msg,action){
+	/* Update current battle */
+	let battle = await getBattle(p);
+	if(!battle){
+		await msg.edit("⚠ **|** This battle is inactive!");
+		return;
+	}
+
+	/* Execute player actions */
+	executeTurn(battle.player.team,battle.enemy.team,action);
+
+	/* Decide enemy actions */
+	action = [attack,attack,attack];
+	/* Execute enemy actions */
+	executeTurn(battle.enemy.team,battle.player.team,action);
+
+	/* Save current state */
+
+	let embed = await display(p,battle);
+	await msg.edit(embed);
+}
+
+function executeTurn(team,enemy,action){
+	for(var i in team){
+		let animal= team[i];
+		/* Check if animal has weapon */
+		if(animal.weapon){
+			if(action[i]==weapon)
+				animal.weapon.attackWeapon(animal,team,enemy);
+			else
+				animal.weapon.attackPhysical(animal,team,enemy);
+		}else{
+			WeaponInterface.basicAttack(animal,team,enemy);
+		}
+	}
 }
