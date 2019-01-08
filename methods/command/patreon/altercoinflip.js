@@ -16,7 +16,7 @@ function geist(text){
 		"color":6315775
 	};
 	if(text.includes(" won ")){
-		embed.thumbnail = {"url":"https://cdn.discordapp.com/attachments/476656258527526922/521255844566794240/tumblr_o6n5mc8YRo1tydz8to1_400.gif"};
+		embed.thumbnail = {"url":"https://cdn.discordapp.com/attachments/476656258527526922/522495882281877505/giphy_2.gif"};
 	}else if(text.includes("lost it")){
 		embed.thumbnail = {"url":"https://cdn.discordapp.com/attachments/476656258527526922/521256113845567498/tenor_3.gif"};
 	}
