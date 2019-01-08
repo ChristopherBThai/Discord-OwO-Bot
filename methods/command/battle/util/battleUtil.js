@@ -12,7 +12,7 @@ const weapon = '🗡';
 
 var getBattle = exports.getBattle = async function(p){
 	/* And our team */
-	let sql = `SELECT pet_team_battle.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
+	let sql = `SELECT pet_team_battle.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat,cphp,cpwp,cehp,cewp
 		FROM user 
 			INNER JOIN pet_team ON user.uid = pet_team.uid
 			INNER JOIN pet_team_battle ON pet_team.pgid = pet_team_battle.pgid
@@ -24,7 +24,7 @@ var getBattle = exports.getBattle = async function(p){
 			AND active = 1
 		ORDER BY pos ASC;`;
 	/* Query enemy team */
-	sql += `SELECT pet_team_battle.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
+	sql += `SELECT pet_team_battle.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat,cphp,cpwp,cehp,cewp
 		FROM user 
 			INNER JOIN pet_team ON user.uid = pet_team.uid
 			INNER JOIN pet_team_battle ON pet_team.pgid = pet_team_battle.pgid
@@ -50,8 +50,12 @@ var getBattle = exports.getBattle = async function(p){
 	let eTeam = teamUtil.parseTeam(p,result[1],result[1]);
 	for(let i in eTeam) animalUtil.stats(eTeam[i]);
 
+	/* Parse current hp/wp */
+	parseSqlStats(pTeam,result[0][0].cphp,result[0][0].cpwp);
+	parseSqlStats(eTeam,result[1][0].cehp,result[1][0].cewp);
+
 	/* Combine result */
-	let teams = {player:{name:result[0][0].tname,team:pTeam},enemy:{name:result[1][0].tname,team:eTeam}};
+	let teams = {player:{pgid:pgid,name:result[0][0].tname,team:pTeam},enemy:{pgid:epgid,name:result[1][0].tname,team:eTeam}};
 
 	return teams;
 }
@@ -91,42 +95,30 @@ exports.initBattle = async function(p){
 	let eTeam = teamUtil.parseTeam(p,result[0],result[1]);
 	let pTeam = teamUtil.parseTeam(p,result[2],result[3]);
 
-	/* Init stats */
-	let cphp="",cpwp="",cehp="",cewp="";
-	for(let i in eTeam){
-		animalUtil.stats(eTeam[i]);
-		cehp += eTeam[i].stats.hp[0]+",";
-		cewp += eTeam[i].stats.wp[0]+",";
-	}
-	for(let i in pTeam){
-		animalUtil.stats(pTeam[i]);
-		cphp += pTeam[i].stats.hp[0]+",";
-		cpwp += pTeam[i].stats.wp[0]+",";
-	}
-	cphp = cphp.slice(0,-1);
-	cpwp = cpwp.slice(0,-1);
-	cehp = cehp.slice(0,-1);
-	cewp = cewp.slice(0,-1);
-
+	/* Init stats for sql*/
+	let cpstats = initSqlSaveStats(pTeam);
+	let cestats = initSqlSaveStats(eTeam);
+	
 	/* Combine all to one obj */
-	let teams = {player:{name:result[0][0].tname,team:pTeam},enemy:{name:result[2][0].tname,team:eTeam}};
+	let teams = {player:{pgid:pgid,name:result[0][0].tname,team:pTeam},enemy:{pgid:epgid,name:result[2][0].tname,team:eTeam}};
 
 	/* Added the team into team_battle table */
 	sql = `INSERT IGNORE INTO pet_team_battle (pgid,epgid,cphp,cpwp,cehp,cewp,active) VALUES (
 			${pgid},${epgid},
-			'${cphp}','${cpwp}',
-			'${cehp}','${cewp}',
+			'${cpstats.hp}','${cpstats.wp}',
+			'${cestats.hp}','${cestats.wp}',
 			1
 		) ON DUPLICATE KEY UPDATE 
 			epgid = ${epgid},
-			cphp = '${cphp}', cpwp = '${cpwp}',
-			cehp = '${cehp}', cewp = '${cewp}',
+			cphp = '${cpstats.hp}', cpwp = '${cpstats.wp}',
+			cehp = '${cpstats.hp}', cewp = '${cestats.wp}',
 			active = 1,started = NOW();`;
 	result = await p.query(sql);
 
 	return teams;
 }
 
+/* Generates a display for the current battle */
 var display = exports.display = async function(p,team){
 	let image = await battleImageUtil.generateImage(team);
 	/* TODO add team info+image in embed */
@@ -184,7 +176,8 @@ var display = exports.display = async function(p,team){
 	return {embed}
 }
 
-exports.reactionCollector = async function(p,msg,battle){
+/* Creates a reaction collector and executes the turn */
+var reactionCollector = exports.reactionCollector = async function(p,msg,battle){
 	/* Add initial reactions */
 	await msg.react(attack);
 	await msg.react(weapon);
@@ -224,6 +217,7 @@ exports.reactionCollector = async function(p,msg,battle){
 	collector.on('end',collected => {});
 }
 
+/* Executes a whole battle sequence */
 async function executeBattle(p,msg,action){
 	/* Update current battle */
 	let battle = await getBattle(p);
@@ -241,11 +235,28 @@ async function executeBattle(p,msg,action){
 	executeTurn(battle.enemy.team,battle.player.team,action);
 
 	/* Save current state */
+	let cpstats = initSqlSaveStats(battle.player.team);
+	let cestats = initSqlSaveStats(battle.enemy.team);
+	let ocpstats = initSqlSaveStats(battle.player.team,2);
+	let ocestats = initSqlSaveStats(battle.enemy.team,2);
+	sql = `UPDATE pet_team_battle SET
+			cphp = '${cpstats.hp}', cpwp = '${cpstats.wp}',
+			cehp = '${cestats.hp}', cewp = '${cestats.wp}'
+		WHERE 
+			pgid = ${battle.player.pgid} AND
+			epgid = ${battle.enemy.pgid} AND
+			active = 1 AND
+			cphp = '${ocpstats.hp}' AND cpwp = '${ocpstats.wp}' AND
+			cehp = '${ocestats.hp}' AND cewp = '${ocestats.wp}';
+		`;
+	let result = await p.query(sql);
 
 	let embed = await display(p,battle);
 	await msg.edit(embed);
+	await reactionCollector(p,msg,battle);
 }
 
+/* Calculates a turn for a team */
 function executeTurn(team,enemy,action){
 	for(var i in team){
 		let animal= team[i];
@@ -258,5 +269,34 @@ function executeTurn(team,enemy,action){
 		}else{
 			WeaponInterface.basicAttack(animal,team,enemy);
 		}
+	}
+}
+
+/* ==================== Extra Helpers ================== */
+
+/* Creates string to save in sql */
+function initSqlSaveStats(team,offset=0){
+	hp = "";
+	wp = "";
+	for(let i in team){
+		if(!team[i].stats) animalUtil.stats(team[i]);
+		hp += team[i].stats.hp[offset]+",";
+		wp += team[i].stats.wp[offset]+",";
+	}
+	return {hp:hp.slice(0,-1),wp:wp.slice(0,-1)};
+}
+
+/* Parses string from sql */
+function parseSqlStats(team,hp,wp){
+	hp = hp.split(',');
+	wp = wp.split(',');
+	if(team.length != (hp.length+wp.length)/2)
+		throw new Error("Hp/Wp Stats does not match");
+	
+	for(let i=0;i<team.length;i++){
+		team[i].stats.hp[0] = parseInt(hp[i]);
+		team[i].stats.hp[2] = parseInt(hp[i]);
+		team[i].stats.wp[0] = parseInt(wp[i]);
+		team[i].stats.wp[2] = parseInt(wp[i]);
 	}
 }

@@ -64,21 +64,29 @@ function generateAnimalJson(animal){
 		if(weaponID) weaponID = weaponID[0].match(/[0-9]+/g)[0];
 	}
 
+	/* Parse hp/wp */
+	let hp = {
+		current:Math.ceil(stat.hp[0]),
+		max:Math.ceil(stat.hp[1]+stat.hp[3]),
+		previous:Math.ceil(stat.hp[2])
+	};
+	if(hp.current<0) hp.current = 0;
+	if(hp.previous<0) hp.previous = 0;
+	let wp = {
+		current:Math.ceil(stat.wp[0]),
+		max:Math.ceil(stat.wp[1]+stat.wp[3]),
+		previous:Math.ceil(stat.wp[2])
+	};
+	if(wp.current<0) wp.current = 0;
+	if(wp.previous<0) wp.current = 0;
+
 	return {
 		animal_name:nickname,
 		animal_image:animalID,
 		weapon_image:weaponID,
 		animal_level:stat.lvl,
-		animal_hp:{
-			current:Math.ceil(stat.hp[0]),
-			max:Math.ceil(stat.hp[1]+stat.hp[3]),
-			previous:Math.ceil(stat.hp[2])
-		},
-		animal_wp:{
-			current:Math.ceil(stat.wp[0]),
-			max:Math.ceil(stat.wp[1]+stat.wp[3]),
-			previous:Math.ceil(stat.wp[2])
-		},
+		animal_hp:hp,
+		animal_wp:wp,
 		animal_att:Math.ceil(stat.att[0]+stat.att[1]),
 		animal_mag:Math.ceil(stat.mag[0]+stat.mag[1]),
 		animal_pr:Math.ceil(stat.pr[0]+stat.pr[1]),
