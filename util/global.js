@@ -60,6 +60,13 @@ exports.getUser = async function(mention,cache = false){
 	}
 }
 
+exports.parseID = function(id){
+	id = id.match(/[:@][0-9]+>/);
+	if(!id) return;
+	id = id[0];
+	return id.match(/[0-9]+/)[0];
+}
+
 /*
  * Gets name of guild
  */

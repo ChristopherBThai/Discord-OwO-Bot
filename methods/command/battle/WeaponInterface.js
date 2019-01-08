@@ -116,6 +116,45 @@ module.exports = class WeaponInterface{
 		return stats;
 	}
 
+	/* Actions */
+	/* Physical attack */
+	attackPhysical(me,team,enemy){
+		WeaponInterface.basicAttack(me,team,enemy);
+	}
+
+	/* Weapon attack */
+	attackWeapon(me,team,enemy){
+		WeaponInterface.basicAttack(me,team,enemy);
+	}
+
+	/* Get list of alive animals */
+	static getAlive(team){
+		let alive = [];
+		for(var i in team)
+			if(team[i].stats.hp[0]>0)
+				alive.push(i);
+		return alive;
+	}
+
+	/* Basic attack when animal has no weapon */
+	static basicAttack(me,team,enemy){
+		if(me.stats.hp<=0) return;
+		
+		/* Grab an enemy that I'm attacking */
+		let alive = WeaponInterface.getAlive(enemy);
+		let attacking = enemy[alive[Math.trunc(Math.random()*alive.length)]];
+
+		/* Calculate damage */
+		let damage = WeaponInterface.getDamage(me.stats.att);
+
+		/* Deal damage */
+		attacking.stats.hp[0] -= damage;
+	}
+
+	static getDamage(stat,multiplier=1){
+		return Math.round(multiplier*(stat[0]+stat[1]+Math.random()*50-25));
+	}
+
 	static get allPassives(){return passives}
 	static get getID(){return new this(null,null,true).id}
 	static get getName(){return new this(null,null,true).name}

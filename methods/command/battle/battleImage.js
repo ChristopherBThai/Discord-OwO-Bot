@@ -12,7 +12,7 @@ exports.generateImage = function(teams){
 		request({
 			method:'POST',
 			uri:imagegenAuth.battleImageUri,
-			encoding:null,
+			//encoding:null,
 			json:true,
 			body: info,
 		},(error,res,body)=>{
