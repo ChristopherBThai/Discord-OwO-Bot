@@ -31,6 +31,6 @@ exports.afterMidnight = function(date){
 	else if(diff<=91800000) return {after:true,diff:diff,withinDay:true,seconds:seconds,minutes:minutes,hours:hours,days:days};
 
 	/* Over 1 full day */
-	else return {after:true,diff:diff,withinDay:false,seconds:seconds,minutes:minutes,hours:hours,days:days};
+	else return {after:true,diff:diff,withinDay:true,seconds:seconds,minutes:minutes,hours:hours,days:days};
 }
 
