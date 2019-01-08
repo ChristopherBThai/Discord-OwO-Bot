@@ -130,9 +130,10 @@ module.exports = class WeaponInterface{
 	/* Get list of alive animals */
 	static getAlive(team){
 		let alive = [];
-		for(var i in team)
+		for(var i in team){
 			if(team[i].stats.hp[0]>0)
 				alive.push(i);
+		}
 		return alive;
 	}
 
@@ -143,6 +144,7 @@ module.exports = class WeaponInterface{
 		/* Grab an enemy that I'm attacking */
 		let alive = WeaponInterface.getAlive(enemy);
 		let attacking = enemy[alive[Math.trunc(Math.random()*alive.length)]];
+		if(!attacking) return;
 
 		/* Calculate damage */
 		let damage = WeaponInterface.getDamage(me.stats.att);
@@ -151,6 +153,7 @@ module.exports = class WeaponInterface{
 		attacking.stats.hp[0] -= damage;
 	}
 
+	/* Calculate the damage output (Either mag or att) */
 	static getDamage(stat,multiplier=1){
 		return Math.round(multiplier*(stat[0]+stat[1]+Math.random()*50-25));
 	}
