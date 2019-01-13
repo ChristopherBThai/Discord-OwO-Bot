@@ -183,26 +183,40 @@ var reactionCollector = exports.reactionCollector = async function(p,msg,battle)
 	await msg.react(weapon);
 	let team = battle.player.team;
 	var current = 0;
-	if(!team[current]) return;
+
+	/* Add initial reaction */
+	/* Skip if the animal is dead */
+	while(team[current]&&team[current].stats.hp[0]<=0)
+		current++;
+	/* If all animals are dead end it. */
+	if(!team[current]){
+		await finishBattle(msg,p,battle,6381923,"An error occured",false,false);
+		return;
+	}
+	/* Add reaction */
 	var emoji  = team[current].animal.uni?team[current].animal.uni:await p.client.emojis.get(p.global.parseID(team[current].animal.value));
 	var emojiReaction = await msg.react(emoji);
 
 	/* Construct reaction collector */
 	var filter = (reaction,user) => (reaction.emoji.name===attack||reaction.emoji.name===weapon)&&user.id===p.msg.author.id;
-	var collector = msg.createReactionCollector(filter,{time:60000});
+	var collector = msg.createReactionCollector(filter,{time:20000});
 	var action = {};
 	collector.on('collect', async function(r){
 		/* Save the animal's action */
 		if(r.emoji.name===attack) action[current] = attack;
 		else action[current] = weapon;
 
+		/* Gather action for next animal */
 		current++;
-		emojiReaction.remove();
+		await emojiReaction.remove();
+		while(team[current]&&team[current].stats.hp[0]<=0)
+			current++;
+
 		/* Check if we need to gather more actions */
 		if(!team[current]){
 			/* If not, execute the actions */
-			collector.stop();
 			try{
+				await collector.stop();
 				await executeBattle(p,msg,action);
 			}catch(err){
 				console.error(err);
@@ -234,43 +248,47 @@ async function executeBattle(p,msg,action){
 	/* Execute enemy actions */
 	executeTurn(battle.enemy.team,battle.player.team,action);
 
-	/* Save current state */
-	let cpstats = initSqlSaveStats(battle.player.team);
-	let cestats = initSqlSaveStats(battle.enemy.team);
-	let ocpstats = initSqlSaveStats(battle.player.team,2);
-	let ocestats = initSqlSaveStats(battle.enemy.team,2);
-	sql = `UPDATE pet_team_battle SET
-			cphp = '${cpstats.hp}', cpwp = '${cpstats.wp}',
-			cehp = '${cestats.hp}', cewp = '${cestats.wp}'
-		WHERE 
-			pgid = ${battle.player.pgid} AND
-			epgid = ${battle.enemy.pgid} AND
-			active = 1 AND
-			cphp = '${ocpstats.hp}' AND cpwp = '${ocpstats.wp}' AND
-			cehp = '${ocestats.hp}' AND cewp = '${ocestats.wp}';
-		`;
-	let result = await p.query(sql);
+	/* check if the battle is finished */
+	let enemyWin = teamUtil.isDead(battle.player.team);
+	let playerWin = teamUtil.isDead(battle.enemy.team);
 
-	let embed = await display(p,battle);
-	await msg.edit(embed);
-	await reactionCollector(p,msg,battle);
-}
+	/* tie */
+	if(enemyWin&&playerWin){
+		await finishBattle(msg,p,battle,6381923,"It's a tie!",playerWin,enemyWin);
 
-/* Calculates a turn for a team */
-function executeTurn(team,enemy,action){
-	for(var i in team){
-		let animal= team[i];
-		/* Check if animal has weapon */
-		if(animal.weapon){
-			if(action[i]==weapon)
-				animal.weapon.attackWeapon(animal,team,enemy);
-			else
-				animal.weapon.attackPhysical(animal,team,enemy);
-		}else{
-			WeaponInterface.basicAttack(animal,team,enemy);
-		}
+	/* enemy wins */
+	}else if(enemyWin){
+		await finishBattle(msg,p,battle,16711680,"You lost!",playerWin,enemyWin);
+
+	/* player wins */
+	}else if(playerWin){
+		await finishBattle(msg,p,battle,65280,"You won!",playerWin,enemyWin);
+
+	/* continue battle */
+	}else{
+		/* Save current state */
+		let cpstats = initSqlSaveStats(battle.player.team);
+		let cestats = initSqlSaveStats(battle.enemy.team);
+		let ocpstats = initSqlSaveStats(battle.player.team,2);
+		let ocestats = initSqlSaveStats(battle.enemy.team,2);
+		sql = `UPDATE pet_team_battle SET
+				cphp = '${cpstats.hp}', cpwp = '${cpstats.wp}',
+				cehp = '${cestats.hp}', cewp = '${cestats.wp}'
+			WHERE 
+				pgid = ${battle.player.pgid} AND
+				epgid = ${battle.enemy.pgid} AND
+				active = 1 AND
+				cphp = '${ocpstats.hp}' AND cpwp = '${ocpstats.wp}' AND
+				cehp = '${ocestats.hp}' AND cewp = '${ocestats.wp}';
+			`;
+		let result = await p.query(sql);
+		let embed = await display(p,battle);
+		await msg.edit(embed);
+		await reactionCollector(p,msg,battle);
 	}
+
 }
+
 
 /* ==================== Extra Helpers ================== */
 
@@ -299,4 +317,60 @@ function parseSqlStats(team,hp,wp){
 		team[i].stats.wp[0] = parseInt(wp[i]);
 		team[i].stats.wp[2] = parseInt(wp[i]);
 	}
+}
+
+/* Calculates a turn for a team */
+function executeTurn(team,enemy,action){
+	for(var i in team){
+		let animal= team[i];
+		/* Check if animal has weapon */
+		if(animal.weapon){
+			if(action[i]==weapon)
+				animal.weapon.attackWeapon(animal,team,enemy);
+			else
+				animal.weapon.attackPhysical(animal,team,enemy);
+		}else{
+			WeaponInterface.basicAttack(animal,team,enemy);
+		}
+	}
+}
+
+/* finish battle */
+async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin){
+	/* Check if the battle is still active and if the player should receive rewards */
+	let sql = `UPDATE pet_team_battle SET active = 0 WHERE active = 1 and pgid = ${battle.player.pgid}`;
+	if((await p.query(sql)).changedRows == 0) return;
+
+	/* An error occured */
+	if(!playerWin&&!enemyWin) return;
+
+	/* Calculate and distribute xp */
+	let pXP = calculateXP({team:battle.player,win:playerWin},{team:battle.enemy,win:enemyWin});
+	let eXP = calculateXP({team:battle.enemy,win:enemyWin},{team:battle.player,win:playerWin});
+	await teamUtil.giveXP(p,battle.player,pXP);
+	await teamUtil.giveXP(p,battle.enemy,eXP);
+
+	/* Send result message */
+	let embed = await display(p,battle);
+	embed.embed.color = color;
+	text += ` Your team gained ${pXP}xp!`;
+	embed.embed.footer = {text};
+	await msg.edit(embed);
+}
+
+/* Calculate xp depending on win/loss/tie */
+function calculateXP(team,enemy){
+	/* Find the avg level diff for xp multipliers */
+	let lvlDiff = 1;
+	for(let i in team.team.team) lvlDiff -= team.team.team[i].stats.lvl;
+	for(let i in enemy.team.team) lvlDiff += enemy.team.team[i].stats.lvl;
+	if(lvlDiff<=0) lvlDiff = 1;
+
+	/* Calculate xp */
+	let xp = 10;
+	if(team.win&&enemy.win) xp = 15;
+	else xp = 50;
+	xp *= lvlDiff;
+
+	return xp;
 }

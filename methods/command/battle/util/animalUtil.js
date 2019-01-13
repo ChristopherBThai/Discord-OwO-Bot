@@ -18,6 +18,7 @@ exports.weaponStats = function(stats,weapon){
 	if(weapon) weapon.alterStats(stats);
 }
 
+/* Parse animal stats based on level */
 exports.parseStats = function(animal,lvl){
 	let stats = {};
 	let baseHp = 500+lvl*animal.hpr;
@@ -35,15 +36,24 @@ exports.parseStats = function(animal,lvl){
 	return stats;
 }
 
+/* Converts xp to lvl */
 exports.toLvl = function(xp){
 	let lvl = 1;
-	while(xp>=getXp(lvl)){
-		xp -= getXp(lvl);
+	while(xp>=getXP(lvl)){
+		xp -= getXP(lvl);
 		lvl++;
 	}
-	return {lvl,currentXp:xp,maxXp:getXp(lvl+1)}
+	return {lvl,currentXp:xp,maxXp:getXP(lvl+1)}
 }
 
-function getXp(lvl){
+/* converts lvl to xp */
+function getXP(lvl){
 	return lvl*lvl + 100;
+}
+
+/* Returns sql for giving xp to animal */
+exports.giveXP = function(pid,xp){
+	let sql = `UPDATE IGNORE animal SET xp = xp + ${xp} WHERE pid = ${pid};`;
+	return sql;
+
 }

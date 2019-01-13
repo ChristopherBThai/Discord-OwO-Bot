@@ -1,7 +1,7 @@
 const badwords = require('../../../../../tokens/badwords.json');
 const battleEmoji = "🛋";
 const weaponUtil = require('./weaponUtil.js');
-const animalUtil= require('./animalUtil.js');
+const animalUtil = require('./animalUtil.js');
 
 /*
  * Adds a member to the user's team
@@ -247,6 +247,7 @@ exports.displayTeam = async function(p){
 	p.send({embed});
 }
 
+/* Parses animals and weapons into json */
 exports.parseTeam = parseTeam;
 function parseTeam(p,animals,weapons){
 	let result = [];
@@ -283,5 +284,21 @@ function parseTeam(p,animals,weapons){
 	return result;
 }
 
-exports.parseAnimal = function(p,animal){
+/* Checks if the team is dead */
+exports.isDead = function(team){
+	let totalhp = 0;
+	for(var i in team){
+		totalhp += team[i].stats.hp[0];
+	}
+	return totalhp<=0;
 }
+
+/* Distributes xp to team */
+exports.giveXP = async function(p,team,xp){
+	let sql = '';
+	for(let i in team.team){
+		sql += animalUtil.giveXP(team.team[i].pid,xp);
+	}
+	await p.query(sql);
+}
+
