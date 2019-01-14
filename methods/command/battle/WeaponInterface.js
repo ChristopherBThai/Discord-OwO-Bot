@@ -119,12 +119,12 @@ module.exports = class WeaponInterface{
 	/* Actions */
 	/* Physical attack */
 	attackPhysical(me,team,enemy){
-		WeaponInterface.basicAttack(me,team,enemy);
+		return WeaponInterface.basicAttack(me,team,enemy);
 	}
 
 	/* Weapon attack */
 	attackWeapon(me,team,enemy){
-		WeaponInterface.basicAttack(me,team,enemy);
+		return WeaponInterface.basicAttack(me,team,enemy);
 	}
 
 	/* Get list of alive animals */
@@ -139,7 +139,7 @@ module.exports = class WeaponInterface{
 
 	/* Basic attack when animal has no weapon */
 	static basicAttack(me,team,enemy){
-		if(me.stats.hp<=0) return;
+		if(me.stats.hp[0]<=0) return;
 		
 		/* Grab an enemy that I'm attacking */
 		let alive = WeaponInterface.getAlive(enemy);
@@ -150,15 +150,36 @@ module.exports = class WeaponInterface{
 		let damage = WeaponInterface.getDamage(me.stats.att);
 
 		/* Deal damage */
-		attacking.stats.hp[0] -= damage;
+		damage = WeaponInterface.dealDamage(attacking,damage,WeaponInterface.PHYSICAL);
+
+		return `${me.nickname?me.nickname:me.animal.name}\`deals ${damage}\`<:att:531616155450998794>\` to \`${attacking.nickname?attacking.nickname:attacking.animal.name}`
 	}
 
 	/* Calculate the damage output (Either mag or att) */
 	static getDamage(stat,multiplier=1){
-		return Math.round(multiplier*(stat[0]+stat[1]+Math.random()*50-25));
+		return Math.round(multiplier*(stat[0]+stat[1]+Math.random()*100-50));
+	}
+
+	/* Deals damage to an opponent */
+	static dealDamage(attacking,damage,type){
+		if(type==WeaponInterface.PHYSICAL){
+			let totalDamage = damage - (attacking.stats.pr[0]+attacking.stats.pr[1]);
+			if(totalDamage<0) totalDamage = 0;
+			attacking.stats.hp[0] -= totalDamage;
+			return totalDamage;
+		}else if(type==WeaponInterface.MAGICAL){
+			let totalDamage = damage - (attacking.stats.mr[0]+attacking.stats.mr[1]);
+			if(totalDamage<0) totalDamage = 0;
+			attacking.stats.hp[0] -= totalDamage;
+			return totalDamage;
+		}else{
+			throw new Error("Invalid attack type");
+		}
 	}
 
 	static get allPassives(){return passives}
+	static get PHYSICAL(){return 'p'}
+	static get MAGICAL(){return 'm'}
 	static get getID(){return new this(null,null,true).id}
 	static get getName(){return new this(null,null,true).name}
 	static get getDesc(){return new this(null,null,true).basicDesc}

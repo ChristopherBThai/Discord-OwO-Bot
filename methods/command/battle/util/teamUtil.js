@@ -11,12 +11,11 @@ const animalUtil = require('./animalUtil.js');
  * animal = valid animal
  */
 exports.addMember = async function(p,animal,pos){
-
 	/* Get team and animal pid */
 	var sql = `SELECT pos,pet_team.pgid,pid,name FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
 	sql += `SELECT pid,count FROM animal WHERE name = ? AND ID = ${p.msg.author.id};`;
 	var result = await p.query(sql,[animal.value]);
-	
+
 	/* Check if its not a duplicate animal in team */
 	var usedPos = [];
 	for(var i=0;i<result[0].length;i++){
@@ -95,7 +94,7 @@ exports.addMember = async function(p,animal,pos){
  * remove = must be either 1-3 or an animal 
  */
 exports.removeMember = async function(p,remove){
-	var sql = `SELECT pos,animal.pid,name FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE user.id = ${p.msg.author.id} ORDER BY pos ASC;`;
+	let sql = `SELECT pos,animal.pid,name FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE user.id = ${p.msg.author.id} ORDER BY pos ASC;`;
 
 	/* If its a position */
 	if(p.global.isInt(remove)){
@@ -114,7 +113,8 @@ exports.removeMember = async function(p,remove){
 		${sql}`;
 	}
 
-	var result = await p.query(sql,remove);
+	let result = await p.query(sql,remove);
+
 	var team = parseTeam(p,result[1]);
 	let text = "";
 	for(var i=0;i<team.length;i++){
@@ -288,7 +288,8 @@ function parseTeam(p,animals,weapons){
 exports.isDead = function(team){
 	let totalhp = 0;
 	for(var i in team){
-		totalhp += team[i].stats.hp[0];
+		let hp = team[i].stats.hp[0];
+		totalhp += hp<0?0:hp;
 	}
 	return totalhp<=0;
 }

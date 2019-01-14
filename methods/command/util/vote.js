@@ -30,6 +30,14 @@ module.exports = new CommandInterface({
 					if(result[1][0]&&result[1][0].patreonDaily==1)
 						patreon = true;
 					if(result[0][0]==undefined){
+						let box = {};
+						if(Math.random()<.5){
+							box.sql = "INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES ("+p.msg.author.id+",1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
+							box.text = "**<:box:427352600476647425> |** You received a lootbox!\n"
+						}else{
+							box.sql = "INSERT INTO crate(uid,cratetype,boxcount,claimcount,claim) VALUES ((SELECT uid FROM user WHERE id = "+p.msg.author.id+"),0,1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
+							box.text = "**<:crate:523771259302182922> | You received a weapon crate!\n";
+						}
 						var reward = 100;
 						var patreonBonus = 0;
 						var weekendBonus = ((weekend)?reward:0);
@@ -37,18 +45,28 @@ module.exports = new CommandInterface({
 							patreonBonus*=2;
 						sql = "INSERT IGNORE INTO vote (id,date,count) VALUES ("+id+",NOW(),1);"+
 							"UPDATE IGNORE cowoncy SET money = money+"+(reward+patreonBonus+weekendBonus)+" WHERE id = "+id+";";
+						sql += box.sql;
 						con.query(sql,function(err,result){
 							if(err) {console.error(err);return;}
 							p.logger.value('cowoncy',(reward+patreonBonus+weekendBonus),['command:vote','id:'+id]);
 							var text = "**☑ |** You have received **"+reward+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
 							if(weekend)
 								text += "**⛱ |** It's the weekend! You also earned a bonus of **"+weekendBonus+"** cowoncy!\n";
+							text += box.text;
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
 							console.log("\x1b[33m",id+" has voted for the first time!");
 							p.logger.increment("votecount");
 						});
 					}else if(result[0][0].time>=12){
+						let box = {};
+						if(Math.random()<.5){
+							box.sql = "INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES ("+p.msg.author.id+",1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
+							box.text = "**<:box:427352600476647425> |** You received a lootbox!\n"
+						}else{
+							box.sql = "INSERT INTO crate(uid,cratetype,boxcount,claimcount,claim) VALUES ((SELECT uid FROM user WHERE id = "+p.msg.author.id+"),0,1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
+							box.text = "**<:crate:523771259302182922> | You received a weapon crate!\n";
+						}
 						var bonus = 100 + (result[0][0].count*3);
 						var patreonBonus = 0;
 						var weekendBonus = ((weekend)?bonus:0);
@@ -56,12 +74,14 @@ module.exports = new CommandInterface({
 							patreonBonus= bonus;
 						sql = "UPDATE vote SET date = NOW(),count = count+1 WHERE id = "+id+";"+
 						"UPDATE IGNORE cowoncy SET money = money+"+(bonus+patreonBonus+weekendBonus)+" WHERE id = "+id+";";
+						sql += box.sql;
 						con.query(sql,function(err,result){
 							if(err) {console.error(err);return;}
 							p.logger.value('cowoncy',(bonus+patreonBonus+weekendBonus),['command:vote','id:'+id]);
 							var text = "**☑ |** You have received **"+bonus+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
 							if(weekend)
 								text += "**⛱ |** It's the weekend! You also earned a bonus of **"+weekendBonus+"** cowoncy!\n";
+							text += box.text;
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
 							console.log("\x1b[33m",id+" has voted and  received cowoncy!");

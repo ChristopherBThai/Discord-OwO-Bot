@@ -3,6 +3,7 @@ const CommandInterface = require('../../commandinterface.js');
 const global = require('../../../util/global.js');
 const petUtil = require('./petutil.js');
 const teamUtil = require('./util/teamUtil.js');
+const battleUtil = require('./util/battleUtil.js');
 
 module.exports = new CommandInterface({
 
@@ -20,7 +21,7 @@ module.exports = new CommandInterface({
 	half:80,
 	six:500,
 
-	execute: function(p){
+	execute: async function(p){
 		/* Parse sub command */
 		var subcommand = p.args[0];
 		if(subcommand != undefined)
@@ -28,19 +29,27 @@ module.exports = new CommandInterface({
 
 		/* Display team */
 		if(p.args.length==0||subcommand=="display")
-			displayTeam(p);
+			await displayTeam(p);
 
 		/* Add a new team member */
-		else if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a"||subcommand=="replace")
-			add(p);
+		else if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a"||subcommand=="replace"){
+			/* No changing while in battle */
+			if((await battleUtil.inBattle(p)))
+				p.errorMsg(", You cannot change your team while you're in battle! Please finish your `owo battle`!");
+			else
+				await add(p);
 
 		/* Remove a team member */
-		else if(subcommand=="remove"||subcommand=="delete"||subcommand=="d")
-			remove(p);
+		}else if(subcommand=="remove"||subcommand=="delete"||subcommand=="d"){
+			/* No changing while in battle */
+			if((await battleUtil.inBattle(p)))
+				p.errorMsg(", You cannot change your team while you're in battle! Please finish your `owo battle`!");
+			else
+				await remove(p);
 
 		/* Rename the team */
-		else if(subcommand=="rename"||subcommand=="r"||subcommand=="name")
-			rename(p);
+		}else if(subcommand=="rename"||subcommand=="r"||subcommand=="name")
+			await rename(p);
 
 		/* If they need help 
 		else if(subcommand=="help"){
