@@ -57,3 +57,26 @@ exports.giveXP = function(pid,xp){
 	return sql;
 
 }
+
+const barLength = 24;
+exports.bar = function(stats){
+	bar = "";
+	let hp = stats.hp[0]/(stats.hp[1]+stats.hp[3]);
+	hp = Math.ceil(barLength*hp);
+	if(hp<0) hp = 0;
+	for(i=0;i<barLength;i++){
+		if(i<hp)
+			bar += '█';
+		else bar += '▁';
+	}
+	bar += "\n";
+	let wp = stats.wp[0]/(stats.wp[1]+stats.wp[3]);
+	wp *= Math.ceil(barLength*wp);
+	if(wp<0) wp = 0;
+	for(i=0;i<barLength;i++){
+		if(i<wp)
+			bar += '▰';
+		else bar += '▱';
+	}
+	return bar;
+}

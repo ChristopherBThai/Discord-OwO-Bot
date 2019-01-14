@@ -1,6 +1,7 @@
 const CommandInterface = require('../../commandinterface.js');
 
 const weaponUtil = require('./util/weaponUtil.js');
+const battleUtil = require('./util/battleUtil.js');
 
 module.exports = new CommandInterface({
 	
@@ -34,6 +35,12 @@ module.exports = new CommandInterface({
 
 		/* Unequip weapon */
 		}else if(p.args.length==2&&(p.args[0]=="unequip"||p.args[0]=="ue")){
+			/* No changing while in battle */
+			if((await battleUtil.inBattle(p))){
+				p.errorMsg(", You cannot change your weapon while you're in battle! Please finish your `owo battle`!");
+				return;
+			}
+
 			var uwid = p.args[1];
 			if(p.global.isInt(uwid))
 				await weaponUtil.unequip(p,uwid);
@@ -42,6 +49,12 @@ module.exports = new CommandInterface({
 
 		/* Equip weapon */
 		}else if(p.args.length==2){
+			/* No changing while in battle */
+			if((await battleUtil.inBattle(p))){
+				p.errorMsg(", You cannot change your weapon while you're in battle! Please finish your `owo battle`!");
+				return;
+			}
+
 			var uwid = p.args[0];
 			var pet = p.args[1];
 
