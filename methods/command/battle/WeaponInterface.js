@@ -37,6 +37,7 @@ module.exports = class WeaponInterface{
 		}else{
 			avgQuality = qualities.reduce((a,b)=>a+b,0)/qualities.length;
 		}
+		avgQuality = Math.trunc(avgQuality);
 		
 		/* Determine rank */
 		let rank = 0;

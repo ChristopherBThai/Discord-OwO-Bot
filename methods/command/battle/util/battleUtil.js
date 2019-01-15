@@ -26,11 +26,12 @@ var getBattle = exports.getBattle = async function(p){
 			AND active = 1
 		ORDER BY pos ASC;`;
 	/* Query enemy team */
-	sql += `SELECT pet_team_battle.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat,cphp,cpwp,cehp,cewp
+	sql += `SELECT pet_team_battle.epgid,enemyTeam.tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat,cphp,cpwp,cehp,cewp
 		FROM user 
 			INNER JOIN pet_team ON user.uid = pet_team.uid
 			INNER JOIN pet_team_battle ON pet_team.pgid = pet_team_battle.pgid
 			INNER JOIN pet_team_animal ON pet_team_battle.epgid = pet_team_animal.pgid
+			INNER JOIN pet_team enemyTeam ON pet_team_battle.epgid = enemyTeam.pgid
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
 			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid 
@@ -45,7 +46,7 @@ var getBattle = exports.getBattle = async function(p){
 
 	/* Grab pgid */
 	let pgid = result[0][0]?result[0][0].pgid:undefined;
-	let epgid = result[1][0]?result[1][0].pgid:undefined;
+	let epgid = result[1][0]?result[1][0].epgid:undefined;
 
 	if(!pgid||!epgid) return undefined;
 
@@ -79,23 +80,30 @@ var getBattle = exports.getBattle = async function(p){
 
 exports.initBattle = async function(p){
 	/* Find random opponent */
-	let sql = `SELECT COUNT(pgid) as count FROM pet_team`;
+	let sql = `SELECT COUNT(pgid) as count FROM pet_team;SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id}`;
 	let count = await p.query(sql);
+	let pgid = count[1][0];
+	if(!pgid){
+		p.errorMsg(", You don't have a team! Set one with `owo team add {animal}`!");
+		return;
+	}
+	pgid = pgid.pgid
+	count = count[0];
 
 	if(!count[0]) throw new Error("battleUtil sql is broken");
 
-	count = Math.floor(Math.random()*count[0].count);
+	count = Math.floor(Math.random()*(count[0].count-1));
 
 	/* Query random team */
 	sql = `SELECT pet_team.pgid,tname,pos,name,nickname,pid,xp FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE pet_team.pgid = (
-			SELECT pgid FROM pet_team LIMIT 1 OFFSET ${count}	
+			SELECT pgid FROM pet_team WHERE pgid != ${pgid} LIMIT 1 OFFSET ${count}	
 		) ORDER BY pos ASC;`;
 	sql += `SELECT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname 
 		FROM 
 			user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid 
 		WHERE 
 			a.pid IN (
-				SELECT pid FROM pet_team LEFT JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid WHERE pet_team.pgid = (SELECT pgid FROM pet_team LIMIT 1 OFFSET ${count})
+				SELECT pid FROM pet_team LEFT JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid WHERE pet_team.pgid = (SELECT pgid FROM pet_team WHERE pgid != ${pgid}  LIMIT 1 OFFSET ${count})
 			);`;
 	/* And our team */
 	sql += `SELECT pet_team.pgid,tname,pos,name,nickname,pid,xp FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
@@ -106,10 +114,13 @@ exports.initBattle = async function(p){
 
 	let result = await p.query(sql);
 
-	let pgid = result[0][0]?result[0][0].pgid:undefined;
-	let epgid = result[2][0]?result[2][0].pgid:undefined;
+	pgid = result[2][0]?result[2][0].pgid:undefined;
+	let epgid = result[0][0]?result[0][0].pgid:undefined;
 
-	if(!pgid||!epgid) throw new Error("Could not grab pgid");
+	if(!pgid||!epgid){
+		p.errorMsg(", Create a team with the command `owo team add {animal}");
+		throw new Error("Could not grab pgid");
+	}
 
 	/* Parse */
 	let eTeam = teamUtil.parseTeam(p,result[0],result[1]);
@@ -120,7 +131,7 @@ exports.initBattle = async function(p){
 	let cestats = initSqlSaveStats(eTeam);
 	
 	/* Combine all to one obj */
-	let teams = {player:{pgid:pgid,name:result[0][0].tname,team:pTeam},enemy:{pgid:epgid,name:result[2][0].tname,team:eTeam}};
+	let teams = {player:{pgid:pgid,name:result[2][0].tname,team:pTeam},enemy:{pgid:epgid,name:result[0][0].tname,team:eTeam}};
 
 	/* Set display type */
 	if(result[4][0]&&result[4][0].type==1)
@@ -137,7 +148,7 @@ exports.initBattle = async function(p){
 		) ON DUPLICATE KEY UPDATE 
 			epgid = ${epgid},
 			cphp = '${cpstats.hp}', cpwp = '${cpstats.wp}',
-			cehp = '${cpstats.hp}', cewp = '${cestats.wp}',
+			cehp = '${cestats.hp}', cewp = '${cestats.wp}',
 			active = 1,started = NOW();`;
 	result = await p.query(sql);
 
@@ -178,11 +189,11 @@ var displayText = exports.displayText = async function(p,team,logs){
 		"description":logtext,
 		"fields":[
 		{
-			"name":team.player.name,
+			"name":team.player.name?team.player.name:"Player Team",
 			"value":pTeam,
 			"inline":true
 		},{
-			"name":team.enemy.name,
+			"name":team.enemy.name?team.enemy.name:"Enemy Team",
 			"value":eTeam,
 			"inline":true
 		} ] 
@@ -248,11 +259,11 @@ var display = exports.display = async function(p,team,logs){
 		},
 		"fields":[
 		{
-			"name":team.player.name,
+			"name":team.player.name?team.player.name:"Player team",
 			"value":pTeam,
 			"inline":true
 		},{
-			"name":team.enemy.name,
+			"name":team.enemy.name?team.enemy.name:"Enemy team",
 			"value":eTeam,
 			"inline":true
 		}
@@ -291,7 +302,7 @@ var reactionCollector = exports.reactionCollector = async function(p,msg,battle,
 			},3000);
 		}else{
 			actions = actions.split('');
-			if(actions.length == team.length){
+			if(actions.length >= team.length){
 				action = {};
 				for(var i=0;i<actions.length;i++){
 					if(actions[i]=='w')
@@ -304,6 +315,8 @@ var reactionCollector = exports.reactionCollector = async function(p,msg,battle,
 					try{await executeBattle(p,msg,action);}
 					catch(err){console.error(err);}
 				},2000);
+			}else{
+				p.errorMsg(", Invalid arguments!");
 			}
 		}
 		return;
@@ -391,7 +404,7 @@ async function executeBattle(p,msg,action){
 		let cestats = initSqlSaveStats(battle.enemy.team);
 		let ocpstats = initSqlSaveStats(battle.player.team,2);
 		let ocestats = initSqlSaveStats(battle.enemy.team,2);
-		sql = `UPDATE pet_team_battle SET
+		sql = `UPDATE IGNORE pet_team_battle SET
 				cphp = '${cpstats.hp}', cpwp = '${cpstats.wp}',
 				cehp = '${cestats.hp}', cewp = '${cestats.wp}'
 			WHERE 
@@ -402,6 +415,10 @@ async function executeBattle(p,msg,action){
 				cehp = '${ocestats.hp}' AND cewp = '${ocestats.wp}';
 			`;
 		let result = await p.query(sql);
+		if(result.changedRows==0){
+			msg.edit("Could not execute the turn");
+			return;
+		}
 		let embed = await display(p,battle,logs);
 		await msg.edit(embed);
 		await reactionCollector(p,msg,battle,null,(action.auto?action:null));
@@ -428,14 +445,12 @@ function initSqlSaveStats(team,offset=0){
 function parseSqlStats(team,hp,wp){
 	hp = hp.split(',');
 	wp = wp.split(',');
-	if(team.length != (hp.length+wp.length)/2)
-		throw new Error("Hp/Wp Stats does not match");
 	
 	for(let i=0;i<team.length;i++){
-		team[i].stats.hp[0] = parseInt(hp[i]);
-		team[i].stats.hp[2] = parseInt(hp[i]);
-		team[i].stats.wp[0] = parseInt(wp[i]);
-		team[i].stats.wp[2] = parseInt(wp[i]);
+		team[i].stats.hp[0] = parseInt(hp[i]?hp[i]:0);
+		team[i].stats.hp[2] = parseInt(hp[i]?hp[i]:0);
+		team[i].stats.wp[0] = parseInt(wp[i]?wp[i]:0);
+		team[i].stats.wp[2] = parseInt(wp[i]?wp[i]:0);
 	}
 }
 
@@ -532,8 +547,8 @@ function animalDisplayText(animal){
 	let mag = Math.ceil(animal.stats.mag[0]+animal.stats.mag[1]);
 	let pr = Math.ceil(animal.stats.pr[0]+animal.stats.pr[1]);
 	let mr = Math.ceil(animal.stats.mr[0]+animal.stats.mr[1]);
-	text += `<:hp:531620120410456064> \`${hp}\` <:att:531616155450998794> \`${att}\` <:pr:531616156222488606> \`${pr}\`\n`;
-	text += `<:wp:531620120976687114> \`${wp}\` <:mag:531616156231139338> \`${mag}\` <:mr:531616156226945024> \`${mr}\``;
+	text += `\`${hp} HP\` <:att:531616155450998794> \`${att}\` <:pr:531616156222488606> \`${pr}\`\n`;
+	text += `\`${wp} WP\` <:mag:531616156231139338> \`${mag}\` <:mr:531616156226945024> \`${mr}\``;
 	if(animal.weapon){
 		text += "\n"+animal.weapon.rank.emoji+animal.weapon.emoji;
 		let passives = animal.weapon.passives;

@@ -48,6 +48,7 @@ module.exports = new CommandInterface({
 		for(var i=0;i<weapon.passives.length;i++){
 			text2 += " "+weapon.passives[i].emoji;
 		}
+		text2 += " "+weapon.avgQuality+"%";
 
 		/* construct sql */
 		sql = `INSERT INTO user_weapon (uid,wid,stat) VALUES (${uid},${weapon.id},${weapon.sqlStat});`;

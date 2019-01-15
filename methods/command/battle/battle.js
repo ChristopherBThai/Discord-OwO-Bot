@@ -15,13 +15,14 @@ module.exports = new CommandInterface({
 
 	related:["owo zoo","owo pet","owo team","owo weapon"],
 
-	cooldown:30000,
+	cooldown:10000,
 	half:80,
 	six:500,
 	bot:true,
 
 	execute: async function(p){
 
+		/* Parse arguments */
 		if(p.args[0]=="text"||p.args[0]=="image"){
 			await changeType(p,p.args[0]);
 			return;
@@ -29,10 +30,17 @@ module.exports = new CommandInterface({
 
 		let auto = false;
 		let actions = undefined;
-		if(p.args[0]=="a"||p.args[0]=="auto")
-			auto =  true;
-		if(p.args[0]&&p.args[0].match(/[aw]/gi).length==p.args[0].length)
-			actions = p.args[0];
+		if(p.args[0]){
+			if(p.args[0]=="a"||p.args[0]=="auto")
+				auto =  true;
+			let tempMatch = p.args[0].match(/[aw]/gi);
+			if(tempMatch&&p.args[0].match(/[aw]/gi).length==p.args[0].length)
+				actions = p.args[0];
+			if(p.global.isUser(p.args[0])){
+				p.errorMsg(", battles with other users are not implemented yet! Sorry :(",3000);
+				return;
+			}
+		}
 
 		let resume = true;
 		/* Get battle info */
