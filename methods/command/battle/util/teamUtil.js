@@ -46,7 +46,7 @@ exports.addMember = async function(p,animal,pos){
 	if(!result[1][0]){
 		p.errorMsg(`, you do not own this animal!`,3000);
 		return;
-	}else if(result[1][0].count<1){
+	}else if(false&&result[1][0].count<1){
 		p.errorMsg(`, you need at least 1 animal in the zoo!`,3000);
 		return;
 	}

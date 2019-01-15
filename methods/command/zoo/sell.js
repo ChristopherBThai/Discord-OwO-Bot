@@ -2,6 +2,7 @@ const CommandInterface = require('../../commandinterface.js');
 
 const ranks = {};
 const animals = require('../../../../tokens/owo-animals.json');
+const weaponUtil = require('../battle/util/weaponUtil.js');
 
 module.exports = new CommandInterface({
 
@@ -20,7 +21,7 @@ module.exports = new CommandInterface({
 	six:500,
 	bot:true,
 
-	execute: function(p){
+	execute: async function(p){
 		var global=p.global,con=p.con,msg=p.msg,args=p.args;
 
 		var name = undefined;
@@ -46,7 +47,11 @@ module.exports = new CommandInterface({
 
 		/* Only one argument */
 		}else if(args.length==1){
-			if(args[0].toLowerCase()=="all")
+			/* If its an int, it's a weapon id */
+			if(p.global.isInt(args[0])){
+				await weaponUtil.sell(p,parseInt(args[0]));
+				return;
+			}else if(args[0].toLowerCase()=="all")
 				ranks = global.getAllRanks();
 			else
 				name = args[0];
