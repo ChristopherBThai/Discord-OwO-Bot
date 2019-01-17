@@ -1,8 +1,12 @@
 exports.alter = function(id,text){
-	if(id==220934553861226498)
-		return geist(text);
-	else
-		return text;
+	switch(id){
+		case '220934553861226498':
+			return geist(text);
+		case '369533933471268875':
+			return light(text);
+		default:
+			return text;
+	}
 }
 
 function geist(text){
@@ -16,6 +20,18 @@ function geist(text){
 		"color":6315775,
 		"thumbnail":{
 			"url":"https://i.imgur.com/PcQVN4l.gif"
+		}
+	};
+	return {embed};
+}
+
+function light(text){
+	text = text.replace("You found:","Lighti cuddled and befriended many animals and found:\n<:blank:427371936482328596> **|**");
+	var embed = {
+		"description":text,
+		"color":4286945,
+		"thumbnail":{
+			"url":"https://cdn.discordapp.com/attachments/531265349375492146/531874556697247746/image0.gif"
 		}
 	};
 	return {embed};
