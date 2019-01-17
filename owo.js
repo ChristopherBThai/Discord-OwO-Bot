@@ -93,7 +93,11 @@ client.on("guildMemberRemove", (member) => {
 	patreon.left(member);
 });
 
-client.on('error',console.error);
+client.on('error',(err) => {
+	console.error(new Date());
+	console.error(err.Error);
+	console.error(err.errno);
+});
 
 function updateActivity(){
 	client.shard.fetchClientValues('guilds.size')
@@ -105,4 +109,14 @@ function updateActivity(){
 
 process.on('message',message => {
 	broadcastHandler.handle(client,message)
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+	console.error(new Date());
+	console.error('Unhandled Rejection at:', reason.stack || reason);
+});
+
+process.on('uncaughtException', (err) => {
+	console.error(new Date());
+	console.error(`Caught exception: ${err}`);
 });
