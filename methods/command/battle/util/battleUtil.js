@@ -71,9 +71,9 @@ var getBattle = exports.getBattle = async function(p){
 
 	/* Set display type */
 	if(result[2][0]&&result[2][0].type==1)
-		teams.displayText = false;
-	else
 		teams.displayText = true;
+	else
+		teams.displayText = false;
 
 	return teams;
 }
@@ -135,9 +135,9 @@ exports.initBattle = async function(p){
 
 	/* Set display type */
 	if(result[4][0]&&result[4][0].type==1)
-		teams.displayText = false;
-	else
 		teams.displayText = true;
+	else
+		teams.displayText = false;
 
 	/* Added the team into team_battle table */
 	sql = `INSERT IGNORE INTO pet_team_battle (pgid,epgid,cphp,cpwp,cehp,cewp,active) VALUES (
@@ -435,8 +435,8 @@ function initSqlSaveStats(team,offset=0){
 	wp = "";
 	for(let i in team){
 		if(!team[i].stats) animalUtil.stats(team[i]);
-		hp += team[i].stats.hp[offset]+",";
-		wp += team[i].stats.wp[offset]+",";
+		hp += Math.trunc(team[i].stats.hp[offset])+",";
+		wp += Math.trunc(team[i].stats.wp[offset])+",";
 	}
 	return {hp:hp.slice(0,-1),wp:wp.slice(0,-1)};
 }
@@ -521,8 +521,7 @@ function calculateXP(team,enemy){
 	/* Calculate xp */
 	let xp = 10;
 	if(team.win&&enemy.win) xp = 15;
-	else if(team.win) xp = 50;
-	xp *= lvlDiff;
+	else if(team.win) xp = 50*lvlDiff;
 
 	return xp;
 }

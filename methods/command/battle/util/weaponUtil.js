@@ -263,22 +263,26 @@ exports.equip = async function(p,uwid,pet){
 			uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND
 			uwid = ${uwid} AND
 			${pid} IS NOT NULL;`;
-	sql += `SELECT wid,name,nickname FROM user_weapon a LEFT JOIN animal b ON a.pid = b.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND uwid = ${uwid};`;
+	sql += `SELECT animal.name,animal.nickname,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal ON a.pid = animal.pid WHERE a.uwid = ${uwid} AND uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
 	let result = await p.query(sql);
 
 	/* Success */
 	if(result[1].changedRows>0){
 		let animal = p.global.validAnimal(result[2][0].name);
 		let nickname = result[2][0].nickname;
-		let weapon = weapons[result[2][0].wid];
-		p.replyMsg(weaponEmoji,`, ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}** is now wielding ${weapon.getEmoji} **${weapon.getName}**!`);
+		let weapon = this.parseWeaponQuery(result[2]);
+		weapon = weapon[Object.keys(weapon)[0]];
+		weapon = this.parseWeapon(weapon);
+		p.replyMsg(weaponEmoji,`, ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}** is now wielding ${weapon.emoji} **${weapon.name}**!`);
 
 	/* Already equipped */
 	}else if(result[1].affectedRows>0){
 		let animal = p.global.validAnimal(result[2][0].name);
 		let nickname = result[2][0].nickname;
-		let weapon = weapons[result[2][0].wid];
-		p.replyMsg(weaponEmoji,`, ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}** is already wielding ${weapon.getEmoji} **${weapon.getName}**!`);
+		let weapon = this.parseWeaponQuery(result[2]);
+		weapon = weapon[Object.keys(weapon)[0]];
+		weapon = this.parseWeapon(weapon);
+		p.replyMsg(weaponEmoji,`, ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}** is already wielding ${weapon.emoji} **${weapon.name}**!`);
 
 	/* A Failure (like me!) */
 	}else{
@@ -287,7 +291,7 @@ exports.equip = async function(p,uwid,pet){
 }
 
 exports.unequip = async function(p,uwid){
-	let sql = `SELECT wid,name,nickname FROM user_weapon a LEFT JOIN animal b ON a.pid = b.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND uwid = ${uwid};`;
+	let sql = `SELECT animal.name,animal.nickname,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal ON a.pid = animal.pid WHERE a.uwid = ${uwid} AND uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
 	sql += `UPDATE IGNORE user_weapon SET pid = NULL WHERE uwid = ${uwid} AND uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
 	let result =  await p.query(sql);
 
@@ -295,14 +299,18 @@ exports.unequip = async function(p,uwid){
 	if(result[1].changedRows>0){
 		let animal = p.global.validAnimal(result[0][0].name);
 		let nickname = result[0][0].nickname;
-		let weapon = weapons[result[0][0].wid];
-		p.replyMsg(weaponEmoji,`, Unequipped ${weapon.getEmoji} **${weapon.getName}** from ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}**`);
+		let weapon = this.parseWeaponQuery(result[0]);
+		weapon = weapon[Object.keys(weapon)[0]];
+		weapon = this.parseWeapon(weapon);
+		p.replyMsg(weaponEmoji,`, Unequipped ${weapon.emoji} **${weapon.name}** from ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}**`);
 
 
 	/* No body using weapon */
 	}else if(result[1].affectedRows>0){
-		let weapon = weapons[result[0][0].wid];
-		p.replyMsg(weaponEmoji,`, No animal is using ${weapon.getEmoji} **${weapon.getName}**`);
+		let weapon = this.parseWeaponQuery(result[0]);
+		weapon = weapon[Object.keys(weapon)[0]];
+		weapon = this.parseWeapon(weapon);
+		p.replyMsg(weaponEmoji,`, No animal is using ${weapon.emoji} **${weapon.name}**`);
 
 	/* Invalid */
 	}else{
