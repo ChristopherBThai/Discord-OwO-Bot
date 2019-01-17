@@ -24,12 +24,15 @@ module.exports = class WeaponInterface{
 		/* Construct stats */
 		let stats = this.toStats(qualities);
 
+		/* Check if it has enough emojis */
+		if(this.emojis.length!=7) throw new Error(`[${args.id}] does not have 7 emojis`);
+
 		/* Get the quality of the weapon */
 		let avgQuality = 0;
 		if(passives.length>0){
 			let totalQualities = qualities.reduce((a,b)=>a+b,0);
 			let qualityCount = qualities.length;
-			for(var i=1;i<passives.length;i++){
+			for(var i=0;i<passives.length;i++){
 				totalQualities += passives[i].qualities.reduce((a,b)=>a+b,0);
 				qualityCount += passives[i].qualities.length;
 			}
@@ -38,6 +41,8 @@ module.exports = class WeaponInterface{
 			avgQuality = qualities.reduce((a,b)=>a+b,0)/qualities.length;
 		}
 		avgQuality = Math.trunc(avgQuality);
+
+		let emoji = this.getEmoji(avgQuality);
 		
 		/* Determine rank */
 		let rank = 0;
@@ -69,6 +74,7 @@ module.exports = class WeaponInterface{
 		this.stats = stats;
 		this.passives = passives;
 		this.rank = rank;
+		this.emoji = emoji;
 	}
 
 	/* Alters the animal's stats */
@@ -178,11 +184,31 @@ module.exports = class WeaponInterface{
 		}
 	}
 
+	getEmoji(quality){
+		/* If there are multiple quality, get avg */
+		if(typeof quality == "string"){
+			quality = parseInt(quality.split(','));
+			quality = quality.reduce((a,b)=>a+b,0)/quality.length;
+		}
+		
+		quality /= 100;
+
+		/* Get correct rank */
+		var count = 0;
+		for(var i=0;i<ranks.length;i++){
+			count += ranks[i][0];
+			if(quality <= count)
+				return this.emojis[i];
+		}
+		return this.emojis[0];
+
+	}
+
 	static get allPassives(){return passives}
 	static get PHYSICAL(){return 'p'}
 	static get MAGICAL(){return 'm'}
 	static get getID(){return new this(null,null,true).id}
 	static get getName(){return new this(null,null,true).name}
 	static get getDesc(){return new this(null,null,true).basicDesc}
-	static get getEmoji(){return new this(null,null,true).emoji}
+	//static get getEmoji(){return new this(null,null,true).emoji}
 }
