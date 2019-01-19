@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const Error = require('../../../../handler/errorHandler.js');
 const dateUtil = require('../../../../util/dateUtil.js');
+const global = require('../../../../util/global.js');
 const teamUtil = require('./teamUtil.js');
 const weaponUtil = require('./weaponUtil.js');
 const animalUtil = require('./animalUtil.js');
@@ -157,27 +158,29 @@ exports.initBattle = async function(p){
 
 var displayText = exports.displayText = async function(p,team,logs){
 	let logtext = "";
-	let pTeam = "";
+	let pTeam = [];
 	for(var i=0;i<team.player.team.length;i++){
 		let player = team.player.team[i];
-		pTeam += animalDisplayText(player);
+		let text = ""
+		text += animalDisplayText(player);
 		logtext += "\n" + (player.animal.uni?player.animal.uni:player.animal.value) + " ";
 		if(logs&&logs.player&&logs.player[i]){
 			logtext += logs.player[i];
 		}else
 			logtext += "is ready to battle!";
-		pTeam += "\n";
+		pTeam.push(text);
 	}
-	let eTeam = "";
+	let eTeam = [];
 	for(var i=0;i<team.enemy.team.length;i++){
 		let enemy = team.enemy.team[i];
-		eTeam += animalDisplayText(enemy);
+		let text = "";
+		text += animalDisplayText(enemy);
 		logtext += "\n" + (enemy.animal.uni?enemy.animal.uni:enemy.animal.value) + " ";
 		if(logs&&logs.enemy&&logs.enemy[i]){
 			logtext += logs.enemy[i];
 		}else
 			logtext += "is ready to battle!";
-		eTeam += "\n";
+		eTeam.push(text);
 
 	}
 	let embed = {
@@ -187,16 +190,35 @@ var displayText = exports.displayText = async function(p,team,logs){
 			"icon_url":p.msg.author.avatarURL
 		},
 		"description":logtext,
-		"fields":[
-		{
+		"fields":[] 
+	}
+	if(pTeam.join("\n").length>=1020||eTeam.join("\n").length>=1020){
+		for(let i in pTeam){
+			embed.fields.push({
+				"name":team.player.name?team.player.name:"Player Team",
+				"value":pTeam[i],
+				"inline":true
+			});
+		}
+		for(let i in pTeam){
+			embed.fields.push({
+				"name":team.enemy.name?team.enemy.name:"Enemy Team",
+				"value":eTeam[i],
+				"inline":true
+			});
+		}
+	}
+	else{
+		embed.fields.push({
 			"name":team.player.name?team.player.name:"Player Team",
-			"value":pTeam,
+			"value":pTeam.join('\n'),
 			"inline":true
-		},{
+		});
+		embed.fields.push({
 			"name":team.enemy.name?team.enemy.name:"Enemy Team",
-			"value":eTeam,
+			"value":eTeam.join('\n'),
 			"inline":true
-		} ] 
+		});
 	}
 	/*
 	if(logtext!="")
@@ -435,8 +457,12 @@ function initSqlSaveStats(team,offset=0){
 	wp = "";
 	for(let i in team){
 		if(!team[i].stats) animalUtil.stats(team[i]);
-		hp += Math.trunc(team[i].stats.hp[offset])+",";
-		wp += Math.trunc(team[i].stats.wp[offset])+",";
+		hpN = Math.trunc(team[i].stats.hp[offset]);
+		wpN = Math.trunc(team[i].stats.wp[offset]);
+		if(global.isInt(hpN)) hp += hpN+",";
+		else hp += "0,";
+		if(global.isInt(wpN)) wp += wpN+",";
+		else wp += "0,";
 	}
 	return {hp:hp.slice(0,-1),wp:wp.slice(0,-1)};
 }
