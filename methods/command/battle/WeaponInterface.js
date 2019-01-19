@@ -17,6 +17,9 @@ module.exports = class WeaponInterface{
 		this.init();
 		if(noCreate) return;
 
+		/* Mana will also have a quality (always last in quality array) */
+		this.qualityList.push(this.manaRange);
+
 		/* Get random vars if not present */
 		if(!passives) passives = this.randomPassives();
 		if(!qualities) qualities = this.randomQualities();
@@ -72,6 +75,7 @@ module.exports = class WeaponInterface{
 		this.avgQuality = avgQuality;
 		this.desc = desc;
 		this.stats = stats;
+		this.manaCost = stats[stats.length-1];
 		this.passives = passives;
 		this.rank = rank;
 		this.emoji = emoji;
@@ -144,31 +148,8 @@ module.exports = class WeaponInterface{
 		return alive;
 	}
 
-	/* Basic attack when animal has no weapon */
-	static basicAttack(me,team,enemy){
-		if(me.stats.hp[0]<=0) return;
-		
-		/* Grab an enemy that I'm attacking */
-		let alive = WeaponInterface.getAlive(enemy);
-		let attacking = enemy[alive[Math.trunc(Math.random()*alive.length)]];
-		if(!attacking) return;
-
-		/* Calculate damage */
-		let damage = WeaponInterface.getDamage(me.stats.att);
-
-		/* Deal damage */
-		damage = WeaponInterface.dealDamage(attacking,damage,WeaponInterface.PHYSICAL);
-
-		return `${me.nickname?me.nickname:me.animal.name}\`deals ${damage}\`<:att:531616155450998794>\` to \`${attacking.nickname?attacking.nickname:attacking.animal.name}`
-	}
-
-	/* Calculate the damage output (Either mag or att) */
-	static getDamage(stat,multiplier=1){
-		return Math.round(multiplier*(stat[0]+stat[1]+Math.random()*100-50));
-	}
-
-	/* Deals damage to an opponent */
-	static dealDamage(attacking,damage,type){
+	/* Deals damage to this animal */
+	dealDamage(attacking,damage,type){
 		if(type==WeaponInterface.PHYSICAL){
 			let totalDamage = damage - (attacking.stats.pr[0]+attacking.stats.pr[1]);
 			if(totalDamage<0) totalDamage = 0;
@@ -182,6 +163,83 @@ module.exports = class WeaponInterface{
 		}else{
 			throw new Error("Invalid attack type");
 		}
+	}
+
+	/* Uses mana */
+	useMana(me,cost){
+		if(!me) return false;
+		if(!cost) cost = this.manaCost;
+		me.stats.wp[0] -= cost;
+		return true;
+	}
+
+	/* heals */
+	heal(me,amount){
+		/* Full health */
+		if(!me||me.stats.hp[0]>=me.stats.hp[1])
+			return 0;
+
+		me.stats.hp[0] += amount;
+		if(me.stats.hp[0]>me.stats.hp[1])
+			me.stats.hp[0] = me.stats.hp[1];
+		return amount;
+	}
+
+	/* Basic attack when animal has no weapon */
+	static basicAttack(me,team,enemy){
+		if(me.stats.hp[0]<=0) return;
+		
+		/* Grab an enemy that I'm attacking */
+		let alive = WeaponInterface.getAlive(enemy);
+		let attacking = enemy[alive[Math.trunc(Math.random()*alive.length)]];
+		if(!attacking) return;
+
+		/* Calculate damage */
+		let damage = WeaponInterface.getDamage(me.stats.att);
+
+		/* Deal damage */
+		damage = WeaponInterface.inflictDamage(attacking,damage,WeaponInterface.PHYSICAL);
+
+		return `${me.nickname?me.nickname:me.animal.name}\`deals ${damage}\`<:att:531616155450998794>\` to \`${attacking.nickname?attacking.nickname:attacking.animal.name}`
+	}
+
+	/* Calculate the damage output (Either mag or att) */
+	static getDamage(stat,multiplier=1){
+		return Math.round( (multiplier*(stat[0]+stat[1])) + (Math.random()*100-50));
+	}
+
+	/* Deals damage to an opponent */
+	static inflictDamage(attacking,damage,type){
+		if(attacking.weapon){
+			return attacking.weapon.dealDamage(attacking,damage,type);
+		}else{
+			if(type==WeaponInterface.PHYSICAL){
+				let totalDamage = damage - (attacking.stats.pr[0]+attacking.stats.pr[1]);
+				if(totalDamage<0) totalDamage = 0;
+				attacking.stats.hp[0] -= totalDamage;
+				return totalDamage;
+			}else if(type==WeaponInterface.MAGICAL){
+				let totalDamage = damage - (attacking.stats.mr[0]+attacking.stats.mr[1]);
+				if(totalDamage<0) totalDamage = 0;
+				attacking.stats.hp[0] -= totalDamage;
+				return totalDamage;
+			}else{
+				throw new Error("Invalid attack type");
+			}
+		}
+	}
+
+	/* heals */
+	static heal(me,amount){
+		if(me.weapon) return me.weapon.heal(me,amount);
+		/* Full health */
+		if(!me||me.stats.hp[0]>=me.stats.hp[1])
+			return 0;
+
+		me.stats.hp[0] += amount;
+		if(me.stats.hp[0]>me.stats.hp[1])
+			me.stats.hp[0] = me.stats.hp[1];
+		return amount;
 	}
 
 	getEmoji(quality){
@@ -204,9 +262,22 @@ module.exports = class WeaponInterface{
 
 	}
 
+	/* Get lowest hp animal */
+	static getLowestHp(team){
+		let lowest = undefined;
+		for(let i=0;i<team.length;i++)
+			if(team[i].stats.hp[0]>0)
+				if(!lowest||lowest.stats.hp[0]>team[i].stats.hp[0])
+					lowest = team[i];
+		return lowest;
+	}
+
 	static get allPassives(){return passives}
 	static get PHYSICAL(){return 'p'}
+	static get strEmoji(){return '<:att:531616155450998794>'}
 	static get MAGICAL(){return 'm'}
+	static get magEmoji(){return '<:mag:531616156231139338>'}
+	static get hpEmoji(){return '<:hp:531620120410456064>'}
 	static get getID(){return new this(null,null,true).id}
 	static get getName(){return new this(null,null,true).name}
 	static get getDesc(){return new this(null,null,true).basicDesc}
