@@ -29,6 +29,7 @@
     "weeb.js": "^1.6.2",
     "patreon":"^0.4.1",
     "systeminformation":"^3.47.0",
-	"winston":"^3.1.0"
+	"winston":"^3.1.0",
+	"bufferutil":"3.0.5"
   }
 }

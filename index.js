@@ -1,3 +1,6 @@
+/* Default is 4. Use higher numbers if you have enough cores */
+process.env.UV_THREADPOOL_SIZE = 12;
+
 const debug = false;
 if(debug) var auth = require('../tokens/scuttester-auth.json');
 else var auth = require('../tokens/owo-auth.json');
@@ -43,6 +46,18 @@ process.on('exit', function(code) {
 
 try{
 	Manager.spawn(Manager.totalShards,15000).catch(console.error);
-}catch(err){console.error(err);}
+}catch(err){
+	console.error(err);
+}
 
 ramCheck.check(Manager);
+
+process.on('unhandledRejection', (reason, promise) => {
+	console.error(new Date());
+	console.error('Unhandled Rejection at:', reason.stack || reason);
+});
+
+process.on('uncaughtException', (err) => {
+	console.error(new Date());
+	console.error(`Caught exception: ${err}`);
+});
