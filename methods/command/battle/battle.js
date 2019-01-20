@@ -2,6 +2,7 @@ const CommandInterface = require('../../commandinterface.js');
 
 const battleUtil = require('./util/battleUtil.js');
 const battleEmoji = '⚔';
+const battleSettings = require('./battleSetting.js');
 
 module.exports = new CommandInterface({
 
@@ -28,6 +29,7 @@ module.exports = new CommandInterface({
 			return;
 		}
 
+		/*
 		let auto = false;
 		let actions = undefined;
 		if(p.args[0]){
@@ -41,6 +43,9 @@ module.exports = new CommandInterface({
 				return;
 			}
 		}
+		*/
+
+		let setting = await parseSettings(p);
 
 		let resume = true;
 		/* Get battle info */
@@ -50,9 +55,9 @@ module.exports = new CommandInterface({
 			battle = await battleUtil.initBattle(p);
 		}
 
-		let embed = await battleUtil.display(p,battle);
+		let embed = await battleUtil.display(p,battle,undefined,setting.display);
 		let msg = await p.msg.channel.send(embed);
-		await battleUtil.reactionCollector(p,msg,battle,auto,actions);
+		await battleUtil.reactionCollector(p,msg,battle,setting.auto,(setting.auto?"www":undefined),setting);
 	}
 
 })
@@ -74,4 +79,26 @@ async function changeType(p,type){
 		await p.query(`INSERT IGNORE INTO user (id,count) VALUES (${p.msg.author.id},0);+sql`);
 	}
 	p.replyMsg(battleEmoji,text);
+}
+
+async function parseSettings(p){
+	let sql = `SELECT auto,display,speed from user INNER JOIN battle_settings WHERE id = ${p.msg.author.id};`;
+	let result = await p.query(sql);
+	return parseSetting(result);
+}
+
+function parseSetting(query){
+	let auto = true;
+	let display = "image";
+	let speed = 1;
+
+	if(query[0]){
+		if(query[0].auto==1)
+			auto = false;
+		if(query[0].display=="text")
+			display = "text";
+		if(query[0].speed==0||query[0].speed==2)
+			speed = query[0].speed;
+	}
+	return {auto,display,speed};
 }

@@ -7,7 +7,7 @@ const weaponUtil = require('./util/weaponUtil.js');
 
 module.exports = new CommandInterface({
 	
-	alias:["crate","weaponcrate"],
+	alias:["crate","weaponcrate","wc"],
 
 	args:"",
 
