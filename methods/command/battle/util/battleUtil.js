@@ -70,12 +70,6 @@ var getBattle = exports.getBattle = async function(p){
 	/* Combine result */
 	let teams = {player:{pgid:pgid,name:result[0][0].tname,team:pTeam},enemy:{pgid:epgid,name:result[1][0].tname,team:eTeam}};
 
-	/* Set display type */
-	if(result[2][0]&&result[2][0].type==1)
-		teams.displayText = true;
-	else
-		teams.displayText = false;
-
 	return teams;
 }
 
@@ -133,12 +127,6 @@ exports.initBattle = async function(p){
 	
 	/* Combine all to one obj */
 	let teams = {player:{pgid:pgid,name:result[2][0].tname,team:pTeam},enemy:{pgid:epgid,name:result[0][0].tname,team:eTeam}};
-
-	/* Set display type */
-	if(result[4][0]&&result[4][0].type==1)
-		teams.displayText = true;
-	else
-		teams.displayText = false;
 
 	/* Added the team into team_battle table */
 	sql = `INSERT IGNORE INTO pet_team_battle (pgid,epgid,cphp,cpwp,cehp,cewp,active) VALUES (
@@ -229,8 +217,8 @@ var displayText = exports.displayText = async function(p,team,logs){
 
 
 /* Generates a display for the current battle */
-var display = exports.display = async function(p,team,logs){
-	if(team.displayText)
+var display = exports.display = async function(p,team,logs,display){
+	if(display=="text")
 		return displayText(p,team,logs);
 	let image = await battleImageUtil.generateImage(team);
 	let logtext = "";
@@ -302,7 +290,7 @@ var display = exports.display = async function(p,team,logs){
 }
 
 /* Creates a reaction collector and executes the turn */
-var reactionCollector = exports.reactionCollector = async function(p,msg,battle,auto,actions){
+var reactionCollector = exports.reactionCollector = async function(p,msg,battle,auto,actions,setting){
 	/* Parse team and first animal choice */
 	let team = battle.player.team;
 	var current = 0;
@@ -319,7 +307,7 @@ var reactionCollector = exports.reactionCollector = async function(p,msg,battle,
 	if(actions){
 		if(typeof actions === 'object'){
 			setTimeout(async function(){
-				try{await executeBattle(p,msg,actions);}
+				try{await executeBattle(p,msg,actions,setting);}
 				catch(err){console.error(err);}
 			},3000);
 		}else{
@@ -334,7 +322,7 @@ var reactionCollector = exports.reactionCollector = async function(p,msg,battle,
 				}
 				action.auto = true;
 				setTimeout(async function(){
-					try{await executeBattle(p,msg,action);}
+					try{await executeBattle(p,msg,action,setting);}
 					catch(err){console.error(err);}
 				},2000);
 			}else{
@@ -371,7 +359,7 @@ var reactionCollector = exports.reactionCollector = async function(p,msg,battle,
 			/* If not, execute the actions */
 			try{
 				await collector.stop();
-				await executeBattle(p,msg,action);
+				await executeBattle(p,msg,action,setting);
 			}catch(err){
 				console.error(err);
 			}
@@ -382,11 +370,11 @@ var reactionCollector = exports.reactionCollector = async function(p,msg,battle,
 		}
 	})
 
-	collector.on('end',collected => {console.log("end")});
+	collector.on('end',collected => {});
 }
 
 /* Executes a whole battle sequence */
-async function executeBattle(p,msg,action){
+async function executeBattle(p,msg,action,setting){
 	/* Update current battle */
 	let battle = await getBattle(p);
 	if(!battle){
@@ -409,15 +397,15 @@ async function executeBattle(p,msg,action){
 
 	/* tie */
 	if(enemyWin&&playerWin){
-		await finishBattle(msg,p,battle,6381923,"It's a tie!",playerWin,enemyWin,logs);
+		await finishBattle(msg,p,battle,6381923,"It's a tie!",playerWin,enemyWin,logs,setting);
 
 	/* enemy wins */
 	}else if(enemyWin){
-		await finishBattle(msg,p,battle,16711680,"You lost!",playerWin,enemyWin,logs);
+		await finishBattle(msg,p,battle,16711680,"You lost!",playerWin,enemyWin,logs,setting);
 
 	/* player wins */
 	}else if(playerWin){
-		await finishBattle(msg,p,battle,65280,"You won!",playerWin,enemyWin,logs);
+		await finishBattle(msg,p,battle,65280,"You won!",playerWin,enemyWin,logs,setting);
 
 	/* continue battle */
 	}else{
@@ -441,9 +429,9 @@ async function executeBattle(p,msg,action){
 			msg.edit("Could not execute the turn");
 			return;
 		}
-		let embed = await display(p,battle,logs);
+		let embed = await display(p,battle,logs,setting.display);
 		await msg.edit(embed);
-		await reactionCollector(p,msg,battle,null,(action.auto?action:null));
+		await reactionCollector(p,msg,battle,setting.auto,(setting.auto?"www":undefined),setting);
 	}
 
 }
@@ -499,7 +487,7 @@ function executeTurn(team,enemy,action){
 }
 
 /* finish battle */
-async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs){
+async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,setting){
 	/* Check if the battle is still active and if the player should receive rewards */
 	let sql = "";
 	if(!battle) sql = `UPDATE pet_team_battle SET active = 0 WHERE active = 1 and pgid = (SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id});`;
@@ -527,7 +515,7 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs){
 	await teamUtil.giveXP(p,battle.enemy,eXP);
 
 	/* Send result message */
-	let embed = await display(p,battle,logs);
+	let embed = await display(p,battle,logs,setting.display);
 	embed.embed.color = color;
 	text += ` Your team gained ${pXP}xp!`;
 	embed.embed.footer = {text};
