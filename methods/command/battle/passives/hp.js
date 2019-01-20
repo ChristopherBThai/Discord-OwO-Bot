@@ -9,7 +9,7 @@ module.exports = class HealthPoint extends PassiveInterface{
 		this.name = "Health Point";
 		this.basicDesc= "Increases your Health Points";
 		this.emojis = ["<:chp:535290421467807755>","<:uhp:535290422721904640>","<:rhp:535290422709321748>","<:ehp:535290421740568577>","<:mhp:535290421769928716>","<:lhp:535290422147153930>","<:fhp:535290422306799616>"];
-		this.statDesc = "Increases your HP by ?%";
+		this.statDesc = "Increases your <:hp:531620120410456064>HP by **?%**";
 		this.qualityList = [[5,20]];
 	}
 
