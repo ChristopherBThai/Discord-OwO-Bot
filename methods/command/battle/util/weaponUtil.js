@@ -222,7 +222,10 @@ exports.describe = async function(p,uwid){
 
 	/* Make description */
 	let desc = `**Name:** ${weapon.name}\n`;
-	desc += `**Quality:** ${weapon.rank.emoji} ${weapon.avgQuality}%`;
+	desc += `**ID:** \`${uwid}\`\n`;
+	desc += `**Sell Value:** ${prices[weapon.rank.name]}\n`;
+	desc += `**Quality:** ${weapon.rank.emoji} ${weapon.avgQuality}%\n`;
+	desc += `**WP Cost:** ${weapon.manaCost} <:wp:531620120976687114>`;
 	desc += `\n**Description:** ${weapon.desc}\n`;
 	if(weapon.passives.length<=0)
 		desc += `\n**Passives:** None`;

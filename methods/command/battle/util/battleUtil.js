@@ -380,9 +380,9 @@ var reactionCollector = exports.reactionCollector = async function(p,msg,battle,
 			emoji  = team[current].animal.uni?team[current].animal.uni:await p.client.emojis.get(p.global.parseID(team[current].animal.value));
 			emojiReaction = await msg.react(emoji);
 		}
-	});
+	})
 
-	collector.on('end',collected => {});
+	collector.on('end',collected => {console.log("end")});
 }
 
 /* Executes a whole battle sequence */

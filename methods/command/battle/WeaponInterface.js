@@ -176,12 +176,12 @@ module.exports = class WeaponInterface{
 	/* heals */
 	heal(me,amount){
 		/* Full health */
-		if(!me||me.stats.hp[0]>=me.stats.hp[1])
+		if(!me||me.stats.hp[0]>=me.stats.hp[1]+me.stats.hp[3])
 			return 0;
 
 		me.stats.hp[0] += amount;
-		if(me.stats.hp[0]>me.stats.hp[1])
-			me.stats.hp[0] = me.stats.hp[1];
+		if(me.stats.hp[0]>me.stats.hp[1]+me.stats.hp[3])
+			me.stats.hp[0] = me.stats.hp[1]+me.stats.hp[3];
 		return amount;
 	}
 
@@ -233,7 +233,7 @@ module.exports = class WeaponInterface{
 	static heal(me,amount){
 		if(me.weapon) return me.weapon.heal(me,amount);
 		/* Full health */
-		if(!me||me.stats.hp[0]>=me.stats.hp[1])
+		if(!me||me.stats.hp[0]>=me.stats.hp[1]+me.stats.hp[3])
 			return 0;
 
 		me.stats.hp[0] += amount;
@@ -267,7 +267,8 @@ module.exports = class WeaponInterface{
 		let lowest = undefined;
 		for(let i=0;i<team.length;i++)
 			if(team[i].stats.hp[0]>0)
-				if(!lowest||lowest.stats.hp[0]>team[i].stats.hp[0])
+				if(!lowest||lowest.stats.hp[0]/(lowest.stats.hp[1]+lowest.stats.hp[3])
+						>team[i].stats.hp[0]/(team[i].stats.hp[1]+team[i].stats.hp[3]))
 					lowest = team[i];
 		return lowest;
 	}

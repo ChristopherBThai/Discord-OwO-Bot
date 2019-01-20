@@ -7,11 +7,11 @@ module.exports = class HealStaff extends WeaponInterface{
 		this.name = "Healing Staff";
 		this.basicDesc = "A staff that can heal allies!";
 		this.emojis = ["<:chealstaff:535283616016498688>","<:uhealstaff:535283616096321547>","<:rhealstaff:535283616100646912>","<:ehealstaff:535283615664439300>","<:mhealstaff:535283616242991115>","<:lhealstaff:535283616209567764>","<:fhealstaff:535283617019068426>"]
-		this.statDesc = "Heals ?% of "+WeaponInterface.magEmoji+"MAG to the lowest ally";
+		this.statDesc = "Heals **?%** of "+WeaponInterface.magEmoji+"MAG to the lowest ally";
 		this.availablePassives = [1,2,3,4,5,6];
 		this.passiveCount = 1;
 		this.qualityList = [[50,100]];
-		this.manaRange = [150,250];
+		this.manaRange = [250,150];
 	}
 
 	attackWeapon(me,team,enemy){
@@ -29,7 +29,10 @@ module.exports = class HealStaff extends WeaponInterface{
 		let heal = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);
 
 		/* Heal ally */
-		heal = WeaponInterface.heal(lowest,heal)
+		heal = WeaponInterface.heal(lowest,heal);
+
+		/* Everyone at full health */
+		if(heal===0) return this.attackPhysical(me,team,enemy);
 
 		/* deplete weapon points*/
 		this.useMana(me);

@@ -51,7 +51,7 @@ module.exports = new CommandInterface({
 		text2 += " "+weapon.avgQuality+"%";
 
 		/* construct sql */
-		sql = `INSERT INTO user_weapon (uid,wid,stat) VALUES (${uid},${weapon.id},${weapon.sqlStat});`;
+		sql = `INSERT INTO user_weapon (uid,wid,stat) VALUES (${uid},${weapon.id},'${weapon.sqlStat}');`;
 
 		/* Insert weapon */
 		result = await p.query(sql);		
