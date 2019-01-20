@@ -30,15 +30,23 @@ exports.check = async function(con,msg,client,command,callback,ignore){
 	//Check if the command is enabled
 	var sql = "SELECT * FROM disabled WHERE command = '"+command+"' AND channel = "+channel+";";
 	sql += "SELECT id FROM timeout WHERE id IN ("+msg.author.id+","+msg.guild.id+") AND TIMESTAMPDIFF(HOUR,time,NOW()) < penalty;";
+	sql += "SELECT * FROM rules WHERE uid = (SELECT uid FROM user WHERE id = "+msg.author.id+");";
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		if(rows[1][0]!=undefined){
-		}else if(rows[0][0]==undefined||command=="points"){
+		}else if(command=="points"){
 			callback();
-		}else
+		}else if(rows[0][0]!=undefined) {
 			msg.channel.send("**🚫 |** That command is disabled on this channel!")
 				.then(message => message.delete(3000))
 				.catch(err => console.error(err));
+		}else if(["rule","help","enable","disable","censor","uncensor","invite","guildlink"].includes(command)) {
+			callback();
+		}else if(rows[2][0]==undefined) {
+			msg.channel.send("**🚫 |** Please read and accept the rules first! (`owo rules`)")
+				.then(message => message.delete(3000))
+				.catch(err => console.error(err));
+		}else callback();
 	});
 }
 
