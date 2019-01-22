@@ -94,7 +94,7 @@ async function add(p){
 
 	/* Check if position is valid (if any) */
 	var pos = p.args[2];
-	if(pos&&(pos<=0||pos>3)){
+	if(pos&&(!p.global.isInt(pos)||pos<=0||pos>3)){
 		p.errorMsg(", Invalid team position! It must be between `1-3`!",3000);
 		return;
 	}

@@ -426,6 +426,7 @@ async function executeBattle(p,msg,action,setting){
 			`;
 		let result = await p.query(sql);
 		if(result.changedRows==0){
+			/* TODO delete active */
 			msg.edit("Could not execute the turn");
 			return;
 		}
