@@ -58,7 +58,10 @@ module.exports = new CommandInterface({
 			var uwid = p.args[0];
 			var pet = p.args[1];
 
-			if(p.global.isInt(pet)){
+			if(!p.global.isInt(uwid)){
+					p.errorMsg(", Invalid arguments! Use `owo weapon {uniqueWeaponId} {animalPos|animal}`");
+					return;
+			}else if(p.global.isInt(pet)){
 				pet = parseInt(pet);
 				if(pet<1||pet>3){
 					p.errorMsg(", Invalid arguments! Use `owo weapon {uniqueWeaponId} {animalPos|animal}`");

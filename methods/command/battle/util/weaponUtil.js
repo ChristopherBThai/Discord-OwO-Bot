@@ -100,6 +100,7 @@ exports.display = async function(p,pageNum=0){
 	
 	/* Construct initial page */
 	let page = await getDisplayPage(p,pageNum);
+	if(!page) return;
 
 	/* Send msg and add reactions */
 	let msg = await p.msg.channel.send({embed:page.embed});
@@ -370,7 +371,9 @@ exports.sell = async function(p,uwid){
 	}
 
 	/* Give cowoncy */
+	/*
 	sql = `UPDATE cowoncy SET money = money + ${price} WHERE id = ${p.msg.author.id}`;
 	result = await p.query(sql);
+	*/
 	p.replyMsg(weaponEmoji,`, You sold a(n) **${weapon.rank.name} ${weapon.name}**  ${weapon.rank.emoji}${weapon.emoji} for **${price}** cowoncy!`);
 }

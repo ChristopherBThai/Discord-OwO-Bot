@@ -28,7 +28,7 @@ module.exports = new CommandInterface({
 		var result = await p.query(sql);
 
 		/* Validate query */
-		if(false&&(result[0].changedRows==0||!result[1][0])){
+		if((result[0].changedRows==0||!result[1][0])){
 			p.send("**🚫 | "+p.msg.author.username+"**, You don't have ay weapon crates!",3000);
 			return;
 		}
