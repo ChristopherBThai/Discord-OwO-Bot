@@ -15,6 +15,7 @@ const command = new CommandClass(client,dbl);
 const macro = require('../tokens/macro.js');
 const logger = require('./util/logger.js');
 const patreon = require('./util/patreon.js');
+const muteCheck = require('./util/muteCheck.js');
 const broadcastHandler = require('./handler/broadcastHandler');
 
 const modChannel = "471579186059018241";
@@ -47,6 +48,7 @@ client.on('ready',()=>{
 			dbl.postStats(client.guilds.size,client.shard.id,client.shard.count);
 		}, 3200000)
 	}
+	muteCheck.startPoll(client, modChannel);
 });
 
 //When bot disconnects
@@ -91,6 +93,10 @@ client.on("guildMemberUpdate", (oldMember,newMember) => {
 });
 client.on("guildMemberRemove", (member) => {
 	patreon.left(member);
+});
+
+client.on("guildMemberAdd", (member) => {
+	muteCheck.checkNewUser(member);
 });
 
 client.on('error',(err) => {
