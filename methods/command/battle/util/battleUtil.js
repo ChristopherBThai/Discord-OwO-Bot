@@ -13,7 +13,10 @@ const crateUtil = require('./crateUtil.js');
 const attack = '👊🏼';
 const weapon = '🗡';
 
-var getBattle = exports.getBattle = async function(p){
+
+/* ==================================== Grabs battle from sql ====================================  */
+/* Grabs existing battle */
+var getBattle = exports.getBattle = async function(p,setting){
 	/* And our team */
 	let sql = `SELECT pet_team_battle.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat,cphp,cpwp,cehp,cewp
 		FROM user 
@@ -67,13 +70,19 @@ var getBattle = exports.getBattle = async function(p){
 		return;
 	}
 
+	/* No need to save if instant */
+	if(setting.instant){
+		await finishBattle(null,p,null,6381923,"Instant battle",false,false);
+	}
+
 	/* Combine result */
 	let teams = {player:{pgid:pgid,name:result[0][0].tname,team:pTeam},enemy:{pgid:epgid,name:result[1][0].tname,team:eTeam}};
 
 	return teams;
 }
 
-exports.initBattle = async function(p){
+/* Creates a brand new battle */
+exports.initBattle = async function(p,setting){
 	/* Find random opponent */
 	let sql = `SELECT COUNT(pgid) as count FROM pet_team;SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id}`;
 	let count = await p.query(sql);
@@ -128,95 +137,28 @@ exports.initBattle = async function(p){
 	/* Combine all to one obj */
 	let teams = {player:{pgid:pgid,name:result[2][0].tname,team:pTeam},enemy:{pgid:epgid,name:result[0][0].tname,team:eTeam}};
 
-	/* Added the team into team_battle table */
-	sql = `INSERT IGNORE INTO pet_team_battle (pgid,epgid,cphp,cpwp,cehp,cewp,active) VALUES (
-			${pgid},${epgid},
-			'${cpstats.hp}','${cpstats.wp}',
-			'${cestats.hp}','${cestats.wp}',
-			1
-		) ON DUPLICATE KEY UPDATE 
-			epgid = ${epgid},
-			cphp = '${cpstats.hp}', cpwp = '${cpstats.wp}',
-			cehp = '${cestats.hp}', cewp = '${cestats.wp}',
-			active = 1,started = NOW();`;
-	result = await p.query(sql);
+	/* No need to save if instant */
+	if(!setting.instant){
+		/* Added the team into team_battle table */
+		sql = `INSERT IGNORE INTO pet_team_battle (pgid,epgid,cphp,cpwp,cehp,cewp,active) VALUES (
+				${pgid},${epgid},
+				'${cpstats.hp}','${cpstats.wp}',
+				'${cestats.hp}','${cestats.wp}',
+				1
+			) ON DUPLICATE KEY UPDATE 
+				epgid = ${epgid},
+				cphp = '${cpstats.hp}', cpwp = '${cpstats.wp}',
+				cehp = '${cestats.hp}', cewp = '${cestats.wp}',
+				active = 1,started = NOW();`;
+		result = await p.query(sql);
+	}
 
 	return teams;
 }
 
-var displayText = exports.displayText = async function(p,team,logs){
-	let logtext = "";
-	let pTeam = [];
-	for(var i=0;i<team.player.team.length;i++){
-		let player = team.player.team[i];
-		let text = ""
-		text += animalDisplayText(player);
-		logtext += "\n" + (player.animal.uni?player.animal.uni:player.animal.value) + " ";
-		if(logs&&logs.player&&logs.player[i]){
-			logtext += logs.player[i];
-		}else
-			logtext += "is ready to battle!";
-		pTeam.push(text);
-	}
-	let eTeam = [];
-	for(var i=0;i<team.enemy.team.length;i++){
-		let enemy = team.enemy.team[i];
-		let text = "";
-		text += animalDisplayText(enemy);
-		logtext += "\n" + (enemy.animal.uni?enemy.animal.uni:enemy.animal.value) + " ";
-		if(logs&&logs.enemy&&logs.enemy[i]){
-			logtext += logs.enemy[i];
-		}else
-			logtext += "is ready to battle!";
-		eTeam.push(text);
+/* ==================================== battle display methods ====================================  */
 
-	}
-	let embed = {
-		"color":p.config.embed_color,
-		"author":{
-			"name":p.msg.author.username+" goes into battle!",
-			"icon_url":p.msg.author.avatarURL
-		},
-		"description":logtext,
-		"fields":[] 
-	}
-	if(pTeam.join("\n").length>=1020||eTeam.join("\n").length>=1020){
-		for(let i in pTeam){
-			embed.fields.push({
-				"name":team.player.name?team.player.name:"Player Team",
-				"value":pTeam[i],
-				"inline":true
-			});
-		}
-		for(let i in pTeam){
-			embed.fields.push({
-				"name":team.enemy.name?team.enemy.name:"Enemy Team",
-				"value":eTeam[i],
-				"inline":true
-			});
-		}
-	}
-	else{
-		embed.fields.push({
-			"name":team.player.name?team.player.name:"Player Team",
-			"value":pTeam.join('\n'),
-			"inline":true
-		});
-		embed.fields.push({
-			"name":team.enemy.name?team.enemy.name:"Enemy Team",
-			"value":eTeam.join('\n'),
-			"inline":true
-		});
-	}
-	/*
-	if(logtext!="")
-		embed.description = logtext;
-		*/
-	return {embed};
-}
-
-
-/* Generates a display for the current battle */
+/* Generates a display for the current battle (image mode)*/
 var display = exports.display = async function(p,team,logs,display){
 	if(display=="text")
 		return displayText(p,team,logs);
@@ -289,6 +231,81 @@ var display = exports.display = async function(p,team,logs,display){
 	return {embed}
 }
 
+/* displays the battle as text */
+var displayText = exports.displayText = async function(p,team,logs){
+	let logtext = "";
+	let pTeam = [];
+	for(var i=0;i<team.player.team.length;i++){
+		let player = team.player.team[i];
+		let text = ""
+		text += animalDisplayText(player);
+		logtext += "\n" + (player.animal.uni?player.animal.uni:player.animal.value) + " ";
+		if(logs&&logs.player&&logs.player[i]){
+			logtext += logs.player[i];
+		}else
+			logtext += "is ready to battle!";
+		pTeam.push(text);
+	}
+	let eTeam = [];
+	for(var i=0;i<team.enemy.team.length;i++){
+		let enemy = team.enemy.team[i];
+		let text = "";
+		text += animalDisplayText(enemy);
+		logtext += "\n" + (enemy.animal.uni?enemy.animal.uni:enemy.animal.value) + " ";
+		if(logs&&logs.enemy&&logs.enemy[i]){
+			logtext += logs.enemy[i];
+		}else
+			logtext += "is ready to battle!";
+		eTeam.push(text);
+
+	}
+	let embed = {
+		"color":p.config.embed_color,
+		"author":{
+			"name":p.msg.author.username+" goes into battle!",
+			"icon_url":p.msg.author.avatarURL
+		},
+		/*
+		"description":logtext,
+		*/
+		"fields":[] 
+	}
+	if(pTeam.join("\n").length>=1020||eTeam.join("\n").length>=1020){
+		for(let i in pTeam){
+			embed.fields.push({
+				"name":team.player.name?team.player.name:"Player Team",
+				"value":pTeam[i],
+				"inline":true
+			});
+		}
+		for(let i in pTeam){
+			embed.fields.push({
+				"name":team.enemy.name?team.enemy.name:"Enemy Team",
+				"value":eTeam[i],
+				"inline":true
+			});
+		}
+	}
+	else{
+		embed.fields.push({
+			"name":team.player.name?team.player.name:"Player Team",
+			"value":pTeam.join('\n'),
+			"inline":true
+		});
+		embed.fields.push({
+			"name":team.enemy.name?team.enemy.name:"Enemy Team",
+			"value":eTeam.join('\n'),
+			"inline":true
+		});
+	}
+	/*
+	if(logtext!="")
+		embed.description = logtext;
+		*/
+	return {embed};
+}
+
+/* ==================================== battle execution ====================================  */
 /* Creates a reaction collector and executes the turn */
 var reactionCollector = exports.reactionCollector = async function(p,msg,battle,auto,actions,setting){
 	/* Parse team and first animal choice */
@@ -376,7 +393,7 @@ var reactionCollector = exports.reactionCollector = async function(p,msg,battle,
 /* Executes a whole battle sequence */
 async function executeBattle(p,msg,action,setting){
 	/* Update current battle */
-	let battle = await getBattle(p);
+	let battle = await getBattle(p,setting);
 	if(!battle){
 		await msg.edit("⚠ **|** This battle is inactive!");
 		return;
@@ -426,8 +443,8 @@ async function executeBattle(p,msg,action,setting){
 			`;
 		let result = await p.query(sql);
 		if(result.changedRows==0){
-			/* TODO delete active */
-			msg.edit("Could not execute the turn");
+			await finishBattle(null,p,null,6381923,"An error occured",false,false);
+			await msg.edit("It seems like the enemy team ran away...");
 			return;
 		}
 		let embed = await display(p,battle,logs,setting.display);
@@ -437,8 +454,121 @@ async function executeBattle(p,msg,action,setting){
 
 }
 
+/* Calculates all the steps required to finish the battle in recursion */
+var calculateAll = exports.calculateAll = function(p,battle,logs = []){
 
-/* ==================== Extra Helpers ================== */
+	/* Battle is way too long */
+	if(logs.length>=10){
+		logs.push({enemy:true,player:true,color:6381923,text:"Battle was too long! It's a tie!"});
+		return logs;
+	}
+
+	/* check if the battle is finished */
+	let enemyWin = teamUtil.isDead(battle.player.team);
+	let playerWin = teamUtil.isDead(battle.enemy.team);
+	if(enemyWin||playerWin){
+
+		/* tie */
+		let color=6381923;
+		let text="It's a tie!";
+
+		/* enemy wins */
+		if(enemyWin){
+			color = 16711680;
+			text = "You lost!";
+
+		/* player wins */
+		}else if(playerWin){
+			color = 65280;
+			text = "You won!";
+		}
+
+		/* Last event in log is winning result */
+		logs.push({enemy:enemyWin,player:playerWin,color,text});
+		return logs;
+	}
+
+	/* Execute player actions */
+	executeTurn(battle.player.team,battle.enemy.team,[weapon,weapon,weapon]);
+	/* Decide enemy actions */
+	let eaction = [];
+	for(var i=0;i<3;i++){eaction[i] = Math.random()>.5?weapon:attack;}
+	/* Execute enemy actions */
+	executeTurn(battle.enemy.team,battle.player.team,eaction);
+
+	/* Save only the HP and WP states (will need to save buff status later) */
+	logs.push(saveStates(battle));
+
+	/* recursive call */
+	return calculateAll(p,battle,logs);
+}
+
+/* Displays all the battle results according to setting */
+exports.displayAllBattles = async function(p,battle,logs,setting){
+	let endResult = logs[logs.length-1];
+	/* Instant mode sends just one message */
+	if(setting.speed=="instant"){
+		await finishBattle(null,p,battle,endResult.color,endResult.text,endResult.player,endResult.enemy,null,setting);
+		return;
+	}
+
+	/* This should never happen. you probably dun goofed somewhere*/
+	if(logs.length<=1) return;
+
+	/* we should distribute the rewards first */
+	setting.noMsg = true;
+	await finishBattle(null,p,battle,endResult.color,endResult.text,endResult.player,endResult.enemy,null,setting);
+	setting.noMsg = false;
+	setting.noReward = true;
+
+	/* Lets see which battle step we should display */
+	let logLength = logs.length-1;
+	let logTimeline = [];
+	if(logLength<=3){
+		for(let i=0;i<logLength;i++)
+			logTimeline.push(i);
+	}else{
+		let diff = (logLength+1)/3;
+		/* beginning log */
+		logTimeline.push(Math.round(diff)-1);
+		/* middle log */
+		logTimeline.push(Math.round(2*diff)-1);
+		/* final log */
+		logTimeline.push(logLength-1);
+	}
+
+	/* short mode should send 4 msgs */
+	/* send initial message */
+	updateTeamStats(battle.player.team,100);
+	updateTeamStats(battle.enemy.team,100);
+	let embed = await display(p,battle,undefined,setting.display);
+	embed.embed.footer = {"text":"Turn 0/"+(logs.length-1)};
+	let msg = await p.msg.channel.send(embed);
+
+	/* Update the message for each log in log timeline */
+	const gap = 3000;
+	let i = 0;
+	let msgEdit = async function(){
+		let currentLog = logs[logTimeline[i]];
+		let player = currentLog.player;
+		let enemy = currentLog.enemy;
+		updateTeamStats(battle.player.team,player);
+		updateTeamStats(battle.enemy.team,enemy);
+		if(i==logTimeline.length-1){
+			await finishBattle(msg,p,battle,endResult.color,endResult.text,endResult.player,endResult.enemy,null,setting).catch(console.error);;
+		}else{
+			let embed = await display(p,battle,undefined,setting.display);
+			embed.embed.footer = {"text":"Turn "+(logTimeline[i]+1)+"/"+(logs.length-1)};
+			await msg.edit(embed);
+			i++;
+			setTimeout(msgEdit,gap);
+		}
+	}
+	setTimeout(msgEdit,gap);
+}
+
+
+/* ==================================== Extra Helpers ====================================  */
 
 /* Creates string to save in sql */
 function initSqlSaveStats(team,offset=0){
@@ -492,37 +622,46 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 	/* Check if the battle is still active and if the player should receive rewards */
 	let sql = "";
 	if(!battle) sql = `UPDATE pet_team_battle SET active = 0 WHERE active = 1 and pgid = (SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id});`;
-	else sql = `UPDATE pet_team_battle SET active = 0 WHERE active = 1 and pgid = ${battle.player.pgid};`;
+	else if(!setting.instant) sql = `UPDATE pet_team_battle SET active = 0 WHERE active = 1 and pgid = ${battle.player.pgid};`;
 	sql +=  `SELECT * FROM user INNER JOIN crate ON user.uid = crate.uid WHERE id = ${p.msg.author.id};`;
-	sql += 'SELECT NOW()';
 	let result = await p.query(sql);
-	if(result[0].changedRows == 0) return;
+	if((!setting||!setting.instant)&&result[0].changedRows == 0) return;
 
-	/* Decide if user receives a crate */
-	let crate = dateUtil.afterMidnight((result[1][0])?result[1][0].claim:undefined);
-	if((playerWin&&!enemyWin)&&(!result[1][0]||result[1][0].claimcount<3||crate.after)){
-		crate = crateUtil.crateFromBattle(p,result[1][0],crate);
-		if(crate.sql)
-			await p.query(crate.sql);
-	}
-
-	/* An error occured */
-	if(!playerWin&&!enemyWin) return;
-
+	let crate = undefined;
 	/* Calculate and distribute xp */
 	let pXP = calculateXP({team:battle.player,win:playerWin},{team:battle.enemy,win:enemyWin});
 	let eXP = calculateXP({team:battle.enemy,win:enemyWin},{team:battle.player,win:playerWin});
-	await teamUtil.giveXP(p,battle.player,pXP);
-	await teamUtil.giveXP(p,battle.enemy,eXP);
 
-	/* Send result message */
-	let embed = await display(p,battle,logs,setting.display);
-	embed.embed.color = color;
-	text += ` Your team gained ${pXP}xp!`;
-	embed.embed.footer = {text};
-	await msg.edit(embed);
-	if(crate.text)
-		p.send(crate.text);
+	/* Don't distribute reward if it says not to */
+	if(!setting.noReward){
+		/* Decide if user receives a crate */
+		let crateQuery = (setting&&setting.instant)?result[0]:result[1][0];
+		crate = dateUtil.afterMidnight((crateQuery)?crateQuery.claim:undefined);
+		if((playerWin&&!enemyWin)&&(!crateQuery||crateQuery.claimcount<3||crate.after)){
+			crate = crateUtil.crateFromBattle(p,crateQuery,crate);
+			if(crate.sql) await p.query(crate.sql);
+		}
+
+		/* An error occured */
+		if(!playerWin&&!enemyWin) return;
+
+		await teamUtil.giveXP(p,battle.player,pXP);
+		await teamUtil.giveXP(p,battle.enemy,eXP);
+	}
+
+
+	if(!setting.noMsg){
+		/* Send result message */
+		let embed = await display(p,battle,logs,setting.display);
+		embed.embed.color = color;
+		text += ` Your team gained ${pXP}xp!`;
+		embed.embed.footer = {text};
+		if(msg) await msg.edit(embed);
+		else p.send(embed);
+	}
+
+	/* send message for crate reward */
+	if(crate&&crate.text) p.send(crate.text);
 }
 
 /* Calculate xp depending on win/loss/tie */
@@ -574,3 +713,34 @@ function animalDisplayText(animal){
 	return text;
 }
 
+/* Update's pet team's stats */
+function updateTeamStats(team,stats){
+	let percent = undefined;
+	if(Number.isFinite(stats)) percent = stats/100;
+	for(let i=0;i<team.length;i++){
+		if(percent){
+			team[i].stats.hp[0] = (team[i].stats.hp[1]+team[i].stats.hp[3])*percent;
+			team[i].stats.wp[0] = (team[i].stats.wp[1]+team[i].stats.wp[3])*percent;
+		}else{
+			team[i].stats.hp = stats[i].hp
+			team[i].stats.wp = stats[i].wp
+		}
+	}
+}
+
+/* Saves both team's status */
+function saveStates(battle){
+	let player = [];
+	for(let i in battle.player.team)
+		player.push({
+			hp:battle.player.team[i].stats.hp.slice(),
+			wp:battle.player.team[i].stats.wp.slice()
+		});
+	let enemy = [];
+	for(let i in battle.enemy.team)
+		enemy.push({
+			hp:battle.enemy.team[i].stats.hp.slice(),
+			wp:battle.enemy.team[i].stats.wp.slice()
+		});
+	return {player,enemy};
+}
