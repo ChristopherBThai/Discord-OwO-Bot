@@ -26,14 +26,16 @@ module.exports = new CommandInterface({
 })
 
 async function display(p){
-	let sql = `SELECT auto,display,speed from user INNER JOIN battle_settings WHERE id = ${p.msg.author.id};`;
+	let sql = `SELECT auto,display,speed from user INNER JOIN battle_settings ON user.uid = battle_settings.uid WHERE id = ${p.msg.author.id};`;
 	let result = await p.query(sql);
 
 	let settings = parseSettings(result);
 
 	let text = "**Auto Mode:** `"+settings.auto+"`\n";
 	text += "**Display Mode:** `"+settings.display+"`\n";
+	if(!settings.auto) text += "~~";
 	text += "**Display Speed:** `"+settings.speed+"`";
+	if(!settings.auto) text += "~~";
 
 	let embed = {
 		"color":p.config.embed_color,
@@ -74,8 +76,10 @@ async function changeSettings(p){
 			setting = '\'image\'';
 		}else if(args[1]=='text'){
 			setting = '\'text\'';
+		}else if(args[1]=='compact'){
+			setting = '\'compact\'';
 		}else{
-			p.errorMsg(", the display settings can only be `image`, or `text`!");
+			p.errorMsg(", the display settings can only be `image`, `compact`, or `text`!");
 			return;
 		}
 	}else if(args[0]=='speed'){
@@ -102,9 +106,10 @@ async function changeSettings(p){
 			${field} = ${setting};`;
 
 	let result = await p.query(sql);
-	if(result.affectedRows==0)
+	if(result.affectedRows==0){
 		sql = `INSERT IGNORE INTO user (id,count) VALUES (${p.msg.author.id},0); ${sql}`;
 		result = await p.query(sql);
+	}
 
 	display(p);
 }
@@ -112,15 +117,19 @@ async function changeSettings(p){
 function parseSettings(query){
 	let auto = true;
 	let display = "image";
-	let speed = 1;
+	let speed = "short";
 
 	if(query[0]){
 		if(query[0].auto==1)
 			auto = false;
 		if(query[0].display=="text")
 			display = "text";
-		if(query[0].speed==0||query[0].speed==2)
-			speed = query[0].speed;
+		else if(query[0].display=="compact")
+			display = "compact";
+		if(query[0].speed==0)
+			speed = "instant";
+		else if(query[0].speed==2)
+			speed = "lengthy";
 	}
 	return {auto,display,speed};
 }

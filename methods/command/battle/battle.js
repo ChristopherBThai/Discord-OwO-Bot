@@ -29,35 +29,30 @@ module.exports = new CommandInterface({
 			return;
 		}
 
-		/*
-		let auto = false;
-		let actions = undefined;
-		if(p.args[0]){
-			if(p.args[0]=="a"||p.args[0]=="auto")
-				auto =  true;
-			let tempMatch = p.args[0].match(/[aw]/gi);
-			if(tempMatch&&p.args[0].match(/[aw]/gi).length==p.args[0].length)
-				actions = p.args[0];
-			if(p.global.isUser(p.args[0])){
-				p.errorMsg(", battles with other users are not implemented yet! Sorry :(",3000);
-				return;
-			}
-		}
-		*/
-
+		/* Grab user settings for battle */
 		let setting = await parseSettings(p);
 
-		let resume = true;
 		/* Get battle info */
-		let battle = await battleUtil.getBattle(p);
+		let resume = true;
+		let battle = await battleUtil.getBattle(p,setting);
 		if(!battle){
 			resume = false;
-			battle = await battleUtil.initBattle(p);
+			battle = await battleUtil.initBattle(p,setting);
 		}
 
-		let embed = await battleUtil.display(p,battle,undefined,setting.display);
-		let msg = await p.msg.channel.send(embed);
-		await battleUtil.reactionCollector(p,msg,battle,setting.auto,(setting.auto?"www":undefined),setting);
+		/* whether it should  calculate the whole battle or step by step */
+		/* Instant */
+		if(setting.instant){
+			let logs = await battleUtil.calculateAll(p,battle);
+			await battleUtil.displayAllBattles(p,battle,logs,setting);
+
+		/* turn by turn */
+		}else{
+			/* Display the first message */
+			let embed = await battleUtil.display(p,battle,undefined,setting.display);
+			let msg = await p.msg.channel.send(embed);
+			await battleUtil.reactionCollector(p,msg,battle,setting.auto,(setting.auto?"www":undefined),setting);
+		}
 	}
 
 })
@@ -82,7 +77,7 @@ async function changeType(p,type){
 }
 
 async function parseSettings(p){
-	let sql = `SELECT auto,display,speed from user INNER JOIN battle_settings WHERE id = ${p.msg.author.id};`;
+	let sql = `SELECT auto,display,speed from user INNER JOIN battle_settings ON user.uid = battle_settings.uid WHERE id = ${p.msg.author.id};`;
 	let result = await p.query(sql);
 	return parseSetting(result);
 }
@@ -90,15 +85,25 @@ async function parseSettings(p){
 function parseSetting(query){
 	let auto = true;
 	let display = "image";
-	let speed = 1;
+	let speed = "short";
+	let instant = false;
 
 	if(query[0]){
 		if(query[0].auto==1)
 			auto = false;
 		if(query[0].display=="text")
 			display = "text";
-		if(query[0].speed==0||query[0].speed==2)
-			speed = query[0].speed;
+		else if(query[0].display=="compact")
+			display = "compact";
+		if(query[0].speed==0)
+			speed = "instant";
+		else if(query[0].speed==2)
+			speed = "lengthy";
 	}
-	return {auto,display,speed};
+
+	if(auto&&(speed=="short"||speed=="instant")){
+		instant = true;
+	}
+
+	return {auto,display,speed,instant};
 }
