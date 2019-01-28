@@ -21,7 +21,7 @@ exports.randAnimal = function(patreon,gem,lucky){
 			result.push("**patreon** "+animals.ranks.cpatreon);
 			result.push(animals.cpatreon[rand]);
 			result.push("cpatreon");
-			result.push(5000);
+			result.push(3000);
 		}else{
 			rand = Math.ceil(Math.random()*(animals.patreon.length-1));
 			result.push("**patreon** "+animals.ranks.patreon);
@@ -82,13 +82,13 @@ exports.randAnimal = function(patreon,gem,lucky){
 		result.push("**fabled** "+animals.ranks.fabled);
 		result.push(animals.fabled[rand]);
 		result.push("fabled");
-		result.push(50000);
+		result.push(25000);
 	}else{
 		rand = Math.ceil(Math.random()*(animals.hidden.length-1));
 		result.push("**hidden** "+animals.ranks.hidden);
 		result.push(animals.hidden[rand]);
 		result.push("hidden");
-		result.push(100000);
+		result.push(50000);
 	}
 	return result;
 }

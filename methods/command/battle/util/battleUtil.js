@@ -30,7 +30,7 @@ var getBattle = exports.getBattle = async function(p,setting){
 			AND active = 1
 		ORDER BY pos ASC;`;
 	/* Query enemy team */
-	sql += `SELECT pet_team_battle.epgid,enemyTeam.tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat,cphp,cpwp,cehp,cewp
+	sql += `SELECT pet_team.censor as ptcensor,animal.offensive as acensor,pet_team_battle.epgid,enemyTeam.tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat,cphp,cpwp,cehp,cewp
 		FROM user 
 			INNER JOIN pet_team ON user.uid = pet_team.uid
 			INNER JOIN pet_team_battle ON pet_team.pgid = pet_team_battle.pgid
@@ -43,10 +43,12 @@ var getBattle = exports.getBattle = async function(p,setting){
 			AND active = 1
 		ORDER BY pos ASC;`;
 
-	/* Query display type */
-	sql += `SELECT type FROM user LEFT JOIN battle_type ON user.uid = battle_type.uid WHERE id = ${p.msg.author.id}`;
+	/* Should we censor? */
+	sql += `SELECT young FROM guild WHERE id = ${p.msg.guild.id} AND young = 1;`;
 
 	let result = await p.query(sql);
+
+	let censor = (result[2][0])?true:false;
 
 	/* Grab pgid */
 	let pgid = result[0][0]?result[0][0].pgid:undefined;
@@ -57,7 +59,7 @@ var getBattle = exports.getBattle = async function(p,setting){
 	/* Parse teams */
 	let pTeam = teamUtil.parseTeam(p,result[0],result[0]);
 	for(let i in pTeam) animalUtil.stats(pTeam[i]);
-	let eTeam = teamUtil.parseTeam(p,result[1],result[1]);
+	let eTeam = teamUtil.parseTeam(p,result[1],result[1],censor);
 	for(let i in eTeam) animalUtil.stats(eTeam[i]);
 
 	/* Parse current hp/wp */
@@ -76,7 +78,7 @@ var getBattle = exports.getBattle = async function(p,setting){
 	}
 
 	/* Combine result */
-	let teams = {player:{pgid:pgid,name:result[0][0].tname,team:pTeam},enemy:{pgid:epgid,name:result[1][0].tname,team:eTeam}};
+	let teams = {player:{pgid:pgid,name:result[0][0].tname,team:pTeam},enemy:{pgid:epgid,name:(censor&&result[1][0].ptcensor==1)?"Censored":result[1][0].tname,team:eTeam}};
 
 	return teams;
 }
@@ -99,10 +101,10 @@ exports.initBattle = async function(p,setting){
 	count = Math.floor(Math.random()*(count[0].count-1));
 
 	/* Query random team */
-	sql = `SELECT pet_team.pgid,tname,pos,name,nickname,pid,xp FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE pet_team.pgid = (
+	sql = `SELECT pet_team.censor as ptcensor,pet_team.pgid,tname,pos,name,nickname,pid,xp FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE pet_team.pgid = (
 			SELECT pgid FROM pet_team WHERE pgid != ${pgid} LIMIT 1 OFFSET ${count}	
 		) ORDER BY pos ASC;`;
-	sql += `SELECT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname 
+	sql += `SELECT c.offensive as acensor,a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname 
 		FROM 
 			user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid 
 		WHERE 
@@ -113,10 +115,12 @@ exports.initBattle = async function(p,setting){
 	sql += `SELECT pet_team.pgid,tname,pos,name,nickname,pid,xp FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
 	sql += `SELECT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND a.pid IN (SELECT pid FROM pet_team LEFT JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}));`;
 
-	/* Query display type */
-	sql += `SELECT type FROM user LEFT JOIN battle_type ON user.uid = battle_type.uid WHERE id = ${p.msg.author.id}`;
+	/* Should we censor? */
+	sql += `SELECT young FROM guild WHERE id = ${p.msg.guild.id} AND young = 1;`;
 
 	let result = await p.query(sql);
+
+	let censor = (result[4][0])?true:false;
 
 	pgid = result[2][0]?result[2][0].pgid:undefined;
 	let epgid = result[0][0]?result[0][0].pgid:undefined;
@@ -127,7 +131,7 @@ exports.initBattle = async function(p,setting){
 	}
 
 	/* Parse */
-	let eTeam = teamUtil.parseTeam(p,result[0],result[1]);
+	let eTeam = teamUtil.parseTeam(p,result[0],result[1],censor);
 	let pTeam = teamUtil.parseTeam(p,result[2],result[3]);
 
 	/* Init stats for sql*/
@@ -135,7 +139,7 @@ exports.initBattle = async function(p,setting){
 	let cestats = initSqlSaveStats(eTeam);
 	
 	/* Combine all to one obj */
-	let teams = {player:{pgid:pgid,name:result[2][0].tname,team:pTeam},enemy:{pgid:epgid,name:result[0][0].tname,team:eTeam}};
+	let teams = {player:{pgid:pgid,name:result[2][0].tname,team:pTeam},enemy:{pgid:epgid,name:(censor&&result[0][0].ptcensor==1)?"Censored":result[0][0].tname,team:eTeam}};
 
 	/* No need to save if instant */
 	if(!setting.instant){
@@ -162,11 +166,14 @@ exports.initBattle = async function(p,setting){
 var display = exports.display = async function(p,team,logs,display){
 	if(display=="text")
 		return displayText(p,team,logs);
+	else if(display=="compact")
+		return displayCompact(p,team,logs);
 	let image = await battleImageUtil.generateImage(team);
 	let logtext = "";
 	let pTeam = "";
 	for(var i=0;i<team.player.team.length;i++){
 		let player = team.player.team[i];
+		pTeam += "L. "+player.stats.lvl+" ";
 		pTeam += player.animal.value;
 		if(player.weapon){
 			pTeam += " - "+player.weapon.rank.emoji+player.weapon.emoji;
@@ -174,7 +181,7 @@ var display = exports.display = async function(p,team,logs,display){
 			for(var j in passives){
 				pTeam += passives[j].emoji;
 			}
-			pTeam += " "+player.weapon.avgQuality+"%";
+			//pTeam += " "+player.weapon.avgQuality+"%";
 		}else
 			pTeam += " - *no weapon*";
 		if(logs&&logs.player&&logs.player[i]){
@@ -186,6 +193,7 @@ var display = exports.display = async function(p,team,logs,display){
 	let eTeam = "";
 	for(var i=0;i<team.enemy.team.length;i++){
 		let enemy = team.enemy.team[i];
+		eTeam += "L. "+enemy.stats.lvl+" ";
 		eTeam += enemy.animal.value;
 		if(enemy.weapon){
 			eTeam += " - "+enemy.weapon.rank.emoji+enemy.weapon.emoji;
@@ -193,7 +201,7 @@ var display = exports.display = async function(p,team,logs,display){
 			for(var j in passives){
 				eTeam+= passives[j].emoji;
 			}
-			eTeam += " "+enemy.weapon.avgQuality+"%";
+			//eTeam += " "+enemy.weapon.avgQuality+"%";
 		}else
 			eTeam += " - *no weapon*";
 		if(logs&&logs.enemy&&logs.enemy[i]){
@@ -302,6 +310,62 @@ var displayText = exports.displayText = async function(p,team,logs){
 	if(logtext!="")
 		embed.description = logtext;
 		*/
+	return {embed};
+}
+
+/* displays the battle as compact mode*/
+var displayCompact = exports.displayCompact= async function(p,team,logs){
+	let pTeam = [];
+	for(var i=0;i<team.player.team.length;i++){
+		let player = team.player.team[i];
+		let text = ""
+		text += animalCompactDisplayText(player);
+		pTeam.push(text);
+	}
+	let eTeam = [];
+	for(var i=0;i<team.enemy.team.length;i++){
+		let enemy = team.enemy.team[i];
+		let text = "";
+		text += animalCompactDisplayText(enemy);
+		eTeam.push(text);
+
+	}
+	let embed = {
+		"color":p.config.embed_color,
+		"author":{
+			"name":p.msg.author.username+" goes into battle!",
+			"icon_url":p.msg.author.avatarURL
+		},
+		"fields":[] 
+	}
+	if(pTeam.join("\n").length>=1020||eTeam.join("\n").length>=1020){
+		for(let i in pTeam){
+			embed.fields.push({
+				"name":team.player.name?team.player.name:"Player Team",
+				"value":pTeam[i],
+				"inline":true
+			});
+		}
+		for(let i in pTeam){
+			embed.fields.push({
+				"name":team.enemy.name?team.enemy.name:"Enemy Team",
+				"value":eTeam[i],
+				"inline":true
+			});
+		}
+	}
+	else{
+		embed.fields.push({
+			"name":team.player.name?team.player.name:"Player Team",
+			"value":pTeam.join('\n'),
+			"inline":true
+		});
+		embed.fields.push({
+			"name":team.enemy.name?team.enemy.name:"Enemy Team",
+			"value":eTeam.join('\n'),
+			"inline":true
+		});
+	}
 	return {embed};
 }
 
@@ -488,6 +552,8 @@ var calculateAll = exports.calculateAll = function(p,battle,logs = []){
 		return logs;
 	}
 
+	/* Update previous hp before turn execution */
+	updatePreviousStats(battle);
 	/* Execute player actions */
 	executeTurn(battle.player.team,battle.enemy.team,[weapon,weapon,weapon]);
 	/* Decide enemy actions */
@@ -541,6 +607,7 @@ exports.displayAllBattles = async function(p,battle,logs,setting){
 	/* send initial message */
 	updateTeamStats(battle.player.team,100);
 	updateTeamStats(battle.enemy.team,100);
+	updatePreviousStats(battle);
 	let embed = await display(p,battle,undefined,setting.display);
 	embed.embed.footer = {"text":"Turn 0/"+(logs.length-1)};
 	let msg = await p.msg.channel.send(embed);
@@ -713,6 +780,27 @@ function animalDisplayText(animal){
 	return text;
 }
 
+/* converts animal info to readable string */
+function animalCompactDisplayText(animal){
+	let text = "";
+	text += "\nL."+animal.stats.lvl+" "+animal.animal.value + " ";
+	text += animal.nickname?animal.nickname:animal.animal.name;
+	let hp = Math.ceil(animal.stats.hp[0]);
+	if(hp<0) hp = 0;
+	let wp = Math.ceil(animal.stats.wp[0]);
+	if(wp<0) wp = 0;
+	text += `\n\`${hp} HP\` `;
+	text += `\`${wp} WP\` `;
+	if(animal.weapon){
+		text += "\n"+animal.weapon.rank.emoji+animal.weapon.emoji;
+		let passives = animal.weapon.passives;
+		for(var j in passives){
+			text += passives[j].emoji;
+		}
+	}
+	return text;
+}
+
 /* Update's pet team's stats */
 function updateTeamStats(team,stats){
 	let percent = undefined;
@@ -743,4 +831,16 @@ function saveStates(battle){
 			wp:battle.enemy.team[i].stats.wp.slice()
 		});
 	return {player,enemy};
+}
+
+/* Updates the previous hp/wp */
+function updatePreviousStats(battle){
+	for(let i in battle.player.team){
+		battle.player.team[i].stats.hp[2] = battle.player.team[i].stats.hp[0];
+		battle.player.team[i].stats.wp[2] = battle.player.team[i].stats.wp[0];
+	}
+	for(let i in battle.enemy.team){
+		battle.enemy.team[i].stats.hp[2] = battle.enemy.team[i].stats.hp[0];
+		battle.enemy.team[i].stats.wp[2] = battle.enemy.team[i].stats.wp[0];
+	}
 }

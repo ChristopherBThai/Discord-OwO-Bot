@@ -10,6 +10,10 @@ exports.stats = function(animal){
 
 	this.weaponStats(stats,animal.weapon);
 
+	/* Make sure bonus hp/wp is added */
+	stats.hp[0] = stats.hp[1]+stats.hp[3];
+	stats.wp[0] = stats.wp[1]+stats.wp[3];
+
 	animal.stats = stats;
 }
 
@@ -48,7 +52,7 @@ exports.toLvl = function(xp){
 
 /* converts lvl to xp */
 function getXP(lvl){
-	return lvl*lvl + 100;
+	return Math.pow(lvl,3) + 100;
 }
 
 /* Returns sql for giving xp to animal */
