@@ -138,11 +138,11 @@ exports.removeMember = async function(p,remove){
 exports.renameTeam = async function(p,name){
 
 	/* Name filter */
-	var offensive = false;
+	var offensive = 0;
 	var shortnick = name.replace(/\s/g,"").toLowerCase();
 	for(var i=0;i<badwords.length;i++){
 		if(shortnick.includes(badwords[i]))
-			offensive = true;
+			offensive = 1;
 	}
 	name = name.replace(/https:/gi,"https;");
 	name = name.replace(/http:/gi,"http;");
@@ -151,7 +151,7 @@ exports.renameTeam = async function(p,name){
 	name = name.replace(/[*`]+/gi,"");
 
 	/* Validation check */
-	if(name.length>20){
+	if(name.length>35){
 		p.errorMsg(", The team name is too long!",3000);
 		return;
 	}else if(name.length<=0){
@@ -159,7 +159,7 @@ exports.renameTeam = async function(p,name){
 		return;
 	}
 
-	var sql = `UPDATE IGNORE pet_team SET tname = ? WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id})`;
+	var sql = `UPDATE IGNORE pet_team SET tname = ?, censor = ${offensive} WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id})`;
 	var result = await p.query(sql,name);
 	if(result.affectedRows>0){
 		p.replyMsg(battleEmoji,`, You successfully changed your team name to: **${name}**`);
@@ -249,7 +249,7 @@ exports.displayTeam = async function(p){
 
 /* Parses animals and weapons into json */
 exports.parseTeam = parseTeam;
-function parseTeam(p,animals,weapons){
+function parseTeam(p,animals,weapons,censor=false){
 	let result = [];
 
 	/* get basic animal info */
@@ -260,7 +260,7 @@ function parseTeam(p,animals,weapons){
 			used.push(animal.pid);
 			result.push({
 				pid:animal.pid,
-				nickname:animal.nickname,
+				nickname:(censor&&animal.acensor==1)?"Censored":animal.nickname,
 				pos:animal.pos,
 				xp:animal.xp,
 				animal:p.global.validAnimal(animal.name)

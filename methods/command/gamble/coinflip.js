@@ -20,7 +20,7 @@ module.exports = new CommandInterface({
 	related:["owo money"],
 
 	cooldown:15000,
-	half:80,
+	half:90,
 	six:500,
 	bot:true,
 
