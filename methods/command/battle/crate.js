@@ -29,14 +29,14 @@ module.exports = new CommandInterface({
 
 		/* Validate query */
 		if((result[0].changedRows==0||!result[1][0])){
-			p.send("**🚫 | "+p.msg.author.username+"**, You don't have ay weapon crates!",3000);
+			p.send("**🚫 | "+p.msg.author.username+"**, You don't have any weapon crates!",3000);
 			return;
 		}
 
 		/* Parse uid */
 		var uid = result[1][0].uid;
 		if(!uid){
-			p.send("**🚫 | "+p.msg.author.username+"**, You don't have ay weapon crates!",3000);
+			p.send("**🚫 | "+p.msg.author.username+"**, You don't have any weapon crates!",3000);
 			return;
 		}
 

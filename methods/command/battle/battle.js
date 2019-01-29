@@ -40,6 +40,9 @@ module.exports = new CommandInterface({
 			battle = await battleUtil.initBattle(p,setting);
 		}
 
+		/* If no team */
+		if(!battle) return;
+
 		/* whether it should  calculate the whole battle or step by step */
 		/* Instant */
 		if(setting.instant){
