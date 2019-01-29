@@ -126,8 +126,8 @@ exports.initBattle = async function(p,setting){
 	let epgid = result[0][0]?result[0][0].pgid:undefined;
 
 	if(!pgid||!epgid){
-		p.errorMsg(", Create a team with the command `owo team add {animal}");
-		throw new Error("Could not grab pgid");
+		p.errorMsg(", Create a team with the command `owo team add {animal}`");
+		return;
 	}
 
 	/* Parse */
@@ -521,12 +521,6 @@ async function executeBattle(p,msg,action,setting){
 /* Calculates all the steps required to finish the battle in recursion */
 var calculateAll = exports.calculateAll = function(p,battle,logs = []){
 
-	/* Battle is way too long */
-	if(logs.length>=10){
-		logs.push({enemy:true,player:true,color:6381923,text:"Battle was too long! It's a tie!"});
-		return logs;
-	}
-
 	/* check if the battle is finished */
 	let enemyWin = teamUtil.isDead(battle.player.team);
 	let playerWin = teamUtil.isDead(battle.enemy.team);
@@ -549,6 +543,12 @@ var calculateAll = exports.calculateAll = function(p,battle,logs = []){
 
 		/* Last event in log is winning result */
 		logs.push({enemy:enemyWin,player:playerWin,color,text});
+		return logs;
+	}
+
+	/* Battle is way too long */
+	if(logs.length>=15){
+		logs.push({enemy:true,player:true,color:6381923,text:"Battle was too long! It's a tie!"});
 		return logs;
 	}
 
@@ -696,11 +696,15 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 
 	let crate = undefined;
 	/* Calculate and distribute xp */
-	let pXP = calculateXP({team:battle.player,win:playerWin},{team:battle.enemy,win:enemyWin});
-	let eXP = calculateXP({team:battle.enemy,win:enemyWin},{team:battle.player,win:playerWin});
+	let pXP = 0;
+	let eXP = 0;
+	if(!setting||!setting.noReward||!setting.noMsg){
+		pXP = calculateXP({team:battle.player,win:playerWin},{team:battle.enemy,win:enemyWin});
+		eXP = calculateXP({team:battle.enemy,win:enemyWin},{team:battle.player,win:playerWin});
+	}
 
 	/* Don't distribute reward if it says not to */
-	if(!setting.noReward){
+	if(!setting||!setting.noReward){
 		/* Decide if user receives a crate */
 		let crateQuery = (setting&&setting.instant)?result[0]:result[1][0];
 		crate = dateUtil.afterMidnight((crateQuery)?crateQuery.claim:undefined);
@@ -717,7 +721,7 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 	}
 
 
-	if(!setting.noMsg){
+	if(!setting||!setting.noMsg){
 		/* Send result message */
 		let embed = await display(p,battle,logs,setting.display);
 		embed.embed.color = color;

@@ -1,5 +1,6 @@
 const CommandInterface = require('../../commandinterface.js');
 
+const battleHelpUtil = require('../battle/util/battleHelpUtil.js');
 const emotes = require('../../../json/emotes.json');
 var sEmotes= [];
 for(var key in emotes.sEmote)
@@ -29,11 +30,19 @@ module.exports = new CommandInterface({
 	half:100,
 	six:500,
 
-	execute: function(p){
+	execute: async function(p){
 		if(p.args==0)
 			display(p.send);
-		else
-			describe(p.send,p.args[0],p.commands[p.aliasToCommand[p.args[0]]]);
+		else{
+			let command = p.aliasToCommand[p.args[0]];
+			switch(command){
+				case "battle":
+					await battleHelpUtil.help(p,0);
+					break;
+				default:
+					describe(p.send,p.args[0],p.commands[command]);
+			}
+		}
 	}
 
 })

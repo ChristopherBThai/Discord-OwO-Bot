@@ -10,11 +10,11 @@ var modLogChannel = "471579186059018241";
 exports.send = function(msg){
 	return function(message,del,embed){
 		if(del)
-			msg.channel.send(message,embed)
+			return msg.channel.send(message,embed)
 				.then(message => message.delete(del))
 				.catch(err => console.error(err));
 		else
-			msg.channel.send(message,embed)
+			return msg.channel.send(message,embed)
 				.catch(err => console.error(err));
 	}
 }

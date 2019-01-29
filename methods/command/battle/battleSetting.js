@@ -2,7 +2,7 @@ const CommandInterface = require('../../commandinterface.js');
 
 module.exports = new CommandInterface({
 
-	alias:["battlesetting","bs"],
+	alias:["battlesetting","bs","battlesettings"],
 
 	args:"",
 
@@ -31,10 +31,10 @@ async function display(p){
 
 	let settings = parseSettings(result);
 
-	let text = "**Auto Mode:** `"+settings.auto+"`\n";
-	text += "**Display Mode:** `"+settings.display+"`\n";
+	let text = "**Auto = ** `"+settings.auto+"`\n";
+	text += "**Display = ** `"+settings.display+"`\n";
 	if(!settings.auto) text += "~~";
-	text += "**Display Speed:** `"+settings.speed+"`";
+	text += "**Speed = ** `"+settings.speed+"`";
 	if(!settings.auto) text += "~~";
 
 	let embed = {
@@ -51,6 +51,7 @@ async function display(p){
 
 async function changeSettings(p){
 	let args = p.args.join("");
+	args = args.toLowerCase();
 	args = args.split("=");
 	if(args.length!=2){
 		p.errorMsg(", The correct command is `owo battlesetting {settingName=setting}`");
@@ -84,14 +85,14 @@ async function changeSettings(p){
 		}
 	}else if(args[0]=='speed'){
 		field = 'speed';
-		if(args[1]=='0'){
+		if(args[1]=='0'||args[1]=='instant'){
 			setting = 0;
-		}else if(args[1]=='1'){
+		}else if(args[1]=='1'||args[1]=='short'){
 			setting = 1;
-		}else if(args[1]=='2'){
+		}else if(args[1]=='2'||args[1]=='lengthy'){
 			setting = 2;
 		}else{
-			p.errorMsg(", the speed settings can only be `0`, `1`, or `2`!");
+			p.errorMsg(", the speed settings can only be `instant`, `short`, or `lengthy`!");
 			return;
 		}
 	}else{
