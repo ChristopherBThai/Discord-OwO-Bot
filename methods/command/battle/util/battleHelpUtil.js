@@ -12,6 +12,7 @@ exports.help = async function(p,page=0){
 		"author":{
 			"name":"Guide to battle!"
 		},
+		"description":"Have any questions? Please feel free to ask in our server!\n"+p.config.guildlink,
 		"color":p.config.embed_color,
 		"image":{
 			"url":pages[page]
@@ -28,7 +29,7 @@ exports.help = async function(p,page=0){
 	await msg.react(prevPageEmoji);
 	await msg.react(nextPageEmoji);
 	let filter = (reaction,user) => (reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&user.id===p.msg.author.id;
-	let collector = await msg.createReactionCollector(filter,{time:30000});
+	let collector = await msg.createReactionCollector(filter,{time:60000});
 	
 	/* Flip the page if reaction is pressed */
 	collector.on('collect', async function(r){

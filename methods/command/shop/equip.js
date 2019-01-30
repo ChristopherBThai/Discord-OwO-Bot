@@ -1,6 +1,5 @@
 const CommandInterface = require('../../commandinterface.js');
 
-const foodUtil = require('./food.js');
 const shopUtil = require('./shopUtil.js');
 const lootbox = require('../zoo/lootbox.js');
 const gemUtil = require('../zoo/gemUtil.js');
@@ -29,11 +28,11 @@ module.exports = new CommandInterface({
 		if(typeof item === 'string' || item instanceof String){
 			p.send("**🚫 | "+msg.author.username+"**, "+item,3000);
 			return;
+		}else if(!item){
+			p.errorMsg(", I could not find that item",3000);
 		}
 
-		if(item.name=="Pill"){
-			foodUtil.throwup(con,msg);
-		}else if(item.name=="lootbox"){
+		if(item.name=="lootbox"){
 			lootbox.execute(p);
 		}else if(item.name=="gem"){
 			gemUtil.use(p,item.id);
@@ -41,8 +40,9 @@ module.exports = new CommandInterface({
 			crate.execute(p);
 		}else if(item.name=="weapon"){
 			weapon.execute(p);
-		}else
-			foodUtil.equip(con,msg,item);
+		}else{
+			p.errorMsg(", Could not find that item",3000);
+		}
 	}
 
 })

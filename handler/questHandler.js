@@ -63,6 +63,10 @@ async function check(msg,questName,result,count,extra){
 			text += "<:box:427352600476647425>".repeat(reward);
 			rewardSql = "INSERT INTO lootbox (id,boxcount,claim) VALUES (?,?,'2017-01-01 10:10:10') ON DUPLICATE KEY UPDATE boxcount = boxcount + ?;";
 			var rewardVar = [BigInt((questName=="emoteBy")?extra.id:msg.author.id),reward,reward];
+		}else if(rewardType=="crate"){
+			text += "<:crate:523771259302182922>".repeat(reward);
+			rewardSql = "INSERT INTO crate (uid,boxcount,claim) VALUES ((SELECT uid FROM user WHERE id = ?),?,'2017-01-01 10:10:10') ON DUPLICATE KEY UPDATE boxcount = boxcount + ?;";
+			var rewardVar = [BigInt((questName=="emoteBy")?extra.id:msg.author.id),reward,reward];
 		}else{
 			text += global.toFancyNum(reward)+" <:cowoncy:416043450337853441>";
 			rewardSql = "INSERT INTO cowoncy (id,money) VALUES (?,?) ON DUPLICATE KEY UPDATE money = money + ?";

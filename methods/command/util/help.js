@@ -39,6 +39,18 @@ module.exports = new CommandInterface({
 				case "battle":
 					await battleHelpUtil.help(p,0);
 					break;
+				case "team":
+					await battleHelpUtil.help(p,0);
+					break;
+				case "weapon":
+					await battleHelpUtil.help(p,2);
+					break;
+				case "crate":
+					await battleHelpUtil.help(p,1);
+					break;
+				case "battlesetting":
+					await battleHelpUtil.help(p,5);
+					break;
 				default:
 					describe(p.send,p.args[0],p.commands[command]);
 			}
@@ -59,7 +71,7 @@ function display(send){
 			{"name":"💰 Economy",
 				"value":"`cowoncy`  `give`  `daily`  `vote`  `quest`"},
 			{"name":"🌱 Animals",
-				"value":"`zoo`  `hunt`  `sell`  `battle`  `pets`  `inv`  `shop`  `equip`  `buy`  `autohunt`  `owodex`  `lootbox`"},
+				"value":"`zoo`  `hunt`  `sell`  `battle`  `inv`  `equip`  `autohunt`  `owodex`  `lootbox`  `crate`  `battlesetting`  `team`  `weapon`"},
 			{"name":"🎲 Gambling",
 				"value":"`slots`  `coinflip`  `lottery`  `blackjack`  `drop`"},
 			{"name":"🎱 Fun",

@@ -1,6 +1,5 @@
 const CommandInterface = require('../../commandinterface.js');
 
-const food = require('./food.js');
 const lootboxUtil = require('../zoo/lootboxUtil.js');
 const gemUtil = require('../zoo/gemUtil.js');
 const shopUtil = require('./shopUtil.js');
