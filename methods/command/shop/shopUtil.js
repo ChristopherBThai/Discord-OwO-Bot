@@ -19,8 +19,6 @@ exports.getItem = function(args){
 		return "Please identify the item by their item **ID**, not item name!";
 	}
 
-	if(id<50)
-		return getFood(id);
 	if(id==50)
 		return {name:"lootbox"};
 	if(id>50&&id<100)

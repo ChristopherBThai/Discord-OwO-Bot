@@ -112,10 +112,10 @@ exports.zooScore = function(zoo){
 		text += "F-"+zoo.fabled+", ";
 	if(zoo.cpatreon>0)
 		text += "CP-"+zoo.cpatreon+", ";
-	if(zoo.legendary>0)
-		text += "L-"+zoo.legendary+", ";
 	if(zoo.gem>0)
 		text += "G-"+zoo.gem+", ";
+	if(zoo.legendary>0)
+		text += "L-"+zoo.legendary+", ";
 	if(zoo.patreon>0||zoo.cpatreon>0)
 		text += "P-"+zoo.patreon+", ";
 	text += "M-"+zoo.mythical+", ";

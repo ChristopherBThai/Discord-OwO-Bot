@@ -1,5 +1,6 @@
 const debug = true;
 const testingGuild = '409959187229966337';
+const supportGuild = '420104212895105044';
 if(debug) var auth = require('../tokens/scuttester-auth.json');
 else var auth = require('../tokens/owo-auth.json');
 
@@ -25,7 +26,7 @@ client.on('message',msg => {
 	if(msg.author.bot) return;
 
 	/* Ignore guilds if in debug mode */
-	else if(debug&&msg.guild.id!=testingGuild) return;
+	else if(debug&&msg.guild.id!=testingGuild&&msg.guild.id!=supportGuild) return;
 
 	else if(msg.channel.id==modChannel) command.executeMod(msg);
 

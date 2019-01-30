@@ -713,6 +713,9 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 			if(crate.sql) await p.query(crate.sql);
 		}
 
+		/* battle quests */
+		p.quest("battle");
+
 		/* An error occured */
 		if(!playerWin&&!enemyWin) return;
 
@@ -787,7 +790,7 @@ function animalDisplayText(animal){
 /* converts animal info to readable string */
 function animalCompactDisplayText(animal){
 	let text = "";
-	text += "\nL."+animal.stats.lvl+" "+animal.animal.value + " ";
+	text += "L."+animal.stats.lvl+" "+animal.animal.value + " ";
 	text += animal.nickname?animal.nickname:animal.animal.name;
 	let hp = Math.ceil(animal.stats.hp[0]);
 	if(hp<0) hp = 0;

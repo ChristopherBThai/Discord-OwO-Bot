@@ -100,7 +100,8 @@ function getQuest(id){
 	/* Grab prize type */
 	var prize = "cowoncy";
 	rand = Math.random();
-	if(rand > .5) prize = "lootbox";
+	if(rand > .6) prize = "crate";
+	else if(rand > .3) prize = "lootbox";
 
 	/* Construct insert sql */
 	var sql = `INSERT IGNORE INTO quest (uid,qid,qname,level,prize,count) values (
@@ -157,7 +158,8 @@ function parseQuest(questInfo){
 		var reward = global.toFancyNum(quest.cowoncy[questInfo.level]) + " <:cowoncy:416043450337853441>";
 	}else if(questInfo.prize=="lootbox"){
 		var reward = "<:box:427352600476647425>".repeat(quest.lootbox[questInfo.level]);
-		//var reward = "📦 ".repeat(quest.lootbox[questInfo.level]);
+	}else if(questInfo.prize=="crate"){
+		var reward = "<:crate:523771259302182922>".repeat(quest.crate[questInfo.level]);
 	}
 	var count = quest.count[questInfo.level];
 	if(global.isInt(count))
