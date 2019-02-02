@@ -229,6 +229,7 @@ function getRepRanking(globalRank, con, msg, count){
  * displays pet ranking
  */
 function getPetRanking(globalRank, con, msg, count){
+	return;
 	var sql;
 	if(globalRank){
 		sql = "SELECT * FROM animal  ORDER BY lvl DESC, xp DESC LIMIT "+count+";";

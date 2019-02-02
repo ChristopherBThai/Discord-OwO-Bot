@@ -38,7 +38,7 @@ function upvote(id,bot,json){
 				box.text = "\n**<:box:427352600476647425> |** You received a lootbox!"
 			}else{
 				box.sql = "INSERT INTO crate(uid,cratetype,boxcount,claimcount,claim) VALUES ((SELECT uid FROM user WHERE id = "+id+"),0,1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
-				box.text = "\n**<:crate:523771259302182922> | You received a weapon crate!";
+				box.text = "\n**<:crate:523771259302182922> |** You received a weapon crate!";
 			}
 			var reward = 100;
 			var patreonBonus = 0;
@@ -65,7 +65,7 @@ function upvote(id,bot,json){
 				box.text = "\n**<:box:427352600476647425> |** You received a lootbox!"
 			}else{
 				box.sql = "INSERT INTO crate(uid,cratetype,boxcount,claimcount,claim) VALUES ((SELECT uid FROM user WHERE id = "+id+"),0,1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
-				box.text = "\n**<:crate:523771259302182922> | You received a weapon crate!";
+				box.text = "\n**<:crate:523771259302182922> |** You received a weapon crate!";
 			}
 			var bonus = 100 + (result[0][0].count*3);
 			var patreonBonus = 0;

@@ -236,11 +236,12 @@ function getRepRanking(globalRank,con,msg){
 }
 
 function getPetRanking(globalRank,con,msg){
+	return;
 	var sql;
 	if(globalRank){
-		sql = "SELECT * FROM animal WHERE (lvl,xp) > (SELECT lvl,xp FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name) ORDER BY lvl ASC, xp ASC LIMIT 2;";
-		sql += "SELECT * FROM animal WHERE (lvl,xp)  < (SELECT lvl,xp FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name) ORDER BY lvl DESC, xp DESC LIMIT 2;";
-		sql += "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c NATURAL JOIN cowoncy WHERE c.id = "+msg.author.id+" AND c.name = pet  ORDER BY lvl DESC, xp DESC LIMIT 1;";
+		sql = "SELECT * FROM animal WHERE (xp) > (SELECT xp FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name) ORDER BY xp ASC LIMIT 2;";
+		sql += "SELECT * FROM animal WHERE (xp)  < (SELECT xp FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name) ORDER BY xp DESC LIMIT 2;";
+		sql += "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE (xp > c.xp)) AS rank FROM animal c NATURAL JOIN cowoncy WHERE c.id = "+msg.author.id+" AND c.name = pet  ORDER BY xp DESC LIMIT 1;";
 	}else{
 		var users = global.getids(msg.guild.members);
 		sql = "SELECT * FROM animal WHERE id IN ("+users+") AND (lvl,xp) > (SELECT lvl,xp FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name) ORDER BY lvl ASC, xp ASC LIMIT 2;";
