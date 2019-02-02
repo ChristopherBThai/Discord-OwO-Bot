@@ -40,7 +40,7 @@ exports.randAnimal = function(patreon,gem,lucky){
 		result.push("**gem** "+animals.ranks.gem);
 		result.push(animals.gem[rand]);
 		result.push("gem");
-		result.push(1000);
+		result.push(5000);
 	}else if(rand<animals.common[0]){
 		rand = Math.ceil(Math.random()*(animals.common.length-1));
 		result.push("**common** "+animals.ranks.common);

@@ -2,7 +2,7 @@ const CommandInterface = require('../../commandinterface.js');
 
 const global = require('../../../util/global.js');
 const animals = require('../../../../tokens/owo-animals.json');
-const animalUtil = require('../zoo/animalUtil.js');
+const animalUtil = require('../battle/util/animalUtil.js');
 
 module.exports = new CommandInterface({
 	
@@ -229,22 +229,26 @@ function getRepRanking(globalRank, con, msg, count){
  * displays pet ranking
  */
 function getPetRanking(globalRank, con, msg, count){
-	return;
 	var sql;
 	if(globalRank){
-		sql = "SELECT * FROM animal  ORDER BY lvl DESC, xp DESC LIMIT "+count+";";
-		sql +=  "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY lvl DESC, xp DESC LIMIT 1;";
+		sql = "SELECT * FROM animal ORDER BY xp DESC LIMIT "+count+";";
+		sql +=  "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE xp > c.xp) AS rank FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY xp DESC LIMIT 1;";
 	}else{
 		var users = global.getids(msg.guild.members);
-		sql = "SELECT * FROM animal WHERE id IN ("+users+") ORDER BY lvl DESC, xp DESC LIMIT "+count+";";
-		sql +=  "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE id IN ("+users+") AND ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY lvl DESC, xp DESC LIMIT 1;";
+		sql = "SELECT * FROM animal WHERE id IN ("+users+") ORDER BY xp DESC LIMIT "+count+";";
+		sql +=  "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE id IN ("+users+") AND xp > c.xp) AS rank FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY xp DESC LIMIT 1;";
 	}
 
 	displayRanking(con,msg,count,globalRank,sql,
 		"Top "+count+" "+((globalRank)?"Global Pet Rankings":"Pet Rankings for "+msg.guild.name),
 		function(query,rank){
-			if(rank==0) return ">\t\t"+query.nickname+" Lvl:"+query.lvl+" Att:"+query.att+" Hp:"+query.hp+"\n\n";
-			else return "\n\t\t"+query.nickname+" Lvl:"+query.lvl+" Att:"+query.att+" Hp:"+query.hp+"\n";
+			let result = "\t\t ";
+			if(query.nickname!=null)
+				result += query.nickname+" ";
+			let lvl = animalUtil.toLvl(query.xp);
+			result += `Lvl. ${lvl.lvl} ${lvl.currentXp}xp\n`;
+			if(rank==0) return ">"+result+"\n";
+			else return "\n"+result;
 		}
 	);
 }

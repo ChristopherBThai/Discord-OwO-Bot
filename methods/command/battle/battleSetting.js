@@ -64,8 +64,6 @@ async function changeSettings(p){
 	if(args[0]=='auto'){
 		field = 'auto';
 		if(args[1]=='false'){
-			p.send("Manual battles are currently broken!",3000);
-			return;
 			setting = 1;
 		}else if(args[1]=='true'){
 			setting = 0;

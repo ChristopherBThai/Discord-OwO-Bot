@@ -417,7 +417,7 @@ var reactionCollector = exports.reactionCollector = async function(p,msg,battle,
 	await msg.react(attack);
 	await msg.react(weapon);
 	/* Add reaction */
-	var emoji  = team[current].animal.uni?team[current].animal.uni:await p.client.emojis.get(p.global.parseID(team[current].animal.value));
+	var emoji  = team[current].animal.uni?team[current].animal.uni:p.global.parseID(team[current].animal.value);
 	var emojiReaction = await msg.react(emoji);
 
 	/* Construct reaction collector */
