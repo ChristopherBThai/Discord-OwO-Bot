@@ -21,13 +21,13 @@ exports.randAnimal = function(patreon,gem,lucky){
 			result.push("**patreon** "+animals.ranks.cpatreon);
 			result.push(animals.cpatreon[rand]);
 			result.push("cpatreon");
-			result.push(3000);
+			result.push(2000);
 		}else{
 			rand = Math.ceil(Math.random()*(animals.patreon.length-1));
 			result.push("**patreon** "+animals.ranks.patreon);
 			result.push(animals.patreon[rand]);
 			result.push("patreon");
-			result.push(100);
+			result.push(400);
 		}
 	}else if(specialPercent&&rand<specialPercent+patreonPercent){
 		rand = 1;
@@ -46,49 +46,49 @@ exports.randAnimal = function(patreon,gem,lucky){
 		result.push("**common** "+animals.ranks.common);
 		result.push(animals.common[rand]);
 		result.push("common");
-		result.push(1);
+		result.push(5);
 	}else if(rand<animals.uncommon[0]){
 		rand = Math.ceil(Math.random()*(animals.uncommon.length-1));
 		result.push("**uncommon** "+animals.ranks.uncommon);
 		result.push(animals.uncommon[rand]);
 		result.push("uncommon");
-		result.push(3);
+		result.push(10);
 	}else if(rand<animals.rare[0]){
 		rand = Math.ceil(Math.random()*(animals.rare.length-1));
 		result.push("**rare** "+animals.ranks.rare);
 		result.push(animals.rare[rand]);
 		result.push("rare");
-		result.push(8);
+		result.push(20);
 	}else if(rand<animals.epic[0]){
 		rand = Math.ceil(Math.random()*(animals.epic.length-1));
 		result.push("**epic** "+animals.ranks.epic);
 		result.push(animals.epic[rand]);
 		result.push("epic");
-		result.push(25);
+		result.push(400);
 	}else if(rand<animals.mythical[0]){
 		rand = Math.ceil(Math.random()*(animals.mythical.length-1));
 		result.push("**mythic** "+animals.ranks.mythical);
 		result.push(animals.mythical[rand]);
 		result.push("mythical");
-		result.push(500);
+		result.push(1000);
 	}else if(rand<animals.legendary[0]){
 		rand = Math.ceil(Math.random()*(animals.legendary.length-1));
 		result.push("**legendary** "+animals.ranks.legendary);
 		result.push(animals.legendary[rand]);
 		result.push("legendary");
-		result.push(1500);
+		result.push(2000);
 	}else if(rand<animals.fabled[0]){
 		rand = Math.ceil(Math.random()*(animals.fabled.length-1));
 		result.push("**fabled** "+animals.ranks.fabled);
 		result.push(animals.fabled[rand]);
 		result.push("fabled");
-		result.push(25000);
+		result.push(100000);
 	}else{
 		rand = Math.ceil(Math.random()*(animals.hidden.length-1));
 		result.push("**hidden** "+animals.ranks.hidden);
 		result.push(animals.hidden[rand]);
 		result.push("hidden");
-		result.push(50000);
+		result.push(300000);
 	}
 	return result;
 }

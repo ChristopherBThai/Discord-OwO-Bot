@@ -67,9 +67,15 @@ module.exports = new CommandInterface({
 			if(animal.alt.length>0)
 				alias = animal.alt.join(", ");
 
-			var atthp = "??? | ???";
-			if(result[0][0].lvl > 1)
-				atthp = animal.attr+" | "+animal.hpr;
+			let phys = "";
+			let mag = "";
+			if(result[0][0].xp >= 1001){
+				phys = `<:hp:531620120410456064> \`${animal.hpr}\` <:att:531616155450998794> \`${animal.attr}\` <:pr:531616156222488606> \`${animal.prr}\` `;
+				mag = `<:wp:531620120976687114> \`${animal.wpr}\` <:mag:531616156231139338> \`${animal.magr}\` <:mr:531616156226945024> \`${animal.mrr}\` `;
+			}else{
+				phys = `<:hp:531620120410456064> \`??\` <:att:531616155450998794> \`??\` <:pr:531616156222488606> \`??\``;
+				mag = `<:wp:531620120976687114> \`??\` <:mag:531616156231139338> \`??\` <:mr:531616156226945024> \`??\``;
+			}
 
 			var rarity = global.toFancyNum(result[1][0].total)+" total caught";
 
@@ -93,7 +99,7 @@ module.exports = new CommandInterface({
 				"thumbnail": {
 					"url": (emoji)?emoji:p.client.user.displayAvatarURL
 				},
-				"description": desc+"\n\n"+nickname+"**Count:** "+result[0][0].count+"/"+result[0][0].totalcount+"\n**Rank:** "+rankEmoji+" "+animal.rank+"\n**Rarity:** "+rarity+"\n**Alias:** "+alias+"\n**Att|Hp:** "+atthp+"\n**Points:** "+points+"\n**Sell:** "+sell+"\n**Sacrifice:** "+sac
+				"description": desc+"\n\n"+nickname+"**Count:** "+result[0][0].count+"/"+result[0][0].totalcount+"\n**Rank:** "+rankEmoji+" "+animal.rank+"\n**Rarity:** "+rarity+"\n**Alias:** "+alias+"\n**Points:** "+points+"\n**Sell:** "+sell+"\n**Sacrifice:** "+sac+"\n"+phys+"\n"+mag
 			};
 			msg.channel.send({ embed });
 		});
