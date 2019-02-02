@@ -9,7 +9,7 @@ exports.getItems = async function(p){
 	for(var i=0;i<result.length;i++){
 		var item = gems.gems[result[i].gname];
 		if(item){
-			var item = {emoji:item.emoji,id:item.id,count:result[i].gcount};
+			var item = {key:item.key,emoji:item.emoji,id:item.id,count:result[i].gcount};
 			items[item.key] = item;
 		}
 	}
