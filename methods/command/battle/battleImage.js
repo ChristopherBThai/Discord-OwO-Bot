@@ -8,22 +8,27 @@ exports.generateImage = function(teams){
 	info.password = imagegenAuth.password;
 
 	/* Returns a promise to avoid callback hell */
-	return new Promise( (resolve, reject) => {
-		request({
-			method:'POST',
-			uri:imagegenAuth.battleImageUri,
-			//encoding:null,
-			json:true,
-			body: info,
-		},(error,res,body)=>{
-			if(error){
-				reject(error);
-				console.error(error);
-				return;
-			}
-			resolve(body);
+	try{
+		return new Promise( (resolve, reject) => {
+			let req = request({
+				method:'POST',
+				uri:imagegenAuth.battleImageUri,
+				//encoding:null,
+				json:true,
+				body: info,
+			},(error,res,body)=>{
+				if(error){
+					resolve("");
+					console.error(error);
+					return;
+				}
+				resolve(body);
+			});
 		});
-	});
+	}catch (err){
+		console.log(err);
+		return "";
+	}
 }
 
 /* Generates a json depending on the battle info */
