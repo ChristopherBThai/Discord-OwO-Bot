@@ -594,11 +594,9 @@ exports.displayAllBattles = async function(p,battle,logs,setting){
 		for(let i=0;i<logLength;i++)
 			logTimeline.push(i);
 	}else{
-		let diff = (logLength+1)/3;
+		let diff = (logLength+1)/2;
 		/* beginning log */
 		logTimeline.push(Math.round(diff)-1);
-		/* middle log */
-		logTimeline.push(Math.round(2*diff)-1);
 		/* final log */
 		logTimeline.push(logLength-1);
 	}
@@ -613,7 +611,7 @@ exports.displayAllBattles = async function(p,battle,logs,setting){
 	let msg = await p.msg.channel.send(embed);
 
 	/* Update the message for each log in log timeline */
-	const gap = 3000;
+	const gap = 2000;
 	let i = 0;
 	let msgEdit = async function(){
 		let currentLog = logs[logTimeline[i]];
