@@ -201,7 +201,7 @@ exports.describe = async function(p,uwid){
 
 	/* Check if valid */
 	if(!result[0]){
-		p.errorMsg(", I could not find a weapon with that unique weapon id! Please use `owo weapon`");
+		p.errorMsg(", I could not find a weapon with that unique weapon id! Please use `owo weapon` for the weapon ID!");
 		return;
 	}
 

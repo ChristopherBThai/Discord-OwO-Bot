@@ -72,7 +72,7 @@ module.exports = new CommandInterface({
 					box.text = "\n**<:box:427352600476647425> |** You received a lootbox!"
 				}else{
 					box.sql = "INSERT INTO crate(uid,cratetype,boxcount,claimcount,claim) VALUES ((SELECT uid FROM user WHERE id = "+p.msg.author.id+"),0,1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
-					box.text = "\n**<:crate:523771259302182922> | You received a weapon crate!";
+					box.text = "\n**<:crate:523771259302182922> |** You received a weapon crate!";
 				}
 
 				/* Check if the user has not seen latest announcement */
