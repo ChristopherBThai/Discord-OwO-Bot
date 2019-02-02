@@ -92,7 +92,7 @@ function claim(msg,con,query,bot){
 			var animalLoc = animals.order.indexOf(total[animal].rank);
 			if(animalLoc||animalLoc===0){
 				if(!tempText[animalLoc])
-					tempText[animalLoc] = "\n"+animals.ranks[animals.order[animalLoc]] + "**|**";
+					tempText[animalLoc] = " \n"+animals.ranks[animals.order[animalLoc]] + "**|**";
 				tempText[animalLoc] += " "+animalString;
 			}
 			count++;

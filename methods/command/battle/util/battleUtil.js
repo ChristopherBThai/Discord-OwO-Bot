@@ -747,9 +747,9 @@ function calculateXP(team,enemy){
 	if(lvlDiff<=0) lvlDiff = 1;
 
 	/* Calculate xp */
-	let xp = 10;
-	if(team.win&&enemy.win) xp = 15;
-	else if(team.win) xp = 50*lvlDiff;
+	let xp = 50;
+	if(team.win&&enemy.win) xp = 100;
+	else if(team.win) xp = 200*lvlDiff;
 
 	return xp;
 }

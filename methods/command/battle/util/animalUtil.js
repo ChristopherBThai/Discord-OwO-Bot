@@ -52,7 +52,7 @@ exports.toLvl = function(xp){
 
 /* converts lvl to xp */
 function getXP(lvl){
-	return Math.pow(lvl,3) + 100;
+	return Math.pow(lvl,4) + 1000;
 }
 
 /* Returns sql for giving xp to animal */
