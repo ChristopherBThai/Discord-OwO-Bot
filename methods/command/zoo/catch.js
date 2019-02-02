@@ -63,7 +63,7 @@ module.exports = new CommandInterface({
 						let pet =  p.global.validAnimal(result[1][i].name);
 						text += (pet.uni?pet.uni:pet.value)+" ";
 					}
-					text += `gained ${animal.xp}xp!`;
+					text += `gained **${animal.xp}xp**!`;
 				}
 
 				//Get Lootbox
