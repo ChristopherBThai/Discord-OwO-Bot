@@ -30,6 +30,7 @@ module.exports = new CommandInterface({
 			return;
 		}else if(!item){
 			p.errorMsg(", I could not find that item",3000);
+			return;
 		}
 
 		if(item.name=="lootbox"){

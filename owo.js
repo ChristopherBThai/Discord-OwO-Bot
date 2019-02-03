@@ -1,4 +1,4 @@
-const debug = true;
+const debug = false;
 const testingGuild = '409959187229966337';
 const supportGuild = '420104212895105044';
 if(debug) var auth = require('../tokens/scuttester-auth.json');
@@ -26,7 +26,7 @@ client.on('message',msg => {
 	if(msg.author.bot) return;
 
 	/* Ignore guilds if in debug mode */
-	else if(debug&&msg.guild.id!=testingGuild&&msg.guild.id!=supportGuild) return;
+	//else if(debug&&msg.guild.id!=testingGuild&&msg.guild.id!=supportGuild) return;
 
 	else if(msg.channel.id==modChannel) command.executeMod(msg);
 
@@ -121,7 +121,7 @@ process.on('unhandledRejection', (reason, promise) => {
 	console.error('Unhandled Rejection at:', reason.stack || reason);
 });
 
-process.on('uncaughtException', (err) => {
+process.on('uncaughtException', err => {
 	console.error(new Date());
 	console.error(`Caught exception: ${err}`);
 });
