@@ -3,6 +3,7 @@ const CommandInterface = require('../../commandinterface.js');
 const global = require('../../../util/global.js');
 const animals = require('../../../../tokens/owo-animals.json');
 const animalUtil = require('../battle/util/animalUtil.js');
+const animalUtil2 = require('../zoo/animalUtil.js');
 
 module.exports = new CommandInterface({
 	
@@ -173,8 +174,8 @@ function getZooRanking(globalRank, con, msg, count){
 	displayRanking(con,msg,count,globalRank,sql,
 		"Top "+count+" "+((globalRank)?"Global Zoo Rankings":"Zoo Rankings for "+msg.guild.name),
 		function(query,rank){
-			if(rank==0) return ">\t\t"+global.toFancyNum(query.points)+" zoo points: "+animalUtil.zooScore(query)+"\n\n";
-			else return "\n\t\t"+global.toFancyNum(query.points)+" zoo points: "+animalUtil.zooScore(query)+"\n";
+			if(rank==0) return ">\t\t"+global.toFancyNum(query.points)+" zoo points: "+animalUtil2.zooScore(query)+"\n\n";
+			else return "\n\t\t"+global.toFancyNum(query.points)+" zoo points: "+animalUtil2.zooScore(query)+"\n";
 		}
 	);
 }
