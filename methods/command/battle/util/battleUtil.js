@@ -12,6 +12,7 @@ const crateUtil = require('./crateUtil.js');
 
 const attack = '👊🏼';
 const weapon = '🗡';
+const numEmojis = ['1⃣','2⃣','3⃣'];
 
 
 /* ==================================== Grabs battle from sql ====================================  */
@@ -417,7 +418,7 @@ var reactionCollector = exports.reactionCollector = async function(p,msg,battle,
 	await msg.react(attack);
 	await msg.react(weapon);
 	/* Add reaction */
-	var emoji  = team[current].animal.uni?team[current].animal.uni:p.global.parseID(team[current].animal.value);
+	let emoji = numEmojis[current];
 	var emojiReaction = await msg.react(emoji);
 
 	/* Construct reaction collector */
@@ -446,7 +447,7 @@ var reactionCollector = exports.reactionCollector = async function(p,msg,battle,
 			}
 		}else{
 			/* Else, gather more actions */
-			emoji  = team[current].animal.uni?team[current].animal.uni:await p.client.emojis.get(p.global.parseID(team[current].animal.value));
+			emoji = numEmojis[current];
 			emojiReaction = await msg.react(emoji);
 		}
 	})
