@@ -1,4 +1,4 @@
-const debug = true;
+const debug = false;
 
 /* Default is 4. Use higher numbers if you have enough cores */
 process.env.UV_THREADPOOL_SIZE = 12;
