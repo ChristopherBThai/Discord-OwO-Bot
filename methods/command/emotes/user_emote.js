@@ -25,7 +25,7 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 		var global=p.global,args=p.args,msg=p.msg,client=p.client;
-		if(args.length!=1||!global.isUser(args[0])){
+		if(!global.isUser(args[0])){
 			p.send("**🚫 |** Wrong arguments! Please tag someone!",3000);
 			return;
 		}

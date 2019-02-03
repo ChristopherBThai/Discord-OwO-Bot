@@ -3,6 +3,7 @@ const CommandInterface = require('../../commandinterface.js');
 const global = require('../../../util/global.js');
 const animals = require('../../../../tokens/owo-animals.json');
 const animalUtil = require('../battle/util/animalUtil.js');
+const animalUtil2 = require('../zoo/animalUtil.js');
 
 module.exports = new CommandInterface({
 	
@@ -87,8 +88,10 @@ function display(con, msg, args){
 }
 
 function displayRanking(con,msg,sql,title,subText){
+	try{
 	con.query(sql,async function(err,rows,fields){
 		if(err){console.error(err);return;}
+		try{
 		var above = rows[0];
 		var below = rows[1];
 		var me = rows[2][0];
@@ -152,7 +155,9 @@ function displayRanking(con,msg,sql,title,subText){
 		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
 		msg.channel.send(embed,{split:{prepend:'```md\n',append:'```'}})
 			.catch(err => console.error(err));
+		}catch(err){console.error(err);}
 	});
+	}catch(err){console.error(err);}
 }
 
 /**
@@ -194,7 +199,7 @@ function getZooRanking(globalRank,con,msg){
 	displayRanking(con,msg,sql,
 			((globalRank)?"Global ":"")+"Zoo Ranking",
 			function(query){
-				return "\t\t"+global.toFancyNum(query.points)+" zoo points: "+animalUtil.zooScore(query);
+				return "\t\t"+global.toFancyNum(query.points)+" zoo points: "+animalUtil2.zooScore(query);
 			});
 }
 
