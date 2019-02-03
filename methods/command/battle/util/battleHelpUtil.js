@@ -47,4 +47,9 @@ exports.help = async function(p,page=0){
 			await msg.edit({embed});
 		}
 	});
+
+	collector.on('end',async function(collected){
+		embed.color = 6381923;
+		await msg.edit("This message is now inactive",{embed});
+	});
 }
