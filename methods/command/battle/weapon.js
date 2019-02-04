@@ -5,7 +5,7 @@ const battleUtil = require('./util/battleUtil.js');
 
 module.exports = new CommandInterface({
 	
-	alias:["weapon","w","weapons"],
+	alias:["weapon","w","weapons","wep"],
 
 	args:"",
 
