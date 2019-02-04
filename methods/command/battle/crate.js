@@ -23,9 +23,9 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 		/* Decrement crate count */
-		var sql = "UPDATE IGNORE crate SET boxcount = boxcount - 1 WHERE uid = (SELECT uid FROM user WHERE id = "+p.msg.author.id+") AND boxcount > 0;";
+		let sql = "UPDATE IGNORE crate SET boxcount = boxcount - 1 WHERE uid = (SELECT uid FROM user WHERE id = "+p.msg.author.id+") AND boxcount > 0;";
 		sql += "SELECT uid FROM user WHERE id = "+p.msg.author.id+";";
-		var result = await p.query(sql);
+		let result = await p.query(sql);
 
 		/* Validate query */
 		if((result[0].changedRows==0||!result[1][0])){
@@ -34,28 +34,21 @@ module.exports = new CommandInterface({
 		}
 
 		/* Parse uid */
-		var uid = result[1][0].uid;
+		let uid = result[1][0].uid;
 		if(!uid){
 			p.send("**🚫 | "+p.msg.author.username+"**, You don't have any weapon crates!",3000);
 			return;
 		}
 
 		/* Get random weapon and construct sql */
-		var weapon = weaponUtil.getRandomWeapon(p.msg.author.id);
-
-		var text1 = p.config.emoji.blank+" **| "+p.msg.author.username+"** opens a weapon crate\n"+crateShake+" **|** and finds a ...";
-		var text2 = weapon.emoji+" **| "+p.msg.author.username+"** opens a weapon crate\n"+crateOpen+" **|** and finds a "+weapon.rank.emoji+" "+weapon.emoji;
-		for(var i=0;i<weapon.passives.length;i++){
-			text2 += " "+weapon.passives[i].emoji;
-		}
-		text2 += " "+weapon.avgQuality+"%";
+		let weapon = weaponUtil.getRandomWeapon(p.msg.author.id);
 
 		/* construct sql */
 		sql = `INSERT INTO user_weapon (uid,wid,stat) VALUES (${uid},${weapon.id},'${weapon.sqlStat}');`;
 
 		/* Insert weapon */
 		result = await p.query(sql);		
-		var uwid = result.insertId;
+		let uwid = result.insertId;
 		if(!uwid){
 			p.errorMsg(", Uh oh. Something went wrong! The weapon passive could not be applied");
 			console.error("Unable to add weapon passive to: "+uwid);
@@ -72,8 +65,16 @@ module.exports = new CommandInterface({
 			result = await p.query(sql);
 		}
 
+		/* Construct text */
+		let text1 = p.config.emoji.blank+" **| "+p.msg.author.username+"** opens a weapon crate\n"+crateShake+" **|** and finds a ...";
+		let text2 = weapon.emoji+" **| "+p.msg.author.username+"** opens a weapon crate\n"+crateOpen+" **|** and finds a `"+uwid+"` "+weapon.rank.emoji+" "+weapon.emoji;
+		for(var i=0;i<weapon.passives.length;i++){
+			text2 += " "+weapon.passives[i].emoji;
+		}
+		text2 += " "+weapon.avgQuality+"%";
+
 		/* Send and edit message */
-		var message = await p.msg.channel.send(text1);
+		let message = await p.msg.channel.send(text1);
 		setTimeout(function(){message.edit(text2)},3000);
 	}
 })
