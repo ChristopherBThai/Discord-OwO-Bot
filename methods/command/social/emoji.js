@@ -28,17 +28,17 @@ module.exports = new CommandInterface({
 
 		/* Look at previous message */
 		}else if(p.args[0]&&(p.args[0].toLowerCase()=="prev"||p.args[0].toLowerCase()=="previous")){
-			let msgs = (await p.msg.channel.fetchMessages({limit:3,before:p.msg.id})).array();
+			let msgs = (await p.msg.channel.fetchMessages({limit:5,before:p.msg.id})).array();
 			if(!msgs){
 				p.errorMsg(", There are no emojis! >:c");
 				return;
 			}
-			let emojis = undefined;
+			let emojis = "";
 			for(let i in msgs){
-				if(!emojis) emojis = parseIDs(msgs[i].content);
-				if(emojis.length==0) emojis = undefined;
+				emojis += msgs[i].content;
 			}
 
+			emojis = parseIDs(emojis);
 			if(!emojis) p.errorMsg(", There are no emojis! >:c");
 			else await display(p,emojis);
 
@@ -59,11 +59,11 @@ module.exports = new CommandInterface({
 function parseIDs(text){
 	let emojis = [];
 
-	let parsedEmojis = text.match(/<a?:[a-z0-9]+:[0-9]+>/gi);
+	let parsedEmojis = text.match(/<a?:[a-z0-9_]+:[0-9]+>/gi);
 
 	for(let i in parsedEmojis){
 		let emoji = parsedEmojis[i];
-		let name = emoji.match(/:[a-z0-9]+:/gi)[0].substr(1).slice(0,-1);
+		let name = emoji.match(/:[a-z0-9_]+:/gi)[0].substr(1).slice(0,-1);
 		let id = emoji.match(/:[0-9]+>/gi)[0].substr(1).slice(0,-1);
 		let gif = (emoji.match(/<a:/gi)?true:false);
 		let url = baseURL+id+(gif?".gif":".png");
