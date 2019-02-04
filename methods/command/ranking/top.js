@@ -123,7 +123,7 @@ function displayRanking(con,msg,count,globalRank,sql,title,subText){
 			rank++;
 		};
 		var date = new Date();
-		embed += (date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		embed += (date.toLocaleString("en-US", {month: '2-digit', day: '2-digit', year:'numeric', hour12:false, hour: '2-digit', minute:'2-digit'})+"```");
 		msg.channel.send(embed,{split:{prepend:'```md\n',append:'```'}})
 			.catch(err => console.error(err));
 
@@ -355,7 +355,7 @@ function getGuildRanking(con, msg, count){
 			rank++;
 		}
 		var date = new Date();
-		embed += ("\n*Spamming owo will not count!!!* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		embed += ("\n*Spamming owo will not count!!!* | "+date.toLocaleString("en-US", {month: '2-digit', day: '2-digit', year:'numeric', hour12:false, hour: '2-digit', minute:'2-digit'})+"```");
 		channel.send(embed)
 			.catch(err => console.error(err));
 	});
