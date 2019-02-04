@@ -26,7 +26,7 @@ exports.getItem = function(args){
 	if(id==100)
 		return {name:"crate"};
 	if(id>100)
-		return {name:"weapon"};
+		return {name:"weapon",id:id};
 }
 
 exports.toSmallNum = function(count,digits){

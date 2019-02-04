@@ -152,7 +152,7 @@ function displayRanking(con,msg,sql,title,subText){
 		if(rank-userRank==3) embed += ">...\n";
 
 		var date = new Date();
-		embed += ("\n"+date.toLocaleString("en-US", {month: '2-digit', day: '2=digit', year:'numeric', hour12:false, hour: '2-digit', minute:'2-digit'})+"```");
+		embed += ("\n"+date.toLocaleString("en-US", {month: '2-digit', day: '2-digit', year:'numeric', hour12:false, hour: '2-digit', minute:'2-digit'})+"```");
 		msg.channel.send(embed,{split:{prepend:'```md\n',append:'```'}})
 			.catch(err => console.error(err));
 		}catch(err){console.error(err);}

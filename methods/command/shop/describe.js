@@ -4,6 +4,7 @@ const food = require('../../../json/food.json');
 const shopUtil = require('./shopUtil.js');
 const cowoncy = "<:cowoncy:416043450337853441>";
 const lootboxUtil = require('../zoo/lootboxUtil.js');
+const weaponUtil = require('../battle/util/weaponUtil.js');
 const gemUtil = require('../zoo/gemUtil.js');
 
 module.exports = new CommandInterface({
@@ -35,14 +36,7 @@ module.exports = new CommandInterface({
 		}else if(item.name=="gem"){
 			gemUtil.desc(p,item.id);
 		}else{
-			var embed = {
-			"color": 4886754,
-			"fields":[{
-				"name":item.key+" "+item.name,
-				"value":"**ID:** "+item.id+"\n**Price:** "+item.price+"\nUsed to upgrade pets!\n"+item.desc
-				}]
-			};
-			p.send({embed});
+			weaponUtil.describe(p,item.id);
 		}
 	}
 

@@ -47,7 +47,7 @@ exports.toLvl = function(xp){
 		xp -= getXP(lvl);
 		lvl++;
 	}
-	return {lvl,currentXp:xp,maxXp:getXP(lvl+1)}
+	return {lvl,currentXp:xp,maxXp:getXP(lvl)}
 }
 
 /* converts lvl to xp */
