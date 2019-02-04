@@ -209,6 +209,11 @@ exports.describe = async function(p,uwid){
 	var weapon = this.parseWeaponQuery(result);
 	weapon = weapon[Object.keys(weapon)[0]];
 	weapon = this.parseWeapon(weapon);
+
+	/* If no weapon */
+	if(!weapon){
+		p.errorMsg(", I could not find a weapon with that unique weapon id! Please use `owo weapon` for the weapon ID!");
+	}
 	
 	/* Parse image url */
 	let url = weapon.emoji;
