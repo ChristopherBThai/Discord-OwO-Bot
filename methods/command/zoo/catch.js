@@ -3,7 +3,6 @@ const CommandInterface = require('../../commandinterface.js');
 const animals = require('../../../../tokens/owo-animals.json');
 const global = require('../../../util/global.js');
 const dateUtil = require('../../../util/dateUtil.js');
-const pet = require('../battle/petutil.js');
 const gemUtil = require('./gemUtil.js');
 const animalUtil = require('./animalUtil.js');
 const alterHunt = require('./../patreon/alterHunt.js');
