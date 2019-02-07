@@ -1,7 +1,6 @@
 const CommandInterface = require('../../commandinterface.js');
 
 const global = require('../../../util/global.js');
-const petUtil = require('./petutil.js');
 const teamUtil = require('./util/teamUtil.js');
 const battleUtil = require('./util/battleUtil.js');
 

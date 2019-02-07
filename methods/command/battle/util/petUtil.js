@@ -32,6 +32,8 @@ exports.getDisplay = function(p,animals){
 		"fields":[]
 	};
 
+	let letterCount = embed.author.name.length;
+
 
 	for(let i in animals){
 		let animal = animals[i];
@@ -73,6 +75,12 @@ exports.getDisplay = function(p,animals){
 			"value":`Lvl.${animal.stats.lvl} [${animal.stats.xp[0]}/${animal.stats.xp[1]}]\n${stats}\n${weaponText}`,
 			"inline":true
 		};
+
+		/* Discord embed char limit */
+		letterCount += field.name.length + field.value.length;
+		if(letterCount>6000)
+			return {embed}
+
 		embed.fields.push(field);
 	}
 
