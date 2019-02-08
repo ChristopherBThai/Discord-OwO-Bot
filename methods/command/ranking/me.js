@@ -11,7 +11,7 @@ module.exports = new CommandInterface({
 
 	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse|team [global]",
 
-	desc:"Displays your ranking of each catagory!\nYou can choose you rank within the server or globally!\nYou can also shorten the command like in the example!",
+	desc:"Displays your ranking of each category!\nYou can choose you rank within the server or globally!\nYou can also shorten the command like in the example!",
 
 	example:["owo my zoo","owo my cowoncy global","owo my p g"],
 

@@ -11,7 +11,7 @@ module.exports = new CommandInterface({
 
 	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse [global] {count}",
 
-	desc:"Displays the top ranking of each catagory!",
+	desc:"Displays the top ranking of each category!",
 
 	example:["owo top zoo","owo top cowoncy global","owo top p g"],
 
