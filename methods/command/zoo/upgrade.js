@@ -37,7 +37,7 @@ module.exports = new CommandInterface({
 	six:500,
 	bot:true,
 
-	execute: function(p){
+	execute: async function(p){
 		var global=p.global,con=p.con,msg=p.msg,args=p.args;
 
 		var count = undefined;
@@ -72,13 +72,18 @@ module.exports = new CommandInterface({
 
 		var sql = "SELECT * FROM autohunt WHERE id = "+msg.author.id+";";
 		sql += "UPDATE autohunt SET essence = essence - "+count+","+trait+"="+trait+"+"+count+" WHERE id = "+msg.author.id+" AND essence >= "+count+";";
-		con.query(sql,function(err,result){
+		con.query(sql,async function(err,result){
 			if(err){console.error(err);return;}
 			if(!result[0][0]||result[1].affectedRows==0){
 				p.send("**🚫 | "+msg.author.username+"** You do not have enough animal essence!",3000);
 				return;
 			}
 			var stat = autohuntUtil.getLvl(result[0][0][trait],count,trait);
+			/* Refund overflowing mana */
+			if(stat.max){
+				sql += "UPDATE autohunt SET essence = essence + "+stat.currentxp+","+trait+"="+trait+"-"+stat.currentxp+" WHERE id = "+msg.author.id+";";
+				await p.query(sql);
+			}
 			var text = "**🛠 | "+msg.author.username+"**, You successfully upgraded `"+trait+"` with  **"+(p.global.toFancyNum(count))+" Animal Essence** "+essence+"!"; 
 			text += "\n**<:blank:427371936482328596> |** `"+trait+": "+stat.stat+stat.prefix+" -  Lvl "+stat.lvl+" "+((stat.max)?"[MAX]":"["+stat.currentxp+"/"+stat.maxxp+"]")+"`";
 			if(stat.max)
