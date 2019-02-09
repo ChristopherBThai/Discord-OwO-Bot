@@ -10,16 +10,18 @@ const prevPageEmoji = '⬅';
 /* Initialize all the weapons */
 const weaponsDir = requireDir('../weapons');
 var weapons = {};
+var availableWeapons = {};
 for(var key in weaponsDir){
 	let weapon = weaponsDir[key];
-	if(!weapon.disabled) weapons[weapon.getID] = weapon;
+	weapons[weapon.getID] = weapon;
+	if(!weapon.disabled) availableWeapons[weapon.getID] = weapon;
 }
 
 exports.getRandomWeapon = function(id){
 	/* Grab a random weapon */
-	let keys = Object.keys(weapons);
+	let keys = Object.keys(availableWeapons);
 	let random = keys[Math.floor(Math.random()*keys.length)];
-	let weapon = weapons[random];
+	let weapon = availableWeapons[random];
 
 	/* Initialize random stats */
 	weapon = new weapon();

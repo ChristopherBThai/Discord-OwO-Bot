@@ -18,7 +18,7 @@ module.exports = class WeaponInterface{
 		if(noCreate) return;
 
 		/* Mana will also have a quality (always last in quality array) */
-		this.qualityList.push(this.manaRange);
+		if(this.manaRange) this.qualityList.push(this.manaRange);
 
 		/* Get random vars if not present */
 		if(!passives) passives = this.randomPassives();
@@ -75,7 +75,8 @@ module.exports = class WeaponInterface{
 		this.avgQuality = avgQuality;
 		this.desc = desc;
 		this.stats = stats;
-		this.manaCost = stats[stats.length-1];
+		if(this.manaRange) this.manaCost = stats[stats.length-1];
+		else this.manaCost = 0;
 		this.passives = passives;
 		this.rank = rank;
 		this.emoji = emoji;
@@ -280,6 +281,7 @@ module.exports = class WeaponInterface{
 	static get magEmoji(){return '<:mag:531616156231139338>'}
 	static get hpEmoji(){return '<:hp:531620120410456064>'}
 	static get getID(){return new this(null,null,true).id}
+	static get disabled(){return new this(null,null,true).disabled}
 	static get getName(){return new this(null,null,true).name}
 	static get getDesc(){return new this(null,null,true).basicDesc}
 	static get getEmoji(){return new this(null,null,true).defaultEmoji}
