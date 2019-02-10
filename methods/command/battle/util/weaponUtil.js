@@ -6,6 +6,7 @@ const weaponEmoji = "🗡";
 const weaponPerPage = 10;
 const nextPageEmoji = '➡';
 const prevPageEmoji = '⬅';
+const sortEmoji = '🔃';
 
 /* Initialize all the weapons */
 const weaponsDir = requireDir('../weapons');
@@ -98,37 +99,45 @@ var parseWeaponQuery = exports.parseWeaponQuery = function(query){
 }
 
 /* Displays weapons with multiple pages */
-exports.display = async function(p,pageNum=0){
+exports.display = async function(p,pageNum=0,sort=false){
 	
 	/* Construct initial page */
-	let page = await getDisplayPage(p,pageNum);
+	let page = await getDisplayPage(p,pageNum,sort);
 	if(!page) return;
 
 	/* Send msg and add reactions */
 	let msg = await p.msg.channel.send({embed:page.embed});
 	await msg.react(prevPageEmoji);
 	await msg.react(nextPageEmoji);
-	let filter = (reaction,user) => (reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&user.id===p.msg.author.id;
+	await msg.react(sortEmoji);
+	let filter = (reaction,user) => (reaction.emoji.name===sortEmoji||reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&user.id===p.msg.author.id;
 	let collector = await msg.createReactionCollector(filter,{time:20000});
 
 	collector.on('collect', async function(r){
-		/* Save the animal's action */
-		if(r.emoji.name===nextPageEmoji&&pageNum+1<page.maxPage) {
-			pageNum++;
-			page = await getDisplayPage(p,pageNum);
-			msg.edit({embed:page.embed});
-		}
-		if(r.emoji.name===prevPageEmoji&&pageNum>0){
-			pageNum--;
-			page = await getDisplayPage(p,pageNum);
-			msg.edit({embed:page.embed});
-		}
+		try{
+			/* Save the animal's action */
+			if(r.emoji.name===nextPageEmoji&&pageNum+1<page.maxPage) {
+				pageNum++;
+				page = await getDisplayPage(p,pageNum,sort);
+				msg.edit({embed:page.embed});
+			}
+			else if(r.emoji.name===prevPageEmoji&&pageNum>0){
+				pageNum--;
+				page = await getDisplayPage(p,pageNum,sort);
+				msg.edit({embed:page.embed});
+			}
+			else if(r.emoji.name===sortEmoji){
+				sort = !sort;
+				page = await getDisplayPage(p,pageNum,sort);
+				msg.edit({embed:page.embed});
+			}
+		}catch(err){console.error(err);}
 	});
 
 }
 
 /* Gets a single page */
-var getDisplayPage = async function(p,page){
+var getDisplayPage = async function(p,page,sort){
 	/* Query all weapons */
 	let sql = `SELECT temp.*,user_weapon_passive.wpid,user_weapon_passive.pcount,user_weapon_passive.stat as pstat
 		FROM 
@@ -138,7 +147,7 @@ var getDisplayPage = async function(p,page){
 				LEFT JOIN animal ON animal.pid = user_weapon.pid
 			WHERE 
 				user.id = ${p.msg.author.id}
-			ORDER BY user_weapon.uwid DESC
+			ORDER BY ${sort?'user_weapon.avg DESC,':''} user_weapon.uwid DESC
 			LIMIT ${weaponPerPage}
 			OFFSET ${page*weaponPerPage}) temp
 		LEFT JOIN
@@ -190,7 +199,7 @@ var getDisplayPage = async function(p,page){
 		"description":desc,
 		"color": p.config.embed_color,
 		"footer":{
-			"text":"Page "+(page+1)+"/"+maxPage
+			"text":"Page "+(page+1)+"/"+maxPage+" | "+((sort)?"Sorting by rarity":"Sorting by id")
 		}
 	};
 	return {sql,embed,totalCount,nextPage,prevPage,maxPage}
