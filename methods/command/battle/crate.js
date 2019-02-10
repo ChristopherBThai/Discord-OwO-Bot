@@ -44,7 +44,7 @@ module.exports = new CommandInterface({
 		let weapon = weaponUtil.getRandomWeapon(p.msg.author.id);
 
 		/* construct sql */
-		sql = `INSERT INTO user_weapon (uid,wid,stat) VALUES (${uid},${weapon.id},'${weapon.sqlStat}');`;
+		sql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${uid},${weapon.id},'${weapon.sqlStat}',${weapon.avgQuality});`;
 
 		/* Insert weapon */
 		result = await p.query(sql);		
