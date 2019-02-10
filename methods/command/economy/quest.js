@@ -39,23 +39,27 @@ async function rrQuest(p){
 
 	/* Query timer info */
 	let sql = "SELECT questrrTime FROM timers WHERE uid = (SELECT uid FROM user WHERE id = "+p.msg.author.id+");";
-	sql += "SELECT qid FROM user INNER JOIN quest ON user.uid = quest.uid WHERE id = "+p.msg.author.id+";";
+	sql += "SELECT qid FROM user INNER JOIN quest ON user.uid = quest.uid WHERE id = "+p.msg.author.id+" ORDER BY qid ASC;";
 	let result = await p.query(sql);
 
 	/* Parse dates */
 	var afterMid = dateUtil.afterMidnight((result[0][0])?result[0][0].questrrTime:undefined);
 
 	/* After midnight? */
+	/*
 	if(!afterMid||!afterMid.after){
 		p.errorMsg(", you already rerolled a quest today silly head!",3000);
 		return;
 	}
+	*/
 
 	/* Is there even a quest to reroll? */
 	let valid = false;
 	for(let i in result[1])
-		if(result[1][i].qid==qnum)
+		if(!valid&&i==qnum){
 			valid = true;
+			qnum = result[1][i].qid;
+		}
 	if(!valid){
 		p.errorMsg(", Could not locate the quest.",3000);
 		return;
