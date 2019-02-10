@@ -35,7 +35,7 @@ module.exports = new CommandInterface({
 
 async function rrQuest(p){
 	/* Parse which quest to alter */
-	let qnum = parseInt(p.args[1]);
+	let qnum = parseInt(p.args[1])-1;
 
 	/* Query timer info */
 	let sql = "SELECT questrrTime FROM timers WHERE uid = (SELECT uid FROM user WHERE id = "+p.msg.author.id+");";
