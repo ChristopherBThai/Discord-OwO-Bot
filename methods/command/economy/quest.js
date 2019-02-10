@@ -13,11 +13,11 @@ module.exports = new CommandInterface({
 
 	alias:["quest"],
 
-	args:"",
+	args:"{rr} {num}",
 
-	desc:"Grab a quest everyday! Complete them to earn rewards! You can earn a new quest after 12am PST",
+	desc:"Grab a quest everyday! Complete them to earn rewards! You also have one quest reroll per day! You can earn a new quest after 12am PST",
 
-	example:[],
+	example:['owo quest','owo quest rr 1'],
 
 	related:[],
 
@@ -26,61 +26,113 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: async function(p){
-		/* Query for user info */
-		var sql = "SELECT questTime FROM timers WHERE uid = (SELECT uid FROM user WHERE id = "+p.msg.author.id+");";
-		sql += "SELECT * FROM quest WHERE uid = (SELECT uid FROM user WHERE id = "+p.msg.author.id+") ORDER BY qid asc;";
-		try{
-			/* Query sql */
-			var result = await p.query(sql).catch(err => {
-				throw new p.Error(err,"MySQL",sql);
-			});
-
-			/* If there is no timer data, make one */
-			if(!result[0][0]){
-				sql = "INSERT IGNORE INTO user (id,count) values ("+p.msg.author.id+",0);";
-				sql += "INSERT INTO timers (uid) values ((SELECT uid FROM user WHERE id = "+p.msg.author.id+"));";
-				await p.query(sql).catch(err => {
-					throw new p.Error(err,"MySQL",sql);
-				});
-			}
-
-			/* Parse dates */
-			var afterMid = dateUtil.afterMidnight((result[0][0])?result[0][0].questTime:undefined);
-
-			/* Check if its past midnight and number of quest < 3, if so add 1 quest */
-			if(afterMid&&afterMid.after&&result[1].length<3)
-				var quest = getQuest(p.msg.author.id);
-
-			var quests = parseQuests(p.msg.author.id,result[1],afterMid,quest);
-
-			/* Combine sql statements */
-			sql = "";
-			if(quest) sql += quest.sql;
-			if(quests) sql += quests.sql;
-
-			if(sql!="")
-				await p.query(sql).catch(err => {console.error(err)});
-
-			/*Create embed */
-			var embed = {
-				"color":p.config.embed_color,
-				"footer":{
-					"text": "Next quest in: "+afterMid.hours+" H "+afterMid.minutes+" M "+afterMid.seconds+" S"
-				},
-				"author": {
-					"name": p.msg.author.username+"'s Quest Log",
-					"icon_url":p.msg.author.avatarURL
-				},
-				"description":quests.text
-			};
-
-			p.send({embed});
-		}catch(err){console.error(err);}
+		if(p.args.length==2&&(p.args[0]=='rr'||p.args[0]=='reroll')&&p.global.isInt(p.args[1]))
+			await rrQuest(p);
+		else await addQuest(p);
 	}
 
 })
 
-function getQuest(id){
+async function rrQuest(p){
+	/* Parse which quest to alter */
+	let qnum = parseInt(p.args[1]);
+
+	/* Query timer info */
+	let sql = "SELECT questrrTime FROM timers WHERE uid = (SELECT uid FROM user WHERE id = "+p.msg.author.id+");";
+	sql += "SELECT qid FROM user INNER JOIN quest ON user.uid = quest.uid WHERE id = "+p.msg.author.id+";";
+	let result = await p.query(sql);
+
+	/* Parse dates */
+	var afterMid = dateUtil.afterMidnight((result[0][0])?result[0][0].questrrTime:undefined);
+
+	/* After midnight? */
+	if(!afterMid||!afterMid.after){
+		p.errorMsg(", you already rerolled a quest today silly head!",3000);
+		return;
+	}
+
+	/* Is there even a quest to reroll? */
+	let valid = false;
+	for(let i in result[1])
+		if(result[1][i].qid==qnum)
+			valid = true;
+	if(!valid){
+		p.errorMsg(", Could not locate the quest.",3000);
+		return;
+	}
+
+	/* alright, we can now find a new quest! */
+	let quest = getQuest(p.msg.author.id,qnum);
+
+	/* Replace the quest in query */
+	sql = "DELETE FROM quest WHERE uid = (SELECT uid FROM user WHERE id = "+p.msg.author.id+") AND qid = "+qnum+";";
+	sql += quest.sql;
+	sql += "UPDATE timers LEFT JOIN user ON timers.uid = user.uid SET questrrTime = NOW() WHERE id = "+p.msg.author.id+";";
+	sql += "SELECT * FROM quest WHERE uid = (SELECT uid FROM user WHERE id = "+p.msg.author.id+") ORDER BY qid asc;";
+	result = await p.query(sql);
+
+	/* Display the result */
+	var quests = parseQuests(p.msg.author.id,result[3],afterMid);
+	let embed = constructEmbed(p,afterMid,quests);
+
+	p.send({embed});
+}
+
+async function addQuest(p){
+	/* Query for user info */
+	var sql = "SELECT questTime FROM timers WHERE uid = (SELECT uid FROM user WHERE id = "+p.msg.author.id+");";
+	sql += "SELECT * FROM quest WHERE uid = (SELECT uid FROM user WHERE id = "+p.msg.author.id+") ORDER BY qid asc;";
+
+	/* Query sql */
+	var result = await p.query(sql);
+
+	/* If there is no timer data, make one */
+	if(!result[0][0]){
+		sql = "INSERT IGNORE INTO user (id,count) values ("+p.msg.author.id+",0);";
+		sql += "INSERT INTO timers (uid) values ((SELECT uid FROM user WHERE id = "+p.msg.author.id+"));";
+		await p.query(sql).catch(err => {
+			throw new p.Error(err,"MySQL",sql);
+		});
+	}
+
+	/* Parse dates */
+	var afterMid = dateUtil.afterMidnight((result[0][0])?result[0][0].questTime:undefined);
+
+	/* Check if its past midnight and number of quest < 3, if so add 1 quest */
+	if(afterMid&&afterMid.after&&result[1].length<3)
+		var quest = getQuest(p.msg.author.id);
+
+	var quests = parseQuests(p.msg.author.id,result[1],afterMid,quest);
+
+	/* Combine sql statements */
+	sql = "";
+	if(quest) sql += quest.sql;
+	if(quests) sql += quests.sql;
+
+	if(sql!="")
+		await p.query(sql).catch(err => {console.error(err)});
+
+	/*Create embed */
+	let embed = constructEmbed(p,afterMid,quests);
+
+	p.send({embed});
+}
+
+function constructEmbed(p,afterMid,quests){
+	return embed = {
+		"color":p.config.embed_color,
+		"footer":{
+			"text": "Next quest in: "+afterMid.hours+" H "+afterMid.minutes+" M "+afterMid.seconds+" S"
+		},
+		"author": {
+			"name": p.msg.author.username+"'s Quest Log",
+			"icon_url":p.msg.author.avatarURL
+		},
+		"description":quests.text
+	};
+}
+
+function getQuest(id,qid){
 	/* Grab a random quest catagory */
 	var key = Object.keys(questJson);
 	key = key[Math.floor(Math.random()*key.length)];
@@ -109,13 +161,15 @@ function getQuest(id){
 				(SELECT uid FROM user WHERE id = ${id}),
 				NULL
 			  ),
-			3,
+			${qid?qid:3},
 			'${key}',
 			${loc},
 			'${prize}',
 			0
 		);`
-	sql += `INSERT INTO timers (uid,questTime) VALUES ((SELECT uid FROM user WHERE id = ${id}),NOW()) ON DUPLICATE KEY UPDATE questTime = NOW();`;
+	/* Reset timer if its from daily quest */
+	if(!qid)
+		sql += `INSERT INTO timers (uid,questTime) VALUES ((SELECT uid FROM user WHERE id = ${id}),NOW()) ON DUPLICATE KEY UPDATE questTime = NOW();`;
 
 	return {sql:sql,
 		key:key,
