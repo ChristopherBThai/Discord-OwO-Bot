@@ -21,7 +21,7 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	cooldown:5000,
+	cooldown:1000,
 	half:100,
 	six:500,
 
@@ -46,12 +46,10 @@ async function rrQuest(p){
 	var afterMid = dateUtil.afterMidnight((result[0][0])?result[0][0].questrrTime:undefined);
 
 	/* After midnight? */
-	/*
 	if(!afterMid||!afterMid.after){
 		p.errorMsg(", you already rerolled a quest today silly head!",3000);
 		return;
 	}
-	*/
 
 	/* Is there even a quest to reroll? */
 	let valid = false;
@@ -66,7 +64,7 @@ async function rrQuest(p){
 	}
 
 	/* alright, we can now find a new quest! */
-	let quest = getQuest(p.msg.author.id,qnum);
+	let quest = getQuest(p.msg.author.id,{qnum});
 
 	/* Replace the quest in query */
 	sql = "DELETE FROM quest WHERE uid = (SELECT uid FROM user WHERE id = "+p.msg.author.id+") AND qid = "+qnum+";";
@@ -161,11 +159,8 @@ function getQuest(id,qid){
 
 	/* Construct insert sql */
 	var sql = `INSERT IGNORE INTO quest (uid,qid,qname,level,prize,count) values (
-			IF((SELECT * FROM (SELECT COUNT(*) FROM quest left join user on quest.uid = user.uid WHERE id = ${id}) AS t)<3,
-				(SELECT uid FROM user WHERE id = ${id}),
-				NULL
-			  ),
-			${qid?qid:3},
+			(SELECT uid FROM user WHERE id = ${id}),
+			${qid?qid.qnum:3},
 			'${key}',
 			${loc},
 			'${prize}',
