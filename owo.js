@@ -12,6 +12,8 @@ const client = new Discord.Client(config.client);
 const DBL = require("dblapi.js");
 const dbl = new DBL(auth.dbl);
 
+const mysql = require('./util/mysql.js');
+
 const CommandClass = require('./methods/command.js');
 const command = new CommandClass(client,dbl);
 const macro = require('../tokens/macro.js');
@@ -26,7 +28,7 @@ client.on('message',msg => {
 	if(msg.author.bot) return;
 
 	/* Ignore guilds if in debug mode */
-	//else if(debug&&msg.guild.id!=testingGuild&&msg.guild.id!=supportGuild) return;
+	else if(debug&&msg.guild.id!=testingGuild&&msg.guild.id!=supportGuild) return;
 
 	else if(msg.channel.id==modChannel) command.executeMod(msg);
 
@@ -123,5 +125,11 @@ process.on('unhandledRejection', (reason, promise) => {
 
 process.on('uncaughtException', err => {
 	console.error(new Date());
+	console.error(client.shard.id);
 	console.error(`Caught exception: ${err}`);
+	console.error(err);
+	if(err.code=="PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR"){
+		console.error("true");
+		mysql.reconnect();
+	}
 });
