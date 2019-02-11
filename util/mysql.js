@@ -25,9 +25,21 @@ function handleDisconnect(){
 
 	con.on('error',function(err){
 		console.error('db error',err);
-		if(err.code = 'PROTOCOL_CONNECTION_LOST'){
+		console.log(err.code);
+
+		if(err.fatal){
+			console.error('fatal');
+			con.disconnect();
 			handleDisconnect();
+			return;
 		}
+
+		if(err.code !== 'PROTOCOL_CONNECTION_LOST'){
+			throw err;
+		}
+		console.error("reconnection mysql");
+		console.error(err);
+		handleDisconnect();
 	});
 
 	module.exports.con = con;
@@ -37,4 +49,6 @@ exports.con = con;
 exports.mysql = mysql;
 
 handleDisconnect();
+
+module.exports.reconnect = handleDisconnect;
 
