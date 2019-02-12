@@ -121,6 +121,7 @@ process.on('message',message => {
 process.on('unhandledRejection', (reason, promise) => {
 	console.error(new Date());
 	console.error('Unhandled Rejection at:', reason.stack || reason);
+	console.error(reason);
 });
 
 process.on('uncaughtException', err => {

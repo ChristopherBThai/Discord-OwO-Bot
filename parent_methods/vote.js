@@ -23,7 +23,7 @@ var manager;
  */
 function upvote(id,bot,json){
 	console.log("Webhooks for "+id);
-	var weekend = json.isWeekend;
+	var weekend = json?json.isWeekend:false;
 	var sql = "SELECT count,TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = "+id+";";
 	sql += "SELECT patreonDaily FROM cowoncy NATURAL JOIN user WHERE id = "+id+";";
 	con.query(sql,function(err,result){
