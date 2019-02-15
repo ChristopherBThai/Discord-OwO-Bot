@@ -39,7 +39,7 @@ module.exports = new CommandInterface({
 			}
 
 			emojis = parseIDs(emojis);
-			if(!emojis) p.errorMsg(", There are no emojis! >:c");
+			if(emojis.length==0) p.errorMsg(", There are no emojis! I can only look at the previous 5 messages! >:c");
 			else await display(p,emojis);
 
 		/* Look at current message */
@@ -111,6 +111,8 @@ async function display(p,emojis){
 
 function createEmbed(p,loc,emojis){
 	let emoji = emojis[loc];
+	if(!emoji) emoji = p.client.user.avatarURL;
+
 	let embed = {
 		"author":{
 			"name":"Enlarged Emojis!",

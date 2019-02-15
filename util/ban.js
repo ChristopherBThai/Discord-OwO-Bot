@@ -20,7 +20,7 @@ exports.check = async function(con,msg,client,command,callback,ignore){
 	}else if(cooldown[msg.author.id]>=3) {
 		msg.channel.send("**⏱ | "+msg.author.username+"**, Please slow down~ You're a little **too fast** for me :c")
 			.then(message => message.delete(3000))
-			.catch(err => console.error(err));
+			.catch(err => console.info(err));
 		return;
 	}else if(cooldown[msg.author.id]<3){
 		cooldown[msg.author.id]++;
@@ -38,7 +38,7 @@ exports.check = async function(con,msg,client,command,callback,ignore){
 		}else
 			msg.channel.send("**🚫 |** That command is disabled on this channel!")
 				.then(message => message.delete(3000))
-				.catch(err => console.error(err));
+				.catch(err => console.info(err));
 	});
 }
 
@@ -50,8 +50,8 @@ function checkPermissions(msg,client){
 	for(var i=0;i<permissions.length;i++){
 		if(!perm.includes(permissions[i])){
 			msg.channel.send("**🚫 |** I don't have permissions for: `"+permissions[i]+"`!\n**<:blank:427371936482328596> |** Please contact an admin on your server or reinvite me with `owo invite`!")
-				.catch(err => {console.error("I can't send messange in this channel! [ban.js/checkPermissions]")});
-			console.error("Missing permission "+permissions[i]+" for "+msg.channel.id);
+				.catch(err => {console.info("I can't send messange in this channel! [ban.js/checkPermissions]")});
+			console.info("Missing permission "+permissions[i]+" for "+msg.channel.id);
 			return false;
 		}
 	}
