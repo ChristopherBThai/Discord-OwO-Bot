@@ -800,7 +800,7 @@ function animalCompactDisplayText(animal){
 	text += `\n\`${hp} HP\` `;
 	text += `\`${wp} WP\` `;
 	if(animal.weapon){
-		text += "\n"+animal.weapon.rank.emoji+animal.weapon.emoji;
+		text += " "+animal.weapon.rank.emoji+animal.weapon.emoji;
 		let passives = animal.weapon.passives;
 		for(var j in passives){
 			text += passives[j].emoji;
