@@ -281,18 +281,20 @@ var displayText = exports.displayText = async function(p,team,logs){
 	}
 	if(pTeam.join("\n").length>=1020||eTeam.join("\n").length>=1020){
 		for(let i in pTeam){
-			embed.fields.push({
-				"name":team.player.name?team.player.name:"Player Team",
-				"value":pTeam[i],
-				"inline":true
-			});
+			if(pTeam[i])
+				embed.fields.push({
+					"name":team.player.name?team.player.name:"Player Team",
+					"value":pTeam[i],
+					"inline":true
+				});
 		}
 		for(let i in pTeam){
-			embed.fields.push({
-				"name":team.enemy.name?team.enemy.name:"Enemy Team",
-				"value":eTeam[i],
-				"inline":true
-			});
+			if(eTeam[i])
+				embed.fields.push({
+					"name":team.enemy.name?team.enemy.name:"Enemy Team",
+					"value":eTeam[i],
+					"inline":true
+				});
 		}
 	}
 	else{
@@ -697,7 +699,7 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 	/* Calculate and distribute xp */
 	let pXP = 0;
 	let eXP = 0;
-	if(!setting||!setting.noReward||!setting.noMsg){
+	if(battle&&(!setting||!setting.noReward||!setting.noMsg)){
 		pXP = calculateXP({team:battle.player,win:playerWin},{team:battle.enemy,win:enemyWin});
 		eXP = calculateXP({team:battle.enemy,win:enemyWin},{team:battle.player,win:playerWin});
 	}

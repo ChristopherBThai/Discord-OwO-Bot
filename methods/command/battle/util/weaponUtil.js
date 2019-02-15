@@ -111,7 +111,7 @@ exports.display = async function(p,pageNum=0,sort=false){
 	await msg.react(nextPageEmoji);
 	await msg.react(sortEmoji);
 	let filter = (reaction,user) => (reaction.emoji.name===sortEmoji||reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&user.id===p.msg.author.id;
-	let collector = await msg.createReactionCollector(filter,{time:20000});
+	let collector = await msg.createReactionCollector(filter,{time:45000});
 
 	collector.on('collect', async function(r){
 		try{
@@ -119,19 +119,24 @@ exports.display = async function(p,pageNum=0,sort=false){
 			if(r.emoji.name===nextPageEmoji&&pageNum+1<page.maxPage) {
 				pageNum++;
 				page = await getDisplayPage(p,pageNum,sort);
-				msg.edit({embed:page.embed});
+				await msg.edit({embed:page.embed});
 			}
 			else if(r.emoji.name===prevPageEmoji&&pageNum>0){
 				pageNum--;
 				page = await getDisplayPage(p,pageNum,sort);
-				msg.edit({embed:page.embed});
+				await msg.edit({embed:page.embed});
 			}
 			else if(r.emoji.name===sortEmoji){
 				sort = !sort;
 				page = await getDisplayPage(p,pageNum,sort);
-				msg.edit({embed:page.embed});
+				await msg.edit({embed:page.embed});
 			}
 		}catch(err){console.error(err);}
+	});
+
+	collector.on('end',async function(collected){
+		page.embed.color = 6381923;
+		await msg.edit("This message is now inactive",{embed:page.embed});
 	});
 
 }
@@ -206,6 +211,12 @@ var getDisplayPage = async function(p,page,sort){
 }
 
 exports.describe = async function(p,uwid){
+	/* Check if valid */
+	if(!uwid){
+		p.errorMsg(", I could not find a weapon with that unique weapon id! Please use `owo weapon` for the weapon ID!");
+		return;
+	}
+
 	/* sql query */
 	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid WHERE a.uwid = ${uwid} AND uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
 	var result = await p.query(sql);
