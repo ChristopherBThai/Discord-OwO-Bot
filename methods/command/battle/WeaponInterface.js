@@ -283,6 +283,7 @@ module.exports = class WeaponInterface{
 	static get getID(){return new this(null,null,true).id}
 	static get disabled(){return new this(null,null,true).disabled}
 	static get getName(){return new this(null,null,true).name}
+	static get unsellable(){return new this(null,null,true).unsellable}
 	static get getDesc(){return new this(null,null,true).basicDesc}
 	static get getEmoji(){return new this(null,null,true).defaultEmoji}
 }

@@ -252,7 +252,7 @@ exports.describe = async function(p,uwid){
 	/* Make description */
 	let desc = `**Name:** ${weapon.name}\n`;
 	desc += `**ID:** \`${uwid}\`\n`;
-	desc += `**Sell Value:** ${prices[weapon.rank.name]}\n`;
+	desc += `**Sell Value:** ${weapon.unsellable?"UNSELLABLE":prices[weapon.rank.name]}\n`;
 	desc += `**Quality:** ${weapon.rank.emoji} ${weapon.avgQuality}%\n`;
 	desc += `**WP Cost:** ${weapon.manaCost} <:wp:531620120976687114>`;
 	desc += `\n**Description:** ${weapon.desc}\n`;
@@ -352,13 +352,42 @@ exports.unequip = async function(p,uwid){
 
 /* Sells a weapon */
 exports.sell = async function(p,uwid){
+	/* Grab the item we will sell */
 	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname 
 		FROM user
 			LEFT JOIN user_weapon a ON user.uid = a.uid
 			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid 
 			LEFT JOIN animal c ON a.pid = c.pid 
 		WHERE user.id = ${p.msg.author.id} AND a.uwid = ${uwid};`
-	sql += `DELETE user_weapon_passive FROM user 
+	
+	let result = await p.query(sql);
+
+	/* If an animal is using the weapon */
+	if(result[0]&&result[0].name){
+		p.errorMsg(", please unequip the weapon to sell it!",3000);
+		return;
+	}
+
+	/* Parse stats to determine price */
+	let weapon = this.parseWeaponQuery(result);
+	for(var key in weapon){
+		weapon = this.parseWeapon(weapon[key]);
+	}
+
+	/* Is this weapon sellable? */
+	if(weapon.unsellable){
+		p.errorMsg(", This weapon cannot be sold!");
+		return;
+	}
+
+	/* Get weapon price */
+	let price = prices[weapon.rank.name];
+	if(!price){
+		p.errorMsg(", Something went terribly wrong...");
+		return;
+	}
+
+	sql = `DELETE user_weapon_passive FROM user 
 		LEFT JOIN user_weapon ON user.uid = user_weapon.uid 
 		LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
 		WHERE id = ${p.msg.author.id} 
@@ -370,34 +399,14 @@ exports.sell = async function(p,uwid){
 			AND user_weapon.uwid = ${uwid}
 			AND user_weapon.pid IS NULL;`;
 
-	let result = await p.query(sql);
-
-	/* If an animal is using the weapon */
-	if(result[0][0]&&result[0][0].name){
-		p.errorMsg(", please unequip the weapon to sell it!",3000);
-		return;
-	}
-
+	result = await p.query(sql);
 
 	/* Check if deleted */
-	if(result[2].affectedRows==0){
+	if(result[1].affectedRows==0){
 		p.errorMsg(", you do not have a weapon with this id!",3000);
 		return;
 	}
 	
-	/* Parse stats to determine price */
-	let weapon = this.parseWeaponQuery(result[0]);
-	for(var key in weapon){
-		weapon = this.parseWeapon(weapon[key]);
-	}
-
-	/* Get weapon price */
-	let price = prices[weapon.rank.name];
-	if(!price){
-		p.errorMsg(", Something went terribly wrong...");
-		return;
-	}
-
 	/* Give cowoncy */
 	sql = `UPDATE cowoncy SET money = money + ${price} WHERE id = ${p.msg.author.id}`;
 	result = await p.query(sql);
