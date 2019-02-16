@@ -13,6 +13,7 @@ module.exports = class Rune extends WeaponInterface{
 		this.availablePassives = [];
 		this.passiveCount = 0;
 		this.qualityList = [[5,15]];
+		this.unsellable = true;
 	}
 
 	alterStats(stats){
