@@ -31,6 +31,8 @@ module.exports = class WeaponInterface{
 				let buff = buffs[this.buffList[i]];
 				this.qualityList = this.qualityList.concat(buff.getQualityList);
 			}
+		}else{
+			this.buffList = [];
 		}
 		/* Mana will also have a quality (always last in quality array) */
 		if(this.manaRange) this.qualityList.push(this.manaRange);
