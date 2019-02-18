@@ -29,7 +29,7 @@ module.exports = class GreatSword extends WeaponInterface{
 		let dealt = 0;
 		for(let i=0;i<enemy.length;i++){
 			if(enemy[i].stats.hp[0]>0)
-				dealt += WeaponInterface.inflictDamage(enemy[i],damage,WeaponInterface.MAGICAL);
+				dealt += WeaponInterface.inflictDamage(me,enemy[i],damage,WeaponInterface.MAGICAL);
 		}
 
 		/* deplete weapon points*/

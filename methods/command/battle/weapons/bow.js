@@ -24,14 +24,14 @@ module.exports = class Bow extends WeaponInterface{
 		
 		/* Grab an enemy that I'm attacking */
 		let alive = WeaponInterface.getAlive(enemy);
-		let attacking = enemy[alive[Math.trunc(Math.random()*alive.length)]];
+		let attacking = WeaponInterface.getAttacking(me,team,enemy);
 		if(!attacking) return;
 
 		/* Calculate damage */
 		let damage = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);
 
 		/* Deal damage */
-		damage = WeaponInterface.inflictDamage(attacking,damage,WeaponInterface.MAGICAL);
+		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.MAGICAL);
 
 		/* deplete weapon points*/
 		this.useMana(me);

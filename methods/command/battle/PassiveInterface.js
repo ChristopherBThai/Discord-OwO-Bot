@@ -11,6 +11,7 @@ module.exports = class PassiveInterface{
 		let avgQuality = qualities.reduce((a,b)=>a+b,0)/qualities.length;
 		let emoji = this.getEmoji(avgQuality);
 		let stats = this.toStats(qualities);
+
 		/* Construct desc */
 		let desc = this.statDesc;
 		for(var i=0;i<stats.length;i++){
@@ -74,5 +75,6 @@ module.exports = class PassiveInterface{
 	alterStats(stats){}
 
 	static get getID(){return new this(null,true).id}
+
 }
 

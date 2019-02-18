@@ -25,9 +25,9 @@ exports.weaponStats = function(stats,weapon){
 /* Parse animal stats based on level */
 exports.parseStats = function(animal,lvl){
 	let stats = {};
-	let baseHp = 500+lvl*animal.hpr;
+	let baseHp = 500+lvl*(animal.hpr*2);
 	stats.hp = [baseHp,baseHp,baseHp,0];
-	let baseWp = 500+lvl*animal.wpr;
+	let baseWp = 500+lvl*(animal.wpr*2);
 	stats.wp = [baseWp,baseWp,baseWp,0];
 	let baseAtt = 100+lvl*animal.attr;
 	stats.att = [baseAtt,0];

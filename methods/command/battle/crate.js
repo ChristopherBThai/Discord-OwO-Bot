@@ -48,8 +48,8 @@ module.exports = new CommandInterface({
 
 		/* Insert weapon */
 		result = await p.query(sql).catch(err => {
-			console.log(err);
-			console.log(sql);
+			console.error(err);
+			console.error(sql);
 		});		
 		let uwid = result.insertId;
 		if(!uwid){

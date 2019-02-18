@@ -13,7 +13,6 @@ exports.generateImage = function(teams){
 			let req = request({
 				method:'POST',
 				uri:imagegenAuth.battleImageUri,
-				//encoding:null,
 				json:true,
 				body: info,
 			},(error,res,body)=>{
@@ -22,7 +21,10 @@ exports.generateImage = function(teams){
 					console.error(error);
 					return;
 				}
-				resolve(body);
+				if(res.statusCode==200)
+					resolve(body);
+				else
+					resolve("");
 			});
 		});
 	}catch (err){
@@ -85,6 +87,14 @@ function generateAnimalJson(animal){
 	if(wp.current<0) wp.current = 0;
 	if(wp.previous<0) wp.current = 0;
 
+	let buffs = [];
+
+	for(let i in animal.buffs){
+		let buff = animal.buffs[i];
+		buff = buff.emoji.match(/:[0-9]+>/g);
+		if(buff) buffs.push(buff[0].match(/[0-9]+/g)[0]);
+	}
+
 	return {
 		animal_name:nickname,
 		animal_image:animalID,
@@ -96,6 +106,6 @@ function generateAnimalJson(animal){
 		animal_mag:Math.ceil(stat.mag[0]+stat.mag[1]),
 		animal_pr:Math.ceil(stat.pr[0]+stat.pr[1]),
 		animal_mr:Math.ceil(stat.mr[0]+stat.mr[1]),
-		animal_debuff:{}
+		animal_buffs:buffs
 	}
 }
