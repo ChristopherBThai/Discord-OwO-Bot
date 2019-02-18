@@ -56,6 +56,7 @@ function addToString(items){
 		for(var key in itemList){
 			sorted.push(itemList[key].id);
 			itemsID[itemList[key].id] = itemList[key];
+			itemList[key].count = parseInt(itemList[key].count);
 			if(itemList[key].count > maxCount) maxCount = itemList[key].count;
 		}
 	}
