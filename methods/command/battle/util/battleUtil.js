@@ -7,11 +7,14 @@ const weaponUtil = require('./weaponUtil.js');
 const animalUtil = require('./animalUtil.js');
 const battleImageUtil = require('../battleImage.js');
 const WeaponInterface = require('../WeaponInterface.js');
+var allBuffs = WeaponInterface.allBuffs;
 const imagegenAuth = require('../../../../../tokens/imagegen.json');
 const crateUtil = require('./crateUtil.js');
 
 const attack = '👊🏼';
+exports.attack = attack;
 const weapon = '🗡';
+exports.weapon = weapon;
 const numEmojis = ['1⃣','2⃣','3⃣'];
 
 
@@ -43,6 +46,11 @@ var getBattle = exports.getBattle = async function(p,setting){
 		WHERE user.id = ${p.msg.author.id} 
 			AND active = 1
 		ORDER BY pos ASC;`;
+	sql += `SELECT pet_team_battle_buff.*
+		FROM user
+			INNER JOIN pet_team ON user.uid = pet_team.uid
+			INNER JOIN pet_team_battle_buff ON pet_team.pgid = pet_team_battle_buff.pgid
+		WHERE user.id = ${p.msg.author.id};`
 
 	/* Should we censor? */
 	sql += `SELECT young FROM guild WHERE id = ${p.msg.guild.id} AND young = 1;`;
@@ -67,6 +75,8 @@ var getBattle = exports.getBattle = async function(p,setting){
 	try{
 		parseSqlStats(pTeam,result[0][0].cphp,result[0][0].cpwp);
 		parseSqlStats(eTeam,result[1][0].cehp,result[1][0].cewp);
+		parseSqlBuffs(pTeam,result[2]);
+		parseSqlBuffs(eTeam,result[2]);
 	}catch(err){
 		console.error(err);
 		await finishBattle(null,p,null,6381923,"An error occured",false,false);
@@ -170,6 +180,8 @@ var display = exports.display = async function(p,team,logs,display){
 	else if(display=="compact")
 		return displayCompact(p,team,logs);
 	let image = await battleImageUtil.generateImage(team);
+	if(!image||image=="")
+		return displayCompact(p,team,logs);
 	let logtext = "";
 	let pTeam = "";
 	for(var i=0;i<team.player.team.length;i++){
@@ -466,14 +478,20 @@ async function executeBattle(p,msg,action,setting){
 		return;
 	}
 
-	/* Execute player actions */
-	let pLogs = executeTurn(battle.player.team,battle.enemy.team,action);
 	/* Decide enemy actions */
 	let eaction = [];
 	for(var i=0;i<3;i++){eaction[i] = Math.random()>.5?weapon:attack;}
+	/* Pre turn */
+	preTurn(battle.player.team,battle.enemy.team,action);
+	preTurn(battle.enemy.team,battle.player.team,eaction);
+	/* Execute player actions */
+	let pLogs = executeTurn(battle.player.team,battle.enemy.team,action);
 	/* Execute enemy actions */
 	let eLogs = executeTurn(battle.enemy.team,battle.player.team,eaction);
 	let logs = {player:pLogs,enemy:eLogs};
+	/* Post turn */
+	postTurn(battle.player.team,battle.enemy.team,action);
+	postTurn(battle.enemy.team,battle.player.team,eaction);
 
 	/* check if the battle is finished */
 	let enemyWin = teamUtil.isDead(battle.player.team);
@@ -507,9 +525,11 @@ async function executeBattle(p,msg,action,setting){
 				active = 1 AND
 				cphp = '${ocpstats.hp}' AND cpwp = '${ocpstats.wp}' AND
 				cehp = '${ocestats.hp}' AND cewp = '${ocestats.wp}';
-			`;
+			DELETE FROM pet_team_battle_buff WHERE pgid = ${battle.player.pgid};`;
+		let sqlBuffs = initSqlSaveBuffs(battle);
+		sql += sqlBuffs;
 		let result = await p.query(sql);
-		if(result.changedRows==0){
+		if(result[0].changedRows==0){
 			await finishBattle(null,p,null,6381923,"An error occured",false,false);
 			await msg.edit("It seems like the enemy team ran away...");
 			return;
@@ -557,13 +577,20 @@ var calculateAll = exports.calculateAll = function(p,battle,logs = []){
 
 	/* Update previous hp before turn execution */
 	updatePreviousStats(battle);
-	/* Execute player actions */
-	executeTurn(battle.player.team,battle.enemy.team,[weapon,weapon,weapon]);
+
 	/* Decide enemy actions */
 	let eaction = [];
 	for(var i=0;i<3;i++){eaction[i] = Math.random()>.5?weapon:attack;}
+	/* Pre turn */
+	preTurn(battle.player.team,battle.enemy.team,[weapon,weapon,weapon]);
+	preTurn(battle.enemy.team,battle.player.team,eaction);
+	/* Execute player actions */
+	executeTurn(battle.player.team,battle.enemy.team,[weapon,weapon,weapon]);
 	/* Execute enemy actions */
 	executeTurn(battle.enemy.team,battle.player.team,eaction);
+	/* Post turn */
+	postTurn(battle.player.team,battle.enemy.team,[weapon,weapon,weapon]);
+	postTurn(battle.enemy.team,battle.player.team,eaction);
 
 	/* Save only the HP and WP states (will need to save buff status later) */
 	logs.push(saveStates(battle));
@@ -654,6 +681,33 @@ function initSqlSaveStats(team,offset=0){
 	return {hp:hp.slice(0,-1),wp:wp.slice(0,-1)};
 }
 
+/* creates string to save buffs in sql */
+function initSqlSaveBuffs(team){
+	let result = [];
+	let pgid = team.player.pgid;
+	for(let i in team.player.team){
+		let animal = team.player.team[i];
+		let pid = animal.pid;
+		for(let j in animal.buffs){
+			let buff = animal.buffs[j];
+			result.push(
+				`(${pgid},${pid},${buff.id},${buff.duration},'${buff.sqlStat}')`
+			);
+		}
+	}
+	for(let i in team.enemy.team){
+		let animal = team.enemy.team[i];
+		let pid = animal.pid;
+		for(let j in animal.buffs){
+			let buff = animal.buffs[j];
+			result.push(
+				`(${pgid},${pid},${buff.id},${buff.duration},'${buff.sqlStat}')`
+			);
+		}
+	}
+	return result.length==0?"":`INSERT INTO pet_team_battle_buff (pgid,pid,bfid,duration,qualities) VALUES ${result.join(",")} ON DUPLICATE KEY UPDATE duration=VALUES(duration),qualities=VALUES(qualities);`;
+}
+
 /* Parses string from sql */
 function parseSqlStats(team,hp,wp){
 	hp = hp.split(',');
@@ -664,6 +718,36 @@ function parseSqlStats(team,hp,wp){
 		team[i].stats.hp[2] = parseInt(hp[i]?hp[i]:0);
 		team[i].stats.wp[0] = parseInt(wp[i]?wp[i]:0);
 		team[i].stats.wp[2] = parseInt(wp[i]?wp[i]:0);
+	}
+}
+
+/* parse buffs */
+function parseSqlBuffs(team,buffs){
+	for(let i in team){
+		let animal = team[i];
+		for(let j in buffs){
+			if(buffs[j].pid==animal.pid){
+				let buff = allBuffs[buffs[j].bfid];
+				if(buff){
+					let qualities = buffs[j].qualities.split(",").map(x=>parseInt(x));
+					buff = new buff(animal,qualities,buffs[j].duration);
+					animal.buffs.push(buff);
+				}
+			}
+		}
+	}
+}
+
+/* Do stuff before the turn starts (usually for buffs) */
+function preTurn(team,enemy,action){
+	for(let i in team){
+		let animal= team[i];
+		for(let j in animal.buffs)
+			animal.buffs[j].preTurn(animal,team,enemy,action[i]);
+		for(let j in animal.debuffs)
+			animal.debuffs[j].preTurn(animal,team,enemy,action[i]);
+		if(animal.weapon)
+			animal.weapon.preTurn(animal,team,enemy,action[i]);
 	}
 }
 
@@ -685,6 +769,19 @@ function executeTurn(team,enemy,action){
 	return logs;
 }
 
+/* Do stuff after the turn ends (usually for buffs) */
+function postTurn(team,enemy,action){
+	for(let i in team){
+		let animal= team[i];
+		for(let j in animal.buffs)
+			animal.buffs[j].postTurn(animal,team,enemy,action[i]);
+		for(let j in animal.debuffs)
+			animal.debuffs[j].postTurn(animal,team,enemy,action[i]);
+		if(animal.weapon)
+			animal.weapon.postTurn(animal,team,enemy,action[i]);
+	}
+}
+
 /* finish battle */
 async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,setting){
 	/* Check if the battle is still active and if the player should receive rewards */
@@ -692,6 +789,7 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 	if(!battle) sql = `UPDATE pet_team_battle SET active = 0 WHERE active = 1 and pgid = (SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id});`;
 	else if(!setting.instant) sql = `UPDATE pet_team_battle SET active = 0 WHERE active = 1 and pgid = ${battle.player.pgid};`;
 	sql +=  `SELECT * FROM user INNER JOIN crate ON user.uid = crate.uid WHERE id = ${p.msg.author.id};`;
+	sql += `DELETE FROM pet_team_battle_buff WHERE pgid = (SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id});`;
 	let result = await p.query(sql);
 	if((!setting||!setting.instant)&&result[0].changedRows == 0) return;
 
@@ -707,7 +805,7 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 	/* Don't distribute reward if it says not to */
 	if(!setting||!setting.noReward){
 		/* Decide if user receives a crate */
-		let crateQuery = (setting&&setting.instant)?result[0]:result[1][0];
+		let crateQuery = (setting&&setting.instant)?result[0][0]:result[1][0];
 		crate = dateUtil.afterMidnight((crateQuery)?crateQuery.claim:undefined);
 		if((playerWin&&!enemyWin)&&(!crateQuery||crateQuery.claimcount<3||crate.after)){
 			crate = crateUtil.crateFromBattle(p,crateQuery,crate);
@@ -766,6 +864,11 @@ function animalDisplayText(animal){
 	let text = "";
 	text += "\nLvl."+animal.stats.lvl+" "+animal.animal.value + " ";
 	text += animal.nickname?animal.nickname:animal.animal.name;
+	if(animal.buffs.length>0){
+		text += " ";
+		for(let i in animal.buffs)
+			text += animal.buffs[i].emoji;
+	}
 	text += "\n`"+animalUtil.bar(animal.stats)+"`\n";
 	let hp = Math.ceil(animal.stats.hp[0]);
 	if(hp<0) hp = 0;
@@ -793,6 +896,11 @@ function animalCompactDisplayText(animal){
 	let text = "";
 	text += "L."+animal.stats.lvl+" "+animal.animal.value + " ";
 	text += animal.nickname?animal.nickname:animal.animal.name;
+	if(animal.buffs.length>0){
+		text += " ";
+		for(let i in animal.buffs)
+			text += animal.buffs[i].emoji;
+	}
 	let hp = Math.ceil(animal.stats.hp[0]);
 	if(hp<0) hp = 0;
 	let wp = Math.ceil(animal.stats.wp[0]);
@@ -817,9 +925,11 @@ function updateTeamStats(team,stats){
 		if(percent){
 			team[i].stats.hp[0] = (team[i].stats.hp[1]+team[i].stats.hp[3])*percent;
 			team[i].stats.wp[0] = (team[i].stats.wp[1]+team[i].stats.wp[3])*percent;
+			team[i].buffs = [];
 		}else{
-			team[i].stats.hp = stats[i].hp
-			team[i].stats.wp = stats[i].wp
+			team[i].stats.hp = stats[i].hp;
+			team[i].stats.wp = stats[i].wp;
+			team[i].buffs = stats[i].buffs;
 		}
 	}
 }
@@ -827,17 +937,29 @@ function updateTeamStats(team,stats){
 /* Saves both team's status */
 function saveStates(battle){
 	let player = [];
-	for(let i in battle.player.team)
-		player.push({
+	for(let i in battle.player.team){
+		let result = {
 			hp:battle.player.team[i].stats.hp.slice(),
-			wp:battle.player.team[i].stats.wp.slice()
-		});
+			wp:battle.player.team[i].stats.wp.slice(),
+			buffs:[]
+		};
+		for(let j in battle.player.team[i].buffs){
+			result.buffs.push({emoji:battle.player.team[i].buffs[j].emoji});
+		}
+		player.push(result);
+	}
 	let enemy = [];
-	for(let i in battle.enemy.team)
-		enemy.push({
+	for(let i in battle.enemy.team){
+		let result = {
 			hp:battle.enemy.team[i].stats.hp.slice(),
-			wp:battle.enemy.team[i].stats.wp.slice()
-		});
+			wp:battle.enemy.team[i].stats.wp.slice(),
+			buffs:[]
+		};
+		for(let j in battle.enemy.team[i].buffs){
+			result.buffs.push({emoji:battle.enemy.team[i].buffs[j].emoji});
+		}
+		enemy.push(result);
+	}
 	return {player,enemy};
 }
 

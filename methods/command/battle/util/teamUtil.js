@@ -263,7 +263,9 @@ function parseTeam(p,animals,weapons,censor=false){
 				nickname:(censor&&animal.acensor==1)?"Censored":animal.nickname,
 				pos:animal.pos,
 				xp:animal.xp,
-				animal:p.global.validAnimal(animal.name)
+				animal:p.global.validAnimal(animal.name),
+				buffs:[],
+				debuffs:[]
 			});
 		}
 	}

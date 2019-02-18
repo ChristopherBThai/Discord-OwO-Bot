@@ -7,6 +7,12 @@ for(var key in passiveDir){
 	let passive = passiveDir[key];
 	if(!passive.disabled) passives[passive.getID] = passive;
 }
+const buffDir = requireDir('./buffs');
+var buffs = {};
+for(var key in buffDir){
+	let buff = buffDir[key];
+	if(!buff.disabled) buffs[buff.getID] = buff;
+}
 const ranks = [[0.20,"Common","<:common:416520037713838081>"],[0.20,"Uncommon","<:uncommon:416520056269176842>"],[0.20,"Rare","<:rare:416520066629107712>"],[0.20,"Epic","<:epic:416520722987614208>"],[0.14,"Mythical","<:mythic:416520808501084162>"],[0.05,"Legendary","<a:legendary:417955061801680909>"],[0.01,"Fabled","<a:fabled:438857004493307907>"]];
 
 module.exports = class WeaponInterface{
@@ -17,6 +23,15 @@ module.exports = class WeaponInterface{
 		this.init();
 		if(noCreate) return;
 
+		/* Keep track of quality list length for buff quality purposes */
+		this.initialQualityListLength = this.qualityList.length;
+		/* Buff qualities are always in the middle */
+		if(this.buffList){
+			for(let i in this.buffList){
+				let buff = buffs[this.buffList[i]];
+				this.qualityList = this.qualityList.concat(buff.getQualityList);
+			}
+		}
 		/* Mana will also have a quality (always last in quality array) */
 		if(this.manaRange) this.qualityList.push(this.manaRange);
 
@@ -128,6 +143,21 @@ module.exports = class WeaponInterface{
 		return stats;
 	}
 
+	/* Get the corresponding buff classes */
+	getBuffs(){
+		let buffClasses = [];
+		let index = this.initialQualityListLength; 
+		if(this.buffList){
+			for(let i in this.buffList){
+				let buff = buffs[this.buffList[i]];
+				let buffQualityLength = buff.getQualityList.length;
+				buffClasses.push(new buff(null,this.qualities.slice(index,index+buffQualityLength)));
+				index += buffQualityLength;
+			}
+		}
+		return buffClasses;
+	}
+
 	/* Actions */
 	/* Physical attack */
 	attackPhysical(me,team,enemy){
@@ -150,16 +180,20 @@ module.exports = class WeaponInterface{
 	}
 
 	/* Deals damage to this animal */
-	dealDamage(attacking,damage,type){
+	dealDamage(attacker,attackee,damage,type){
 		if(type==WeaponInterface.PHYSICAL){
-			let totalDamage = damage - (attacking.stats.pr[0]+attacking.stats.pr[1]);
+			let totalDamage = damage - (attackee.stats.pr[0]+attackee.stats.pr[1]);
 			if(totalDamage<0) totalDamage = 0;
-			attacking.stats.hp[0] -= totalDamage;
+			for(let i in attackee.buffs)
+				totalDamage = attackee.buffs[i].attacked(attackee,attacker,totalDamage,type);
+			attackee.stats.hp[0] -= totalDamage;
 			return totalDamage;
 		}else if(type==WeaponInterface.MAGICAL){
-			let totalDamage = damage - (attacking.stats.mr[0]+attacking.stats.mr[1]);
+			let totalDamage = damage - (attackee.stats.mr[0]+attackee.stats.mr[1]);
 			if(totalDamage<0) totalDamage = 0;
-			attacking.stats.hp[0] -= totalDamage;
+			for(let i in attackee.buffs)
+				totalDamage = attackee.buffs[i].attacked(attackee,attacker,totalDamage,type);
+			attackee.stats.hp[0] -= totalDamage;
 			return totalDamage;
 		}else{
 			throw new Error("Invalid attack type");
@@ -186,22 +220,36 @@ module.exports = class WeaponInterface{
 		return amount;
 	}
 
+	preTurn(animal,ally,enemy,action){}
+	postTurn(animal,ally,enemy,action){}
+
 	/* Basic attack when animal has no weapon */
 	static basicAttack(me,team,enemy){
 		if(me.stats.hp[0]<=0) return;
 		
 		/* Grab an enemy that I'm attacking */
-		let alive = WeaponInterface.getAlive(enemy);
-		let attacking = enemy[alive[Math.trunc(Math.random()*alive.length)]];
+		let attacking = WeaponInterface.getAttacking(me,team,enemy);
 		if(!attacking) return;
 
 		/* Calculate damage */
 		let damage = WeaponInterface.getDamage(me.stats.att);
 
 		/* Deal damage */
-		damage = WeaponInterface.inflictDamage(attacking,damage,WeaponInterface.PHYSICAL);
+		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.PHYSICAL);
 
 		return `${me.nickname?me.nickname:me.animal.name}\`deals ${damage}\`<:att:531616155450998794>\` to \`${attacking.nickname?attacking.nickname:attacking.animal.name}`
+	}
+
+	/* Get an enemy to attack */
+	static getAttacking(me,team,enemy){
+		let alive = WeaponInterface.getAlive(enemy);
+		let attacking = enemy[alive[Math.trunc(Math.random()*alive.length)]];
+		for(let i in enemy){
+			if(enemy[i].stats.hp[0]>0)
+				for(let j in enemy[i].buffs)
+					attacking = enemy[i].buffs[j].enemyChooseAttack(enemy[i],me,attacking,team,enemy);
+		}
+		return attacking;
 	}
 
 	/* Calculate the damage output (Either mag or att) */
@@ -210,19 +258,23 @@ module.exports = class WeaponInterface{
 	}
 
 	/* Deals damage to an opponent */
-	static inflictDamage(attacking,damage,type){
-		if(attacking.weapon){
-			return attacking.weapon.dealDamage(attacking,damage,type);
+	static inflictDamage(attacker,attackee,damage,type){
+		if(attackee.weapon){
+			return attackee.weapon.dealDamage(attacker,attackee,damage,type);
 		}else{
 			if(type==WeaponInterface.PHYSICAL){
-				let totalDamage = damage - (attacking.stats.pr[0]+attacking.stats.pr[1]);
+				let totalDamage = damage - (attackee.stats.pr[0]+attackee.stats.pr[1]);
 				if(totalDamage<0) totalDamage = 0;
-				attacking.stats.hp[0] -= totalDamage;
+				for(let i in attackee.buffs)
+					totalDamage = attackee.buffs[i].attacked(attackee,attacker,totalDamage,type);
+				attackee.stats.hp[0] -= totalDamage;
 				return totalDamage;
 			}else if(type==WeaponInterface.MAGICAL){
-				let totalDamage = damage - (attacking.stats.mr[0]+attacking.stats.mr[1]);
+				let totalDamage = damage - (attackee.stats.mr[0]+attackee.stats.mr[1]);
 				if(totalDamage<0) totalDamage = 0;
-				attacking.stats.hp[0] -= totalDamage;
+				for(let i in attackee.buffs)
+					totalDamage = attackee.buffs[i].attacked(attackee,attacker,totalDamage,type);
+				attackee.stats.hp[0] -= totalDamage;
 				return totalDamage;
 			}else{
 				throw new Error("Invalid attack type");
@@ -275,6 +327,7 @@ module.exports = class WeaponInterface{
 	}
 
 	static get allPassives(){return passives}
+	static get allBuffs(){return buffs}
 	static get PHYSICAL(){return 'p'}
 	static get strEmoji(){return '<:att:531616155450998794>'}
 	static get MAGICAL(){return 'm'}

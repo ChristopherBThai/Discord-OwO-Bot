@@ -256,6 +256,13 @@ exports.describe = async function(p,uwid){
 	desc += `**Quality:** ${weapon.rank.emoji} ${weapon.avgQuality}%\n`;
 	desc += `**WP Cost:** ${weapon.manaCost} <:wp:531620120976687114>`;
 	desc += `\n**Description:** ${weapon.desc}\n`;
+	if(weapon.buffList.length>0){
+		desc += `\n`;
+		let buffs = weapon.getBuffs();
+		for(let i in buffs){
+			desc += `${buffs[i].emoji} **${buffs[i].name}** - ${buffs[i].desc}\n`;
+		}
+	}
 	if(weapon.passives.length<=0)
 		desc += `\n**Passives:** None`;
 	for(var i=0;i<weapon.passives.length;i++){
@@ -361,6 +368,12 @@ exports.sell = async function(p,uwid){
 		WHERE user.id = ${p.msg.author.id} AND a.uwid = ${uwid};`
 	
 	let result = await p.query(sql);
+
+	/* not a real weapon! */
+	if(!result[0]){
+		p.errorMsg(", you do not have a weapon with this id!",3000);
+		return;
+	}
 
 	/* If an animal is using the weapon */
 	if(result[0]&&result[0].name){
