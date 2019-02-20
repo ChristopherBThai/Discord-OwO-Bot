@@ -65,6 +65,16 @@ module.exports = new CommandInterface({
 				if(gain > 1000) gain = 1000
 				if(patreon) extra = gain;
 
+				/* Determine lootbox or crate */
+				let box = {};
+				if(Math.random()<.5){
+					box.sql = "INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES ("+p.msg.author.id+",1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
+					box.text = "\n**<:box:427352600476647425> |** You received a lootbox!"
+				}else{
+					box.sql = "INSERT INTO crate(uid,cratetype,boxcount,claimcount,claim) VALUES ((SELECT uid FROM user WHERE id = "+p.msg.author.id+"),0,1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
+					box.text = "\n**<:crate:523771259302182922> |** You received a weapon crate!";
+				}
+
 				/* Check if the user has not seen latest announcement */
 				var announcement = false;
 				if(!rows[1][0]){
@@ -81,9 +91,11 @@ module.exports = new CommandInterface({
 					text += "\n**<:blank:427371936482328596> |** You're on a **__"+(streak-1)+"__ daily streak**!";
 				if(extra>0)
 					text += "\n**<:blank:427371936482328596> |** You got an extra **"+extra+" Cowoncy** for being a <:patreon:449705754522419222> Patreon!";
+				text += box.text;
 				text += "\n**⏱ |** Your next daily is in: "+afterMid.hours+"H "+afterMid.minutes+"M "+afterMid.seconds+"S";
 
 				sql += "INSERT INTO cowoncy (id,money) VALUES ("+msg.author.id+","+(gain+extra)+") ON DUPLICATE KEY UPDATE daily_streak = "+streak+", money = money + "+(gain+extra)+",daily = NOW();";
+				sql += box.sql;
 				con.query(sql,function(err,rows,fields){
 					if(err){console.error(err);return;}
 					p.logger.value('cowoncy',(gain+extra),['command:daily','id:'+msg.author.id]);

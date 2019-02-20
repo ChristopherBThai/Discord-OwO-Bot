@@ -2,7 +2,8 @@ const CommandInterface = require('../../commandinterface.js');
 
 const global = require('../../../util/global.js');
 const animals = require('../../../../tokens/owo-animals.json');
-const animalUtil = require('../zoo/animalUtil.js');
+const animalUtil = require('../battle/util/animalUtil.js');
+const animalUtil2 = require('../zoo/animalUtil.js');
 
 module.exports = new CommandInterface({
 	
@@ -10,7 +11,7 @@ module.exports = new CommandInterface({
 
 	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse [global] {count}",
 
-	desc:"Displays the top ranking of each catagory!",
+	desc:"Displays the top ranking of each category!",
 
 	example:["owo top zoo","owo top cowoncy global","owo top p g"],
 
@@ -122,7 +123,7 @@ function displayRanking(con,msg,count,globalRank,sql,title,subText){
 			rank++;
 		};
 		var date = new Date();
-		embed += (date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		embed += (date.toLocaleString("en-US", {month: '2-digit', day: '2-digit', year:'numeric', hour12:false, hour: '2-digit', minute:'2-digit'})+"```");
 		msg.channel.send(embed,{split:{prepend:'```md\n',append:'```'}})
 			.catch(err => console.error(err));
 
@@ -173,8 +174,8 @@ function getZooRanking(globalRank, con, msg, count){
 	displayRanking(con,msg,count,globalRank,sql,
 		"Top "+count+" "+((globalRank)?"Global Zoo Rankings":"Zoo Rankings for "+msg.guild.name),
 		function(query,rank){
-			if(rank==0) return ">\t\t"+global.toFancyNum(query.points)+" zoo points: "+animalUtil.zooScore(query)+"\n\n";
-			else return "\n\t\t"+global.toFancyNum(query.points)+" zoo points: "+animalUtil.zooScore(query)+"\n";
+			if(rank==0) return ">\t\t"+global.toFancyNum(query.points)+" zoo points: "+animalUtil2.zooScore(query)+"\n\n";
+			else return "\n\t\t"+global.toFancyNum(query.points)+" zoo points: "+animalUtil2.zooScore(query)+"\n";
 		}
 	);
 }
@@ -231,19 +232,24 @@ function getRepRanking(globalRank, con, msg, count){
 function getPetRanking(globalRank, con, msg, count){
 	var sql;
 	if(globalRank){
-		sql = "SELECT * FROM animal  ORDER BY lvl DESC, xp DESC LIMIT "+count+";";
-		sql +=  "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY lvl DESC, xp DESC LIMIT 1;";
+		sql = "SELECT * FROM animal ORDER BY xp DESC LIMIT "+count+";";
+		sql +=  "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE xp > c.xp) AS rank FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY xp DESC LIMIT 1;";
 	}else{
 		var users = global.getids(msg.guild.members);
-		sql = "SELECT * FROM animal WHERE id IN ("+users+") ORDER BY lvl DESC, xp DESC LIMIT "+count+";";
-		sql +=  "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE id IN ("+users+") AND ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY lvl DESC, xp DESC LIMIT 1;";
+		sql = "SELECT * FROM animal WHERE id IN ("+users+") ORDER BY xp DESC LIMIT "+count+";";
+		sql +=  "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE id IN ("+users+") AND xp > c.xp) AS rank FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY xp DESC LIMIT 1;";
 	}
 
 	displayRanking(con,msg,count,globalRank,sql,
 		"Top "+count+" "+((globalRank)?"Global Pet Rankings":"Pet Rankings for "+msg.guild.name),
 		function(query,rank){
-			if(rank==0) return ">\t\t"+query.nickname+" Lvl:"+query.lvl+" Att:"+query.att+" Hp:"+query.hp+"\n\n";
-			else return "\n\t\t"+query.nickname+" Lvl:"+query.lvl+" Att:"+query.att+" Hp:"+query.hp+"\n";
+			let result = "\t\t ";
+			if(query.nickname!=null)
+				result += query.nickname+" ";
+			let lvl = animalUtil.toLvl(query.xp);
+			result += `Lvl. ${lvl.lvl} ${lvl.currentXp}xp\n`;
+			if(rank==0) return ">"+result+"\n";
+			else return "\n"+result;
 		}
 	);
 }
@@ -349,7 +355,7 @@ function getGuildRanking(con, msg, count){
 			rank++;
 		}
 		var date = new Date();
-		embed += ("\n*Spamming owo will not count!!!* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		embed += ("\n*Spamming owo will not count!!!* | "+date.toLocaleString("en-US", {month: '2-digit', day: '2-digit', year:'numeric', hour12:false, hour: '2-digit', minute:'2-digit'})+"```");
 		channel.send(embed)
 			.catch(err => console.error(err));
 	});

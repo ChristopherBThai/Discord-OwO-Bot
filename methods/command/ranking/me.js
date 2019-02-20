@@ -2,15 +2,16 @@ const CommandInterface = require('../../commandinterface.js');
 
 const global = require('../../../util/global.js');
 const animals = require('../../../../tokens/owo-animals.json');
-const animalUtil = require('../zoo/animalUtil.js');
+const animalUtil = require('../battle/util/animalUtil.js');
+const animalUtil2 = require('../zoo/animalUtil.js');
 
 module.exports = new CommandInterface({
 	
 	alias:["my","me","guild"],
 
-	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse [global]",
+	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse|team [global]",
 
-	desc:"Displays your ranking of each catagory!\nYou can choose you rank within the server or globally!\nYou can also shorten the command like in the example!",
+	desc:"Displays your ranking of each category!\nYou can choose you rank within the server or globally!\nYou can also shorten the command like in the example!",
 
 	example:["owo my zoo","owo my cowoncy global","owo my p g"],
 
@@ -47,10 +48,11 @@ function display(con, msg, args){
 	var money = false;
 	var rep = false;
 	var pet = false;
+	var team = false;
 	var huntbot,luck,curse;
 
 	for(var i=0;i<args.length;i++){
-		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet&&!huntbot&&!luck&&!curse){
+		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet&&!huntbot&&!luck&&!curse&&!team){
 			if(args[i]=== "points"||args[i]==="point"||args[i]==="p") points = true;
 			else if(args[i]==="guild"||args[i]==="server"||args[i]==="g"||args[i]==="s") guild = true;
 			else if(args[i]=== "zoo"||args[i]==="z") zoo = true;
@@ -60,6 +62,7 @@ function display(con, msg, args){
 			else if(args[i]==="huntbot"||args[i]==="hb"||args[i]==="autohunt") huntbot= true;
 			else if(args[i]==="luck") luck = true;
 			else if(args[i]==="curse") curse = true;
+			//else if(args[i]==="team"||args[i]==='t') team = true;
 			else if(args[i]==="global"||args[i]==="g") aglobal = true;
 			else invalid = true;
 		}else if(args[i]==="global"||args[i]==="g") aglobal = true;
@@ -79,13 +82,16 @@ function display(con, msg, args){
 		else if(huntbot) getHuntbotRanking(aglobal,con,msg);
 		else if(luck) getLuckRanking(aglobal,con,msg);
 		else if(curse) getCurseRanking(aglobal,con,msg);
+		else if(team) getTeamRanking(aglobal,con,msg);
 		else getPointRanking(aglobal,con,msg);
 	}
 }
 
 function displayRanking(con,msg,sql,title,subText){
+	try{
 	con.query(sql,async function(err,rows,fields){
 		if(err){console.error(err);return;}
+		try{
 		var above = rows[0];
 		var below = rows[1];
 		var me = rows[2][0];
@@ -146,10 +152,12 @@ function displayRanking(con,msg,sql,title,subText){
 		if(rank-userRank==3) embed += ">...\n";
 
 		var date = new Date();
-		embed += ("\n"+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		embed += ("\n"+date.toLocaleString("en-US", {month: '2-digit', day: '2-digit', year:'numeric', hour12:false, hour: '2-digit', minute:'2-digit'})+"```");
 		msg.channel.send(embed,{split:{prepend:'```md\n',append:'```'}})
 			.catch(err => console.error(err));
+		}catch(err){console.error(err);}
 	});
+	}catch(err){console.error(err);}
 }
 
 /**
@@ -191,7 +199,7 @@ function getZooRanking(globalRank,con,msg){
 	displayRanking(con,msg,sql,
 			((globalRank)?"Global ":"")+"Zoo Ranking",
 			function(query){
-				return "\t\t"+global.toFancyNum(query.points)+" zoo points: "+animalUtil.zooScore(query);
+				return "\t\t"+global.toFancyNum(query.points)+" zoo points: "+animalUtil2.zooScore(query);
 			});
 }
 
@@ -238,14 +246,14 @@ function getRepRanking(globalRank,con,msg){
 function getPetRanking(globalRank,con,msg){
 	var sql;
 	if(globalRank){
-		sql = "SELECT * FROM animal WHERE (lvl,xp) > (SELECT lvl,xp FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name) ORDER BY lvl ASC, xp ASC LIMIT 2;";
-		sql += "SELECT * FROM animal WHERE (lvl,xp)  < (SELECT lvl,xp FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name) ORDER BY lvl DESC, xp DESC LIMIT 2;";
-		sql += "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c NATURAL JOIN cowoncy WHERE c.id = "+msg.author.id+" AND c.name = pet  ORDER BY lvl DESC, xp DESC LIMIT 1;";
+		sql = "SELECT * FROM animal WHERE (xp) > (SELECT xp FROM animal WHERE id = "+msg.author.id+" ORDER BY xp DESC LIMIT 1) ORDER BY xp ASC LIMIT 2;";
+		sql += "SELECT * FROM animal WHERE (xp)  < (SELECT xp FROM animal WHERE id = "+msg.author.id+" ORDER BY xp DESC LIMIT 1) ORDER BY xp DESC LIMIT 2;";
+		sql += "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE (xp > c.xp)) AS rank FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY c.xp DESC LIMIT 1;";
 	}else{
 		var users = global.getids(msg.guild.members);
-		sql = "SELECT * FROM animal WHERE id IN ("+users+") AND (lvl,xp) > (SELECT lvl,xp FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name) ORDER BY lvl ASC, xp ASC LIMIT 2;";
-		sql += "SELECT * FROM animal WHERE id IN ("+users+") AND (lvl,xp) < (SELECT lvl,xp FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name) ORDER BY lvl DESC, xp DESC LIMIT 2;";
-		sql += "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE id IN ("+users+") AND ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c NATURAL JOIN cowoncy WHERE c.id = "+msg.author.id+" AND c.name = pet ORDER BY lvl DESC, xp DESC LIMIT 1;";
+		sql = "SELECT * FROM animal WHERE id IN ("+users+") AND (xp) > (SELECT xp FROM animal WHERE id = "+msg.author.id+" ORDER BY xp DESC LIMIT 1) ORDER BY xp ASC LIMIT 2;";
+		sql += "SELECT * FROM animal WHERE id  IN ("+users+") AND (xp)  < (SELECT xp FROM animal WHERE id = "+msg.author.id+" ORDER BY xp DESC LIMIT 1) ORDER BY xp DESC LIMIT 2;";
+		sql += "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE id IN ("+users+") AND (xp > c.xp)) AS rank FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY c.xp DESC LIMIT 1;";
 	}
 
 	displayRanking(con,msg,sql,
@@ -254,7 +262,8 @@ function getPetRanking(globalRank,con,msg){
 				var result = "\t\t";
 				if(query.nickname!=null)
 					result += query.nickname+" ";
-				result += "Lvl:"+query.lvl+" Att:"+query.att+" Hp:"+query.hp;
+				let lvl = animalUtil.toLvl(query.xp);
+				result += `Lvl. ${lvl.lvl} ${lvl.currentXp}xp`;
 				return result;
 			});
 }
@@ -395,10 +404,34 @@ function getGuildRanking(con, msg, id){
 
 
 		var date = new Date();
-		embed += ("\n*owo counting has a 10s cooldown* | "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"```");
+		embed += ("\n*owo counting has a 10s cooldown* | "+date.toLocaleString("en-US", {month: '2-digit', day: '2-digit', year:'numeric', hour12:false, hour: '2-digit', minute:'2-digit'})+"```");
 		channel.send(embed)
 			.catch(err => console.error(err));
 	});
+}
+
+function getTeamRanking(globalRank,con,msg){
+	var sql;
+	if(globalRank){
+		sql = "SELECT * FROM animal WHERE (xp) > (SELECT xp FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name) ORDER BY xp ASC LIMIT 2;";
+		sql += "SELECT * FROM animal WHERE (xp)  < (SELECT xp FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name) ORDER BY xp DESC LIMIT 2;";
+		sql += "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE (xp > c.xp)) AS rank FROM animal c NATURAL JOIN cowoncy WHERE c.id = "+msg.author.id+" AND c.name = pet  ORDER BY xp DESC LIMIT 1;";
+	}else{
+		var users = global.getids(msg.guild.members);
+		sql = "SELECT * FROM animal WHERE id IN ("+users+") AND (lvl,xp) > (SELECT lvl,xp FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name) ORDER BY lvl ASC, xp ASC LIMIT 2;";
+		sql += "SELECT * FROM animal WHERE id IN ("+users+") AND (lvl,xp) < (SELECT lvl,xp FROM animal NATURAL JOIN cowoncy WHERE id = "+msg.author.id+" AND pet = name) ORDER BY lvl DESC, xp DESC LIMIT 2;";
+		sql += "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE id IN ("+users+") AND ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c NATURAL JOIN cowoncy WHERE c.id = "+msg.author.id+" AND c.name = pet ORDER BY lvl DESC, xp DESC LIMIT 1;";
+	}
+
+	displayRanking(con,msg,sql,
+			((globalRank)?"Global ":"")+"Pet Ranking",
+			function(query){
+				var result = "\t\t";
+				if(query.nickname!=null)
+					result += query.nickname+" ";
+				result += "Lvl:"+query.lvl+" Att:"+query.att+" Hp:"+query.hp;
+				return result;
+			});
 }
 
 const points = "(common*"+animals.points.common+"+"+

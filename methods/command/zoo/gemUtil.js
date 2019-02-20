@@ -2,20 +2,18 @@ const gems = require('../../../json/gems.json');
 for(var gem in gems.gems) gems.gems[gem].key = gem;
 const ranks = {"c":"Common","u":"Uncommon","r":"Rare","e":"Epic","m":"Mythical","l":"Legendary","f":"Fabled"};
 
-exports.getItems = function(con,id,callback){
-	var sql = "SELECT * FROM user_gem NATURAL JOIN user WHERE id = "+id+" AND gcount > 0;";
-	con.query(sql,function(err,result){
-		if(err){console.error(err);callback({});return;}
-		var items = {}
-		for(var i=0;i<result.length;i++){
-			var item = gems.gems[result[i].gname];
-			if(item){
-				var item = {key:item.emoji,id:item.id,count:result[i].gcount};
-				items[item.key] = item;
-			}
+exports.getItems = async function(p){
+	var sql = `SELECT gname,gcount FROM user_gem NATURAL JOIN user WHERE id = ${p.msg.author.id} AND gcount > 0;`;
+	let result = await p.query(sql);
+	var items = {}
+	for(var i=0;i<result.length;i++){
+		var item = gems.gems[result[i].gname];
+		if(item){
+			var item = {key:item.key,emoji:item.emoji,id:item.id,count:result[i].gcount};
+			items[item.key] = item;
 		}
-		callback(items);
-	});
+	}
+	return items;
 }
 
 function getGemByID(id){

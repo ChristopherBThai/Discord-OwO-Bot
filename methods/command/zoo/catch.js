@@ -3,7 +3,6 @@ const CommandInterface = require('../../commandinterface.js');
 const animals = require('../../../../tokens/owo-animals.json');
 const global = require('../../../util/global.js');
 const dateUtil = require('../../../util/dateUtil.js');
-const pet = require('../battle/petutil.js');
 const gemUtil = require('./gemUtil.js');
 const animalUtil = require('./animalUtil.js');
 const alterHunt = require('./../patreon/alterHunt.js');
@@ -29,7 +28,8 @@ module.exports = new CommandInterface({
 	execute: function(p){
 		var msg=p.msg,con=p.con;
 		var sql = "SELECT money,patreonAnimal FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id WHERE cowoncy.id = "+msg.author.id+";";
-		sql += "SELECT name,nickname,lvl,xp FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND name = pet;";
+		sql += `SELECT name,nickname,animal.pid FROM user INNER JOIN pet_team ON user.uid = pet_team.uid INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid INNER JOIN animal ON pet_team_animal.pid = animal.pid
+				WHERE user.id = ${p.msg.author.id};`;
 		sql += "SELECT *,TIMESTAMPDIFF(HOUR,claim,NOW()) as time FROM lootbox WHERE id = "+msg.author.id+";";
 		sql += "SELECT uid,activecount,gname,type FROM user NATURAL JOIN user_gem NATURAL JOIN gem WHERE id = "+msg.author.id+" AND activecount > 0;";
 		con.query(sql,function(err,result){
@@ -56,10 +56,13 @@ module.exports = new CommandInterface({
 
 				//Get Xp
 				if(result[1][0]){
-					var lvlup = pet.givexp(con,{id:msg.author.id, pet:result[1][0].name, lvl:result[1][0].lvl, xp:result[1][0].xp, gxp:animal.xp});
-					text += "\n**"+global.unicodeAnimal(result[1][0].name)+" |** "+((result[1][0].nickname==null)?"Your pet":"**"+result[1][0].nickname+"**")+" gained **"+animal.xp+" xp**";
-					if(lvlup) text += " and leveled up";
-					text += "!";
+					text += `\n${p.config.emoji.blank} **|** `;
+					for(let i in result[1]){
+						sql += `UPDATE animal SET xp = xp + ${animal.xp} WHERE pid = ${result[1][i].pid};`;
+						let pet =  p.global.validAnimal(result[1][i].name);
+						text += (pet.uni?pet.uni:pet.value)+" ";
+					}
+					text += `gained **${animal.xp}xp**!`;
 				}
 
 				//Get Lootbox

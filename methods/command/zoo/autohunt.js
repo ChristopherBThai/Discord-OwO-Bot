@@ -50,7 +50,6 @@ function claim(msg,con,query,bot){
 
 	var sql = "SELECT patreonAnimal FROM user WHERE id = "+msg.author.id+";";
 	sql += "UPDATE autohunt SET huntmin = 0,huntcount=0,essence = essence +"+totalGain+" WHERE id = "+msg.author.id+" AND huntmin > 0;";
-	sql += "SELECT * FROM cowoncy NATURAL JOIN animal WHERE id = "+msg.author.id+" AND pet = name;";
 	con.query(sql,function(err,result){
 		if(err) {
 			console.error(err);
@@ -69,7 +68,7 @@ function claim(msg,con,query,bot){
 		sql = "";
 		//Get total exp
 		var totalExp = Math.floor(autohuntutil.getLvl(query.exp,0,"exp").stat*duration);
-		sql += "UPDATE IGNORE cowoncy NATURAL JOIN animal SET xp = xp + "+totalExp+" WHERE id = "+msg.author.id+" AND pet = name;";
+		sql += `UPDATE IGNORE user INNER JOIN pet_team ON user.uid = pet_team.uid INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid INNER JOIN animal ON pet_team_animal.pid = animal.pid set animal.xp = animal.xp + ${totalExp} WHERE  user.id = ${msg.author.id};`;
 
 		//Get all animal
 		var total = {};
@@ -93,7 +92,7 @@ function claim(msg,con,query,bot){
 			var animalLoc = animals.order.indexOf(total[animal].rank);
 			if(animalLoc||animalLoc===0){
 				if(!tempText[animalLoc])
-					tempText[animalLoc] = "\n"+animals.ranks[animals.order[animalLoc]] + "**|**";
+					tempText[animalLoc] = " \n"+animals.ranks[animals.order[animalLoc]] + "**|**";
 				tempText[animalLoc] += " "+animalString;
 			}
 			count++;

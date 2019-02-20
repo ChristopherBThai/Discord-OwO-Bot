@@ -1,5 +1,6 @@
 const CommandInterface = require('../../commandinterface.js');
 
+const battleHelpUtil = require('../battle/util/battleHelpUtil.js');
 const emotes = require('../../../json/emotes.json');
 var sEmotes= [];
 for(var key in emotes.sEmote)
@@ -29,11 +30,31 @@ module.exports = new CommandInterface({
 	half:100,
 	six:500,
 
-	execute: function(p){
+	execute: async function(p){
 		if(p.args==0)
 			display(p.send);
-		else
-			describe(p.send,p.args[0],p.commands[p.aliasToCommand[p.args[0]]]);
+		else{
+			let command = p.aliasToCommand[p.args[0]];
+			switch(command){
+				case "battle":
+					await battleHelpUtil.help(p,0);
+					break;
+				case "team":
+					await battleHelpUtil.help(p,0);
+					break;
+				case "weapon":
+					await battleHelpUtil.help(p,2);
+					break;
+				case "crate":
+					await battleHelpUtil.help(p,1);
+					break;
+				case "battlesetting":
+					await battleHelpUtil.help(p,5);
+					break;
+				default:
+					describe(p.send,p.args[0],p.commands[command]);
+			}
+		}
 	}
 
 })
@@ -50,7 +71,7 @@ function display(send){
 			{"name":"💰 Economy",
 				"value":"`cowoncy`  `give`  `daily`  `vote`  `quest`"},
 			{"name":"🌱 Animals",
-				"value":"`zoo`  `hunt`  `sell`  `battle`  `pets`  `inv`  `shop`  `equip`  `buy`  `autohunt`  `owodex`  `lootbox`"},
+				"value":"`zoo`  `hunt`  `sell`  `battle`  `inv`  `equip`  `autohunt`  `owodex`  `lootbox`  `crate`  `battlesetting`  `team`  `weapon`  `rename`"},
 			{"name":"🎲 Gambling",
 				"value":"`slots`  `coinflip`  `lottery`  `blackjack`  `drop`"},
 			{"name":"🎱 Fun",

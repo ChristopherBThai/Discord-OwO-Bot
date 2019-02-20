@@ -12,23 +12,24 @@
   },
   "homepage": "https://github.com/ChristopherBThai/Discord-OwO-Bot#readme",
   "dependencies": {
-    "canvas": "^1.6.12",
+    "bufferutil": "^3.0.5",
     "dbl-api": "^1.2.1",
     "dblapi.js": "^2.2.0",
     "discord.js": "^11.4.2",
+    "erlpack": "github:discordapp/erlpack",
     "express": "^4.16.3",
     "merge-images": "^1.1.0",
     "mysql": "^2.16.0",
     "node-dogstatsd": "0.0.7",
+    "patreon": "^0.4.1",
     "pm2": "^3.2.2",
     "redis": "^2.8.0",
     "request": "^2.88.0",
     "require-dir": "^1.1.0",
+    "systeminformation": "^3.47.0",
     "translate-google": "^1.1.0",
     "urban-dictionary": "^2.2.1",
     "weeb.js": "^1.6.2",
-    "patreon":"^0.4.1",
-    "systeminformation":"^3.47.0",
-	"winston":"^3.1.0"
+    "winston": "^3.1.0"
   }
 }

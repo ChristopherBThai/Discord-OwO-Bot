@@ -1,9 +1,10 @@
 const CommandInterface = require('../../commandinterface.js');
 
-const food = require('./food.js');
 const lootboxUtil = require('../zoo/lootboxUtil.js');
 const gemUtil = require('../zoo/gemUtil.js');
 const shopUtil = require('./shopUtil.js');
+const weaponUtil = require('../battle/util/weaponUtil.js');
+const crateUtil = require('../battle/util/crateUtil.js');
 
 module.exports = new CommandInterface({
 	
@@ -21,21 +22,25 @@ module.exports = new CommandInterface({
 	half:80,
 	six:500,
 
-	execute: function(p){
+	execute: async function(p){
 		var con=p.con,msg=p.msg;
-		food.getItems(con,msg.author.id,function(foodItems){
-		lootboxUtil.getItems(con,msg.author.id,function(lootboxItems){
-		gemUtil.getItems(con,msg.author.id,function(gemItems){
+
+		/* {emoji,id,count} */
+		try{
+			let lootboxItems = await lootboxUtil.getItems(p);
+			let gemItems = await gemUtil.getItems(p);
+			let weaponItems = await weaponUtil.getItems(p);
+			let crateItems = await crateUtil.getItems(p);
+			var text = addToString([lootboxItems,gemItems,weaponItems,crateItems]);
+		}catch(err){
+			console.error(err);
+			return;
+		}
 			
-			var text = addToString([foodItems,lootboxItems,gemItems]);
 
-			if(text=="") text = "Your inventory is empty :c";
-			text = "**====== "+msg.author.username+"'s Inventory ======**\n"+text;
-			p.send(text);
-
-		});
-		});
-		});
+		if(text=="") text = "Your inventory is empty :c";
+		text = "**====== "+msg.author.username+"'s Inventory ======**\n"+text;
+		p.send(text);
 	}
 
 })
@@ -51,6 +56,7 @@ function addToString(items){
 		for(var key in itemList){
 			sorted.push(itemList[key].id);
 			itemsID[itemList[key].id] = itemList[key];
+			itemList[key].count = parseInt(itemList[key].count);
 			if(itemList[key].count > maxCount) maxCount = itemList[key].count;
 		}
 	}
@@ -66,7 +72,7 @@ function addToString(items){
 	var count = 0;
 	for(var i=0;i<items.length;i++){
 		var item = items[i];
-		text += "`"+((item.id<9)?"0":"")+item.id+"`"+item.key + shopUtil.toSmallNum(item.count,digits);
+		text += "`"+((item.id<9)?"0":"")+item.id+"`"+item.emoji+ shopUtil.toSmallNum(item.count,digits);
 		count++;
 		if(count==4){
 			text += "\n";

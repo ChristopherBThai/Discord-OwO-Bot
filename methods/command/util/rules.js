@@ -32,7 +32,7 @@ module.exports = new CommandInterface({
 		if(result[2][0]) disagree = parseInt(result[2][0].disagree);
 		
 		/* Construct embed message */
-		var description = "• You can **not** use macros/scripts for **any** commands\n• You can **not** use multiple accounts for **any** reason\n• Do not use any exploits and report any found in the bot\n• If you have any questions, use the feedback command!";
+		var description = "• You can **not** use macros/scripts for **any** commands\n• You can **not** use multiple accounts for **any** reason\n• Do not use any exploits and report any found in the bot\n• You can **not** sell cowoncy or any bot goods for other currency/money\n• If you have any questions, use the feedback command!";
 		var descriptionExtra = ""
 		if(!voted) descriptionExtra = "\n\n*Reacting with either emoji means you will follow the rules and acknowlege the consequences*";
 		else if(result[0][0].opinion == 1) descriptionExtra = "\n\nOwO what's this? You already agreed to these rules! <3";

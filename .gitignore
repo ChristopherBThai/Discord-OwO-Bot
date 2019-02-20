@@ -19,4 +19,4 @@ tags
 node_modules/
 
 # log files
-*.log
+.log
