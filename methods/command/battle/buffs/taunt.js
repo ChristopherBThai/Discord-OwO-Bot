@@ -8,7 +8,7 @@ module.exports = class Taunt extends BuffInterface{
 		this.debuff = false;
 		this.emoji = "<:taunt:546615322598440960>";
 		this.statDesc = "Taunts the enemy team and reduces incoming damage by **?**%";
-		this.qualityList = [[25,50]];
+		this.qualityList = [[25,40]];
 	}
 
 	enemyChooseAttack(animal,attacker,attackee,ally,enemy){
