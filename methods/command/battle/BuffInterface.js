@@ -63,8 +63,14 @@ module.exports = class BuffInterface{
 		this.justCreated = true;
 	}
 
+	/* If the buff owner is attacking*/
+	attack(animal,attackee,damage,type,last){}
 	/* If the buff owner is attacked */
-	attacked(animal,attacker,damage,type){return damage}
+	attacked(animal,attacker,damage,type,last){}
+	/* If the buff owner is attacking (after bonus damage) */
+	postAttack(animal,attackee,damage,type,last){}
+	/* If the buff owner is attacked (after bonus damage) */
+	postAttacked(animal,attacker,damage,type,last){}
 
 	/* when an enemy chooses an opponent */
 	enemyChooseAttack(animal,attacker,attackee,ally,enemy){return attackee}

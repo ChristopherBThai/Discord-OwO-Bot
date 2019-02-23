@@ -76,5 +76,14 @@ module.exports = class PassiveInterface{
 
 	static get getID(){return new this(null,true).id}
 
+	/* If the passive owner is attacking*/
+	attack(animal,attackee,damage,type,last){}
+	/* If the passive owner is attacked */
+	attacked(animal,attacker,damage,type,last){}
+	/* If the passive owner is attacking (after bonus damage) */
+	postAttack(animal,attackee,damage,type,last){}
+	/* If the passive owner is attacked (after bonus damage) */
+	postAttacked(animal,attacker,damage,type,last){}
+
 }
 

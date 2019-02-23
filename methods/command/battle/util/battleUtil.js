@@ -11,6 +11,7 @@ var allBuffs = WeaponInterface.allBuffs;
 const imagegenAuth = require('../../../../../tokens/imagegen.json');
 const crateUtil = require('./crateUtil.js');
 
+const maxAnimals = 6;
 const attack = '👊🏼';
 exports.attack = attack;
 const weapon = '🗡';
@@ -484,10 +485,9 @@ async function executeBattle(p,msg,action,setting){
 	/* Pre turn */
 	preTurn(battle.player.team,battle.enemy.team,action);
 	preTurn(battle.enemy.team,battle.player.team,eaction);
-	/* Execute player actions */
+	/* Execute actions */
 	let pLogs = executeTurn(battle.player.team,battle.enemy.team,action);
-	/* Execute enemy actions */
-	let eLogs = executeTurn(battle.enemy.team,battle.player.team,eaction);
+	let eLogs = [];
 	let logs = {player:pLogs,enemy:eLogs};
 	/* Post turn */
 	postTurn(battle.player.team,battle.enemy.team,action);
@@ -551,17 +551,17 @@ var calculateAll = exports.calculateAll = function(p,battle,logs = []){
 
 		/* tie */
 		let color=6381923;
-		let text="It's a tie!";
+		let text="It's a tie in "+(logs.length)+" turns!";
 
 		/* enemy wins */
 		if(enemyWin){
 			color = 16711680;
-			text = "You lost!";
+			text = "You lost in "+(logs.length)+" turns!";
 
 		/* player wins */
 		}else if(playerWin){
 			color = 65280;
-			text = "You won!";
+			text = "You won in "+(logs.length)+" turns!";
 		}
 
 		/* Last event in log is winning result */
@@ -584,10 +584,8 @@ var calculateAll = exports.calculateAll = function(p,battle,logs = []){
 	/* Pre turn */
 	preTurn(battle.player.team,battle.enemy.team,[weapon,weapon,weapon]);
 	preTurn(battle.enemy.team,battle.player.team,eaction);
-	/* Execute player actions */
+	/* Execute actions */
 	executeTurn(battle.player.team,battle.enemy.team,[weapon,weapon,weapon]);
-	/* Execute enemy actions */
-	executeTurn(battle.enemy.team,battle.player.team,eaction);
 	/* Post turn */
 	postTurn(battle.player.team,battle.enemy.team,[weapon,weapon,weapon]);
 	postTurn(battle.enemy.team,battle.player.team,eaction);
@@ -754,16 +752,35 @@ function preTurn(team,enemy,action){
 /* Calculates a turn for a team */
 function executeTurn(team,enemy,action){
 	let logs = {};
-	for(var i in team){
-		let animal= team[i];
-		/* Check if animal has weapon */
-		if(animal.weapon){
-			if(action[i]==weapon)
-				logs[i] = animal.weapon.attackWeapon(animal,team,enemy);
-			else
-				logs[i] = animal.weapon.attackPhysical(animal,team,enemy);
+	let teamPos = 0;
+	let enemyPos = 0;
+	for(let i =0;i<maxAnimals;i++){
+		let animal;
+		let tempEnemy;
+		let tempAlly;
+
+		if(teamPos <= enemyPos){
+			animal = team[teamPos];
+			tempEnemy = enemy;
+			tempAlly = team;
+			teamPos++;
 		}else{
-			logs[i] = WeaponInterface.basicAttack(animal,team,enemy);
+			animal = enemy[enemyPos];
+			tempEnemy = team;
+			tempAlly = enemy;
+			enemyPos++;
+		}
+
+		if(animal){
+			/* Check if animal has weapon */
+			if(animal.weapon){
+				if(action[i]==weapon)
+					logs[i] = animal.weapon.attackWeapon(animal,tempAlly,tempEnemy);
+				else
+					logs[i] = animal.weapon.attackPhysical(animal,tempAlly,tempEnemy);
+			}else{
+				logs[i] = WeaponInterface.basicAttack(animal,tempAlly,tempEnemy);
+			}
 		}
 	}
 	return logs;

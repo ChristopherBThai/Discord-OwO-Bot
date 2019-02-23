@@ -1,4 +1,5 @@
 const BuffInterface = require('../BuffInterface.js');
+const WeaponInterface = require('../WeaponInterface.js');
 
 module.exports = class Taunt extends BuffInterface{
 
@@ -17,7 +18,7 @@ module.exports = class Taunt extends BuffInterface{
 		return attackee;
 	}
 
-	attacked(animal,attacker,damage,type){
-		return damage - (damage*this.stats[0]/100);
+	attacked(animal,attacker,damage,type,last){
+		damage[1] += -1*damage[0]*this.stats[0]/100;
 	}
 }

@@ -1,26 +1,18 @@
 const Error = require('../../../handler/errorHandler.js');
 const PassiveInterface = require('./PassiveInterface.js');
 const requireDir = require('require-dir');
-const passiveDir = requireDir('./passives');
-var passives = {};
-for(var key in passiveDir){
-	let passive = passiveDir[key];
-	if(!passive.disabled) passives[passive.getID] = passive;
-}
-const buffDir = requireDir('./buffs');
-var buffs = {};
-for(var key in buffDir){
-	let buff = buffDir[key];
-	if(!buff.disabled) buffs[buff.getID] = buff;
-}
 const ranks = [[0.20,"Common","<:common:416520037713838081>"],[0.20,"Uncommon","<:uncommon:416520056269176842>"],[0.20,"Rare","<:rare:416520066629107712>"],[0.20,"Epic","<:epic:416520722987614208>"],[0.14,"Mythical","<:mythic:416520808501084162>"],[0.05,"Legendary","<a:legendary:417955061801680909>"],[0.01,"Fabled","<a:fabled:438857004493307907>"]];
 
 module.exports = class WeaponInterface{
 
 	/* Constructor */
-	constructor(passives,qualities,noCreate){
+	constructor(cpassives,qualities,noCreate){
 
 		this.init();
+		if(this.availablePassives==="all"){
+			this.availablePassives=[];
+			for(let i in passives) this.availablePassives.push(i);
+		}
 		if(noCreate) return;
 
 		/* Keep track of quality list length for buff quality purposes */
@@ -38,7 +30,7 @@ module.exports = class WeaponInterface{
 		if(this.manaRange) this.qualityList.push(this.manaRange);
 
 		/* Get random vars if not present */
-		if(!passives) passives = this.randomPassives();
+		if(!cpassives) cpassives = this.randomPassives();
 		if(!qualities) qualities = this.randomQualities();
 
 		/* Construct stats */
@@ -49,12 +41,12 @@ module.exports = class WeaponInterface{
 
 		/* Get the quality of the weapon */
 		let avgQuality = 0;
-		if(passives.length>0){
+		if(cpassives.length>0){
 			let totalQualities = qualities.reduce((a,b)=>a+b,0);
 			let qualityCount = qualities.length;
-			for(var i=0;i<passives.length;i++){
-				totalQualities += passives[i].qualities.reduce((a,b)=>a+b,0);
-				qualityCount += passives[i].qualities.length;
+			for(var i=0;i<cpassives.length;i++){
+				totalQualities += cpassives[i].qualities.reduce((a,b)=>a+b,0);
+				qualityCount += cpassives[i].qualities.length;
 			}
 			avgQuality = totalQualities/qualityCount;
 		}else{
@@ -94,7 +86,7 @@ module.exports = class WeaponInterface{
 		this.stats = stats;
 		if(this.manaRange) this.manaCost = stats[stats.length-1];
 		else this.manaCost = 0;
-		this.passives = passives;
+		this.passives = cpassives;
 		this.rank = rank;
 		this.emoji = emoji;
 	}
@@ -182,24 +174,52 @@ module.exports = class WeaponInterface{
 	}
 
 	/* Deals damage to this animal */
-	dealDamage(attacker,attackee,damage,type){
-		if(type==WeaponInterface.PHYSICAL){
-			let totalDamage = damage - (attackee.stats.pr[0]+attackee.stats.pr[1]);
-			if(totalDamage<0) totalDamage = 0;
-			for(let i in attackee.buffs)
-				totalDamage = attackee.buffs[i].attacked(attackee,attacker,totalDamage,type);
-			attackee.stats.hp[0] -= totalDamage;
-			return totalDamage;
-		}else if(type==WeaponInterface.MAGICAL){
-			let totalDamage = damage - (attackee.stats.mr[0]+attackee.stats.mr[1]);
-			if(totalDamage<0) totalDamage = 0;
-			for(let i in attackee.buffs)
-				totalDamage = attackee.buffs[i].attacked(attackee,attacker,totalDamage,type);
-			attackee.stats.hp[0] -= totalDamage;
-			return totalDamage;
-		}else{
+	dealDamage(attacker,attackee,damage,type,last=false){
+		let totalDamage = 0;
+		if(type==WeaponInterface.PHYSICAL)
+			totalDamage = damage - (attackee.stats.pr[0]+attackee.stats.pr[1]);
+		else if(type==WeaponInterface.MAGICAL)
+			totalDamage = damage - (attackee.stats.mr[0]+attackee.stats.mr[1]);
+		else if(type==WeaponInterface.TRUE)
+			totalDamage = damage;
+		else
 			throw new Error("Invalid attack type");
-		}
+
+		if(totalDamage<0) totalDamage = 0;
+		totalDamage = [totalDamage,0];
+
+		/* Calculate bonus damages */
+		/* Event for attackee */
+		for(let i in attackee.buffs)
+			attackee.buffs[i].attacked(attackee,attacker,totalDamage,type,last);
+		if(attackee.weapon)
+			for(let i in attackee.weapon.passives)
+				attackee.weapon.passives[i].attacked(attackee,attacker,totalDamage,type,last);
+		/* Event for attacker */
+		for(let i in attacker.buffs)
+			attacker.buffs[i].attack(attacker,attackee,totalDamage,type,last);
+		if(attacker.weapon)
+			for(let i in attacker.weapon.passives)
+				attacker.weapon.passives[i].attack(attacker,attackee,totalDamage,type,last);
+
+		/* After all damage is calculated */
+		/* Event for attackee */
+		for(let i in attackee.buffs)
+			attackee.buffs[i].postAttacked(attackee,attacker,totalDamage,type,last);
+		if(attackee.weapon)
+			for(let i in attackee.weapon.passives)
+				attackee.weapon.passives[i].postAttacked(attackee,attacker,totalDamage,type,last);
+		/* Event for attacker */
+		for(let i in attacker.buffs)
+			attacker.buffs[i].postAttack(attacker,attackee,totalDamage,type,last);
+		if(attacker.weapon)
+			for(let i in attacker.weapon.passives)
+				attacker.weapon.passives[i].postAttack(attacker,attackee,totalDamage,type,last);
+
+		totalDamage = totalDamage.reduce((a,b)=>a+b,0);
+		if(totalDamage<0) totalDamage = 0;
+		attackee.stats.hp[0] -= totalDamage;
+		return totalDamage;
 	}
 
 	/* Uses mana */
@@ -260,28 +280,56 @@ module.exports = class WeaponInterface{
 	}
 
 	/* Deals damage to an opponent */
-	static inflictDamage(attacker,attackee,damage,type){
-		if(attackee.weapon){
+	static inflictDamage(attacker,attackee,damage,type,last=false){
+		/* If opponent has a weapon, use that instead */
+		if(attackee.weapon)
 			return attackee.weapon.dealDamage(attacker,attackee,damage,type);
-		}else{
-			if(type==WeaponInterface.PHYSICAL){
-				let totalDamage = damage - (attackee.stats.pr[0]+attackee.stats.pr[1]);
-				if(totalDamage<0) totalDamage = 0;
-				for(let i in attackee.buffs)
-					totalDamage = attackee.buffs[i].attacked(attackee,attacker,totalDamage,type);
-				attackee.stats.hp[0] -= totalDamage;
-				return totalDamage;
-			}else if(type==WeaponInterface.MAGICAL){
-				let totalDamage = damage - (attackee.stats.mr[0]+attackee.stats.mr[1]);
-				if(totalDamage<0) totalDamage = 0;
-				for(let i in attackee.buffs)
-					totalDamage = attackee.buffs[i].attacked(attackee,attacker,totalDamage,type);
-				attackee.stats.hp[0] -= totalDamage;
-				return totalDamage;
-			}else{
-				throw new Error("Invalid attack type");
-			}
-		}
+
+		let totalDamage = 0;
+		if(type==WeaponInterface.PHYSICAL)
+			totalDamage = damage - (attackee.stats.pr[0]+attackee.stats.pr[1]);
+		else if(type==WeaponInterface.MAGICAL)
+			totalDamage = damage - (attackee.stats.mr[0]+attackee.stats.mr[1]);
+		else if(type==WeaponInterface.TRUE)
+			totalDamage = damage;
+		else
+			throw new Error("Invalid attack type");
+
+		if(totalDamage<0) totalDamage = 0;
+		totalDamage = [totalDamage,0];
+
+		/* Bonus damage calculation */
+		/* Event for attackee */
+		for(let i in attackee.buffs)
+			attackee.buffs[i].attacked(attackee,attacker,totalDamage,type,last);
+		if(attackee.weapon)
+			for(let i in attackee.weapon.passives)
+				attackee.weapon.passives[i].attacked(attackee,attacker,totalDamage,type,last);
+		/* Event for attacker */
+		for(let i in attacker.buffs)
+			attacker.buffs[i].attack(attacker,attackee,totalDamage,type,last);
+		if(attacker.weapon)
+			for(let i in attacker.weapon.passives)
+				attacker.weapon.passives[i].attack(attacker,attackee,totalDamage,type,last);
+
+		/* After bonus damage calculation */
+		/* Event for attackee */
+		for(let i in attackee.buffs)
+			attackee.buffs[i].postAttacked(attackee,attacker,totalDamage,type,last);
+		if(attackee.weapon)
+			for(let i in attackee.weapon.passives)
+				attackee.weapon.passives[i].postAttacked(attackee,attacker,totalDamage,type,last);
+		/* Event for attacker */
+		for(let i in attacker.buffs)
+			attacker.buffs[i].postAttack(attacker,attackee,totalDamage,type,last);
+		if(attacker.weapon)
+			for(let i in attacker.weapon.passives)
+				attacker.weapon.passives[i].postAttack(attacker,attackee,totalDamage,type,last);
+
+		totalDamage = totalDamage.reduce((a,b)=>a+b,0);
+		if(totalDamage<0) totalDamage = 0;
+		attackee.stats.hp[0] -= totalDamage;
+		return totalDamage;
 	}
 
 	/* heals */
@@ -341,4 +389,17 @@ module.exports = class WeaponInterface{
 	static get unsellable(){return new this(null,null,true).unsellable}
 	static get getDesc(){return new this(null,null,true).basicDesc}
 	static get getEmoji(){return new this(null,null,true).defaultEmoji}
+}
+
+const passiveDir = requireDir('./passives');
+var passives = {};
+for(var key in passiveDir){
+	let passive = passiveDir[key];
+	if(!passive.disabled) passives[passive.getID] = passive;
+}
+const buffDir = requireDir('./buffs');
+var buffs = {};
+for(var key in buffDir){
+	let buff = buffDir[key];
+	if(!buff.disabled) buffs[buff.getID] = buff;
 }
