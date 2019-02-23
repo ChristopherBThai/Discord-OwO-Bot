@@ -480,13 +480,12 @@ async function executeBattle(p,msg,action,setting){
 	}
 
 	/* Decide enemy actions */
-	let eaction = [];
-	for(var i=0;i<3;i++){eaction[i] = Math.random()>.5?weapon:attack;}
+	let eaction = [weapon,weapon,weapon];
 	/* Pre turn */
 	preTurn(battle.player.team,battle.enemy.team,action);
 	preTurn(battle.enemy.team,battle.player.team,eaction);
 	/* Execute actions */
-	let pLogs = executeTurn(battle.player.team,battle.enemy.team,action);
+	let pLogs = executeTurn(battle.player.team,battle.enemy.team,{ally:action,enemy:eaction});
 	let eLogs = [];
 	let logs = {player:pLogs,enemy:eLogs};
 	/* Post turn */
@@ -579,13 +578,12 @@ var calculateAll = exports.calculateAll = function(p,battle,logs = []){
 	updatePreviousStats(battle);
 
 	/* Decide enemy actions */
-	let eaction = [];
-	for(var i=0;i<3;i++){eaction[i] = Math.random()>.5?weapon:attack;}
+	let eaction = [weapon,weapon,weapon];
 	/* Pre turn */
 	preTurn(battle.player.team,battle.enemy.team,[weapon,weapon,weapon]);
 	preTurn(battle.enemy.team,battle.player.team,eaction);
 	/* Execute actions */
-	executeTurn(battle.player.team,battle.enemy.team,[weapon,weapon,weapon]);
+	executeTurn(battle.player.team,battle.enemy.team,{ally:[weapon,weapon,weapon],enemy:eaction});
 	/* Post turn */
 	postTurn(battle.player.team,battle.enemy.team,[weapon,weapon,weapon]);
 	postTurn(battle.enemy.team,battle.player.team,eaction);
@@ -758,23 +756,26 @@ function executeTurn(team,enemy,action){
 		let animal;
 		let tempEnemy;
 		let tempAlly;
+		let tempAction;
 
 		if(teamPos <= enemyPos){
 			animal = team[teamPos];
 			tempEnemy = enemy;
 			tempAlly = team;
+			tempAction = action.ally[teamPos];
 			teamPos++;
 		}else{
 			animal = enemy[enemyPos];
 			tempEnemy = team;
 			tempAlly = enemy;
+			tempAction = action.enemy[enemyPos];
 			enemyPos++;
 		}
 
 		if(animal){
 			/* Check if animal has weapon */
 			if(animal.weapon){
-				if(action[i]==weapon)
+				if(tempAction==weapon)
 					logs[i] = animal.weapon.attackWeapon(animal,tempAlly,tempEnemy);
 				else
 					logs[i] = animal.weapon.attackPhysical(animal,tempAlly,tempEnemy);
