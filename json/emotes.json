@@ -344,6 +344,7 @@
 		"pats":{"alt":"pat"},
 		"wave":{"alt":"greet"},
 		"boop":{"alt":"poke"},
+		"snuggle":{"alt":"cuddle"},
 		"fuck":{
 			"name":"handholding",
 			"msg":[
