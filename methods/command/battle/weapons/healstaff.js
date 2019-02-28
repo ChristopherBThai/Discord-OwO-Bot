@@ -11,7 +11,7 @@ module.exports = class HealStaff extends WeaponInterface{
 		this.statDesc = "Heals **?%** of your "+WeaponInterface.magEmoji+"MAG to the lowest health ally";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
-		this.qualityList = [[50,100]];
+		this.qualityList = [[90,140]];
 		this.manaRange = [250,150];
 	}
 
