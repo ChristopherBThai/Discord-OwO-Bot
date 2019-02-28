@@ -45,6 +45,7 @@ var parseWeapon = exports.parseWeapon = function(data){
 	if(!data.parsed){
 		/* Parse stats */
 		data.stat = data.stat.split(",");
+		if(data.stat[0]=='') data.stat = [];
 		for(var i=0;i<data.stat.length;i++)
 			data.stat[i] = parseInt(data.stat[i]);
 

@@ -1,3 +1,4 @@
+const WeaponInterface = require('../WeaponInterface.js');
 exports.stats = function(animal){
 
 	/* Parse animal stats */
@@ -13,6 +14,10 @@ exports.stats = function(animal){
 	/* Make sure bonus hp/wp is added */
 	stats.hp[0] = stats.hp[1]+stats.hp[3];
 	stats.wp[0] = stats.wp[1]+stats.wp[3];
+
+	/* add the mr/pr percentages */
+	stats.mrp = WeaponInterface.resToPrettyPercent(stats.mr[0]+stats.mr[1]);
+	stats.prp = WeaponInterface.resToPrettyPercent(stats.pr[0]+stats.pr[1]);
 
 	animal.stats = stats;
 }
