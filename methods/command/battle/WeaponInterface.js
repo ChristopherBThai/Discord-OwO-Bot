@@ -388,7 +388,7 @@ module.exports = class WeaponInterface{
 	}
 
 	static resToPrettyPercent(res){
-		res = this.resToPercent(res);
+		res = WeaponInterface.resToPercent(res);
 		return Math.round(res*100)+"%";
 	}
 
