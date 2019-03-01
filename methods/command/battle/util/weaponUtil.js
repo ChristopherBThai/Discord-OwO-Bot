@@ -36,7 +36,8 @@ exports.getItems = async function(p){
 	var items = {};
 	for(var i = 0;i<result.length;i++){
 		var key = result[i].wid;
-		items[key] = {id:(key+100),count:result[i].count,emoji:weapons[key].getEmoji};
+		if(weapons[key])
+			items[key] = {id:(key+100),count:result[i].count,emoji:weapons[key].getEmoji};
 	}
 	return items;
 }
