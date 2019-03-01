@@ -110,3 +110,4 @@ function parseSetting(query){
 
 	return {auto,display,speed,instant};
 }
+
