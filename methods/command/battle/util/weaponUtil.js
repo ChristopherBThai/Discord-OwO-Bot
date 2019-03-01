@@ -120,24 +120,26 @@ exports.display = async function(p,pageNum=0,sort=false){
 			if(r.emoji.name===nextPageEmoji&&pageNum+1<page.maxPage) {
 				pageNum++;
 				page = await getDisplayPage(p,pageNum,sort);
-				await msg.edit({embed:page.embed});
+				if(page) await msg.edit({embed:page.embed});
 			}
 			else if(r.emoji.name===prevPageEmoji&&pageNum>0){
 				pageNum--;
 				page = await getDisplayPage(p,pageNum,sort);
-				await msg.edit({embed:page.embed});
+				if(page) await msg.edit({embed:page.embed});
 			}
 			else if(r.emoji.name===sortEmoji){
 				sort = !sort;
 				page = await getDisplayPage(p,pageNum,sort);
-				await msg.edit({embed:page.embed});
+				if(page) await msg.edit({embed:page.embed});
 			}
 		}catch(err){console.error(err);}
 	});
 
 	collector.on('end',async function(collected){
-		page.embed.color = 6381923;
-		await msg.edit("This message is now inactive",{embed:page.embed});
+		if(page){
+			page.embed.color = 6381923;
+			await msg.edit("This message is now inactive",{embed:page.embed});
+		}
 	});
 
 }
