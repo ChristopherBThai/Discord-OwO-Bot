@@ -177,9 +177,9 @@ module.exports = class WeaponInterface{
 	dealDamage(attacker,attackee,damage,type,last=false){
 		let totalDamage = 0;
 		if(type==WeaponInterface.PHYSICAL)
-			totalDamage = damage - (attackee.stats.pr[0]+attackee.stats.pr[1]);
+			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.pr));
 		else if(type==WeaponInterface.MAGICAL)
-			totalDamage = damage - (attackee.stats.mr[0]+attackee.stats.mr[1]);
+			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.mr));
 		else if(type==WeaponInterface.TRUE)
 			totalDamage = damage;
 		else
@@ -287,9 +287,9 @@ module.exports = class WeaponInterface{
 
 		let totalDamage = 0;
 		if(type==WeaponInterface.PHYSICAL)
-			totalDamage = damage - (attackee.stats.pr[0]+attackee.stats.pr[1]);
+			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.pr));
 		else if(type==WeaponInterface.MAGICAL)
-			totalDamage = damage - (attackee.stats.mr[0]+attackee.stats.mr[1]);
+			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.mr));
 		else if(type==WeaponInterface.TRUE)
 			totalDamage = damage;
 		else
@@ -376,11 +376,26 @@ module.exports = class WeaponInterface{
 		return lowest;
 	}
 
+	/* Convert resistance to percent */
+	static resToPercent(res){
+		res = res[0]+res[1];
+		res = res/(150+res);
+		if(res>0.75) res = .75;
+		return res;
+	}
+
+	/* Convert resistance to pretty print percent */
+	static resToPrettyPercent(res){
+		res = WeaponInterface.resToPercent(res);
+		return Math.round(res*100)+"%";
+	}
+
 	static get allPassives(){return passives}
 	static get allBuffs(){return buffs}
 	static get PHYSICAL(){return 'p'}
-	static get strEmoji(){return '<:att:531616155450998794>'}
 	static get MAGICAL(){return 'm'}
+	static get TRUE(){return 't'}
+	static get strEmoji(){return '<:att:531616155450998794>'}
 	static get magEmoji(){return '<:mag:531616156231139338>'}
 	static get hpEmoji(){return '<:hp:531620120410456064>'}
 	static get getID(){return new this(null,null,true).id}

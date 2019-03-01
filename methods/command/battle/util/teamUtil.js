@@ -2,6 +2,7 @@ const badwords = require('../../../../../tokens/badwords.json');
 const battleEmoji = "🛋";
 const weaponUtil = require('./weaponUtil.js');
 const animalUtil = require('./animalUtil.js');
+const WeaponInterface = require('../WeaponInterface.js');
 
 /*
  * Adds a member to the user's team
@@ -218,8 +219,8 @@ exports.displayTeam = async function(p){
 			let wp = (''+Math.ceil(animal.stats.wp[1]+animal.stats.wp[3])).padStart(digits,"0");
 			let att = (''+Math.ceil(animal.stats.att[0]+animal.stats.att[1])).padStart(digits,"0");
 			let mag = (''+Math.ceil(animal.stats.mag[0]+animal.stats.mag[1])).padStart(digits,"0");
-			let pr = (''+Math.ceil(animal.stats.pr[0]+animal.stats.pr[1])).padStart(digits,"0");
-			let mr = (''+Math.ceil(animal.stats.mr[0]+animal.stats.mr[1])).padStart(digits,"0");
+			let pr = WeaponInterface.resToPrettyPercent(animal.stats.pr);
+			let mr = WeaponInterface.resToPrettyPercent(animal.stats.mr);
 			title += `${(animal.animal.uni)?animal.animal.uni:animal.animal.value} **${(animal.nickname)?animal.nickname:animal.animal.name}** `;
 			body = `Lvl ${animal.stats.lvl} [${animal.stats.xp[0]}/${animal.stats.xp[1]}]\n<:hp:531620120410456064> \`${hp}\` <:wp:531620120976687114> \`${wp}\`\n<:att:531616155450998794> \`${att}\` <:mag:531616156231139338> \`${mag}\`\n<:pr:531616156222488606> \`${pr}\` <:mr:531616156226945024> \`${mr}\`\n`;
 			let weapon = animal.weapon;
