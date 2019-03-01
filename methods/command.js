@@ -167,6 +167,7 @@ function executeCommand(param){
 					alias:command
 				});
 				*/
+				/*
 				console.log("\x1b[0m\x1b[4mCommand\x1b[0m: %s\x1b[0m \x1b[36m{%s}\x1b[0m \x1b[0m%s\x1b[36m[%s][%s][%s]",
 					command,
 					param.args,
@@ -176,7 +177,9 @@ function executeCommand(param){
 					msg.channel.name);
 				if(result)
 					console.log("\t\x1b[36m%s\x1b[0m",result);
+					*/
 			}else{
+				/*	
 				console.log("\x1b[0m\x1b[4mCommand\x1b[0m: %s\x1b[0m \x1b[36m{%s}\x1b[0m \x1b[0m%s\x1b[36m[%s][%s][%s]",
 					command,
 					msg.content.replace(/(\n)+/g," | "),
@@ -184,6 +187,7 @@ function executeCommand(param){
 					msg.author.id,
 					msg.guild.name,
 					msg.channel.name);
+				*/
 			}
 			//user requests help of a command
 			//if(param.help)

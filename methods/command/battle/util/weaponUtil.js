@@ -118,28 +118,34 @@ exports.display = async function(p,pageNum=0,sort=false){
 
 	collector.on('collect', async function(r){
 		try{
+			if(page){
 			/* Save the animal's action */
-			if(r.emoji.name===nextPageEmoji&&pageNum+1<page.maxPage) {
-				pageNum++;
+			if(r.emoji.name===nextPageEmoji) {
+				if(pageNum+1<page.maxPage) pageNum++;
+				else pageNum = 0;
 				page = await getDisplayPage(p,pageNum,sort);
-				await msg.edit({embed:page.embed});
+				if(page) await msg.edit({embed:page.embed});
 			}
-			else if(r.emoji.name===prevPageEmoji&&pageNum>0){
-				pageNum--;
+			else if(r.emoji.name===prevPageEmoji){
+				if(pageNum>0) pageNum--;
+				else pageNum = page.maxPage-1;
 				page = await getDisplayPage(p,pageNum,sort);
-				await msg.edit({embed:page.embed});
+				if(page) await msg.edit({embed:page.embed});
 			}
 			else if(r.emoji.name===sortEmoji){
 				sort = !sort;
 				page = await getDisplayPage(p,pageNum,sort);
-				await msg.edit({embed:page.embed});
+				if(page) await msg.edit({embed:page.embed});
+			}
 			}
 		}catch(err){console.error(err);}
 	});
 
 	collector.on('end',async function(collected){
-		page.embed.color = 6381923;
-		await msg.edit("This message is now inactive",{embed:page.embed});
+		if(page){
+			page.embed.color = 6381923;
+			await msg.edit("This message is now inactive",{embed:page.embed});
+		}
 	});
 
 }
