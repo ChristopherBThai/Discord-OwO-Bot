@@ -60,6 +60,7 @@ var parseWeapon = exports.parseWeapon = function(data){
 	}
 
 	/* Convert data to actual weapon data */
+	if(!weapons[data.id]) return;
 	let weapon = new (weapons[data.id])(data.passives,data.stat);
 	weapon.uwid = data.uwid;
 	weapon.pid = data.pid;
@@ -184,15 +185,17 @@ var getDisplayPage = async function(p,page,sort){
 	let desc = "Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nSell `owo sell {weaponID}`\n";
 	for(var key in weapons){
 		let weapon = parseWeapon(weapons[key]);
-		let emoji = `${weapon.rank.emoji}${weapon.emoji}`;
-		for(var i=0;i<weapon.passives.length;i++){
-			let passive = weapon.passives[i];
-			emoji += passive.emoji;
-		}
-		desc += `\n\`${weapons[key].uwid}\` ${emoji} **${weapon.name}** | Quality: ${weapon.avgQuality}%`;
-		if(weapons[key].animal.name){
-			let animal = p.global.validAnimal(weapons[key].animal.name);
-			desc += ` | ${(animal.uni)?animal.uni:animal.value} ${(weapons[key].animal.nickname)?weapons[key].animal.nickname:""}`;
+		if(weapon){
+			let emoji = `${weapon.rank.emoji}${weapon.emoji}`;
+			for(var i=0;i<weapon.passives.length;i++){
+				let passive = weapon.passives[i];
+				emoji += passive.emoji;
+			}
+			desc += `\n\`${weapons[key].uwid}\` ${emoji} **${weapon.name}** | Quality: ${weapon.avgQuality}%`;
+			if(weapons[key].animal.name){
+				let animal = p.global.validAnimal(weapons[key].animal.name);
+				desc += ` | ${(animal.uni)?animal.uni:animal.value} ${(weapons[key].animal.nickname)?weapons[key].animal.nickname:""}`;
+			}
 		}
 	}
 	/* Construct msg */
@@ -312,7 +315,10 @@ exports.equip = async function(p,uwid,pet){
 		let weapon = this.parseWeaponQuery(result[2]);
 		weapon = weapon[Object.keys(weapon)[0]];
 		weapon = this.parseWeapon(weapon);
-		p.replyMsg(weaponEmoji,`, ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}** is now wielding ${weapon.emoji} **${weapon.name}**!`);
+		if(weapon)
+			p.replyMsg(weaponEmoji,`, ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}** is now wielding ${weapon.emoji} **${weapon.name}**!`);
+		else
+			p.errorMsg(`, Could not find a weapon with that id!`);
 
 	/* Already equipped */
 	}else if(result[1].affectedRows>0){
@@ -321,7 +327,10 @@ exports.equip = async function(p,uwid,pet){
 		let weapon = this.parseWeaponQuery(result[2]);
 		weapon = weapon[Object.keys(weapon)[0]];
 		weapon = this.parseWeapon(weapon);
-		p.replyMsg(weaponEmoji,`, ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}** is already wielding ${weapon.emoji} **${weapon.name}**!`);
+		if(weapon)
+			p.replyMsg(weaponEmoji,`, ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}** is already wielding ${weapon.emoji} **${weapon.name}**!`);
+		else
+			p.errorMsg(`, Could not find a weapon with that id!`);
 
 	/* A Failure (like me!) */
 	}else{
@@ -341,15 +350,20 @@ exports.unequip = async function(p,uwid){
 		let weapon = this.parseWeaponQuery(result[0]);
 		weapon = weapon[Object.keys(weapon)[0]];
 		weapon = this.parseWeapon(weapon);
-		p.replyMsg(weaponEmoji,`, Unequipped ${weapon.emoji} **${weapon.name}** from ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}**`);
-
+		if(weapon)
+			p.replyMsg(weaponEmoji,`, Unequipped ${weapon.emoji} **${weapon.name}** from ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}**`);
+		else
+			p.errorMsg(`, Could not find a weapon with that id!`);
 
 	/* No body using weapon */
 	}else if(result[1].affectedRows>0){
 		let weapon = this.parseWeaponQuery(result[0]);
 		weapon = weapon[Object.keys(weapon)[0]];
 		weapon = this.parseWeapon(weapon);
-		p.replyMsg(weaponEmoji,`, No animal is using ${weapon.emoji} **${weapon.name}**`);
+		if(weapon)
+			p.replyMsg(weaponEmoji,`, No animal is using ${weapon.emoji} **${weapon.name}**`);
+		else
+			p.errorMsg(`, Could not find a weapon with that id!`);
 
 	/* Invalid */
 	}else{
@@ -385,6 +399,11 @@ exports.sell = async function(p,uwid){
 	let weapon = this.parseWeaponQuery(result);
 	for(var key in weapon){
 		weapon = this.parseWeapon(weapon[key]);
+	}
+
+	if(!weapon){
+		p.errorMsg(", you do not have a weapon with this id!",3000);
+		return;
 	}
 
 	/* Is this weapon sellable? */
