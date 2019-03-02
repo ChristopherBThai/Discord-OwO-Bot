@@ -70,7 +70,7 @@ module.exports = new CommandInterface({
 
 		/* Construct text */
 		let text1 = p.config.emoji.blank+" **| "+p.msg.author.username+"** opens a weapon crate\n"+crateShake+" **|** and finds a ...";
-		let text2 = weapon.emoji+" **| "+p.msg.author.username+"** opens a weapon crate\n"+crateOpen+" **|** and finds a `"+uwid+"` "+weapon.rank.emoji+" "+weapon.emoji;
+		let text2 = weapon.emoji+" **| "+p.msg.author.username+"** opens a weapon crate\n"+crateOpen+" **|** and finds a `"+weaponUtil.shortenUWID(uwid)+"` "+weapon.rank.emoji+" "+weapon.emoji;
 		for(var i=0;i<weapon.passives.length;i++){
 			text2 += " "+weapon.passives[i].emoji;
 		}

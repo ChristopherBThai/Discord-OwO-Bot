@@ -2,6 +2,7 @@ const CommandInterface = require('../../commandinterface.js');
 
 const weaponUtil = require('./util/weaponUtil.js');
 const battleUtil = require('./util/battleUtil.js');
+const uwidMax = 10;
 
 module.exports = new CommandInterface({
 	
@@ -28,7 +29,7 @@ module.exports = new CommandInterface({
 		/* Describe weapon */
 		}else if(p.args.length==1){
 			var uwid = p.args[0];
-			if(p.global.isInt(uwid))
+			if(uwid.length < uwidMax)
 				await weaponUtil.describe(p,uwid);
 			else
 				p.errorMsg(", Invalid arguments! Use `owo weapon {uniqueWeaponId}`");
@@ -42,7 +43,7 @@ module.exports = new CommandInterface({
 			}
 
 			var uwid = p.args[1];
-			if(p.global.isInt(uwid))
+			if(uwid.length < uwidMax)
 				await weaponUtil.unequip(p,uwid);
 			else
 				p.errorMsg(", Invalid arguments! Use `owo weapon unequip {weaponId}`");
@@ -58,7 +59,7 @@ module.exports = new CommandInterface({
 			var uwid = p.args[0];
 			var pet = p.args[1];
 
-			if(!p.global.isInt(uwid)){
+			if(uwid.length >= uwidMax){
 					p.errorMsg(", Invalid arguments! Use `owo weapon {uniqueWeaponId} {animalPos|animal}`");
 					return;
 			}else if(p.global.isInt(pet)){
