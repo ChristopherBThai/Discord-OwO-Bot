@@ -47,11 +47,8 @@ module.exports = new CommandInterface({
 
 		/* Only one argument */
 		}else if(args.length==1){
-			/* If its an int, it's a weapon id */
-			if(p.global.isInt(args[0])){
-				await weaponUtil.sell(p,parseInt(args[0]));
-				return;
-			}else if(args[0].toLowerCase()=="all")
+
+			if(args[0].toLowerCase()=="all")
 				ranks = global.getAllRanks();
 			else
 				name = args[0];
@@ -90,6 +87,10 @@ module.exports = new CommandInterface({
 				p.send("**🚫 | "+msg.author.username+"**, The correct syntax for selling ranks is `owo sell {rank}`!",3000);
 			else
 				sellRank(msg,con,rank,p.send,global,p);
+
+		//Is a weapon...
+		}else if(args.length==1){
+			weaponUtil.sell(p,args[0]);
 
 		//if neither...
 		}else{

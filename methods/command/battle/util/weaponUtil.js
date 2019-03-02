@@ -64,7 +64,7 @@ var parseWeapon = exports.parseWeapon = function(data){
 	/* Convert data to actual weapon data */
 	if(!weapons[data.id]) return;
 	let weapon = new (weapons[data.id])(data.passives,data.stat);
-	weapon.uwid = data.uwid;
+	weapon.uwid = shortenUWID(data.uwid);
 	weapon.pid = data.pid;
 	weapon.animal = data.animal;
 
@@ -79,7 +79,7 @@ var parseWeaponQuery = exports.parseWeaponQuery = function(query){
 			var key = "_"+query[i].uwid;
 			if(!(key in weapons)){
 				weapons[key] = {
-					uwid:query[i].uwid,
+					uwid:shortenUWID(query[i].uwid),
 					pid:query[i].pid,
 					id:query[i].wid,
 					stat:query[i].stat,
@@ -222,6 +222,8 @@ var getDisplayPage = async function(p,page,sort){
 }
 
 exports.describe = async function(p,uwid){
+	uwid = expandUWID(uwid);
+
 	/* Check if valid */
 	if(!uwid){
 		p.errorMsg(", I could not find a weapon with that unique weapon id! Please use `owo weapon` for the weapon ID!");
@@ -262,7 +264,7 @@ exports.describe = async function(p,uwid){
 
 	/* Make description */
 	let desc = `**Name:** ${weapon.name}\n`;
-	desc += `**ID:** \`${uwid}\`\n`;
+	desc += `**ID:** \`${shortenUWID(uwid)}\`\n`;
 	desc += `**Sell Value:** ${weapon.unsellable?"UNSELLABLE":prices[weapon.rank.name]}\n`;
 	desc += `**Quality:** ${weapon.rank.emoji} ${weapon.avgQuality}%\n`;
 	desc += `**WP Cost:** ${weapon.manaCost} <:wp:531620120976687114>`;
@@ -297,6 +299,11 @@ exports.describe = async function(p,uwid){
 }
 
 exports.equip = async function(p,uwid,pet){
+	uwid = expandUWID(uwid);
+	if(!uwid){
+		p.errorMsg(", could not find that weapon or animal! The correct command is `owo weapon {weaponID} {animal}`");
+		return;
+	}
 	/* Construct sql depending in pet parameter */
 	if(p.global.isInt(pet)){
 		var pid = `(SELECT pid FROM user a LEFT JOIN pet_team b ON a.uid = b.uid LEFT JOIN pet_team_animal c ON b.pgid = c.pgid WHERE a.id = ${p.msg.author.id} AND pos = ${pet})`
@@ -347,6 +354,12 @@ exports.equip = async function(p,uwid,pet){
 }
 
 exports.unequip = async function(p,uwid){
+	uwid  = expandUWID(uwid);
+	if(!uwid){
+		p.errorMsg(`, Could not find a weapon with that id!`);
+		return;
+	}
+
 	let sql = `SELECT animal.name,animal.nickname,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal ON a.pid = animal.pid WHERE a.uwid = ${uwid} AND uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
 	sql += `UPDATE IGNORE user_weapon SET pid = NULL WHERE uwid = ${uwid} AND uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
 	let result =  await p.query(sql);
@@ -381,6 +394,12 @@ exports.unequip = async function(p,uwid){
 
 /* Sells a weapon */
 exports.sell = async function(p,uwid){
+	uwid = expandUWID(uwid);
+	if(!uwid){
+		p.errorMsg(", you do not have a weapon with this id!",3000);
+		return;
+	}
+
 	/* Grab the item we will sell */
 	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname 
 		FROM user
@@ -453,3 +472,17 @@ exports.sell = async function(p,uwid){
 
 	p.replyMsg(weaponEmoji,`, You sold a(n) **${weapon.rank.name} ${weapon.name}**  ${weapon.rank.emoji}${weapon.emoji} for **${price}** cowoncy!`);
 }
+
+/* Shorten a uwid to base36 */
+var shortenUWID = exports.shortenUWID = function(uwid){
+	if(!uwid) return;
+	return uwid.toString(36).toUpperCase();
+}
+
+/* expand base36 to decimal */
+var expandUWID = exports.expandUWID = function(euwid){
+	if(!euwid) return;
+	if(!(/^[a-zA-Z0-9]+$/.test(euwid))) return;
+	return parseInt(euwid.toLowerCase(),36);
+}
+
