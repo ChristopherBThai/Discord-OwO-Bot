@@ -283,7 +283,7 @@ module.exports = class WeaponInterface{
 	static inflictDamage(attacker,attackee,damage,type,last=false){
 		/* If opponent has a weapon, use that instead */
 		if(attackee.weapon)
-			return attackee.weapon.dealDamage(attacker,attackee,damage,type);
+			return attackee.weapon.dealDamage(attacker,attackee,damage,type,last);
 
 		let totalDamage = 0;
 		if(type==WeaponInterface.PHYSICAL)
