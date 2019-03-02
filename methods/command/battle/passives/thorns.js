@@ -18,7 +18,7 @@ module.exports = class Thorns extends PassiveInterface{
 		/* Ignore if last flag is true */
 		if(last) return;
 		let totalDamage = damage.reduce((a,b)=>a+b,0)*this.stats[0]/100;
-		if(totalDamage<=0) return;
+		if(totalDamage<1) return;
 		WeaponInterface.inflictDamage(animal,attacker,totalDamage,WeaponInterface.TRUE,true);
 	}
 }
