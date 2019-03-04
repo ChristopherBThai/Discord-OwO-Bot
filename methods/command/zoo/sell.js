@@ -8,11 +8,11 @@ module.exports = new CommandInterface({
 
 	alias:["sell"],
 
-	args:"{animal|rank} {count}",
+	args:"{animal|rank|weaponID} {count}",
 
-	desc:"Sell animals from your zoo! Selling animals will NOT affect your zoo score!",
+	desc:"Sell animals from your zoo! Selling animals will NOT affect your zoo score!\nYou can also sell weapons by their unique weaponID!",
 
-	example:["owo sell dog","owo sell cat 1","owo sell ladybug all","owo sell uncommon","owo sell all"],
+	example:["owo sell dog","owo sell cat 1","owo sell ladybug all","owo sell uncommon","owo sell all","owo sell rareweapons"],
 
 	related:["owo hunt"],
 
