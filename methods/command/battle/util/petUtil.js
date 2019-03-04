@@ -1,5 +1,6 @@
 const teamUtil = require('./teamUtil.js');
 const animalUtil = require('./animalUtil.js');
+const WeaponInterface = require('../WeaponInterface.js');
 
 /* get and parse animals from the database */
 exports.getAnimals = async function(p){
@@ -57,8 +58,8 @@ exports.getDisplay = function(p,animals){
 		let wp = (''+Math.ceil(animal.stats.wp[1]+animal.stats.wp[3])).padStart(digits,"0");
 		let att = (''+Math.ceil(animal.stats.att[0]+animal.stats.att[1])).padStart(digits,"0");
 		let mag = (''+Math.ceil(animal.stats.mag[0]+animal.stats.mag[1])).padStart(digits,"0");
-		let pr = animal.stats.prp;
-		let mr = animal.stats.mrp;
+		let pr = WeaponInterface.resToPrettyPercent(animal.stats.pr);
+		let mr = WeaponInterface.resToPrettyPercent(animal.stats.mr);
 		let stats = `<:hp:531620120410456064> \`${hp}\` <:wp:531620120976687114> \`${wp}\`\n<:att:531616155450998794> \`${att}\` <:mag:531616156231139338> \`${mag}\`\n<:pr:531616156222488606> \`${pr}\` <:mr:531616156226945024> \`${mr}\``;
 		let weapon = animal.weapon;
 		let weaponText = "";

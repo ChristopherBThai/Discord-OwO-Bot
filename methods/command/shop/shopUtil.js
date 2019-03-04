@@ -16,7 +16,7 @@ exports.getItem = function(args){
 	if(global.isInt(args[0])){
 		id = parseInt(args[0]);
 	}else{
-		return "Please identify the item by their item **ID**, not item name!";
+		return {name:"weapon",id:args[0]};
 	}
 
 	if(id==50)

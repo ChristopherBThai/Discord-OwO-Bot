@@ -177,9 +177,9 @@ module.exports = class WeaponInterface{
 	dealDamage(attacker,attackee,damage,type,last=false){
 		let totalDamage = 0;
 		if(type==WeaponInterface.PHYSICAL)
-			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.pr[0]+attackee.stats.pr[1]));
+			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.pr));
 		else if(type==WeaponInterface.MAGICAL)
-			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.mr[0]+attackee.stats.mr[1]));
+			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.mr));
 		else if(type==WeaponInterface.TRUE)
 			totalDamage = damage;
 		else
@@ -279,22 +279,22 @@ module.exports = class WeaponInterface{
 		return Math.round( (multiplier*(stat[0]+stat[1])) + (Math.random()*100-50));
 	}
 
-	/* Calculate the damage output for mixed damage */
+	/* Get mixed damage */
 	static getMixedDamage(stat1,percent1,stat2,percent2){
-		return Math.round( ((stat1[0]+stat1[1])*percent1) + ((stat2[0]+stat2[1])*percent2) + (Math.random()*100-50));
+		return Math.round(((stat1[0]+stat1[1])*percent1) + ((stat2[0]+stat2[1])*percent2) + (Math.random()*100-50));
 	}
 
 	/* Deals damage to an opponent */
 	static inflictDamage(attacker,attackee,damage,type,last=false){
 		/* If opponent has a weapon, use that instead */
 		if(attackee.weapon)
-			return attackee.weapon.dealDamage(attacker,attackee,damage,type);
+			return attackee.weapon.dealDamage(attacker,attackee,damage,type,last);
 
 		let totalDamage = 0;
 		if(type==WeaponInterface.PHYSICAL)
-			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.pr[0]+attackee.stats.pr[1]));
+			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.pr));
 		else if(type==WeaponInterface.MAGICAL)
-			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.mr[0]+attackee.stats.mr[1]));
+			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.mr));
 		else if(type==WeaponInterface.TRUE)
 			totalDamage = damage;
 		else
@@ -381,12 +381,14 @@ module.exports = class WeaponInterface{
 		return lowest;
 	}
 
+	/* Convert resistance to percent */
 	static resToPercent(res){
-		res = res/(120+res);
-		if(res>0.75) res = .75;
+		res = res[0]+res[1];
+		res = (res/(100+res))*.75;
 		return res;
 	}
 
+	/* Convert resistance to pretty print percent */
 	static resToPrettyPercent(res){
 		res = WeaponInterface.resToPercent(res);
 		return Math.round(res*100)+"%";
@@ -397,6 +399,7 @@ module.exports = class WeaponInterface{
 	static get PHYSICAL(){return 'p'}
 	static get MAGICAL(){return 'm'}
 	static get TRUE(){return 't'}
+	static get ranks(){return ranks}
 	static get strEmoji(){return '<:att:531616155450998794>'}
 	static get magEmoji(){return '<:mag:531616156231139338>'}
 	static get hpEmoji(){return '<:hp:531620120410456064>'}
