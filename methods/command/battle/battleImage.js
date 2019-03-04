@@ -2,7 +2,6 @@ const request = require('request');
 const imagegenAuth = require('../../../../tokens/imagegen.json');
 const WeaponInterface = require('./WeaponInterface.js');
 
-
 /* Generates a battle image by my battle image generation api */
 exports.generateImage = function(teams){
 	/* Construct json for POST request */
@@ -106,8 +105,8 @@ function generateAnimalJson(animal){
 		animal_wp:wp,
 		animal_att:Math.ceil(stat.att[0]+stat.att[1]),
 		animal_mag:Math.ceil(stat.mag[0]+stat.mag[1]),
-		animal_pr:WeaponInterface.resToPrettyPercent(stat.pr[0]+stat.pr[1]),
-		animal_mr:WeaponInterface.resToPrettyPercent(stat.mr[0]+stat.mr[1]),
+		animal_pr:WeaponInterface.resToPrettyPercent(stat.pr),
+		animal_mr:WeaponInterface.resToPrettyPercent(stat.mr),
 		animal_buffs:buffs
 	}
 }
