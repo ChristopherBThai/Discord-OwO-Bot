@@ -160,7 +160,7 @@ module.exports = class WeaponInterface{
 
 	/* Weapon attack */
 	attackWeapon(me,team,enemy){
-		return WeaponInterface.basicAttack(me,team,enemy);
+		return this.attackPhysical(me,team,enemy);
 	}
 
 	/* Get list of alive animals */
@@ -279,6 +279,11 @@ module.exports = class WeaponInterface{
 		return Math.round( (multiplier*(stat[0]+stat[1])) + (Math.random()*100-50));
 	}
 
+	/* Get mixed damage */
+	static getMixedDamage(stat1,percent1,stat2,percent2){
+		return Math.round(((stat1[0]+stat1[1])*percent1) + ((stat2[0]+stat2[1])*percent2) + (Math.random()*100-50));
+	}
+
 	/* Deals damage to an opponent */
 	static inflictDamage(attacker,attackee,damage,type,last=false){
 		/* If opponent has a weapon, use that instead */
@@ -379,8 +384,7 @@ module.exports = class WeaponInterface{
 	/* Convert resistance to percent */
 	static resToPercent(res){
 		res = res[0]+res[1];
-		res = res/(150+res);
-		if(res>0.75) res = .75;
+		res = (res/(100+res))*.75;
 		return res;
 	}
 
