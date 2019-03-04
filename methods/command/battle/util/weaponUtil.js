@@ -2,6 +2,10 @@ const requireDir = require('require-dir');
 const WeaponInterface = require('../WeaponInterface.js');
 
 const prices = {"Common":100,"Uncommon":250,"Rare":400,"Epic":600,"Mythical":2000,"Legendary":5000,"Fabled":20000};
+const ranks = [['cw','commonweapons','commonweapon'],['uw','uncommonweapons','uncommonweapon'],['rw','rareweapon','rareweapons'],
+      ['ew','epicweapons','epicweapon'],['mw','mythicalweapons','mythicalweapon','mythicweapons','mythicweapon'],
+      ['lw','legendaryweapons','legendaryweapon'],['fw','fabledweapons','fabledweapon','fableweapons','fableweapon']];
+
 const weaponEmoji = "🗡";
 const weaponPerPage = 10;
 const nextPageEmoji = '➡';
@@ -64,7 +68,8 @@ var parseWeapon = exports.parseWeapon = function(data){
 	/* Convert data to actual weapon data */
 	if(!weapons[data.id]) return;
 	let weapon = new (weapons[data.id])(data.passives,data.stat);
-	weapon.uwid = shortenUWID(data.uwid);
+	weapon.uwid = data.uwid;
+	weapon.ruwid = data.ruwid;
 	weapon.pid = data.pid;
 	weapon.animal = data.animal;
 
@@ -80,6 +85,7 @@ var parseWeaponQuery = exports.parseWeaponQuery = function(query){
 			if(!(key in weapons)){
 				weapons[key] = {
 					uwid:shortenUWID(query[i].uwid),
+					ruwid:query[i].uwid,
 					pid:query[i].pid,
 					id:query[i].wid,
 					stat:query[i].stat,
@@ -102,7 +108,7 @@ var parseWeaponQuery = exports.parseWeaponQuery = function(query){
 }
 
 /* Displays weapons with multiple pages */
-exports.display = async function(p,pageNum=0,sort=false){
+exports.display = async function(p,pageNum=0,sort=0){
 	
 	/* Construct initial page */
 	let page = await getDisplayPage(p,pageNum,sort);
@@ -133,7 +139,7 @@ exports.display = async function(p,pageNum=0,sort=false){
 				if(page) await msg.edit({embed:page.embed});
 			}
 			else if(r.emoji.name===sortEmoji){
-				sort = !sort;
+				sort = (sort+1)%4;
 				page = await getDisplayPage(p,pageNum,sort);
 				if(page) await msg.edit({embed:page.embed});
 			}
@@ -161,7 +167,16 @@ var getDisplayPage = async function(p,page,sort){
 				LEFT JOIN animal ON animal.pid = user_weapon.pid
 			WHERE 
 				user.id = ${p.msg.author.id}
-			ORDER BY ${sort?'user_weapon.avg DESC,':''} user_weapon.uwid DESC
+			ORDER BY `;
+			
+			if(sort===1)
+				sql += 'user_weapon.avg DESC,';
+			else if(sort===2)
+				sql += 'user_weapon.wid DESC, user_weapon.avg DESC,';
+			else if(sort===3)
+				sql += 'user_weapon.pid DESC,';
+			
+	sql += 			` user_weapon.uwid DESC
 			LIMIT ${weaponPerPage}
 			OFFSET ${page*weaponPerPage}) temp
 		LEFT JOIN
@@ -190,7 +205,7 @@ var getDisplayPage = async function(p,page,sort){
 	let weapons = parseWeaponQuery(result[0]);
 
 	/* Parse actual weapon data for each weapon */
-	let desc = "Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nSell `owo sell {weaponID}`\n";
+	let desc = "Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nSell `owo sell {weaponID|commonweapons,rareweapons...}`\n";
 	for(var key in weapons){
 		let weapon = parseWeapon(weapons[key]);
 		if(weapon){
@@ -215,9 +230,19 @@ var getDisplayPage = async function(p,page,sort){
 		"description":desc,
 		"color": p.config.embed_color,
 		"footer":{
-			"text":"Page "+(page+1)+"/"+maxPage+" | "+((sort)?"Sorting by rarity":"Sorting by id")
+			"text":"Page "+(page+1)+"/"+maxPage+" | "
 		}
 	};
+
+	if(sort===0)
+		embed.footer.text += "Sorting by id";
+	else if(sort===1)
+		embed.footer.text += "Sorting by rarity";
+	else if(sort===2)
+		embed.footer.text += "Sorting by type";
+	else if(sort===3)
+		embed.footer.text += "Sorting by equipped";
+
 	return {sql,embed,totalCount,nextPage,prevPage,maxPage}
 }
 
@@ -394,6 +419,15 @@ exports.unequip = async function(p,uwid){
 
 /* Sells a weapon */
 exports.sell = async function(p,uwid){
+	/* Check if we're selling a rank */
+	uwid = uwid.toLowerCase();
+	for(let i=0;i<ranks.length;i++){
+		if(ranks[i].includes(uwid)){
+			sellRank(p,i);
+			return;
+		}
+	}
+
 	uwid = expandUWID(uwid);
 	if(!uwid){
 		p.errorMsg(", you do not have a weapon with this id!",3000);
@@ -471,6 +505,92 @@ exports.sell = async function(p,uwid){
 	result = await p.query(sql);
 
 	p.replyMsg(weaponEmoji,`, You sold a(n) **${weapon.rank.name} ${weapon.name}**  ${weapon.rank.emoji}${weapon.emoji} for **${price}** cowoncy!`);
+}
+
+var sellRank = exports.sellRank = async function(p,rankLoc){
+	// (min,max]
+	let min = 0,max = 0;
+	for(let i=0;i<=rankLoc;i++){
+		let rank = WeaponInterface.ranks[i];
+		min = max;
+		max += rank[0];
+	}
+	min *= 100;
+	max *= 100;
+
+	/* Grab the item we will sell */
+	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat
+		FROM user
+			LEFT JOIN user_weapon a ON user.uid = a.uid
+			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid 
+		WHERE user.id = ${p.msg.author.id} AND avg > ${min} AND avg <= ${max} AND a.pid IS NULL LIMIT 500;`
+	
+	let result = await p.query(sql);
+
+	/* not a real weapon! */
+	if(!result[0]){
+		p.errorMsg(", you do not have any weapons with this rank!",3000);
+		return;
+	}
+
+	/* Parse emoji and uwid */
+	let weapon = parseWeaponQuery(result);
+	let weapons = [];
+	let weaponsSQL = [];
+	let price;
+	let rank;
+	for(var key in weapon){
+		let tempWeapon = parseWeapon(weapon[key]);
+		if(!tempWeapon.unsellable){
+			weapons.push(tempWeapon.emoji);
+			weaponsSQL.push(tempWeapon.ruwid);
+		}
+		/* Get weapon price */
+		if(!price){
+			price = prices[tempWeapon.rank.name];
+			rank = tempWeapon.rank.emoji+" **"+tempWeapon.rank.name+"**";
+		}
+	}
+	weaponsSQL = '('+weaponsSQL.join(',')+')';
+
+	if(weapon.length<=0){
+		p.errorMsg(", you do not have any weapons with this rank!",3000);
+		return;
+	}
+
+	if(!price){
+		p.errorMsg(", Something went terribly wrong...");
+		return;
+	}
+
+	sql = `DELETE user_weapon_passive FROM user 
+		LEFT JOIN user_weapon ON user.uid = user_weapon.uid 
+		LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
+		WHERE id = ${p.msg.author.id} 
+			AND user_weapon_passive.uwid IN ${weaponsSQL}
+			AND user_weapon.pid IS NULL;`;
+	sql += `DELETE user_weapon FROM user 
+		LEFT JOIN user_weapon ON user.uid = user_weapon.uid 
+		WHERE id = ${p.msg.author.id}
+			AND user_weapon.uwid IN ${weaponsSQL}
+			AND user_weapon.pid IS NULL;`;
+
+	result = await p.query(sql);
+
+	/* Check if deleted */
+	if(result[1].affectedRows==0){
+		p.errorMsg(", you do not have a weapon with this id!",3000);
+		return;
+	}
+
+	/* calculate rewards */
+	price *= result[1].affectedRows;
+	
+	/* Give cowoncy */
+	sql = `UPDATE cowoncy SET money = money + ${price} WHERE id = ${p.msg.author.id}`;
+	result = await p.query(sql);
+
+	p.replyMsg(weaponEmoji,`, You sold all your ${rank} weapons for **${price}** cowoncy!\n${p.config.emoji.blank} **| Sold:** ${weapons.join('')}`);
 }
 
 /* Shorten a uwid to base36 */

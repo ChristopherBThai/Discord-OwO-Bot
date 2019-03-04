@@ -399,6 +399,7 @@ module.exports = class WeaponInterface{
 	static get PHYSICAL(){return 'p'}
 	static get MAGICAL(){return 'm'}
 	static get TRUE(){return 't'}
+	static get ranks(){return ranks}
 	static get strEmoji(){return '<:att:531616155450998794>'}
 	static get magEmoji(){return '<:mag:531616156231139338>'}
 	static get hpEmoji(){return '<:hp:531620120410456064>'}
