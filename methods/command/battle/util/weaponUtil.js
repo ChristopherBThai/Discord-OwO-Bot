@@ -553,7 +553,7 @@ var sellRank = exports.sellRank = async function(p,rankLoc){
 	}
 	weaponsSQL = '('+weaponsSQL.join(',')+')';
 
-	if(weapon.length<=0){
+	if(weapons.length<=0){
 		p.errorMsg(", you do not have any weapons with this rank!",3000);
 		return;
 	}
@@ -602,6 +602,7 @@ var shortenUWID = exports.shortenUWID = function(uwid){
 /* expand base36 to decimal */
 var expandUWID = exports.expandUWID = function(euwid){
 	if(!euwid) return;
+	euwid = euwid+'';
 	if(!(/^[a-zA-Z0-9]+$/.test(euwid))) return;
 	return parseInt(euwid.toLowerCase(),36);
 }
