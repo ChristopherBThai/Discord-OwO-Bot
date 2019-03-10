@@ -908,15 +908,16 @@ function calculateXP(team,enemy,currentStreak=0){
 		/* Calculate bonus */
 		currentStreak++;
 		if(currentStreak%1000===0)
-			bonus = 10*(Math.sqrt(currentStreak/10)*600+1000);
+			bonus = 20*(Math.sqrt(currentStreak/100)*200+1000);
 		else if(currentStreak%100===0)
-			bonus = 5*(Math.sqrt(currentStreak/10)*600+1000);
+			bonus = 10*(Math.sqrt(currentStreak/100)*200+1000);
 		else if(currentStreak%50===0)
-			bonus = 3*(Math.sqrt(currentStreak/10)*600+1000);
+			bonus = 3*(Math.sqrt(currentStreak/100)*200+1000);
 		else if(currentStreak%10===0)
-			bonus = Math.sqrt(currentStreak/10)*600+1000;
+			bonus = Math.sqrt(currentStreak/100)*200+1000;
 		else bonus = 0;
 		bonus = Math.round(bonus);
+		if(bonus>100000) bonus = 100000;
 	}
 
 	return {total:xp+bonus,bonus,xp,resetStreak,addStreak};
