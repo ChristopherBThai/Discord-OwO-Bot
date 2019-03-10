@@ -61,7 +61,7 @@ exports.msgUser = async function(id,msg){
 	var success;
 	if(user)
 		await user.send(msg)
-		.then(success = {username:user.username,id:user.id})
+		.then(success = {username:user.username,id:user.id,tag:user.tag})
 		.catch(err => success = false);
 	return success;
 }

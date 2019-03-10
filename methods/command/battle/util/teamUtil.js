@@ -174,7 +174,7 @@ exports.renameTeam = async function(p,name){
  */
 exports.displayTeam = async function(p){
 	/* Query info */
-	let sql = `SELECT tname,pos,name,nickname,pid,xp FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
+	let sql = `SELECT tname,pos,name,nickname,pid,xp,pet_team.streak,highest_streak FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
 	sql += `SELECT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND a.pid IN (SELECT pid FROM pet_team LEFT JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}));`;
 	let result = await p.query(sql);
 	if(!result[0][0]){
@@ -201,6 +201,8 @@ exports.displayTeam = async function(p){
 		if(tempDigit>digits) digits = tempDigit;
 	}
 	digits = Math.trunc(digits);
+	let streak = result[0][0].streak;
+	let highestStreak = result[0][0].highest_streak;
 
 	/* Convert data to user readable strings */
 	let fields = [];
@@ -236,13 +238,16 @@ exports.displayTeam = async function(p){
 	}
 
 	/* Construct msg */
-	const embed = {
+	var embed = {
 		"author":{
 			"name":p.msg.author.username+"'s "+result[0][0].tname,
 			"icon_url":p.msg.author.avatarURL
 		},
 		"description":"`owo team add {animal} {pos}` Add an animal to your team\n`owo team remove {pos}` Removes an animal from your team\n`owo team rename {name}` Renames your team\n`owo rename {animal} {name}` Rename an animal",
 		"color": p.config.embed_color,
+		"footer":{
+			"text":`Current Streak: ${streak} | Highest Streak: ${highestStreak}`
+		},
 		fields
 	};
 	p.send({embed});
@@ -262,6 +267,8 @@ function parseTeam(p,animals,weapons,censor=false){
 			result.push({
 				pid:animal.pid,
 				nickname:(censor&&animal.acensor==1)?"Censored":animal.nickname,
+				streak:animals.streak,
+				highestStreak:animals.highest_streak,
 				pos:animal.pos,
 				xp:animal.xp,
 				animal:p.global.validAnimal(animal.name),
@@ -299,10 +306,19 @@ exports.isDead = function(team){
 
 /* Distributes xp to team */
 exports.giveXP = async function(p,team,xp){
+	let isInt = p.global.isInt(xp);
+	let total = (isInt)?xp:xp.total;
+	let addStreak = (isInt)?false:xp.addStreak;
+	let resetStreak = (isInt)?false:xp.resetStreak;
+		
 	let sql = '';
 	for(let i in team.team){
-		sql += animalUtil.giveXP(team.team[i].pid,xp);
+		sql += animalUtil.giveXP(team.team[i].pid,total);
 	}
-	await p.query(sql);
+
+	if(addStreak) sql += `UPDATE pet_team SET highest_streak = IF(streak+1>highest_streak,streak+1,highest_streak), streak = streak + 1 WHERE pgid = ${team.pgid};`;
+	if(resetStreak) sql += `UPDATE pet_team SET streak = 0 WHERE pgid = ${team.pgid};`;
+
+	return await p.query(sql);
 }
 

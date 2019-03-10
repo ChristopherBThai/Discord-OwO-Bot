@@ -23,7 +23,7 @@ const numEmojis = ['1⃣','2⃣','3⃣'];
 /* Grabs existing battle */
 var getBattle = exports.getBattle = async function(p,setting){
 	/* And our team */
-	let sql = `SELECT pet_team_battle.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat,cphp,cpwp,cehp,cewp
+	let sql = `SELECT pet_team_battle.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat,cphp,cpwp,cehp,cewp,pet_team.streak,pet_team.highest_streak
 		FROM user 
 			INNER JOIN pet_team ON user.uid = pet_team.uid
 			INNER JOIN pet_team_battle ON pet_team.pgid = pet_team_battle.pgid
@@ -90,7 +90,15 @@ var getBattle = exports.getBattle = async function(p,setting){
 	}
 
 	/* Combine result */
-	let teams = {player:{pgid:pgid,name:result[0][0].tname,team:pTeam},enemy:{pgid:epgid,name:(censor&&result[1][0].ptcensor==1)?"Censored":result[1][0].tname,team:eTeam}};
+	let player = {pgid:pgid,
+		name:result[0][0].tname,
+		streak:result[0][0].streak,
+		highestStreak:result[0][0].highest_streak,
+		team:pTeam};
+	let enemy = {pgid:epgid,
+		name:(censor&&result[1][0].ptcensor==1)?"Censored":result[1][0].tname,
+		team:eTeam};
+	let teams = {player,enemy};
 
 	return teams;
 }
@@ -124,7 +132,7 @@ exports.initBattle = async function(p,setting){
 				SELECT pid FROM pet_team LEFT JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid WHERE pet_team.pgid = (SELECT pgid FROM pet_team WHERE pgid != ${pgid}  LIMIT 1 OFFSET ${count})
 			);`;
 	/* And our team */
-	sql += `SELECT pet_team.pgid,tname,pos,name,nickname,pid,xp FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
+	sql += `SELECT pet_team.streak,pet_team.highest_streak,pet_team.pgid,tname,pos,name,nickname,pid,xp FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
 	sql += `SELECT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND a.pid IN (SELECT pid FROM pet_team LEFT JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}));`;
 
 	/* Should we censor? */
@@ -151,7 +159,15 @@ exports.initBattle = async function(p,setting){
 	let cestats = initSqlSaveStats(eTeam);
 	
 	/* Combine all to one obj */
-	let teams = {player:{pgid:pgid,name:result[2][0].tname,team:pTeam},enemy:{pgid:epgid,name:(censor&&result[0][0].ptcensor==1)?"Censored":result[0][0].tname,team:eTeam}};
+	let player = {pgid:pgid,
+		name:result[2][0].tname,
+		streak:result[2][0].streak,
+		highestStreak:result[2][0].highest_streak,
+		team:pTeam};
+	let enemy = {pgid:epgid,
+		name:(censor&&result[0][0].ptcensor==1)?"Censored":result[0][0].tname,
+		team:eTeam};
+	let teams = {player,enemy};
 
 	/* No need to save if instant */
 	if(!setting.instant){
@@ -813,10 +829,9 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 
 	let crate = undefined;
 	/* Calculate and distribute xp */
-	let pXP = 0;
-	let eXP = 0;
+	let pXP,eXP;
 	if(battle&&(!setting||!setting.noReward||!setting.noMsg)){
-		pXP = calculateXP({team:battle.player,win:playerWin},{team:battle.enemy,win:enemyWin});
+		pXP = calculateXP({team:battle.player,win:playerWin},{team:battle.enemy,win:enemyWin},battle.player.streak);
 		eXP = calculateXP({team:battle.enemy,win:enemyWin},{team:battle.player,win:playerWin});
 	}
 
@@ -837,7 +852,7 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 		if(!playerWin&&!enemyWin) return;
 
 		await teamUtil.giveXP(p,battle.player,pXP);
-		await teamUtil.giveXP(p,battle.enemy,eXP);
+		await teamUtil.giveXP(p,battle.enemy,eXP.xp);
 	}
 
 
@@ -845,7 +860,18 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 		/* Send result message */
 		let embed = await display(p,battle,logs,setting.display);
 		embed.embed.color = color;
-		text += ` Your team gained ${pXP}xp!`;
+		text += ` Your team gained ${pXP.xp} xp`;
+		if(pXP){
+			if(pXP.resetStreak)
+				text+= `! You lost your streak of ${battle.player.streak} wins...`;
+			else if(pXP.addStreak){
+				if(pXP.bonus)
+					text+= ` + ${pXP.bonus} bonus xp! Streak: ${battle.player.streak+1}`;
+				else
+					text+=`! Streak: ${battle.player.streak+1}`;
+			}else
+				text+=`! Streak: ${battle.player.streak}`;
+		}else text += '!';
 		embed.embed.footer = {text};
 		if(msg) await msg.edit(embed);
 		else p.send(embed);
@@ -856,19 +882,44 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 }
 
 /* Calculate xp depending on win/loss/tie */
-function calculateXP(team,enemy){
+function calculateXP(team,enemy,currentStreak=0){
 	/* Find the avg level diff for xp multipliers */
 	let lvlDiff = 1;
 	for(let i in team.team.team) lvlDiff -= team.team.team[i].stats.lvl;
 	for(let i in enemy.team.team) lvlDiff += enemy.team.team[i].stats.lvl;
 	if(lvlDiff<=0) lvlDiff = 1;
 
-	/* Calculate xp */
+	/* Calculate xp and streak */
+	/* lose */
 	let xp = 50;
-	if(team.win&&enemy.win) xp = 100;
-	else if(team.win) xp = 200*lvlDiff;
+	let resetStreak = true;
+	let addStreak = false;
+	let bonus = 0;
+	/* tie */
+	if(team.win&&enemy.win){
+		resetStreak = false;
+		addStreak = false;
+		xp = 100;
+	/* win */
+	}else if(team.win){
+		resetStreak = false;
+		addStreak = true;
+		xp = 200*lvlDiff;
+		/* Calculate bonus */
+		currentStreak++;
+		if(currentStreak%1000===0)
+			bonus = 10*(Math.sqrt(currentStreak/10)*600+1000);
+		else if(currentStreak%100===0)
+			bonus = 5*(Math.sqrt(currentStreak/10)*600+1000);
+		else if(currentStreak%50===0)
+			bonus = 3*(Math.sqrt(currentStreak/10)*600+1000);
+		else if(currentStreak%10===0)
+			bonus = Math.sqrt(currentStreak/10)*600+1000;
+		else bonus = 0;
+		bonus = Math.round(bonus);
+	}
 
-	return xp;
+	return {total:xp+bonus,bonus,xp,resetStreak,addStreak};
 }
 
 /* Returns if the player is in battle or not */
