@@ -29,7 +29,7 @@ module.exports = new CommandInterface({
 			if(err) throw err;
 			if(user = await sender.msgUser(args[0],"**🙇 |** Your penalty has been lifted by an admin! Sorry for the inconvenience!"))
 				p.send("Penalty has been set to "+time+" for "+user.username);
-			if(guild = await p.global.getGuildName(args[0]))
+			else if(guild = await p.global.getGuildName(args[0]))
 				p.send("Penalty has been set to "+time+" for guild: "+guild);
 			else
 				p.send("Failed to set penalty for that user");
