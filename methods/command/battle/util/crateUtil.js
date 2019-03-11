@@ -13,7 +13,7 @@ exports.getItems = async function(p){
 
 exports.crateFromBattle = function(p,query,crateReset){
 	let rand = Math.random();
-	let sql = "INSERT INTO crate(uid,cratetype,boxcount,claimcount,claim) VALUES ((SELECT uid FROM user WHERE id = "+p.msg.author.id+"),0,1,1,NOW()) ON DUPLICATE KEY UPDATE boxcount = boxcount + 1, claimcount = 1, claim = NOW();";
+	let sql = "INSERT INTO crate(uid,cratetype,boxcount,claimcount,claim) VALUES ((SELECT uid FROM user WHERE id = "+p.msg.author.id+"),0,1,1,"+crateReset.sql+") ON DUPLICATE KEY UPDATE boxcount = boxcount + 1, claimcount = 1, claim = "+crateReset.sql+";";
 	let count = 1;
 	if(!query||crateReset.after)
 		rand = 0;

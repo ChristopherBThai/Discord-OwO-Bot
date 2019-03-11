@@ -69,7 +69,7 @@ async function rrQuest(p){
 	/* Replace the quest in query */
 	sql = "DELETE FROM quest WHERE uid = (SELECT uid FROM user WHERE id = "+p.msg.author.id+") AND qid = "+qnum+";";
 	sql += quest.sql;
-	sql += "UPDATE timers LEFT JOIN user ON timers.uid = user.uid SET questrrTime = NOW() WHERE id = "+p.msg.author.id+";";
+	sql += "UPDATE timers LEFT JOIN user ON timers.uid = user.uid SET questrrTime = "+afterMid.sql+" WHERE id = "+p.msg.author.id+";";
 	sql += "SELECT * FROM quest WHERE uid = (SELECT uid FROM user WHERE id = "+p.msg.author.id+") ORDER BY qid asc;";
 	result = await p.query(sql);
 
@@ -102,7 +102,7 @@ async function addQuest(p){
 
 	/* Check if its past midnight and number of quest < 3, if so add 1 quest */
 	if(afterMid&&afterMid.after&&result[1].length<3)
-		var quest = getQuest(p.msg.author.id);
+		var quest = getQuest(p.msg.author.id,undefined,afterMid.sql);
 
 	var quests = parseQuests(p.msg.author.id,result[1],afterMid,quest);
 
@@ -134,7 +134,7 @@ function constructEmbed(p,afterMid,quests){
 	};
 }
 
-function getQuest(id,qid){
+function getQuest(id,qid,afterMidSQL){
 	/* Grab a random quest catagory */
 	var key = Object.keys(questJson);
 	key = key[Math.floor(Math.random()*key.length)];
@@ -168,7 +168,7 @@ function getQuest(id,qid){
 		);`
 	/* Reset timer if its from daily quest */
 	if(!qid)
-		sql += `INSERT INTO timers (uid,questTime) VALUES ((SELECT uid FROM user WHERE id = ${id}),NOW()) ON DUPLICATE KEY UPDATE questTime = NOW();`;
+		sql += `INSERT INTO timers (uid,questTime) VALUES ((SELECT uid FROM user WHERE id = ${id}),${afterMidSQL}) ON DUPLICATE KEY UPDATE questTime = ${afterMidSQL};`;
 
 	return {sql:sql,
 		key:key,

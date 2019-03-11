@@ -5,6 +5,7 @@ exports.afterMidnight = function(date){
 
 	/* Grab current time */
 	var now = new Date();
+	let sqlNow = toMySQL(now);
 	var midnight = new Date(now.getFullYear(),now.getMonth(),now.getDate());
 
 	/* Calculate time until midnight */
@@ -18,19 +19,27 @@ exports.afterMidnight = function(date){
 	var days = temp;
 
 	/* If there is no data */
-	if(!date) return {after:true,seconds:seconds,minutes:minutes,hours:hours,days:days};
+	if(!date) return {after:true,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow};
 
 	var pDate = new Date(date);
 	var diff = midnight - pDate;
-
+	console.log(pDate.toString());
 	
 	/* Not past midnight */
-	if(diff<=0) return {after:false,diff:diff,seconds:seconds,minutes:minutes,hours:hours,days:days};
+	if(diff<=0) return {after:false,diff:diff,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow};
 
 	/* Within 1 day */
-	else if(diff<=172810000) return {after:true,diff:diff,withinDay:true,seconds:seconds,minutes:minutes,hours:hours,days:days};
+	else if(diff<=172810000) return {after:true,diff:diff,withinDay:true,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow};
 
 	/* Over 1 full day */
-	else return {after:true,diff:diff,withinDay:true,seconds:seconds,minutes:minutes,hours:hours,days:days};
+	else return {after:true,diff:diff,withinDay:true,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow};
 }
 
+function toMySQL(date){
+	return "'"+date.getFullYear() + '-' +
+		('00' + (date.getMonth()+1)).slice(-2) + '-' +
+		('00' + date.getDate()).slice(-2) + ' ' + 
+		('00' + date.getHours()).slice(-2) + ':' + 
+		('00' + date.getMinutes()).slice(-2) + ':' + 
+		('00' + date.getSeconds()).slice(-2) + "'";
+}
