@@ -26,7 +26,7 @@ module.exports = new CommandInterface({
 		let result = await p.query(sql);
 		let cowoncy = (result[0][0])?result[0][0].money:undefined;
 
-		let warn = p.args.slice(2).join(" ");
+		let warn = p.args.slice(1).join(" ");
 		let user = await sender.msgUser(p.args[0],"**⚠ |** Your cowoncy has been reset due to: **"+warn+"**");
 		if(user&&cowoncy){
 			p.send(`📨 **|** Successfully reset cowoncy for **${user.tag}**\n${p.config.emoji.blank} **|** Previously had: ${cowoncy} cowoncy`);
