@@ -917,20 +917,32 @@ function calculateXP(team,enemy,currentStreak=0){
 function bonusXP(streak){
 	let bonus = 0;
 	if(streak%1000===0)
-		bonus = 20*(Math.sqrt(streak/100)*200+1000);
+		bonus = 25*(Math.sqrt(streak/100)*100+500);
 	else if(streak%500===0)
-		bonus = 15*(Math.sqrt(streak/100)*200+1000);
+		bonus = 10*(Math.sqrt(streak/100)*100+500);
 	else if(streak%100===0)
-		bonus = 10*(Math.sqrt(streak/100)*200+1000);
+		bonus = 5*(Math.sqrt(streak/100)*100+500);
 	else if(streak%50===0)
-		bonus = 5*(Math.sqrt(streak/100)*200+1000);
+		bonus = 3*(Math.sqrt(streak/100)*100+500);
 	else if(streak%10===0)
-		bonus = Math.sqrt(streak/100)*100+1000;
+		bonus = Math.sqrt(streak/100)*100+500;
 	else bonus = 0;
 	bonus = Math.round(bonus);
 	if(bonus>100000) bonus = 100000;
 	return bonus;
 }
+
+/* Test bonus xp */
+/*
+var totalxp = 0;
+var pxp = 0;
+for(let i = 10;i<=1000;i+=10){
+	pxp += 10*200;
+	let currentxp = bonusXP(i);
+	totalxp += currentxp;
+	console.log(`[${i}] ${currentxp} | ${totalxp} | ${pxp}`);
+}
+*/
 
 /* Returns if the player is in battle or not */
 exports.inBattle = async function(p){
