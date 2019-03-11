@@ -94,7 +94,7 @@ module.exports = new CommandInterface({
 				text += box.text;
 				text += "\n**⏱ |** Your next daily is in: "+afterMid.hours+"H "+afterMid.minutes+"M "+afterMid.seconds+"S";
 
-				sql += "INSERT INTO cowoncy (id,money) VALUES ("+msg.author.id+","+(gain+extra)+") ON DUPLICATE KEY UPDATE daily_streak = "+streak+", money = money + "+(gain+extra)+",daily = NOW();";
+				sql += "INSERT INTO cowoncy (id,money) VALUES ("+msg.author.id+","+(gain+extra)+") ON DUPLICATE KEY UPDATE daily_streak = "+streak+", money = money + "+(gain+extra)+",daily = "+afterMid.sql+";";
 				sql += box.sql;
 				con.query(sql,function(err,rows,fields){
 					if(err){console.error(err);return;}

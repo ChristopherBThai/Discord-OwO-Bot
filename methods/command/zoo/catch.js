@@ -158,7 +158,7 @@ function getAnimals(p,result,gems,uid){
 
 function getLootbox(p,query,lbReset){
 	var rand = Math.random();
-	var sql = "INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES ("+p.msg.author.id+",1,1,NOW()) ON DUPLICATE KEY UPDATE boxcount = boxcount + 1, claimcount = 1, claim = NOW();";
+	var sql = "INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES ("+p.msg.author.id+",1,1,"+lbReset.sql+") ON DUPLICATE KEY UPDATE boxcount = boxcount + 1, claimcount = 1, claim = "+lbReset.sql+";";
 	var count = 1;
 	if(!query||lbReset.after)
 		rand = 0;
