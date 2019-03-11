@@ -907,20 +907,29 @@ function calculateXP(team,enemy,currentStreak=0){
 		xp = 200*lvlDiff;
 		/* Calculate bonus */
 		currentStreak++;
-		if(currentStreak%1000===0)
-			bonus = 20*(Math.sqrt(currentStreak/100)*200+1000);
-		else if(currentStreak%100===0)
-			bonus = 10*(Math.sqrt(currentStreak/100)*200+1000);
-		else if(currentStreak%50===0)
-			bonus = 3*(Math.sqrt(currentStreak/100)*200+1000);
-		else if(currentStreak%10===0)
-			bonus = Math.sqrt(currentStreak/100)*200+1000;
-		else bonus = 0;
-		bonus = Math.round(bonus);
-		if(bonus>100000) bonus = 100000;
+		bonus = bonusXP(currentStreak);
 	}
 
 	return {total:xp+bonus,bonus,xp,resetStreak,addStreak};
+}
+
+/* Bonus xp depending on the streak */
+function bonusXP(streak){
+	let bonus = 0;
+	if(streak%1000===0)
+		bonus = 20*(Math.sqrt(streak/100)*200+1000);
+	else if(streak%500===0)
+		bonus = 15*(Math.sqrt(streak/100)*200+1000);
+	else if(streak%100===0)
+		bonus = 10*(Math.sqrt(streak/100)*200+1000);
+	else if(streak%50===0)
+		bonus = 5*(Math.sqrt(streak/100)*200+1000);
+	else if(streak%10===0)
+		bonus = Math.sqrt(streak/100)*100+1000;
+	else bonus = 0;
+	bonus = Math.round(bonus);
+	if(bonus>100000) bonus = 100000;
+	return bonus;
 }
 
 /* Returns if the player is in battle or not */

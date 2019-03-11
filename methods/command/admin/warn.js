@@ -21,7 +21,7 @@ module.exports = new CommandInterface({
 			return;
 		}
 
-		let warn = p.args.slice(2).join(" ");
+		let warn = p.args.slice(1).join(" ");
 		let user = await sender.msgUser(p.args[0],"**⚠ |** You received a warning from a moderator: **"+warn+"**");
 
 		if(user){
