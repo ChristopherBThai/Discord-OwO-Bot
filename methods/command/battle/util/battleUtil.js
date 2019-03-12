@@ -569,12 +569,12 @@ var calculateAll = exports.calculateAll = function(p,battle,logs = []){
 		let text="It's a tie in "+(logs.length)+" turns!";
 
 		/* enemy wins */
-		if(enemyWin){
+		if(enemyWin&&!playerWin){
 			color = 16711680;
 			text = "You lost in "+(logs.length)+" turns!";
 
 		/* player wins */
-		}else if(playerWin){
+		}else if(playerWin&&!enemyWin){
 			color = 65280;
 			text = "You won in "+(logs.length)+" turns!";
 		}
@@ -585,7 +585,7 @@ var calculateAll = exports.calculateAll = function(p,battle,logs = []){
 	}
 
 	/* Battle is way too long */
-	if(logs.length>=15){
+	if(logs.length>=20){
 		logs.push({enemy:true,player:true,color:6381923,text:"Battle was too long! It's a tie!"});
 		return logs;
 	}
