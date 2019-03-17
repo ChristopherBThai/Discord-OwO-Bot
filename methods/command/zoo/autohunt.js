@@ -1,5 +1,6 @@
 const CommandInterface = require('../../commandinterface.js');
 
+const alterhb = require('../patreon/alterHuntbot.js').alter;
 const autohuntutil = require('./autohuntutil.js');
 const animalUtil = require('./animalUtil.js');
 const global = require('../../../util/global.js');
@@ -109,6 +110,7 @@ function claim(msg,con,query,bot){
 				console.error(err);
 				return;
 			}
+			text = alterhb(msg.author.id,text,"returned");
 			msg.channel.send(text).catch(err => {console.error(err)});
 		});
 	});
@@ -151,8 +153,11 @@ function autohunt(msg,con,args,global,send){
 		var hunting;
 		if(result[0][0]&&result[0][0].huntmin!=0){
 			hunting = claim(msg,con,result[0][0],bot);
-			if(hunting)
-				send("**"+bot+" |** `BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN "+hunting.time+"`\n**<:blank:427371936482328596> |** `"+hunting.percent+"% DONE | "+hunting.count+" ANIMALS CAPTURED`\n**<:blank:427371936482328596> |** "+hunting.bar);
+			if(hunting){
+				let text = "**"+bot+" |** `BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN "+hunting.time+"`\n**<:blank:427371936482328596> |** `"+hunting.percent+"% DONE | "+hunting.count+" ANIMALS CAPTURED`\n**<:blank:427371936482328596> |** "+hunting.bar;
+				text = alterhb(msg.author.id,text,"progress");
+				send(text);
+			}
 			return;
 		}
 
@@ -171,7 +176,9 @@ function autohunt(msg,con,args,global,send){
 			sql = "INSERT INTO autohunt (id,start,huntcount,huntmin,password,passwordtime) VALUES ("+msg.author.id+",NOW(),0,0,'"+rand+"',NOW()) ON DUPLICATE KEY UPDATE password = '"+rand+"',passwordtime = NOW();";
 			con.query(sql,function(err,result){
 				if(err){console.error(err);return;}
-				autohuntutil.captcha(msg,rand,"**"+bot+" | "+msg.author.username+"**, Here is your password!\n**<:blank:427371936482328596> |** Use the command `owo autohunt "+cowoncy+" {password}`");
+				let text = "**"+bot+" | "+msg.author.username+"**, Here is your password!\n**<:blank:427371936482328596> |** Use the command `owo autohunt "+cowoncy+" {password}`";
+				text = alterhb(msg.author.id,text,"password");
+				autohuntutil.captcha(msg,rand,text);
 			});
 			return;
 		}
@@ -226,7 +233,9 @@ function autohunt(msg,con,args,global,send){
 			var timer = "";
 			if(hour>0) timer = hour+"H"+min+"M";
 			else timer = min+"M";
-			send("**"+bot+" |** `BEEP BOOP. `**`"+msg.author.username+"`**`, YOU SPENT "+(global.toFancyNum(cowoncy))+" cowoncy`\n**<:blank:427371936482328596> |** `I WILL BE BACK IN "+timer+" WITH "+huntcount+" ANIMALS,`\n**<:blank:427371936482328596> |** `"+huntgain+" ESSENCE, AND "+huntexp+" EXPERIENCE`");
+			let text = "**"+bot+" |** `BEEP BOOP. `**`"+msg.author.username+"`**`, YOU SPENT "+(global.toFancyNum(cowoncy))+" cowoncy`\n**<:blank:427371936482328596> |** `I WILL BE BACK IN "+timer+" WITH "+huntcount+" ANIMALS,`\n**<:blank:427371936482328596> |** `"+huntgain+" ESSENCE, AND "+huntexp+" EXPERIENCE`";
+			text = alterhb(msg.author.id,text,"spent");
+			send(text);
 		});
 	});
 }
@@ -271,7 +280,7 @@ function display(msg,con,send){
 		}
 
 		maxhunt = Math.floor(duration.stat*efficiency.stat);
-		const embed = {
+		let embed = {
 			"color": 4886754,
 			"author": {
 				"name": msg.author.username+"'s HuntBot",
@@ -320,6 +329,7 @@ function display(msg,con,send){
 				"value": "`BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN "+hunting.time+"`\n`"+hunting.percent+"% DONE | "+hunting.count+" ANIMALS CAPTURED`\n"+hunting.bar
 			});
 		}
+		embed = alterhb(msg.author.id,embed,"hb");
 		msg.channel.send({ embed })
 			.catch(err => msg.channel.send("**🚫 |** I don't have permission to send embedded links! :c")
 				.catch(err => console.error(err)));
