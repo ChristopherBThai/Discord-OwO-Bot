@@ -23,7 +23,6 @@ exports.afterMidnight = function(date){
 
 	var pDate = new Date(date);
 	var diff = midnight - pDate;
-	console.log(pDate.toString());
 	
 	/* Not past midnight */
 	if(diff<=0) return {after:false,diff:diff,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow};

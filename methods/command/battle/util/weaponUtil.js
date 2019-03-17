@@ -120,7 +120,7 @@ exports.display = async function(p,pageNum=0,sort=0){
 	await msg.react(nextPageEmoji);
 	await msg.react(sortEmoji);
 	let filter = (reaction,user) => (reaction.emoji.name===sortEmoji||reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&user.id===p.msg.author.id;
-	let collector = await msg.createReactionCollector(filter,{time:45000});
+	let collector = await msg.createReactionCollector(filter,{time:150000});
 
 	collector.on('collect', async function(r){
 		try{
