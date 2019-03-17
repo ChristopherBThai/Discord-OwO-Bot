@@ -9,7 +9,7 @@ module.exports = class Rune extends WeaponInterface{
 		this.basicDesc = "This item is rewarded to those who played owo bot before the new battle update!\nThis item will increase all stats.";
 		this.emojis = ["<:crune:543662985558884363>","<:urune:543662986384900107>","<:rrune:543662986565255168>","<:erune:543662986393419787>","<:mrune:543662986749804544>","<:lrune:543662986837884928>","<:frune:543662986753998874>"];
 		this.defaultEmoji = "<:rune:543662986431037481>";
-		this.statDesc = "Increase ALL stats by ?%, and changes your physical attacks to do 50% STR and 50% MAG as TRUE damage. This weapon does not have an active ability.";
+		this.statDesc = "Increase ALL stats by ?%, and changes your physical attacks to do 100% STR and 50% MAG as TRUE damage. This weapon does not have an active ability.";
 		this.availablePassives = [];
 		this.passiveCount = 0;
 		this.qualityList = [[5,15]];
@@ -40,7 +40,7 @@ module.exports = class Rune extends WeaponInterface{
 		if(!attacking) return;
 
 		/* Calculate damage */
-		let damage = WeaponInterface.getMixedDamage(me.stats.att,.5,me.stats.mag,.5);
+		let damage = WeaponInterface.getMixedDamage(me.stats.att,1,me.stats.mag,1);
 
 		/* Deal damage */
 		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.TRUE);
