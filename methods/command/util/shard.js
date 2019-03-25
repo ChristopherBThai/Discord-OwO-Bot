@@ -2,7 +2,7 @@ const CommandInterface = require('../../commandinterface.js');
 
 module.exports = new CommandInterface({
 
-	alias:["shards","shards"],
+	alias:["shards","shard"],
 
 	args:"",
 
@@ -43,7 +43,7 @@ module.exports = new CommandInterface({
 		let result = "```\n"+title;
 		for(let i=0;i<shardInfo.length;i++){
 			let text = shards[i];
-			result += "\n"+text+(i==p.client.shard.id?'<':'');
+			result += "\n"+(i==p.client.shard.id?'>':'')+text+(i==p.client.shard.id?'<':'');
 		}
 		result += "```";
 
