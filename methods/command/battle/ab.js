@@ -118,7 +118,8 @@ module.exports = new CommandInterface({
 		let setting = {
 			friendlyBattle:true,
 			display:"image",
-			speed:"short"
+			speed:"short",
+			title:p.msg.author.username+" vs "+sender.username
 		}
 		await battleUtil.displayAllBattles(p,teams,logs,setting);
 	}
