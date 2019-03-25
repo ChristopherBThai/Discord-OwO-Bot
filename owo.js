@@ -28,7 +28,7 @@ client.on('message',msg => {
 	if(msg.author.bot) return;
 
 	/* Ignore guilds if in debug mode */
-	else if(debug&&msg.guild.id!=testingGuild&&msg.guild.id!=supportGuild) return;
+	//else if(debug&&msg.guild&&msg.guild.id!=testingGuild&&msg.guild.id!=supportGuild) return;
 
 	else if(msg.channel.id==modChannel) command.executeMod(msg);
 
@@ -119,18 +119,11 @@ process.on('message',message => {
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-	console.error(new Date());
-	console.error('Unhandled Rejection at:', reason.stack || reason);
+	console.error("unhandledRejection at Shard "+client.shard.id+" error "+(new Date()).toLocaleString());
 	console.error(reason);
 });
 
 process.on('uncaughtException', err => {
-	console.error(new Date());
-	console.error(client.shard.id);
-	console.error(`Caught exception: ${err}`);
+	console.error("uncaughtException at Shard "+client.shard.id+" error "+(new Date()).toLocaleString());
 	console.error(err);
-	if(err.code=="PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR"){
-		console.error("true");
-		mysql.reconnect();
-	}
 });

@@ -2,6 +2,7 @@ const CommandInterface = require('../../commandinterface.js');
 
 const weaponUtil = require('./util/weaponUtil.js');
 const battleUtil = require('./util/battleUtil.js');
+const battleFriendUtil = require('./util/battleFriendUtil.js');
 const uwidMax = 10;
 
 module.exports = new CommandInterface({
@@ -38,7 +39,10 @@ module.exports = new CommandInterface({
 		}else if(p.args.length==2&&(p.args[0]=="unequip"||p.args[0]=="ue")){
 			/* No changing while in battle */
 			if((await battleUtil.inBattle(p))){
-				p.errorMsg(", You cannot change your weapon while you're in battle! Please finish your `owo battle`!");
+				p.errorMsg(", You cannot change your weapon while you're in battle! Please finish your `owo battle`!",3000);
+				return;
+			}else if((await battleFriendUtil.inBattle(p))){
+				p.errorMsg(", You cannot change your weapon while you have a pending battle! Use `owo db` to decline it!",3000);
 				return;
 			}
 
@@ -52,7 +56,10 @@ module.exports = new CommandInterface({
 		}else if(p.args.length==2){
 			/* No changing while in battle */
 			if((await battleUtil.inBattle(p))){
-				p.errorMsg(", You cannot change your weapon while you're in battle! Please finish your `owo battle`!");
+				p.errorMsg(", You cannot change your weapon while you're in battle! Please finish your `owo battle`!",3000);
+				return;
+			}else if((await battleFriendUtil.inBattle(p))){
+				p.errorMsg(", You cannot change your weapon while you have a pending battle! Use `owo db` to decline it!",3000);
 				return;
 			}
 
