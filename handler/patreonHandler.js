@@ -22,7 +22,8 @@ async function requestRec(url){
 	await patreon_client(url).then(function(result){
 		let valid = validPayments(result.rawJson.data);
 		did = parseDiscordUser(result,valid);
-		console.log(did.join(",")+",")
+		if(did.length>0)
+			console.log(did.join(",")+",")
 		if(result.rawJson.links.next)
 			requestRec(result.rawJson.links.next.replace("https://www.patreon.com/api/oauth2/v2",""));
 
@@ -60,7 +61,7 @@ function parseDiscordUser(result,valid){
 
 function checkDate(date){
 	var userDate = new Date(date);
-	var pastDate = new Date('2018-10-30');
+	var pastDate = new Date('2019-2-25');
 	return userDate > pastDate
 }
 

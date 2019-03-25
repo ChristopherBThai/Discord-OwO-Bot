@@ -150,6 +150,7 @@ exports.renameTeam = async function(p,name){
 	name = name.replace(/@everyone/gi,"everyone");
 	name = name.replace(/<@!?[0-9]+>/gi,"User");
 	name = name.replace(/[*`]+/gi,"'");
+	name = name.replace(/\n/g,"");
 
 	/* Validation check */
 	if(name.length>35){

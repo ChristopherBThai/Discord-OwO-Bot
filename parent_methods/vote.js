@@ -86,7 +86,7 @@ function upvote(id,bot,json){
 				console.log("\x1b[33m",id+" has voted and  received cowoncy!");
 			});
 		}else{
-			global.msgUser(id,"You wait need to wait "+(12-result[0][0].time)+" hours before voting again!")
+			global.msgUser(id,"You need to wait "+(12-result[0][0].time)+" hours before voting again!")
 			console.log("\x1b[33m",id+" tried to vote again");
 		}
 	});

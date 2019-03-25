@@ -23,14 +23,14 @@ module.exports = new CommandInterface({
 	execute: async function(p){
 		/* Invalid arguments */
 		if(p.args.length==0){
-			p.errorMsg(", Invalid arguments! Please list the emojis!");
+			p.errorMsg(", Invalid arguments! Please list the emojis!",3000);
 			return;
 
 		/* Look at previous message */
 		}else if(p.args[0]&&(p.args[0].toLowerCase()=="prev"||p.args[0].toLowerCase()=="previous")){
 			let msgs = (await p.msg.channel.fetchMessages({limit:5,before:p.msg.id})).array();
 			if(!msgs){
-				p.errorMsg(", There are no emojis! >:c");
+				p.errorMsg(", There are no emojis! >:c",3000);
 				return;
 			}
 			let emojis = "";
@@ -39,7 +39,7 @@ module.exports = new CommandInterface({
 			}
 
 			emojis = parseIDs(emojis);
-			if(emojis.length==0) p.errorMsg(", There are no emojis! I can only look at the previous 5 messages! >:c");
+			if(emojis.length==0) p.errorMsg(", There are no emojis! I can only look at the previous 5 messages! >:c",3000);
 			else await display(p,emojis);
 
 		/* Look at current message */
@@ -47,7 +47,7 @@ module.exports = new CommandInterface({
 			let text = p.args.join(" ");
 			let emojis = parseIDs(text);
 			if(emojis.length==0)
-				p.errorMsg(", There are no emojis! >:c");
+				p.errorMsg(", There are no emojis! >:c",3000);
 			else
 				await display(p,emojis);
 		}

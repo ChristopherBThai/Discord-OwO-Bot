@@ -92,6 +92,7 @@ module.exports = new CommandInterface({
 						desc = desc.replace(/\s*\?[0-9]+\?\s*/,(descID)?"* ***"+descID.username+"*** \n*":"* ***A User*** *");
 					}
 			}
+			desc = desc.replace(/\n\*\*$/,"");
 
 			const embed = {
 				"title": ((animal.uni)?animal.uni:animal.value)+" "+animal.name,

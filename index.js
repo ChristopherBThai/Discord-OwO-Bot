@@ -54,11 +54,11 @@ try{
 ramCheck.check(Manager);
 
 process.on('unhandledRejection', (reason, promise) => {
-	console.error(new Date());
-	console.error('Unhandled Rejection at:', reason.stack || reason);
+	console.error("unhandledRejection at index.js error "+(new Date()).toLocaleString());
+	console.error(reason);
 });
 
 process.on('uncaughtException', (err) => {
-	console.error(new Date());
-	console.error(`Caught exception: ${err}`);
+	console.error("uncaughtException at index.js error "+(new Date()).toLocaleString());
+	console.error(err);
 });

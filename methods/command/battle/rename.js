@@ -53,6 +53,7 @@ module.exports = new CommandInterface({
 		name = name.replace(/@everyone/gi,"everyone");
 		name = name.replace(/<@!?[0-9]+>/gi,"User");
 		name = name.replace(/[*`]+/gi,"'");
+		name = name.replace(/\n/g,"");
 
 		let sql = `UPDATE animal SET nickname = ? , offensive = ${offensive} WHERE id = ${p.msg.author.id} AND name = '${animal.value}'`;
 		let result = await p.query(sql,[name]);

@@ -625,7 +625,8 @@ exports.displayAllBattles = async function(p,battle,logs,setting){
 
 	/* we should distribute the rewards first */
 	setting.noMsg = true;
-	await finishBattle(null,p,battle,endResult.color,endResult.text,endResult.player,endResult.enemy,null,setting);
+	if(!setting.friendlyBattle)
+		await finishBattle(null,p,battle,endResult.color,endResult.text,endResult.player,endResult.enemy,null,setting);
 	setting.noMsg = false;
 	setting.noReward = true;
 
@@ -662,7 +663,11 @@ exports.displayAllBattles = async function(p,battle,logs,setting){
 		updateTeamStats(battle.player.team,player);
 		updateTeamStats(battle.enemy.team,enemy);
 		if(i==logTimeline.length-1){
-			await finishBattle(msg,p,battle,endResult.color,endResult.text,endResult.player,endResult.enemy,null,setting).catch(console.error);;
+			if(setting.friendlyBattle){
+				await finishFriendlyBattle(msg,p,battle,endResult.color,endResult.text,endResult.player,endResult.enemy,null,setting).catch(console.error);;
+			}else{
+				await finishBattle(msg,p,battle,endResult.color,endResult.text,endResult.player,endResult.enemy,null,setting).catch(console.error);;
+			}
 		}else{
 			let embed = await display(p,battle,undefined,setting.display);
 			embed.embed.footer = {"text":"Turn "+(logTimeline[i]+1)+"/"+(logs.length-1)};
@@ -879,6 +884,16 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 
 	/* send message for crate reward */
 	if(crate&&crate.text) p.send(crate.text);
+}
+
+/* finish friendly battle */
+async function finishFriendlyBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,setting){
+	/* Send result message */
+	let embed = await display(p,battle,logs,setting.display);
+	embed.embed.color = color;
+	embed.embed.footer = {text};
+	if(msg) await msg.edit(embed);
+	else p.send(embed);
 }
 
 /* Calculate xp depending on win/loss/tie */

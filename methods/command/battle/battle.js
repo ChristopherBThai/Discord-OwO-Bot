@@ -1,6 +1,7 @@
 const CommandInterface = require('../../commandinterface.js');
 
 const battleUtil = require('./util/battleUtil.js');
+const battleFriendUtil = require('./util/battleFriendUtil.js');
 const battleEmoji = '⚔';
 const battleSettings = require('./battleSetting.js');
 
@@ -23,9 +24,19 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 
-		/* Parse arguments */
-		if(p.args[0]=="text"||p.args[0]=="image"){
-			await changeType(p,p.args[0]);
+		/* If its a friendly battle... */
+		if(p.global.isUser(p.args[0])){
+			let id = p.args[0].match(/[0-9]+/)[0];
+			let bet = 0;
+			if(p.global.isInt(p.args[1])) bet = parseInt(p.args[1]);
+			if(bet>1000000) bet = 1000000;
+			if(!id){
+				p.errorMsg(", The correct command is `owo battle @user`!",3000);
+			}else if(id==p.msg.author.id){
+				battleFriendUtil.challenge(p,id,0);
+			}else{
+				battleFriendUtil.challenge(p,id,bet);
+			}
 			return;
 		}
 
