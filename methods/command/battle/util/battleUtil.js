@@ -191,14 +191,14 @@ exports.initBattle = async function(p,setting){
 /* ==================================== battle display methods ====================================  */
 
 /* Generates a display for the current battle (image mode)*/
-var display = exports.display = async function(p,team,logs,display){
+var display = exports.display = async function(p,team,logs,{display,title}){
 	if(display=="text")
-		return displayText(p,team,logs);
+		return displayText(p,team,logs,{title});
 	else if(display=="compact")
-		return displayCompact(p,team,logs);
+		return displayCompact(p,team,logs,{title});
 	let image = await battleImageUtil.generateImage(team);
 	if(!image||image=="")
-		return displayCompact(p,team,logs);
+		return displayCompact(p,team,logs,{title});
 	let logtext = "";
 	let pTeam = "";
 	for(var i=0;i<team.player.team.length;i++){
@@ -244,7 +244,7 @@ var display = exports.display = async function(p,team,logs,display){
 	let embed = {
 		"color":p.config.embed_color,
 		"author":{
-			"name":p.msg.author.username+" goes into battle!",
+			"name":title?title:p.msg.author.username+" goes into battle!",
 			"icon_url":p.msg.author.avatarURL
 		},
 		"fields":[
@@ -270,7 +270,7 @@ var display = exports.display = async function(p,team,logs,display){
 }
 
 /* displays the battle as text */
-var displayText = exports.displayText = async function(p,team,logs){
+var displayText = exports.displayText = async function(p,team,logs,{title}){
 	let logtext = "";
 	let pTeam = [];
 	for(var i=0;i<team.player.team.length;i++){
@@ -300,7 +300,7 @@ var displayText = exports.displayText = async function(p,team,logs){
 	let embed = {
 		"color":p.config.embed_color,
 		"author":{
-			"name":p.msg.author.username+" goes into battle!",
+			"name":title?title:p.msg.author.username+" goes into battle!",
 			"icon_url":p.msg.author.avatarURL
 		},
 		/*
@@ -346,7 +346,7 @@ var displayText = exports.displayText = async function(p,team,logs){
 }
 
 /* displays the battle as compact mode*/
-var displayCompact = exports.displayCompact= async function(p,team,logs){
+var displayCompact = exports.displayCompact= async function(p,team,logs,{title}){
 	let pTeam = [];
 	for(var i=0;i<team.player.team.length;i++){
 		let player = team.player.team[i];
@@ -365,7 +365,7 @@ var displayCompact = exports.displayCompact= async function(p,team,logs){
 	let embed = {
 		"color":p.config.embed_color,
 		"author":{
-			"name":p.msg.author.username+" goes into battle!",
+			"name":title?title:p.msg.author.username+" goes into battle!",
 			"icon_url":p.msg.author.avatarURL
 		},
 		"fields":[] 
@@ -549,7 +549,7 @@ async function executeBattle(p,msg,action,setting){
 			await msg.edit("It seems like the enemy team ran away...");
 			return;
 		}
-		let embed = await display(p,battle,logs,setting.display);
+		let embed = await display(p,battle,logs,setting);
 		await msg.edit(embed);
 		await reactionCollector(p,msg,battle,setting.auto,(setting.auto?"www":undefined),setting);
 	}
@@ -649,7 +649,7 @@ exports.displayAllBattles = async function(p,battle,logs,setting){
 	updateTeamStats(battle.player.team,100);
 	updateTeamStats(battle.enemy.team,100);
 	updatePreviousStats(battle);
-	let embed = await display(p,battle,undefined,setting.display);
+	let embed = await display(p,battle,undefined,setting);
 	embed.embed.footer = {"text":"Turn 0/"+(logs.length-1)};
 	let msg = await p.msg.channel.send(embed);
 
@@ -669,7 +669,7 @@ exports.displayAllBattles = async function(p,battle,logs,setting){
 				await finishBattle(msg,p,battle,endResult.color,endResult.text,endResult.player,endResult.enemy,null,setting).catch(console.error);;
 			}
 		}else{
-			let embed = await display(p,battle,undefined,setting.display);
+			let embed = await display(p,battle,undefined,setting);
 			embed.embed.footer = {"text":"Turn "+(logTimeline[i]+1)+"/"+(logs.length-1)};
 			await msg.edit(embed);
 			i++;
@@ -863,7 +863,7 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 
 	if(!setting||!setting.noMsg){
 		/* Send result message */
-		let embed = await display(p,battle,logs,setting.display);
+		let embed = await display(p,battle,logs,setting);
 		embed.embed.color = color;
 		text += ` Your team gained ${pXP.xp} xp`;
 		if(pXP){
@@ -889,7 +889,7 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 /* finish friendly battle */
 async function finishFriendlyBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,setting){
 	/* Send result message */
-	let embed = await display(p,battle,logs,setting.display);
+	let embed = await display(p,battle,logs,setting);
 	embed.embed.color = color;
 	embed.embed.footer = {text};
 	if(msg) await msg.edit(embed);
