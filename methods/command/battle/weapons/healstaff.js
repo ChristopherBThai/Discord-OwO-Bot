@@ -24,7 +24,7 @@ module.exports = class HealStaff extends WeaponInterface{
 		
 		/* Grab lowest hp */
 		let lowest = WeaponInterface.getLowestHp(team);
-		if(!lowest) return;
+		if(!lowest) return this.attackPhysical(me,team,enemy);
 
 		/* Calculate heal */
 		let heal = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);
