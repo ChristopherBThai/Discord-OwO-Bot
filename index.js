@@ -1,7 +1,7 @@
 const debug = false;
 
 /* Default is 4. Use higher numbers if you have enough cores */
-process.env.UV_THREADPOOL_SIZE = 12;
+process.env.UV_THREADPOOL_SIZE = 17;
 
 if(debug) var auth = require('../tokens/scuttester-auth.json');
 else var auth = require('../tokens/owo-auth.json');
