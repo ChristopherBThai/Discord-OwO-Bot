@@ -899,10 +899,16 @@ async function finishFriendlyBattle(msg,p,battle,color,text,playerWin,enemyWin,l
 /* Calculate xp depending on win/loss/tie */
 function calculateXP(team,enemy,currentStreak=0){
 	/* Find the avg level diff for xp multipliers */
-	let lvlDiff = 1;
-	for(let i in team.team.team) lvlDiff -= team.team.team[i].stats.lvl;
-	for(let i in enemy.team.team) lvlDiff += enemy.team.team[i].stats.lvl;
-	if(lvlDiff<=0) lvlDiff = 1;
+	let playeravg = 0;
+	for(let i in team.team.team) playeravg += team.team.team[i].stats.lvl;
+	playeravg /= team.team.team.length;
+
+	let enemyavg = 0;
+	for(let i in enemy.team.team) enemyavg += enemy.team.team[i].stats.lvl;
+	enemyavg /= enemy.team.team.length;
+
+	let lvlDiff = enemyavg - playeravg;
+	if(lvlDiff<0) lvlDiff = 0;
 
 	/* Calculate xp and streak */
 	/* lose */
@@ -919,7 +925,7 @@ function calculateXP(team,enemy,currentStreak=0){
 	}else if(team.win){
 		resetStreak = false;
 		addStreak = true;
-		xp = 200*lvlDiff;
+		xp = Math.round(200+(300*lvlDiff));
 		/* Calculate bonus */
 		currentStreak++;
 		bonus = bonusXP(currentStreak);
