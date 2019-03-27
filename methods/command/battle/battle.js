@@ -63,7 +63,7 @@ module.exports = new CommandInterface({
 		/* turn by turn */
 		}else{
 			/* Display the first message */
-			let embed = await battleUtil.display(p,battle,undefined,setting.display);
+			let embed = await battleUtil.display(p,battle,undefined,setting);
 			let msg = await p.msg.channel.send(embed);
 			await battleUtil.reactionCollector(p,msg,battle,setting.auto,(setting.auto?"www":undefined),setting);
 		}
