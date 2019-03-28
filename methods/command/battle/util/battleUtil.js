@@ -925,7 +925,7 @@ function calculateXP(team,enemy,currentStreak=0){
 	}else if(team.win){
 		resetStreak = false;
 		addStreak = true;
-		xp = Math.round(200+(300*lvlDiff));
+		xp = Math.round(200+(600*lvlDiff));
 		/* Calculate bonus */
 		currentStreak++;
 		bonus = bonusXP(currentStreak);
