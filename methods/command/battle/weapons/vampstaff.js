@@ -32,7 +32,7 @@ module.exports = class VampStaff extends WeaponInterface{
 		let dealt = 0;
 		for(let i=0;i<enemy.length;i++){
 			if(enemy[i].stats.hp[0]>0){
-				let dmg = WeaponInterface.inflictDamage(me,enemy[i],damage,WeaponInterface.MAGICAL);
+				let dmg = WeaponInterface.inflictDamage(me,enemy[i],damage,WeaponInterface.MAGICAL,{me,allies:team,enemies:enemy});
 				dealt += dmg.amount;
 				logs.push(`[VSTAFF] ${me.nickname} damaged ${enemy[i].nickname} for ${dmg.amount} HP`, dmg.logs);
 			}
@@ -42,13 +42,13 @@ module.exports = class VampStaff extends WeaponInterface{
 		let heal = dealt/3;
 		for(let i=0;i<team.length;i++){
 			if(team[i].stats.hp[0]>0){
-				let hl = WeaponInterface.heal(team[i],heal);
+				let hl = WeaponInterface.heal(team[i],heal,me,{me,allies:team,enemies:enemy});
 				logs.push(`[VSTAFF] ${me.nickname} healed ${team[i].nickname} for ${hl.amount} HP`, hl.logs);
 			}
 		}
 
 		/* deplete weapon points*/
-		let mana = this.useMana(me);
+		let mana = WeaponInterface.useMana(me,this.manaCost,me,{me,allies:team,enemies:enemy});
 		logs.push(`[VSTAFF] ${me.nickname} used ${mana.amount} WP`,mana.logs);
 
 		return logs;

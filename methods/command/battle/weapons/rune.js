@@ -46,7 +46,7 @@ module.exports = class Rune extends WeaponInterface{
 		let damage = WeaponInterface.getMixedDamage(me.stats.att,.75,me.stats.mag,.75);
 
 		/* Deal damage */
-		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.TRUE);
+		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.TRUE,{me,allies:team,enemies:enemy});
 
 		logs.push(`[RUNE] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
 		return logs;

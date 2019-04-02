@@ -175,14 +175,13 @@ module.exports = class WeaponInterface{
 	}
 
 	/* Uses mana */
-	useMana(me,cost){
-		if(!me) return {amount:0};
+	static useMana(me,amount,from,tags){
 		let logs = new Logs();
 
-		if(!cost) cost = this.manaCost;
-		me.stats.wp[0] -= cost;
+		me.stats.wp[0] -= amount;
+		if(me.stats.wp[0]<0) me.stats.wp[0] = 0;
 
-		return {amount:Math.round(cost),logs};
+		return {amount:Math.round(amount),logs};
 	}
 
 	preTurn(animal,ally,enemy,action){}
@@ -202,7 +201,7 @@ module.exports = class WeaponInterface{
 		let damage = WeaponInterface.getDamage(me.stats.att);
 
 		/* Deal damage */
-		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.PHYSICAL);
+		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.PHYSICAL,{me,allies:team,enemies:enemy});
 
 		logs.push(`[PHYS] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`,damage.logs);
 
@@ -283,20 +282,69 @@ module.exports = class WeaponInterface{
 	}
 
 	/* heals */
-	static heal(me,amount){
+	static heal(me,amount,from,tags={}){
 		let max = me.stats.hp[1]+me.stats.hp[3];
 		/* Full health */
 		if(!me||me.stats.hp[0]>=max)
 			return {amount:0};
 
-		let logs = new Logs();
+		let subLogs = new Logs();
+		let totalHeal = [amount,0];
 
-		me.stats.hp[0] += amount;
+		/* Bonus heal calculation */
+		/* Event for me*/
+		for(let i in me.buffs)
+			subLogs.push(me.buffs[i].healed(me,from,totalHeal,tags));
+		if(me.weapon)
+			for(let i in me.weapon.passives)
+				subLogs.push(me.weapon.passives[i].healed(me,from,totalHeal,tags));
+		/* Event for from*/
+		for(let i in from.buffs)
+			subLogs.push(from.buffs[i].heal(me,from,totalHeal,tags));
+		if(from.weapon)
+			for(let i in from.weapon.passives)
+				subLogs.push(from.weapon.passives[i].heal(me,from,totalHeal,tags));
+
+		/* After bonus heal calculation */
+		/* Event for me*/
+		for(let i in me.buffs)
+			subLogs.push(me.buffs[i].postHealed(me,from,totalHeal,tags));
+		if(me.weapon)
+			for(let i in me.weapon.passives)
+				subLogs.push(me.weapon.passives[i].postHealed(me,from,totalHeal,tags));
+		/* Event for from*/
+		for(let i in from.buffs)
+			subLogs.push(from.buffs[i].postHeal(me,from,totalHeal,tags));
+		if(from.weapon)
+			for(let i in from.weapon.passives)
+				subLogs.push(from.weapon.passives[i].postHeal(me,from,totalHeal,tags));
+
+		totalHeal = totalHeal.reduce((a,b)=>a+b,0);
+		if(totalHeal<0) totalHeal = 0;
+
+		me.stats.hp[0] += totalHeal;
 		if(me.stats.hp[0]>max)
 			me.stats.hp[0] = max;
 
+		return {amount:Math.round(totalHeal),logs:subLogs};
+	}
+
+	/* replenishes mana*/
+	static replenish(me,amount,from,tags={}){
+		let max = me.stats.wp[1]+me.stats.wp[3];
+		/* Full mana */
+		if(!me||me.stats.wp[0]>=max)
+			return {amount:0};
+
+		let logs = new Logs();
+
+		me.stats.wp[0] += amount;
+		if(me.stats.wp[0]>max)
+			me.stats.wp[0] = max;
+
 		return {amount:Math.round(amount),logs};
 	}
+
 
 	getEmoji(quality){
 		/* If there are multiple quality, get avg */

@@ -33,14 +33,14 @@ module.exports = class HealStaff extends WeaponInterface{
 		let heal = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);
 
 		/* Heal ally */
-		heal = WeaponInterface.heal(lowest,heal);
+		heal = WeaponInterface.heal(lowest,heal,me,{me,allies:team,enemies:enemy});
 		logs.push(`[HSTAFF] ${me.nickname} healed ${lowest.nickname} for ${heal.amount} HP`, heal.logs);
 
 		/* Everyone at full health */
 		if(heal===0) return this.attackPhysical(me,team,enemy);
 
 		/* deplete weapon points*/
-		let mana = this.useMana(me);
+		let mana = WeaponInterface.useMana(me,this.manaCost,me,{me,allies:team,enemies:enemy});
 		logs.push(`[HSTAFF] ${me.nickname} used ${mana.amount} WP`,mana.logs);
 
 		return logs;
