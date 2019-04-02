@@ -1,5 +1,6 @@
 const PassiveInterface = require('../PassiveInterface.js');
 const WeaponInterface = require('../WeaponInterface.js');
+const Log = require('../util/logUtil.js');
 
 /* +[10~25%] lifesteal*/
 
@@ -15,8 +16,12 @@ module.exports = class Lifesteal extends PassiveInterface{
 	}
 
 	postAttack(animal,attackee,damage,type,last){
+		let logs = new Log();
 		let totalDamage = damage.reduce((a,b)=>a+b,0);
-		WeaponInterface.heal(animal,totalDamage*this.stats[0]/100);
+		let heal = totalDamage*this.stats[0]/100;
+		heal = WeaponInterface.heal(animal,heal);
+		logs.push(`[LIFESTEAL] ${animal.nickname} heals for ${heal.amount} HP`,heal.logs);
+		return logs;
 	}
 
 }

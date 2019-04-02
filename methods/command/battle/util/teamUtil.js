@@ -265,14 +265,17 @@ function parseTeam(p,animals,weapons,censor=false){
 		let animal = animals[i];
 		if(!used.includes(animal.pid)){
 			used.push(animal.pid);
+			let animalObj = p.global.validAnimal(animal.name);
+			let nickname = (censor&&animal.acensor==1)?"Censored":animal.nickname;
+			if(!nickname) nickname = animalObj.name;
 			result.push({
 				pid:animal.pid,
-				nickname:(censor&&animal.acensor==1)?"Censored":animal.nickname,
+				animal:animalObj,
+				nickname,
 				streak:animals.streak,
 				highestStreak:animals.highest_streak,
 				pos:animal.pos,
 				xp:animal.xp,
-				animal:p.global.validAnimal(animal.name),
 				buffs:[],
 				debuffs:[]
 			});

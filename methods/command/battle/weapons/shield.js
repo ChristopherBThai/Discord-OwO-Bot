@@ -1,5 +1,6 @@
 const WeaponInterface = require('../WeaponInterface.js');
 const battleUtil = require('../util/battleUtil.js');
+const Logs = require('../util/logUtil.js');
 
 module.exports = class Shield extends WeaponInterface{
 
@@ -33,13 +34,17 @@ module.exports = class Shield extends WeaponInterface{
 			if(animal.buffs[i].id == this.buffList[0])
 				return;
 
+		let logs = new Logs();
+
 		/* Grab buff and bind it to our animal */
 		let buff = this.getBuffs()[0];
 		buff.bind(animal,2);
+		logs.push(`[AEGIS] ${animal.nickname} used taunt`);
 
 		/* deplete weapon points*/
-		this.useMana(animal);
-
+		let mana = this.useMana(animal);
+		logs.push(`[AEGIS] ${animal.nickname} used ${mana.amount} WP`,mana.logs);
+		return logs
 	}
 
 	attackWeapon(me,team,enemy){

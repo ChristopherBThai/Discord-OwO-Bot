@@ -191,14 +191,15 @@ exports.initBattle = async function(p,setting){
 /* ==================================== battle display methods ====================================  */
 
 /* Generates a display for the current battle (image mode)*/
-var display = exports.display = async function(p,team,logs,{display,title}){
+var display = exports.display = async function(p,team,logs,{display,title,showLogs}){
+
 	if(display=="text")
-		return displayText(p,team,logs,{title});
+		return displayText(p,team,logs,{title,showLogs});
 	else if(display=="compact")
-		return displayCompact(p,team,logs,{title});
+		return displayCompact(p,team,logs,{title,showLogs});
 	let image = await battleImageUtil.generateImage(team);
 	if(!image||image=="")
-		return displayCompact(p,team,logs,{title});
+		return displayCompact(p,team,logs,{title,showLogs});
 	let logtext = "";
 	let pTeam = "";
 	for(var i=0;i<team.player.team.length;i++){
@@ -262,15 +263,14 @@ var display = exports.display = async function(p,team,logs,{display,title}){
 			"url":imagegenAuth.imageGenUrl+"/battleimage/uuid/"+image
 		}
 	}
-	/*
-	if(logtext!="")
-		embed.description = logtext;
-		*/
+
+	if(showLogs) embed.description = parseLogs(logs);
+
 	return {embed}
 }
 
 /* displays the battle as text */
-var displayText = exports.displayText = async function(p,team,logs,{title}){
+var displayText = exports.displayText = async function(p,team,logs,{title,showLogs}){
 	let logtext = "";
 	let pTeam = [];
 	for(var i=0;i<team.player.team.length;i++){
@@ -303,9 +303,6 @@ var displayText = exports.displayText = async function(p,team,logs,{title}){
 			"name":title?title:p.msg.author.username+" goes into battle!",
 			"icon_url":p.msg.author.avatarURL
 		},
-		/*
-		"description":logtext,
-		*/
 		"fields":[] 
 	}
 	if(pTeam.join("\n").length>=1020||eTeam.join("\n").length>=1020){
@@ -338,15 +335,12 @@ var displayText = exports.displayText = async function(p,team,logs,{title}){
 			"inline":true
 		});
 	}
-	/*
-	if(logtext!="")
-		embed.description = logtext;
-		*/
+	if(showLogs) embed.description = parseLogs(logs);
 	return {embed};
 }
 
 /* displays the battle as compact mode*/
-var displayCompact = exports.displayCompact= async function(p,team,logs,{title}){
+var displayCompact = exports.displayCompact= async function(p,team,logs,{title,showLogs}){
 	let pTeam = [];
 	for(var i=0;i<team.player.team.length;i++){
 		let player = team.player.team[i];
@@ -398,6 +392,7 @@ var displayCompact = exports.displayCompact= async function(p,team,logs,{title})
 			"inline":true
 		});
 	}
+	if(showLogs) embed.description = parseLogs(logs);
 	return {embed};
 }
 
@@ -514,15 +509,15 @@ async function executeBattle(p,msg,action,setting){
 
 	/* tie */
 	if(enemyWin&&playerWin){
-		await finishBattle(msg,p,battle,6381923,"It's a tie!",playerWin,enemyWin,logs,setting);
+		await finishBattle(msg,p,battle,6381923,"It's a tie!",playerWin,enemyWin,null,setting);
 
 	/* enemy wins */
 	}else if(enemyWin){
-		await finishBattle(msg,p,battle,16711680,"You lost!",playerWin,enemyWin,logs,setting);
+		await finishBattle(msg,p,battle,16711680,"You lost!",playerWin,enemyWin,null,setting);
 
 	/* player wins */
 	}else if(playerWin){
-		await finishBattle(msg,p,battle,65280,"You won!",playerWin,enemyWin,logs,setting);
+		await finishBattle(msg,p,battle,65280,"You won!",playerWin,enemyWin,null,setting);
 
 	/* continue battle */
 	}else{
@@ -593,19 +588,23 @@ var calculateAll = exports.calculateAll = function(p,battle,logs = []){
 	/* Update previous hp before turn execution */
 	updatePreviousStats(battle);
 
+	let battleLogs = [];
+
 	/* Decide enemy actions */
 	let eaction = [weapon,weapon,weapon];
 	/* Pre turn */
-	preTurn(battle.player.team,battle.enemy.team,[weapon,weapon,weapon]);
-	preTurn(battle.enemy.team,battle.player.team,eaction);
+	battleLogs = battleLogs.concat(preTurn(battle.player.team,battle.enemy.team,[weapon,weapon,weapon]));
+	battleLogs = battleLogs.concat(preTurn(battle.enemy.team,battle.player.team,eaction));
 	/* Execute actions */
-	executeTurn(battle.player.team,battle.enemy.team,{ally:[weapon,weapon,weapon],enemy:eaction});
+	battleLogs = battleLogs.concat(executeTurn(battle.player.team,battle.enemy.team,{ally:[weapon,weapon,weapon],enemy:eaction}));
 	/* Post turn */
-	postTurn(battle.player.team,battle.enemy.team,[weapon,weapon,weapon]);
-	postTurn(battle.enemy.team,battle.player.team,eaction);
+	battleLogs = battleLogs.concat(postTurn(battle.player.team,battle.enemy.team,[weapon,weapon,weapon]));
+	battleLogs = battleLogs.concat(postTurn(battle.enemy.team,battle.player.team,eaction));
 
 	/* Save only the HP and WP states (will need to save buff status later) */
-	logs.push(saveStates(battle));
+	let state = saveStates(battle);
+	if(battleLogs.length>0) state.battleLogs = battleLogs;
+	logs.push(state);
 
 	/* recursive call */
 	return calculateAll(p,battle,logs);
@@ -616,7 +615,10 @@ exports.displayAllBattles = async function(p,battle,logs,setting){
 	let endResult = logs[logs.length-1];
 	/* Instant mode sends just one message */
 	if(setting.speed=="instant"){
-		await finishBattle(null,p,battle,endResult.color,endResult.text,endResult.player,endResult.enemy,null,setting);
+		let battleLogs = [];
+		for(let i=0;i<logs.length;i++)
+			if(logs[i].battleLogs) battleLogs.push(logs[i].battleLogs);
+		await finishBattle(null,p,battle,endResult.color,endResult.text,endResult.player,endResult.enemy,battleLogs,setting);
 		return;
 	}
 
@@ -757,20 +759,30 @@ function parseSqlBuffs(team,buffs){
 
 /* Do stuff before the turn starts (usually for buffs) */
 function preTurn(team,enemy,action){
+	let logs = [];
+
 	for(let i in team){
 		let animal= team[i];
-		for(let j in animal.buffs)
-			animal.buffs[j].preTurn(animal,team,enemy,action[i]);
-		for(let j in animal.debuffs)
-			animal.debuffs[j].preTurn(animal,team,enemy,action[i]);
-		if(animal.weapon)
-			animal.weapon.preTurn(animal,team,enemy,action[i]);
+		for(let j in animal.buffs){
+			let log = animal.buffs[j].preTurn(animal,team,enemy,action[i]);
+			if(log) logs = logs.concat(log.logs);
+		}
+		for(let j in animal.debuffs){
+			let log = animal.debuffs[j].preTurn(animal,team,enemy,action[i]);
+			if(log) logs = logs.concat(log.logs);
+		}
+		if(animal.weapon){
+			let log = animal.weapon.preTurn(animal,team,enemy,action[i]);
+			if(log) logs = logs.concat(log.logs);
+		}
 	}
+
+	return logs;
 }
 
 /* Calculates a turn for a team */
 function executeTurn(team,enemy,action){
-	let logs = {};
+	let logs = [];
 	let teamPos = 0;
 	let enemyPos = 0;
 	for(let i =0;i<maxAnimals;i++){
@@ -793,32 +805,46 @@ function executeTurn(team,enemy,action){
 			enemyPos++;
 		}
 
+		let log;
+
 		if(animal){
 			/* Check if animal has weapon */
 			if(animal.weapon){
 				if(tempAction==weapon)
-					logs[i] = animal.weapon.attackWeapon(animal,tempAlly,tempEnemy);
+					log = animal.weapon.attackWeapon(animal,tempAlly,tempEnemy);
 				else
-					logs[i] = animal.weapon.attackPhysical(animal,tempAlly,tempEnemy);
+					log = animal.weapon.attackPhysical(animal,tempAlly,tempEnemy);
 			}else{
-				logs[i] = WeaponInterface.basicAttack(animal,tempAlly,tempEnemy);
+				log = WeaponInterface.basicAttack(animal,tempAlly,tempEnemy);
 			}
 		}
+
+		if(log) logs = logs.concat(log.logs);
 	}
+
 	return logs;
 }
 
 /* Do stuff after the turn ends (usually for buffs) */
 function postTurn(team,enemy,action){
+	let logs = [];
 	for(let i in team){
 		let animal= team[i];
-		for(let j in animal.buffs)
-			animal.buffs[j].postTurn(animal,team,enemy,action[i]);
-		for(let j in animal.debuffs)
-			animal.debuffs[j].postTurn(animal,team,enemy,action[i]);
-		if(animal.weapon)
-			animal.weapon.postTurn(animal,team,enemy,action[i]);
+		for(let j in animal.buffs){
+			let log = animal.buffs[j].postTurn(animal,team,enemy,action[i]);
+			if(log) logs = logs.concat(log.logs);
+		}
+		for(let j in animal.debuffs){
+			let log = animal.debuffs[j].postTurn(animal,team,enemy,action[i]);
+			if(log) logs = logs.concat(log.logs);
+		}
+		if(animal.weapon){
+			let log = animal.weapon.postTurn(animal,team,enemy,action[i]);
+			if(log) logs = logs.concat(log.logs);
+		}
 	}
+
+	return logs;
 }
 
 /* finish battle */
@@ -1085,4 +1111,23 @@ function updatePreviousStats(battle){
 		battle.enemy.team[i].stats.hp[2] = battle.enemy.team[i].stats.hp[0];
 		battle.enemy.team[i].stats.wp[2] = battle.enemy.team[i].stats.wp[0];
 	}
+}
+
+/* parses logs into string */
+function parseLogs(logs){
+	let text = "```ini\n";
+	let over = false;
+	for(let i in logs){
+			for(let j in logs[i]){
+				if(text.length<1950){
+					text += logs[i][j]+"\n";
+				}else if(!over){
+					text += "\n; Log is too long...";
+					over = true;
+				}
+			}
+			text += "\n"
+	}
+	text += "```";
+	return text;
 }

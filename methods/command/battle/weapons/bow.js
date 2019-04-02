@@ -1,4 +1,5 @@
 const WeaponInterface = require('../WeaponInterface.js');
+const Logs = require('../util/logUtil.js');
 
 module.exports = class Bow extends WeaponInterface{
 
@@ -27,15 +28,20 @@ module.exports = class Bow extends WeaponInterface{
 		let attacking = WeaponInterface.getAttacking(me,team,enemy);
 		if(!attacking) return;
 
+		let logs = new Logs();
+
 		/* Calculate damage */
 		let damage = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);
 
 		/* Deal damage */
 		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.MAGICAL);
+		logs.push(`[BOW] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
 
 		/* deplete weapon points*/
-		this.useMana(me);
+		let mana = this.useMana(me);
+		logs.push(`[BOW] ${me.nickname} used ${mana.amount} WP`,mana.logs);
 
-		return `${me.nickname?me.nickname:me.animal.name}\`deals ${damage}\`${WeaponInterface.magEmoji}\` to \`${attacking.nickname?attacking.nickname:attacking.animal.name}`
+		return logs
+
 	}
 }

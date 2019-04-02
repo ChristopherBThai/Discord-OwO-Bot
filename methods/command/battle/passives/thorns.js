@@ -1,5 +1,6 @@
 const PassiveInterface = require('../PassiveInterface.js');
 const WeaponInterface = require('../WeaponInterface.js');
+const Log = require('../util/logUtil.js');
 
 /* +[10~25%] thorns*/
 
@@ -14,11 +15,18 @@ module.exports = class Thorns extends PassiveInterface{
 		this.qualityList = [[15,35]];
 	}
 
-	postAttacked(animal,attacker,damage,type,last){
-		/* Ignore if last flag is true */
-		if(last) return;
+	postAttacked(animal,attacker,damage,type,tags){
+		/* Ignore if tags.thorns flag is true */
+		if(tags.thorns) return;
 		let totalDamage = damage.reduce((a,b)=>a+b,0)*this.stats[0]/100;
 		if(totalDamage<1) return;
-		WeaponInterface.inflictDamage(animal,attacker,totalDamage,WeaponInterface.TRUE,true);
+
+		let logs = new Log();
+
+		let dmg = WeaponInterface.inflictDamage(animal,attacker,totalDamage,WeaponInterface.TRUE,{...tags,thorns:true});
+
+		logs.push(`[THORNS] ${animal.nickname} damaged ${attacker.nickname} for ${dmg.amount} HP`,dmg.logs);
+
+		return logs;
 	}
 }

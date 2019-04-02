@@ -1,4 +1,5 @@
 const WeaponInterface = require('../WeaponInterface.js');
+const Logs = require('../util/logUtil.js');
 
 module.exports = class HealStaff extends WeaponInterface{
 
@@ -21,6 +22,8 @@ module.exports = class HealStaff extends WeaponInterface{
 		/* No mana */
 		if(me.stats.wp[0]<this.manaCost)
 			return this.attackPhysical(me,team,enemy);
+
+		let logs = new Logs();
 		
 		/* Grab lowest hp */
 		let lowest = WeaponInterface.getLowestHp(team);
@@ -31,13 +34,16 @@ module.exports = class HealStaff extends WeaponInterface{
 
 		/* Heal ally */
 		heal = WeaponInterface.heal(lowest,heal);
+		logs.push(`[HSTAFF] ${me.nickname} healed ${lowest.nickname} for ${heal.amount} HP`, heal.logs);
 
 		/* Everyone at full health */
 		if(heal===0) return this.attackPhysical(me,team,enemy);
 
 		/* deplete weapon points*/
-		this.useMana(me);
+		let mana = this.useMana(me);
+		logs.push(`[HSTAFF] ${me.nickname} used ${mana.amount} WP`,mana.logs);
 
-		return `${me.nickname?me.nickname:me.animal.name}\`heals ${heal}\`${WeaponInterface.hpEmoji}\` to \`${lowest.nickname?lowest.nickname:lowest.animal.name}`
+		return logs;
+
 	}
 }

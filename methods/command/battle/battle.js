@@ -91,7 +91,7 @@ async function changeType(p,type){
 }
 
 async function parseSettings(p){
-	let sql = `SELECT auto,display,speed from user INNER JOIN battle_settings ON user.uid = battle_settings.uid WHERE id = ${p.msg.author.id};`;
+	let sql = `SELECT logs,auto,display,speed from user INNER JOIN battle_settings ON user.uid = battle_settings.uid WHERE id = ${p.msg.author.id};`;
 	let result = await p.query(sql);
 	return parseSetting(result);
 }
@@ -100,25 +100,31 @@ function parseSetting(query){
 	let auto = true;
 	let display = "image";
 	let speed = "short";
+	let showLogs = false;
 	let instant = false;
 
 	if(query[0]){
 		if(query[0].auto==1)
 			auto = false;
-		if(query[0].display=="text")
-			display = "text";
-		else if(query[0].display=="compact")
-			display = "compact";
 		if(query[0].speed==0)
 			speed = "instant";
 		else if(query[0].speed==2)
 			speed = "lengthy";
+		if(query[0].display=="text")
+			display = "text";
+		else if(query[0].display=="compact")
+			display = "compact";
+		if(query[0].logs==1){
+			showLogs = true;
+			auto = true;
+			speed = "instant";
+		}
 	}
 
 	if(auto&&(speed=="short"||speed=="instant")){
 		instant = true;
 	}
 
-	return {auto,display,speed,instant};
+	return {auto,display,speed,instant,showLogs};
 }
 
