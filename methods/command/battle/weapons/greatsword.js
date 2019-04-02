@@ -31,14 +31,14 @@ module.exports = class GreatSword extends WeaponInterface{
 		/* Deal damage to all opponents*/
 		for(let i=0;i<enemy.length;i++){
 			if(enemy[i].stats.hp[0]>0){
-				let dmg = WeaponInterface.inflictDamage(me,enemy[i],damage,WeaponInterface.MAGICAL);
+				let dmg = WeaponInterface.inflictDamage(me,enemy[i],damage,WeaponInterface.MAGICAL,{me,allies:team,enemies:enemy});
 				logs.push(`[GSWORD] ${me.nickname} damaged ${enemy[i].nickname} for ${dmg.amount} HP`, dmg.logs);
 			}
 		}
 
 		/* deplete weapon points*/
-		let mana = this.useMana(me);
-		logs.push(`[BOW] ${me.nickname} used ${mana.amount} WP`,mana.logs);
+		let mana = WeaponInterface.useMana(me,this.manaCost,me,{me,allies:team,enemies:enemy});
+		logs.push(`[GSWORD] ${me.nickname} used ${mana.amount} WP`,mana.logs);
 
 		return logs;
 

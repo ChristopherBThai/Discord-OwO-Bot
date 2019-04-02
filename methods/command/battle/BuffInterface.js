@@ -67,10 +67,18 @@ module.exports = class BuffInterface{
 	attack(animal,attackee,damage,type,last){}
 	/* If the buff owner is attacked */
 	attacked(animal,attacker,damage,type,last){}
+	/* If the buff owner is healing */
+	heal(animal,healer,amount,tag){}
+	/* If the buff owner is healed */
+	healed(animal,healer,amount,tag){}
 	/* If the buff owner is attacking (after bonus damage) */
 	postAttack(animal,attackee,damage,type,last){}
 	/* If the buff owner is attacked (after bonus damage) */
 	postAttacked(animal,attacker,damage,type,last){}
+	/* If the buff owner is healing(after bonus heal) */
+	postHeal(animal,healer,amount,tag){}
+	/* If the buff owner is healed (after bonus heal) */
+	postHealed(animal,healer,amount,tag){}
 
 	/* when an enemy chooses an opponent */
 	enemyChooseAttack(animal,attacker,attackee,ally,enemy){return attackee}

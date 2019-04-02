@@ -24,7 +24,6 @@ module.exports = class Bow extends WeaponInterface{
 			return this.attackPhysical(me,team,enemy);
 		
 		/* Grab an enemy that I'm attacking */
-		let alive = WeaponInterface.getAlive(enemy);
 		let attacking = WeaponInterface.getAttacking(me,team,enemy);
 		if(!attacking) return;
 
@@ -34,11 +33,11 @@ module.exports = class Bow extends WeaponInterface{
 		let damage = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);
 
 		/* Deal damage */
-		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.MAGICAL);
+		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.MAGICAL,{me,allies:team,enemies:enemy});
 		logs.push(`[BOW] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
 
 		/* deplete weapon points*/
-		let mana = this.useMana(me);
+		let mana = WeaponInterface.useMana(me,this.manaCost,me,{me,allies:team,enemies:enemy});
 		logs.push(`[BOW] ${me.nickname} used ${mana.amount} WP`,mana.logs);
 
 		return logs
