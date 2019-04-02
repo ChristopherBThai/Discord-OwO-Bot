@@ -1,4 +1,5 @@
 const WeaponInterface = require('../WeaponInterface.js');
+const Logs = require('../util/logUtil.js');
 
 module.exports = class Rune extends WeaponInterface{
 
@@ -39,11 +40,17 @@ module.exports = class Rune extends WeaponInterface{
 		let attacking = WeaponInterface.getAttacking(me,team,enemy);
 		if(!attacking) return;
 
+		let logs = new Logs();
+
 		/* Calculate damage */
 		let damage = WeaponInterface.getMixedDamage(me.stats.att,.75,me.stats.mag,.75);
 
 		/* Deal damage */
 		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.TRUE);
+
+		logs.push(`[RUNE] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
+		return logs;
+
 	}
 
 }

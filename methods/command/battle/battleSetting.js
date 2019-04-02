@@ -26,16 +26,17 @@ module.exports = new CommandInterface({
 })
 
 async function display(p){
-	let sql = `SELECT auto,display,speed from user INNER JOIN battle_settings ON user.uid = battle_settings.uid WHERE id = ${p.msg.author.id};`;
+	let sql = `SELECT logs,auto,display,speed from user INNER JOIN battle_settings ON user.uid = battle_settings.uid WHERE id = ${p.msg.author.id};`;
 	let result = await p.query(sql);
 
 	let settings = parseSettings(result);
 
-	let text = "**Auto = ** `"+settings.auto+"`\n";
+	let text = (settings.showLogs?"~~":"")+"**Auto = ** `"+settings.auto+"`"+(settings.showLogs?"~~":"")+"\n";
 	text += "**Display = ** `"+settings.display+"`\n";
-	if(!settings.auto) text += "~~";
+	if(settings.showLogs||!settings.auto) text += "~~";
 	text += "**Speed = ** `"+settings.speed+"`";
-	if(!settings.auto) text += "~~";
+	if(settings.showLogs||!settings.auto) text += "~~";
+	text += "\n**Logs = ** `"+settings.showLogs+"`";
 
 	let embed = {
 		"color":p.config.embed_color,
@@ -95,6 +96,16 @@ async function changeSettings(p){
 			p.errorMsg(", the speed settings can only be `instant`, `short`, or `lengthy`!");
 			return;
 		}
+	}else if(args[0]=='log'||args[0]=='logs'){
+		field = 'logs';
+		if(args[1]=='false'){
+			setting = 0;
+		}else if(args[1]=='true'){
+			setting = 1;
+		}else{
+			p.errorMsg(", the log settings can only be `true`, or `false`!");
+			return;
+		}
 	}else{
 		p.errorMsg(", the display settings can only be `auto`, `display`, or `speed`!");
 		return;
@@ -119,6 +130,7 @@ function parseSettings(query){
 	let auto = true;
 	let display = "image";
 	let speed = "short";
+	let logs = false;
 
 	if(query[0]){
 		if(query[0].auto==1)
@@ -127,10 +139,14 @@ function parseSettings(query){
 			display = "text";
 		else if(query[0].display=="compact")
 			display = "compact";
+		else if(query[0].display=="log")
+			display = "log";
 		if(query[0].speed==0)
 			speed = "instant";
 		else if(query[0].speed==2)
 			speed = "lengthy";
+		if(query[0].logs==1)
+			logs = true;
 	}
-	return {auto,display,speed};
+	return {auto,display,speed,showLogs:logs};
 }

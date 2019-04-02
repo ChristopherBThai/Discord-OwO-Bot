@@ -1,4 +1,5 @@
 const WeaponInterface = require('../WeaponInterface.js');
+const Logs = require('../util/logUtil.js');
 
 module.exports = class GreatSword extends WeaponInterface{
 
@@ -22,19 +23,24 @@ module.exports = class GreatSword extends WeaponInterface{
 		if(me.stats.wp[0]<this.manaCost)
 			return this.attackPhysical(me,team,enemy);
 
+		let logs = new Logs();
+
 		/* Calculate damage */
 		let damage = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);
 
 		/* Deal damage to all opponents*/
-		let dealt = 0;
 		for(let i=0;i<enemy.length;i++){
-			if(enemy[i].stats.hp[0]>0)
-				dealt += WeaponInterface.inflictDamage(me,enemy[i],damage,WeaponInterface.MAGICAL);
+			if(enemy[i].stats.hp[0]>0){
+				let dmg = WeaponInterface.inflictDamage(me,enemy[i],damage,WeaponInterface.MAGICAL);
+				logs.push(`[GSWORD] ${me.nickname} damaged ${enemy[i].nickname} for ${dmg.amount} HP`, dmg.logs);
+			}
 		}
 
 		/* deplete weapon points*/
-		this.useMana(me);
+		let mana = this.useMana(me);
+		logs.push(`[BOW] ${me.nickname} used ${mana.amount} WP`,mana.logs);
 
-		return `${me.nickname?me.nickname:me.animal.name}\`deals ${dealt}\`<:mag:531616156231139338>\` in total to all enemies\``
+		return logs;
+
 	}
 }

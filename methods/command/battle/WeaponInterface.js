@@ -1,5 +1,6 @@
 const Error = require('../../../handler/errorHandler.js');
 const PassiveInterface = require('./PassiveInterface.js');
+const Logs = require('./util/logUtil.js');
 const requireDir = require('require-dir');
 const ranks = [[0.20,"Common","<:common:416520037713838081>"],[0.20,"Uncommon","<:uncommon:416520056269176842>"],[0.20,"Rare","<:rare:416520066629107712>"],[0.20,"Epic","<:epic:416520722987614208>"],[0.14,"Mythical","<:mythic:416520808501084162>"],[0.05,"Legendary","<a:legendary:417955061801680909>"],[0.01,"Fabled","<a:fabled:438857004493307907>"]];
 
@@ -173,73 +174,15 @@ module.exports = class WeaponInterface{
 		return alive;
 	}
 
-	/* Deals damage to this animal */
-	dealDamage(attacker,attackee,damage,type,last=false){
-		let totalDamage = 0;
-		if(type==WeaponInterface.PHYSICAL)
-			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.pr));
-		else if(type==WeaponInterface.MAGICAL)
-			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.mr));
-		else if(type==WeaponInterface.TRUE)
-			totalDamage = damage;
-		else
-			throw new Error("Invalid attack type");
-
-		if(totalDamage<0) totalDamage = 0;
-		totalDamage = [totalDamage,0];
-
-		/* Calculate bonus damages */
-		/* Event for attackee */
-		for(let i in attackee.buffs)
-			attackee.buffs[i].attacked(attackee,attacker,totalDamage,type,last);
-		if(attackee.weapon)
-			for(let i in attackee.weapon.passives)
-				attackee.weapon.passives[i].attacked(attackee,attacker,totalDamage,type,last);
-		/* Event for attacker */
-		for(let i in attacker.buffs)
-			attacker.buffs[i].attack(attacker,attackee,totalDamage,type,last);
-		if(attacker.weapon)
-			for(let i in attacker.weapon.passives)
-				attacker.weapon.passives[i].attack(attacker,attackee,totalDamage,type,last);
-
-		/* After all damage is calculated */
-		/* Event for attackee */
-		for(let i in attackee.buffs)
-			attackee.buffs[i].postAttacked(attackee,attacker,totalDamage,type,last);
-		if(attackee.weapon)
-			for(let i in attackee.weapon.passives)
-				attackee.weapon.passives[i].postAttacked(attackee,attacker,totalDamage,type,last);
-		/* Event for attacker */
-		for(let i in attacker.buffs)
-			attacker.buffs[i].postAttack(attacker,attackee,totalDamage,type,last);
-		if(attacker.weapon)
-			for(let i in attacker.weapon.passives)
-				attacker.weapon.passives[i].postAttack(attacker,attackee,totalDamage,type,last);
-
-		totalDamage = totalDamage.reduce((a,b)=>a+b,0);
-		if(totalDamage<0) totalDamage = 0;
-		attackee.stats.hp[0] -= totalDamage;
-		return totalDamage;
-	}
-
 	/* Uses mana */
 	useMana(me,cost){
-		if(!me) return false;
+		if(!me) return {amount:0};
+		let logs = new Logs();
+
 		if(!cost) cost = this.manaCost;
 		me.stats.wp[0] -= cost;
-		return true;
-	}
 
-	/* heals */
-	heal(me,amount){
-		/* Full health */
-		if(!me||me.stats.hp[0]>=me.stats.hp[1]+me.stats.hp[3])
-			return 0;
-
-		me.stats.hp[0] += amount;
-		if(me.stats.hp[0]>me.stats.hp[1]+me.stats.hp[3])
-			me.stats.hp[0] = me.stats.hp[1]+me.stats.hp[3];
-		return amount;
+		return {amount:Math.round(cost),logs};
 	}
 
 	preTurn(animal,ally,enemy,action){}
@@ -253,13 +196,17 @@ module.exports = class WeaponInterface{
 		let attacking = WeaponInterface.getAttacking(me,team,enemy);
 		if(!attacking) return;
 
+		let logs = new Logs();
+
 		/* Calculate damage */
 		let damage = WeaponInterface.getDamage(me.stats.att);
 
 		/* Deal damage */
 		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.PHYSICAL);
 
-		return `${me.nickname?me.nickname:me.animal.name}\`deals ${damage}\`<:att:531616155450998794>\` to \`${attacking.nickname?attacking.nickname:attacking.animal.name}`
+		logs.push(`[PHYS] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`,damage.logs);
+
+		return logs;
 	}
 
 	/* Get an enemy to attack */
@@ -285,11 +232,7 @@ module.exports = class WeaponInterface{
 	}
 
 	/* Deals damage to an opponent */
-	static inflictDamage(attacker,attackee,damage,type,last=false){
-		/* If opponent has a weapon, use that instead */
-		if(attackee.weapon)
-			return attackee.weapon.dealDamage(attacker,attackee,damage,type,last);
-
+	static inflictDamage(attacker,attackee,damage,type,tags={}){
 		let totalDamage = 0;
 		if(type==WeaponInterface.PHYSICAL)
 			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.pr));
@@ -300,54 +243,59 @@ module.exports = class WeaponInterface{
 		else
 			throw new Error("Invalid attack type");
 
+		let subLogs = new Logs();
+
 		if(totalDamage<0) totalDamage = 0;
 		totalDamage = [totalDamage,0];
 
 		/* Bonus damage calculation */
 		/* Event for attackee */
 		for(let i in attackee.buffs)
-			attackee.buffs[i].attacked(attackee,attacker,totalDamage,type,last);
+			subLogs.push(attackee.buffs[i].attacked(attackee,attacker,totalDamage,type,tags));
 		if(attackee.weapon)
 			for(let i in attackee.weapon.passives)
-				attackee.weapon.passives[i].attacked(attackee,attacker,totalDamage,type,last);
+				subLogs.push(attackee.weapon.passives[i].attacked(attackee,attacker,totalDamage,type,tags));
 		/* Event for attacker */
 		for(let i in attacker.buffs)
-			attacker.buffs[i].attack(attacker,attackee,totalDamage,type,last);
+			subLogs.push(attacker.buffs[i].attack(attacker,attackee,totalDamage,type,tags));
 		if(attacker.weapon)
 			for(let i in attacker.weapon.passives)
-				attacker.weapon.passives[i].attack(attacker,attackee,totalDamage,type,last);
+				subLogs.push(attacker.weapon.passives[i].attack(attacker,attackee,totalDamage,type,tags));
 
 		/* After bonus damage calculation */
 		/* Event for attackee */
 		for(let i in attackee.buffs)
-			attackee.buffs[i].postAttacked(attackee,attacker,totalDamage,type,last);
+			subLogs.push(attackee.buffs[i].postAttacked(attackee,attacker,totalDamage,type,tags));
 		if(attackee.weapon)
 			for(let i in attackee.weapon.passives)
-				attackee.weapon.passives[i].postAttacked(attackee,attacker,totalDamage,type,last);
+				subLogs.push(attackee.weapon.passives[i].postAttacked(attackee,attacker,totalDamage,type,tags));
 		/* Event for attacker */
 		for(let i in attacker.buffs)
-			attacker.buffs[i].postAttack(attacker,attackee,totalDamage,type,last);
+			subLogs.push(attacker.buffs[i].postAttack(attacker,attackee,totalDamage,type,tags));
 		if(attacker.weapon)
 			for(let i in attacker.weapon.passives)
-				attacker.weapon.passives[i].postAttack(attacker,attackee,totalDamage,type,last);
+				subLogs.push(attacker.weapon.passives[i].postAttack(attacker,attackee,totalDamage,type,tags));
 
 		totalDamage = totalDamage.reduce((a,b)=>a+b,0);
 		if(totalDamage<0) totalDamage = 0;
 		attackee.stats.hp[0] -= totalDamage;
-		return totalDamage;
+		return {amount:Math.round(totalDamage),logs:subLogs};
 	}
 
 	/* heals */
 	static heal(me,amount){
-		if(me.weapon) return me.weapon.heal(me,amount);
+		let max = me.stats.hp[1]+me.stats.hp[3];
 		/* Full health */
-		if(!me||me.stats.hp[0]>=me.stats.hp[1]+me.stats.hp[3])
-			return 0;
+		if(!me||me.stats.hp[0]>=max)
+			return {amount:0};
+
+		let logs = new Logs();
 
 		me.stats.hp[0] += amount;
-		if(me.stats.hp[0]>me.stats.hp[1])
-			me.stats.hp[0] = me.stats.hp[1];
-		return amount;
+		if(me.stats.hp[0]>max)
+			me.stats.hp[0] = max;
+
+		return {amount:Math.round(amount),logs};
 	}
 
 	getEmoji(quality){
