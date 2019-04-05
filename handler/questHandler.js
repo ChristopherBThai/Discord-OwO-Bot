@@ -9,6 +9,7 @@ const global = require('./../util/global.js');
 const findQuest = {"rare":["common","uncommon"],
 	"epic":["common","uncommon","rare"],
 	"mythical":["common","uncommon","rare","epic"]};
+const questBy = ["friendlyBattleBy","emoteBy","prayBy","cursedBy","cookieBy"];
 
 module.exports = class Quest{
 
@@ -18,21 +19,33 @@ module.exports = class Quest{
 
 	/* progress in a specific quest */
 	async increment(msg,questName,count=1,extra){
-		/* Grab current quest progress */
+		/* parse id and username */
+		let id = msg.author.id;
+		let username = msg.author.username;
+		if(questBy.includes(questName)){ 
+			id = extra.id;
+			username = extra.username;
+		}
+		id = BigInt(id);
+
+		/* Special quest parameters */
+		if(questName=="friendlyBattleBy") questName = "friendlyBattle";
+
+		/* Check if user has this quest */
 		var result = await mysql.query(
 			"SELECT * FROM quest WHERE qname = ? AND uid = (SELECT uid FROM user WHERE id = ?);",
-			[questName,BigInt((questName=="emoteBy")?extra.id:msg.author.id)]
+			[questName,id]
 		).catch(console.error);
-		
+
 		if(!result[0]) return;
 
 		for(var i=0;i<result.length;i++)
-			await check(msg,questName,result[i],count,extra);
+			await check(msg,id,username,questName,result[i],count,extra);
 	}
 }
 
 /* Check if user finished quest or increment quest progress */
-async function check(msg,questName,result,count,extra){
+async function check(msg,id,username,questName,result,count,extra){
 	/* Parse data for quest */
 	var quest = quests[questName];
 	if(!quest||!result) return;
@@ -53,29 +66,31 @@ async function check(msg,questName,result,count,extra){
 		else return;
 	}
 
+
 	/* Check if the quest is complete */
 	var text,rewardSql;
 	if(current >= needed){
 		var sql = "DELETE FROM quest WHERE qid = ? AND qname = ? AND uid = (SELECT uid FROM user WHERE id = ?);";
-		var variables = [result.qid,questName,BigInt((questName=="emoteBy")?extra.id:msg.author.id)];
-		var text = "**📜 | "+((questName=="emoteBy")?extra.username:msg.author.username)+"**! You finished a quest and earned: ";
+
+		var variables = [result.qid,questName,id];
+		var text = "**📜 | "+username+"**! You finished a quest and earned: ";
 		if(rewardType=="lootbox"){
 			text += "<:box:427352600476647425>".repeat(reward);
 			rewardSql = "INSERT INTO lootbox (id,boxcount,claim) VALUES (?,?,'2017-01-01 10:10:10') ON DUPLICATE KEY UPDATE boxcount = boxcount + ?;";
-			var rewardVar = [BigInt((questName=="emoteBy")?extra.id:msg.author.id),reward,reward];
+			var rewardVar = [id,reward,reward];
 		}else if(rewardType=="crate"){
 			text += "<:crate:523771259302182922>".repeat(reward);
 			rewardSql = "INSERT INTO crate (uid,boxcount,claim) VALUES ((SELECT uid FROM user WHERE id = ?),?,'2017-01-01 10:10:10') ON DUPLICATE KEY UPDATE boxcount = boxcount + ?;";
-			var rewardVar = [BigInt((questName=="emoteBy")?extra.id:msg.author.id),reward,reward];
+			var rewardVar = [id,reward,reward];
 		}else{
 			text += global.toFancyNum(reward)+" <:cowoncy:416043450337853441>";
 			rewardSql = "INSERT INTO cowoncy (id,money) VALUES (?,?) ON DUPLICATE KEY UPDATE money = money + ?";
-			var rewardVar = [BigInt((questName=="emoteBy")?extra.id:msg.author.id),reward,reward];
+			var rewardVar = [id,reward,reward];
 		}
 		text += "!";
 	}else{
 		var sql = "UPDATE IGNORE quest SET count = count + ? WHERE qid = ? AND qname = ? AND uid = (SELECT uid FROM user WHERE id = ?);";
-		var variables = [count,result.qid,questName,BigInt((questName=="emoteBy")?extra.id:msg.author.id)];
+		var variables = [count,result.qid,questName,id];
 	}
 
 	/* Query sql */

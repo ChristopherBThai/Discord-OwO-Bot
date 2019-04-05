@@ -883,6 +883,9 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 		if(!playerWin&&!enemyWin) return;
 
 		await teamUtil.giveXP(p,battle.player,pXP);
+		/* xp quest */
+		p.quest("xp",pXP.total);
+
 		await teamUtil.giveXP(p,battle.enemy,eXP.xp);
 	}
 

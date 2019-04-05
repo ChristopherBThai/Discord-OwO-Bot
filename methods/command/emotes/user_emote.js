@@ -45,7 +45,7 @@ module.exports = new CommandInterface({
 			var text = emote.self[Math.floor(Math.random()*emote.self.length)];
 			text = text.replace(/\?/,msg.author.username);
 			msg.channel.send(text)
-				.catch(err => consoleI.error(err));
+				.catch(err => console.error(err));
 			return;
 		}
 		var text = emote.msg[Math.floor(Math.random()*emote.msg.length)];

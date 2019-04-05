@@ -45,7 +45,7 @@ function lexus(text,type){
 		case 'returned':
 			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,lunawave)
 				.replace("BEEP BOOP. I AM BACK WITH","Woof! I am back with")
-				.replace("ANIMALS","animals")
+				.replace("ANIMALS","friends")
 				.replace("ESSENCE, AND","essence, and")
 				.replace("EXPERIENCE","exprerience!");
 		default:
