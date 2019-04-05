@@ -121,7 +121,13 @@ module.exports = new CommandInterface({
 			speed:"short",
 			title:p.msg.author.username+" vs "+sender.username
 		}
+
+		if(sender&&sender.id!=p.msg.author.id){
+			p.quest("friendlyBattle");
+			p.quest("friendlyBattleBy",1,sender);
+		}
 		await battleUtil.displayAllBattles(p,teams,logs,setting);
+
 	}
 });
 

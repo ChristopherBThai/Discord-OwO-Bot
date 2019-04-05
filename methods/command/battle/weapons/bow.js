@@ -12,8 +12,8 @@ module.exports = class Bow extends WeaponInterface{
 		this.statDesc = "Deals **?%** of your "+WeaponInterface.magEmoji+"MAG to a random opponent";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
-		this.qualityList = [[90,150]];
-		this.manaRange = [250,150];
+		this.qualityList = [[100,160]];
+		this.manaRange = [220,120];
 	}
 
 	attackWeapon(me,team,enemy){

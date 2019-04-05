@@ -81,6 +81,7 @@ module.exports = new CommandInterface({
 					p.logger.value('cowoncy',-5,['command:hunt','id:'+msg.author.id]);
 					p.quest("hunt");
 					p.quest("find",1,animal.typeCount);
+					p.quest("xp",animal.xp);
 					p.send(text);
 				});
 			}

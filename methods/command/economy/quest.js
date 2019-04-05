@@ -242,6 +242,21 @@ function parseQuest(questInfo){
 		case "find":
 			var text = "Find 3 animals that are "+count+" rank!";
 			break;
+		case "cookieBy":
+			var text = "Receive a cookie by "+count+" friends!";
+			break;
+		case "prayBy":
+			var text = "Have a friend pray to you "+count+" times!";
+			break;
+		case "curseBy":
+			var text = "Have a friend curse to you "+count+" times!";
+			break;
+		case "friendlyBattle":
+			var text = "Battle with a friend "+count+" times!";
+			break;
+		case "xp":
+			var text = "Earn  "+count+" xp from hunting and battling!";
+			break;
 		default:
 			var text = "Invalid Quest";
 			break;

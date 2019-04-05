@@ -15,7 +15,7 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	cooldown:300000,
+	cooldown:1000,//300000,
 	half:100,
 	six:500,
 	bot:true,
@@ -26,6 +26,7 @@ module.exports = new CommandInterface({
 			user = await p.global.getUser(p.args[0]);
 		if(user&&user.id == p.msg.author.id)
 			user = undefined;
+		let quest;
 
 		var text = "";
 		var authorPoints = 0, opponentPoints = 0;
@@ -35,6 +36,7 @@ module.exports = new CommandInterface({
 				text = "**🙏 | "+p.msg.author.username+"** prays for **"+user.username+"**! "+prayLine;
 				authorPoints = -1;
 				opponentPoints = 1;
+				quest = "prayBy";
 			}else{
 				text = "**🙏 | "+p.msg.author.username+"** prays... "+prayLine;
 				authorPoints = 1;
@@ -45,6 +47,7 @@ module.exports = new CommandInterface({
 				text = "**👻 | "+p.msg.author.username+"** puts a curse on **"+user.username+"**! "+curseLine;
 				authorPoints = 1;
 				opponentPoints = -1;
+				quest = "curseBy";
 			}else{
 				text = "**👻 | "+p.msg.author.username+"** is now cursed. "+curseLine;
 				authorPoints = -1;
@@ -58,6 +61,7 @@ module.exports = new CommandInterface({
 			if(err) {console.error(err);return;}
 			text += "\n**<:blank:427371936482328596> |** You have **"+(result[1][0].lcount)+"** luck point(s)!";
 			p.send(text);
+			if(user&&quest) p.quest(quest,1,user);
 		});
 	}
 

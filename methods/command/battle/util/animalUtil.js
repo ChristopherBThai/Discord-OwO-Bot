@@ -1,4 +1,5 @@
 const WeaponInterface = require('../WeaponInterface.js');
+
 exports.stats = function(animal){
 
 	/* Parse animal stats */
