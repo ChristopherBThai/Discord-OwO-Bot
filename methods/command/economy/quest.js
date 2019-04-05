@@ -249,7 +249,7 @@ function parseQuest(questInfo){
 			var text = "Have a friend pray to you "+count+" times!";
 			break;
 		case "curseBy":
-			var text = "Have a friend curse to you "+count+" times!";
+			var text = "Have a friend curse you "+count+" times!";
 			break;
 		case "friendlyBattle":
 			var text = "Battle with a friend "+count+" times!";
