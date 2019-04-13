@@ -5,7 +5,7 @@ exports.alter = function(id,text){
 			return geist(text);
 		case '369533933471268875':
 			return light(text);
-		case '184587051943985152'://'242718397836558337':
+		case '242718397836558337':
 			return shippig(text);
 		default:
 			return text;
