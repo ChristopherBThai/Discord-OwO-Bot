@@ -73,7 +73,7 @@ async function display(p){
 	let afterMid = dateUtil.afterMidnight(result[0]?result[0].cookieTime:undefined);
 
 	let count = 0;
-	if(result[0]||result[0].count) count = result[0].count;
+	if(result[0]&&result[0].count) count = result[0].count;
 	var again = "You have one cookie to send!";
 
 	if(afterMid&&!afterMid.after){
