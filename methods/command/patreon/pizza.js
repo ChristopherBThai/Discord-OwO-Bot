@@ -29,6 +29,9 @@ module.exports = new CommandInterface({
 			if(!user){
 				p.errorMsg(", Invalid syntax! Please tag a user!",3000);
 				return;
+			}else if(user.id==p.msg.author.id){
+				p.errorMsg(", You cannot give pizza to yourself!!",3000);
+				return;
 			}
 			give(p,user);
 		}
@@ -59,7 +62,7 @@ async function give(p,user){
 	}
 
 	// Add two pizza
-	sql = `INSERT IGNORE INTO pizza (uid,count) VALUES ((SELECT uid FROM user WHERE id = 3${user.id}),2) ON DUPLICATE KEY UPDATE count = count + 2;`;
+	sql = `INSERT IGNORE INTO pizza (uid,count) VALUES ((SELECT uid FROM user WHERE id = ${user.id}),2) ON DUPLICATE KEY UPDATE count = count + 2;`;
 	result = await p.query(sql);
 	if(result.warningCount>0){
 		sql = `INSERT IGNORE INTO user (id,count) VALUES (${user.id},0);${sql}`;
