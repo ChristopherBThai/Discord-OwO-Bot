@@ -43,7 +43,11 @@ module.exports = class Shield extends WeaponInterface{
 
 		/* deplete weapon points*/
 		let mana = WeaponInterface.useMana(animal,this.manaCost,animal,{me:animal,allies:ally,enemies:enemy});
-		logs.push(`[AEGIS] ${animal.nickname} used ${mana.amount} WP`,mana.logs);
+		let manaLogs = new Logs();
+		manaLogs.push(`[AEGIS] ${animal.nickname} used ${mana.amount} WP`,mana.logs);
+
+		logs.addSubLogs(manaLogs);
+
 		return logs
 	}
 

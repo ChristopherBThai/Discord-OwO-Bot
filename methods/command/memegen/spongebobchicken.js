@@ -49,6 +49,7 @@ module.exports = new CommandInterface({
 			te = ctx.measureText(text);
 			if(lines>4){
 				p.send("**🚫 | "+p.msg.author.username+"**, The text is too long!");
+				p.setCooldown(5);
 				return;
 			}
 			ctx.fillText(text,10,80-(lines*15));

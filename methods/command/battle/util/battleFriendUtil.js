@@ -83,16 +83,22 @@ exports.challenge = async function(p,id,bet){
 	stats[user1] = result[5][0]?result[5][0].win1:0;
 	stats[user2] = result[5][0]?result[5][0].win2:0;
 
+	/* Parse flags */
+	let flags = p.args.slice(1);
+	if(p.global.isInt(flags[0]))
+		flags = flags.slice(1);
+	flags = parseFlags(p,flags);
+
 	/* Insert challenge to database */
-	sql = `INSERT INTO user_battle (user1,user2,sender,bet) values ((SELECT uid FROM user WHERE id = ${user1}),(SELECT uid FROM user WHERE id = ${user2}),(SELECT uid FROM user WHERE id = ${p.msg.author.id}),${bet}) ON DUPLICATE KEY UPDATE time = NOW(), sender = (SELECT uid FROM user WHERE id = ${p.msg.author.id}), bet = ${bet};`;
+	sql = `INSERT INTO user_battle (user1,user2,sender,bet,flags) values ((SELECT uid FROM user WHERE id = ${user1}),(SELECT uid FROM user WHERE id = ${user2}),(SELECT uid FROM user WHERE id = ${p.msg.author.id}),${bet},'${flags}') ON DUPLICATE KEY UPDATE time = NOW(), sender = (SELECT uid FROM user WHERE id = ${p.msg.author.id}), bet = ${bet}, flags = '${flags}';`;
 	result = p.query(sql);
 
 	/* Send challenge request */
-	let embed = toEmbedRequest(p,stats,bet,player,enemy);
+	let embed = toEmbedRequest(p,stats,bet,player,enemy,flags);
 	p.send({embed});
 }
 
-function toEmbedRequest(p,stats,bet,sender,receiver){
+function toEmbedRequest(p,stats,bet,sender,receiver,flags){
 	let text = "";
 	for(let i in sender.team){
 		let animal = sender.team[i];
@@ -123,12 +129,26 @@ function toEmbedRequest(p,stats,bet,sender,receiver){
 		}
 	}
 
+	let flagText = "";
+	flags = flags.split(",");
+	for(let i in flags){
+		let flag = flags[i];
+		if(flag=="log"){
+			flagText += "`LOGS` ";
+		}else if(flag=="compact"||flag=="image"||flag=="text"){
+			flagText += "`"+flag.toUpperCase()+"` ";
+		}else if(/^l[0-9]+$/.test(flag)){
+			flagText += "`LVL"+flag.substring(1)+"` ";
+		}
+	}
+	if(flagText!="") flagText = "\nFlags: "+flagText;
+
 	var embed = {
 		author:{
 			name: sender.username+" challenged "+receiver.username+" to a battle!",
 			icon_url: p.msg.author.avatarURL
 		},
-		description: "Bet amount: "+bet+" cowoncy\n`owo ab` to accept the battle!\n`owo db` to decline the battle!",
+		description: "Bet amount: "+bet+" cowoncy"+flagText+"\n`owo ab` to accept the battle!\n`owo db` to decline the battle!",
 		fields: [
 		{
 			name:(sender.name?sender.name:sender.username+"'s Team")+(sender.id==receiver.id?"":" | "+(stats[sender.id]?stats[sender.id]:0)+" wins"),
@@ -156,4 +176,57 @@ exports.inBattle = async function(p){
 		) AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 10;`
 	let result = await p.query(sql);
 	return result[0];
+}
+
+function parseFlags(p,flags){
+	let result = [];
+	let usedFlags = [];
+
+	flags = flags.join("")
+		.replace(/[=:]/gi,"")
+		.toLowerCase()
+		.split("-");
+
+	for(i in flags){
+		let flag = parseFlag(p,flags[i]);
+		if(flag&&!usedFlags.includes(flag.flag)){
+			result.push(flag.res);
+			usedFlags.push(flag.flag);
+		}
+	}
+
+	return result.join(",");
+}
+
+function parseFlag(p,flag){
+	if(flag.startsWith("display")){
+		flag = flag.replace("display","");
+		switch(flag){
+			case "text":
+				return {flag:"display",res:"text"};
+				break;
+			case "compact":
+				return {flag:"display",res:"compact"};
+				break;
+			case "image":
+				return {flag:"display",res:"image"};
+				break;
+			default:
+				return undefined;
+		}
+	}else if(flag=="log"||flag=="logs"){
+		return {flag:"log",res:"log"};
+	}else if(flag.startsWith("lvl")||flag.startsWith("level")){
+		flag = flag.replace("level","")
+			.replace("lvl","");
+		if(p.global.isInt(flag)){
+			flag = parseInt(flag);
+			if(flag<1) flag = 1;
+			if(flag>100) flag = 100;
+			return {flag:"lvl",res:"l"+flag};
+		}else{
+			return undefined;
+		}
+	}
+	return undefined;
 }

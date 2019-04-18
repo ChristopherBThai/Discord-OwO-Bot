@@ -62,6 +62,7 @@ function car(p){
 		te = ctx.measureText(text);
 		if(lines>4){
 			p.send("**🚫 | "+p.msg.author.username+"**, The text is too long!",3000);
+			p.setCooldown(5);
 			return;
 		}
 		ctx.fillText(text,10,80-(lines*15));
@@ -110,6 +111,7 @@ function user(p){
 				te = ctx.measureText(text);
 				if(lines>4){
 					p.send("**🚫 | "+p.msg.author.username+"**, The text is too long!");
+					p.setCooldown(5);
 					return;
 				}
 				ctx.fillText(text,10,80-(lines*15));
@@ -132,6 +134,7 @@ function emoji(p){
 		var url = p.args[p.args.length-1].match(/:[0-9]+>/gi);
 		if(!url||!url[0]){
 			p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the emoji",3000); 
+			p.setCooldown(5);
 			return;
 		}
 		url = "https://cdn.discordapp.com/emojis/"+url[0].slice(1,url[0].length-1)+".png";
@@ -167,6 +170,7 @@ function emoji(p){
 				te = ctx.measureText(text);
 				if(lines>4){
 					p.send("**🚫 | "+p.msg.author.username+"**, The text is too long!");
+					p.setCooldown(5);
 					return;
 				}
 				ctx.fillText(text,10,80-(lines*15));
