@@ -29,6 +29,11 @@ module.exports = class Bow extends WeaponInterface{
 
 		let logs = new Logs();
 
+		/* deplete weapon points*/
+		let mana = WeaponInterface.useMana(me,this.manaCost,me,{me,allies:team,enemies:enemy});
+		let manaLogs = new Logs();
+		manaLogs.push(`[BOW] ${me.nickname} used ${mana.amount} WP`,mana.logs);
+
 		/* Calculate damage */
 		let damage = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);
 
@@ -36,9 +41,7 @@ module.exports = class Bow extends WeaponInterface{
 		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.MAGICAL,{me,allies:team,enemies:enemy});
 		logs.push(`[BOW] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
 
-		/* deplete weapon points*/
-		let mana = WeaponInterface.useMana(me,this.manaCost,me,{me,allies:team,enemies:enemy});
-		logs.push(`[BOW] ${me.nickname} used ${mana.amount} WP`,mana.logs);
+		logs.addSubLogs(manaLogs);
 
 		return logs
 

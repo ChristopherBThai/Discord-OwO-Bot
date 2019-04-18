@@ -28,28 +28,45 @@ module.exports = class VampStaff extends WeaponInterface{
 		/* Calculate damage */
 		let damage = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);
 
+		/* deplete weapon points*/
+		let mana = WeaponInterface.useMana(me,this.manaCost,me,{me,allies:team,enemies:enemy});
+		let manaLogs = new Logs();
+		manaLogs.push(`[VSTAFF] ${me.nickname} used ${mana.amount} WP`,mana.logs);
+
 		/* Deal damage to all opponents*/
 		let dealt = 0;
+		let logText = `[VSTAFF] ${me.nickname} damaged `;
+		let subLogs = new Logs();
 		for(let i=0;i<enemy.length;i++){
 			if(enemy[i].stats.hp[0]>0){
 				let dmg = WeaponInterface.inflictDamage(me,enemy[i],damage,WeaponInterface.MAGICAL,{me,allies:team,enemies:enemy});
 				dealt += dmg.amount;
-				logs.push(`[VSTAFF] ${me.nickname} damaged ${enemy[i].nickname} for ${dmg.amount} HP`, dmg.logs);
+				logText += `${enemy[i].nickname} -${dmg.amount} | `;
+				subLogs.push(dmg.logs);
 			}
 		}
+		logText = logText.slice(0,-2) + "HP";
+		logs.push(logText,subLogs);
 
 		/* Heal all allies */
-		let heal = dealt/3;
+		let alive = WeaponInterface.getAlive(team);
+		alive = alive.length>1?alive.length:1;
+		let heal = dealt/alive;
+		logText = `[VSTAFF] ${me.nickname} healed `;
+		subLogs = new Logs();
 		for(let i=0;i<team.length;i++){
 			if(team[i].stats.hp[0]>0){
 				let hl = WeaponInterface.heal(team[i],heal,me,{me,allies:team,enemies:enemy});
-				logs.push(`[VSTAFF] ${me.nickname} healed ${team[i].nickname} for ${hl.amount} HP`, hl.logs);
+				logText += `${team[i].nickname} ${hl.amount} | `;
+				subLogs.push(hl.logs);
 			}
 		}
+		logText = logText.slice(0,-2) + "HP";
+		let healLogs = new Logs();
+		healLogs.push(logText,subLogs);
+		logs.addSubLogs(healLogs);
 
-		/* deplete weapon points*/
-		let mana = WeaponInterface.useMana(me,this.manaCost,me,{me,allies:team,enemies:enemy});
-		logs.push(`[VSTAFF] ${me.nickname} used ${mana.amount} WP`,mana.logs);
+		logs.addSubLogs(manaLogs);
 
 		return logs;
 	}
