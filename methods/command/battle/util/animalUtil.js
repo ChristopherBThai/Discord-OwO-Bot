@@ -1,9 +1,10 @@
 const WeaponInterface = require('../WeaponInterface.js');
 
-exports.stats = function(animal){
+exports.stats = function(animal,flags){
 
 	/* Parse animal stats */
 	let lvl = this.toLvl(animal.xp);
+	if(flags&&flags.level) lvl.lvl = flags.level;
 	/* Parse base animal stat*/
 	let stats = this.parseStats(animal.animal,lvl.lvl);
 	
