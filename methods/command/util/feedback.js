@@ -27,13 +27,16 @@ module.exports = new CommandInterface({
 		var message = p.args.join(" ");
 		if(!message||message === ''){
 			p.send("**🚫 |** Silly **"+p.msg.author.username+"**, you need to add a message!",3000);
+			p.setCooldown(5);
 			return;
 		}
 		if(p.command!="suggest"&&message.length > 250){
 			p.send("**🚫 |** Sorry, "+p.msg.author.username+"! Messages must be under 250 character!!!",3000);
+			p.setCooldown(5);
 			return;
 		}else if(message.length > 1500){
 			p.send("**🚫 |** Sorry, "+p.msg.author.username+"! Suggestions must be under 1500 character!!!",3000);
+			p.setCooldown(5);
 			return;
 		}
 		if(p.command == "suggest"){

@@ -212,12 +212,14 @@ function initParam(msg,command,args,client,dbl){
 		"Error":Error,
 		"global":global,
 		"aliasToCommand":aliasToCommand,
+		"commandAlias":aliasToCommand[command],
 		"commands":commands,
 		"mcommands":mcommands,
 		"logger":logger,
 		"log":logger.log,
 		"config":config,
-		"quest":function(questName,count,extra){questHandler.increment(msg,questName,count,extra).catch(console.error)}
+		"quest":function(questName,count,extra){questHandler.increment(msg,questName,count,extra).catch(console.error)},
+		"setCooldown":function(cooldown){macro.setCooldown(msg.author.id,aliasToCommand[command],commands[command].cooldown,cooldown);}
 	};
 	return param;
 }
