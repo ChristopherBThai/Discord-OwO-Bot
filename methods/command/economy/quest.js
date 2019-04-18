@@ -243,7 +243,7 @@ function parseQuest(questInfo){
 			var text = "Find 3 animals that are "+count+" rank!";
 			break;
 		case "cookieBy":
-			var text = "Receive a cookie by "+count+" friends!";
+			var text = "Receive a cookie from "+count+" friends!";
 			break;
 		case "prayBy":
 			var text = "Have a friend pray to you "+count+" times!";

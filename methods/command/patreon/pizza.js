@@ -16,15 +16,16 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	cooldown:300000,
-	half:6,
-	six:70,
+	cooldown:30000,
+	half:80,
+	six:400,
 	bot:true,
 
 	execute: async function(p){
-		if(p.args.length==0)
+		if(p.args.length==0){
 			display(p);
-		else{
+			p.setCooldown(10);
+		}else{
 			let user = await p.global.getUser(p.args[0]);
 			if(!user){
 				p.errorMsg(", Invalid syntax! Please tag a user!",3000);

@@ -32,9 +32,11 @@ module.exports = new CommandInterface({
 		args = args.split(/\n+/g);
 		if(args.length>3){
 			p.send("**🚫 | "+p.msg.author.username+"**, you have more than 3 arguments!",3000);
+			p.setCooldown(5);
 			return;
 		}else if(args.length<1){
 			p.send("**🚫 | "+p.msg.author.username+"**, you need at least 1 argument!",3000);
+			p.setCooldown(5);
 			return;
 		}
 		fs.readFile('./json/images/isthisa.jpg',function(err,image){

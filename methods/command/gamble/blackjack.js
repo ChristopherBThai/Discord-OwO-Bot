@@ -32,9 +32,11 @@ module.exports = new CommandInterface({
 			amount = "all";
 		else if(amount==undefined){
 			p.send("**🚫 | "+msg.author.username+"**, Invalid arguments!",3000);
+			p.setCooldown(5);
 			return;
 		}else if(amount<=0){
 			p.send("**🚫 | "+msg.author.username+"**, You can't bet that much silly!",3000);
+			p.setCooldown(5);
 			return;
 		}
 

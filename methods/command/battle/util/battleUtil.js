@@ -618,7 +618,10 @@ exports.displayAllBattles = async function(p,battle,logs,setting){
 		let battleLogs = [];
 		for(let i=0;i<logs.length;i++)
 			if(logs[i].battleLogs) battleLogs.push(logs[i].battleLogs);
-		await finishBattle(null,p,battle,endResult.color,endResult.text,endResult.player,endResult.enemy,battleLogs,setting);
+		if(setting.friendlyBattle)
+			await finishFriendlyBattle(null,p,battle,endResult.color,endResult.text,endResult.player,endResult.enemy,battleLogs,setting).catch(console.error);
+		else
+			await finishBattle(null,p,battle,endResult.color,endResult.text,endResult.player,endResult.enemy,battleLogs,setting);
 		return;
 	}
 
@@ -922,7 +925,7 @@ async function finishFriendlyBattle(msg,p,battle,color,text,playerWin,enemyWin,l
 	embed.embed.color = color;
 	embed.embed.footer = {text};
 	if(msg) await msg.edit(embed);
-	else p.send(embed);
+	else await p.send(embed);
 }
 
 /* Calculate xp depending on win/loss/tie */

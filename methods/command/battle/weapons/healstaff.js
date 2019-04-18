@@ -27,21 +27,21 @@ module.exports = class HealStaff extends WeaponInterface{
 		
 		/* Grab lowest hp */
 		let lowest = WeaponInterface.getLowestHp(team);
-		if(!lowest) return this.attackPhysical(me,team,enemy);
+		if(!lowest||WeaponInterface.isMaxHp(lowest)) return this.attackPhysical(me,team,enemy);
 
 		/* Calculate heal */
 		let heal = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);
+
+		/* deplete weapon points*/
+		let mana = WeaponInterface.useMana(me,this.manaCost,me,{me,allies:team,enemies:enemy});
+		let manaLogs = new Logs();
+		manaLogs.push(`[HSTAFF] ${me.nickname} used ${mana.amount} WP`,mana.logs);
 
 		/* Heal ally */
 		heal = WeaponInterface.heal(lowest,heal,me,{me,allies:team,enemies:enemy});
 		logs.push(`[HSTAFF] ${me.nickname} healed ${lowest.nickname} for ${heal.amount} HP`, heal.logs);
 
-		/* Everyone at full health */
-		if(heal===0) return this.attackPhysical(me,team,enemy);
-
-		/* deplete weapon points*/
-		let mana = WeaponInterface.useMana(me,this.manaCost,me,{me,allies:team,enemies:enemy});
-		logs.push(`[HSTAFF] ${me.nickname} used ${mana.amount} WP`,mana.logs);
+		logs.addSubLogs(manaLogs);
 
 		return logs;
 

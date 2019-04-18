@@ -25,20 +25,28 @@ module.exports = class GreatSword extends WeaponInterface{
 
 		let logs = new Logs();
 
+		/* deplete weapon points*/
+		let mana = WeaponInterface.useMana(me,this.manaCost,me,{me,allies:team,enemies:enemy});
+		let manaLogs = new Logs();
+		manaLogs.push(`[GSWORD] ${me.nickname} used ${mana.amount} WP`,mana.logs);
+
 		/* Calculate damage */
 		let damage = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);
 
 		/* Deal damage to all opponents*/
+		let logText = `[GSWORD] ${me.nickname} damaged `;
+		let subLogs = new Logs();
 		for(let i=0;i<enemy.length;i++){
 			if(enemy[i].stats.hp[0]>0){
 				let dmg = WeaponInterface.inflictDamage(me,enemy[i],damage,WeaponInterface.MAGICAL,{me,allies:team,enemies:enemy});
-				logs.push(`[GSWORD] ${me.nickname} damaged ${enemy[i].nickname} for ${dmg.amount} HP`, dmg.logs);
+				logText += `${enemy[i].nickname} -${dmg.amount} | `;
+				subLogs.push(dmg.logs);
 			}
 		}
+		logText = logText.slice(0,-2) + "HP";
 
-		/* deplete weapon points*/
-		let mana = WeaponInterface.useMana(me,this.manaCost,me,{me,allies:team,enemies:enemy});
-		logs.push(`[GSWORD] ${me.nickname} used ${mana.amount} WP`,mana.logs);
+		logs.push(logText,subLogs);
+		logs.addSubLogs(manaLogs);
 
 		return logs;
 
