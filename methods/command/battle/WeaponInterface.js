@@ -305,6 +305,18 @@ module.exports = class WeaponInterface{
 			for(let i in from.weapon.passives)
 				subLogs.push(from.weapon.passives[i].heal(me,from,totalHeal,tags));
 
+		/* Adjust healing if its overheal */
+		if(me.stats.hp[0]+totalHeal.reduce((a,b)=>a+b,0)>max){
+			let over = me.stats.hp[0]+totalHeal.reduce((a,b)=>a+b)-max;
+			if(totalHeal[1]>=over)
+				totalHeal[1] -= over;
+			else{
+				over -= totalHeal[1];
+				totalHeal[1] = 0;
+				totalHeal[0] -= over;
+			}
+		}
+
 		/* After bonus heal calculation */
 		/* Event for me*/
 		for(let i in me.buffs)
@@ -323,8 +335,11 @@ module.exports = class WeaponInterface{
 		if(totalHeal<0) totalHeal = 0;
 
 		me.stats.hp[0] += totalHeal;
-		if(me.stats.hp[0]>max)
+		if(me.stats.hp[0]>max){
+			totalHeal -= me.stats.hp[0]-max;
 			me.stats.hp[0] = max;
+		}
+		if(totalHeal<0) totalHeal = 0;
 
 		return {amount:Math.round(totalHeal),logs:subLogs};
 	}
@@ -375,6 +390,12 @@ module.exports = class WeaponInterface{
 						>team[i].stats.hp[0]/(team[i].stats.hp[1]+team[i].stats.hp[3]))
 					lowest = team[i];
 		return lowest;
+	}
+
+	/* Check if the animal is at max or higher health */
+	static isMaxHp(animal){
+		let hp = animal.stats.hp;
+		return hp[0] >= hp[1]+hp[3];
 	}
 
 	/* Convert resistance to percent */
