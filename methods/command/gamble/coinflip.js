@@ -41,6 +41,7 @@ module.exports = new CommandInterface({
 			bet = "all";
 		}else if(args.length!=1){
 			p.send("**🚫 | "+msg.author.username+"**, Invalid arguments!!",3000);
+			p.setCooldown(5);
 			return;
 		}
 
@@ -56,12 +57,15 @@ module.exports = new CommandInterface({
 		//Final syntax check
 		if(bet==0){
 			p.send("**🚫 | "+msg.author.username+"**, You can't bet 0 dum dum!",3000);
+			p.setCooldown(5);
 			return;
 		}else if(bet<0){
 			msg.channel.send("**🚫 | "+msg.author.username+"**, Do you understand how to bet cowoncy???",3000);
+			p.setCooldown(5);
 			return;
 		}else if(choice==undefined){
 			msg.channel.send("**🚫 | "+msg.author.username+"**, You must choose either `heads` or `tails`!",3000);
+			p.setCooldown(5);
 			return;
 		}
 

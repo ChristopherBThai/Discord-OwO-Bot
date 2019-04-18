@@ -34,14 +34,17 @@ module.exports = new CommandInterface({
 			all = true;
 		else{
 			p.send("**🚫 |** Invalid arguments!! :c",3000);
+			p.setCooldown(5);
 			return;
 		}
 
 		if(amount==0&&!all){
 			p.send("**🚫 |** uwu.. you can't bet nothing silly!",3000);
+			p.setCooldown(5);
 			return;
 		}else if(amount<0){
 			p.send("**🚫 |** Do you want to lose even more money????",3000);
+			p.setCooldown(5);
 			return;
 		}
 

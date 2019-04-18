@@ -29,6 +29,7 @@ module.exports = new CommandInterface({
 		args = args.split(/\n+/g);
 		if(args.length!=2){
 			p.send("**🚫 | "+p.msg.author.username+"**, you need 2 arguments!",3000);
+			p.setCooldown(5);
 			return;
 		}
 		canvasUtil.loadBackground('./json/images/drake.jpg',function(err,ctx,canvas,image){
