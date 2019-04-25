@@ -13,7 +13,7 @@ const DBL = require("dblapi.js");
 const dbl = new DBL(auth.dbl);
 
 const mysql = require('./util/mysql.js');
-
+const uncaughtHandler = require('./handler/uncaughtHandler.js');
 const CommandClass = require('./methods/command.js');
 const command = new CommandClass(client,dbl);
 const macro = require('../tokens/macro.js');
@@ -126,4 +126,5 @@ process.on('unhandledRejection', (reason, promise) => {
 process.on('uncaughtException', err => {
 	console.error("uncaughtException at Shard "+client.shard.id+" error "+(new Date()).toLocaleString());
 	console.error(err);
+	uncaughtHandler.handle(err);
 });
