@@ -45,8 +45,14 @@ function handleDisconnect(){
 	module.exports.con = con;
 }
 
+function reconnect(){
+	console.error("MYSQL IS GOING TO RECONNECT");
+	handleDisconnect();
+}
+
 exports.con = con;
 exports.mysql = mysql;
+exports.reconnect = reconnect;
 
 handleDisconnect();
 

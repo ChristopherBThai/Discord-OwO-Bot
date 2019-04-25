@@ -14,6 +14,7 @@ var CLIENT_SECRET = auth.patreonSecret;
 
 var link = '/campaigns/1623609/members?include=user&fields%5Bmember%5D=full_name,last_charge_date,last_charge_status,lifetime_support_cents&fields%5Buser%5D=first_name,social_connections&page%5Bcount%5D=100';
 
+let ids = "";
 
 function request(url){
 	setTimeout(function(){requestRec(url)},15000);
@@ -23,9 +24,11 @@ async function requestRec(url){
 		let valid = validPayments(result.rawJson.data);
 		did = parseDiscordUser(result,valid);
 		if(did.length>0)
-			console.log(did.join(",")+",")
-		if(result.rawJson.links.next)
+			ids += did.join(",")+",";
+		if(result.rawJson.links&&result.rawJson.links.next)
 			requestRec(result.rawJson.links.next.replace("https://www.patreon.com/api/oauth2/v2",""));
+		else
+			console.log(ids);
 
 	}).catch(console.error);
 }
@@ -61,7 +64,7 @@ function parseDiscordUser(result,valid){
 
 function checkDate(date){
 	var userDate = new Date(date);
-	var pastDate = new Date('2019-2-25');
+	var pastDate = new Date('2019-3-20');
 	return userDate > pastDate
 }
 
