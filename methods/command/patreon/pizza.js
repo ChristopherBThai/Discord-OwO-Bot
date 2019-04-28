@@ -56,7 +56,7 @@ async function give(p,user){
 		let result = await p.query(sql);
 		
 		// Error checking
-		if(false&&result.changedRows==0){
+		if(result.changedRows==0){
 			p.errorMsg(", you do not have any pizza! >:c",3000);
 			return;
 		}
