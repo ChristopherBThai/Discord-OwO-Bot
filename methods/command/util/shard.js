@@ -55,6 +55,8 @@ module.exports = new CommandInterface({
 
 async function fetchInfo(p){
 	return result = await p.client.shard.broadcastEval(`
+		let startedAt = "OFFLINE";
+		if(this.readyAt) startedAt = this.readyAt.toLocaleString();
 		let result = {
 			id:this.shard.id,
 			users:this.users.size,
@@ -62,7 +64,7 @@ async function fetchInfo(p){
 			channels:this.channels.size,
 			ping:this.ping,
 			uptime:this.uptime,
-			startedAt:this.readyAt.toLocaleString()
+			startedAt
 		}
 		result;
 	`);

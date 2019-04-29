@@ -12,9 +12,24 @@ config = {
 	charset: "utf8mb4"
 };
 
-var con;
+var pool = mysql.createPool(config);
+pool.on('connection', function (connection) {
+	  console.log('New connect %d', connection.threadId);
+});
+/*
+pool.on('acquire', function (connection) {
+	  console.log('Connection %d acquired', connection.threadId);
+});
+pool.on('enqueue', function () {
+	  console.log('Waiting for available connection slot');
+});
+pool.on('release', function (connection) {
+	  console.log('Connection %d released', connection.threadId);
+});
+*/
+/*
 function handleDisconnect(){
-	con = mysql.createConnection(config);
+	pool = mysql.createPool(config);
 
 	con.connect(function(err){
 		if(err) {
@@ -47,14 +62,15 @@ function handleDisconnect(){
 
 function reconnect(){
 	console.error("MYSQL IS GOING TO RECONNECT");
+	console.log("MYSQL IS GOING TO RECONNECT");
+	con.disconnect();
 	handleDisconnect();
 }
+*/
 
-exports.con = con;
+exports.con = pool;
 exports.mysql = mysql;
-exports.reconnect = reconnect;
-
-handleDisconnect();
-
-module.exports.reconnect = handleDisconnect;
+//exports.reconnect = reconnect;
+//handleDisconnect();
+//module.exports.reconnect = reconnect;
 
