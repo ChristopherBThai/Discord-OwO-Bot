@@ -10,7 +10,7 @@ module.exports = class Absolve extends PassiveInterface{
 		this.basicDesc= "";
 		this.emojis = ["<:cabsolve:562175422343938059>","<:uabsolve:562175424604536843>","<:rabsolve:562175425556774912>","<:eabsolve:562175424969310227>","<:mabsolve:562175424625639435>","<:labsolve:562175424747143209>","<:fabsolve:562175424965115914>"];
 		this.statDesc = "When healed, deal **?%** of the healed amount to a random enemy as MAG damage";
-		this.qualityList = [[80,100]];
+		this.qualityList = [[50,70]];
 	}
 
 	postHealed(animal,healer,amount,tags){

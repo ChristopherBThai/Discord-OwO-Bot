@@ -12,8 +12,8 @@ module.exports = class VampStaff extends WeaponInterface{
 		this.statDesc = "Deal **?%** of your "+WeaponInterface.magEmoji+"MAG to ALL enemies and heal ALL allies by the damage dealt";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
-		this.qualityList = [[30,50]];
-		this.manaRange = [225,125];
+		this.qualityList = [[25,40]];
+		this.manaRange = [275,175];
 	}
 
 	attackWeapon(me,team,enemy){
