@@ -49,7 +49,7 @@ function claim(msg,con,query,bot){
 	//Get Total essence
 	var totalGain = Math.floor(autohuntutil.getLvl(query.gain,0,"gain").stat*duration);
 
-	var sql = "SELECT patreonAnimal FROM user WHERE id = "+msg.author.id+";";
+	var sql = "SELECT IF(patreonAnimal = 1 OR (TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths),1,0) as patreon FROM user LEFT JOIN patreons ON user.uid = patreons.uid WHERE user.id = "+msg.author.id+";";
 	sql += "UPDATE autohunt SET huntmin = 0,huntcount=0,essence = essence +"+totalGain+" WHERE id = "+msg.author.id+" AND huntmin > 0;";
 	con.query(sql,function(err,result){
 		if(err) {
@@ -63,7 +63,7 @@ function claim(msg,con,query,bot){
 
 		//Check if patreon 
 		var patreon = false;
-		if(result[0][0]&&result[0][0].patreonAnimal==1)
+		if(result[0][0]&&result[0][0].patreon==1)
 			patreon = true;
 
 		sql = "";
