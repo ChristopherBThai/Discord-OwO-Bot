@@ -62,7 +62,7 @@ module.exports = new CommandInterface({
 		if(weapon.passives.length>0){
 			sql = `INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES `;
 			for(var i=0;i<weapon.passives.length;i++){
-				sql += `(${uwid},${i},${weapon.passives[i].id},${weapon.passives[i].sqlStat}),`;
+				sql += `(${uwid},${i},${weapon.passives[i].id},'${weapon.passives[i].sqlStat}'),`;
 			}
 			sql = `${sql.slice(0,-1)};`;
 			result = await p.query(sql);

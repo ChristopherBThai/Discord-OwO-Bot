@@ -37,7 +37,7 @@ module.exports = class Shield extends WeaponInterface{
 		let logs = new Logs();
 
 		/* Grab buff and bind it to our animal */
-		let buff = this.getBuffs()[0];
+		let buff = this.getBuffs(animal)[0];
 		buff.bind(animal,2);
 		logs.push(`[AEGIS] ${animal.nickname} used taunt`);
 

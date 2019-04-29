@@ -84,6 +84,10 @@ module.exports = class PassiveInterface{
 	heal(animal,healer,amount,tag){}
 	/* If the passive owner is healed */
 	healed(animal,healer,amount,tag){}
+	/* If the passive owner is replenishing */
+	replenish(animal,healer,amount,tag){}
+	/* If the passive owner is replenished */
+	replenished(animal,healer,amount,tag){}
 	/* If the passive owner is attacking (after bonus damage) */
 	postAttack(animal,attackee,damage,type,last){}
 	/* If the passive owner is attacked (after bonus damage) */
@@ -92,6 +96,10 @@ module.exports = class PassiveInterface{
 	postHeal(animal,healer,amount,tag){}
 	/* If the passive owner is healed (after bonus heal) */
 	postHealed(animal,healer,amount,tag){}
+	/* If the passive owner is replenishing (after bonus heal) */
+	postReplenish(animal,healer,amount,tag){}
+	/* If the passive owner is replenished (after bonus heal) */
+	postReplenished(animal,healer,amount,tag){}
 
 }
 

@@ -139,14 +139,14 @@ module.exports = class WeaponInterface{
 	}
 
 	/* Get the corresponding buff classes */
-	getBuffs(){
+	getBuffs(from){
 		let buffClasses = [];
 		let index = this.initialQualityListLength; 
 		if(this.buffList){
 			for(let i in this.buffList){
 				let buff = buffs[this.buffList[i]];
 				let buffQualityLength = buff.getQualityList.length;
-				buffClasses.push(new buff(null,this.qualities.slice(index,index+buffQualityLength)));
+				buffClasses.push(new buff(from,this.qualities.slice(index,index+buffQualityLength)));
 				index += buffQualityLength;
 			}
 		}
@@ -351,13 +351,60 @@ module.exports = class WeaponInterface{
 		if(!me||me.stats.wp[0]>=max)
 			return {amount:0};
 
-		let logs = new Logs();
+		let subLogs = new Logs();
+		let total = [amount,0];
 
-		me.stats.wp[0] += amount;
-		if(me.stats.wp[0]>max)
+		/* Bonus calculation */
+		/* Event for me*/
+		for(let i in me.buffs)
+			subLogs.push(me.buffs[i].replenished(me,from,total,tags));
+		if(me.weapon)
+			for(let i in me.weapon.passives)
+				subLogs.push(me.weapon.passives[i].replenished(me,from,total,tags));
+		/* Event for from*/
+		for(let i in from.buffs)
+			subLogs.push(from.buffs[i].replenish(me,from,total,tags));
+		if(from.weapon)
+			for(let i in from.weapon.passives)
+				subLogs.push(from.weapon.passives[i].replenish(me,from,total,tags));
+
+		/* Adjust if its over */
+		if(me.stats.wp[0]+total.reduce((a,b)=>a+b,0)>max){
+			let over = me.stats.wp[0]+total.reduce((a,b)=>a+b)-max;
+			if(total[1]>=over)
+				total[1] -= over;
+			else{
+				over -= total[1];
+				total[1] = 0;
+				total[0] -= over;
+			}
+		}
+
+		/* After bonus calculation */
+		/* Event for me*/
+		for(let i in me.buffs)
+			subLogs.push(me.buffs[i].postReplenished(me,from,total,tags));
+		if(me.weapon)
+			for(let i in me.weapon.passives)
+				subLogs.push(me.weapon.passives[i].postReplenished(me,from,total,tags));
+		/* Event for from*/
+		for(let i in from.buffs)
+			subLogs.push(from.buffs[i].postReplenish(me,from,total,tags));
+		if(from.weapon)
+			for(let i in from.weapon.passives)
+				subLogs.push(from.weapon.passives[i].postReplenish(me,from,total,tags));
+
+		total = total.reduce((a,b)=>a+b,0);
+		if(total<0) total= 0;
+
+		me.stats.wp[0] += total;
+		if(me.stats.wp[0]>max){
+			total -= me.stats.wp[0]-max;
 			me.stats.wp[0] = max;
+		}
+		if(total<0) total= 0;
 
-		return {amount:Math.round(amount),logs};
+		return {amount:Math.round(total),logs:subLogs};
 	}
 
 
