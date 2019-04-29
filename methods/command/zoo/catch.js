@@ -27,7 +27,8 @@ module.exports = new CommandInterface({
 
 	execute: function(p){
 		var msg=p.msg,con=p.con;
-		var sql = "SELECT money,patreonAnimal FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id WHERE cowoncy.id = "+msg.author.id+";";
+		
+		var sql = "SELECT money,IF(patreonAnimal = 1 OR (TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths),1,0) as patreon FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id LEFT JOIN patreons ON user.uid = patreons.uid WHERE cowoncy.id = "+msg.author.id+";";
 		sql += `SELECT name,nickname,animal.pid FROM user INNER JOIN pet_team ON user.uid = pet_team.uid INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid INNER JOIN animal ON pet_team_animal.pid = animal.pid
 				WHERE user.id = ${p.msg.author.id};`;
 		sql += "SELECT *,TIMESTAMPDIFF(HOUR,claim,NOW()) as time FROM lootbox WHERE id = "+msg.author.id+";";
@@ -91,7 +92,7 @@ module.exports = new CommandInterface({
 
 function getAnimals(p,result,gems,uid){
 	/* Parse if user is a patreon */
-	var patreon = (result[0][0].patreonAnimal==1);
+	var patreon = (result[0][0].patreon==1);
 	var patreonGem = (gems["Patreon"])?true:false;
 
 	/* If no gems */

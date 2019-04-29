@@ -3,6 +3,43 @@ const daily = "";
 const con = require('./mysql.js').con;
 const sender = require('./sender.js');
 
+exports.parsePatreon = function(query){
+	if(!query||!query.patreonMonths) return null; 
+
+	// parse variables
+	let months = query.patreonMonths;
+	let started = query.patreonTimer;
+	let passed = query.monthsPassed;
+	let type = query.patreonType;
+	let animal = false;
+	let cowoncy = false;
+
+	// parse benefits
+	switch(type){
+		case 1:
+			animal = true;
+			break;
+		case 3:
+			animal = true;
+			cowoncy = true;
+			break;
+		default:
+			return null;
+	}
+
+	// Already expired 
+	if(passed>=months) return null;
+
+
+	// parse expire date
+	if(!started||!months) return null;
+	let expireDate = new Date(started);
+	expireDate.setMonth(expireDate.getMonth()+months);
+
+	return {animal,cowoncy,expireDate};
+
+}
+
 exports.update = function(oldMember,newMember){
 	if(newMember.guild.id != '420104212895105044')
 		return;

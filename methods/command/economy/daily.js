@@ -27,7 +27,7 @@ module.exports = new CommandInterface({
 	execute: function(p){
 		/* Query for user info */
 		var msg = p.msg,con = p.con;
-		var sql = "SELECT daily,patreonDaily,daily_streak,uid FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id WHERE cowoncy.id = "+msg.author.id+";";
+		var sql = "SELECT daily,daily_streak,user.uid,IF(patreonDaily = 1 OR ((TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths) AND patreonType = 3),1,0) as patreon  FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id LEFT JOIN patreons ON user.uid = patreons.uid WHERE cowoncy.id = "+msg.author.id+";";
 		sql += "SELECT * FROM user_announcement where uid = (SELECT uid FROM user WHERE id = "+msg.author.id+") AND (aid = (SELECT aid FROM announcement ORDER BY aid DESC limit 1) OR disabled = 1);"
 		con.query(sql,function(err,rows,fields){
 			if(err){console.error(err);return;}
@@ -48,7 +48,7 @@ module.exports = new CommandInterface({
 				var patreon = false;
 				if(rows[0][0]){
 					streak = rows[0][0].daily_streak;
-					if(rows[0][0].patreonDaily==1)
+					if(rows[0][0].patreon==1)
 						patreon = true;
 				}
 
