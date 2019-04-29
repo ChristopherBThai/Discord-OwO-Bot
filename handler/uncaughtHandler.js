@@ -4,7 +4,7 @@ exports.handle = function(err){
 	console.log(err.code);
 	switch(err.code){
 		case "PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR":
-			mysql.reconnect();
+			//mysql.reconnect();
 			break;
 	}
 }

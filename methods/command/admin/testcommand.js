@@ -1,6 +1,7 @@
 const CommandInterface = require('../../commandinterface.js');
 const imagegen = require('../battle/battleImage.js');
 const patreon = require('../../../handler/patreonHandler.js');
+const mysql = require('../../../util/mysql.js');
 
 module.exports = new CommandInterface({
 	
@@ -9,6 +10,9 @@ module.exports = new CommandInterface({
 	admin:true,
 
 	execute: async function(p){
+		console.log("testcommand");
+		//mysql.reconnect();
+		return;
 		/*
 		var sql = "SELECT COUNT(*) as count FROM animal;"
 		var result = await p.query(sql);
