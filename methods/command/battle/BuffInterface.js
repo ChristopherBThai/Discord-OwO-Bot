@@ -1,7 +1,7 @@
 module.exports = class BuffInterface{
 
 	/* Constructor */
-	constructor(animal,qualities,duration,noCreate){
+	constructor(from,qualities,duration,noCreate){
 
 		this.init();
 		if(noCreate) return;
@@ -22,6 +22,7 @@ module.exports = class BuffInterface{
 			desc = desc.replace('?',stats[i]);
 		}
 
+		this.from = from;
 		this.avgQuality = avgQuality;
 		this.qualities = qualities;
 		this.duration = duration;
@@ -71,6 +72,10 @@ module.exports = class BuffInterface{
 	heal(animal,healer,amount,tag){}
 	/* If the buff owner is healed */
 	healed(animal,healer,amount,tag){}
+	/* If the passive owner is replenishing */
+	replenish(animal,healer,amount,tag){}
+	/* If the passive owner is replenished */
+	replenished(animal,healer,amount,tag){}
 	/* If the buff owner is attacking (after bonus damage) */
 	postAttack(animal,attackee,damage,type,last){}
 	/* If the buff owner is attacked (after bonus damage) */
@@ -79,6 +84,10 @@ module.exports = class BuffInterface{
 	postHeal(animal,healer,amount,tag){}
 	/* If the buff owner is healed (after bonus heal) */
 	postHealed(animal,healer,amount,tag){}
+	/* If the passive owner is replenishing (after bonus heal) */
+	postReplenish(animal,healer,amount,tag){}
+	/* If the passive owner is replenished (after bonus heal) */
+	postReplenished(animal,healer,amount,tag){}
 
 	/* when an enemy chooses an opponent */
 	enemyChooseAttack(animal,attacker,attackee,ally,enemy){return attackee}

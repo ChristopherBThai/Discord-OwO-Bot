@@ -58,7 +58,7 @@ var getBattle = exports.getBattle = async function(p,setting){
 
 	let result = await p.query(sql);
 
-	let censor = (result[2][0])?true:false;
+	let censor = (result[3][0])?true:false;
 
 	/* Grab pgid */
 	let pgid = result[0][0]?result[0][0].pgid:undefined;
@@ -76,8 +76,8 @@ var getBattle = exports.getBattle = async function(p,setting){
 	try{
 		parseSqlStats(pTeam,result[0][0].cphp,result[0][0].cpwp);
 		parseSqlStats(eTeam,result[1][0].cehp,result[1][0].cewp);
-		parseSqlBuffs(pTeam,result[2]);
-		parseSqlBuffs(eTeam,result[2]);
+		parseSqlBuffs(pTeam,result[2],eTeam);
+		parseSqlBuffs(eTeam,result[2],pTeam);
 	}catch(err){
 		console.error(err);
 		await finishBattle(null,p,null,6381923,"An error occured",false,false);
@@ -713,7 +713,7 @@ function initSqlSaveBuffs(team){
 		for(let j in animal.buffs){
 			let buff = animal.buffs[j];
 			result.push(
-				`(${pgid},${pid},${buff.id},${buff.duration},'${buff.sqlStat}')`
+				`(${pgid},${pid},${buff.id},${buff.duration},'${buff.sqlStat}',${buff.from.pid})`
 			);
 		}
 	}
@@ -723,11 +723,11 @@ function initSqlSaveBuffs(team){
 		for(let j in animal.buffs){
 			let buff = animal.buffs[j];
 			result.push(
-				`(${pgid},${pid},${buff.id},${buff.duration},'${buff.sqlStat}')`
+				`(${pgid},${pid},${buff.id},${buff.duration},'${buff.sqlStat}',${buff.from.pid})`
 			);
 		}
 	}
-	return result.length==0?"":`INSERT INTO pet_team_battle_buff (pgid,pid,bfid,duration,qualities) VALUES ${result.join(",")} ON DUPLICATE KEY UPDATE duration=VALUES(duration),qualities=VALUES(qualities);`;
+	return result.length==0?"":`INSERT INTO pet_team_battle_buff (pgid,pid,bfid,duration,qualities,pfrom) VALUES ${result.join(",")} ON DUPLICATE KEY UPDATE duration=VALUES(duration),qualities=VALUES(qualities);`;
 }
 
 /* Parses string from sql */
@@ -744,7 +744,7 @@ function parseSqlStats(team,hp,wp){
 }
 
 /* parse buffs */
-function parseSqlBuffs(team,buffs){
+function parseSqlBuffs(team,buffs,otherTeam){
 	for(let i in team){
 		let animal = team[i];
 		for(let j in buffs){
@@ -752,8 +752,19 @@ function parseSqlBuffs(team,buffs){
 				let buff = allBuffs[buffs[j].bfid];
 				if(buff){
 					let qualities = buffs[j].qualities.split(",").map(x=>parseInt(x));
-					buff = new buff(animal,qualities,buffs[j].duration);
-					animal.buffs.push(buff);
+					owner = null;
+					for(let k in team){
+						if(team[k].pid==buffs[j].pfrom)
+							owner = team[k];
+					}
+					for(let k in otherTeam){
+						if(otherTeam[k].pid==buffs[j].pfrom)
+							owner = otherTeam[k];
+					}
+					if(owner){
+						buff = new buff(owner,qualities,buffs[j].duration);
+						animal.buffs.push(buff);
+					}
 				}
 			}
 		}
