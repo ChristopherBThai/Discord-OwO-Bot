@@ -5,12 +5,12 @@ const Logs = require('../util/logUtil.js');
 module.exports = class FStaff extends WeaponInterface{
 
 	init(){
-		this.id = 9;
+		this.id = 10;
 		this.name = "Flame Staff";
 		this.basicDesc = "";
-		this.emojis = [""];
-		this.defaultEmoji = "";
-		this.statDesc = "Deals **?%** of your MAG to a random enemy and applies **flame** for 3 turns";
+		this.emojis = ["<:cfstaff:572663874353102859>","<:ufstaff:572663875531440146>","<:rfstaff:572663875833430016>","<:efstaff:572663875711795200>","<:mfstaff:572663875888218114>","<:lfstaff:572663875904733186>","<:ffstaff:572663876110254090>"];
+		this.defaultEmoji = "<:fstaff:572663875749675018>";
+		this.statDesc = "Deals **?%** of your "+WeaponInterface.magEmoji+" MAG to a random enemy and applies **flame** for 3 turns";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
 		this.qualityList = [[60,80]];
@@ -34,7 +34,7 @@ module.exports = class FStaff extends WeaponInterface{
 		/* deplete weapon points*/
 		let mana = WeaponInterface.useMana(me,this.manaCost,me,{me,allies:team,enemies:enemy});
 		let manaLogs = new Logs();
-		manaLogs.push(`[PDAG] ${me.nickname} used ${mana.amount} WP`,mana.logs);
+		manaLogs.push(`[FSTAFF] ${me.nickname} used ${mana.amount} WP`,mana.logs);
 
 		/* Calculate damage */
 		let damage = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);
@@ -43,7 +43,7 @@ module.exports = class FStaff extends WeaponInterface{
 		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.MAGICAL,{me,allies:team,enemies:enemy});
 		let buff = this.getBuffs(me)[0];
 		let buffLogs = buff.bind(attacking,3,{me,allies:team,enemies:enemy});
-		logs.push(`[PDAG] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP and applied flame`, damage.logs);
+		logs.push(`[FSTAFF] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP and applied flame`, damage.logs);
 		logs.addSubLogs(buffLogs);
 
 		logs.addSubLogs(manaLogs);

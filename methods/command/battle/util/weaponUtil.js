@@ -26,6 +26,7 @@ exports.getRandomWeapon = function(id){
 	/* Grab a random weapon */
 	let keys = Object.keys(availableWeapons);
 	let random = keys[Math.floor(Math.random()*keys.length)];
+	random = 10;
 	let weapon = availableWeapons[random];
 
 	/* Initialize random stats */
