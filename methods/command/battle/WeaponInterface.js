@@ -439,6 +439,17 @@ module.exports = class WeaponInterface{
 		return lowest;
 	}
 
+	/* Get lowest wp animal */
+	static getLowestWp(team){
+		let lowest = undefined;
+		for(let i=0;i<team.length;i++)
+			if(team[i].stats.wp[0]>0)
+				if(!lowest||lowest.stats.wp[0]/(lowest.stats.wp[1]+lowest.stats.wp[3])
+						>team[i].stats.wp[0]/(team[i].stats.wp[1]+team[i].stats.wp[3]))
+					lowest = team[i];
+		return lowest;
+	}
+
 	/* Check if the animal is at max or higher health */
 	static isMaxHp(animal){
 		let hp = animal.stats.hp;
@@ -467,6 +478,7 @@ module.exports = class WeaponInterface{
 	static get strEmoji(){return '<:att:531616155450998794>'}
 	static get magEmoji(){return '<:mag:531616156231139338>'}
 	static get hpEmoji(){return '<:hp:531620120410456064>'}
+	static get wpEmoji(){return '<:wp:531620120976687114>'}
 	static get getID(){return new this(null,null,true).id}
 	static get disabled(){return new this(null,null,true).disabled}
 	static get getName(){return new this(null,null,true).name}
