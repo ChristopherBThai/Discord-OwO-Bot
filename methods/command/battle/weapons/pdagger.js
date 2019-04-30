@@ -2,7 +2,7 @@ const WeaponInterface = require('../WeaponInterface.js');
 const battleUtil = require('../util/battleUtil.js');
 const Logs = require('../util/logUtil.js');
 
-module.exports = class Shield extends WeaponInterface{
+module.exports = class PDagger extends WeaponInterface{
 
 	init(){
 		this.id = 8;
