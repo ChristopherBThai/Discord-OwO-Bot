@@ -34,7 +34,7 @@ module.exports = class Shield extends WeaponInterface{
 		/* deplete weapon points*/
 		let mana = WeaponInterface.useMana(me,this.manaCost,me,{me,allies:team,enemies:enemy});
 		let manaLogs = new Logs();
-		manaLogs.push(`[BOW] ${me.nickname} used ${mana.amount} WP`,mana.logs);
+		manaLogs.push(`[PDAG] ${me.nickname} used ${mana.amount} WP`,mana.logs);
 
 		/* Calculate damage */
 		let damage = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);

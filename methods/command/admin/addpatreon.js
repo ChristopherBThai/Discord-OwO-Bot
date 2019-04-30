@@ -32,7 +32,7 @@ module.exports = new CommandInterface({
 		}
 
 		// Query result
-		let sql = `SELECT user.uid,patreonMonths,patreonTimer,TIMESTAMPDIFF(MONTH,patreonTimer,NOW()) AS monthsPassed,patreonType FROM user LEFT JOIN patreons ON user.uid = patreons.uid WHERE id = ${p.msg.author.id}`;
+		let sql = `SELECT user.uid,patreonMonths,patreonTimer,TIMESTAMPDIFF(MONTH,patreonTimer,NOW()) AS monthsPassed,patreonType FROM user LEFT JOIN patreons ON user.uid = patreons.uid WHERE id = ${p.args[0]}`;
 		let result = await p.query(sql);
 		let uid;
 		let months = result[0]&&result[0].patreonMonths?result[0].patreonMonths:0;
@@ -46,7 +46,7 @@ module.exports = new CommandInterface({
 
 		// If uid does not exist
 		if(result.length<1||!result[0].uid){
-			sql = `INSERT IGNORE INTO user (id,count) VALUES (${p.msg.author.id},0);`;
+			sql = `INSERT IGNORE INTO user (id,count) VALUES (${p.args[0]},0);`;
 			result = await p.query(sql);
 			uid = result.insertId;
 		}else{
@@ -70,7 +70,7 @@ module.exports = new CommandInterface({
 		// Send msgs
 		let user;
 		if(addMonths>0)
-			user = await sender.msgUser(p.args[0],`${tada} **|** Your patreon has been extended by ${addMonths} months!\n${p.config.emoji.blank} **|** Expires on: **${date}**`);
+			user = await sender.msgUser(p.args[0],`${tada} **|** Your patreon has been extended by ${addMonths} month(s)!\n${p.config.emoji.blank} **|** Expires on: **${date}**`);
 		else
 			user = await sender.msgUser(p.args[0],`${gear} **|** Your patreon perks have been changed!\n${p.config.emoji.blank} **|** Expires on: **${date}**`);
 		if(user)
