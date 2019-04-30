@@ -9,7 +9,7 @@ module.exports = class Poison extends BuffInterface{
 		this.name = "Flame";
 		this.debuff = true;
 		this.emoji = "<:flame:572657585400971277>";
-		this.statDesc = "Deals **?%** of your MAG at the end of the turn. Apply flame on a target that already has flame will explode and deal **?%** damage to the target.";
+		this.statDesc = "Deals **?%** of your "+WeaponInterface.magEmoji+" MAG at the end of the turn. Apply flame on a target that already has flame will explode and deal **?%** damage to the target.";
 		this.qualityList = [[20,40],[40,60]];
 	}
 
@@ -17,7 +17,7 @@ module.exports = class Poison extends BuffInterface{
 	bind(animal,duration,tags){
 		if(tags.flame) return;
 		let logs = new Logs();
-		for(let i in animal.buffs,tags){
+		for(let i in animal.buffs){
 			if(animal.buffs[i].id == this.id && animal.buffs[i].from.pid==this.from.pid){
 				animal.buffs.splice(animal.buffs.indexOf(this),1);
 				let damage = WeaponInterface.getDamage(this.from.stats.mag,this.stats[1]/100);

@@ -9,8 +9,8 @@ module.exports = class Poison extends BuffInterface{
 		this.name = "Poison";
 		this.debuff = true;
 		this.emoji = "<:poison:572311805704273920>";
-		this.statDesc = "Deals **?%** of your MAG as true damage at the end of the turn";
-		this.qualityList = [[25,45]];
+		this.statDesc = "Deals **?%** of your "+WeaponInterface.magEmoji+" MAG as true damage at the end of the turn";
+		this.qualityList = [[40,65]];
 	}
 
 	// Override

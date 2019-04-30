@@ -35,7 +35,7 @@ module.exports = class Bow extends WeaponInterface{
 		manaLogs.push(`[BOW] ${me.nickname} used ${mana.amount} WP`,mana.logs);
 
 		/* Calculate damage */
-		let damage = WeaponInterface.getDamage(me.stats.str,this.stats[0]/100);
+		let damage = WeaponInterface.getDamage(me.stats.att,this.stats[0]/100);
 
 		/* Deal damage */
 		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.PHYSICAL,{me,allies:team,enemies:enemy});
