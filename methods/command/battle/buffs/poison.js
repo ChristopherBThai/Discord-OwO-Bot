@@ -9,12 +9,12 @@ module.exports = class Poison extends BuffInterface{
 		this.name = "Poison";
 		this.debuff = true;
 		this.emoji = "<:poison:572311805704273920>";
-		this.statDesc = "Deals **?%** of your MAG at the end of the turn";
+		this.statDesc = "Deals **?%** of your MAG as true damage at the end of the turn";
 		this.qualityList = [[25,45]];
 	}
 
 	// Override
-	bind(animal,duration){
+	bind(animal,duration,tags){
 		for(let i in animal.buffs){
 			if(animal.buffs[i].id == this.id && animal.buffs[i].from.pid==this.from.pid){
 				animal.buffs[i].duration += duration;
@@ -22,7 +22,7 @@ module.exports = class Poison extends BuffInterface{
 			}
 		}
 
-		super.bind(animal,duration);
+		super.bind(animal,duration,tags);
 	}
 
 	postTurn(animal,ally,enemy,action){

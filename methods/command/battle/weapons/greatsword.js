@@ -9,7 +9,7 @@ module.exports = class GreatSword extends WeaponInterface{
 		this.basicDesc = "A great sword that can slash a wide range of opponents";
 		this.emojis = ["<:cgreatsword:535279248253124638>","<:ugreatsword:535279249028808735>","<:rgreatsword:535279249129472014>","<:egreatsword:535279248991191081>","<:mgreatsword:535279249125539858>","<:lgreatsword:535279249058168852>","<:fgreatsword:535279248923951116>"];
 		this.defaultEmoji = "<:greatsword:538196865129250817>";
-		this.statDesc = "Deals **?%** of your "+WeaponInterface.magEmoji+"MAG to all opponents";
+		this.statDesc = "Deals **?%** of your "+WeaponInterface.strEmoji+"STR to all opponents";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
 		this.qualityList = [[35,65]];
@@ -31,14 +31,14 @@ module.exports = class GreatSword extends WeaponInterface{
 		manaLogs.push(`[GSWORD] ${me.nickname} used ${mana.amount} WP`,mana.logs);
 
 		/* Calculate damage */
-		let damage = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);
+		let damage = WeaponInterface.getDamage(me.stats.str,this.stats[0]/100);
 
 		/* Deal damage to all opponents*/
 		let logText = `[GSWORD] ${me.nickname} damaged `;
 		let subLogs = new Logs();
 		for(let i=0;i<enemy.length;i++){
 			if(enemy[i].stats.hp[0]>0){
-				let dmg = WeaponInterface.inflictDamage(me,enemy[i],damage,WeaponInterface.MAGICAL,{me,allies:team,enemies:enemy});
+				let dmg = WeaponInterface.inflictDamage(me,enemy[i],damage,WeaponInterface.PHYSICAL,{me,allies:team,enemies:enemy});
 				logText += `${enemy[i].nickname} -${dmg.amount} | `;
 				subLogs.push(dmg.logs);
 			}

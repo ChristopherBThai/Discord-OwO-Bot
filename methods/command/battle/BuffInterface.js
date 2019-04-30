@@ -58,7 +58,7 @@ module.exports = class BuffInterface{
 	}
 
 	/* Bind this buff to an animal */
-	bind(animal,duration){
+	bind(animal,duration,tags={}){
 		if(duration) this.duration = duration;
 		animal.buffs.push(this);
 		this.justCreated = true;
