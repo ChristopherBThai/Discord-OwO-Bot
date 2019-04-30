@@ -10,7 +10,7 @@ module.exports = class PhysicalResistance extends PassiveInterface{
 		this.basicDesc= "Increases your Physical Resistance";
 		this.emojis = ["<:cpr:535290422730162177>","<:upr:535290423023763461>","<:rpr:535290422902390789>","<:epr:535290422738681884>","<:mpr:535290422910779411>","<:lpr:535290422554001410>","<:fpr:535290422793338880>"];
 		this.statDesc = "Increases your <:pr:531616156222488606>PR by **?%**";
-		this.qualityList = [[5,20]];
+		this.qualityList = [[15,35]];
 	}
 
 	alterStats(stats){

@@ -10,7 +10,7 @@ module.exports = class PDagger extends WeaponInterface{
 		this.basicDesc = "";
 		this.emojis = ["<:cpdagger:572285295177891843>","<:updagger:572285295769157632>","<:rpdagger:572285295781871616>","<:epdagger:572285295773351966>","<:mpdagger:572285295761031171>","<:lpdagger:572285296188850176>","<:fpdagger:572285296184393738>"];
 		this.defaultEmoji = "<:pdagger:572285296272736256>";
-		this.statDesc = "Deals **?%** of your MAG to a random enemy and applies **poison** for 3 turns";
+		this.statDesc = "Deals **?%** of your STR to a random enemy and applies **poison** for 3 turns";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
 		this.qualityList = [[60,80]];
@@ -37,12 +37,12 @@ module.exports = class PDagger extends WeaponInterface{
 		manaLogs.push(`[PDAG] ${me.nickname} used ${mana.amount} WP`,mana.logs);
 
 		/* Calculate damage */
-		let damage = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);
+		let damage = WeaponInterface.getDamage(me.stats.str,this.stats[0]/100);
 
 		/* Deal damage */
-		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.MAGICAL,{me,allies:team,enemies:enemy});
+		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.PHYSICAL,{me,allies:team,enemies:enemy});
 		let buff = this.getBuffs(me)[0];
-		buff.bind(attacking,3);
+		buff.bind(attacking,3,{me,allies:team,enemies:enemy});
 		logs.push(`[PDAG] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP and applied poison`, damage.logs);
 
 		logs.addSubLogs(manaLogs);

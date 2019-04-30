@@ -9,7 +9,7 @@ module.exports = class Bow extends WeaponInterface{
 		this.basicDesc = "An accurate bow that will deal alot of damage to a single opponent";
 		this.emojis = ["<:cbow:535283611260420096>","<:ubow:535283613198188594>","<:rbow:535283613374349316>","<:ebow:535283614334844937>","<:mbow:535283613802168323>","<:lbow:535283613391126529>","<:fbow:535283614099832872>"];
 		this.defaultEmoji = "<:bow:538196864277807105>";
-		this.statDesc = "Deals **?%** of your "+WeaponInterface.magEmoji+"MAG to a random opponent";
+		this.statDesc = "Deals **?%** of your "+WeaponInterface.strEmoji+"STR to a random opponent";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
 		this.qualityList = [[100,160]];
@@ -35,10 +35,10 @@ module.exports = class Bow extends WeaponInterface{
 		manaLogs.push(`[BOW] ${me.nickname} used ${mana.amount} WP`,mana.logs);
 
 		/* Calculate damage */
-		let damage = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);
+		let damage = WeaponInterface.getDamage(me.stats.str,this.stats[0]/100);
 
 		/* Deal damage */
-		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.MAGICAL,{me,allies:team,enemies:enemy});
+		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.PHYSICAL,{me,allies:team,enemies:enemy});
 		logs.push(`[BOW] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
 
 		logs.addSubLogs(manaLogs);
