@@ -8,8 +8,8 @@ module.exports = class Poison extends BuffInterface{
 		this.id = 3;
 		this.name = "Flame";
 		this.debuff = true;
-		this.emoji = "<:flame:572657585400971277>";
-		this.statDesc = "Deals **?%** of your "+WeaponInterface.magEmoji+" MAG at the end of the turn. Apply flame on a target that already has flame will explode and deal **?%** damage to the target.";
+		this.emoji = "<:flame:572915106854469633>";
+		this.statDesc = "Deals **?%** of your "+WeaponInterface.magEmoji+" MAG at the end of the turn. Applying flame on a target that already has flame will explode and deal **?%** damage to the target.";
 		this.qualityList = [[20,40],[40,60]];
 	}
 
