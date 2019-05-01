@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const request = require('request');
 const imagegenAuth = require('../../../../tokens/imagegen.json');
 const WeaponInterface = require('./WeaponInterface.js');
@@ -57,7 +64,7 @@ function generateJson(teams){
 function generateAnimalJson(animal){
 	let weapon = animal.weapon;
 	let stat = animal.stats;
-	
+
 	/* Parse animal info */
 	let animalID = animal.animal.value.match(/:[0-9]+>/g);
 	if(animalID) animalID = animalID[0].match(/[0-9]+/g)[0];

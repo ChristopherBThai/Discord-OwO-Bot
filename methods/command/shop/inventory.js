@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const lootboxUtil = require('../zoo/lootboxUtil.js');
@@ -7,7 +14,7 @@ const weaponUtil = require('../battle/util/weaponUtil.js');
 const crateUtil = require('../battle/util/crateUtil.js');
 
 module.exports = new CommandInterface({
-	
+
 	alias:["inventory","inv"],
 
 	args:"",
@@ -36,7 +43,7 @@ module.exports = new CommandInterface({
 			console.error(err);
 			return;
 		}
-			
+
 
 		if(text=="") text = "Your inventory is empty :c";
 		text = "**====== "+msg.author.username+"'s Inventory ======**\n"+text;
@@ -66,7 +73,7 @@ function addToString(items){
 		items.push(itemsID[sorted[i]]);
 	}
 	var digits = Math.trunc(Math.log10(maxCount)+1);
-	
+
 	/* Add to text */
 	var text = "";
 	var count = 0;

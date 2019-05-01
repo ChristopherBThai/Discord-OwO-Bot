@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const crate = "<:crate:523771259302182922>";
@@ -6,7 +13,7 @@ const crateOpen = "<a:crateopen:523771437408845852>";
 const weaponUtil = require('./util/weaponUtil.js');
 
 module.exports = new CommandInterface({
-	
+
 	alias:["crate","weaponcrate","wc"],
 
 	args:"",
@@ -50,7 +57,7 @@ module.exports = new CommandInterface({
 		result = await p.query(sql).catch(err => {
 			console.error(err);
 			console.error(sql);
-		});		
+		});
 		let uwid = result.insertId;
 		if(!uwid){
 			p.errorMsg(", Uh oh. Something went wrong! The weapon passive could not be applied");
@@ -81,5 +88,3 @@ module.exports = new CommandInterface({
 		setTimeout(function(){message.edit(text2)},3000);
 	}
 })
-
-

@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const global = require('../../../util/global.js');
@@ -6,7 +13,7 @@ const animalUtil = require('../battle/util/animalUtil.js');
 const animalUtil2 = require('../zoo/animalUtil.js');
 
 module.exports = new CommandInterface({
-	
+
 	alias:["top","rank","ranking"],
 
 	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse [global] {count}",
@@ -103,7 +110,7 @@ function displayRanking(con,msg,count,globalRank,sql,title,subText){
 			if(!globalRank){
 				var user = msg.guild.members.get(id);
 				var name = "";
-				if(user&&user.nickname) 
+				if(user&&user.nickname)
 					name = user.nickname+" ("+user.user.username+")";
 				else if(user&&user.user.username)
 					name = ""+user.user.username;
@@ -132,7 +139,7 @@ function displayRanking(con,msg,count,globalRank,sql,title,subText){
 
 /**
  * Top OwO Rankings
- * @param {boolean}		globalRank	- Global rankings 
+ * @param {boolean}		globalRank	- Global rankings
  * @param {mysql.Connection}	con 	- Mysql.createConnection()
  * @param {discord.Message}	msg	- User's message
  * @param {int} 		count 	- number of ranks to display
@@ -385,4 +392,3 @@ const apoints = "(a.common*"+animals.points.common+"+"+
 		"a.gem*"+animals.points.gem+"+"+
 		"a.legendary*"+animals.points.legendary+"+"+
 		"a.fabled*"+animals.points.fabled+")";
-

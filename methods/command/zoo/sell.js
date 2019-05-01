@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const ranks = {};
@@ -27,7 +34,7 @@ module.exports = new CommandInterface({
 		var name = undefined;
 		var count = 1;
 		var ranks;
-		
+
 		/* If no args */
 		if(args.length==0){
 			p.send("**🚫 | "+msg.author.username+"**, Please specify what rank/animal to sell!",3000);

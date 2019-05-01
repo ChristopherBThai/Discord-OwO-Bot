@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const baseURL = "https://cdn.discordapp.com/emojis/";
@@ -5,7 +12,7 @@ const nextPageEmoji = '➡';
 const prevPageEmoji = '⬅';
 
 module.exports = new CommandInterface({
-	
+
 	alias:["emoji","enlarge","jumbo"],
 
 	args:"{previous|emoji1 emoji2 emoji3...}",
@@ -76,7 +83,7 @@ function parseIDs(text){
 async function display(p,emojis){
 	let loc = 0;
 	let embed = createEmbed(p,loc,emojis);
-	
+
 	let msg = await p.send({embed});
 
 	/* Add a reaction collector to update the pages */
@@ -85,7 +92,7 @@ async function display(p,emojis){
 
 	let filter = (reaction,user) => (reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&user.id===p.msg.author.id;
 	let collector = await msg.createReactionCollector(filter,{time:120000});
-	
+
 	/* Flip the page if reaction is pressed */
 	collector.on('collect', async function(r){
 		/* Save the animal's action */
@@ -131,6 +138,3 @@ function createEmbed(p,loc,emojis){
 	}
 	return embed;
 }
-
-
-

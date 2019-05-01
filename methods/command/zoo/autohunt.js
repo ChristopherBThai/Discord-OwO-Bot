@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const alterhb = require('../patreon/alterHuntbot.js').alter;
@@ -61,7 +68,7 @@ function claim(msg,con,query,bot){
 			return;
 		}
 
-		//Check if patreon 
+		//Check if patreon
 		var patreon = false;
 		if(result[0][0]&&result[0][0].patreon==1)
 			patreon = true;

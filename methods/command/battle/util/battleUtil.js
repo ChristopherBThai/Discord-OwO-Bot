@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const Discord = require('discord.js');
 const Error = require('../../../../handler/errorHandler.js');
 const dateUtil = require('../../../../util/dateUtil.js');
@@ -24,27 +31,27 @@ const numEmojis = ['1⃣','2⃣','3⃣'];
 var getBattle = exports.getBattle = async function(p,setting){
 	/* And our team */
 	let sql = `SELECT pet_team_battle.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat,cphp,cpwp,cehp,cewp,pet_team.streak,pet_team.highest_streak
-		FROM user 
+		FROM user
 			INNER JOIN pet_team ON user.uid = pet_team.uid
 			INNER JOIN pet_team_battle ON pet_team.pgid = pet_team_battle.pgid
 			INNER JOIN pet_team_animal ON pet_team_battle.pgid = pet_team_animal.pgid
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
-			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid 
-		WHERE user.id = ${p.msg.author.id} 
+			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
+		WHERE user.id = ${p.msg.author.id}
 			AND active = 1
 		ORDER BY pos ASC;`;
 	/* Query enemy team */
 	sql += `SELECT pet_team.censor as ptcensor,animal.offensive as acensor,pet_team_battle.epgid,enemyTeam.tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat,cphp,cpwp,cehp,cewp
-		FROM user 
+		FROM user
 			INNER JOIN pet_team ON user.uid = pet_team.uid
 			INNER JOIN pet_team_battle ON pet_team.pgid = pet_team_battle.pgid
 			INNER JOIN pet_team_animal ON pet_team_battle.epgid = pet_team_animal.pgid
 			INNER JOIN pet_team enemyTeam ON pet_team_battle.epgid = enemyTeam.pgid
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
-			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid 
-		WHERE user.id = ${p.msg.author.id} 
+			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
+		WHERE user.id = ${p.msg.author.id}
 			AND active = 1
 		ORDER BY pos ASC;`;
 	sql += `SELECT pet_team_battle_buff.*
@@ -122,12 +129,12 @@ exports.initBattle = async function(p,setting){
 
 	/* Query random team */
 	sql = `SELECT pet_team.censor as ptcensor,pet_team.pgid,tname,pos,name,nickname,pid,xp FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE pet_team.pgid = (
-			SELECT pgid FROM pet_team WHERE pgid != ${pgid} LIMIT 1 OFFSET ${count}	
+			SELECT pgid FROM pet_team WHERE pgid != ${pgid} LIMIT 1 OFFSET ${count}
 		) ORDER BY pos ASC;`;
-	sql += `SELECT c.offensive as acensor,a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname 
-		FROM 
-			user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid 
-		WHERE 
+	sql += `SELECT c.offensive as acensor,a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
+		FROM
+			user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid
+		WHERE
 			a.pid IN (
 				SELECT pid FROM pet_team LEFT JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid WHERE pet_team.pgid = (SELECT pgid FROM pet_team WHERE pgid != ${pgid}  LIMIT 1 OFFSET ${count})
 			);`;
@@ -157,7 +164,7 @@ exports.initBattle = async function(p,setting){
 	/* Init stats for sql*/
 	let cpstats = initSqlSaveStats(pTeam);
 	let cestats = initSqlSaveStats(eTeam);
-	
+
 	/* Combine all to one obj */
 	let player = {pgid:pgid,
 		name:result[2][0].tname,
@@ -177,7 +184,7 @@ exports.initBattle = async function(p,setting){
 				'${cpstats.hp}','${cpstats.wp}',
 				'${cestats.hp}','${cestats.wp}',
 				1
-			) ON DUPLICATE KEY UPDATE 
+			) ON DUPLICATE KEY UPDATE
 				epgid = ${epgid},
 				cphp = '${cpstats.hp}', cpwp = '${cpstats.wp}',
 				cehp = '${cestats.hp}', cewp = '${cestats.wp}',
@@ -303,7 +310,7 @@ var displayText = exports.displayText = async function(p,team,logs,{title,showLo
 			"name":title?title:p.msg.author.username+" goes into battle!",
 			"icon_url":p.msg.author.avatarURL
 		},
-		"fields":[] 
+		"fields":[]
 	}
 	if(pTeam.join("\n").length>=1020||eTeam.join("\n").length>=1020){
 		for(let i in pTeam){
@@ -362,7 +369,7 @@ var displayCompact = exports.displayCompact= async function(p,team,logs,{title,s
 			"name":title?title:p.msg.author.username+" goes into battle!",
 			"icon_url":p.msg.author.avatarURL
 		},
-		"fields":[] 
+		"fields":[]
 	}
 	if(pTeam.join("\n").length>=1020||eTeam.join("\n").length>=1020){
 		for(let i in pTeam){
@@ -529,7 +536,7 @@ async function executeBattle(p,msg,action,setting){
 		sql = `UPDATE IGNORE pet_team_battle SET
 				cphp = '${cpstats.hp}', cpwp = '${cpstats.wp}',
 				cehp = '${cestats.hp}', cewp = '${cestats.wp}'
-			WHERE 
+			WHERE
 				pgid = ${battle.player.pgid} AND
 				epgid = ${battle.enemy.pgid} AND
 				active = 1 AND
@@ -734,7 +741,7 @@ function initSqlSaveBuffs(team){
 function parseSqlStats(team,hp,wp){
 	hp = hp.split(',');
 	wp = wp.split(',');
-	
+
 	for(let i=0;i<team.length;i++){
 		team[i].stats.hp[0] = parseInt(hp[i]?hp[i]:0);
 		team[i].stats.hp[2] = parseInt(hp[i]?hp[i]:0);

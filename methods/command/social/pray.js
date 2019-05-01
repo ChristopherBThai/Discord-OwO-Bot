@@ -1,10 +1,17 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const prayLines = ["May luck be in your favor.","You feel lucky!","You feel very lucky!","You can feel the luck within you!","Fortune favors you!","Luck is on your side!"];
 const curseLines = ["You feel unlucky...","You feel very unlucky.","Oh no.","You should be careful...","I've got a bad feeling about this...","oh boy.","rip"];
 
 module.exports = new CommandInterface({
-	
+
 	alias:["pray","curse"],
 
 	args:"{@user}",

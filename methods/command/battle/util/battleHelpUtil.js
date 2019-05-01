@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const pages = ["https://i.imgur.com/cJ9F3DM.png","https://i.imgur.com/uHyENGL.png","https://i.imgur.com/QjYt5Xv.png","https://i.imgur.com/mFWT5wg.png","https://i.imgur.com/G3zfrc6.png","https://i.imgur.com/9LXG4qy.png"];
 const nextPageEmoji = '➡';
 const prevPageEmoji = '⬅';
@@ -30,7 +37,7 @@ exports.help = async function(p,page=0){
 	await msg.react(nextPageEmoji);
 	let filter = (reaction,user) => (reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&user.id===p.msg.author.id;
 	let collector = await msg.createReactionCollector(filter,{time:60000});
-	
+
 	/* Flip the page if reaction is pressed */
 	collector.on('collect', async function(r){
 		/* Save the animal's action */

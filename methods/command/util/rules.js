@@ -1,7 +1,14 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 module.exports = new CommandInterface({
-	
+
 	alias:["rule","rules"],
 
 	args:"",
@@ -30,7 +37,7 @@ module.exports = new CommandInterface({
 		if(result[1][0]) agree = parseInt(result[1][0].agree);
 		var disagree = 0;
 		if(result[2][0]) disagree = parseInt(result[2][0].disagree);
-		
+
 		/* Construct embed message */
 		var description = "• You can **not** use macros/scripts for **any** commands\n• You can **not** use multiple accounts for **any** reason\n• Do not use any exploits and report any found in the bot\n• You can **not** sell cowoncy or any bot goods for other currency/money\n• If you have any questions, use the feedback command!";
 		var descriptionExtra = ""
@@ -64,7 +71,7 @@ module.exports = new CommandInterface({
 			const collector = message.createReactionCollector(filter,{time:60000});
 			collector.on('collect',r => {
 				collector.stop("done");
-				
+
 				/* Construct sql */
 				if(r.emoji.name=='👎'){
 					var sql = "INSERT IGNORE INTO rules (uid,opinion) VALUES ((SELECT uid FROM user WHERE id = ?),-1)";
@@ -89,4 +96,3 @@ module.exports = new CommandInterface({
 	}
 
 })
-

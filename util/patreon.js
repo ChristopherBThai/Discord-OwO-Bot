@@ -1,10 +1,17 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+	
 const animal = "";
 const daily = "";
 const con = require('./mysql.js').con;
 const sender = require('./sender.js');
 
 exports.parsePatreon = function(query){
-	if(!query||!query.patreonMonths) return null; 
+	if(!query||!query.patreonMonths) return null;
 
 	// parse variables
 	let months = query.patreonMonths;
@@ -27,7 +34,7 @@ exports.parsePatreon = function(query){
 			return null;
 	}
 
-	// Already expired 
+	// Already expired
 	if(passed>=months) return null;
 
 
@@ -128,4 +135,3 @@ function lostAnimal(user){
 		console.log(user.user.username+"["+user.id+"] lost patreon animal perk!");
 	});
 }
-

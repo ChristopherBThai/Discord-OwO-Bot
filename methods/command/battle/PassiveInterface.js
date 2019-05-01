@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const ranks = [0.20,0.20,0.20,0.20,0.14,0.05,0.01];
 module.exports = class PassiveInterface{
 
@@ -41,7 +48,7 @@ module.exports = class PassiveInterface{
 			quality = parseInt(quality.split(','));
 			quality = quality.reduce((a,b)=>a+b,0)/quality.length;
 		}
-		
+
 		quality /= 100;
 
 		/* Get correct rank */
@@ -102,4 +109,3 @@ module.exports = class PassiveInterface{
 	postReplenished(animal,healer,amount,tag){}
 
 }
-

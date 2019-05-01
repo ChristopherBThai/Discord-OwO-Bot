@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const pizzaEmoji = "🍕";
@@ -36,7 +43,7 @@ module.exports = new CommandInterface({
 			}
 			give(p,user);
 		}
-	}	
+	}
 });
 
 async function display(p){
@@ -54,7 +61,7 @@ async function give(p,user){
 		// Subtract pizza
 		let sql = `UPDATE user LEFT JOIN pizza ON user.uid = pizza.uid SET pizza.count = pizza.count -1 WHERE id = ${p.msg.author.id} AND pizza.count>0;`;
 		let result = await p.query(sql);
-		
+
 		// Error checking
 		if(result.changedRows==0){
 			p.errorMsg(", you do not have any pizza! >:c",3000);

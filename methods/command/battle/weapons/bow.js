@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const WeaponInterface = require('../WeaponInterface.js');
 const Logs = require('../util/logUtil.js');
 
@@ -22,7 +29,7 @@ module.exports = class Bow extends WeaponInterface{
 		/* No mana */
 		if(me.stats.wp[0]<this.manaCost)
 			return this.attackPhysical(me,team,enemy);
-		
+
 		/* Grab an enemy that I'm attacking */
 		let attacking = WeaponInterface.getAttacking(me,team,enemy);
 		if(!attacking) return;

@@ -1,7 +1,14 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 module.exports = new CommandInterface({
-	
+
 	alias:["stats","stat","info"],
 
 	args:"",
@@ -21,7 +28,7 @@ module.exports = new CommandInterface({
 		var sql = "SELECT COUNT(*) user,sum(count) AS total FROM user;";
 		sql += "SELECT SUM(common) AS common, SUM(uncommon) AS uncommon, SUM(rare) AS rare, SUM(epic) AS epic, SUM(mythical) AS mythical, SUM(legendary) AS legendary FROM animal_count;"
 		sql += "SELECT command FROM disabled WHERE channel = "+msg.channel.id+";";
-		
+
 		var guilds = await client.shard.fetchClientValues('guilds.size');
 		guildsTotal = guilds.reduce((prev,val) => prev + val);
 		var channels = await client.shard.fetchClientValues('channels.size');

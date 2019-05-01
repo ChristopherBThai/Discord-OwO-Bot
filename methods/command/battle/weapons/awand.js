@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const WeaponInterface = require('../WeaponInterface.js');
 const Logs = require('../util/logUtil.js');
 
@@ -53,7 +60,7 @@ module.exports = class AbsorbWand extends WeaponInterface{
 		/* Add everything to logs */
 		if(!lowestWp||!replenishLogs)
 			logs.push(`[AWAND] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`);
-		else 
+		else
 			logs.push(`[AWAND] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP and transfered ${Math.round(stole)} WP to ${lowestWp.nickname}`);
 		logs.addSubLogs(damage.logs);
 		logs.addSubLogs(replenishLogs.logs);

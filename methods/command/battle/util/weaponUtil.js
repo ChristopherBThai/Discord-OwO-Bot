@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const requireDir = require('require-dir');
 const WeaponInterface = require('../WeaponInterface.js');
 
@@ -60,7 +67,7 @@ var parseWeapon = exports.parseWeapon = function(data){
 			for(var j=0;j<stats.length;j++)
 				stats[j] = parseInt(stats[j]);
 			let passive = new (WeaponInterface.allPassives[data.passives[i].id])(stats);
-			data.passives[i] = passive; 
+			data.passives[i] = passive;
 		}
 		data.parsed = true;
 	}
@@ -109,7 +116,7 @@ var parseWeaponQuery = exports.parseWeaponQuery = function(query){
 
 /* Displays weapons with multiple pages */
 exports.display = async function(p,pageNum=0,sort=0){
-	
+
 	/* Construct initial page */
 	let page = await getDisplayPage(p,pageNum,sort);
 	if(!page) return;
@@ -160,22 +167,22 @@ exports.display = async function(p,pageNum=0,sort=0){
 var getDisplayPage = async function(p,page,sort){
 	/* Query all weapons */
 	let sql = `SELECT temp.*,user_weapon_passive.wpid,user_weapon_passive.pcount,user_weapon_passive.stat as pstat
-		FROM 
+		FROM
 			(SELECT user_weapon.uwid,user_weapon.wid,user_weapon.stat,animal.name,animal.nickname
 			FROM  user
 				INNER JOIN user_weapon ON user.uid = user_weapon.uid
 				LEFT JOIN animal ON animal.pid = user_weapon.pid
-			WHERE 
+			WHERE
 				user.id = ${p.msg.author.id}
 			ORDER BY `;
-			
+
 			if(sort===1)
 				sql += 'user_weapon.avg DESC,';
 			else if(sort===2)
 				sql += 'user_weapon.wid DESC, user_weapon.avg DESC,';
 			else if(sort===3)
 				sql += 'user_weapon.pid DESC,';
-			
+
 	sql += 			` user_weapon.uwid DESC
 			LIMIT ${weaponPerPage}
 			OFFSET ${page*weaponPerPage}) temp
@@ -184,7 +191,7 @@ var getDisplayPage = async function(p,page,sort){
 	;`;
 	sql += `SELECT COUNT(uwid) as count FROM user
 			INNER JOIN user_weapon ON user.uid = user_weapon.uid
-		WHERE 
+		WHERE
 			user.id = ${p.msg.author.id};`;
 	var result = await p.query(sql);
 
@@ -193,7 +200,7 @@ var getDisplayPage = async function(p,page,sort){
 		p.errorMsg(", you do not have any weapons, or the page is out of bounds",3000);
 		return;
 	}
-	
+
 	/* Parse total weapon count */
 	let totalCount = result[1][0].count;
 	let nextPage = (((page+1)*weaponPerPage)<=totalCount);
@@ -275,7 +282,7 @@ exports.describe = async function(p,uwid){
 		p.errorMsg(", I could not find a weapon with that unique weapon id! Please use `owo weapon` for the weapon ID!");
 		return;
 	}
-	
+
 	/* Parse image url */
 	let url = weapon.emoji;
 	if(temp = url.match(/:[0-9]+>/)){
@@ -335,7 +342,7 @@ exports.equip = async function(p,uwid,pet){
 	}else{
 		var pid = `(SELECT pid FROM animal WHERE name = '${pet.value}' AND id = ${p.msg.author.id})`;
 	}
-	let sql = `UPDATE IGNORE user_weapon SET pid = NULL WHERE 
+	let sql = `UPDATE IGNORE user_weapon SET pid = NULL WHERE
 			uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND
 			pid = ${pid} AND
 			(SELECT * FROM (SELECT uwid FROM user_weapon WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND uwid = ${uwid}) a) IS NOT NULL;`
@@ -435,13 +442,13 @@ exports.sell = async function(p,uwid){
 	}
 
 	/* Grab the item we will sell */
-	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname 
+	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
 		FROM user
 			LEFT JOIN user_weapon a ON user.uid = a.uid
-			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid 
-			LEFT JOIN animal c ON a.pid = c.pid 
+			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
+			LEFT JOIN animal c ON a.pid = c.pid
 		WHERE user.id = ${p.msg.author.id} AND a.uwid = ${uwid};`
-	
+
 	let result = await p.query(sql);
 
 	/* not a real weapon! */
@@ -480,14 +487,14 @@ exports.sell = async function(p,uwid){
 		return;
 	}
 
-	sql = `DELETE user_weapon_passive FROM user 
-		LEFT JOIN user_weapon ON user.uid = user_weapon.uid 
+	sql = `DELETE user_weapon_passive FROM user
+		LEFT JOIN user_weapon ON user.uid = user_weapon.uid
 		LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
-		WHERE id = ${p.msg.author.id} 
+		WHERE id = ${p.msg.author.id}
 			AND user_weapon_passive.uwid = ${uwid}
 			AND user_weapon.pid IS NULL;`;
-	sql += `DELETE user_weapon FROM user 
-		LEFT JOIN user_weapon ON user.uid = user_weapon.uid 
+	sql += `DELETE user_weapon FROM user
+		LEFT JOIN user_weapon ON user.uid = user_weapon.uid
 		WHERE id = ${p.msg.author.id}
 			AND user_weapon.uwid = ${uwid}
 			AND user_weapon.pid IS NULL;`;
@@ -499,7 +506,7 @@ exports.sell = async function(p,uwid){
 		p.errorMsg(", you do not have a weapon with this id!",3000);
 		return;
 	}
-	
+
 	/* Give cowoncy */
 	sql = `UPDATE cowoncy SET money = money + ${price} WHERE id = ${p.msg.author.id}`;
 	result = await p.query(sql);
@@ -522,9 +529,9 @@ var sellRank = exports.sellRank = async function(p,rankLoc){
 	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat
 		FROM user
 			LEFT JOIN user_weapon a ON user.uid = a.uid
-			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid 
+			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
 		WHERE user.id = ${p.msg.author.id} AND avg > ${min} AND avg <= ${max} AND a.pid IS NULL LIMIT 500;`
-	
+
 	let result = await p.query(sql);
 
 	/* not a real weapon! */
@@ -563,14 +570,14 @@ var sellRank = exports.sellRank = async function(p,rankLoc){
 		return;
 	}
 
-	sql = `DELETE user_weapon_passive FROM user 
-		LEFT JOIN user_weapon ON user.uid = user_weapon.uid 
+	sql = `DELETE user_weapon_passive FROM user
+		LEFT JOIN user_weapon ON user.uid = user_weapon.uid
 		LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
-		WHERE id = ${p.msg.author.id} 
+		WHERE id = ${p.msg.author.id}
 			AND user_weapon_passive.uwid IN ${weaponsSQL}
 			AND user_weapon.pid IS NULL;`;
-	sql += `DELETE user_weapon FROM user 
-		LEFT JOIN user_weapon ON user.uid = user_weapon.uid 
+	sql += `DELETE user_weapon FROM user
+		LEFT JOIN user_weapon ON user.uid = user_weapon.uid
 		WHERE id = ${p.msg.author.id}
 			AND user_weapon.uwid IN ${weaponsSQL}
 			AND user_weapon.pid IS NULL;`;
@@ -585,7 +592,7 @@ var sellRank = exports.sellRank = async function(p,rankLoc){
 
 	/* calculate rewards */
 	price *= result[1].affectedRows;
-	
+
 	/* Give cowoncy */
 	sql = `UPDATE cowoncy SET money = money + ${price} WHERE id = ${p.msg.author.id}`;
 	result = await p.query(sql);
@@ -606,4 +613,3 @@ var expandUWID = exports.expandUWID = function(euwid){
 	if(!(/^[a-zA-Z0-9]+$/.test(euwid))) return;
 	return parseInt(euwid.toLowerCase(),36);
 }
-

@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const animals = require('../../../../tokens/owo-animals.json');
@@ -27,7 +34,7 @@ module.exports = new CommandInterface({
 
 	execute: function(p){
 		var msg=p.msg,con=p.con;
-		
+
 		var sql = "SELECT money,IF(patreonAnimal = 1 OR (TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths),1,0) as patreon FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id LEFT JOIN patreons ON user.uid = patreons.uid WHERE cowoncy.id = "+msg.author.id+";";
 		sql += `SELECT name,nickname,animal.pid FROM user INNER JOIN pet_team ON user.uid = pet_team.uid INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid INNER JOIN animal ON pet_team_animal.pid = animal.pid
 				WHERE user.id = ${p.msg.author.id};`;
@@ -99,7 +106,7 @@ function getAnimals(p,result,gems,uid){
 	var gemLength = Object.keys(gems).length;
 	if(gemLength==0){
 		var animal = [animalUtil.randAnimal(patreon)];
-	
+
 	/* If gems... */
 	}else{
 		/* Calculate how many animals we need */
@@ -129,7 +136,7 @@ function getAnimals(p,result,gems,uid){
 		typeCount[type] += 1;
 	}
 	sql += insertAnimal.slice(0,-1)+" ON DUPLICATE KEY UPDATE count = count +1,totalcount = totalcount+1;";
-	var insertCount = ""; 
+	var insertCount = "";
 	for(var key in typeCount){
 		insertCount += "INSERT INTO animal_count (id,"+key+") VALUES ("+p.msg.author.id+","+typeCount[key]+") ON DUPLICATE KEY UPDATE "+key+" = "+key+"+"+typeCount[key]+";";
 	}
@@ -151,7 +158,7 @@ function getAnimals(p,result,gems,uid){
 			if(remaining<0) remaining = 0;
 			text += gems[i].emoji+"`["+remaining+"/"+gems[i].length+"]` ";
 		}
-		text += " !\n**<:blank:427371936482328596> |** You found: "+global.unicodeAnimal(animal[0][1]); 
+		text += " !\n**<:blank:427371936482328596> |** You found: "+global.unicodeAnimal(animal[0][1]);
 		for(var i=1;i<animal.length;i++) text += " "+global.unicodeAnimal(animal[i][1]);
 	}
 

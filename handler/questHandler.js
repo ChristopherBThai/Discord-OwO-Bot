@@ -1,4 +1,11 @@
 /*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
+/*
  * Handles quest counter/rewards
  */
 
@@ -22,7 +29,7 @@ module.exports = class Quest{
 		/* parse id and username */
 		let id = msg.author.id;
 		let username = msg.author.username;
-		if(questBy.includes(questName)){ 
+		if(questBy.includes(questName)){
 			id = extra.id;
 			username = extra.username;
 		}
@@ -101,4 +108,3 @@ async function check(msg,id,username,questName,result,count,extra){
 			).catch(console.error);
 	}
 }
-

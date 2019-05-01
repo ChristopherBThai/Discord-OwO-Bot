@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const teamUtil = require('./teamUtil.js');
 const animalUtil = require('./animalUtil.js');
 const WeaponInterface = require('../WeaponInterface.js');
@@ -6,10 +13,10 @@ const WeaponInterface = require('../WeaponInterface.js');
 exports.getAnimals = async function(p){
 	/* Query animals and weapons */
 	let sql = `SELECT animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
-		FROM animal 
+		FROM animal
 			LEFT JOIN user_weapon ON user_weapon.pid = animal.pid
-			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid 
-		WHERE animal.id = ${p.msg.author.id} 
+			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
+		WHERE animal.id = ${p.msg.author.id}
 			AND animal.xp > 0
 		ORDER BY xp DESC LIMIT 25;`;
 

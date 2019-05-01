@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const fs = require('fs');
 const request = require('request').defaults({encoding:null});
 const {createCanvas, Canvas, Image} = require('canvas')
@@ -69,7 +76,7 @@ async function addEmoji(args,p,ctx,canvas,callback){
 	var text = args.text;
 	var url = text.match(/:[0-9]+>/gi);
 	if(!url||!url[0]){
-		p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the emoji",3000); 
+		p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the emoji",3000);
 		return;
 	}
 	url = "https://cdn.discordapp.com/emojis/"+url[0].slice(1,url[0].length-1)+".png";
@@ -112,7 +119,7 @@ function addText(args,p,ctx,canvas,callback){
 	text = text.replace(/:[0-9]+>/gi,"");
 	//Check if we need to downsize font
 	ctx.font = args.size+'px Impact'
-	if(ctx.measureText(text).width>args.textWidth) 
+	if(ctx.measureText(text).width>args.textWidth)
 		ctx.font = (args.size-10)+'px Impact';
 
 	//Format the text with new lines
@@ -127,8 +134,8 @@ function addText(args,p,ctx,canvas,callback){
 	//Check if it will fit
 	var measure = ctx.measureText(text);
 	var height = Math.abs(measure.actualBoundingBoxAscent - measure.actualBoundingBoxDescent);
-	if(measure.width>args.width||height>args.height){  
-		p.send("**🚫 | "+p.msg.author.username+"**, The text is too long!",3000); 
+	if(measure.width>args.width||height>args.height){
+		p.send("**🚫 | "+p.msg.author.username+"**, The text is too long!",3000);
 		return;
 	}
 

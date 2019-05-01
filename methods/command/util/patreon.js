@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const patreonUtil = require('../../../util/patreon.js');
@@ -6,7 +13,7 @@ const daily = "449429399217897473";
 const animal = "449429255781351435";
 
 module.exports = new CommandInterface({
-	
+
 	alias:["patreon","donate"],
 
 	args:"",
@@ -54,7 +61,7 @@ module.exports = new CommandInterface({
 			if(parsed){
 				if(parsed.animal&&!parsed.cowoncy)
 					stat = "You are currently a **Patreon**";
-				else 
+				else
 					stat = "You are currently a **Patreon+**";
 				stat += "\n**<:blank:427371936482328596> |** until: **"+parsed.expireDate.toString()+"**";
 			}
@@ -67,4 +74,3 @@ module.exports = new CommandInterface({
 	}
 
 })
-

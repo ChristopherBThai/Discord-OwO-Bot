@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const blank = "<:blank:427371936482328596>";
@@ -7,7 +14,7 @@ const boxOpen = "<a:boxopen:427019823747301377>";
 const lootboxUtil = require('./lootboxUtil.js');
 
 module.exports = new CommandInterface({
-	
+
 	alias:["lootbox","lb"],
 
 	args:"",
@@ -54,5 +61,3 @@ module.exports = new CommandInterface({
 		});
 	}
 })
-
-

@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const macro = require('../../../../tokens/macro.js');
 const traits= {"efficiency":{"inc":10,"pow":1.748,"base":25,"upg":1,"max":215,"prefix":"/H"},
 		"duration":{"inc":10,"pow":1.7,"base":.5,"upg":.1,"max":235,"prefix":"H"},
