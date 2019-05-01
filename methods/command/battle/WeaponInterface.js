@@ -38,7 +38,7 @@ module.exports = class WeaponInterface{
 		let stats = this.toStats(qualities);
 
 		/* Check if it has enough emojis */
-		if(this.emojis.length!=7) throw new Error(`[${args.id}] does not have 7 emojis`);
+		if(this.emojis.length!=7) throw new Error(`[${this.id}] does not have 7 emojis`);
 
 		/* Get the quality of the weapon */
 		let avgQuality = 0;
