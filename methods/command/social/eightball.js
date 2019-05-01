@@ -1,9 +1,16 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 var eightballCount = 55;
 
 module.exports = new CommandInterface({
-	
+
 	alias:["eightball","8b","ask"],
 
 	args:"{question}",
@@ -26,7 +33,7 @@ module.exports = new CommandInterface({
 		p.con.query(sql,function(err,rows,field){
 			if(err){console.error(err);return;}
 			var question = p.args.join(" ");
-				
+
 			p.send("**🎱 | "+p.msg.author+" asked:**  "+question+"\n**<:blank:427371936482328596> | Answer:**  "+rows[0].answer);
 		});
 	}

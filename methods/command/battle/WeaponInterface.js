@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const Error = require('../../../handler/errorHandler.js');
 const PassiveInterface = require('./PassiveInterface.js');
 const Logs = require('./util/logUtil.js');
@@ -56,7 +63,7 @@ module.exports = class WeaponInterface{
 		avgQuality = Math.trunc(avgQuality);
 
 		let emoji = this.getEmoji(avgQuality);
-		
+
 		/* Determine rank */
 		let rank = 0;
 		for(var i=0;i<ranks.length;i++){
@@ -141,7 +148,7 @@ module.exports = class WeaponInterface{
 	/* Get the corresponding buff classes */
 	getBuffs(from){
 		let buffClasses = [];
-		let index = this.initialQualityListLength; 
+		let index = this.initialQualityListLength;
 		if(this.buffList){
 			for(let i in this.buffList){
 				let buff = buffs[this.buffList[i]];
@@ -190,7 +197,7 @@ module.exports = class WeaponInterface{
 	/* Basic attack when animal has no weapon */
 	static basicAttack(me,team,enemy){
 		if(me.stats.hp[0]<=0) return;
-		
+
 		/* Grab an enemy that I'm attacking */
 		let attacking = WeaponInterface.getAttacking(me,team,enemy);
 		if(!attacking) return;
@@ -414,7 +421,7 @@ module.exports = class WeaponInterface{
 			quality = parseInt(quality.split(','));
 			quality = quality.reduce((a,b)=>a+b,0)/quality.length;
 		}
-		
+
 		quality /= 100;
 
 		/* Get correct rank */

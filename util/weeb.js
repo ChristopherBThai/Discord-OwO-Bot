@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+	
 const weeb = require("weeb.js");
 const auth = require('../../tokens/owo-auth.json');
 const sh = new weeb("Wolke "+auth.weebsh,"owo/1.0");
@@ -37,7 +44,7 @@ exports.grab = function(msg,ptype,ftype,text,notsfw,retry){
 
 	}).catch(err => {
 		if(retryt&&(ftype=="jpg"||ftype=="png")){
-			this.grab(msg,ptype,(ftype=="jpg")?"png":"jpg",text,notsfw,false);		
+			this.grab(msg,ptype,(ftype=="jpg")?"png":"jpg",text,notsfw,false);
 		}else
 			msg.channel.send("**🚫 |** I couldn't find that image type! :c\nType `owo help gif` for the list of types!")
 				.then(message => message.delete(3000))

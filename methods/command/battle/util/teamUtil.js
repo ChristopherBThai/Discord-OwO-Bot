@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const badwords = require('../../../../../tokens/badwords.json');
 const battleEmoji = "🛋";
 const weaponUtil = require('./weaponUtil.js');
@@ -24,7 +31,7 @@ exports.addMember = async function(p,animal,pos){
 			p.errorMsg(`, This animal is already in your team!`,3000);
 			return;
 		}
-		
+
 		/* Add used team pos to an array */
 		usedPos.push(result[0][i].pos);
 	}
@@ -71,7 +78,7 @@ exports.addMember = async function(p,animal,pos){
 			) ON DUPLICATE KEY UPDATE
 				pid = ${result[1][0].pid};`;
 	}
-	
+
 	/* Query and send message */
 	await p.query(sql);
 
@@ -92,14 +99,14 @@ exports.addMember = async function(p,animal,pos){
  * Removes a member to the user's team
  * We will assume that all parameters are valid
  * (Error check before calling this function
- * remove = must be either 1-3 or an animal 
+ * remove = must be either 1-3 or an animal
  */
 exports.removeMember = async function(p,remove){
 	let sql = `SELECT pos,animal.pid,name FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE user.id = ${p.msg.author.id} ORDER BY pos ASC;`;
 
 	/* If its a position */
 	if(p.global.isInt(remove)){
-		sql = `DELETE FROM pet_team_animal WHERE 
+		sql = `DELETE FROM pet_team_animal WHERE
 			pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id})) AND
 			pos = ? AND
 			(SELECT count FROM (SELECT COUNT(pid) as count FROM pet_team_animal WHERE pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}))) as a) > 1;
@@ -107,7 +114,7 @@ exports.removeMember = async function(p,remove){
 
 	/* If its an animal */
 	}else{
-		sql = `DELETE FROM pet_team_animal WHERE 
+		sql = `DELETE FROM pet_team_animal WHERE
 			pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id})) AND
 			pid = (SELECT pid FROM animal WHERE name = ? AND id = ${p.msg.author.id}) AND
 			(SELECT count FROM (SELECT COUNT(pid) as count FROM pet_team_animal WHERE pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}))) as a) > 1;
@@ -186,7 +193,7 @@ exports.displayTeam = async function(p){
 	/* Parse query */
 	let team = parseTeam(p,result[0],result[1]);
 	let digits = 1;
-	for(let i in team){ 
+	for(let i in team){
 		animalUtil.stats(team[i]);
 		let tempDigit = Math.log10(team[i].stats.hp[1]+team[i].stats.hp[3])+1;
 		if(tempDigit>digits) digits = tempDigit;
@@ -314,7 +321,7 @@ exports.giveXP = async function(p,team,xp){
 	let total = (isInt)?xp:xp.total;
 	let addStreak = (isInt)?false:xp.addStreak;
 	let resetStreak = (isInt)?false:xp.resetStreak;
-		
+
 	let sql = '';
 	for(let i in team.team){
 		sql += animalUtil.giveXP(team.team[i].pid,total);
@@ -325,4 +332,3 @@ exports.giveXP = async function(p,team,xp){
 
 	return await p.query(sql);
 }
-

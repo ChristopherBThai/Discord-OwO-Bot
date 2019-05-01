@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const global = require('../../../util/global.js');
@@ -7,7 +14,7 @@ const feedbackChannel = "519778148888346635";
 const supportGuild = "420104212895105044";
 
 module.exports = new CommandInterface({
-	
+
 	alias:["feedback","question","report","suggest"],
 
 	args:"{msg}",
@@ -101,4 +108,3 @@ function suggest(p,message){
 	else
 		p.send("**📨 |** *OwO What's this?!*  "+p.msg.author+", Thanks for the suggestion! Your suggestion can be viewed in our server! Come join!\n"+p.config.emoji.blank+" **|** Abuse of this command will result in a ban.\n"+p.config.emoji.blank+" **|** "+p.config.guildlink);
 }
-

@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const fid = {};
 const food = require('../../../json/food.json');
 const global = require('../../../util/global.js');
@@ -12,7 +19,7 @@ exports.getItem = function(args){
 	if(args.length!=1){
 		return "Invalid arguments!";
 	}
-	
+
 	if(global.isInt(args[0])){
 		id = parseInt(args[0]);
 	}else{

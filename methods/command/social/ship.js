@@ -1,9 +1,16 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const vowels = ['a','e','i','o','u','y'];
 
 module.exports = new CommandInterface({
-	
+
 	alias:["ship","combine"],
 
 	args:"{@user1} {@user2}",
@@ -102,4 +109,3 @@ function combinename(name1,name2){
 	}
 	return name;
 }
-

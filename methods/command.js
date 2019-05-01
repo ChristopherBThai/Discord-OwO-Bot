@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const requireDir = require('require-dir');
 const dir = requireDir('./command',{recurse:true});
 
@@ -179,7 +186,7 @@ function executeCommand(param){
 					console.log("\t\x1b[36m%s\x1b[0m",result);
 					*/
 			}else{
-				/*	
+				/*
 				console.log("\x1b[0m\x1b[4mCommand\x1b[0m: %s\x1b[0m \x1b[36m{%s}\x1b[0m \x1b[0m%s\x1b[36m[%s][%s][%s]",
 					command,
 					msg.content.replace(/(\n)+/g," | "),

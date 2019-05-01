@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const cards = ["<:cardback:457084762230751254>",
 	"<:as:457412291457974272>","<:2s:457412287372722176>","<:3s:457412291382738954>","<:4s:457412290988343296>","<:5s:457412291059646465>","<:6s:457412291303047208>","<:7s:457412291302916096>","<:8s:457412291004989441>","<:9s:457412291378413578>","<:10s:457412291093069826>","<:js:457412291881598988>","<:qs:457412292007690251>","<:ks:457412292015816720>",
 	"<:ac:457412292238114826>","<:2c:457412287389630475>","<:3c:457412291764420608>","<:4c:457412291290464267>","<:5c:457412291655106561>","<:6c:457412292166811659>","<:7c:457412292083187743>","<:8c:457412291780935691>","<:9c:457412291651043329>","<:10c:457412291877404674>","<:jc:457412292359880716>","<:qc:457412292469063682>","<:kc:457412292577853441>",
@@ -116,7 +123,7 @@ function cardValue(deck){
 			aces++;
 		}
 	}
-	
+
 	var usedAces = 0;
 	for(var i = 0;i<aces;i++){
 		points += 10;
@@ -127,7 +134,7 @@ function cardValue(deck){
 	}
 
 	var ace = false;
-	if(aces>0 && usedAces<aces) 
+	if(aces>0 && usedAces<aces)
 		ace = true;
 
 	return {"display":text,"points":points,"shownPoints":unhiddenPoints,"ace":ace};

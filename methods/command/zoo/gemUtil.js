@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const gems = require('../../../json/gems.json');
 for(var gem in gems.gems) gems.gems[gem].key = gem;
 const ranks = {"c":"Common","u":"Uncommon","r":"Rare","e":"Epic","m":"Mythical","l":"Legendary","f":"Fabled"};
@@ -39,12 +46,12 @@ exports.use = function(p,id){
 	var sql = `UPDATE IGNORE user NATURAL JOIN user_gem ug NATURAL JOIN gem g SET
 			gcount = gcount - 1,
 			activecount = ${gem.length}
-		WHERE 
+		WHERE
 			gname = '${gem.key}' AND
 			gcount > 0 AND
 			id = ${p.msg.author.id} AND
-			(SELECT sum FROM 
-			 	(SELECT SUM(activecount) as sum,type FROM user NATURAL JOIN user_gem NATURAL JOIN gem WHERE id = ${p.msg.author.id} GROUP BY type) as tmptable 
+			(SELECT sum FROM
+			 	(SELECT SUM(activecount) as sum,type FROM user NATURAL JOIN user_gem NATURAL JOIN gem WHERE id = ${p.msg.author.id} GROUP BY type) as tmptable
 			WHERE type = g.type) <= 0;`;
 	p.con.query(sql,function(err,result){
 		if(err){console.error(err);return;}

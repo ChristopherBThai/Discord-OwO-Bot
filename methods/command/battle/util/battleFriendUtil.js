@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const teamUtil = require('./teamUtil.js');
 const animalUtil = require('./animalUtil.js');
 
@@ -18,30 +25,30 @@ exports.challenge = async function(p,id,bet){
 
 	/* Query two teams */
 	let sql = `SELECT pet_team.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
-		FROM user 
+		FROM user
 			INNER JOIN pet_team ON user.uid = pet_team.uid
 			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
-			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid 
-		WHERE user.id = ${id} 
+			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
+		WHERE user.id = ${id}
 		ORDER BY pos ASC;`;
 	sql += `SELECT pet_team.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
-		FROM user 
+		FROM user
 			INNER JOIN pet_team ON user.uid = pet_team.uid
 			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
-			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid 
-		WHERE user.id = ${p.msg.author.id} 
+			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
+		WHERE user.id = ${p.msg.author.id}
 		ORDER BY pos ASC;`;
 	sql += `SELECT money from cowoncy where id = ${p.msg.author.id};`;
 	sql += `SELECT money from cowoncy where id = ${opponent.id};`;
 	sql += `SELECT * FROM user_battle WHERE (
 			user1 IN (SELECT uid FROM user WHERE id IN (${user2},${user1})) OR
-			user2 IN (SELECT uid FROM user WHERE id IN (${user2},${user1})) 
+			user2 IN (SELECT uid FROM user WHERE id IN (${user2},${user1}))
 		) AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 10;`;
-	sql += `SELECT win1,win2,tie FROM user_battle 
+	sql += `SELECT win1,win2,tie FROM user_battle
 			LEFT JOIN user u1 ON user_battle.user1 = u1.uid
 			LEFT JOIN user u2 ON user_battle.user2 = u2.uid
 		WHERE u1.id = ${user1} AND u2.id = ${user2};`;

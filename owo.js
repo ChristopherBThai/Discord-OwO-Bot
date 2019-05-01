@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const debug = false;
 const testingGuild = '409959187229966337';
 const supportGuild = '420104212895105044';
@@ -69,7 +76,7 @@ client.on('reconnecting', () => {
 	console.log('--------------- Bot is reconnecting ---------------');
 });
 
-//When bot resumes 
+//When bot resumes
 client.on('reconnecting', function(replayed) {
 	console.log('--------------- Bot has resumed ---------------');
 	if(!debug)

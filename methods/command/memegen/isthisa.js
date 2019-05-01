@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const fs = require('fs');
@@ -5,7 +12,7 @@ const request = require('request').defaults({encoding:null});
 const {createCanvas, Canvas, Image} = require('canvas')
 
 module.exports = new CommandInterface({
-	
+
 	alias:["isthisa"],
 
 	args:"{bottomText} | {butterflyText|@user|emoji} | {personText|@user|emoji}",
@@ -67,10 +74,10 @@ function addBottomText(p,text,ctx,canvas){
 	text = text.replace(/:[0-9]+>/gi,"");
 	ctx.textAlign = "center";
 	ctx.font = '40px Impact';
-	if(ctx.measureText(text).width>730) 
+	if(ctx.measureText(text).width>730)
 		ctx.font = '30px Impact';
-	if(ctx.measureText(text).width>730){ 
-		p.send("**🚫 | "+p.msg.author.username+"**, The bottom text is too long!",3000); 
+	if(ctx.measureText(text).width>730){
+		p.send("**🚫 | "+p.msg.author.username+"**, The bottom text is too long!",3000);
 		return false;
 	}
 
@@ -97,7 +104,7 @@ async function addButterflyText(p,text,ctx,canvas,callback){
 	}else if((/^\s*<a?:[a-zA-Z0-9]+:[0-9]+>\s*$/gi).test(text)){
 		var url = text.match(/:[0-9]+>/gi);
 		if(!url||!url[0]){
-			p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the emoji",3000); 
+			p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the emoji",3000);
 			return;
 		}
 		url = "https://cdn.discordapp.com/emojis/"+url[0].slice(1,url[0].length-1)+".png";
@@ -111,7 +118,7 @@ async function addButterflyText(p,text,ctx,canvas,callback){
 		text = text.replace(/<a?:/gi,"");
 		text = text.replace(/:[0-9]+>/gi,"");
 		ctx.font = '30px Impact'
-		if(ctx.measureText(text).width>300) 
+		if(ctx.measureText(text).width>300)
 			ctx.font = '15px Impact';
 		var tempText = text.split(" ");
 		text = "";
@@ -120,8 +127,8 @@ async function addButterflyText(p,text,ctx,canvas,callback){
 				text += "\n";
 			text += tempText[i]+" ";
 		}
-		if(ctx.measureText(text).width>300||text.split(/\r\n|\r|\n/).length>3){  
-			p.send("**🚫 | "+p.msg.author.username+"**, The butterfly text is too long!",3000); 
+		if(ctx.measureText(text).width>300||text.split(/\r\n|\r|\n/).length>3){
+			p.send("**🚫 | "+p.msg.author.username+"**, The butterfly text is too long!",3000);
 			return;
 		}
 
@@ -131,7 +138,7 @@ async function addButterflyText(p,text,ctx,canvas,callback){
 }
 
 async function addPersonText(p,text,ctx,canvas,callback){
-	if(!text){ callback(); return;} 
+	if(!text){ callback(); return;}
 	ctx.textAlign = "center";
 	if(p.global.isUser(text)){
 		var url = await p.global.getUser(text);
@@ -149,7 +156,7 @@ async function addPersonText(p,text,ctx,canvas,callback){
 	}else if((/^\s*<a?:[a-zA-Z0-9]+:[0-9]+>\s*$/gi).test(text)){
 		var url = text.match(/:[0-9]+>/gi);
 		if(!url||!url[0]){
-			p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the emoji",3000); 
+			p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the emoji",3000);
 			return;
 		}
 		url = "https://cdn.discordapp.com/emojis/"+url[0].slice(1,url[0].length-1)+".png";
@@ -163,7 +170,7 @@ async function addPersonText(p,text,ctx,canvas,callback){
 		text = text.replace(/<a?:/gi,"");
 		text = text.replace(/:[0-9]+>/gi,"");
 		ctx.font = '30px Impact'
-		if(ctx.measureText(text).width>300) 
+		if(ctx.measureText(text).width>300)
 			ctx.font = '15px Impact';
 		var tempText = text.split(" ");
 		text = "";
@@ -172,8 +179,8 @@ async function addPersonText(p,text,ctx,canvas,callback){
 				text += "\n";
 			text += tempText[i]+" ";
 		}
-		if(ctx.measureText(text).width>300){  
-			p.send("**🚫 | "+p.msg.author.username+"**, The person text is too long!",3000); 
+		if(ctx.measureText(text).width>300){
+			p.send("**🚫 | "+p.msg.author.username+"**, The person text is too long!",3000);
 			return;
 		}
 
@@ -194,7 +201,7 @@ function callbackImage(p,ctx,x,y,size,callback){
 				p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the image",3000);
 			}
 			img.src = body;
-		}else p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the image",3000); 
+		}else p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the image",3000);
 	}
 }
 

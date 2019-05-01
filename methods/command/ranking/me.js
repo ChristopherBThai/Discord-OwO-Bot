@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const global = require('../../../util/global.js');
@@ -6,7 +13,7 @@ const animalUtil = require('../battle/util/animalUtil.js');
 const animalUtil2 = require('../zoo/animalUtil.js');
 
 module.exports = new CommandInterface({
-	
+
 	alias:["my","me","guild"],
 
 	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse|team [global]",
@@ -68,7 +75,7 @@ function display(con, msg, args){
 		}else if(args[i]==="global"||args[i]==="g") aglobal = true;
 		else invalid = true;
 	}
-	
+
 	if(invalid)
 		msg.channel.send("**🚫 |** Wrong arguments! :c Go check `owo help`!")
 			.catch(err => console.error(err));
@@ -125,7 +132,7 @@ function displayRanking(con,msg,sql,title,subText){
 		var uname;
 		if(uname = await global.getUser(me.id))
 			uname = uname.username;
-		else 
+		else
 			uname = "you";
 		uname = uname.replace("discord.gg","discord,gg").replace(/(```)/g, "`\u200b``");
 		embed += "< "+rank+"   "+uname+" >\n"+subText(me)+"\n";
@@ -368,7 +375,7 @@ function getGuildRanking(con, msg, id){
 				rank++;
 			}else if(rank==0)
 				rank = 1;
-				
+
 		}
 
 		//Current user
@@ -458,6 +465,3 @@ const apoints = "(a.common*"+animals.points.common+"+"+
 		"a.gem*"+animals.points.gem+"+"+
 		"a.legendary*"+animals.points.legendary+"+"+
 		"a.fabled*"+animals.points.fabled+")";
-
-
-

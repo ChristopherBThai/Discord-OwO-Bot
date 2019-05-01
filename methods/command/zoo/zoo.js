@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const animalUtil = require('./animalUtil.js');
@@ -14,7 +21,7 @@ initDisplay();
 
 
 module.exports = new CommandInterface({
-	
+
 	alias:["zoo"],
 
 	args:"{display}",

@@ -1,9 +1,16 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const global = require("../../../util/global.js");
 const box = "<:box:427352600476647425>";
 const tempGem = require("../../../json/gems.json");
 var gems = {};
 for (var key in tempGem.gems){
- 	var temp = tempGem.gems[key];	
+ 	var temp = tempGem.gems[key];
 	temp.key = key;
 	if(!gems[temp.type]) gems[temp.type] = [];
 	gems[temp.type].push(temp);

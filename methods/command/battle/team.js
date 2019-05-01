@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const global = require('../../../util/global.js');
@@ -55,7 +62,7 @@ module.exports = new CommandInterface({
 		}else if(subcommand=="rename"||subcommand=="r"||subcommand=="name")
 			await rename(p);
 
-		/* If they need help 
+		/* If they need help
 		else if(subcommand=="help"){
 			p.help = true;
 			p.hcommand = "team";
@@ -155,7 +162,7 @@ async function rename(p){
 		p.errorMsg(", the correct command is `owo team rename {name}`!",5000);
 		return;
 	}
-	
+
 	/* grab name */
 	var name = p.args.slice(1).join(" ");
 

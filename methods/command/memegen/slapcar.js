@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const fs = require('fs');
@@ -6,7 +13,7 @@ const {createCanvas, Canvas, Image} = require('canvas')
 const textBoxHeight = 100;
 
 module.exports = new CommandInterface({
-	
+
 	alias:["slapcar","slaproof"],
 
 	args:"{text} {@user|emoji}",
@@ -122,7 +129,7 @@ function user(p){
 			}
 			img2.onerror = function(){p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the image",3000);}
 			img2.src = body;
-			}else p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the image",3000); 
+			}else p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the image",3000);
 		});
 	});
 }
@@ -133,7 +140,7 @@ function emoji(p){
 
 		var url = p.args[p.args.length-1].match(/:[0-9]+>/gi);
 		if(!url||!url[0]){
-			p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the emoji",3000); 
+			p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the emoji",3000);
 			p.setCooldown(5);
 			return;
 		}
@@ -181,7 +188,7 @@ function emoji(p){
 			}
 			img2.onerror = function(){p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the image",3000);}
 			img2.src = body;
-			}else p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the image",3000); 
+			}else p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the image",3000);
 		});
 	});
 }

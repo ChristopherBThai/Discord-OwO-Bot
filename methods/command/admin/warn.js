@@ -1,9 +1,16 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 var sender = require('../../../util/sender.js');
 
 module.exports = new CommandInterface({
-	
+
 	alias:["warn"],
 
 	admin:true,
@@ -32,4 +39,3 @@ module.exports = new CommandInterface({
 	}
 
 })
-

@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 module.exports = new CommandInterface({
@@ -17,15 +24,15 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: async function(p){
-		let sql = `SELECT u1.id as user1,u2.id as user2 FROM user_battle 
+		let sql = `SELECT u1.id as user1,u2.id as user2 FROM user_battle
 				LEFT JOIN user u1 ON user_battle.user1 = u1.uid
 				LEFT JOIN user u2 ON user_battle.user2 = u2.uid
 			WHERE
 				TIMESTAMPDIFF(MINUTE,time,NOW()) < 10 AND (
 					u1.id = ${p.msg.author.id} OR
-					u2.id = ${p.msg.author.id} 
+					u2.id = ${p.msg.author.id}
 				);`;
-		sql += `UPDATE user_battle SET time = '2018-01-01' WHERE 
+		sql += `UPDATE user_battle SET time = '2018-01-01' WHERE
 			TIMESTAMPDIFF(MINUTE,time,NOW()) < 10 AND (
 				user1 = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) OR
 				user2 = (SELECT uid FROM user WHERE id = ${p.msg.author.id})

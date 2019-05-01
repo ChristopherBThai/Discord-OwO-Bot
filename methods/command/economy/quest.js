@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 /*
@@ -190,7 +197,7 @@ function parseQuests(id,result,afterMid,quest){
 		}
 		result.push({qname:quest.key,level:quest.level,prize:quest.prize,count:0});
 	}
-	
+
 	var text = "";
 	for(let i=0;i<result.length;i++){
 		texts = parseQuest(result[i]);

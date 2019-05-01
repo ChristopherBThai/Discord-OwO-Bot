@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const animalUtil = require('./util/animalUtil.js');
@@ -22,19 +29,19 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 		let sql = `SELECT (SELECT id FROM user WHERE uid = sender) AS sender,bet,flags
-			FROM user_battle JOIN 
-				(SELECT uid FROM user WHERE id = ${p.msg.author.id}) AS user 
+			FROM user_battle JOIN
+				(SELECT uid FROM user WHERE id = ${p.msg.author.id}) AS user
 			WHERE
 				TIMESTAMPDIFF(MINUTE,time,NOW()) < 10 AND (
 					user1 = user.uid OR
-					user2 = user.uid 
+					user2 = user.uid
 				) AND (
 					sender != user.uid OR
 					user1 = user2
 				);`;
-		sql += `UPDATE user_battle JOIN 
-				(SELECT uid FROM user WHERE id = ${p.msg.author.id}) AS user 
-			SET time = '2018-01-01' WHERE 
+		sql += `UPDATE user_battle JOIN
+				(SELECT uid FROM user WHERE id = ${p.msg.author.id}) AS user
+			SET time = '2018-01-01' WHERE
 			TIMESTAMPDIFF(MINUTE,time,NOW()) < 10 AND (
 				user1 = user.uid OR
 				user2 = user.uid
@@ -103,7 +110,7 @@ module.exports = new CommandInterface({
 		let winSql = `UPDATE user_battle SET ${winColumn} = ${winColumn} + 1 WHERE user1 = (SELECT uid FROM user WHERE id = ${user1}) AND user2 = (SELECT uid FROM user WHERE id = ${user2});`;
 		if(winner&&bet>0){
 			sql = `UPDATE cowoncy c
-				SET c.money = c.money - ${bet} 
+				SET c.money = c.money - ${bet}
 				WHERE c.id IN (${p.msg.author.id},${sender.id}) AND
 					(SELECT * FROM (SELECT COUNT(id) FROM cowoncy c2 WHERE c2.id IN (${p.msg.author.id},${sender.id}) AND c2.money >= ${bet}) c3) >= 2`
 			result = await p.query(sql);
@@ -140,22 +147,22 @@ module.exports = new CommandInterface({
 /* user1 should be challengee, user2 is challenger */
 async function parseTeams(p, user, sender,flags){
 	let sql = `SELECT pet_team.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
-		FROM user 
+		FROM user
 			INNER JOIN pet_team ON user.uid = pet_team.uid
 			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
-			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid 
-		WHERE user.id = ${user.id} 
+			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
+		WHERE user.id = ${user.id}
 		ORDER BY pos ASC;`;
 	sql += `SELECT pet_team.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
-		FROM user 
+		FROM user
 			INNER JOIN pet_team ON user.uid = pet_team.uid
 			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
-			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid 
-		WHERE user.id = ${sender.id} 
+			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
+		WHERE user.id = ${sender.id}
 		ORDER BY pos ASC;`;
 
 	let result = await p.query(sql);

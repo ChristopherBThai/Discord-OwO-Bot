@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const CommandInterface = require('../../commandinterface.js');
 
 const autohuntUtil = require('./autohuntutil.js');
@@ -21,7 +28,7 @@ for(var i=0;i<exp.length;i++)
 
 
 module.exports = new CommandInterface({
-	
+
 	alias:["upgrade","upg"],
 
 	args:"{trait} {count}",
@@ -59,7 +66,7 @@ module.exports = new CommandInterface({
 			p.send("**🚫 |** Please include how many animal essence to use!",3000);
 			return;
 		}
-		
+
 		//Check if valid args
 		if(!trait){
 			p.send("**🚫 |** I could not find that autohunt trait!\n**<:blank:427371936482328596> |** You can choose from: `efficiency`, `duration`, `cost`, `gain`, or `exp`",5000);
@@ -84,7 +91,7 @@ module.exports = new CommandInterface({
 				sql += "UPDATE autohunt SET essence = essence + "+stat.currentxp+","+trait+"="+trait+"-"+stat.currentxp+" WHERE id = "+msg.author.id+";";
 				await p.query(sql);
 			}
-			var text = "**🛠 | "+msg.author.username+"**, You successfully upgraded `"+trait+"` with  **"+(p.global.toFancyNum(count))+" Animal Essence** "+essence+"!"; 
+			var text = "**🛠 | "+msg.author.username+"**, You successfully upgraded `"+trait+"` with  **"+(p.global.toFancyNum(count))+" Animal Essence** "+essence+"!";
 			text += "\n**<:blank:427371936482328596> |** `"+trait+": "+stat.stat+stat.prefix+" -  Lvl "+stat.lvl+" "+((stat.max)?"[MAX]":"["+stat.currentxp+"/"+stat.maxxp+"]")+"`";
 			if(stat.max)
 				text += "\n**<:blank:427371936482328596> |** HuntBot is at max level!";

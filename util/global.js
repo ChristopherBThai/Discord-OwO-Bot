@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+	
 /**
  * Global Variables and Methods
  */
@@ -51,7 +58,7 @@ exports.getUser = async function(mention,cache = false){
 	id = (mention+'').match(/[0-9]+/);
 	if(id)
 		id = id[0];
-	else 
+	else
 		return undefined;
 	try{
 		return await client.fetchUser(id,cache);
@@ -106,7 +113,7 @@ exports.client= function(tclient){
 		if(animallist[key].uni!=undefined)
 			animalunicode[animallist[key].value] = animallist[key].uni;
 	}
-	
+
 	//other info to animaljson
 	for(key in animaljson.ranks){
 		ranks[key] = {};

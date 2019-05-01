@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 /* Utility to check/parse dates */
 
 /* Checks if the given date is past midnight */
@@ -23,7 +30,7 @@ exports.afterMidnight = function(date){
 
 	var pDate = new Date(date);
 	var diff = midnight - pDate;
-	
+
 	/* Not past midnight */
 	if(diff<=0) return {after:false,diff:diff,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow};
 
@@ -37,8 +44,8 @@ exports.afterMidnight = function(date){
 function toMySQL(date){
 	return "'"+date.getFullYear() + '-' +
 		('00' + (date.getMonth()+1)).slice(-2) + '-' +
-		('00' + date.getDate()).slice(-2) + ' ' + 
-		('00' + date.getHours()).slice(-2) + ':' + 
-		('00' + date.getMinutes()).slice(-2) + ':' + 
+		('00' + date.getDate()).slice(-2) + ' ' +
+		('00' + date.getHours()).slice(-2) + ':' +
+		('00' + date.getMinutes()).slice(-2) + ':' +
 		('00' + date.getSeconds()).slice(-2) + "'";
 }

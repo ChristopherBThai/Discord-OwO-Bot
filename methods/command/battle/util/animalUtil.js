@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const WeaponInterface = require('../WeaponInterface.js');
 
 exports.stats = function(animal,flags){
@@ -7,7 +14,7 @@ exports.stats = function(animal,flags){
 	if(flags&&flags.level) lvl.lvl = flags.level;
 	/* Parse base animal stat*/
 	let stats = this.parseStats(animal.animal,lvl.lvl);
-	
+
 	stats.lvl = lvl.lvl;
 	stats.xp = [lvl.currentXp,lvl.maxXp];
 
