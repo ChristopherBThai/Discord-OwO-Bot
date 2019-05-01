@@ -2,7 +2,7 @@ const BuffInterface = require('../BuffInterface.js');
 const WeaponInterface = require('../WeaponInterface.js');
 const Logs = require('../util/logUtil.js');
 
-module.exports = class Poison extends BuffInterface{
+module.exports = class Flame extends BuffInterface{
 
 	init(){
 		this.id = 3;
