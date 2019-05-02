@@ -64,11 +64,13 @@ client.on('ready',()=>{
 });
 
 //When bot disconnects
-client.on('disconnect', function(erMsg, code) {
+client.on('disconnect', function(erMsg) {
+	let code = erMsg.code;
 	console.log('----- Bot disconnected from Discord with code', code, 'for reason:', erMsg, '-----');
-	//client.connect();
+	client.destroy().then(client.login(auth.token));
 	if(!debug)
 		logger.increment("disconnect");
+
 });
 
 //When bot reconnecting
