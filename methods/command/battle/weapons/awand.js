@@ -19,7 +19,7 @@ module.exports = class AbsorbWand extends WeaponInterface{
 		this.statDesc = "Deal **?%** of your "+WeaponInterface.magEmoji+"MAG to to a random enemy and transfer **?%** of their max "+WeaponInterface.wpEmoji+"WP to an ally";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
-		this.qualityList = [[60,80],[25,40]];
+		this.qualityList = [[60,80],[10,30]];
 		this.manaRange = [250,150];
 	}
 

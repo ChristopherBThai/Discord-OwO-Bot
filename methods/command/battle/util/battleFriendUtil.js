@@ -106,34 +106,36 @@ exports.challenge = async function(p,id,bet){
 }
 
 function toEmbedRequest(p,stats,bet,sender,receiver,flags){
-	let text = "";
+	let text = [];
 	for(let i in sender.team){
 		let animal = sender.team[i];
-		text += "\nL."+animal.stats.lvl+" "+animal.animal.value + " ";
-		text += animal.nickname?animal.nickname:animal.animal.name;
+		let tempText = "L."+animal.stats.lvl+" "+animal.animal.value + " ";
+		tempText += animal.nickname?animal.nickname:animal.animal.name;
 		if(animal.weapon){
-			text += " | "+animal.weapon.rank.emoji+animal.weapon.emoji;
+			tempText += " | "+animal.weapon.rank.emoji+animal.weapon.emoji;
 			let passives = animal.weapon.passives;
 			for(var j in passives){
-				text += passives[j].emoji;
+				tempText += passives[j].emoji;
 			}
-			text += " "+animal.weapon.avgQuality+"%";
+			tempText+= " "+animal.weapon.avgQuality+"%";
 		}
+		text.push(tempText);
 	}
 
-	let text2 = "";
+	let text2 = [];
 	for(let i in receiver.team){
 		let animal = receiver.team[i];
-		text2 += "\nL."+animal.stats.lvl+" "+animal.animal.value + " ";
-		text2 += animal.nickname?animal.nickname:animal.animal.name;
+		let tempText = "L."+animal.stats.lvl+" "+animal.animal.value + " ";
+		tempText += animal.nickname?animal.nickname:animal.animal.name;
 		if(animal.weapon){
-			text2 += " | "+animal.weapon.rank.emoji+animal.weapon.emoji;
+			tempText += " | "+animal.weapon.rank.emoji+animal.weapon.emoji;
 			let passives = animal.weapon.passives;
 			for(var j in passives){
-				text2 += passives[j].emoji;
+				tempText += passives[j].emoji;
 			}
-			text2 += " "+animal.weapon.avgQuality+"%";
+			tempText+= " "+animal.weapon.avgQuality+"%";
 		}
+		text2.push(tempText);
 	}
 
 	let flagText = "";
@@ -156,21 +158,40 @@ function toEmbedRequest(p,stats,bet,sender,receiver,flags){
 			icon_url: p.msg.author.avatarURL
 		},
 		description: "Bet amount: "+bet+" cowoncy"+flagText+"\n`owo ab` to accept the battle!\n`owo db` to decline the battle!",
-		fields: [
-		{
-			name:(sender.name?sender.name:sender.username+"'s Team")+(sender.id==receiver.id?"":" | "+(stats[sender.id]?stats[sender.id]:0)+" wins"),
-			value: text,
-			inline:true
-		},{
-			name:(receiver.name?receiver.name:receiver.username+"'s Team")+(sender.id==receiver.id?"":" | "+(stats[receiver.id]?stats[receiver.id]:0)+" wins"),
-			value: text2,
-			inline:true
-		}],
 		color:p.config.embed_color,
 		footer:{
 			text:"This challenge will expire in 10 minutes"
 		},
 		timestamp: new Date()
+	}
+
+	if(text.join("\n").length>1024||text2.join("\n").length>1024){
+		embed.fields = [];
+		for(let i in text){
+			embed.fields.push({
+				name:(sender.name?sender.name:sender.username+"'s Team")+(sender.id==receiver.id?"":" | "+(stats[sender.id]?stats[sender.id]:0)+" wins"),
+				value: text[i],
+				inline:true
+			});
+		}
+		for(let i in text2){
+			embed.fields.push({
+				name:(receiver.name?receiver.name:receiver.username+"'s Team")+(sender.id==receiver.id?"":" | "+(stats[receiver.id]?stats[receiver.id]:0)+" wins"),
+				value: text2[i],
+				inline:true
+			});
+		}
+
+	}else{
+		embed.fields = [{
+			name:(sender.name?sender.name:sender.username+"'s Team")+(sender.id==receiver.id?"":" | "+(stats[sender.id]?stats[sender.id]:0)+" wins"),
+			value: text.join("\n"),
+			inline:true
+		},{
+			name:(receiver.name?receiver.name:receiver.username+"'s Team")+(sender.id==receiver.id?"":" | "+(stats[receiver.id]?stats[receiver.id]:0)+" wins"),
+			value: text2.join("\n"),
+			inline:true
+		}];
 	}
 
 	return embed;

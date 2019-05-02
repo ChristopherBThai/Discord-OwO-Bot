@@ -48,7 +48,7 @@ module.exports = class VampStaff extends WeaponInterface{
 				subLogs.push(hl.logs);
 				// Apply buff
 				let buff = this.getBuffs(me)[0];
-				let buffLogs = buff.bind(team[i],2,{me,allies:team,enemies:enemy});
+				let buffLogs = buff.bind(team[i],2,{me:team[i],allies:team,enemies:enemy});
 				subLogs.push(buffLogs);
 			}
 		}
