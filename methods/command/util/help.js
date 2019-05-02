@@ -76,7 +76,7 @@ function display(send){
 			{"name":"🎖 Rankings",
 				"value":"`top`  `my`"},
 			{"name":"💰 Economy",
-				"value":"`cowoncy`  `give`  `daily`  `vote`  `quest`"},
+				"value":"`cowoncy`  `give`  `daily`  `vote`  `quest`  `checklist`"},
 			{"name":"🌱 Animals",
 				"value":"`zoo`  `hunt`  `sell`  `battle`  `inv`  `equip`  `autohunt`  `owodex`  `lootbox`  `crate`  `battlesetting`  `team`  `weapon`  `rename`"},
 			{"name":"🎲 Gambling",

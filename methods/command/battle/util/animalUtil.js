@@ -47,9 +47,9 @@ exports.parseStats = function(animal,lvl){
 	stats.att = [baseAtt,0];
 	let baseMag = 100+lvl*animal.magr;
 	stats.mag = [baseMag,0];
-	let basePr = 25+lvl*animal.prr;
+	let basePr = 25+lvl*animal.prr*2;
 	stats.pr = [basePr,0];
-	let baseMr = 25+lvl*animal.mrr;
+	let baseMr = 25+lvl*animal.mrr*2;
 	stats.mr = [baseMr,0]
 	return stats;
 }

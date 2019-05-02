@@ -26,6 +26,6 @@ module.exports = class Taunt extends BuffInterface{
 	}
 
 	attacked(animal,attacker,damage,type,last){
-		damage[1] -= damage[0]*this.stats[0]/100;
+		damage[1] -= (damage[0]+damage[1])*this.stats[0]/100;
 	}
 }
