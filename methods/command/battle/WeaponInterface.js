@@ -466,7 +466,7 @@ module.exports = class WeaponInterface{
 	/* Convert resistance to percent */
 	static resToPercent(res){
 		res = res[0]+res[1];
-		res = (res/(100+res))*.75;
+		res = (res/(100+res))*.8;
 		return res;
 	}
 
