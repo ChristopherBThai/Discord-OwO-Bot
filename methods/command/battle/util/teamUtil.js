@@ -322,9 +322,21 @@ exports.giveXP = async function(p,team,xp){
 	let addStreak = (isInt)?false:xp.addStreak;
 	let resetStreak = (isInt)?false:xp.resetStreak;
 
+	let highestLvl = 1;
+	for(let i in team.team){
+		let lvl = team.team[i].stats.lvl;
+		if(lvl >highestLvl)
+			highestLvl = lvl;
+	}
+		
 	let sql = '';
 	for(let i in team.team){
-		sql += animalUtil.giveXP(team.team[i].pid,total);
+		let mult = 1;
+		let lvl = team.team[i].stats.lvl;
+		if(lvl < highestLvl)
+			mult = 2 + ((highestLvl-lvl)/10)
+		if(mult>10) mult = 10;
+		sql += animalUtil.giveXP(team.team[i].pid,Math.round(total*mult));
 	}
 
 	if(addStreak) sql += `UPDATE pet_team SET highest_streak = IF(streak+1>highest_streak,streak+1,highest_streak), streak = streak + 1 WHERE pgid = ${team.pgid};`;
