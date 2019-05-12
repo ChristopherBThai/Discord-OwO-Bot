@@ -14,6 +14,8 @@ exports.alter = function(id,text){
 			return light(text);
 		case '242718397836558337':
 			return shippig(text);
+		case '255750356519223297':
+			return spotifybot(text);
 		default:
 			return text;
 	}
@@ -61,4 +63,22 @@ function shippig(text){
 		}
 	};
 	return {embed};
+}
+
+function spotifybot(text){
+	let spotify = '<a:spotify:577027003656437766>';
+	let swipeup = '<a:swipeup:577026648646483969>';
+	let nowplaying = '<a:nowplaying:577026647434330132>';
+	if(text.indexOf("empowered by")>=0){
+		text = spotify+" Hey **Spotify** *Make a New Playlist!*\n"+
+			text.replace(", hunt is empowered by","'s Playlist is Sponsored by")
+			.replace(huntEmoji,"<:blank:427371936482328596>")
+			.replace("**<:blank:427371936482328596> |** You found",nowplaying+" **|** You added")
+			.replace("xp**!","xp**! *Shuffle Play* "+swipeup)
+	}else{
+			text.replace(huntEmoji, nowplaying)
+			.replace("caught","added")
+			.replace("xp**!","xp**! *Shuffle Play* "+swipeup)
+	}
+	return text;
 }
