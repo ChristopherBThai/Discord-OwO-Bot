@@ -7,6 +7,7 @@
 
 const CommandInterface = require('../../commandinterface.js');
 
+const alterUpgrade = require('../patreon/alterUpgrade.js');
 const autohuntUtil = require('./autohuntutil.js');
 const essence = "<a:essence:451638978299428875>";
 const traits = {};
@@ -97,6 +98,7 @@ module.exports = new CommandInterface({
 				text += "\n**<:blank:427371936482328596> |** HuntBot is at max level!";
 			else if(stat.lvlup)
 				text += "\n**<:blank:427371936482328596> |** HuntBot Leveled Up!! 🎉";
+			text = alterUpgrade.alter(p.msg.author.id,text);
 			p.send(text);
 		});
 

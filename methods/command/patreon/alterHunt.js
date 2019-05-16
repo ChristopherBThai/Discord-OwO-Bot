@@ -76,6 +76,7 @@ function spotifybot(text){
 			.replace("**<:blank:427371936482328596> |** You found",nowplaying+" **|** You added")
 			.replace("xp**!","xp**! *Shuffle Play* "+swipeup)
 	}else{
+		text = spotify+" Hey **Spotify** *Make a New Playlist!*\n"+
 			text.replace(huntEmoji, nowplaying)
 			.replace("caught","added")
 			.replace("xp**!","xp**! *Shuffle Play* "+swipeup)

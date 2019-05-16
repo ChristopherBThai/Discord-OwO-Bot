@@ -90,7 +90,7 @@ function vote(p){
 			if(!result[0]||result[0].time<12)
 				return {done:true,desc:"You can claim your vote in "+(12-result[0].time)+" hours!",emoji:'📝'}
 			else
-				return {done:false,desc:"You can claim you vote!",emoji:'📝'}
+				return {done:false,desc:"You can claim your vote!",emoji:'📝'}
 		}
 	}
 }
