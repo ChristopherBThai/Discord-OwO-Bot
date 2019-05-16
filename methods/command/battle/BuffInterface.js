@@ -102,8 +102,13 @@ module.exports = class BuffInterface{
 	/* End of turn. Descrease duration by one */
 	postTurn(animal,ally,enemy,action){
 		this.duration -= 1;
-		if(this.duration<=0)
-			animal.buffs.splice(animal.buffs.indexOf(this),1);
+		if(this.duration<=0){
+			for(let i in animal.buffs){
+				if(animal.buffs[i].id == this.id && animal.buffs[i].from.pid==this.from.pid){
+					animal.buffs.splice(i,1);
+				}
+			}
+		}
 		if(this.justCreated) this.justCreated = false;
 	}
 

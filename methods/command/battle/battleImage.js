@@ -26,7 +26,7 @@ exports.generateImage = function(teams){
 			},(error,res,body)=>{
 				if(error){
 					resolve("");
-					console.error(error);
+					//console.error(error);
 					return;
 				}
 				if(res.statusCode==200)
@@ -36,7 +36,7 @@ exports.generateImage = function(teams){
 			});
 		});
 	}catch (err){
-		console.log(err);
+		//console.log(err);
 		return "";
 	}
 }

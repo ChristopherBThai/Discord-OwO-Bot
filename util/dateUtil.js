@@ -38,7 +38,7 @@ exports.afterMidnight = function(date){
 	else if(diff<=172810000) return {after:true,diff:diff,withinDay:true,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow};
 
 	/* Over 1 full day */
-	else return {after:true,diff:diff,withinDay:true,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow};
+	else return {after:true,diff:diff,withinDay:false,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow};
 }
 
 function toMySQL(date){

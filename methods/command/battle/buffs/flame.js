@@ -26,7 +26,7 @@ module.exports = class Flame extends BuffInterface{
 		let logs = new Logs();
 		for(let i in animal.buffs){
 			if(animal.buffs[i].id == this.id && animal.buffs[i].from.pid==this.from.pid){
-				animal.buffs.splice(animal.buffs.indexOf(this),1);
+				animal.buffs.splice(i,1);
 				let damage = WeaponInterface.getDamage(this.from.stats.mag,this.stats[1]/100);
 				damage = WeaponInterface.inflictDamage(this.from,animal,damage,WeaponInterface.MAGICAL,{...tags,flame:true});
 				logs.push(`[FLAME] Exploded and damaged ${animal.nickname} for ${damage.amount} HP`, damage.logs);

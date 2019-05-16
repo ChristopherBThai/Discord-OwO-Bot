@@ -11,6 +11,8 @@ exports.alter = function(id,text,type){
 			return lexus(text,type);
 		case '242718397836558337':
 			return shippig(text,type);
+		case '255750356519223297':
+			return spotifybot(text,type);
 		default:
 			return text;
 	}
@@ -101,6 +103,49 @@ function shippig(text,type){
 				.replace("ANIMALS","animals")
 				.replace("ESSENCE, AND","essence, and")
 				.replace("EXPERIENCE","exprerience!");
+		default:
+			return text;
+	}
+}
+
+function spotifybot(text,type){
+	let spotify = '<a:spotify:577027003656437766>';
+	let swipeup = '<a:swipeup:577026648646483969>';
+	let nowplaying = '<a:nowplaying:577026647434330132>';
+	switch(type){
+		case 'hb':
+			text.color = 1947988;
+			delete text.author;
+			text.fields[0].name = nowplaying+" ***Spotify*** *music stops playing...* OH NO! Need more Songs?\n"+spotify+" `SPOTIFYBOT can add Songs to your Playlist.`";
+			text.fields[1].value = text.fields[1].value.replace(/(\r\n|\n|\r)/gm," *Oh? You need better songs?*\n");
+			text.fields[2].value = text.fields[2].value.replace(/(\r\n|\n|\r)/gm," *How about a longer Playlist?*\n");
+			text.fields[3].value = text.fields[3].value.replace(/(\r\n|\n|\r)/gm," *Want Spotify Premium??*\n");
+			text.fields[4].value = text.fields[4].value.replace(/(\r\n|\n|\r)/gm," *Hmm, what about a New Playlist?*\n");
+			text.fields[5].value = text.fields[5].value.replace(/(\r\n|\n|\r)/gm," *Or do you want more Sponsers??*\n");
+			if(text.fields.length>=8){
+				text.fields[7].name = spotify+" SPOTIFYBOT is currently adding songs!";
+				text.fields[7].value = text.fields[7].value.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","Oops! Looks like the SPOTIFY Playlist is incomplete.\nNEW SONGS ADDED IN")
+					.replace("ANIMALS CAPTURED","SONGS ADDED")
+			}
+			return text;
+		case 'progress':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,spotify)
+				.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","Oops! Looks like the SPOTIFY Playlist is incomplete.`\n<:blank:427371936482328596> **|** `NEW SONGS ADDED IN")
+				.replace("ANIMALS CAPTURED","SONGS ADDED!")
+			return text;
+		case 'password':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,spotify);
+			return text;
+		case 'spent':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,spotify)
+				.replace("`BEEP BOOP. `","")
+				.replace("cowoncy","cowoncy AND GOT Spotify Premium!")
+				.replace("ANIMALS","SONGS")
+			return text;
+		case 'returned':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,spotify)
+				.replace("BEEP BOOP. I AM","SPOTIFY Playlist is ready! I AM")
+				.replace("ANIMALS","SONGS")
 		default:
 			return text;
 	}
