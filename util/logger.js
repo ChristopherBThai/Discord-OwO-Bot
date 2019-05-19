@@ -25,6 +25,7 @@ exports.value = function(name,amount,tags){
 }
 
 /***** winston *****/
+/*
 const winston = require('winston');
 const logger = winston.createLogger({
 	level:'verbose',
@@ -40,3 +41,4 @@ winstonLogger = {
 }
 
 exports.log = winstonLogger;
+*/
