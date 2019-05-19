@@ -267,7 +267,7 @@ var display = exports.display = async function(p,team,logs,{display,title,showLo
 		}
 		],
 		"image":{
-			"url":imagegenAuth.imageGenUrl+"/battleimage/uuid/"+image
+			"url":imagegenAuth.imageGenUrl+"/image/"+image
 		}
 	}
 
