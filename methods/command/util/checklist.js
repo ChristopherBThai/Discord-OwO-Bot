@@ -87,7 +87,7 @@ function vote(p){
 	return {
 		sql:`SELECT TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = ${p.msg.author.id};`,
 		parse:function(result){
-			if(!result[0]||result[0].time<12)
+			if(result[0]&&result[0].time<12)
 				return {done:true,desc:"You can claim your vote in "+(12-result[0].time)+" hours!",emoji:'📝'}
 			else
 				return {done:false,desc:"You can claim your vote!",emoji:'📝'}
@@ -163,7 +163,7 @@ function crates(p){
 				else
 					return {done:true,desc:"You have found all weapon crates!",emoji:'⚔'}
 			}else
-				return {done:false,desc:"3 weapon createsare still available!",emoji:'⚔'}
+				return {done:false,desc:"3 weapon creates are still available!",emoji:'⚔'}
 		}
 	}
 }
