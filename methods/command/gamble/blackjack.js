@@ -207,7 +207,9 @@ function stop(p,player,dealer,msg,bet,fromHit){
 	//sql get winner
 	var winner = undefined;
 	//both bust
-	if(ppoints>21&&dpoints>21)
+	if (ppoints==21 && ppoints!=dpoints)
+		winner = "wb"	
+	else if(ppoints>21&&dpoints>21)
 		winner = 'tb';
 	//tie
 	else if(ppoints==dpoints)
@@ -231,6 +233,8 @@ function stop(p,player,dealer,msg,bet,fromHit){
 	var sql2 = "DELETE FROM blackjack_card WHERE bjid = (SELECT bjid FROM blackjack WHERE id = "+p.msg.author.id+");";
 	if(winner=='w')
 		sql2 += "UPDATE cowoncy SET money = money + "+bet*2+" WHERE id = "+p.msg.author.id+";";
+	else if (winner =='wb')
+	sql2 += "UPDATE cowoncy SET money = money + "+bet*4+" WHERE id = "+p.msg.author.id+";";
 	else if(winner=='t'||winner=='tb')
 		sql2 += "UPDATE cowoncy SET money = money + "+bet+" WHERE id = "+p.msg.author.id+";";
 	p.con.query(sql,function(err,result){
