@@ -39,7 +39,7 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 		if(p.args==0)
-			display(p.send);
+			display(p);
 		else{
 			let command = p.aliasToCommand[p.args[0]];
 			switch(command){
@@ -66,12 +66,12 @@ module.exports = new CommandInterface({
 
 })
 
-function display(send){
+function display(p){
 	var embed = {
-	"description": "Here is the list of commands!\nFor more info on a specific command, use `owo help {command}`",
+	"description": "Here is the list of commands!\nFor more info on a specific command, use `owo help {command}`\nNeed more help? Come join our [guild]("+p.config.guildlink+")",
 		"color": 4886754,
 		"author": {"name": "Command List",
-			"icon_url": "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
+			"icon_url": p.msg.author.avatarURL},
 		"fields": [
 			{"name":"🎖 Rankings",
 				"value":"`top`  `my`"},
@@ -96,7 +96,7 @@ function display(send){
 		]
 	};
 
-	send({embed});
+	p.send({embed});
 }
 
 function describe(send,commandName,command){
