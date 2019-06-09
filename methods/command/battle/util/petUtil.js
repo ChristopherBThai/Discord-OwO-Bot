@@ -80,7 +80,7 @@ exports.getDisplay = function(p,animals){
 
 		let field = {
 			"name":(animal.animal.uni?animal.animal.uni:animal.animal.value)+" "+(animal.nickname?animal.nickname:animal.animal.name),
-			"value":`Lvl.${animal.stats.lvl} [${animal.stats.xp[0]}/${animal.stats.xp[1]}]\n${stats}\n${weaponText}`,
+			"value":`Lvl.${animal.stats.lvl} \`[${p.global.toFancyNum(animal.stats.xp[0])}/${p.global.toFancyNum(animal.stats.xp[1])}]\`\n${stats}\n${weaponText}`,
 			"inline":true
 		};
 
