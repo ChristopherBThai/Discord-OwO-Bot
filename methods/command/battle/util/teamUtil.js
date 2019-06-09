@@ -232,7 +232,7 @@ exports.displayTeam = async function(p){
 			let pr = WeaponInterface.resToPrettyPercent(animal.stats.pr);
 			let mr = WeaponInterface.resToPrettyPercent(animal.stats.mr);
 			title += `${(animal.animal.uni)?animal.animal.uni:animal.animal.value} **${(animal.nickname)?animal.nickname:animal.animal.name}** `;
-			body = `Lvl ${animal.stats.lvl} [${animal.stats.xp[0]}/${animal.stats.xp[1]}]\n<:hp:531620120410456064> \`${hp}\` <:wp:531620120976687114> \`${wp}\`\n<:att:531616155450998794> \`${att}\` <:mag:531616156231139338> \`${mag}\`\n<:pr:531616156222488606> \`${pr}\` <:mr:531616156226945024> \`${mr}\`\n`;
+			body = `Lvl ${animal.stats.lvl} \`[${p.global.toFancyNum(animal.stats.xp[0])}/${p.global.toFancyNum(animal.stats.xp[1])}]\`\n<:hp:531620120410456064> \`${hp}\` <:wp:531620120976687114> \`${wp}\`\n<:att:531616155450998794> \`${att}\` <:mag:531616156231139338> \`${mag}\`\n<:pr:531616156222488606> \`${pr}\` <:mr:531616156226945024> \`${mr}\`\n`;
 			let weapon = animal.weapon;
 			if(weapon){
 				body += `\`${weapon.uwid}\` ${weapon.rank.emoji} ${weapon.emoji} `;
