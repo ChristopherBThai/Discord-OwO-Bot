@@ -66,7 +66,7 @@ exports.use = function(p,id){
 		else if(gem.type=="Patreon")
 			text += "manual hunts will catch an extra animal and have a chance to contain Patreon exclusive animals!";
 		else if(gem.type=="Empowering")
-			text += " animals will be doubled! It Can stack with Hunting gems!";
+			text += " animals will be doubled! It can stack with Hunting gems!";
 		else if(gem.type=="Lucky")
 			text += " animals will have a +"+gem.amount+"x higher chance of finding gem tiers!";
 		else
