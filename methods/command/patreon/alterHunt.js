@@ -16,6 +16,10 @@ exports.alter = function(id,text){
 			return shippig(text);
 		case '255750356519223297':
 			return spotifybot(text);
+		case '358448141424394251':
+			return oliverLaVey(text);
+		case '371344384366739457':
+			return nou(text);
 		default:
 			return text;
 	}
@@ -83,3 +87,56 @@ function spotifybot(text){
 	}
 	return text;
 }
+
+function oliverLaVey(text){
+	let dna = '<:dna:587991032562581535>';
+	let tube = '<:testtube:587991032788942868>';
+	let needle = '💉';
+	if(text.indexOf("empowered by")>=0){
+		text = tube + " *New specimens inbound!*\n"+
+			text.replace(", hunt is empowered by","'s research is empowered by")
+			.replace(huntEmoji,dna)
+			.replace("You found","You sampled")
+			.replace("xp**!","xp**! *Downloading CRISPR-Cas9* "+needle);
+	}else{
+		text = tube + " *New specimens inbound!*\n"+
+			text.replace("caught a","sampled a")
+			.replace(huntEmoji,dna)
+			.replace("xp**!","xp**! *Downloading CRISPR-Cas9* "+needle);
+	}
+	return text;
+
+}
+
+function nou(text){
+	let rainbow = '<a:rainbowcat:587998090045423637>';
+	let scree = '<a:SCREE:587998074807255056>';
+	let whitecomet = '<a:whitecomet:587998076032254002>';
+	let ark = '<:ark:587998073368608772>';
+	let ark2 = '<:ark2:587998074304200744>';
+	let earth = '🌎';
+	if(text.indexOf("empowered by")>=0){
+		text = whitecomet+" **|** The Ark of Destruction has arrived\n"+
+			ark+" **|** Activating Gravity Core\n"+
+			ark+" **|** Charging Core!\n"+
+			ark+" **|** Core active! "+scree+"\n"+
+			ark+" **|** Capturing Target Planet "+earth+"\n"+
+			text.replace(huntEmoji,whitecomet)
+			.replace(/[a-z\* ]+, hunt is empowered by/gi,"** Ark of Destruction is currently energized with")
+			.replace("` !","` ! "+scree)
+			.replace("**<:blank:427371936482328596> |** You found:",ark2+" **|** Planet Captured, No U found ")
+			.replace("\n<:blank"," In the Planet! "+rainbow+"\n<:blank");
+	}else{
+		text = whitecomet+" **|** The Ark of Destruction has arrived\n"+
+			ark+" **|** Activating Gravity Core\n"+
+			ark+" **|** Charging Core!\n"+
+			ark+" **|** Core active! "+scree+"\n"+
+			ark+" **|** Capturing Target Planet "+earth+"\n"+
+			text.replace(huntEmoji,ark2)
+			.replace("| ","|** Planet Captured, **")
+			.replace("spent 5 <:cowoncy:416043450337853441> and caught","found")
+			.replace("!\n<:blank"," In the Planet! "+rainbow+"\n<:blank");
+	}
+	return text;
+}
+
