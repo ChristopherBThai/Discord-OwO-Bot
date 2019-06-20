@@ -16,7 +16,7 @@ const no = '❎';
 
 module.exports = new CommandInterface({
 
-	alias:["propose","marry","marriage","wife"],
+	alias:["propose","marry","marriage","wife","husband"],
 
 	args:"{ringID} {@user1}",
 
@@ -26,7 +26,7 @@ module.exports = new CommandInterface({
 
 	related:["owo daily","owo shop"],
 
-	cooldown:3000,
+	cooldown:30000,
 
 	execute: async function(p){
 		/* Multiple validation checks on user arguments */
