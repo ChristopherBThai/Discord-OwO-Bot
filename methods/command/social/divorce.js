@@ -20,7 +20,7 @@ module.exports = new CommandInterface({
 
 	args:"",
 
-	desc:"Accept a marriage proposal.",
+	desc:"Escape your marriage",
 
 	example:[],
 
