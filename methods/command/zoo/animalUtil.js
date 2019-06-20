@@ -73,7 +73,7 @@ exports.randAnimal = function(patreon,gem,lucky,luck){
 		result.push(animals.epic[rand]);
 		result.push("epic");
 		result.push(400);
-	}else if(rand<=animals.mythical[0]){
+	}else if(rand<animals.mythical[0]){
 		rand = Math.ceil(Math.random()*(animals.mythical.length-1));
 		result.push("**mythic** "+animals.ranks.mythical);
 		result.push(animals.mythical[rand]);
