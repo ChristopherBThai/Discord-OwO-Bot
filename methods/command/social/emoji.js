@@ -34,7 +34,7 @@ module.exports = new CommandInterface({
 			return;
 
 		/* Look at previous message */
-		}else if(p.args[0]&&(p.args[0].toLowerCase()=="prev"||p.args[0].toLowerCase()=="previous")){
+		}else if(p.args[0]&&(p.args[0].toLowerCase()=="prev"||p.args[0].toLowerCase()=="previous"||p.args[0].toLowerCase()=="p")){
 			let msgs = (await p.msg.channel.fetchMessages({limit:5,before:p.msg.id})).array();
 			if(!msgs){
 				p.errorMsg(", There are no emojis! >:c",3000);

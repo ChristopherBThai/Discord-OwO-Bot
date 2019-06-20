@@ -40,6 +40,15 @@ exports.getids = function(members){
 	return result.slice(0,-1);
 }
 
+/**
+ * Check if the first letter is a vowel
+ */
+const vowels = ['a','e','i','o','u'];
+exports.isVowel = function(string){
+	let fchar = string.toLowerCase().trim().charAt(0);
+	return vowels.includes(fchar);
+}
+
 /*
  * Checks if its a user
  */
@@ -217,4 +226,13 @@ exports.toFancyNum = function(num){
 	var parts = num.toString().split(".");
 	parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	return parts.join(".");
+}
+
+exports.toShortNum = function(num){
+	if(num>=1000000)
+		return Math.trunc(num/1000000)+'M';
+	else if(num>=1000)
+		return Math.trunc(num/1000)+'K';
+	else
+		return num;
 }

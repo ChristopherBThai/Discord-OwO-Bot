@@ -10,12 +10,13 @@ const CommandInterface = require('../../commandinterface.js');
 const ranks = {};
 const animals = require('../../../../tokens/owo-animals.json');
 const weaponUtil = require('../battle/util/weaponUtil.js');
+const ringUtil = require('../social/util/ringUtil.js');
 
 module.exports = new CommandInterface({
 
 	alias:["sell"],
 
-	args:"{animal|rank|weaponID} {count}",
+	args:"{animal|rank|weaponID|ringID} {count}",
 
 	desc:"Sell animals from your zoo! Selling animals will NOT affect your zoo score!\nYou can also sell weapons by their unique weaponID!",
 
@@ -95,9 +96,12 @@ module.exports = new CommandInterface({
 			else
 				sellRank(msg,con,rank,p.send,global,p);
 
-		//Is a weapon...
+		//if a weapon or a ring...
 		}else if(args.length==1){
-			weaponUtil.sell(p,args[0]);
+			if(global.isInt(name) && parseInt(name)>0 && parseInt(name)<=ringUtil.getMaxID() )
+				ringUtil.sell(p,parseInt(args[0]));
+			else
+				weaponUtil.sell(p,args[0]);
 
 		//if neither...
 		}else{

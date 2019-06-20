@@ -8,7 +8,7 @@
 const CommandInterface = require('../../commandinterface.js');
 
 const food = require('../../../json/food.json');
-const shopUtil = require('./shopUtil.js');
+const shopUtil = require('./util/shopUtil.js');
 const cowoncy = "<:cowoncy:416043450337853441>";
 const lootboxUtil = require('../zoo/lootboxUtil.js');
 const weaponUtil = require('../battle/util/weaponUtil.js');
@@ -38,7 +38,9 @@ module.exports = new CommandInterface({
 			return;
 		}
 
-		if(item.name=="lootbox"){
+		if(!item){
+			p.errorMsg(", invalid id!",3000);
+		}else if(item.name=="lootbox"){
 			lootboxUtil.desc(p);
 		}else if(item.name=="gem"){
 			gemUtil.desc(p,item.id);

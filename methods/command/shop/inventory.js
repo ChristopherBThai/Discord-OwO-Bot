@@ -8,8 +8,9 @@
 const CommandInterface = require('../../commandinterface.js');
 
 const lootboxUtil = require('../zoo/lootboxUtil.js');
+const ringUtil = require('../social/util/ringUtil.js');
 const gemUtil = require('../zoo/gemUtil.js');
-const shopUtil = require('./shopUtil.js');
+const shopUtil = require('./util/shopUtil.js');
 const weaponUtil = require('../battle/util/weaponUtil.js');
 const crateUtil = require('../battle/util/crateUtil.js');
 
@@ -34,11 +35,12 @@ module.exports = new CommandInterface({
 
 		/* {emoji,id,count} */
 		try{
+			let ringItems = await ringUtil.getItems(p);
 			let lootboxItems = await lootboxUtil.getItems(p);
 			let gemItems = await gemUtil.getItems(p);
 			let weaponItems = await weaponUtil.getItems(p);
 			let crateItems = await crateUtil.getItems(p);
-			var text = addToString([lootboxItems,gemItems,weaponItems,crateItems]);
+			var text = addToString([ringItems,lootboxItems,gemItems,weaponItems,crateItems]);
 		}catch(err){
 			console.error(err);
 			return;
@@ -47,7 +49,7 @@ module.exports = new CommandInterface({
 
 		if(text=="") text = "Your inventory is empty :c";
 		text = "**====== "+msg.author.username+"'s Inventory ======**\n"+text;
-		p.send(text);
+		p.send(text,null,{split:true});
 	}
 
 })
