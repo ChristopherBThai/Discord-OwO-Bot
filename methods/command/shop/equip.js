@@ -7,7 +7,7 @@
 
 const CommandInterface = require('../../commandinterface.js');
 
-const shopUtil = require('./shopUtil.js');
+const shopUtil = require('./util/shopUtil.js');
 const lootbox = require('../zoo/lootbox.js');
 const gemUtil = require('../zoo/gemUtil.js');
 const weapon = require('../battle/weapon.js');

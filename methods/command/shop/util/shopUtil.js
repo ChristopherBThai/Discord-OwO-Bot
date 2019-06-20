@@ -6,8 +6,8 @@
   */
 
 const fid = {};
-const food = require('../../../json/food.json');
-const global = require('../../../util/global.js');
+const food = require('../../../../json/food.json');
+const global = require('../../../../util/global.js');
 const numbers = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
 
 for(var key in food){
