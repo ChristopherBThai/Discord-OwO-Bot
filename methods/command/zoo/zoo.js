@@ -65,7 +65,7 @@ module.exports = new CommandInterface({
 				digits= Math.trunc(Math.log10(count.biggest)+1);
 			for(var i=0;i<row.length;i++){
 				text = text.replace("~"+row[i].name,global.unicodeAnimal(row[i].name)+toSmallNum(row[i].count,digits));
-				if(animals.patreon.indexOf(row[i].name)>0){
+/*				if(animals.patreon.indexOf(row[i].name)>0){
 					if(additional0=="") additional0 = patreon;
 					additional0 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 				}
@@ -103,6 +103,7 @@ module.exports = new CommandInterface({
 					if(additional5=="") additional5 = secret4;
 					additional5 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 				}
+*/
 			}
 			text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question+toSmallNum(0,digits));
 			text += additional0;
@@ -117,14 +118,15 @@ module.exports = new CommandInterface({
 					count.uncommon*animals.points.uncommon+
 					count.rare*animals.points.rare+
 					count.epic*animals.points.epic+
-					count.mythical*animals.points.mythical+
-					count.patreon*animals.points.patreon+
+					count.mythical*animals.points.mythical;
+/*					count.patreon*animals.points.patreon+
 					count.cpatreon*animals.points.cpatreon+
 					count.special*animals.points.special+
 					count.gem*animals.points.gem+
 					count.legendary*animals.points.legendary+
 					count.fabled*animals.points.fabled+
 					count.hidden*animals.points.hidden;
+*/
 				text += "\n**Zoo Points: __"+(p.global.toFancyNum(total))+"__**\n\t**";
 				text += animalUtil.zooScore(count)+"**";
 			}
@@ -163,6 +165,7 @@ function initDisplay(){
 	display += "\n"+animals.ranks.mythical+"   ";
 	for (i=1;i<animals.mythical.length;i++)
 		display += "~"+animals.mythical[i]+gap;
+/*
 	patreon = "\n"+animals.ranks.patreon+"    ";
 	cpatreon = "\n"+animals.ranks.cpatreon+"    ";
 	secret = "\n"+animals.ranks.legendary+"    ";
@@ -170,4 +173,5 @@ function initDisplay(){
 	secret3 = "\n"+animals.ranks.special+"    ";
 	secret4 = "\n"+animals.ranks.hidden+"    ";
 	secret5 = "\n"+animals.ranks.gem+"    ";
+*/
 }

@@ -6,21 +6,26 @@
   */
 
 var animals = require('../../../../tokens/owo-animals.json');
+var luckyrandom = require('../../../util/luckyRandom.js');
 /**
  * Picks a random animal from secret json file
  */
-exports.randAnimal = function(patreon,gem,lucky){
-	var rand = Math.random();
+exports.randAnimal = function(patreon,gem,lucky,luck){
+	var rand = luckyrandom.random(luck);
 	var result = [];
 
 	/* Calculate percentage */
-	var patreonPercent = animals.cpatreon[0]+animals.patreon[0];
+/*	var patreonPercent = animals.cpatreon[0]+animals.patreon[0];
 	if(!patreon) patreonPercent = 0;
 	var specialPercent = animals.special[0];
 	if(animals.special[0]=="0") specialPercent = 0;
 	var gemPercent = animals.gem[0];
 	if(!gem) gemPercent = 0;
 	else if(lucky) gemPercent += gemPercent*lucky.amount;
+*/
+	var patreonPercent = 0;
+	var specialPercent = 0;
+	var gemPercent = 0;
 
 	if(patreonPercent&&rand<patreonPercent){
 		if(rand<animals.cpatreon[0]){
@@ -72,7 +77,7 @@ exports.randAnimal = function(patreon,gem,lucky){
 		result.push(animals.epic[rand]);
 		result.push("epic");
 		result.push(400);
-	}else if(rand<animals.mythical[0]){
+	}else if(rand<=animals.mythical[0]){
 		rand = Math.ceil(Math.random()*(animals.mythical.length-1));
 		result.push("**mythic** "+animals.ranks.mythical);
 		result.push(animals.mythical[rand]);

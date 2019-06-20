@@ -9,6 +9,8 @@ const CommandInterface = require('../../commandinterface.js');
 
 const animals = require('../../../../tokens/owo-animals.json');
 const global = require('../../../util/global.js');
+const luckyrandom = require('../../../util/luckyRandom.js');
+const sqlcollector = require('../../../util/sqlCollector.js');
 const dateUtil = require('../../../util/dateUtil.js');
 const gemUtil = require('./gemUtil.js');
 const animalUtil = require('./animalUtil.js');
@@ -35,48 +37,62 @@ module.exports = new CommandInterface({
 	execute: function(p){
 		var msg=p.msg,con=p.con;
 
-		var sql = "SELECT money,IF(patreonAnimal = 1 OR (TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths),1,0) as patreon FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id LEFT JOIN patreons ON user.uid = patreons.uid WHERE cowoncy.id = "+msg.author.id+";";
-		sql += `SELECT name,nickname,animal.pid FROM user INNER JOIN pet_team ON user.uid = pet_team.uid INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid INNER JOIN animal ON pet_team_animal.pid = animal.pid
-				WHERE user.id = ${p.msg.author.id};`;
-		sql += "SELECT *,TIMESTAMPDIFF(HOUR,claim,NOW()) as time FROM lootbox WHERE id = "+msg.author.id+";";
-		sql += "SELECT uid,activecount,gname,type FROM user NATURAL JOIN user_gem NATURAL JOIN gem WHERE id = "+msg.author.id+" AND activecount > 0;";
+		var collector = new sqlcollector(); 
+
+		collector.add('cowoncy',"SELECT money,IF(patreonAnimal = 1 OR (TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths),1,0) as patreon FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id LEFT JOIN patreons ON user.uid = patreons.uid WHERE cowoncy.id = "+msg.author.id+";");
+
+		collector.add('teammeta',`SELECT name,nickname,animal.pid FROM user INNER JOIN pet_team ON user.uid = pet_team.uid INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid INNER JOIN animal ON pet_team_animal.pid = animal.pid
+				WHERE user.id = ${p.msg.author.id};`);
+
+		collector.add("lootboxcheck","SELECT *,TIMESTAMPDIFF(HOUR,claim,NOW()) as time FROM lootbox WHERE id = "+msg.author.id+";");
+
+		collector.add("gems","SELECT uid,activecount,gname,type FROM user NATURAL JOIN user_gem NATURAL JOIN gem WHERE id = "+msg.author.id+" AND activecount > 0;");
+
+		collector.add("luck","SELECT lcount  FROM luck WHERE id = "+p.msg.author.id+";");
+		var sql = collector.render();
+
 		con.query(sql,function(err,result){
 			if(err) {console.error(err);return;}
-			if(result[0][0]==undefined||result[0][0].money<animals.rollprice){
+			c = result[collector.indexOf('cowoncy')];
+			if(c==undefined||c[0].money<animals.rollprice){
 				p.send("**🚫 | "+msg.author.username+"**, You don't have enough cowoncy!",3000);
 			}else{
 				//Sort gem benefits
 				var gems = {}
 				var uid = undefined;
-				for(var i=0;i<result[3].length;i++){
-					tempGem = gemUtil.getGem(result[3][i].gname);
-					tempGem.uid = result[3][i].uid;
-					tempGem.activecount = result[3][i].activecount;
-					tempGem.gname = result[3][i].gname;
+				var gems = result[collector.indexOf('gems')];
+				for(var i=0;i<gems.length;i++){
+					tempGem = gemUtil.getGem(gems[i].gname);
+					tempGem.uid = gems[i].uid;
+					tempGem.activecount = gems[i].activecount;
+					tempGem.gname = gems[i].gname;
 					gems[tempGem.type] = tempGem;
-					uid = result[3][i].uid;
+					uid = gems[i].uid;
 				}
 
 				//Get animal
+				p.luck = result[collector.indexOf("luck")][0].lcount;
 				var animal = getAnimals(p,result,gems,uid);
 				var sql = animal.sql;
 				var text = animal.text;
 
 				//Get Xp
-				if(result[1][0]){
+				teammeta = result[collector.indexOf("teammeta")];
+				if(teammeta[0]){
 					text += `\n${p.config.emoji.blank} **|** `;
-					for(let i in result[1]){
-						sql += `UPDATE animal SET xp = xp + ${animal.xp} WHERE pid = ${result[1][i].pid};`;
-						let pet =  p.global.validAnimal(result[1][i].name);
+					for(let i in teammeta){
+						sql += `UPDATE animal SET xp = xp + ${animal.xp} WHERE pid = ${teammeta[i].pid};`;
+						let pet =  p.global.validAnimal(teammeta[i].name);
 						text += (pet.uni?pet.uni:pet.value)+" ";
 					}
 					text += `gained **${animal.xp}xp**!`;
 				}
 
 				//Get Lootbox
-				var lbReset = dateUtil.afterMidnight((result[2][0])?result[2][0].claim:undefined);
-				if(!result[2][0]||result[2][0].claimcount<3||lbReset.after){
-					var lootbox = getLootbox(p,result[2][0],lbReset);
+				lootbox = result[collector.indexOf("lootboxcheck")];
+				var lbReset = dateUtil.afterMidnight((lootbox[0])?lootbox[0].claim:undefined);
+				if(!lootbox[0]||lootbox[0].claimcount<3||lbReset.after){
+					var lootbox = getLootbox(p,lootbox[0],lbReset);
 					sql += lootbox.sql;
 					text += lootbox.text;
 				}
@@ -105,7 +121,7 @@ function getAnimals(p,result,gems,uid){
 	/* If no gems */
 	var gemLength = Object.keys(gems).length;
 	if(gemLength==0){
-		var animal = [animalUtil.randAnimal(patreon)];
+		var animal = [animalUtil.randAnimal(patreon,false,false,p.luck)];
 
 	/* If gems... */
 	}else{
@@ -115,12 +131,12 @@ function getAnimals(p,result,gems,uid){
 		if(gems["Empowering"]) count *= 2
 
 		/* Grabs 1-2 animal to check for patreongem */
-		var animal = [animalUtil.randAnimal((patreon||patreonGem),true,gems["Lucky"])];
-		if(gems["Patreon"]) animal.push(animalUtil.randAnimal(true,true,gems["Lucky"]));
+		var animal = [animalUtil.randAnimal((patreon||patreonGem),true,gems["Lucky"],p.luck)];
+		if(gems["Patreon"]) animal.push(animalUtil.randAnimal(true,true,gems["Lucky"],p.luck));
 
 		/* Get the rest of the animals */
 		for(var i=1;i<count;i++)
-			animal.push(animalUtil.randAnimal(patreon,true,gems["Lucky"]));
+			animal.push(animalUtil.randAnimal(patreon,true,gems["Lucky"],p.luck));
 	}
 
 	/* Construct sql statement for animal insertion */
