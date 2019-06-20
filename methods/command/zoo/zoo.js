@@ -65,7 +65,7 @@ module.exports = new CommandInterface({
 				digits= Math.trunc(Math.log10(count.biggest)+1);
 			for(var i=0;i<row.length;i++){
 				text = text.replace("~"+row[i].name,global.unicodeAnimal(row[i].name)+toSmallNum(row[i].count,digits));
-/*				if(animals.patreon.indexOf(row[i].name)>0){
+				if(animals.patreon.indexOf(row[i].name)>0){
 					if(additional0=="") additional0 = patreon;
 					additional0 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 				}
@@ -103,7 +103,7 @@ module.exports = new CommandInterface({
 					if(additional5=="") additional5 = secret4;
 					additional5 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 				}
-*/
+
 			}
 			text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question+toSmallNum(0,digits));
 			text += additional0;
