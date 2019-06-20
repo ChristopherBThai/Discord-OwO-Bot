@@ -1,11 +1,18 @@
 {
 	"_comment":"This json file holds all the animals and ranks. Yes it's messy. I'll clean it up in the future!",
 
-	"common":[0.50,":bee:",":beetle:",":butterfly:"],
-	"uncommon":[0.70,":baby_chick:",":rooster:",":rabbit2:",":chipmunk:"],
+	"cpatreon":[0.10,":bee:"],
+	"patreon":[0.01,":beetle:"],
+	"gem":[0.10,":chipmunk:"],
+	"special":[0.01,":rabbit2:"],
+	"common":[0.50,":butterfly:"],
+	"uncommon":[0.70,":baby_chick:",":rooster:"],
 	"rare":[0.90,":bug:"],
 	"epic":[0.99,":snail:"],
-	"mythical":[1,":mouse2:"],
+	"mythical":[0.995,":mouse2:"],
+	"legendary":[0.996,":see_no_evil:"],
+	"fabled":[0.997,":hear_no_evil:"],
+	"hidden":[1.0,":speak_no_evil:"],
     	
 	"numbers":["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"],
 	"question":"<:question:416100711412137984>",
@@ -13,31 +20,59 @@
 
 	"order":["common","uncommon","rare","epic"],
 	"ranks":{
+		"cpatreon":"<:cpatreon:416520037713838081>",
+		"patreon":"<:patreon:416520037713838081>",
+		"gem":"<:gem:416520037713838081>",
+		"special":"<:special:416520037713838081>",
 		"common":"<:common:416520037713838081>",
 		"uncommon":"<:uncommon:416520056269176842>",
 		"rare":"<:rare:416520056269176842>",
 		"epic":"<:epic:416520056269176842>",
+		"legendary":"<:legendary:416520056269176842>",
+		"fabled":"<:fabled:416520056269176842>",
+		"hidden":"<:hidden:416520056269176842>",
 		"mythical":"<:mythical:416520056269176842>"
 	},
 	"alias":{
+		"cpatreon":["cp"],
+		"patreon":["p"],
+		"gem":["g"],
+		"special":["s"],
 		"common":["c"],
 		"uncommon":["u","uc"],
 		"rare":["r"],
 		"epic":["e"],
+		"legendary":["l"],
+		"fabled":["f"],
+		"hidden":["h"],
 		"mythical":["m"]
 	},
 	"price":{
+		"cpatreon":1,
+		"patreon":1,
+		"gem":20,
+		"special":30,
 		"common":1,
 		"uncommon":3,
 		"rare":5,
 		"epic":7,
+		"legendary":7,
+		"fabled":7,
+		"hidden":7,
 		"mythical":9
 	},
 	"points":{
+		"cpatreon":1,
+		"patreon":1,
+		"gem":20,
+		"special":30,
 		"common":1,
 		"uncommon":5,
 		"rare":9,
 		"epic":13,
+		"legendary":13,
+		"fabled":13,
+		"hidden":13,
 		"mythical":17
 	},
 
@@ -151,6 +186,42 @@
 			"prr":2,
 			"mrr":2
 		},
+		"see_no_evil":{
+			"value":":see_no_evil:",
+			"desc":"Wai.",
+			"uni":"🙈 ",
+			"alt":["see_no_evil","mizaru"],
+			"attr":4,
+			"magr":4,
+			"hpr":2,
+			"wpr":2,
+			"prr":2,
+			"mrr":2
+		},
+		"hear_no_evil":{
+			"value":":hear_no_evil:",
+			"desc":"Zuma.",
+			"uni":"🙉 ",
+			"alt":["hear_no_evil","kikazaru"],
+			"attr":4,
+			"magr":4,
+			"hpr":2,
+			"wpr":2,
+			"prr":2,
+			"mrr":2
+		},
+		"speak_no_evil":{
+			"value":":speak_no_evil:",
+			"desc":"n.",
+			"uni":"🙊 ",
+			"alt":["speak_no_evil","iwazaru"],
+			"attr":4,
+			"magr":4,
+			"hpr":2,
+			"wpr":2,
+			"prr":2,
+			"mrr":2
+		},
 		"chipmunk":{
 			"value":":chipmunk:",
 			"desc":"Don't mess with them.",
@@ -174,6 +245,9 @@
 		"mouse": 8,
 		"chicken": 9,
 		"rabbit": 10,
+		"see_no_evil": 10,
+		"hear_no_evil": 10,
+		"speak_no_evil": 10,
 		"chipmunk": 11
 	}
 }

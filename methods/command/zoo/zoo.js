@@ -118,15 +118,14 @@ module.exports = new CommandInterface({
 					count.uncommon*animals.points.uncommon+
 					count.rare*animals.points.rare+
 					count.epic*animals.points.epic+
-					count.mythical*animals.points.mythical;
-/*					count.patreon*animals.points.patreon+
+					count.mythical*animals.points.mythical+
+					count.patreon*animals.points.patreon+
 					count.cpatreon*animals.points.cpatreon+
 					count.special*animals.points.special+
 					count.gem*animals.points.gem+
 					count.legendary*animals.points.legendary+
 					count.fabled*animals.points.fabled+
 					count.hidden*animals.points.hidden;
-*/
 				text += "\n**Zoo Points: __"+(p.global.toFancyNum(total))+"__**\n\t**";
 				text += animalUtil.zooScore(count)+"**";
 			}
@@ -165,7 +164,6 @@ function initDisplay(){
 	display += "\n"+animals.ranks.mythical+"   ";
 	for (i=1;i<animals.mythical.length;i++)
 		display += "~"+animals.mythical[i]+gap;
-/*
 	patreon = "\n"+animals.ranks.patreon+"    ";
 	cpatreon = "\n"+animals.ranks.cpatreon+"    ";
 	secret = "\n"+animals.ranks.legendary+"    ";
@@ -173,5 +171,4 @@ function initDisplay(){
 	secret3 = "\n"+animals.ranks.special+"    ";
 	secret4 = "\n"+animals.ranks.hidden+"    ";
 	secret5 = "\n"+animals.ranks.gem+"    ";
-*/
 }
