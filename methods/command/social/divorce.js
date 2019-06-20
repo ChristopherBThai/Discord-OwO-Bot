@@ -7,6 +7,7 @@
 
 const CommandInterface = require('../../commandinterface.js');
 
+const dateUtil = require('../../../util/dateUtil.js');
 const rings = require('../../../json/rings.json');
 const yes = '✅';
 const no = '❎';
@@ -40,6 +41,13 @@ module.exports = new CommandInterface({
 
 		if(result.length<1){
 			p.errorMsg(", you can't divorce if you aren't married, silly butt!",3000);
+			return;
+		}
+
+		// You can only divorce if you have married your SO for over a day
+		let afterMid = dateUtil.afterMidnight(result[0].marriedDate);
+		if(!afterMid.after){
+			p.errorMsg(", you can only divorce after you have been with them for one day!",3000);
 			return;
 		}
 
