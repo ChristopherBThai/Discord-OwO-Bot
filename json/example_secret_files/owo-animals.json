@@ -75,6 +75,20 @@
 		"hidden":13,
 		"mythical":17
 	},
+	"essence":{
+		"cpatreon":1,
+		"patreon":1,
+		"gem":20,
+		"special":30,
+		"common":1,
+		"uncommon":3,
+		"rare":5,
+		"epic":7,
+		"legendary":7,
+		"fabled":7,
+		"hidden":7,
+		"mythical":9
+	},
 
 
 	"list":{
@@ -234,20 +248,5 @@
 			"prr":2,
 			"mrr":2
 		}
-	},
-	"essence":{
-		"bee": 2,
-		"bug": 3,
-		"snail": 4,
-		"beetle": 5,
-		"butterfly": 6,
-		"chick": 7,
-		"mouse": 8,
-		"chicken": 9,
-		"rabbit": 10,
-		"see_no_evil": 10,
-		"hear_no_evil": 10,
-		"speak_no_evil": 10,
-		"chipmunk": 11
 	}
 }
