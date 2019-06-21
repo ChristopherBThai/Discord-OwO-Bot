@@ -25,6 +25,6 @@
 	"guildlink":"https://discord.gg/VKesv7J",
 	"luck":{
 		"cap":10000,
-		"skew":0.1
+		"skew":0.4
 	}
 }

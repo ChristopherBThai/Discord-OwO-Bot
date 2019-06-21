@@ -16,11 +16,10 @@ exports.random = function(luck=0, cap=config.luck.cap, skew=config.luck.skew){
   // how close to the cap is the player?
   var normalized = clamped/cap;
 
-  // are we going to apply the luck? 
-  luckyka = Math.random() < Math.abs(normalized);
   // pick a random number and grow o shrink it based on luck
-  scale = luckyka ? 1.0 + normalized * skew : 1.0
-  return clamp((Math.random() - 0.5) * scale + 0.5);
+  roll = Math.random();
+  mod = (roll < 0.5 ? -1 : 1) * (roll - roll*roll) * skew * normalized
+  return roll+mod;
 }
 
 function clamp(n,min=0.0,max=1.0){
