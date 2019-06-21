@@ -71,7 +71,8 @@ module.exports = new CommandInterface({
 				}
 
 				//Get animal
-				p.luck = result[collector.indexOf("luck")][0].lcount;
+				var luck = result[collector.indexOf("luck")]
+				p.luck = luck.length > 0 ? luck[0].lcount : 0;
 				var animal = getAnimals(p,result,gems,uid);
 				var sql = animal.sql;
 				var text = animal.text;
