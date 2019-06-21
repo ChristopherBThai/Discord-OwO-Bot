@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.24, for Linux (x86_64)
 --
--- Host: .17.0.1    Database: owo
+-- Host: localhost    Database: owo
 -- ------------------------------------------------------
 -- Server version	5.7.24-0ubuntu0.16.04.1
 
@@ -572,145 +572,6 @@ CREATE TABLE `vote` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `pet_team`
---
-
-DROP TABLE IF EXISTS `pet_team`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `pet_team` (
-  `uid` int(11),
-  `pgid` int(11) NOT NULL AUTO_INCREMENT,
-  `tname` varchar(12),
-  `censor` bool,
-  `streak` int,
-  `highest_streak` int,
-  PRIMARY KEY (`pgid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `pet_team_animal`
---
-
-DROP TABLE IF EXISTS `pet_team_animal`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `pet_team_animal` (
-  `pgid` int,
-  `pid` int,
-  `pos` int,
-  PRIMARY KEY (`pid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `pet_team_battle`
---
-
-DROP TABLE IF EXISTS `pet_team_battle`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `pet_team_battle` (
-  `pgid` int,
-  `epgid` int,
-  `cphp` int,
-  `cpwp` int,
-  `cehp` int,
-  `cewp` int,
-  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `active` bool,
-  PRIMARY KEY (`pgid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `pet_team_battle_buff`
---
-
-DROP TABLE IF EXISTS `pet_team_battle_buff`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `pet_team_battle_buff` (
-  `pgid` int,
-  `pid` int,
-  `bfid` int,
-  `duration` int,
-  `qualties` varchar(12),
-  `pfrom` int,
-  PRIMARY KEY (`bfid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `crate`
---
-
-DROP TABLE IF EXISTS `crate`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `crate` (
-  `uid` int(11),
-  `cratetype` int,
-  `boxcount` int,
-  `claimcount` int,
-  `claim` timestamp,
-  PRIMARY KEY (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `user_weapon`
---
-
-DROP TABLE IF EXISTS `user_weapon`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `user_weapon` (
-  `uid` int(11),
-  `wid` int,
-  `pid` int,
-  `uwid` int unsigned NOT NULL AUTO_INCREMENT,
-  `stat` varchar(12),
-  `avg` float,
-  PRIMARY KEY (`uwid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `user_weapon_passive`
---
-
-DROP TABLE IF EXISTS `user_weapon_passive`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `user_weapon_passive` (
-  `uwid` int,
-  `wpid` int,
-  `pcount` int,
-  `stat` varchar(12),
-  PRIMARY KEY (`wpid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `battle_settings`
---
-
-DROP TABLE IF EXISTS `battle_settings`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `battle_settings` (
-  `logs` bool,
-  `auto` bool,
-  `display` varchar(12),
-  `speed` varchar(12),
-  `uid` int(11),
-  PRIMARY KEY (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Dumping routines for database 'owo'
 --
 /*!50003 DROP PROCEDURE IF EXISTS `CowoncyDrop` */;
@@ -723,7 +584,7 @@ CREATE TABLE `battle_settings` (
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`owo` PROCEDURE `CowoncyDrop`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `CowoncyDrop`(
 IN tid BIGINT UNSIGNED,
 IN tchannel BIGINT UNSIGNED,
 IN tamount INT UNSIGNED)
@@ -764,7 +625,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`owo` PROCEDURE `CowoncyPickup`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `CowoncyPickup`(
 IN tid BIGINT UNSIGNED,
 IN tchannel BIGINT UNSIGNED,
 IN tamount INT UNSIGNED)
@@ -808,7 +669,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`owo` PROCEDURE `CowoncyTransfer`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `CowoncyTransfer`(
 IN send BIGINT UNSIGNED,
 IN rec BIGINT UNSIGNED,
 IN tamount INT UNSIGNED)
