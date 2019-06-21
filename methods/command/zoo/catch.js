@@ -60,14 +60,14 @@ module.exports = new CommandInterface({
 				//Sort gem benefits
 				var gems = {}
 				var uid = undefined;
-				var gems = result[collector.indexOf('gems')];
-				for(var i=0;i<gems.length;i++){
-					tempGem = gemUtil.getGem(gems[i].gname);
-					tempGem.uid = gems[i].uid;
-					tempGem.activecount = gems[i].activecount;
-					tempGem.gname = gems[i].gname;
+				var g = result[collector.indexOf('gems')];
+				for(var i=0;i<g.length;i++){
+					tempGem = gemUtil.getGem(g[i].gname);
+					tempGem.uid = g[i].uid;
+					tempGem.activecount = g[i].activecount;
+					tempGem.gname = g[i].gname;
 					gems[tempGem.type] = tempGem;
-					uid = gems[i].uid;
+					uid = g[i].uid;
 				}
 
 				//Get animal
