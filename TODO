@@ -1,5 +1,3 @@
-deal with some low rolls being good wrt luck
-clamp negative luck
 deal with no luck
 
 move luck params to config
