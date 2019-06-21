@@ -6,11 +6,12 @@
   */
 
 var animals = require('../../../../tokens/owo-animals.json');
+var luckyrandom = require('../../../util/luckyRandom.js');
 /**
  * Picks a random animal from secret json file
  */
-exports.randAnimal = function(patreon,gem,lucky){
-	var rand = Math.random();
+exports.randAnimal = function(patreon,gem,lucky,luck){
+	var rand = luckyrandom.random(luck);
 	var result = [];
 
 	/* Calculate percentage */
