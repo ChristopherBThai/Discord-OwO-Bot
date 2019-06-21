@@ -7,8 +7,10 @@
 
 /* Utility to provide random numbers modified by "luck" */
 
+config = require('../json/botConfig.json');
+
 /* return a random number 0-1 skewed by a "luck" value */
-exports.random = function(luck=0, cap=10000, skew=0.1){
+exports.random = function(luck=0, cap=config.luck.cap, skew=config.luck.skew){
   // luck may not exceed the cap
   var clamped = clamp(luck,-cap,cap);
   // how close to the cap is the player?

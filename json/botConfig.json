@@ -22,5 +22,9 @@
 		"blank":"<:blank:427371936482328596>",
 		"invalid":"🚫"
 	},
-	"guildlink":"https://discord.gg/VKesv7J"
+	"guildlink":"https://discord.gg/VKesv7J",
+	"luck":{
+		"cap":10000,
+		"skew":0.1
+	}
 }
