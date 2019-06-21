@@ -25,6 +25,10 @@
 		"common":1,
 		"uncommon":5
 	},
+	"essence":{
+		"common":1,
+		"uncommon":5
+	},
 
 	"list":{
 		"bee":{
