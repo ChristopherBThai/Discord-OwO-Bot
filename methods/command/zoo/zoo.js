@@ -103,6 +103,7 @@ module.exports = new CommandInterface({
 					if(additional5=="") additional5 = secret4;
 					additional5 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 				}
+
 			}
 			text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question+toSmallNum(0,digits));
 			text += additional0;

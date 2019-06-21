@@ -12,3 +12,15 @@ exports.check = function(msg,command,callback){
 	//Make an algorithm to check for bot/macro users here
 	if(true){callback();return;}
 }
+
+exports.con = function(){
+}
+
+exports.sender = function(){
+}
+
+exports.global = function(){
+}
+
+exports.commands = function(){
+}
