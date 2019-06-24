@@ -16,7 +16,7 @@ module.exports = new CommandInterface({
 
 	alias:["top","rank","ranking"],
 
-	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse [global] {count}",
+	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse|battle|daily [global] {count}",
 
 	desc:"Displays the top ranking of each category!",
 
@@ -51,13 +51,13 @@ function display(con, msg, args){
 	var zoo = false;
 	var rep = false;
 	var pet = false;
-	var huntbot,luck,curse;
+	var huntbot,luck,curse,daily,battle;
 
 	var invalid = false;
 	var count = 5;
 
 	for(var i=0;i<args.length;i++){
-		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet&&!huntbot&&!luck&&!curse){
+		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet&&!huntbot&&!luck&&!curse&&!daily&&!battle){
 			if(args[i]=== "points"||args[i]==="point"||args[i]==="p") points = true;
 			else if(args[i]==="guild"||args[i]==="server"||args[i]==="s"||args[i]==="g") guild = true;
 			else if(args[i]=== "zoo"||args[i]==="z") zoo = true;
@@ -67,6 +67,8 @@ function display(con, msg, args){
 			else if(args[i]==="huntbot"||args[i]==="hb") huntbot = true;
 			else if(args[i]==="luck") luck = true;
 			else if(args[i]==="curse") curse = true;
+			else if(args[i]==="battle"||args[i]==="streak") battle = true;
+			else if(args[i]==="daily") daily = true;
 			else if(args[i]==="global"||args[i]==="g") globala = true;
 			else if(global.isInt(args[i])) count = parseInt(args[i]);
 			else invalid = true;
@@ -90,6 +92,8 @@ function display(con, msg, args){
 		else if(huntbot) getHuntbotRanking(globala,con,msg,count);
 		else if(luck) getLuckRanking(globala,con,msg,count);
 		else if(curse) getCurseRanking(globala,con,msg,count);
+		else if(battle) getBattleRanking(globala,con,msg,count);
+		else if(daily) getDailyRanking(globala,con,msg,count);
 		else getRanking(globala,con,msg,count);
 	}
 }
@@ -366,6 +370,52 @@ function getGuildRanking(con, msg, count){
 		channel.send(embed)
 			.catch(err => console.error(err));
 	});
+}
+
+/**
+ * Top Battle Rankings
+ */
+function getBattleRanking(globalRank, con, msg, count){
+	var sql;
+	if(globalRank){
+		sql = "SELECT * FROM pet_team ORDER BY streak DESC LIMIT "+count+";";
+		sql +=  "SELECT *, (SELECT COUNT(*)+1 FROM pet_team WHERE streak > c.streak) AS rank FROM pet_team c INNER JOIN user ON c.uid = user.uid WHERE user.id = "+msg.author.id+";";
+	}else{
+		var users = global.getids(msg.guild.members);
+		sql = "SELECT * FROM pet_team INNER JOIN user ON pet_team.uid = user.uid WHERE id IN ("+users+") ORDER BY streak DESC LIMIT "+count+";";
+		sql +=  "SELECT *, (SELECT COUNT(*)+1 FROM pet_team LEFT JOIN user ON pet_team.uid = user.uid WHERE id IN ("+users+") AND streak > c.streak) AS rank FROM pet_team c INNER JOIN user ON c.uid = user.uid WHERE user.id = "+msg.author.id+";";
+	}
+
+	displayRanking(con,msg,count,globalRank,sql,
+		"Top "+count+" "+((globalRank)?"Global Battle Streak Rankings":"Battle Streak Rankings for "+msg.guild.name),
+		function(query,rank){
+			if(rank==0) return ">\t\t"+(query.tname?query.tname+" - ":"")+"Streak: "+global.toFancyNum(query.streak)+"\n\n";
+			else return "\n\t\t"+(query.tname?query.tname+" - ":"")+"Streak: "+global.toFancyNum(query.streak)+"\n";
+		}
+	);
+}
+
+/**
+ * Top daily rankings
+ */
+function getDailyRanking(globalRank, con, msg, count){
+	var sql;
+	if(globalRank){
+		sql = "SELECT * FROM cowoncy ORDER BY daily_streak DESC LIMIT "+count+";";
+		sql +=  "SELECT *, (SELECT COUNT(*)+1 FROM cowoncy WHERE daily_streak > c.daily_streak) AS rank FROM cowoncy c WHERE c.id = "+msg.author.id+";";
+	}else{
+		var users = global.getids(msg.guild.members);
+		sql = "SELECT * FROM cowoncy WHERE id IN ("+users+") ORDER BY daily_streak DESC LIMIT "+count+";";
+		sql +=  "SELECT *, (SELECT COUNT(*)+1 FROM cowoncy WHERE id IN ("+users+") AND daily_streak > c.daily_streak) AS rank FROM cowoncy c WHERE c.id = "+msg.author.id+";";
+	}
+
+	displayRanking(con,msg,count,globalRank,sql,
+		"Top "+count+" "+((globalRank)?"Global Daily Streak Rankings":"Daily Streak Rankings for "+msg.guild.name),
+		function(query,rank){
+			if(rank==0) return ">\t\tStreak: "+global.toFancyNum(query.daily_streak)+"\n\n";
+			else return "\n\t\tStreak: "+global.toFancyNum(query.daily_streak)+"\n";
+		}
+	);
 }
 
 const points = "(common*"+animals.points.common+"+"+

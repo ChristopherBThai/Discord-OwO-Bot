@@ -1007,7 +1007,7 @@ function bonusXP(streak){
 /*
 var totalxp = 0;
 var pxp = 0;
-for(let i = 10;i<=1000;i+=10){
+for(let i = 35000;i<=40000;i+=10){
 	pxp += 10*200;
 	let currentxp = bonusXP(i);
 	totalxp += currentxp;

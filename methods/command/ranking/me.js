@@ -16,7 +16,7 @@ module.exports = new CommandInterface({
 
 	alias:["my","me","guild"],
 
-	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse|team [global]",
+	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse|team|daily|battle [global]",
 
 	desc:"Displays your ranking of each category!\nYou can choose you rank within the server or globally!\nYou can also shorten the command like in the example!",
 
@@ -56,10 +56,10 @@ function display(con, msg, args){
 	var rep = false;
 	var pet = false;
 	var team = false;
-	var huntbot,luck,curse;
+	var huntbot,luck,curse,daily,battle;
 
 	for(var i=0;i<args.length;i++){
-		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet&&!huntbot&&!luck&&!curse&&!team){
+		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet&&!huntbot&&!luck&&!curse&&!team&&!daily&&!battle){
 			if(args[i]=== "points"||args[i]==="point"||args[i]==="p") points = true;
 			else if(args[i]==="guild"||args[i]==="server"||args[i]==="g"||args[i]==="s") guild = true;
 			else if(args[i]=== "zoo"||args[i]==="z") zoo = true;
@@ -69,6 +69,8 @@ function display(con, msg, args){
 			else if(args[i]==="huntbot"||args[i]==="hb"||args[i]==="autohunt") huntbot= true;
 			else if(args[i]==="luck") luck = true;
 			else if(args[i]==="curse") curse = true;
+			else if(args[i]==="battle"||args[i]==="streak") battle = true;
+			else if(args[i]==="daily") daily = true;
 			//else if(args[i]==="team"||args[i]==='t') team = true;
 			else if(args[i]==="global"||args[i]==="g") aglobal = true;
 			else invalid = true;
@@ -90,6 +92,8 @@ function display(con, msg, args){
 		else if(luck) getLuckRanking(aglobal,con,msg);
 		else if(curse) getCurseRanking(aglobal,con,msg);
 		else if(team) getTeamRanking(aglobal,con,msg);
+		else if(battle) getBattleRanking(aglobal,con,msg);
+		else if(daily) getDailyRanking(aglobal,con,msg);
 		else getPointRanking(aglobal,con,msg);
 	}
 }
@@ -438,6 +442,45 @@ function getTeamRanking(globalRank,con,msg){
 					result += query.nickname+" ";
 				result += "Lvl:"+query.lvl+" Att:"+query.att+" Hp:"+query.hp;
 				return result;
+			});
+}
+
+function getBattleRanking(globalRank,con,msg){
+	var sql;
+	if(globalRank){
+		sql = "SELECT u1.tname,u1.id,u1.streak FROM pet_team AS u INNER JOIN user ON u.uid = user.uid LEFT JOIN ( SELECT tname,id,streak FROM pet_team INNER JOIN user ON pet_team.uid = user.uid ORDER BY streak ASC ) AS u1 ON u1.streak > u.streak WHERE user.id = "+msg.author.id+" ORDER BY u1.streak ASC LIMIT 2;";
+		sql += "SELECT u1.tname,u1.id,u1.streak FROM pet_team AS u INNER JOIN user ON u.uid = user.uid LEFT JOIN ( SELECT tname,id,streak FROM pet_team INNER JOIN user ON pet_team.uid = user.uid ORDER BY streak DESC ) AS u1 ON u1.streak < u.streak WHERE user.id = "+msg.author.id+" ORDER BY u1.streak DESC LIMIT 2;";
+		sql +=  "SELECT c.tname,user.id,c.streak, (SELECT COUNT(*)+1 FROM pet_team WHERE streak > c.streak) AS rank FROM pet_team c INNER JOIN user ON c.uid = user.uid WHERE user.id = "+msg.author.id+";";
+	}else{
+		var users = global.getids(msg.guild.members);
+		sql = "SELECT u1.tname,u1.id,u1.streak FROM pet_team AS u INNER JOIN user ON u.uid = user.uid LEFT JOIN ( SELECT tname,id,streak FROM pet_team INNER JOIN user ON pet_team.uid = user.uid WHERE id IN ("+users+") ORDER BY streak ASC ) AS u1 ON u1.streak > u.streak WHERE user.id = "+msg.author.id+" ORDER BY u1.streak ASC LIMIT 2;";
+		sql += "SELECT u1.tname,u1.id,u1.streak FROM pet_team AS u INNER JOIN user ON u.uid = user.uid LEFT JOIN ( SELECT tname,id,streak FROM pet_team INNER JOIN user ON pet_team.uid = user.uid WHERE id IN ("+users+") ORDER BY streak DESC ) AS u1 ON u1.streak < u.streak WHERE user.id = "+msg.author.id+" ORDER BY u1.streak DESC LIMIT 2;";
+		sql +=  "SELECT c.tname,user.id,c.streak, (SELECT COUNT(*)+1 FROM pet_team LEFT JOIN user ON pet_team.uid = user.uid WHERE id IN ("+users+") AND streak > c.streak) AS rank FROM pet_team c INNER JOIN user ON c.uid = user.uid WHERE user.id = "+msg.author.id+";";
+	}
+
+	displayRanking(con,msg,sql,
+			((globalRank)?"Global ":"")+"Battle Streak Ranking",
+			function(query){
+				return "\t\t"+(query.tname?query.tname+" - ":"")+"Streak: "+global.toFancyNum(query.streak);
+			});
+}
+function getDailyRanking(globalRank,con,msg){
+	var sql;
+	if(globalRank){
+		sql = "SELECT u.id,u.daily_streak,u1.id,u1.daily_streak FROM cowoncy AS u LEFT JOIN ( SELECT id,daily_streak FROM cowoncy ORDER BY daily_streak ASC ) AS u1 ON u1.daily_streak > u.daily_streak WHERE u.id = "+msg.author.id+" ORDER BY u1.daily_streak ASC LIMIT 2;";
+		sql += "SELECT u.id,u.daily_streak,u1.id,u1.daily_streak FROM cowoncy AS u LEFT JOIN ( SELECT id,daily_streak FROM cowoncy ORDER BY daily_streak DESC ) AS u1 ON u1.daily_streak < u.daily_streak WHERE u.id = "+msg.author.id+" ORDER BY u1.daily_streak DESC LIMIT 2;";
+		sql += "SELECT id,daily_streak,(SELECT COUNT(*)+1 FROM cowoncy WHERE daily_streak > u.daily_streak) AS rank FROM cowoncy u WHERE u.id = "+msg.author.id+";";
+	}else{
+		var users = global.getids(msg.guild.members);
+		var sql = "SELECT u.id,u.daily_streak,u1.id,u1.daily_streak FROM cowoncy AS u LEFT JOIN ( SELECT id,daily_streak FROM cowoncy WHERE id IN ("+users+") ORDER BY daily_streak ASC ) AS u1 ON u1.daily_streak > u.daily_streak WHERE u.id = "+msg.author.id+" ORDER BY u1.daily_streak ASC LIMIT 2;";
+		sql   +=  "SELECT u.id,u.daily_streak ,u1.id,u1.daily_streak FROM cowoncy AS u LEFT JOIN ( SELECT id,daily_streak FROM cowoncy WHERE id IN ("+users+") ORDER BY daily_streak DESC ) AS u1 ON u1.daily_streak < u.daily_streak WHERE u.id = "+msg.author.id+" ORDER BY u1.daily_streak DESC LIMIT 2;";
+		sql   +=  "SELECT id,daily_streak ,(SELECT COUNT(*)+1 FROM cowoncy WHERE daily_streak > u.daily_streak AND id IN ("+users+") ) AS rank FROM cowoncy u WHERE u.id = "+msg.author.id+";";
+	}
+
+	displayRanking(con,msg,sql,
+			((globalRank)?"Global ":"")+"Daily Streak Ranking",
+			function(query){
+				return "\t\tStreak: "+global.toFancyNum(query.daily_streak);
 			});
 }
 
