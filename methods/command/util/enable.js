@@ -89,15 +89,14 @@ module.exports = new CommandInterface({
 			if(enabled.length==0) enabled.push("NONE");
 			if(disabled.length==0) disabled.push("NONE");
 
+			let desc = "**❎ Disabled Commands for this channel:**";
+			desc += "\n`"+disabled.join("`  `")+"`";
+			desc += "\n**✅ Enabled Commands for this channel:**";
+			desc += "\n`"+enabled.join("`  `")+"`";
+
 			const embed = {
 				"color":4886754,
-				"fields": [{
-					"name": "❎ Disabled Commands for this channel:",
-					"value": "`"+disabled.join("`  `")+"`",
-					},{
-					"name": "✅ Enabled Commands for this channel:",
-					"value": "`"+enabled.join("`  `")+"`",
-				}]
+				"description":desc
 			}
 			p.send({embed});
 		});
