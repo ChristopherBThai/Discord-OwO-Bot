@@ -241,10 +241,10 @@ function parseQuest(questInfo){
 			var text = "Drop cowoncy "+count+" times!";
 			break;
 		case "emoteTo":
-			var text = "Use an emote on someone "+count+" times!";
+			var text = "Use an action command on someone "+count+" times!";
 			break;
 		case "emoteBy":
-			var text = "Have a friend emote to you "+count+" times!";
+			var text = "Have a friend use an action command on you "+count+" times!";
 			break;
 		case "find":
 			var text = "Find 3 animals that are "+count+" rank!";
