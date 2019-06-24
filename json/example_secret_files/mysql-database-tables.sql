@@ -1067,3 +1067,34 @@ DELIMITER ;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2019-06-21 14:52:01
+
+/* Extra data needed for owo bot to work: */
+LOCK TABLES `gem` WRITE;
+/*!40000 ALTER TABLE `gem` DISABLE KEYS */;
+INSERT INTO `gem` VALUES ('cgem1','multi'),('cgem2','patreon'),('cgem3','empow'),('cgem4','lucky'),('egem1','multi'),('egem2','patreon'),('egem3','empow'),('egem4','lucky'),('fgem1','multi'),('fgem2','patreon'),('fgem3','empow'),('fgem4','lucky'),('lgem1','multi'),('lgem2','patreon'),('lgem3','empow'),('lgem4','lucky'),('mgem1','multi'),('mgem2','patreon'),('mgem3','empow'),('mgem4','lucky'),('rgem1','multi'),('rgem2','patreon'),('rgem3','empow'),('rgem4','lucky'),('ugem1','multi'),('ugem2','patreon'),('ugem3','empow'),('ugem4','lucky');
+/*!40000 ALTER TABLE `gem` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `buff` WRITE;
+/*!40000 ALTER TABLE `buff` DISABLE KEYS */;
+INSERT INTO `buff` VALUES (1),(2),(3),(4);
+/*!40000 ALTER TABLE `buff` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `ring` WRITE;
+/*!40000 ALTER TABLE `ring` DISABLE KEYS */;
+INSERT INTO `ring` VALUES (1),(2),(3),(4),(5),(6),(7);
+/*!40000 ALTER TABLE `ring` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `weapon` WRITE;
+/*!40000 ALTER TABLE `weapon` DISABLE KEYS */;
+INSERT INTO `weapon` VALUES (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12);
+/*!40000 ALTER TABLE `weapon` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `weapon_passive` WRITE;
+/*!40000 ALTER TABLE `weapon_passive` DISABLE KEYS */;
+INSERT INTO `weapon_passive` VALUES (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),(13);
+/*!40000 ALTER TABLE `weapon_passive` ENABLE KEYS */;
+UNLOCK TABLES;
