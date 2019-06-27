@@ -378,7 +378,7 @@ function getGuildRanking(con, msg, count){
 function getBattleRanking(globalRank, con, msg, count){
 	var sql;
 	if(globalRank){
-		sql = "SELECT * FROM pet_team ORDER BY streak DESC LIMIT "+count+";";
+		sql = "SELECT * FROM pet_team INNER JOIN user ON user.uid = pet_team.uid ORDER BY streak DESC LIMIT "+count+";";
 		sql +=  "SELECT *, (SELECT COUNT(*)+1 FROM pet_team WHERE streak > c.streak) AS rank FROM pet_team c INNER JOIN user ON c.uid = user.uid WHERE user.id = "+msg.author.id+";";
 	}else{
 		var users = global.getids(msg.guild.members);
