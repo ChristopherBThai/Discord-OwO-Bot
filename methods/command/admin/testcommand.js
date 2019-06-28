@@ -20,7 +20,7 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 		let data = await captcha();
-		p.send({files:[data.buffer]});
+		p.send(data.text,null,{files:[data.buffer]});
 		
 	}
 })
