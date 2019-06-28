@@ -18,7 +18,7 @@ module.exports = new CommandInterface({
 
 	args:"{equation}",
 
-	desc:"Let me do your math homework!",
+	desc:"Let me do your math homework! Add an equation for me to solve! More in-depth syntax can be found here: https://mathjs.org/docs/expressions/syntax.html",
 
 	example:["owo math 2 + 2"],
 
@@ -35,9 +35,13 @@ module.exports = new CommandInterface({
 			.then(function(result){
 				if(result.mathjs){
 					if(result.data)
-						result = result.data+"";
+						result = JSON.stringify(result.data);
 					else if(result.entries)
 						result = result.entries+"";
+					else if(result.unit&&result.value)
+						result = result.value+" "+result.unit;
+					else if(result.value)
+						result = result.value+"";
 					if(result.length>1000)
 						p.replyMsg(mathEmoji,", the answer is: **"+result.substr(0,1000)+"**...");
 					else
