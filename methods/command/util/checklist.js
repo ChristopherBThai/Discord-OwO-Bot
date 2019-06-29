@@ -163,7 +163,7 @@ function crates(p){
 				else
 					return {done:true,desc:"You have found all weapon crates!",emoji:'⚔'}
 			}else
-				return {done:false,desc:"3 weapon creates are still available!",emoji:'⚔'}
+				return {done:false,desc:"3 weapon crates are still available!",emoji:'⚔'}
 		}
 	}
 }
