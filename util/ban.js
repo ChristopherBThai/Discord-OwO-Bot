@@ -10,7 +10,7 @@ const permissions = require('../json/permissions.json');
 
 exports.check = async function(con,msg,client,command,callback,ignore){
 	//Check if the channel has all the valid permissions
-	if(command!="points"&&!checkPermissions(msg,client)) return;
+	//if(command!="points"&&!checkPermissions(msg,client)) return;
 
 	//If its a global command (no cooldown/disable)
 	if(ignore){
