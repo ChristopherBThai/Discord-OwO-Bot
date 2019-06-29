@@ -222,7 +222,7 @@ async function addEmoji(p,name,url,guild,loc,callback){
 	}(this))`);
 	let emoji;
 	for(let i in result){
-		if(i) emoji = result[i];
+		if(result[i]) emoji = result[i];
 	}
 
 	if(!emoji||!p.global.isInt(emoji)){
@@ -238,7 +238,7 @@ async function addEmoji(p,name,url,guild,loc,callback){
 		}(this))`);
 		let after;
 		for(let i in result){
-			if(i) after= result[i];
+			if(result[i]) after= result[i];
 		}
 
 		if(!p.global.isInt(after)||emoji==after){
