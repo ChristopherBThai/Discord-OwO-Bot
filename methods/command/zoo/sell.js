@@ -143,11 +143,10 @@ function sellAnimal(msg,con,animal,count,send,global,p){
 function sellRank(msg,con,rank,send,global,p){
 	var animals = "('"+rank.animals.join("','")+"')";
 	var sql = "SELECT SUM(count) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
-	sql += "UPDATE cowoncy SET money = money + ((SELECT COALESCE(SUM(count),0) FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+")*"+rank.price+") WHERE id = "+msg.author.id+";";
-	sql += "UPDATE animal SET sellcount = sellcount + count, count = 0 WHERE id = "+msg.author.id+" AND name IN "+animals+" AND count > 0;";
+	sql += "UPDATE animal INNER JOIN cowoncy ON animal.id = cowoncy.id INNER JOIN (SELECT COALESCE(SUM(count),0) AS sum FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+") s SET money = money + (s.sum*"+rank.price+"), sellcount = sellcount + count, count = 0 WHERE animal.id = "+msg.author.id+" AND name IN "+animals+" AND count > 0;";
 	con.query(sql,function(err,result){
 		if(err) {console.error(err);return;}
-		if(result[2].affectedRows<=0){
+		if(result[1].affectedRows<=0){
 			send("**🚫 | "+msg.author.username+"**, You don't have enough animals! >:c",3000);
 		}else{
 			count = result[0][0].total;
@@ -163,8 +162,7 @@ function sellRanks(msg,con,ranks,send,global,p){
 		let rank = ranks[i];
 		var animals = "('"+rank.animals.join("','")+"')";
 		sql += "SELECT SUM(count) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
-		sql += "UPDATE cowoncy SET money = money + ((SELECT COALESCE(SUM(count),0) FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+")*"+rank.price+") WHERE id = "+msg.author.id+";";
-		sql += "UPDATE animal SET sellcount = sellcount + count, count = 0 WHERE id = "+msg.author.id+" AND name IN "+animals+" AND count > 0;";
+		sql += "UPDATE animal INNER JOIN cowoncy ON animal.id = cowoncy.id INNER JOIN (SELECT COALESCE(SUM(count),0) AS sum FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+") s SET money = money + (s.sum*"+rank.price+"), sellcount = sellcount + count, count = 0 WHERE animal.id = "+msg.author.id+" AND name IN "+animals+" AND count > 0;";
 	}
 	con.query(sql,function(err,result){
 		if(err) {console.error(err);return;}
@@ -173,9 +171,9 @@ function sellRanks(msg,con,ranks,send,global,p){
 		let count = 0;
 		for(i in ranks){
 			let rank = ranks[i];
-			let sellCount = result[count*3][0].total;
+			let sellCount = result[count*2][0].total;
 			if(sellCount>0){
-				sold += rank.emoji+"x"+result[count*3][0].total+" ";
+				sold += rank.emoji+"x"+result[count*2][0].total+" ";
 				total += sellCount * rank.price;
 			}
 			count++;
