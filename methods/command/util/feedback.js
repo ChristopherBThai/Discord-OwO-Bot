@@ -11,6 +11,7 @@ const global = require('../../../util/global.js');
 const sender = require('../../../util/sender.js');
 
 const feedbackChannel = "519778148888346635";
+const reportChannel = "596220958730223619";
 const supportGuild = "420104212895105044";
 
 module.exports = new CommandInterface({
@@ -50,12 +51,12 @@ module.exports = new CommandInterface({
 			suggest(p,message);
 			return;
 		}
-		var sql = "INSERT INTO feedback (type,message,sender) values ('"+p.command+"',?,"+p.msg.author.id+");";
+		let sql = "INSERT INTO feedback (type,message,sender) values ('"+p.command+"',?,"+p.msg.author.id+");";
 		sql = p.mysql.mysql.format(sql,message);
 		p.con.query(sql,function(err,rows,field){
 			if(err){console.error(err);return;}
-			var avatar = "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png";
-			const embed = {
+			let avatar = "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png";
+			let embed = {
 				"color": 10590193,
 				"timestamp": new Date(),
 				"thumbnail":{"url":avatar},
@@ -82,14 +83,14 @@ module.exports = new CommandInterface({
 				]
 			};
 			p.send("**📨 |** *OwO What's this?!*  "+p.msg.author+", Thanks for the "+p.command+"!");
-			sender.msgAdmin({embed});
+			p.sender.msgChannel(reportChannel,{embed});
 		});
 	}
 
 })
 
 function suggest(p,message){
-	const embed = {
+	let embed = {
 		"color": p.config.embed_color,
 		"timestamp": new Date(),
 		"author": {
