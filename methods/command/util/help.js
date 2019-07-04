@@ -84,7 +84,7 @@ function display(p){
 			{"name":"🎱 Fun",
 				"value":"`8b`  `define`  `gif`  `pic`  `translate`  `roll`"},
 			{"name":"🎭 Social",
-				"value":"`cookie` `ship`  `pray`  `curse`  `marry`"},
+				"value":"`cookie` `ship`  `pray`  `curse`  `marry`  `emoji`"},
 			{"name":"😂 Meme Generation",
 				"value":"`spongebobchicken`  `slapcar`  `isthisa`  `drake`  `distractedbf`"},
 			{"name":"🙂 Emotes",

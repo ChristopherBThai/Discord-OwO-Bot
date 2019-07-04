@@ -121,7 +121,7 @@ function spotifybot(text,type){
 			text.fields[2].value = text.fields[2].value.replace(/(\r\n|\n|\r)/gm," *How about a longer Playlist?*\n");
 			text.fields[3].value = text.fields[3].value.replace(/(\r\n|\n|\r)/gm," *Want Spotify Premium??*\n");
 			text.fields[4].value = text.fields[4].value.replace(/(\r\n|\n|\r)/gm," *Hmm, what about a New Playlist?*\n");
-			text.fields[5].value = text.fields[5].value.replace(/(\r\n|\n|\r)/gm," *Or do you want more Sponsers??*\n");
+			text.fields[5].value = text.fields[5].value.replace(/(\r\n|\n|\r)/gm," *Or do you want more Sponsors??*\n");
 			if(text.fields.length>=8){
 				text.fields[7].name = spotify+" SPOTIFYBOT is currently adding songs!";
 				text.fields[7].value = text.fields[7].value.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","Oops! Looks like the SPOTIFY Playlist is incomplete.\nNEW SONGS ADDED IN")

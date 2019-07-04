@@ -14,6 +14,7 @@ const prevPageEmoji = '⬅';
 const stealEmoji = '🕵';
 const errorEmoji = '';
 const successMsg = "Successfully stolen"
+const failureMsg = "Failed to steal"
 
 module.exports = new CommandInterface({
 
@@ -100,23 +101,54 @@ async function display(p,emojis){
 		canSteal = result[0].guild;
 	}
 
+	let saved = {};
+	let save = function(loc,id,message){
+		if(!saved[loc]) saved[loc] = {success:[],failure:[]};
+		if(message==successMsg){
+			saved[loc].success.push(id);
+		}else if(!saved[loc].failure.includes(id)){
+			saved[loc].failure.push(id);
+		}
+		embed = createEmbed(p,loc,emojis,saved);
+		msg.edit({embed});
+	}
+
 	/* Add a reaction collector to update the pages */
 	await msg.react(prevPageEmoji);
 	await msg.react(nextPageEmoji);
 	if(canSteal) await msg.react(stealEmoji);
 
-	let filter = (reaction,user) => (reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji||(canSteal&&reaction.emoji.name===stealEmoji))&&user.id===p.msg.author.id;
+	let filter = (reaction,user) => {
+		// I need to deal with the steal in the filter since the Discord.Js does not return the user id on 'collect'
+		if(reaction.emoji.name==stealEmoji){
+
+			// if user has already stolen the emoji, ignore
+			if(saved[loc]&&saved[loc].success.includes(user.id)) return;
+
+			let sql = `SELECT emoji_steal.guild FROM emoji_steal INNER JOIN user ON emoji_steal.uid = user.uid WHERE id = ${user.id};`;
+			p.query(sql).then(function(result){
+				if(!result[0])
+					return;
+
+				// Parse steal server id
+				let guild = result[0].guild;
+
+
+				//Save the emoji
+				let name = emojis[loc].name;
+				let url = emojis[loc].url;
+				addEmoji(p,name,url,guild,loc,user.id,save);
+			});
+
+		}
+
+		return (reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji||(canSteal&&reaction.emoji.name===stealEmoji))&&user.id==p.msg.author.id;
+	}
 	let collector = await msg.createReactionCollector(filter,{time:120000});
 
-	let saved = {};
-	let save = function(loc,message){
-		saved[loc] = message;
-		embed = createEmbed(p,loc,emojis,saved);
-		msg.edit({embed});
-	}
 
 	/* Flip the page if reaction is pressed */
-	collector.on('collect', async function(r){
+	collector.on('collect', async function(r,c,u){
 		/* Save the animal's action */
 		if(r.emoji.name===nextPageEmoji&&loc+1<emojis.length) {
 			loc++;
@@ -127,13 +159,6 @@ async function display(p,emojis){
 			loc--;
 			embed = createEmbed(p,loc,emojis,saved);
 			await msg.edit({embed});
-		}
-		if(r.emoji.name==stealEmoji){
-			let temp = saved[loc];
-			if(temp==successMsg) return;
-			let name = emojis[loc].name;
-			let url = emojis[loc].url;
-			addEmoji(p,name,url,canSteal,loc,save);
 		}
 	});
 
@@ -168,11 +193,13 @@ function createEmbed(p,loc,emojis,saved={}){
 
 	let message = saved[loc];
 	if(message){
-		embed.footer.text += " - "+message;
-		if(message==successMsg)
+		if(message.success.length){
+			embed.footer.text += " - "+successMsg+(message.success.length>1?' x'+message.success.length:'');
 			embed.color = 65280;
-		else
+		}else{
+			embed.footer.text += " - "+failureMsg+(message.failure.length>1?' x'+message.failure.length:'');
 			embed.color = 16711680;
+		}
 	}
 
 	return embed;
@@ -212,7 +239,7 @@ async function unsetServer(p){
 	p.replyMsg(stealEmoji,", your server has been unset for stealing!");
 }
 
-async function addEmoji(p,name,url,guild,loc,callback){
+async function addEmoji(p,name,url,guild,loc,id,callback){
 	let result = await p.client.shard.broadcastEval(`(function(client){
 		let guild = client.guilds.get('${guild}');
 		if(guild==undefined) return;
@@ -226,7 +253,7 @@ async function addEmoji(p,name,url,guild,loc,callback){
 	}
 
 	if(!emoji||!p.global.isInt(emoji)){
-		callback(loc,"Failed to steal");
+		callback(loc,id,failureMsg);
 		return;
 	}
 
@@ -242,11 +269,11 @@ async function addEmoji(p,name,url,guild,loc,callback){
 		}
 
 		if(!p.global.isInt(after)||emoji==after){
-			callback(loc,"Failed to steal");
+			callback(loc,id,failureMsg);
 			return;
 		}
 
-		callback(loc,successMsg);
+		callback(loc,id,successMsg);
 		
 	},1000);
 }
