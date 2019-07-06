@@ -7,7 +7,6 @@
 
 const CommandInterface = require('../../commandinterface.js');
 const imagegen = require('../battle/battleImage.js');
-const patreon = require('../../../handler/patreonHandler.js');
 const mysql = require('../../../util/mysql.js');
 
 const captcha = require('../../../../tokens/captcha.js');

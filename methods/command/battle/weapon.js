@@ -29,13 +29,25 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: async function(p){
+		let onlyTags = true;
+		let tags = [];
+		for(let i in p.args){
+			if(p.global.isUser(p.args[i])){
+				tags.push(p.args[0].match(/[0-9]+/)[0]);
+			}else{
+				onlyTags = false;
+			}
+		}
 
 		/* Display weapons */
 		if(p.args.length==0){
 			await weaponUtil.display(p);
+		}else if(onlyTags){
+			await weaponUtil.display(p,0,0,tags);
 
 		/* Describe weapon */
 		}else if(p.args.length==1){
+
 			var uwid = p.args[0];
 			if(uwid.length < uwidMax)
 				await weaponUtil.describe(p,uwid);

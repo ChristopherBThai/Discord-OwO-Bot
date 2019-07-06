@@ -115,7 +115,8 @@ var parseWeaponQuery = exports.parseWeaponQuery = function(query){
 }
 
 /* Displays weapons with multiple pages */
-exports.display = async function(p,pageNum=0,sort=0){
+exports.display = async function(p,pageNum=0,sort=0,users=[]){
+	users.push(p.msg.author.id);
 
 	/* Construct initial page */
 	let page = await getDisplayPage(p,pageNum,sort);
@@ -126,7 +127,7 @@ exports.display = async function(p,pageNum=0,sort=0){
 	await msg.react(prevPageEmoji);
 	await msg.react(nextPageEmoji);
 	await msg.react(sortEmoji);
-	let filter = (reaction,user) => (reaction.emoji.name===sortEmoji||reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&user.id===p.msg.author.id;
+	let filter = (reaction,user) => (reaction.emoji.name===sortEmoji||reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&users.includes(user.id);
 	let collector = await msg.createReactionCollector(filter,{time:150000});
 
 	collector.on('collect', async function(r){

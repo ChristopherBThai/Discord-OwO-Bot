@@ -92,7 +92,7 @@ module.exports = new CommandInterface({
 
 			var desc = "*No description created\nHave a fun/creative description?\nUse 'owo feedback'!*";
 			if(animal.desc){
-				desc = "*"+animal.desc+"*";
+				desc = "*"+animal.desc.trim()+"*";
 				if(descID = desc.match(/\?[0-9]+\?/))
 					if(descID = descID[0].match(/[0-9]+/)){
 						descID = await global.getUser(descID[0]);
@@ -100,6 +100,7 @@ module.exports = new CommandInterface({
 					}
 			}
 			desc = desc.replace(/\n\*\*$/,"");
+			console.log(desc);
 
 			const embed = {
 				"title": ((animal.uni)?animal.uni:animal.value)+" "+animal.name,
