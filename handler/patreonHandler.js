@@ -7,72 +7,68 @@
 
 var url = require('url');
 var patreon = require('patreon');
-var patreonAPI = patreon.patreon;
-var patreonOAuth = patreon.oauth;
 
 // Use the client id and secret you received when setting up your OAuth account
 const auth = require('../../tokens/owo-auth.json');
 var CLIENT_ID = auth.patreonID;
 var CLIENT_SECRET = auth.patreonSecret;
 
-//var patreonOAuthClient = patreonOAuth(CLIENT_ID, CLIENT_SECRET);
+var patreonAPI,patreonOAuth,patreonOAuthClient,patreon_client;
+var link = '/campaigns/1623609?include=benefits.deliverables.user&fields%5Bbenefit%5D=title&fields%5Buser%5D=full_name,social_connections';
 
-//var patreon_client = patreonAPI(auth.patreonAccessToken);
-
-var link = '/campaigns/1623609/members?include=user&fields%5Bmember%5D=full_name,last_charge_date,last_charge_status,lifetime_support_cents&fields%5Buser%5D=first_name,social_connections&page%5Bcount%5D=100';
-
-let ids = "";
-
-function request(url){
-	setTimeout(function(){requestRec(url)},15000);
+exports.request = async function(){
+	patreonAPI = patreon.patreon;
+	patreonOAuth = patreon.oauth;
+	patreonOAuthClient = patreonOAuth(CLIENT_ID, CLIENT_SECRET);
+	patreon_client = patreonAPI(auth.patreonAccessToken);
+	return await requestRec(link);
 }
+
 async function requestRec(url){
-	await patreon_client(url).then(function(result){
-		let valid = validPayments(result.rawJson.data);
-		did = parseDiscordUser(result,valid);
-		if(did.length>0)
-			ids += did.join(",")+",";
-		if(result.rawJson.links&&result.rawJson.links.next)
-			requestRec(result.rawJson.links.next.replace("https://www.patreon.com/api/oauth2/v2",""));
-		else
-			console.log(ids);
+	let result = await patreon_client(url)
+	let res = {};
 
-	}).catch(console.error);
-}
-
-function validPayments(users){
-	var valid = [];
-	/*Check if the payment went though*/
-	for(var i=0;i<users.length;i++){
-		user = users[i];
-		var test = false;
-		if(user.attributes.last_charge_status=="Paid"&&checkDate(user.attributes.last_charge_date)){
-			valid.push(parseInt(user.relationships.user.data.id));
+	// Grab benefits
+	let benefits = {};
+	for(let i in result.rawJson.included){
+		let obj = result.rawJson.included[i];
+		if(obj.type=='benefit'){
+			benefits[obj.id] = {title:obj.attributes.title,users:[],deliverable:[]}
+			for(let j in obj.relationships.deliverables.data){
+				let deliverable = obj.relationships.deliverables.data[j];
+				benefits[obj.id].deliverable.push(deliverable.id);
+			}
+			res[obj.attributes.title] = [];
 		}
 	}
-	return valid;
-}
 
-function parseDiscordUser(result,valid){
-	var dids = [];
-	for(var i=0;i<result.rawJson.included.length;i++){
-		var uid = parseInt(result.rawJson.included[i].id);
-		if(valid.includes(uid) && (user = result.rawJson.included[i].attributes)){
-			if(userInner = user.social_connections){
-				if(userInner2 = userInner.discord){
-					var discordID = userInner2.user_id;
-					dids.push(discordID);
+	// Grab deliverables
+	for(let i in result.rawJson.included){
+		let obj = result.rawJson.included[i];
+		if(obj.type=='deliverable'&&obj.attributes.delivery_status=='not_delivered'){
+			for(let j in benefits){
+				if(benefits[j].deliverable.includes(obj.id)){
+					benefits[j].users.push(obj.relationships.user.data.id);
 				}
 			}
 		}
 	}
-	return dids;
+
+	//Grab users
+	for(let i in result.rawJson.included){
+		let obj = result.rawJson.included[i];
+		if(obj.type=='user'){
+			for(let j in benefits){
+				if(benefits[j].users.includes(obj.id)){
+					res[benefits[j].title].push({
+						name:obj.attributes.full_name,
+						discordID:(obj.attributes.social_connections.discord?obj.attributes.social_connections.discord.user_id:null)
+					});
+				}
+			}
+		}
+	}
+
+	return res;
 }
 
-function checkDate(date){
-	var userDate = new Date(date);
-	var pastDate = new Date('2019-3-20');
-	return userDate > pastDate
-}
-
-//request(link);
