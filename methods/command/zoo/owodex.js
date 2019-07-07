@@ -100,7 +100,6 @@ module.exports = new CommandInterface({
 					}
 			}
 			desc = desc.replace(/\n\*\*$/,"");
-			console.log(desc);
 
 			const embed = {
 				"title": ((animal.uni)?animal.uni:animal.value)+" "+animal.name,
