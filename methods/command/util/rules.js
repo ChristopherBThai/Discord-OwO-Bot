@@ -44,7 +44,7 @@ module.exports = new CommandInterface({
 		if(!voted) descriptionExtra = "\n\n*Reacting with either emoji means you will follow the rules and acknowlege the consequences*";
 		else if(result[0][0].opinion == 1) descriptionExtra = "\n\nOwO what's this? You already agreed to these rules! <3";
 		else descriptionExtra = "\n\nUwU you disagreed! You still have to follow these rules though! c:<";
-		const embed = {
+		let embed = {
 			"title": "Failure to follow these rules will result in a ban and/or account reset!",
 			"description": description+descriptionExtra,
 			"color": p.config.embed_color,
@@ -67,8 +67,8 @@ module.exports = new CommandInterface({
 				.then(mr => {
 
 			/* Reaction collector */
-			const filter = (reaction, user) => (reaction.emoji.name === '👍'||reaction.emoji.name === '👎') && user.id === p.msg.author.id;
-			const collector = message.createReactionCollector(filter,{time:60000});
+			let filter = (reaction, user) => (reaction.emoji.name === '👍'||reaction.emoji.name === '👎') && user.id === p.msg.author.id;
+			let collector = message.createReactionCollector(filter,{time:60000});
 			collector.on('collect',r => {
 				collector.stop("done");
 

@@ -29,30 +29,23 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: async function(p){
-		let onlyTags = true;
-		let tags = [];
-		for(let i in p.args){
-			if(p.global.isUser(p.args[i])){
-				tags.push(p.args[0].match(/[0-9]+/)[0]);
-			}else{
-				onlyTags = false;
-			}
-		}
 
 		/* Display weapons */
 		if(p.args.length==0){
 			await weaponUtil.display(p);
-		}else if(onlyTags){
-			await weaponUtil.display(p,0,0,tags);
 
 		/* Describe weapon */
 		}else if(p.args.length==1){
 
-			var uwid = p.args[0];
-			if(uwid.length < uwidMax)
-				await weaponUtil.describe(p,uwid);
-			else
-				p.errorMsg(", Invalid arguments! Use `owo weapon {uniqueWeaponId}`");
+			if(p.global.isUser(p.args[0])){
+				await weaponUtil.askDisplay(p,p.args[0].match(/[0-9]+/)[0]);
+			}else{
+				var uwid = p.args[0];
+				if(uwid.length < uwidMax)
+					await weaponUtil.describe(p,uwid);
+				else
+					p.errorMsg(", Invalid arguments! Use `owo weapon {uniqueWeaponId}`");
+			}
 
 		/* Unequip weapon */
 		}else if(p.args.length==2&&(p.args[0]=="unequip"||p.args[0]=="ue")){

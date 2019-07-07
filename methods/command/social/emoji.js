@@ -148,7 +148,7 @@ async function display(p,emojis){
 
 
 	/* Flip the page if reaction is pressed */
-	collector.on('collect', async function(r,c,u){
+	collector.on('collect', async function(r,c){
 		/* Save the animal's action */
 		if(r.emoji.name===nextPageEmoji&&loc+1<emojis.length) {
 			loc++;

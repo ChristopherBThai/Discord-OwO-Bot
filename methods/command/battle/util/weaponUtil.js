@@ -115,15 +115,22 @@ var parseWeaponQuery = exports.parseWeaponQuery = function(query){
 }
 
 /* Displays weapons with multiple pages */
-exports.display = async function(p,pageNum=0,sort=0,users=[]){
-	users.push(p.msg.author.id);
+var display = exports.display = async function(p,pageNum=0,sort=0,opt){
+	if(!opt) opt = {};
+	let {users,msg,user} = opt;
+	if(!users) users = [];
+	if(!user) user = p.msg.author;
+	users.push(user.id);
 
 	/* Construct initial page */
-	let page = await getDisplayPage(p,pageNum,sort);
+	let page = await getDisplayPage(p,user,pageNum,sort);
 	if(!page) return;
 
 	/* Send msg and add reactions */
-	let msg = await p.msg.channel.send({embed:page.embed});
+	if(!msg)
+		msg = await p.msg.channel.send({embed:page.embed});
+	else
+		await msg.edit({embed:page.embed});
 	await msg.react(prevPageEmoji);
 	await msg.react(nextPageEmoji);
 	await msg.react(sortEmoji);
@@ -137,18 +144,18 @@ exports.display = async function(p,pageNum=0,sort=0,users=[]){
 			if(r.emoji.name===nextPageEmoji) {
 				if(pageNum+1<page.maxPage) pageNum++;
 				else pageNum = 0;
-				page = await getDisplayPage(p,pageNum,sort);
+				page = await getDisplayPage(p,user,pageNum,sort);
 				if(page) await msg.edit({embed:page.embed});
 			}
 			else if(r.emoji.name===prevPageEmoji){
 				if(pageNum>0) pageNum--;
 				else pageNum = page.maxPage-1;
-				page = await getDisplayPage(p,pageNum,sort);
+				page = await getDisplayPage(p,user,pageNum,sort);
 				if(page) await msg.edit({embed:page.embed});
 			}
 			else if(r.emoji.name===sortEmoji){
 				sort = (sort+1)%4;
-				page = await getDisplayPage(p,pageNum,sort);
+				page = await getDisplayPage(p,user,pageNum,sort);
 				if(page) await msg.edit({embed:page.embed});
 			}
 			}
@@ -164,8 +171,67 @@ exports.display = async function(p,pageNum=0,sort=0,users=[]){
 
 }
 
+const declineEmoji = '👎';
+const acceptEmoji = '👍';
+
+/* Ask a user to display their weapon */
+exports.askDisplay = async function(p, id){
+	if(id==p.msg.author.id){
+		display(p);
+		return;
+	}
+	if(id==p.client.user.id){
+		p.errorMsg("... trust me. You don't want to see what I have.",3000);
+		return;
+	}
+	let member = p.msg.mentions.members.first();
+	if(!member){
+		p.errorMsg(", I couldn't find that user! :(",3000);
+		return;
+	}
+	if(member.user.bot){
+		p.errorMsg(", you dum dum! Bots don't carry weapons!",3000);
+		return;
+	}
+
+	let embed = {
+		"author":{
+			"name":member.user.username+", "+p.msg.author.username+" wants to see your zoo!",
+			"icon_url":p.msg.author.avatarURL
+		},
+		"description":"Do you give permission for this user to view your weapons?",
+		"color": p.config.embed_color,
+	};
+
+	let msg = await p.send({embed});
+
+	await msg.react(acceptEmoji);
+	await msg.react(declineEmoji);
+
+	let filter = (reaction, user) => (reaction.emoji.name === acceptEmoji||reaction.emoji.name === declineEmoji) && user.id === member.id;
+	let collector = msg.createReactionCollector(filter,{time:60000});
+	collector.on('collect',async r => {
+		collector.stop("done");
+		if(r.emoji.name==declineEmoji){
+			embed.color = 16711680;
+			msg.edit({embed});
+		}else{
+			try{await msg.clearReactions();}catch(e){}
+			display(p,0,0,{users:[p.msg.author.id],msg,user:member.user});
+		}
+
+	});
+
+	collector.on('end',async function(collected,reason){
+		if(reason!="done"){
+			embed.color = 6381923;
+			await msg.edit("This message is now inactive",{embed});
+		}
+	});
+}
+
 /* Gets a single page */
-var getDisplayPage = async function(p,page,sort){
+var getDisplayPage = async function(p,user,page,sort){
 	/* Query all weapons */
 	let sql = `SELECT temp.*,user_weapon_passive.wpid,user_weapon_passive.pcount,user_weapon_passive.stat as pstat
 		FROM
@@ -174,7 +240,7 @@ var getDisplayPage = async function(p,page,sort){
 				INNER JOIN user_weapon ON user.uid = user_weapon.uid
 				LEFT JOIN animal ON animal.pid = user_weapon.pid
 			WHERE
-				user.id = ${p.msg.author.id}
+				user.id = ${user.id}
 			ORDER BY `;
 
 			if(sort===1)
@@ -193,7 +259,7 @@ var getDisplayPage = async function(p,page,sort){
 	sql += `SELECT COUNT(uwid) as count FROM user
 			INNER JOIN user_weapon ON user.uid = user_weapon.uid
 		WHERE
-			user.id = ${p.msg.author.id};`;
+			user.id = ${user.id};`;
 	var result = await p.query(sql);
 
 	/* out of bounds or no weapon */
@@ -230,10 +296,10 @@ var getDisplayPage = async function(p,page,sort){
 		}
 	}
 	/* Construct msg */
-	const embed = {
+	let embed = {
 		"author":{
-			"name":p.msg.author.username+"'s weapons",
-			"icon_url":p.msg.author.avatarURL
+			"name":user.username+"'s weapons",
+			"icon_url":user.avatarURL
 		},
 		"description":desc,
 		"color": p.config.embed_color,
