@@ -8,6 +8,7 @@
 const fs = require('fs');
 const request = require('request').defaults({encoding:null});
 const {createCanvas, Canvas, Image} = require('canvas')
+const font = "Impact";
 
 exports.loadBackground = async function(file,callback){
 	fs.readFile(file,function(err,image){
@@ -42,7 +43,7 @@ async function addUser(args,p,ctx,canvas,callback){
 
 	ctx.save();
 
-	ctx.font = '20px Impact';
+	ctx.font = '20px '+(args.font?args.font:font);
 	var x = args.x + (args.width/2) - (args.imageSize/2);
 	var y = args.y - (args.imageSize/2);
 	if(args.imageX) x = args.imageX;
@@ -118,9 +119,9 @@ function addText(args,p,ctx,canvas,callback){
 	text = text.replace(/<a?:/gi,"");
 	text = text.replace(/:[0-9]+>/gi,"");
 	//Check if we need to downsize font
-	ctx.font = args.size+'px Impact'
+	ctx.font = args.size+'px '+(args.font?args.font:font);
 	if(ctx.measureText(text).width>args.textWidth)
-		ctx.font = (args.size-10)+'px Impact';
+		ctx.font = (args.size-10)+'px '+(args.font?args.font:font);
 
 	//Format the text with new lines
 	var tempText = text.split(" ");

@@ -45,7 +45,7 @@ module.exports = new CommandInterface({
 				return
 			}
 
-			var textArgs = {x:340,y:130,width:260,height:250,size:30,color:'black',text:args[0],imageSize:100};
+			var textArgs = {font:'Arial',x:340,y:130,width:260,height:250,size:30,color:'black',text:args[0],imageSize:100};
 
 			canvasUtil.addText(textArgs,p,ctx,canvas,function(){
 				textArgs.text = args[1];
