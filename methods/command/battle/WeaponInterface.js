@@ -450,7 +450,7 @@ module.exports = class WeaponInterface{
 	static getLowestWp(team){
 		let lowest = undefined;
 		for(let i=0;i<team.length;i++)
-			if(team[i].stats.wp[0]>0)
+			if(team[i].stats.hp[0]>0)
 				if(!lowest||lowest.stats.wp[0]/(lowest.stats.wp[1]+lowest.stats.wp[3])
 						>team[i].stats.wp[0]/(team[i].stats.wp[1]+team[i].stats.wp[3]))
 					lowest = team[i];
