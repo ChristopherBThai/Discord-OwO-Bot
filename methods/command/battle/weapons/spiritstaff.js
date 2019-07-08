@@ -8,7 +8,7 @@
 const WeaponInterface = require('../WeaponInterface.js');
 const Logs = require('../util/logUtil.js');
 
-module.exports = class VampStaff extends WeaponInterface{
+module.exports = class SpiritStaff extends WeaponInterface{
 
 	init(){
 		this.id = 12;

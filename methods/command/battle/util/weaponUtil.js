@@ -196,7 +196,7 @@ exports.askDisplay = async function(p, id){
 
 	let embed = {
 		"author":{
-			"name":member.user.username+", "+p.msg.author.username+" wants to see your zoo!",
+			"name":member.user.username+", "+p.msg.author.username+" wants to see your weapons!",
 			"icon_url":p.msg.author.avatarURL
 		},
 		"description":"Do you give permission for this user to view your weapons?",

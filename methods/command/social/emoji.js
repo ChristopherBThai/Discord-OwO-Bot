@@ -35,7 +35,7 @@ module.exports = new CommandInterface({
 	execute: async function(p){
 		/* Look at previous message */
 		if(p.args.length==0||p.args[0]&&(p.args[0].toLowerCase()=="prev"||p.args[0].toLowerCase()=="previous"||p.args[0].toLowerCase()=="p")){
-			let msgs = (await p.msg.channel.fetchMessages({limit:5,before:p.msg.id})).array();
+			let msgs = (await p.msg.channel.fetchMessages({limit:10,before:p.msg.id})).array();
 			if(!msgs){
 				p.errorMsg(", There are no emojis! >:c",3000);
 				return;
@@ -46,7 +46,7 @@ module.exports = new CommandInterface({
 			}
 
 			emojis = parseIDs(emojis);
-			if(emojis.length==0) p.errorMsg(", There are no emojis! I can only look at the previous 5 messages! >:c",3000);
+			if(emojis.length==0) p.errorMsg(", There are no emojis! I can only look at the previous 10 messages! >:c",3000);
 			else await display(p,emojis);
 
 		// Set emoji steal guild

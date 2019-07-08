@@ -56,8 +56,8 @@ function car(p){
 		ctx.textAlign = "left";
 
 		//Format text
-		if(p.args.join(" ").length>120) ctx.font = '20px Impact';
-		else ctx.font = '30px Impact';
+		if(p.args.join(" ").length>120) ctx.font = '20px Arial';
+		else ctx.font = '30px Arial';
 		var text = "";
 		for (var i = 0;i<p.args.length;i++){
 			if(ctx.measureText(text+p.args[i]).width > 700 && i>0)
@@ -105,8 +105,8 @@ function user(p){
 
 				//Format text
 				var tempText = p.args.slice(0,p.args.length-1);
-				if(tempText.join(" ").length>120) ctx.font = '20px Impact';
-				else ctx.font = '30px Impact';
+				if(tempText.join(" ").length>120) ctx.font = '20px Arial';
+				else ctx.font = '30px Arial';
 				var text = "";
 				for (var i = 0;i<tempText.length;i++){
 					if(ctx.measureText(text+tempText[i]+" ").width > 700 && i>0)
@@ -164,8 +164,8 @@ function emoji(p){
 
 				//Format text
 				var tempText = p.args.slice(0,p.args.length-1);
-				if(tempText.join(" ").length>120) ctx.font = '20px Impact';
-				else ctx.font = '30px Impact';
+				if(tempText.join(" ").length>120) ctx.font = '20px Arial';
+				else ctx.font = '30px Arial';
 				var text = "";
 				for (var i = 0;i<tempText.length;i++){
 					if(ctx.measureText(text+tempText[i]+" ").width > 700 && i>0)
