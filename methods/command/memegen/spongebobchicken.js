@@ -40,8 +40,8 @@ module.exports = new CommandInterface({
 
 			//Format text
 			var tempText = p.args.join(" ").toLowerCase().split("");
-			if(tempText.length>120) ctx.font = '20px Impact';
-			else ctx.font = '30px Impact';
+			if(tempText.length>120) ctx.font = '20px Arial';
+			else ctx.font = '30px Arial';
 			for (var i=1;i<tempText.length;i+=2)
 				tempText[i] = tempText[i].toUpperCase();
 			tempText = tempText.join("").split(" ");
