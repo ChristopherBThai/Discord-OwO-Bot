@@ -184,7 +184,7 @@ exports.askDisplay = async function(p, id){
 		p.errorMsg("... trust me. You don't want to see what I have.",3000);
 		return;
 	}
-	let member = p.msg.mentions.members.first();
+	let member = await p.msg.guild.fetchMember(id);
 	if(!member){
 		p.errorMsg(", I couldn't find that user! :(",3000);
 		return;

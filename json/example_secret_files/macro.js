@@ -12,3 +12,18 @@ exports.check = function(msg,command,callback){
 	//Make an algorithm to check for bot/macro users here
 	if(true){callback();return;}
 }
+
+/**
+ * Checks for macros (user levels)
+ */
+exports.levelCheck = function(msg){
+	// Return true to pass the check
+	return true;
+}
+
+/**
+ * Generates an image buffer for huntbot
+ */
+exports.generateBuffer = function(word,callback){
+	callback("Buffer Goes Here");
+}

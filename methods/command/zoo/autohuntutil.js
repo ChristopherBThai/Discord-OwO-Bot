@@ -5,7 +5,8 @@
  * For more information, see README.md and LICENSE
   */
 
-const macro = require('../../../../tokens/macro.js');
+var macro;
+try{macro = require('../../../../tokens/macro.js');}catch(e){console.error("Missing macro.js. Please add this file to ../tokens/macro.js\n",e)}
 const traits= {"efficiency":{"inc":10,"pow":1.748,"base":25,"upg":1,"max":215,"prefix":"/H"},
 		"duration":{"inc":10,"pow":1.7,"base":.5,"upg":.1,"max":235,"prefix":"H"},
 		"cost":{"inc":1000,"pow":3.4,"base":10,"upg":-1,"max":5,"prefix":" cowoncy"},
