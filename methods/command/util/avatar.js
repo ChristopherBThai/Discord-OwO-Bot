@@ -23,20 +23,16 @@ module.exports = new CommandInterface({
 	half:100,
 	six:500,
 
-	execute: function(p){
-		var user = undefined;
-		if(p.msg.mentions.members.first()){
-			if(p.msg.mentions.members.size>1){
-				p.send("**🚫 |"+p.msg.author.username+"**, I can only do one person at a time!",3000);
-				return;
-			}
-			user = p.msg.mentions.members.first();
-		}else{
+	execute: async function(p){
+		let user = undefined;
+		if(p.args.length==0){
 			user = p.msg.member;
-		}
-		if(!user){
-			p.send("**🚫 |"+p.msg.author.username+"**, Hmm.... Something went wrong...",3000);
-			return;
+		}else if(p.global.isUser(p.args[0])||p.global.isInt(p.args[0])){
+			let id = p.args[0].match(/[0-9]+/)[0];
+			user = await p.msg.guild.fetchMember(id);
+			console.log(user.user.username);
+		}else{
+			p.errorMsg(", that user is not in this guild!",3000);
 		}
 
 		const embed = {
