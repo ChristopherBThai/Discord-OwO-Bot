@@ -20,6 +20,8 @@ exports.alter = function(id,text){
 			return oliverLaVey(text);
 		case '371344384366739457':
 			return nou(text);
+		case '176046069954641921':
+			return crown(text);
 		default:
 			return text;
 	}
@@ -140,3 +142,17 @@ function nou(text){
 	return text;
 }
 
+
+function crown(text){
+	let crown = '<a:crown:599030694953353216>';
+	if(text.indexOf("empowered by")>=0){
+		text = text.replace(", hunt is empowered by","'s Super Secret Crown Squad of ninjas used")
+			.replace(huntEmoji,crown)
+			.replace("You found","to search for weeks and found")
+			.replace("  !","");
+	}else{
+		text = text.replace(huntEmoji,crown)
+			.replace("spent 5 <:cowoncy:416043450337853441> and caught a","'s Super Secret Crown Squad of ninjas\n**<:blank:427371936482328596> |** searched for weeks and found a")
+	}
+	return text;
+}
