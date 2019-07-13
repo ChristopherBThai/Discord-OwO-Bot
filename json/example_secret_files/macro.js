@@ -22,8 +22,15 @@ exports.levelCheck = function(msg){
 }
 
 /**
+ * Used to initialize macro check (user levels)
+ */
+exports.initLevelCheck = function(ban){
+}
+
+/**
  * Generates an image buffer for huntbot
  */
 exports.generateBuffer = function(word,callback){
 	callback("Buffer Goes Here");
 }
+

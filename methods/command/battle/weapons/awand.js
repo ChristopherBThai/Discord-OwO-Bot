@@ -63,7 +63,8 @@ module.exports = class AbsorbWand extends WeaponInterface{
 		else
 			logs.push(`[AWAND] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP and transfered ${Math.round(stole)} WP to ${lowestWp.nickname}`);
 		logs.addSubLogs(damage.logs);
-		logs.addSubLogs(replenishLogs.logs);
+		if(replenishLogs)
+			logs.addSubLogs(replenishLogs.logs);
 		logs.addSubLogs(manaLogs);
 
 		return logs;
