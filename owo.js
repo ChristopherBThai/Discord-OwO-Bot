@@ -6,8 +6,7 @@
   */
 
 const debug = false;
-const testingGuild = '409959187229966337';
-const supportGuild = '420104212895105044';
+const whitelist = ['409959187229966337','420104212895105044','552384921914572802']
 if(debug) var auth = require('../tokens/scuttester-auth.json');
 else var auth = require('../tokens/owo-auth.json');
 
@@ -27,6 +26,7 @@ const macro = require('../tokens/macro.js');
 const logger = require('./util/logger.js');
 const patreon = require('./util/patreon.js');
 const broadcastHandler = require('./handler/broadcastHandler');
+const levels = require('./util/levels.js');
 
 const modChannel = "471579186059018241";
 
@@ -35,7 +35,7 @@ client.on('message',msg => {
 	if(msg.author.bot) return;
 
 	/* Ignore guilds if in debug mode */
-	//else if(debug&&msg.guild&&msg.guild.id!=testingGuild&&msg.guild.id!=supportGuild) return;
+	//else if(debug&&msg.guild&&!whitelist.includes(msg.guild.id)) return;
 
 	else if(msg.channel.id==modChannel) command.executeMod(msg);
 
@@ -43,7 +43,10 @@ client.on('message',msg => {
 
 	else if(msg.channel.type==="dm") macro.verify(msg,msg.content.trim());
 
-	else command.execute(msg);
+	else {
+		command.execute(msg);
+		levels.giveXP(msg);
+	}
 });
 
 //Discord login
