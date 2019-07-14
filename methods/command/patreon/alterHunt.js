@@ -146,13 +146,20 @@ function nou(text){
 function crown(text){
 	let crown = '<a:crown:599030694953353216>';
 	if(text.indexOf("empowered by")>=0){
-		text = text.replace(", hunt is empowered by","'s Super Secret Crown Squad of ninjas used")
+		text = text.replace(", hunt is empowered by","'s Elite Force marches into the forest with")
 			.replace(huntEmoji,crown)
-			.replace("You found","to search for weeks and found")
+			.replace("You found","and after 1 week they found")
 			.replace("  !","");
 	}else{
 		text = text.replace(huntEmoji,crown)
-			.replace("spent 5 <:cowoncy:416043450337853441> and caught a","'s Super Secret Crown Squad of ninjas\n**<:blank:427371936482328596> |** searched for weeks and found a")
+			.replace("spent 5 <:cowoncy:416043450337853441> and caught a","'s Elite Force marches into the forest\n**<:blank:427371936482328596> |** and after 1 week they found a")
 	}
-	return text;
+	let embed = {
+		"description":text,
+		"color":3421756,//4286945,
+		"thumbnail":{
+			"url":"https://i.imgur.com/gU5eiwM.gif"
+		}
+	};
+	return {embed};
 }
