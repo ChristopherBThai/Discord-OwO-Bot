@@ -7,6 +7,10 @@
 
 const CommandInterface = require('../../commandinterface.js');
 
+const description = "•  Any actions performed to gain an unfair advantage over other users are explicitly against the rules. This includes but not limited to:\n├> Using macros/scripts for any commands\n└> Using multiple accounts for any reason\n\n•  Do **not** use any exploits and report any found in the bot\n\n•  You can **not** sell/trade cowoncy or any bot goods for anything outside of the bot\n\n•  If you have any questions come ask us in our [server](https://discord.gg/VKesv7J)!";
+const agreeEmoji = '👍';
+const disagreeEmoji = '👎';
+
 module.exports = new CommandInterface({
 
 	alias:["rule","rules"],
@@ -25,23 +29,22 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 		/* Query for agree/disagree votes */
-		var sql = "SELECT * FROM rules WHERE uid = (SELECT uid FROM user WHERE id = ?);";
+		let sql = "SELECT * FROM rules WHERE uid = (SELECT uid FROM user WHERE id = ?);";
 		sql += "SELECT COUNT(*) as agree FROM rules WHERE opinion = 1;";
 		sql += "SELECT COUNT(*) as disagree FROM rules WHERE opinion = -1;";
-		var result = await p.query(sql,[BigInt(p.msg.author.id)]).catch(console.error);
+		let result = await p.query(sql,[BigInt(p.msg.author.id)]).catch(console.error);
 
 		/* Parse query result */
-		var voted = false;
+		let voted = false;
 		if(result[0][0]) voted = true;
-		var agree = 0;
+		let agree = 0;
 		if(result[1][0]) agree = parseInt(result[1][0].agree);
-		var disagree = 0;
+		let disagree = 0;
 		if(result[2][0]) disagree = parseInt(result[2][0].disagree);
 
 		/* Construct embed message */
-		var description = "• You can **not** use macros/scripts for **any** commands\n• You can **not** use multiple accounts for **any** reason\n• Do not use any exploits and report any found in the bot\n• You can **not** sell cowoncy or any bot goods for other currency/money\n• If you have any questions, use the feedback command!";
-		var descriptionExtra = ""
-		if(!voted) descriptionExtra = "\n\n*Reacting with either emoji means you will follow the rules and acknowlege the consequences*";
+		let descriptionExtra = ""
+		if(!voted) descriptionExtra = "\n\n*Reacting with the emoji means you will follow the rules and acknowlege the consequences*";
 		else if(result[0][0].opinion == 1) descriptionExtra = "\n\nOwO what's this? You already agreed to these rules! <3";
 		else descriptionExtra = "\n\nUwU you disagreed! You still have to follow these rules though! c:<";
 		let embed = {
@@ -49,7 +52,7 @@ module.exports = new CommandInterface({
 			"description": description+descriptionExtra,
 			"color": p.config.embed_color,
 			"footer": {
-				"text": p.global.toFancyNum(agree)+" Users agree | "+p.global.toFancyNum(disagree)+" Users disagree"
+				"text": p.global.toFancyNum(agree)+" Users agreed"
 			},
 			"author": {
 				"name": "OwO Bot Rules",
@@ -58,41 +61,28 @@ module.exports = new CommandInterface({
 		};
 
 		/* Send message and add reactions if necessary */
-		p.msg.channel.send({embed}).then(message => {if(!voted){
+		let message = await p.send({embed});
+		if(voted) return;
+		
+		await message.react(agreeEmoji)
 
-			message.react('👍')
-				.then(mr => {
+		/* Reaction collector */
+		let filter = (reaction, user) => reaction.emoji.name === agreeEmoji && user.id === p.msg.author.id;
+		let collector = message.createReactionCollector(filter,{time:60000});
+		collector.on('collect',async r => {
+			collector.stop("done");
 
-			message.react('👎')
-				.then(mr => {
+			/* Construct sql */
+			var sql = "INSERT IGNORE INTO rules (uid,opinion) VALUES ((SELECT uid FROM user WHERE id = ?),1)";
+			embed.footer.text = p.global.toFancyNum(agree+1)+" Users agreed";
+			embed.description = description + "\n\nOwO what's this? You agreed to these rules! <3";
+			sql = "INSERT IGNORE INTO user (id,count) VALUES (?,0);"+sql;
 
-			/* Reaction collector */
-			let filter = (reaction, user) => (reaction.emoji.name === '👍'||reaction.emoji.name === '👎') && user.id === p.msg.author.id;
-			let collector = message.createReactionCollector(filter,{time:60000});
-			collector.on('collect',r => {
-				collector.stop("done");
+			/* Query and edit existing message */
+			result = await p.query(sql,[BigInt(p.msg.author.id),BigInt(p.msg.author.id)])
+			await message.edit({embed});
+		});
 
-				/* Construct sql */
-				if(r.emoji.name=='👎'){
-					var sql = "INSERT IGNORE INTO rules (uid,opinion) VALUES ((SELECT uid FROM user WHERE id = ?),-1)";
-					embed.footer.text = p.global.toFancyNum(agree)+" Users agree | "+p.global.toFancyNum(disagree+1)+" Users disagree";
-					embed.description = description + "\n\nUwU you disagreed! You still have to follow these rules though! c:<";
-				}else{
-					var sql = "INSERT IGNORE INTO rules (uid,opinion) VALUES ((SELECT uid FROM user WHERE id = ?),1)";
-					embed.footer.text = p.global.toFancyNum(agree+1)+" Users agree | "+p.global.toFancyNum(disagree)+" Users disagree";
-					embed.description = description + "\n\nOwO what's this? You agreed to these rules! <3";
-				}
-				sql = "INSERT IGNORE INTO user (id,count) VALUES (?,0);"+sql;
-
-				/* Query and edit existing message */
-				p.query(sql,[BigInt(p.msg.author.id),BigInt(p.msg.author.id)]).then(resulti => {
-					message.edit({embed}).catch(console.error);
-				}).catch(console.error);
-			});
-
-		}).catch(error => message.edit("**🚫 |** I don't have permission to react with emojis!"));
-		}).catch(error => message.edit("**🚫 |** I don't have permission to react with emojis!"));
-		}}).catch(console.error);
 	}
 
 })

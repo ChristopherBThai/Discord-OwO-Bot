@@ -158,7 +158,7 @@ function crown(text){
 		"description":text,
 		"color":3421756,//4286945,
 		"thumbnail":{
-			"url":"https://i.imgur.com/gU5eiwM.gif"
+			"url":"https://i.imgur.com/nQwrbvd.gif"
 		}
 	};
 	return {embed};
