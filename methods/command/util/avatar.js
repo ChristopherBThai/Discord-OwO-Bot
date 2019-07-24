@@ -30,8 +30,11 @@ module.exports = new CommandInterface({
 		}else if(p.global.isUser(p.args[0])||p.global.isInt(p.args[0])){
 			let id = p.args[0].match(/[0-9]+/)[0];
 			user = await p.msg.guild.fetchMember(id);
-		}else{
+		}
+
+		if(!user){
 			p.errorMsg(", that user is not in this guild!",3000);
+			return;
 		}
 
 		const embed = {

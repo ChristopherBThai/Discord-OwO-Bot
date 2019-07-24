@@ -119,7 +119,7 @@ async function addQuest(p){
 	if(quests) sql += quests.sql;
 
 	if(sql!="")
-		await p.query(sql).catch(err => {console.error(err)});
+		await p.query(sql);
 
 	/*Create embed */
 	let embed = constructEmbed(p,afterMid,quests);
