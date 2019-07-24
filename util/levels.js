@@ -31,7 +31,7 @@ exports.giveXP = async function(msg){
 
 	//console.log("["+msg.channel.id+"]"+msg.author.username+" earned "+gain+"xp");
 	redis.hmset("xplimit_"+msg.author.id,limit);
-	logger.value('xp',gain,['id:'+msg.author.id]);
+	logger.value('xp',gain,['id:'+msg.author.id,'channel:'+msg.channel.id,'guild:'+msg.guild.id]);
 	//let xp = await redis.incr("xp_"+msg.author.id,gain);
 
 }

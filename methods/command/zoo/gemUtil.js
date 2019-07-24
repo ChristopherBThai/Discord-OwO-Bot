@@ -54,7 +54,7 @@ exports.use = function(p,id){
 			 	(SELECT SUM(activecount) as sum,type FROM user NATURAL JOIN user_gem NATURAL JOIN gem WHERE id = ${p.msg.author.id} GROUP BY type) as tmptable
 			WHERE type = g.type) <= 0;`;
 	p.con.query(sql,function(err,result){
-		if(err){console.error(err);return;}
+		if(err){return;}
 		if(!result||result.changedRows==0){
 			p.send("**🚫 | "+p.msg.author.username+"**, you already have an active "+gem.type+" gem or you do not own this gem!",3000);
 			return;
@@ -83,7 +83,7 @@ exports.desc = function(p,id){
 	}
 	var sql = "SELECT * FROM user NATURAL JOIN user_gem NATURAL JOIN gem WHERE id = "+p.msg.author.id+" AND gname = '"+gem.key+"';";
 	p.con.query(sql,function(err,result){
-		if(err){console.error(err);return;}
+		if(err){return;}
 		if(!result[0]){
 			p.send("**🚫 | "+p.msg.author.username+"**, you do not have this item!",3000);
 			return;

@@ -32,7 +32,7 @@ module.exports = new CommandInterface({
 				var sql = "SELECT count,TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = "+id+";";
 				sql += "SELECT IF(patreonDaily = 1 OR ((TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths) AND patreonType = 3),1,0) as patreon FROM user LEFT JOIN patreons ON user.uid = patreons.uid WHERE user.id = "+id+";";
 				con.query(sql,function(err,result){
-					if(err) {console.error(err);return;}
+					if(err) return;
 					var patreon = false;
 					if(result[1][0]&&result[1][0].patreon==1)
 						patreon = true;

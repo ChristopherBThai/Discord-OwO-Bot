@@ -54,10 +54,8 @@ module.exports = new CommandInterface({
 		sql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${uid},${weapon.id},'${weapon.sqlStat}',${weapon.avgQuality});`;
 
 		/* Insert weapon */
-		result = await p.query(sql).catch(err => {
-			console.error(err);
-			console.error(sql);
-		});
+		result = await p.query(sql);
+
 		let uwid = result.insertId;
 		if(!uwid){
 			p.errorMsg(", Uh oh. Something went wrong! The weapon passive could not be applied");
