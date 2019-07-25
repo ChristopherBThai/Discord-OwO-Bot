@@ -29,7 +29,7 @@ var manager;
  * Listens to upvote webhooks
  */
 function upvote(id,bot,json){
-	console.log("Webhooks for "+id);
+	//console.log("Webhooks for "+id);
 	var weekend = json?json.isWeekend:false;
 	var sql = "SELECT count,TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = "+id+";";
 	sql += "SELECT IF(patreonDaily = 1 OR ((TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths) AND patreonType = 3),1,0) as patreon FROM user LEFT JOIN patreons ON user.uid = patreons.uid WHERE user.id = "+id+";";
@@ -63,7 +63,7 @@ function upvote(id,bot,json){
 					reply += "\n**⛱ |** It's the weekend! You also earned a bonus of **"+weekendBonus+"** cowoncy!";
 				reply += box.text;
 				global.msgUser(id,reply);
-				console.log("\x1b[33m",id+" has voted for the first time!");
+				//console.log("\x1b[33m",id+" has voted for the first time!");
 			});
 		}else if(result[0][0].time>=11){
 			let box = {};
@@ -90,11 +90,11 @@ function upvote(id,bot,json){
 					reply += "\n**⛱ |** It's the weekend! You also earned a bonus of **"+weekendBonus+"** cowoncy!";
 				reply += box.text;
 				global.msgUser(id,reply);
-				console.log("\x1b[33m",id+" has voted and  received cowoncy!");
+				//console.log("\x1b[33m",id+" has voted and  received cowoncy!");
 			});
 		}else{
 			global.msgUser(id,"You need to wait "+(12-result[0][0].time)+" hours before voting again!")
-			console.log("\x1b[33m",id+" tried to vote again");
+			//console.log("\x1b[33m",id+" tried to vote again");
 		}
 	});
 	logger.increment("votecount");

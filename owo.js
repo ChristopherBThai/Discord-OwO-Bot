@@ -78,19 +78,19 @@ client.on('disconnect', function(erMsg) {
 
 //When bot reconnecting
 client.on('reconnecting', () => {
-	console.log('--------------- Bot is reconnecting ---------------');
+	//console.log('--------------- Bot is reconnecting ---------------');
 });
 
 //When bot resumes
 client.on('reconnecting', function(replayed) {
-	console.log('--------------- Bot has resumed ---------------');
+	//console.log('--------------- Bot has resumed ---------------');
 	if(!debug)
 		logger.increment("reconnecting");
 });
 
 //When bot joins a new guild
 client.on("guildCreate", guild => {
-	console.log('New guild joined: '+guild.name+' (id: '+guild.id+'). This guild has '+guild.memberCount+' members!');
+	//console.log('New guild joined: '+guild.name+' (id: '+guild.id+'). This guild has '+guild.memberCount+' members!');
 	updateActivity();
 	if(!debug)
 		logger.increment("guildcount");
@@ -98,7 +98,7 @@ client.on("guildCreate", guild => {
 
 //When bot is kicked from a guild
 client.on("guildDelete", guild => {
-	console.log('I have been removed from: '+guild.name+' (id: '+guild.id+')');
+	//console.log('I have been removed from: '+guild.name+' (id: '+guild.id+')');
 	updateActivity();
 	if(!debug)
 		logger.decrement("guildcount");
@@ -139,4 +139,8 @@ process.on('uncaughtException', err => {
 	console.error("uncaughtException at Shard "+client.shard.id+" error "+(new Date()).toLocaleString());
 	console.error(err);
 	uncaughtHandler.handle(err);
+});
+
+client.on('rateLimit',function(info){
+	console.log(info);
 });
