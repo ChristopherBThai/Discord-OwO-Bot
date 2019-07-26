@@ -26,7 +26,7 @@ const lottery = require('./parent_methods/lottery.js');
 const messageHandler = require('./parent_methods/messageHandler.js');
 
 
-Manager.on('launch', function(shard){
+Manager.on('shardCreate', function(shard){
 	console.log(`Launched shard ${shard.id}`);
 	if(!loaded && shard.id == Manager.totalShards-1){
 		loaded = true;
