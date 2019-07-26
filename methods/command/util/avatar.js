@@ -24,28 +24,32 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: async function(p){
-		let user = undefined;
-		if(p.args.length==0){
-			user = p.msg.member;
-		}else if(p.global.isUser(p.args[0])||p.global.isInt(p.args[0])){
-			let id = p.args[0].match(/[0-9]+/)[0];
-			user = await p.msg.guild.fetchMember(id);
-		}
+		try{
+			let user = undefined;
+			if(p.args.length==0){
+				user = p.msg.member;
+			}else if(p.global.isUser(p.args[0])||p.global.isInt(p.args[0])){
+				let id = p.args[0].match(/[0-9]+/)[0];
+				user = await p.msg.guild.members.fetch(id);
+			}
 
-		if(!user){
-			p.errorMsg(", that user is not in this guild!",3000);
-			return;
-		}
+			if(!user){
+				p.errorMsg(", that user is not in this guild!",3000);
+				return;
+			}
 
-		const embed = {
-			"fields": [{
-					"name":user.user.tag+((user.user.bot)?" <:bot:489278383646048286>":"")+"  `"+user.presence.status+"`",
-					"value":((user.nickname)?"`Nickname: "+user.nickname+"`\n":"")+"`ID: "+user.user.id+"`"+((user.colorRole)?"\n`RoleColor: "+user.displayHexColor+"`":"")
-			}],
-			"color": 4886754,
-			"image":{"url":user.user.avatarURL},
+			const embed = {
+				"fields": [{
+						"name":user.user.tag+((user.user.bot)?" <:bot:489278383646048286>":"")+"  `"+user.presence.status+"`",
+						"value":((user.nickname)?"`Nickname: "+user.nickname+"`\n":"")+"`ID: "+user.user.id+"`"+((user.roles.color)?"\n`RoleColor: "+user.displayHexColor+"`":"")
+				}],
+				"color": 4886754,
+				"image":{"url":user.user.avatarURL()},
+			}
+			p.send({embed});
+		}catch(e){
+				p.errorMsg(", that user is not in this guild!",3000);
 		}
-		p.send({embed});
 	}
 
 })

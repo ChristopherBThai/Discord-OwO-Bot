@@ -56,7 +56,7 @@ module.exports = new CommandInterface({
 			p.send("**🚫 | "+msg.author.username+"**, You can't send cowoncy to a bot silly!",3000);
 			return;
 		}else if(user.id==msg.author.id){
-			p.send("**💳 | "+msg.author+"** sent **"+(p.global.toFancyNum(amount))+" cowoncy** to... **"+user+"**... *but... why?*");
+			p.send("**💳 | "+msg.author.username+"** sent **"+(p.global.toFancyNum(amount))+" cowoncy** to... **"+user.username+"**... *but... why?*");
 			return;
 		}
 
@@ -72,7 +72,7 @@ module.exports = new CommandInterface({
 			}else{
 				p.logger.value('cowoncy',(amount),['command:given','id:'+id,'by:'+msg.author.id]);
 				p.logger.value('cowoncy',(amount*-1),['command:give','id:'+msg.author.id,'to:'+id]);
-				p.send("**💳 | "+msg.author.username+"** sent **"+(p.global.toFancyNum(amount))+" cowoncy** to **"+user+"**!");
+				p.send("**💳 | "+msg.author.username+"** sent **"+(p.global.toFancyNum(amount))+" cowoncy** to **"+user.username+"**!");
 			}
 		});
 	}

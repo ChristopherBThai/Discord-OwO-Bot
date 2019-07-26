@@ -49,7 +49,7 @@ async function display(p){
 		"color":p.config.embed_color,
 		"author":{
 			"name":p.msg.author.username+"'s battle settings",
-			"icon_url":p.msg.author.avatarURL
+			"icon_url":p.msg.author.avatarURL()
 		},
 		"description":text
 	}

@@ -26,7 +26,7 @@ exports.check = async function(con,msg,client,command,callback,ignore){
 		setTimeout(() => {delete cooldown[msg.author.id];}, 5000);
 	}else if(cooldown[msg.author.id]>=3) {
 		msg.channel.send("**⏱ | "+msg.author.username+"**, Please slow down~ You're a little **too fast** for me :c")
-			.then(message => message.delete(3000))
+			.then(message => message.delete({timeout:3000}))
 			.catch(err => console.info(err));
 		return;
 	}else if(cooldown[msg.author.id]<3){
@@ -44,7 +44,7 @@ exports.check = async function(con,msg,client,command,callback,ignore){
 			callback();
 		}else
 			msg.channel.send("**🚫 |** That command is disabled on this channel!")
-				.then(message => message.delete(3000))
+				.then(message => message.delete({timeout:3000}))
 				.catch(err => console.info(err));
 	});
 }

@@ -69,7 +69,7 @@ module.exports = new CommandInterface({
 			"author": {
 				"name" : p.msg.author.username+" bullies "+target.username+"! "+comment,
 				"url":emote,
-				"icon_url": p.msg.author.avatarURL
+				"icon_url": p.msg.author.avatarURL()
 			}
 		};
 		p.send({embed});

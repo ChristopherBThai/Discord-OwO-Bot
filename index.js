@@ -53,7 +53,7 @@ process.on('exit', function(code) {
 });
 
 try{
-	Manager.spawn(Manager.totalShards,15000).catch(console.error);
+	Manager.spawn(Manager.totalShards).catch(console.error);
 }catch(err){
 	console.error(err);
 }

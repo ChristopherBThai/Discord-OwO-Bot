@@ -34,7 +34,7 @@ exports.getDisplay = function(p,animals){
 	let embed = {
 		"author":{
 			"name":p.msg.author.username+"'s pets",
-			"icon_url":p.msg.author.avatarURL
+			"icon_url":p.msg.author.avatarURL()
 		},
 		"color": p.config.embed_color,
 		"fields":[]
