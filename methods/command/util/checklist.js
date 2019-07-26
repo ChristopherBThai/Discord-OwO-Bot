@@ -56,7 +56,7 @@ module.exports = new CommandInterface({
 		let embed = {
 			author:{
 				name:p.msg.author.username+"'s Checklist",
-				icon_url:p.msg.author.avatarURL
+				icon_url:p.msg.author.avatarURL()
 			},
 			color:p.config.embed_color,
 			footer:{

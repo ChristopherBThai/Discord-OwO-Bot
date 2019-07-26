@@ -58,7 +58,7 @@ module.exports = new CommandInterface({
 					{"name": "Global information",
 						"value": "```md\n<TotalOwOs:  "+p.global.toFancyNum(rows[0][0].total)+">\n<OwOUsers:   "+p.global.toFancyNum(rows[0][0].user)+">``````md\n<animalsCaught: "+p.global.toFancyNum(totalAnimals)+">\n<common: "+p.global.toFancyNum(rows[1][0].common)+">\n<uncommon: "+p.global.toFancyNum(rows[1][0].uncommon)+">\n<rare: "+p.global.toFancyNum(rows[1][0].rare)+">\n<epic: "+p.global.toFancyNum(rows[1][0].epic)+">\n<mythical: "+p.global.toFancyNum(rows[1][0].mythical)+">\n<legendary: "+p.global.toFancyNum(rows[1][0].legendary)+">```"},
 					{"name": "Bot Information",
-						"value": "```md\n<Guilds:    "+p.global.toFancyNum(guildsTotal)+">\n<Channels:  "+p.global.toFancyNum(channelsTotal)+">\n<Users:     "+p.global.toFancyNum(usersTotal)+">``````md\n<Ping:       "+client.ping+"ms>\n<UpdatedOn:  "+client.readyAt+">\n<Uptime:     "+client.uptime+">```"
+						"value": "```md\n<Guilds:    "+p.global.toFancyNum(guildsTotal)+">\n<Channels:  "+p.global.toFancyNum(channelsTotal)+">\n<Users:     "+p.global.toFancyNum(usersTotal)+">``````md\n<Ping:       "+client.ws.ping+"ms>\n<UpdatedOn:  "+client.readyAt+">\n<Uptime:     "+client.uptime+">```"
 					}]
 			};
 			msg.channel.send({embed})

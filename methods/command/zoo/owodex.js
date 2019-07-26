@@ -105,7 +105,7 @@ module.exports = new CommandInterface({
 				"title": ((animal.uni)?animal.uni:animal.value)+" "+animal.name,
 				"color": 4886754,
 				"thumbnail": {
-					"url": (emoji)?emoji:p.client.user.displayAvatarURL
+					"url": (emoji)?emoji:p.client.user.displayAvatarURL()
 				},
 				"description": desc+"\n\n"+nickname+"**Count:** "+result[0][0].count+"/"+result[0][0].totalcount+"\n**Rank:** "+rankEmoji+" "+animal.rank+"\n**Rarity:** "+rarity+"\n**Alias:** "+alias+"\n**Points:** "+points+"\n**Sell:** "+sell+"\n**Sacrifice:** "+sac+"\n"+phys+"\n"+mag
 			};

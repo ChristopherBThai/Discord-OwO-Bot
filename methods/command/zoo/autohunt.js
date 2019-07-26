@@ -291,7 +291,7 @@ function display(msg,con,send){
 			"color": 4886754,
 			"author": {
 				"name": msg.author.username+"'s HuntBot",
-				"icon_url": msg.author.avatarURL
+				"icon_url": msg.author.avatarURL()
 				},
 			"fields": [{
 					"name": bot+" `BEEP. BOOP. I AM HUNTBOT. I WILL HUNT FOR YOU MASTER.`",

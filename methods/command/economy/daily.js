@@ -161,8 +161,8 @@ module.exports = new CommandInterface({
 					if(err){console.error(err);return;}
 					p.logger.value('cowoncy',(gain+extra),['command:daily','id:'+msg.author.id]);
 					if(announcement&&rows[0][0]){
-						var url = rows[0][0].url;
-						p.msg.channel.send(text,{file:url}).catch(err =>{
+						let url = rows[0][0].url;
+						p.msg.channel.send(text,{files:[url]}).catch(err =>{
 							p.send(text);
 							console.error(err);
 						});

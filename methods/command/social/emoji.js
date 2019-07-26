@@ -35,7 +35,7 @@ module.exports = new CommandInterface({
 	execute: async function(p){
 		/* Look at previous message */
 		if(p.args.length==0||p.args[0]&&(p.args[0].toLowerCase()=="prev"||p.args[0].toLowerCase()=="previous"||p.args[0].toLowerCase()=="p")){
-			let msgs = (await p.msg.channel.fetchMessages({limit:10,before:p.msg.id})).array();
+			let msgs = (await p.msg.channel.messages.fetch({limit:10,before:p.msg.id})).array();
 			if(!msgs){
 				p.errorMsg(", There are no emojis! >:c",3000);
 				return;
@@ -172,13 +172,13 @@ async function display(p,emojis){
 
 function createEmbed(p,loc,emojis,saved={}){
 	let emoji = emojis[loc];
-	if(!emoji) emoji = p.client.user.avatarURL;
+	if(!emoji) emoji = p.client.user.avatarURL();
 
 	let embed = {
 		"author":{
 			"name":"Enlarged Emojis!",
 			"url":emoji.url,
-			"icon_url":p.msg.author.avatarURL
+			"icon_url":p.msg.author.avatarURL()
 		},
 		"description":`\`${emoji.name}\` \`${emoji.id}\``,
 		"color":p.config.embed_color,
@@ -244,7 +244,7 @@ async function addEmoji(p,name,url,guild,loc,id,callback){
 		let guild = client.guilds.get('${guild}');
 		if(guild==undefined) return;
 		if(!guild.me.hasPermission('MANAGE_EMOJIS')) return;
-		guild.createEmoji('${url}','${name}');
+		guild.emojis.create('${url}','${name}');
 		return guild.emojis.size;
 	}(this))`);
 	let emoji;

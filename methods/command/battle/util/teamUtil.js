@@ -249,7 +249,7 @@ exports.displayTeam = async function(p){
 	var embed = {
 		"author":{
 			"name":p.msg.author.username+"'s "+result[0][0].tname,
-			"icon_url":p.msg.author.avatarURL
+			"icon_url":p.msg.author.avatarURL()
 		},
 		"description":"`owo team add {animal} {pos}` Add an animal to your team\n`owo team remove {pos}` Removes an animal from your team\n`owo team rename {name}` Renames your team\n`owo rename {animal} {name}` Rename an animal",
 		"color": p.config.embed_color,

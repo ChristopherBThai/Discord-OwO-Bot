@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 	
-const debug = false;
+const debug = true;
 
 /* Default is 4. Use higher numbers if you have enough cores */
 process.env.UV_THREADPOOL_SIZE = 17;
@@ -53,7 +53,7 @@ process.on('exit', function(code) {
 });
 
 try{
-	Manager.spawn(Manager.totalShards,15000).catch(console.error);
+	Manager.spawn(Manager.totalShards).catch(console.error);
 }catch(err){
 	console.error(err);
 }
