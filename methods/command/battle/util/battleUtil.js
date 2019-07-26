@@ -253,7 +253,7 @@ var display = exports.display = async function(p,team,logs,{display,title,showLo
 		"color":p.config.embed_color,
 		"author":{
 			"name":title?title:p.msg.author.username+" goes into battle!",
-			"icon_url":p.msg.author.avatarURL
+			"icon_url":p.msg.author.avatarURL()
 		},
 		"fields":[
 		{
@@ -308,7 +308,7 @@ var displayText = exports.displayText = async function(p,team,logs,{title,showLo
 		"color":p.config.embed_color,
 		"author":{
 			"name":title?title:p.msg.author.username+" goes into battle!",
-			"icon_url":p.msg.author.avatarURL
+			"icon_url":p.msg.author.avatarURL()
 		},
 		"fields":[]
 	}
@@ -367,7 +367,7 @@ var displayCompact = exports.displayCompact= async function(p,team,logs,{title,s
 		"color":p.config.embed_color,
 		"author":{
 			"name":title?title:p.msg.author.username+" goes into battle!",
-			"icon_url":p.msg.author.avatarURL
+			"icon_url":p.msg.author.avatarURL()
 		},
 		"fields":[]
 	}

@@ -60,7 +60,7 @@ module.exports = new CommandInterface({
 		let embed = {
 			"author": {
 				"name": p.msg.author.username+", are you sure you want to divorce"+(so?" "+so.username:"")+"?",
-				"icon_url": p.msg.author.avatarURL
+				"icon_url": p.msg.author.avatarURL()
 			},
 			"description":"You married on **"+(new Date(result[0].marriedDate)).toLocaleDateString("default",dateOptions)+"** and have been married for **"+result[0].days+"** days and claimed **"+result[0].dailies+"** dailies together... Once you divorce, the ring will break and disappear.",
 			"thumbnail":{

@@ -135,7 +135,7 @@ function constructEmbed(p,afterMid,quests){
 		},
 		"author": {
 			"name": p.msg.author.username+"'s Quest Log",
-			"icon_url":p.msg.author.avatarURL
+			"icon_url":p.msg.author.avatarURL()
 		},
 		"description":quests.text
 	};

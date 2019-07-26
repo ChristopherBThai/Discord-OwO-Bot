@@ -39,7 +39,7 @@ async function announcement(p){
 		p.send("**📮 |** There are no announcements!",3000);
 	else{
 		var text = "**📮 |** This announcement was posted on: "+(new Date(result[0].adate)).toDateString();
-		p.msg.channel.send(text,{file:result[0].url}).catch(err => {
+		p.msg.channel.send(text,{files:[result[0].url]}).catch(err => {
 			console.error(err);
 			p.send("**📮 |** There are no announcements!",3000);
 		});

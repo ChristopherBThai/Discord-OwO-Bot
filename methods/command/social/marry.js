@@ -117,7 +117,7 @@ async function propose(p,user,ringId){
 		"color": p.config.embed_color,
 		"author": {
 			"name": p.msg.author.username+" has proposed to "+user.username+" with a "+ring.name+"!",
-			"icon_url": p.msg.author.avatarURL
+			"icon_url": p.msg.author.avatarURL()
 		},
 		"timestamp":new Date(),
 		"thumbnail":{
@@ -228,7 +228,7 @@ async function display(p){
 	let embed = {
 		"author": {
 			"name": p.msg.author.username+", you are happily married to "+(so?so.username:"someone")+"!",
-			"icon_url": p.msg.author.avatarURL
+			"icon_url": p.msg.author.avatarURL()
 		},
 		"description":"Married since **"+(new Date(result[0].marriedDate)).toLocaleDateString("default",dateOptions)+"** (**"+result[0].days+" days**)\nYou have claimed **"+result[0].dailies+" dailies** together!\n"+quotes[Math.floor(Math.random()*quotes.length)]+" "+quotes2[Math.floor(Math.random()*quotes2.length)],
 		"thumbnail":{

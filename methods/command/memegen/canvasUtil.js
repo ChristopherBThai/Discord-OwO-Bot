@@ -62,7 +62,7 @@ async function addUser(args,p,ctx,canvas,callback){
 
 	ctx.restore();
 
-	url = url.avatarURL;
+	url = url.avatarURL({format:'png'});
 	if(!url){  p.send("**🚫 | "+p.msg.author.username+"**, I could not find that user",3000); return;}
 
 	try{

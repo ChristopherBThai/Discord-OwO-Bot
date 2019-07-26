@@ -62,7 +62,7 @@ module.exports = new CommandInterface({
 								"color": p.config.embed_color,
 								"author": {
 									"name": "Definition of '"+entries[0].word+"'",
-									"icon_url": p.msg.author.avatarURL
+									"icon_url": p.msg.author.avatarURL()
 									},
 								"url":url,
 								"footer":{

@@ -26,7 +26,7 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 		let embed = getPage(p,1);
-		embed.author.icon_url = p.msg.author.avatarURL;
+		embed.author.icon_url = p.msg.author.avatarURL();
 		p.send({embed});	
 	}
 });

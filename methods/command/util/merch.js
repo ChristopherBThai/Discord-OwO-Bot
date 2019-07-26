@@ -28,7 +28,7 @@ module.exports = new CommandInterface({
 			"color": p.config.embed_color,
 			"author": {
 				"name": p.msg.author.username+"! Come check out some merch!",
-				"icon_url":p.msg.author.avatarURL,
+				"icon_url":p.msg.author.avatarURL(),
 			},
 			"description":"Want to support the OwO's avatar's creator? Come check out his merch!\n**Shirts**: https://rdbl.co/2U5Xd9x\n**Stickers**: https://rdbl.co/2T9EM6w",
 		};

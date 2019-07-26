@@ -16,7 +16,7 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 		var url = p.args[0];
-		p.msg.channel.send("This is a test message! Does it look ok?",{file:url}).then(async function(message){
+		p.msg.channel.send("This is a test message! Does it look ok?",{files:[url]}).then(async function(message){
 			var sql = "INSERT INTO announcement (url) VALUES (?)";
 			p.query(sql,[url]).catch(console.error).then(result => {
 				p.send("Added new announcement!");

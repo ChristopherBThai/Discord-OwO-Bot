@@ -71,7 +71,7 @@ function display(p){
 	"description": "Here is the list of commands!\nFor more info on a specific command, use `owo help {command}`\nNeed more help? Come join our [guild]("+p.config.guildlink+")",
 		"color": 4886754,
 		"author": {"name": "Command List",
-			"icon_url": p.msg.author.avatarURL},
+			"icon_url": p.msg.author.avatarURL()},
 		"fields": [
 			{"name":"🎖 Rankings",
 				"value":"`top`  `my`"},
