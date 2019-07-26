@@ -86,7 +86,6 @@ function user(p){
 		var url = await p.global.getUser(p.args[p.args.length-1]);
 		if(!url){  p.send("**🚫 | "+p.msg.author.username+"**, I could not find that user",3000); return;}
 		url = url.avatarURL({format:'png'});
-		console.log(url);
 
 		request({url:url,method:'GET',encoding:null},function(err,response,body){
 			if(!err && response.statusCode==200){
