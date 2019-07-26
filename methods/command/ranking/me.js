@@ -16,7 +16,7 @@ module.exports = new CommandInterface({
 
 	alias:["my","me","guild"],
 
-	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse|team|daily|battle [global]",
+	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse|daily|battle [global]",
 
 	desc:"Displays your ranking of each category!\nYou can choose you rank within the server or globally!\nYou can also shorten the command like in the example!",
 
