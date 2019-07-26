@@ -184,7 +184,7 @@ exports.askDisplay = async function(p, id){
 		p.errorMsg("... trust me. You don't want to see what I have.",3000);
 		return;
 	}
-	let member = await p.msg.guild.fetchMember(id);
+	let member = await p.msg.guild.members.fetch(id);
 	if(!member){
 		p.errorMsg(", I couldn't find that user! :(",3000);
 		return;
@@ -197,7 +197,7 @@ exports.askDisplay = async function(p, id){
 	let embed = {
 		"author":{
 			"name":member.user.username+", "+p.msg.author.username+" wants to see your weapons!",
-			"icon_url":p.msg.author.avatarURL
+			"icon_url":p.msg.author.avatarURL()
 		},
 		"description":"Do you give permission for this user to view your weapons?",
 		"color": p.config.embed_color,
@@ -299,7 +299,7 @@ var getDisplayPage = async function(p,user,page,sort){
 	let embed = {
 		"author":{
 			"name":user.username+"'s weapons",
-			"icon_url":user.avatarURL
+			"icon_url":user.avatarURL()
 		},
 		"description":desc,
 		"color": p.config.embed_color,
@@ -386,7 +386,7 @@ exports.describe = async function(p,uwid){
 	const embed ={
 		"author":{
 			"name":p.msg.author.username+"'s "+weapon.name,
-			"icon_url":p.msg.author.avatarURL
+			"icon_url":p.msg.author.avatarURL()
 		},
 		"color":p.config.embed_color,
 		"thumbnail":{

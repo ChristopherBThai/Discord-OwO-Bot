@@ -56,7 +56,7 @@ module.exports = new CommandInterface({
 			},
 			"author": {
 				"name": "OwO Bot Rules",
-				"icon_url": p.client.user.avatarURL
+				"icon_url": p.client.user.avatarURL()
 			}
 		};
 

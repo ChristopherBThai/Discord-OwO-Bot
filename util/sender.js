@@ -18,7 +18,7 @@ exports.send = function(msg){
 	return function(message,del,embed){
 		if(del)
 			return msg.channel.send(message,embed)
-				.then(message => message.delete(del))
+				.then(message => message.delete({timeout:del,reason:'deletion'}))
 				.catch(err => console.error(err));
 		else
 			return msg.channel.send(message,embed)
@@ -34,7 +34,7 @@ exports.reply = function(msg){
 		var username = msg.author.username;
 		if(del)
 			msg.channel.send(`**${emoji} | ${username}**`+message,embed)
-				.then(message => message.delete(del))
+				.then(message => message.delete({timeout:del,reason:'deletion'}))
 				.catch(err => console.error(err));
 		else
 			msg.channel.send(`**${emoji} | ${username}**`+message,embed)
@@ -51,7 +51,7 @@ exports.error = function(errorEmoji,msg){
 		var emoji = errorEmoji;
 		if(del)
 			msg.channel.send(`**${emoji} | ${username}**`+message,embed)
-				.then(message => message.delete(del))
+				.then(message => message.delete({timeout:del,reason:'deletion'}))
 				.catch(err => console.error(err));
 		else
 			msg.channel.send(`**${emoji} | ${username}**`+message,embed)
@@ -64,7 +64,7 @@ exports.error = function(errorEmoji,msg){
  */
 exports.msgUser = async function(id,msg){
 	id = id.match(/[0-9]+/)[0];
-	var user = await client.fetchUser(id,false).catch((err)=>{});
+	var user = await client.users.fetch(id,false).catch((err)=>{});
 	var success;
 	if(user)
 		await user.send(msg)
@@ -78,7 +78,7 @@ exports.msgUser = async function(id,msg){
  */
 exports.msgAdmin = async function (message){
 	if(admin==undefined)
-		admin = await client.fetchUser(auth.admin,true);
+		admin = await client.users.fetch(auth.admin,true);
 	if(admin!=undefined)
 		admin.send(message)
 			.catch(err => console.error(err));

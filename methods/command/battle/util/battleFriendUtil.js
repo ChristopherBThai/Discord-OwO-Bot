@@ -155,7 +155,7 @@ function toEmbedRequest(p,stats,bet,sender,receiver,flags){
 	var embed = {
 		author:{
 			name: sender.username+" challenged "+receiver.username+" to a battle!",
-			icon_url: p.msg.author.avatarURL
+			icon_url: p.msg.author.avatarURL()
 		},
 		description: "Bet amount: "+bet+" cowoncy"+flagText+"\n`owo ab` to accept the battle!\n`owo db` to decline the battle!",
 		color:p.config.embed_color,

@@ -67,9 +67,9 @@ client.on('ready',()=>{
 });
 
 //When bot disconnects
-client.on('disconnect', function(erMsg) {
+client.on('shardDisconnected', (event,shardID) => {
 	let code = erMsg.code;
-	console.log('----- Bot disconnected from Discord with code', code, 'for reason:', erMsg, '-----');
+	console.log('----- ['+shardID+'] Bot disconnected from Discord with code', code, 'for reason:', erMsg, '-----');
 	client.destroy().then(client.login(auth.token));
 	if(!debug)
 		logger.increment("disconnect");
@@ -77,13 +77,13 @@ client.on('disconnect', function(erMsg) {
 });
 
 //When bot reconnecting
-client.on('reconnecting', () => {
-	//console.log('--------------- Bot is reconnecting ---------------');
+client.on('shardReconnecting', (id) => {
+	console.log('['+id+']--------------- Bot is reconnecting ---------------');
 });
 
 //When bot resumes
-client.on('reconnecting', function(replayed) {
-	//console.log('--------------- Bot has resumed ---------------');
+client.on('shardResumed', function(replayed,shardID) {
+	console.log('['+shardID+']--------------- Bot has resumed ---------------');
 	if(!debug)
 		logger.increment("reconnecting");
 });

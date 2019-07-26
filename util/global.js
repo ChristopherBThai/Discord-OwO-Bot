@@ -70,7 +70,7 @@ exports.getUser = async function(mention,cache = false){
 	else
 		return undefined;
 	try{
-		return await client.fetchUser(id,cache);
+		return await client.users.fetch(id,cache);
 	}catch(e) {
 		return undefined;
 	}

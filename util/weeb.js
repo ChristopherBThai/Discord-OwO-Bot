@@ -34,7 +34,7 @@ exports.grab = function(msg,ptype,ftype,text,notsfw,retry){
 			"author": {
 				"name" : text,
 				"url":array.url,
-				"icon_url": msg.author.avatarURL
+				"icon_url": msg.author.avatarURL()
 			}
 		};
 

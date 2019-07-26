@@ -65,11 +65,11 @@ async function fetchInfo(p){
 		let startedAt = "OFFLINE";
 		if(this.readyAt) startedAt = this.readyAt.toLocaleString();
 		let result = {
-			id:this.shard.id,
+			id:this.shard.ids[0],
 			users:this.users.size,
 			guilds:this.guilds.size,
 			channels:this.channels.size,
-			ping:this.ping,
+			ping:this.ws.ping,
 			uptime:this.uptime,
 			startedAt
 		}
