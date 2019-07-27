@@ -44,7 +44,6 @@ async function sendDM(msg){
 async function sendChannel(client,msg){
 	var channel = await client.channels.get(msg.to);
 	if(channel){
-		console.log(msg);
 		channel.send(msg.msg).then(async function (message){
 			if(msg.options){
 				if(msg.options.react){
