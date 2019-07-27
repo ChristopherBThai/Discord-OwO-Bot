@@ -29,7 +29,7 @@ var manager;
  * Listens to upvote webhooks
  */
 function upvote(id,bot,json){
-	//console.log("Webhooks for "+id);
+	console.log("Webhooks for "+id);
 	var weekend = json?json.isWeekend:false;
 	var sql = "SELECT count,TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = "+id+";";
 	sql += "SELECT IF(patreonDaily = 1 OR ((TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths) AND patreonType = 3),1,0) as patreon FROM user LEFT JOIN patreons ON user.uid = patreons.uid WHERE user.id = "+id+";";

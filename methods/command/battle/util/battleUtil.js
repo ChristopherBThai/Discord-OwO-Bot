@@ -465,7 +465,7 @@ var reactionCollector = exports.reactionCollector = async function(p,msg,battle,
 
 		/* Gather action for next animal */
 		current++;
-		await emojiReaction.remove();
+		await emojiReaction.users.remove();
 		while(team[current]&&team[current].stats.hp[0]<=0)
 			current++;
 
