@@ -131,10 +131,6 @@ process.on('message',message => {
 });
 
 
-exports.emit = function(message){
-	broadcastHandler.handle(client,message)
-}
-
 process.on('unhandledRejection', (reason, promise) => {
 	console.error("unhandledRejection at Shard "+client.shard.id+" error "+(new Date()).toLocaleString());
 	console.error(reason);

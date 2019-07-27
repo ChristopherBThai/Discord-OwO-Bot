@@ -32,10 +32,9 @@ Manager.on('shardCreate', function(shard){
 		loaded = true;
 		setTimeout(updateActivity,15000);
 	}
-});
-
-Manager.on('message', (shard, message) => {
-	messageHandler.handle(Manager,shard,message);
+	shard.on('message',(message) => {
+		messageHandler.handle(Manager,shard,message);
+	});
 });
 
 function updateActivity(){
