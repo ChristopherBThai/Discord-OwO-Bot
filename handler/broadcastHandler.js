@@ -12,7 +12,7 @@ const Error = require("./errorHandler.js");
 
 exports.handle = function(client,msg){
 	/* Check if the message is ment for this shard */
-	if(msg.shard!=undefined&&msg.shard!=client.shard.id)
+	if(msg.shard!=undefined&&msg.shard!=client.shard.ids[0])
 		return;
 
 	/* Determine the type of broadcast message */
@@ -44,6 +44,7 @@ async function sendDM(msg){
 async function sendChannel(client,msg){
 	var channel = await client.channels.get(msg.to);
 	if(channel){
+		console.log(msg);
 		channel.send(msg.msg).then(async function (message){
 			if(msg.options){
 				if(msg.options.react){
