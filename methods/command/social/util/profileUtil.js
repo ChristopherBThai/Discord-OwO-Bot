@@ -68,7 +68,7 @@ async function generateJson(p){
 		user:{
 			avatarURL,
 			name:p.msg.author.username,
-			title:'OwO Bot Creator'
+			title:'An OwO Bot User'
 		},
 		aboutme,
 		level:{ lvl, maxxp, currentxp },
