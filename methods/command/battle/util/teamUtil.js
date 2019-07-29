@@ -63,7 +63,7 @@ exports.addMember = async function(p,animal,pos){
 	/* If there is no team, create one */
 	if(!result[0][0]){
 		sql = `INSERT IGNORE INTO user (id) VALUES (${p.msg.author.id});
-			INSERT IGNORE INTO pet_team (uid) VALUES ((SELECT uid FROM user WHERE id = ${p.msg.author.id}));
+			INSERT IGNORE INTO pet_team (uid) VALUES ((SELECT uid FROM user WHERE id = ${p.msg.author.id} AND (SELECT pgid FROM pet_team p WHERE p.uid = user.uid) IS NULL));
 			INSERT IGNORE INTO pet_team_animal (pgid,pid,pos) VALUES (
 				(SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id})),
 				${result[1][0].pid},
