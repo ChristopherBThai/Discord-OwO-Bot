@@ -26,16 +26,15 @@ const lottery = require('./parent_methods/lottery.js');
 const messageHandler = require('./parent_methods/messageHandler.js');
 
 
-Manager.on('launch', function(shard){
+Manager.on('shardCreate', function(shard){
 	console.log(`Launched shard ${shard.id}`);
 	if(!loaded && shard.id == Manager.totalShards-1){
 		loaded = true;
 		setTimeout(updateActivity,15000);
 	}
-});
-
-Manager.on('message', (shard, message) => {
-	messageHandler.handle(Manager,shard,message);
+	shard.on('message',(message) => {
+		messageHandler.handle(Manager,shard,message);
+	});
 });
 
 function updateActivity(){
