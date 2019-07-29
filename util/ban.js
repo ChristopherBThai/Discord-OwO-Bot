@@ -25,9 +25,10 @@ exports.check = async function(con,msg,client,command,callback,ignore){
 		cooldown[msg.author.id] = 1;
 		setTimeout(() => {delete cooldown[msg.author.id];}, 5000);
 	}else if(cooldown[msg.author.id]>=3) {
-		msg.channel.send("**⏱ | "+msg.author.username+"**, Please slow down~ You're a little **too fast** for me :c")
-			.then(message => message.delete({timeout:3000}))
-			.catch(err => console.info(err));
+		if(command!="points")
+			msg.channel.send("**⏱ | "+msg.author.username+"**, Please slow down~ You're a little **too fast** for me :c")
+				.then(message => message.delete({timeout:3000}))
+				.catch(err => console.info(err));
 		return;
 	}else if(cooldown[msg.author.id]<3){
 		cooldown[msg.author.id]++;
