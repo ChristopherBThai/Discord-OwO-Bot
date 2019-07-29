@@ -12,7 +12,7 @@ const Error = require("./errorHandler.js");
 
 exports.handle = function(client,msg){
 	/* Check if the message is ment for this shard */
-	if(msg.shard!=undefined&&msg.shard!=client.shard.id)
+	if(msg.shard!=undefined&&msg.shard!=client.shard.ids[0])
 		return;
 
 	/* Determine the type of broadcast message */

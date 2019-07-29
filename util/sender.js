@@ -10,6 +10,7 @@ var auth = require('../../tokens/owo-auth.json');
 var admin;
 var logChannel = "469352773314412555";
 var modLogChannel = "471579186059018241";
+const owo = require('../owo.js');
 
 /**
  * Sends a msg to channel
@@ -87,7 +88,7 @@ exports.msgAdmin = async function (message){
 exports.msgChannel = async function (id,message,options){
 	if(!message||!id) return;
 	id = id.match(/[0-9]+/)[0];
-	process.send({
+	client.shard.send({
 		type:"sendChannel",
 		to:id,
 		msg:message,
@@ -97,7 +98,7 @@ exports.msgChannel = async function (id,message,options){
 
 exports.msgLogChannel = async function (message){
 	if(!message) return;
-	process.send({
+	client.shard.send({
 		type:"sendChannel",
 		to:logChannel,
 		msg:message
@@ -106,7 +107,7 @@ exports.msgLogChannel = async function (message){
 
 exports.msgModLogChannel = async function (message){
 	if(!message) return;
-	process.send({
+	client.shard.send({
 		type:"sendChannel",
 		to:modLogChannel,
 		msg:message

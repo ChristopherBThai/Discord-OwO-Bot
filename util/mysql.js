@@ -21,7 +21,7 @@ config = {
 
 var pool = mysql.createPool(config);
 pool.on('connection', function (connection) {
-	  console.log('New connect %d', connection.threadId);
+	  //console.log('New connect %d', connection.threadId);
 });
 /*
 pool.on('acquire', function (connection) {
