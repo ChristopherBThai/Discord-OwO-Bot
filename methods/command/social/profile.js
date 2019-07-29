@@ -22,7 +22,7 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	cooldown:60000,
+	cooldown:1000,
 	half:100,
 	six:500,
 
@@ -30,10 +30,10 @@ module.exports = new CommandInterface({
 		try{
 			let uuid = await profileUtil.display(p);
 			let url = imagegenAuth.imageGenUrl+'/profile/'+uuid+'.png';
-			if(uuid)
+			if(uuid){
 				let warning = '⚠';
-				await p.send(warning+" **|** THIS COMMAND IS STILL A WORK IN PROGRESS",{files:[url]});
-			else
+				await p.send(warning+" **|** THIS COMMAND IS STILL A WORK IN PROGRESS",null,{files:[url]});
+			}else
 				throw "Not found"
 		}catch(e){
 			console.log(e);
