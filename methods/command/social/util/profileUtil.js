@@ -12,6 +12,7 @@ const rings = require('../../../../json/rings.json');
 exports.display = async function(p){
 	/* Construct json for POST request */
 	let info = await generateJson(p);
+	console.log(info);
 	info.password = imagegenAuth.password;
 
 	/* Returns a promise to avoid callback hell */
@@ -40,30 +41,33 @@ exports.display = async function(p){
 }
 
 async function generateJson(p){
-	let avatarURL = p.msg.author.avatarURL().replace('.gif','.png').replace(/\?[a-zA-Z0-9=?&]+/gi,'');
+	let avatarURL = p.msg.author.avatarURL()
 	if(!avatarURL) avatarURL= p.msg.author.defaultAvatarURL;
+	avatarURL = avatarURL.replace('.gif','.png').replace(/\?[a-zA-Z0-9=?&]+/gi,'');
 	let aboutme = "I'm just a plain human.";
 
 	let lvl = 0;
 	let maxxp = 500;
 	let currentxp = 1;
 
-	let info = [],temp;
-	if(temp = await getMarriage(p)) info.push(temp);
-	if(temp = await getRank(p)) info.push(temp);
-	if(temp = await getCookie(p)) info.push(temp);
-	
-	let team = await getTeam(p);
+	let promises = [getMarriage(p),getRank(p),getCookie(p),getTeam(p),getBackground(p)]
+	promises = await Promise.all(promises);
+
+	let marriage = promises[0];
+	let rank = promises[1];
+	let cookie = promises[2];
+	let team = promises[3];
+	let background = promises[4];
+
+	let info = [];
+	if(marriage) info.push(marriage);
+	if(rank) info.push(rank);
+	if(cookie) info.push(cookie);
 
 	return {
 		theme:{
-			wallpaper:1,
-			xp:{
-				primary:1,
-				secondary:1
-			},
-			badge_primary:1,
-			info_primary:1
+			background:background.id,
+			name_color:background.color,
 		},
 		user:{
 			avatarURL,
@@ -144,6 +148,7 @@ async function getTeam(p){
 			let animalID = animal.value.match(/:[0-9]+>/g);
 			if(animalID) animalID = animalID[0].match(/[0-9]+/g)[0];
 			else animalID = animal.value.substring(1,animal.value.length-1);
+			if(animal.hidden) animalID = animal.hidden;
 			animals.push(animalID);
 		}
 	}
@@ -151,4 +156,11 @@ async function getTeam(p){
 	if(!name) name = "My Team";
 	return { name, animals }
 
+}
+
+async function getBackground(p){
+	let random = Math.floor(Math.random()*8)+1
+	let sql = `SELECT name_color FROM backgrounds WHERE bid = ${random};`
+	let result = await p.query(sql);
+	return {id:random,color:result[0].name_color};
 }

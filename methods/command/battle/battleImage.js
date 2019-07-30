@@ -67,6 +67,7 @@ function generateAnimalJson(animal){
 	let animalID = animal.animal.value.match(/:[0-9]+>/g);
 	if(animalID) animalID = animalID[0].match(/[0-9]+/g)[0];
 	else animalID = animal.animal.value.substring(1,animal.animal.value.length-1);
+	if(animal.animal.hidden) animalID = animal.animal.hidden;
 	let nickname = animal.nickname;
 	if(!nickname) nickname = animal.animal.name;
 

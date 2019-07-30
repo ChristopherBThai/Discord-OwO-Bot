@@ -5,6 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
+const blank = '<:blank:427371936482328596>';
 const huntEmoji = "🌱";
 exports.alter = function(id,text){
 	switch(id){
@@ -22,6 +23,10 @@ exports.alter = function(id,text){
 			return nou(text);
 		case '176046069954641921':
 			return crown(text);
+		case '289411794672418819':
+			return louis(text);
+		case '348828692539113490':
+			return michelle(text);
 		default:
 			return text;
 	}
@@ -162,4 +167,40 @@ function crown(text){
 		}
 	};
 	return {embed};
+}
+
+function louis(text){
+	let roorun = '<a:roorun:605562843416363018>';
+	let roosleep = '<:roosleep:605562842107740203>';
+	if(text.indexOf("empowered by")>=0){
+		text = roorun+" **|** *panda is super excited!*\n"+
+			text.replace(huntEmoji,blank)
+			.replace(/[a-zA-z0-9!?]+\*\*,\shunt/gi,"roo**")
+			.replace("You found","roo made friends with")
+			.replace("xp**!","xp**!\n"+roosleep+" **|** *panda is tired now*")
+	}else{
+		text = roorun+" **|** *panda is super excited!*\n"+
+			text.replace(huntEmoji,blank)
+			.replace(/[a-zA-z0-9!?]+\*\*\sspent/gi,"roo** spent")
+			.replace("and caught a","and made friends with a")
+			.replace("xp**!","xp**!\n"+roosleep+" **|** *panda is tired now*")
+	}
+	return text;
+}
+
+function michelle(text){
+	let meowth = '<a:meowth:605676882788089867>';
+	let persian = '<a:persian:605676882599477249>';
+	if(text.indexOf("empowered by")>=0){
+		text = text.replace(huntEmoji,meowth)
+			.replace(/[a-zA-z0-9!?]+\*\*,\shunt/gi,"Meowth**")
+			.replace("You found","It returned with")
+			.replace("\n<:blank","\n"+blank+" **|** and evolved into a Persian "+persian+"\n<:blank");
+	}else{
+		text = text.replace(huntEmoji,meowth)
+			.replace(/[a-zA-z0-9!?]+\*\*\sspent/gi,"Meowth** went out and spent")
+			.replace("spent 5 <:cowoncy:416043450337853441> and","")
+			.replace("!\n<:blank","!\n"+blank+" **|** It returned and evolved into a Persian "+persian+"\n<:blank")
+	}
+	return text;
 }
