@@ -30,6 +30,39 @@ exports.hmset = function(key,val){
 	});
 }
 
+exports.incrXP = function(key,val=1){
+	return new Promise(function(res,rej){
+		client.zincrby("user_xp",val,key,function(err,reply){
+			if(err)
+				rej(err);
+			else
+				res(reply);
+		});
+	});
+}
+
+exports.getTopXP = function(count = 5){
+	return new Promise(function(res,rej){
+		client.zrange("user_xp",0,count-1,'WITHSCORES',function(err,reply){
+			if(err)
+				rej(err);
+			else
+				res(reply);
+		});
+	});
+}
+
+exports.getXP = function(id){
+	return new Promise(function(res,rej){
+		client.zscore("user_xp",id,function(err,reply){
+			if(err)
+				rej(err);
+			else
+				res(reply);
+		});
+	});
+}
+
 client.on('connect',function(){
 	console.log('Redis connected');
 });

@@ -175,7 +175,7 @@ function louis(text){
 	if(text.indexOf("empowered by")>=0){
 		text = roorun+" **|** *panda is super excited!*\n"+
 			text.replace(huntEmoji,blank)
-			.replace(/[a-zA-z0-9!?]+\*\*,\shunt/gi,"roo**")
+			.replace(/[a-zA-z0-9!?\s.]+\*\*,\shunt/gi,"roo**")
 			.replace("You found","roo made friends with")
 			.replace("xp**!","xp**!\n"+roosleep+" **|** *panda is tired now*")
 	}else{
