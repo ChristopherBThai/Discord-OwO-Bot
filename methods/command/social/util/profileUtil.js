@@ -8,11 +8,11 @@
 const request = require('request');
 const imagegenAuth = require('../../../../../tokens/imagegen.json');
 const rings = require('../../../../json/rings.json');
+const levels = require('../../../../util/levels.js');
 
 exports.display = async function(p){
 	/* Construct json for POST request */
 	let info = await generateJson(p);
-	console.log(info);
 	info.password = imagegenAuth.password;
 
 	/* Returns a promise to avoid callback hell */
@@ -46,11 +46,7 @@ async function generateJson(p){
 	avatarURL = avatarURL.replace('.gif','.png').replace(/\?[a-zA-Z0-9=?&]+/gi,'');
 	let aboutme = "I'm just a plain human.";
 
-	let lvl = 0;
-	let maxxp = 500;
-	let currentxp = 1;
-
-	let promises = [getMarriage(p),getRank(p),getCookie(p),getTeam(p),getBackground(p)]
+	let promises = [getMarriage(p),getRank(p),getCookie(p),getTeam(p),getBackground(p),levels.getUserLevel(p)]
 	promises = await Promise.all(promises);
 
 	let marriage = promises[0];
@@ -58,6 +54,9 @@ async function generateJson(p){
 	let cookie = promises[2];
 	let team = promises[3];
 	let background = promises[4];
+	let level = promises[5];
+
+	level = {lvl:level.level,maxxp:level.maxxp,currentxp:level.currentxp}
 
 	let info = [];
 	if(marriage) info.push(marriage);
@@ -75,7 +74,7 @@ async function generateJson(p){
 			title:'An OwO Bot User'
 		},
 		aboutme,
-		level:{ lvl, maxxp, currentxp },
+		level,
 		info,
 		team
 	}
