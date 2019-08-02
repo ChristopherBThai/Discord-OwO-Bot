@@ -10,9 +10,9 @@ const imagegenAuth = require('../../../../../tokens/imagegen.json');
 const rings = require('../../../../json/rings.json');
 const levels = require('../../../../util/levels.js');
 
-exports.display = async function(p){
+exports.display = async function(p,user){
 	/* Construct json for POST request */
-	let info = await generateJson(p);
+	let info = await generateJson(p,user);
 	info.password = imagegenAuth.password;
 
 	/* Returns a promise to avoid callback hell */
@@ -40,13 +40,12 @@ exports.display = async function(p){
 	}
 }
 
-async function generateJson(p){
-	let avatarURL = p.msg.author.avatarURL()
-	if(!avatarURL) avatarURL= p.msg.author.defaultAvatarURL;
+async function generateJson(p,user){
+	let avatarURL = user.avatarURL()
+	if(!avatarURL) avatarURL= user.defaultAvatarURL;
 	avatarURL = avatarURL.replace('.gif','.png').replace(/\?[a-zA-Z0-9=?&]+/gi,'');
-	let aboutme = "I'm just a plain human.";
 
-	let promises = [getMarriage(p),getRank(p),getCookie(p),getTeam(p),getBackground(p),levels.getUserLevel(p)]
+	let promises = [getMarriage(p,user),getRank(p,user),getCookie(p,user),getTeam(p,user),getBackground(p,user),levels.getUserLevel(user.id),getInfo(p,user)]
 	promises = await Promise.all(promises);
 
 	let marriage = promises[0];
@@ -55,6 +54,11 @@ async function generateJson(p){
 	let team = promises[3];
 	let background = promises[4];
 	let level = promises[5];
+	let userInfo = promises[6];
+
+	let aboutme = userInfo.about;
+	let accent = userInfo.accent;
+	let accent2 = userInfo.accent2;
 
 	level = {lvl:level.level,maxxp:level.maxxp,currentxp:level.currentxp}
 
@@ -67,10 +71,11 @@ async function generateJson(p){
 		theme:{
 			background:background.id,
 			name_color:background.color,
+			accent,accent2
 		},
 		user:{
 			avatarURL,
-			name:p.msg.author.username,
+			name:user.username,
 			title:'An OwO Bot User'
 		},
 		aboutme,
@@ -80,15 +85,15 @@ async function generateJson(p){
 	}
 }
 
-function getRank(p){
+function getRank(p,user){
 	return {
 		img:'trophy.png',
 		text:'#1'
 	}
 }
 
-async function getCookie(p){
-	let result = await p.query(`SELECT count FROM rep WHERE id = ${p.msg.author.id};`);
+async function getCookie(p,user){
+	let result = await p.query(`SELECT count FROM rep WHERE id = ${user.id};`);
 	if(!result||!result[0]) return { img:'cookie.png', text:'+0' };
 
 	let count = result[0].count;
@@ -96,20 +101,20 @@ async function getCookie(p){
 	return { img:'cookie.png',text:count };
 }
 
-async function getMarriage(p){
+async function getMarriage(p,user){
 	let sql = `SELECT 
 			u1.id AS id1,u2.id AS id2,TIMESTAMPDIFF(DAY,marriedDate,NOW()) as days,marriage.* 
 		FROM marriage 
 			LEFT JOIN user AS u1 ON marriage.uid1 = u1.uid 
 			LEFT JOIN user AS u2 ON marriage.uid2 = u2.uid 
-		WHERE u1.id = ${p.msg.author.id} OR u2.id = ${p.msg.author.id};`;
+		WHERE u1.id = ${user.id} OR u2.id = ${user.id};`;
 	let result = await p.query(sql);
 
 	if(result.length<1) return;
 
 	// Grab user and ring information
 	let ring = rings[result[0].rid];
-	let so = p.msg.author.id==result[0].id1?result[0].id2:result[0].id1;
+	let so = user.id==result[0].id1?result[0].id2:result[0].id1;
 	so = await p.global.getUser(so);
 	if(!so) so = "Someone";
 	else so = so.username;
@@ -132,12 +137,12 @@ function shortenInt(value){
 	return newValue;
 }
 
-async function getTeam(p){
+async function getTeam(p,user){
 	let sql = `SELECT tname,name 
 		FROM user INNER JOIN pet_team ON user.uid = pet_team.uid 
 			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid 
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid 
-		WHERE user.id = ${p.msg.author.id}`;
+		WHERE user.id = ${user.id}`;
 	let result = await p.query(sql);
 	if(!result||!result[0]) return;
 	let animals = []
@@ -157,9 +162,26 @@ async function getTeam(p){
 
 }
 
-async function getBackground(p){
+async function getBackground(p,user){
 	let random = Math.floor(Math.random()*8)+1
 	let sql = `SELECT name_color FROM backgrounds WHERE bid = ${random};`
 	let result = await p.query(sql);
 	return {id:random,color:result[0].name_color};
+}
+
+async function getInfo(p,user){
+	let sql = `SELECT user_profile.* from user_profile INNER JOIN user ON user.uid = user_profile.uid WHERE user.id = ${p.msg.author.id};`;
+	let result = await p.query(sql);
+	let info = {
+		about:"I'm just a plain human."
+	};
+	if(result[0]){
+		if(result[0].about)
+			info.about = result[0].about;
+		if(result[0].accent)
+			info.accent = result[0].accent;
+		if(result[0].accent2)
+			info.accent2 = result[0].accent2;
+	}
+	return info;
 }
