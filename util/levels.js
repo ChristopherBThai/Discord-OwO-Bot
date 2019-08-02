@@ -2,7 +2,7 @@ const redis = require('./redis.js');
 const logger = require('./logger.js');
 var macro;
 try{macro = require('../../tokens/macro.js');}catch(e){console.error("Missing macro.js. Please add this file to ../tokens/macro.js\n",e)}
-const minXP = 10, maxXP = 15, dailyLimit = 5000;
+const minXP = 10, maxXP = 15, dailyLimit = 3000;
 var cooldown = {};
 var banned = {};
 
@@ -20,9 +20,8 @@ exports.giveXP = async function(msg){
 	//Check if we hit the daily limit of xp
 	let limit = await redis.hgetall("xplimit_"+msg.author.id);
 	if(limit&&limit.day==getDate()){
-		//if(limit.xp>dailyLimit) return;
-		//else 
-		limit.xp = parseInt(limit.xp)+gain;
+		if(limit.xp>dailyLimit) return;
+		else limit.xp = parseInt(limit.xp)+gain;
 	}else limit = {day:getDate(),xp:gain};
 
 	// Check for macros
@@ -36,8 +35,8 @@ exports.giveXP = async function(msg){
 
 }
 
-exports.getUserLevel = async function(p){
-	let xp = parseInt(await redis.getXP(p.msg.author.id));
+exports.getUserLevel = async function(id){
+	let xp = parseInt(await redis.getXP(id));
 	return getLevel(xp);
 }
 
