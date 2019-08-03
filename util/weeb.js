@@ -47,7 +47,7 @@ exports.grab = function(msg,ptype,ftype,text,notsfw,retry){
 			this.grab(msg,ptype,(ftype=="jpg")?"png":"jpg",text,notsfw,false);
 		}else
 			msg.channel.send("**🚫 |** I couldn't find that image type! :c\nType `owo help gif` for the list of types!")
-				.then(message => message.delete(3000))
+				.then(message => message.delete({timeout:3000}))
 				.catch(err => console.error(err));
 	});
 }

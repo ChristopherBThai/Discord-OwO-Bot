@@ -46,8 +46,8 @@ module.exports = new CommandInterface({
 				p.send("**🚫 | "+msg.author.username+"**, You don't have enough cowoncy!",3000);
 			}else{
 				//Sort gem benefits
-				var gems = {}
-				var uid = undefined;
+				let gems = {}
+				let uid = undefined;
 				for(var i=0;i<result[3].length;i++){
 					tempGem = gemUtil.getGem(result[3][i].gname);
 					tempGem.uid = result[3][i].uid;
@@ -58,9 +58,9 @@ module.exports = new CommandInterface({
 				}
 
 				//Get animal
-				var animal = getAnimals(p,result,gems,uid);
-				var sql = animal.sql;
-				var text = animal.text;
+				let animal = getAnimals(p,result,gems,uid);
+				let sql = animal.sql;
+				let text = animal.text;
 
 				//Get Xp
 				if(result[1][0]){
@@ -74,7 +74,7 @@ module.exports = new CommandInterface({
 				}
 
 				//Get Lootbox
-				var lbReset = dateUtil.afterMidnight((result[2][0])?result[2][0].claim:undefined);
+				let lbReset = dateUtil.afterMidnight((result[2][0])?result[2][0].claim:undefined);
 				if(!result[2][0]||result[2][0].claimcount<3||lbReset.after){
 					var lootbox = getLootbox(p,result[2][0],lbReset);
 					sql += lootbox.sql;
@@ -87,6 +87,11 @@ module.exports = new CommandInterface({
 				con.query(sql,function(err,result2){
 					if(err) {console.error(err); return;}
 					p.logger.value('cowoncy',-5,['command:hunt','id:'+msg.author.id]);
+					for(let i in animal.animal){
+						let tempAnimal = p.global.validAnimal(animal.animal[i][1]);
+						p.logger.value('animal',1,['animal:'+tempAnimal.name,'rank:'+tempAnimal.rank,'id:'+p.msg.author.id,'guild:'+p.msg.guild.id]);
+						p.logger.value('animal.points',tempAnimal.points,['animal:'+tempAnimal.name,'rank:'+tempAnimal.rank,'id:'+p.msg.author.id,'guild:'+p.msg.guild.id]);
+					}
 					p.quest("hunt");
 					p.quest("find",1,animal.typeCount);
 					p.quest("xp",animal.xp);

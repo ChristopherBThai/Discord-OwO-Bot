@@ -50,7 +50,7 @@ module.exports = new CommandInterface({
 		let result = "```\n"+title;
 		for(let i=0;i<shardInfo.length;i++){
 			let text = shards[i];
-			result += "\n"+(i==p.client.shard.id?'>':'')+text+(i==p.client.shard.id?'<':'');
+			result += "\n"+(i==p.client.shard.ids[0]?'>':'')+text+(i==p.client.shard.id?'<':'');
 		}
 		result += "```";
 
