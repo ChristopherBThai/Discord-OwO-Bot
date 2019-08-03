@@ -5,6 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
+const tracer = require('dd-trace').init()
 const debug = false;
 const whitelist = ['409959187229966337','420104212895105044','552384921914572802']
 if(debug) var auth = require('../tokens/scuttester-auth.json');
@@ -43,10 +44,9 @@ client.on('message',msg => {
 
 	else if(msg.channel.type==="dm") macro.verify(msg,msg.content.trim());
 
-	else {
+	else 
 		command.execute(msg);
-		levels.giveXP(msg);
-	}
+	levels.giveXP(msg);
 });
 
 //Discord login
@@ -61,7 +61,7 @@ client.on('ready',()=>{
 	if(!debug){
 		logger.increment("ready");
 		setInterval(() => {
-			dbl.postStats(client.guilds.size,client.shard.id,client.shard.count);
+			dbl.postStats(client.guilds.size,client.shard.ids[0],client.shard.count);
 		}, 3200000)
 	}
 });

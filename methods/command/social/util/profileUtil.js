@@ -20,7 +20,7 @@ exports.display = async function(p,user){
 		return new Promise( (resolve, reject) => {
 			let req = request({
 				method:'POST',
-				uri:imagegenAuth.profileImageUri,
+				uri:imagegenAuth.profileImageUri_t,
 				json:true,
 				body: info,
 			},(error,res,body)=>{
@@ -76,6 +76,7 @@ async function generateJson(p,user){
 		user:{
 			avatarURL,
 			name:user.username,
+			discriminator:user.discriminator,
 			title:'An OwO Bot User'
 		},
 		aboutme,
@@ -170,7 +171,7 @@ async function getBackground(p,user){
 }
 
 async function getInfo(p,user){
-	let sql = `SELECT user_profile.* from user_profile INNER JOIN user ON user.uid = user_profile.uid WHERE user.id = ${p.msg.author.id};`;
+	let sql = `SELECT user_profile.* from user_profile INNER JOIN user ON user.uid = user_profile.uid WHERE user.id = ${user.id};`;
 	let result = await p.query(sql);
 	let info = {
 		about:"I'm just a plain human."

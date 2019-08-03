@@ -5,6 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 	
+const tracer = require('dd-trace').init()
 const debug = false;
 
 /* Default is 4. Use higher numbers if you have enough cores */
@@ -39,9 +40,10 @@ Manager.on('shardCreate', function(shard){
 
 function updateActivity(){
 	console.log("Done loading all the shards");
-	lottery.init();
-	if(!debug)
+	if(!debug){
+		lottery.init();
 		vote.setManager(Manager);
+	}
 	global.setManager(Manager);
 	Manager.broadcastEval("this.shard.fetchClientValues('guilds.size').then(results => {var result = results.reduce((prev, val) => prev + val, 0);this.user.setActivity('with '+result+' Servers!')}).catch(err => console.error(err))");
 }
