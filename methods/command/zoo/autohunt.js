@@ -119,6 +119,12 @@ function claim(msg,con,query,bot){
 			}
 			text = alterhb(msg.author.id,text,"returned");
 			msg.channel.send(text).catch(err => {console.error(err)});
+			for(let animal in total){
+				let tempAnimal = global.validAnimal(animal);
+				logger.value('animal',total[animal].count,['animal:'+tempAnimal.name,'rank:'+tempAnimal.rank,'id:'+msg.author.id,'guild:'+msg.guild.id]);
+				logger.value('animal.points',tempAnimal.points*total[animal].count,['animal:'+tempAnimal.name,'rank:'+tempAnimal.rank,'id:'+msg.author.id,'guild:'+msg.guild.id]);
+			}
+			logger.value('essence',totalGain,['id:'+msg.author.id,'guild:'+msg.guild.id,'command:huntbot','animal:huntbot']);
 		});
 	});
 }
