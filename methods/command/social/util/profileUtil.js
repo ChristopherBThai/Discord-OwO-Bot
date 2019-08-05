@@ -9,6 +9,7 @@ const request = require('request');
 const imagegenAuth = require('../../../../../tokens/imagegen.json');
 const rings = require('../../../../json/rings.json');
 const levels = require('../../../../util/levels.js');
+const animalUtil = require('../../battle/util/animalUtil.js');
 
 exports.display = async function(p,user){
 	/* Construct json for POST request */
@@ -20,7 +21,7 @@ exports.display = async function(p,user){
 		return new Promise( (resolve, reject) => {
 			let req = request({
 				method:'POST',
-				uri:imagegenAuth.profileImageUri_t,
+				uri:imagegenAuth.profileImageUri,
 				json:true,
 				body: info,
 			},(error,res,body)=>{
@@ -63,9 +64,9 @@ async function generateJson(p,user){
 	level = {lvl:level.level,maxxp:level.maxxp,currentxp:level.currentxp}
 
 	let info = [];
-	if(marriage) info.push(marriage);
 	if(rank) info.push(rank);
 	if(cookie) info.push(cookie);
+	if(marriage) info.push(marriage);
 
 	return {
 		theme:{
@@ -82,7 +83,10 @@ async function generateJson(p,user){
 		aboutme,
 		level,
 		info,
-		team
+		team,
+		rank,
+		cookie,
+		marriage
 	}
 }
 
@@ -117,9 +121,13 @@ async function getMarriage(p,user){
 	let ring = rings[result[0].rid];
 	let so = user.id==result[0].id1?result[0].id2:result[0].id1;
 	so = await p.global.getUser(so);
+	tag = "";
 	if(!so) so = "Someone";
-	else so = so.username;
-	return { img:'ring_'+ring.id+'.png', text:so };
+	else {
+		tag = '#'+so.discriminator;
+		so = so.username;
+	}
+	return { img:'ring_'+ring.id+'.png', text:so, tag};
 }
 
 function shortenInt(value){
@@ -139,7 +147,7 @@ function shortenInt(value){
 }
 
 async function getTeam(p,user){
-	let sql = `SELECT tname,name 
+	let sql = `SELECT tname,name,xp
 		FROM user INNER JOIN pet_team ON user.uid = pet_team.uid 
 			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid 
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid 
@@ -154,7 +162,7 @@ async function getTeam(p,user){
 			if(animalID) animalID = animalID[0].match(/[0-9]+/g)[0];
 			else animalID = animal.value.substring(1,animal.value.length-1);
 			if(animal.hidden) animalID = animal.hidden;
-			animals.push(animalID);
+			animals.push({img:animalID,info:animalUtil.toLvl(result[i].xp)});
 		}
 	}
 	let name = result[0].tname;
