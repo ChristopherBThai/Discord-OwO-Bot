@@ -40,6 +40,11 @@ exports.getUserLevel = async function(id){
 	return getLevel(xp);
 }
 
+exports.getUserRank = async function(id){
+	let rank = await redis.getRank(id);
+	return rank;
+}
+
 function getXpRequired(lvl){
 	return 5000+Math.pow(lvl*5,2);
 }

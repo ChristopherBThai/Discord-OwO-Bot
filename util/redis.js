@@ -63,6 +63,17 @@ exports.getXP = function(id){
 	});
 }
 
+exports.getRank = function(id){
+	return new Promise(function(res,rej){
+		client.zrank("user_xp",id,function(err,reply){
+			if(err)
+				rej(err);
+			else
+				res(reply);
+		});
+	});
+}
+
 client.on('connect',function(){
 	console.log('Redis connected');
 });
