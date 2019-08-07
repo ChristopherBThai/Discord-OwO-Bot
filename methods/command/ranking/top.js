@@ -11,12 +11,13 @@ const global = require('../../../util/global.js');
 const animals = require('../../../../tokens/owo-animals.json');
 const animalUtil = require('../battle/util/animalUtil.js');
 const animalUtil2 = require('../zoo/animalUtil.js');
+const levels = require('../../../util/levels.js');
 
 module.exports = new CommandInterface({
 
 	alias:["top","rank","ranking"],
 
-	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse|battle|daily [global] {count}",
+	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse|battle|daily|level [global] {count}",
 
 	desc:"Displays the top ranking of each category!",
 
@@ -28,8 +29,8 @@ module.exports = new CommandInterface({
 	half:100,
 	six:500,
 
-	execute: function(p){
-		display(p.con,p.msg,p.args);
+	execute: async function(p){
+		await display(p,p.con,p.msg,p.args);
 	}
 
 })
@@ -40,7 +41,7 @@ module.exports = new CommandInterface({
  * @param {discord.Message}	msg 	- Discord's message
  * @param {string[]}		args 	- Command arguments
  */
-function display(con, msg, args){
+async function display(p,con, msg, args){
 	var channel = msg.channel;
 	//check for args
 	var globala = false;
@@ -51,13 +52,13 @@ function display(con, msg, args){
 	var zoo = false;
 	var rep = false;
 	var pet = false;
-	var huntbot,luck,curse,daily,battle;
+	var huntbot,luck,curse,daily,battle,level;
 
 	var invalid = false;
 	var count = 5;
 
 	for(var i=0;i<args.length;i++){
-		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet&&!huntbot&&!luck&&!curse&&!daily&&!battle){
+		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet&&!huntbot&&!luck&&!curse&&!daily&&!battle&&!level){
 			if(args[i]=== "points"||args[i]==="point"||args[i]==="p") points = true;
 			else if(args[i]==="guild"||args[i]==="server"||args[i]==="s"||args[i]==="g") guild = true;
 			else if(args[i]=== "zoo"||args[i]==="z") zoo = true;
@@ -69,6 +70,7 @@ function display(con, msg, args){
 			else if(args[i]==="curse") curse = true;
 			else if(args[i]==="battle"||args[i]==="streak") battle = true;
 			else if(args[i]==="daily") daily = true;
+			else if(args[i]==="level"||args[i]==="lvl"||args[i]==="xp") level= true;
 			else if(args[i]==="global"||args[i]==="g") globala = true;
 			else if(global.isInt(args[i])) count = parseInt(args[i]);
 			else invalid = true;
@@ -94,6 +96,7 @@ function display(con, msg, args){
 		else if(curse) getCurseRanking(globala,con,msg,count);
 		else if(battle) getBattleRanking(globala,con,msg,count);
 		else if(daily) getDailyRanking(globala,con,msg,count);
+		else if(level) await getLevelRanking(globala,p,count);
 		else getRanking(globala,con,msg,count);
 	}
 }
@@ -416,6 +419,29 @@ function getDailyRanking(globalRank, con, msg, count){
 			else return "\n\t\tStreak: "+global.toFancyNum(query.daily_streak)+"\n";
 		}
 	);
+}
+
+async function getLevelRanking(global, p, count){
+	let ranking = await levels.getGlobalRanking(count);
+	let userRank = await levels.getUserRank(p.msg.author.id);
+	let userLevel = await levels.getUserLevel(p.msg.author.id);
+	let text = "```md\n< Top "+count+" Global Level Rankings >\n> Your Rank: "+p.global.toFancyNum(userRank)+"\n>\t\tLvl "+userLevel.level+" "+userLevel.currentxp+"xp\n\n";
+	let counter = 0;
+
+	for(let i in ranking){
+		if(i%2){
+			let tempLevel = await levels.getLevel(ranking[i]);
+			text += "\t\tLvl "+tempLevel.level+" "+tempLevel.currentxp+"xp\n";
+		}else{
+			counter++;
+			let user = await p.global.getUser(ranking[i]);
+			if(!user) user = "User Left Discord";
+			else user = user.username;
+			text += "#"+counter+"\t"+user+"\n";
+		}
+	}
+
+	await p.send(text+"```",null,{split:{prepend:'```md\n',append:'```'}});
 }
 
 const points = "(common*"+animals.points.common+"+"+

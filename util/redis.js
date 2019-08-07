@@ -43,7 +43,7 @@ exports.incrXP = function(key,val=1){
 
 exports.getTopXP = function(count = 5){
 	return new Promise(function(res,rej){
-		client.zrange("user_xp",0,count-1,'WITHSCORES',function(err,reply){
+		client.zrevrange("user_xp",0,count-1,'WITHSCORES',function(err,reply){
 			if(err)
 				rej(err);
 			else
@@ -65,7 +65,7 @@ exports.getXP = function(id){
 
 exports.getRank = function(id){
 	return new Promise(function(res,rej){
-		client.zrank("user_xp",id,function(err,reply){
+		client.zrevrank("user_xp",id,function(err,reply){
 			if(err)
 				rej(err);
 			else
