@@ -90,10 +90,11 @@ async function generateJson(p,user){
 	}
 }
 
-function getRank(p,user){
+async function getRank(p,user){
+	let rank = p.global.toFancyNum(await levels.getUserRank(user.id));
 	return {
 		img:'trophy.png',
-		text:'#1'
+		text:'#'+rank
 	}
 }
 
