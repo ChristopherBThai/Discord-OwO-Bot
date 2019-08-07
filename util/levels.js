@@ -7,6 +7,9 @@ var cooldown = {};
 var banned = {};
 
 exports.giveXP = async function(msg){
+
+	// must be a text channel
+	if(msg.channel.type=="dm") return;
 	
 	// Return if on cooldown (1min) or is a bot
 	if(!cooldown||msg.author.bot||cooldown[msg.author.id]||banned[msg.author.id]||banned[msg.channel.id]) return;
@@ -41,15 +44,19 @@ exports.getUserLevel = async function(id){
 }
 
 exports.getUserRank = async function(id){
-	let rank = await redis.getRank(id);
+	let rank = parseInt(await redis.getRank(id))+1;
 	return rank;
+}
+
+exports.getGlobalRanking = async function(count){
+	return await redis.getTopXP(count);
 }
 
 function getXpRequired(lvl){
 	return 5000+Math.pow(lvl*5,2);
 }
 
-function getLevel(xp){
+var getLevel = exports.getLevel = function(xp){
 	if(!xp) xp = 0;
 	let lvl = 0;
 	let required = getXpRequired(lvl+1);
