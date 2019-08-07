@@ -13,6 +13,8 @@ exports.alter = function(id,text,type){
 			return shippig(text,type);
 		case '255750356519223297':
 			return spotifybot(text,type);
+		case '250383887312748545':
+			return elsa(text,type);
 		default:
 			return text;
 	}
@@ -146,6 +148,49 @@ function spotifybot(text,type){
 			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,spotify)
 				.replace("BEEP BOOP. I AM","SPOTIFY Playlist is ready! I AM")
 				.replace("ANIMALS","SONGS")
+		default:
+			return text;
+	}
+}
+
+function elsa(text,type){
+	let shiryu1 = "<:shiryu:608487137058226186>";
+	let shiryu2 = "<a:shiryuuu:608487444836253696>";
+	switch(type){
+		case 'hb':
+			text.author.name = text.author.name.replace("HuntBot","Bronze Knight");
+			text.fields[0].name = shiryu1+" `I will scour the cosmos for you, my mistress`";
+			if(text.fields.length>=8){
+				text.fields[7].name = shiryu1+" I'm still gathering knights.";
+				text.fields[7].value = text.fields[7].value.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","I'll be back in")
+					.replace("DONE","done")
+					.replace("ANIMALS CAPTURED","knights found")
+			}
+			return text;
+		case 'progress':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,shiryu1)
+				.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","I'm still gathering knights. I'll be back in")
+				.replace("DONE","done")
+				.replace("ANIMALS CAPTURED","knights found")
+			return text;
+		case 'password':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,shiryu1);
+			return text;
+		case 'spent':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,shiryu1)
+				.replace(/BEEP BOOP\. `\*\*`[^`]+`\*\*`, YOU SPENT/gi,"As you wish, my mistress. You spent")
+				.replace("I WILL BE BACK IN","I will return in")
+				.replace("WITH","with")
+				.replace("ANIMALS","animals")
+				.replace("ESSENCE, AND","essence, and")
+				.replace("EXPERIENCE","experience");
+			return text;
+		case 'returned':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,shiryu2)
+				.replace("BEEP BOOP. I AM BACK WITH","Mistress, I have returned with")
+				.replace("ANIMALS","knights")
+				.replace("ESSENCE, AND","essence, and")
+				.replace("EXPERIENCE","exprerience");
 		default:
 			return text;
 	}

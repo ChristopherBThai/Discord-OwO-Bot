@@ -58,11 +58,14 @@ async function getPatreons(p){
 		}
 	}
 
+	csv = "Discord Name,Discord ID,Patreon Name,Pet Name,hp str pr wp mag mr,Pet Desc,Pet ID,SQL\n";
 	if(patreons["Custom Pet"].length){
 		text += "\n**Custom Pet**\n";
 		let list = patreons["Custom Pet"];
 		for(let i in list){
 			text += "<@"+list[i].discordID+"> | **"+list[i].name+"** | "+list[i].discordID+"\n";
+			let user = await p.global.getUser(list[i].discordID);
+			csv += (user?user.username:"A User")+","+list[i].discordID+","+list[i].name+"\n";
 		}
 	}
 
@@ -82,6 +85,7 @@ async function getPatreons(p){
 
 	await p.send(text,null,{split:true});
 	await p.send("Type `owo distributecowoncy {amount}` to send monthly cowoncy to "+cowoncy.length+" users");
+	await p.send('```'+csv+'```',null,{split:{prepend:'```',append:'```'}})
 }
 
 async function distributeCowoncy(p){

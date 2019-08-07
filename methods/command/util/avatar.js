@@ -44,7 +44,7 @@ module.exports = new CommandInterface({
 						"value":((user.nickname)?"`Nickname: "+user.nickname+"`\n":"")+"`ID: "+user.user.id+"`"+((user.roles.color)?"\n`RoleColor: "+user.displayHexColor+"`":"")
 				}],
 				"color": 4886754,
-				"image":{"url":user.user.avatarURL()},
+				"image":{"url":user.user.avatarURL({size:1024})},
 			}
 			p.send({embed});
 		}catch(e){
