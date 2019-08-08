@@ -34,7 +34,7 @@ exports.giveXP = async function(msg){
 	//console.log("["+msg.channel.id+"]"+msg.author.username+" earned "+gain+"xp");
 	redis.hmset("xplimit_"+msg.author.id,limit);
 	logger.value('xp',gain,['id:'+msg.author.id,'channel:'+msg.channel.id,'guild:'+msg.guild.id]);
-	let xp = await redis.incrXP(msg.author.id,gain);
+	let xp = await redis.incr("user_xp",msg.author.id,gain);
 
 }
 
@@ -44,12 +44,16 @@ exports.getUserLevel = async function(id){
 }
 
 exports.getUserRank = async function(id){
-	let rank = parseInt(await redis.getRank(id))+1;
+	let rank = parseInt(await redis.getRank("user_xp",id))+1;
 	return rank;
 }
 
 exports.getGlobalRanking = async function(count){
-	return await redis.getTopXP(count);
+	return await redis.getTop("user_xp",count);
+}
+
+exports.getNearbyXP = async function(rank,count=2){
+	return await redis.getRange("user_xp",rank-count-1,rank+count-1);
 }
 
 function getXpRequired(lvl){
