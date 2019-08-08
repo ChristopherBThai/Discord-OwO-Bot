@@ -135,10 +135,15 @@ var display = exports.display = async function(p,pageNum=0,sort=0,opt){
 	await msg.react(nextPageEmoji);
 	await msg.react(sortEmoji);
 	let filter = (reaction,user) => (reaction.emoji.name===sortEmoji||reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&users.includes(user.id);
-	let collector = await msg.createReactionCollector(filter,{time:150000});
+	let collector = await msg.createReactionCollector(filter,{time:900000});
+
+	let timer = setTimeout(function(){collector.stop()},120000);
 
 	collector.on('collect', async function(r){
 		try{
+			clearTimeout(timer);
+			timer = setTimeout(function(){collector.stop()},120000);
+
 			if(page){
 			/* Save the animal's action */
 			if(r.emoji.name===nextPageEmoji) {
