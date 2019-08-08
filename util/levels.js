@@ -25,7 +25,10 @@ exports.giveXP = async function(msg){
 	if(limit&&limit.day==getDate()){
 		if(limit.xp>dailyLimit) return;
 		else limit.xp = parseInt(limit.xp)+gain;
-	}else limit = {day:getDate(),xp:gain};
+	}else{
+		limit = {day:getDate(),xp:gain};
+		gain += 500;
+	}
 
 	// Check for macros
 	if(macro&&!macro.levelCheck(msg,limit))
