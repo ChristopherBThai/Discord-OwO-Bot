@@ -11,12 +11,13 @@ const global = require('../../../util/global.js');
 const animals = require('../../../../tokens/owo-animals.json');
 const animalUtil = require('../battle/util/animalUtil.js');
 const animalUtil2 = require('../zoo/animalUtil.js');
+const levels = require('../../../util/levels.js');
 
 module.exports = new CommandInterface({
 
 	alias:["my","me","guild"],
 
-	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse|daily|battle [global]",
+	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse|daily|battle|level [global]",
 
 	desc:"Displays your ranking of each category!\nYou can choose you rank within the server or globally!\nYou can also shorten the command like in the example!",
 
@@ -28,11 +29,11 @@ module.exports = new CommandInterface({
 	half:100,
 	six:500,
 
-	execute: function(p){
+	execute: async function(p){
 		if(p.command=="guild")
-			display(p.con,p.msg,["guild"]);
+			await display(p,p.con,p.msg,["guild"]);
 		else
-			display(p.con,p.msg,p.args);
+			await display(p,p.con,p.msg,p.args);
 	}
 
 })
@@ -43,7 +44,7 @@ module.exports = new CommandInterface({
  * @param {discord.Message}	msg 	- Discord's message
  * @param {string[]}		args 	- Command arguments
  */
-function display(con, msg, args){
+async function display(p,con, msg, args){
 	var channel = msg.channel;
 	var id = msg.author.id;
 
@@ -56,10 +57,10 @@ function display(con, msg, args){
 	var rep = false;
 	var pet = false;
 	var team = false;
-	var huntbot,luck,curse,daily,battle;
+	var huntbot,luck,curse,daily,battle,level;
 
 	for(var i=0;i<args.length;i++){
-		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet&&!huntbot&&!luck&&!curse&&!team&&!daily&&!battle){
+		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet&&!huntbot&&!luck&&!curse&&!team&&!daily&&!battle&&!level){
 			if(args[i]=== "points"||args[i]==="point"||args[i]==="p") points = true;
 			else if(args[i]==="guild"||args[i]==="server"||args[i]==="g"||args[i]==="s") guild = true;
 			else if(args[i]=== "zoo"||args[i]==="z") zoo = true;
@@ -70,6 +71,7 @@ function display(con, msg, args){
 			else if(args[i]==="luck") luck = true;
 			else if(args[i]==="curse") curse = true;
 			else if(args[i]==="battle"||args[i]==="streak") battle = true;
+			else if(args[i]==="level"||args[i]==="lvl"||args[i]==="xp") level= true;
 			else if(args[i]==="daily") daily = true;
 			//else if(args[i]==="team"||args[i]==='t') team = true;
 			else if(args[i]==="global"||args[i]==="g") aglobal = true;
@@ -94,6 +96,7 @@ function display(con, msg, args){
 		else if(team) getTeamRanking(aglobal,con,msg);
 		else if(battle) getBattleRanking(aglobal,con,msg);
 		else if(daily) getDailyRanking(aglobal,con,msg);
+		else if(level) await getLevelRanking(aglobal,p);
 		else getPointRanking(aglobal,con,msg);
 	}
 }
@@ -508,3 +511,36 @@ const apoints = "(a.common*"+animals.points.common+"+"+
 		"a.gem*"+animals.points.gem+"+"+
 		"a.legendary*"+animals.points.legendary+"+"+
 		"a.fabled*"+animals.points.fabled+")";
+
+async function getLevelRanking(global,p){
+	let userRank = await levels.getUserRank(p.msg.author.id);
+	let userLevel = await levels.getUserLevel(p.msg.author.id);
+	let ranking = await levels.getNearbyXP(userRank);
+	
+	let text = "```md\n< "+p.msg.author.username+"'s Global Level Ranking >\n> Your Rank: "+p.global.toFancyNum(userRank)+"\n>\t\tLvl "+userLevel.level+" "+userLevel.currentxp+"xp\n\n";
+	let counter = userRank-2;
+	if(counter<=1) counter = 1;
+	else text += ">...\n";
+
+	for(let i in ranking){
+		if(i%2){
+			let tempLevel = await levels.getLevel(ranking[i]);
+			text += "\t\tLvl "+tempLevel.level+" "+tempLevel.currentxp+"xp\n";
+		}else{
+			counter++;
+			if(ranking[i]==p.msg.author.id){
+				let user = p.msg.author.username;
+				text += "< "+counter+"\t"+user+" >\n";
+			}else{
+				let user = await p.global.getUser(ranking[i]);
+				if(!user) user = "User Left Discord";
+				else user = user.username;
+				text += "#"+counter+"\t"+user+"\n";
+			}
+		}
+	}
+	let date = new Date();
+	text+= ">...\n\n"+date.toLocaleString("en-US", {month: '2-digit', day: '2-digit', year:'numeric', hour12:false, hour: '2-digit', minute:'2-digit'})+"```";
+
+	await p.send(text,null,{split:{prepend:'```md\n',append:'```'}});
+}

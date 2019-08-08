@@ -14,11 +14,11 @@ module.exports = new CommandInterface({
 
 	alias:["profile"],
 
-	args:"set [about|accent|accent2] {argument}",
+	args:"set [about|background] {argument}",
 
 	desc:"Display your profile!",
 
-	example:["owo profile","owo profile set accent #FFFFFF"],
+	example:["owo profile","owo profile set about Hello!"],
 
 	related:[],
 
@@ -30,12 +30,15 @@ module.exports = new CommandInterface({
 		if(p.args.length<=0){
 			await displayProfile(p,p.msg.author);
 		}else if(p.global.isUser(p.args[0])||p.global.isInt(p.args[0])){
+			await displayProfile(p,p.msg.author);
+			/*
 			let user = p.args[0].match(/[0-9]+/)[0];
 			user = await p.global.getUser(user);
 			if(!user)
 				p.errorMsg(", I couldn't find that user!",3000);
 			else
 				await displayProfile(p,user);
+			*/
 		}else if(p.args.length>1&&p.args[0]=='set'){
 			switch(p.args[1]){
 				case 'about':
@@ -44,14 +47,16 @@ module.exports = new CommandInterface({
 				case 'background':
 					p.errorMsg(", command not complete yet!",3000);
 					break;
+				/*
 				case 'accent':
 					editAccent(p);
 					break;
 				case 'accent2':
 					editAccent2(p);
 					break;
+				*/
 				default:
-					p.errorMsg(", Invalid arguments! You can only edit `about`, `accent`, and `accent2`!",3000);
+					p.errorMsg(", Invalid arguments! You can only edit `about` and `background`!",3000);
 			}
 		}
 	}

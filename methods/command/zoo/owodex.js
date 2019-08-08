@@ -93,13 +93,17 @@ module.exports = new CommandInterface({
 			var desc = "*No description created\nHave a fun/creative description?\nUse 'owo feedback'!*";
 			if(animal.desc){
 				desc = "*"+animal.desc.trim()+"*";
-				if(descID = desc.match(/\?[0-9]+\?/))
-					if(descID = descID[0].match(/[0-9]+/)){
-						descID = await global.getUser(descID[0]);
-						desc = desc.replace(/\s*\?[0-9]+\?\s*/,(descID)?"* ***"+descID.username+"*** \n*":"* ***A User*** *");
-					}
+				let ids = desc.match(/\?[0-9]+\?/g);
+				for(let i in ids){
+					descID = ids[i].match(/[0-9]+/)
+					tempUser = await global.getUser(descID[0]);
+					desc = desc.replace(' ?'+descID+'? \n',(tempUser)?"* ***"+tempUser.username+"*** \n*":"* ***A User*** \n*");
+					desc = desc.replace(' ?'+descID+'?\n',(tempUser)?"* ***"+tempUser.username+"*** \n*":"* ***A User*** \n*");
+					desc = desc.replace(' ?'+descID+'? ',(tempUser)?"* ***"+tempUser.username+"*** *":"* ***A User*** *");
+				}
 			}
 			desc = desc.replace(/\n\*\*$/,"");
+			console
 
 			const embed = {
 				"title": ((animal.uni)?animal.uni:animal.value)+" "+animal.name,

@@ -441,7 +441,10 @@ async function getLevelRanking(global, p, count){
 		}
 	}
 
-	await p.send(text+"```",null,{split:{prepend:'```md\n',append:'```'}});
+	let date = new Date();
+	text+= "\n"+date.toLocaleString("en-US", {month: '2-digit', day: '2-digit', year:'numeric', hour12:false, hour: '2-digit', minute:'2-digit'})+"```";
+
+	await p.send(text,null,{split:{prepend:'```md\n',append:'```'}});
 }
 
 const points = "(common*"+animals.points.common+"+"+

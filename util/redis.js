@@ -30,9 +30,9 @@ exports.hmset = function(key,val){
 	});
 }
 
-exports.incrXP = function(key,val=1){
+exports.incr = function(table,key,val=1){
 	return new Promise(function(res,rej){
-		client.zincrby("user_xp",val,key,function(err,reply){
+		client.zincrby(table,val,key,function(err,reply){
 			if(err)
 				rej(err);
 			else
@@ -41,9 +41,20 @@ exports.incrXP = function(key,val=1){
 	});
 }
 
-exports.getTopXP = function(count = 5){
+exports.getTop = function(table,count = 5){
 	return new Promise(function(res,rej){
-		client.zrevrange("user_xp",0,count-1,'WITHSCORES',function(err,reply){
+		client.zrevrange(table,0,count-1,'WITHSCORES',function(err,reply){
+			if(err)
+				rej(err);
+			else
+				res(reply);
+		});
+	});
+}
+
+exports.getRange = function(table,min,max){
+	return new Promise(function(res,rej){
+		client.zrevrange(table,min,max,'WITHSCORES',function(err,reply){
 			if(err)
 				rej(err);
 			else
@@ -63,9 +74,9 @@ exports.getXP = function(id){
 	});
 }
 
-exports.getRank = function(id){
+exports.getRank = function(table,id){
 	return new Promise(function(res,rej){
-		client.zrevrank("user_xp",id,function(err,reply){
+		client.zrevrank(table,id,function(err,reply){
 			if(err)
 				rej(err);
 			else
