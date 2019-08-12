@@ -95,7 +95,7 @@ function suggest(p,message){
 		"timestamp": new Date(),
 		"author": {
 			"name": p.msg.author.username+"'s suggestion",
-			"icon_url":p.msg.author.avatarURL,
+			"icon_url":p.msg.author.avatarURL(),
 		},
 		"description":message,
 		"footer": {

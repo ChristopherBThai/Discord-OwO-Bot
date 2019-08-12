@@ -159,13 +159,14 @@ function elsa(text,type){
 	switch(type){
 		case 'hb':
 			text.author.name = text.author.name.replace("HuntBot","Bronze Knight");
-			text.fields[0].name = shiryu1+" `I will scour the cosmos for you, my mistress`";
+			text.description = shiryu1+" **`I will scour the cosmos for you, my mistress`**";
 			if(text.fields.length>=8){
 				text.fields[7].name = shiryu1+" I'm still gathering knights.";
 				text.fields[7].value = text.fields[7].value.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","I'll be back in")
 					.replace("DONE","done")
 					.replace("ANIMALS CAPTURED","knights found")
 			}
+			text.fields.shift()
 			return text;
 		case 'progress':
 			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,shiryu1)
