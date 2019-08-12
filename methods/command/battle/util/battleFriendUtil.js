@@ -97,7 +97,7 @@ exports.challenge = async function(p,id,bet){
 	flags = parseFlags(p,flags);
 
 	/* Insert challenge to database */
-	sql = `INSERT INTO user_battle (user1,user2,sender,bet,flags) values ((SELECT uid FROM user WHERE id = ${user1}),(SELECT uid FROM user WHERE id = ${user2}),(SELECT uid FROM user WHERE id = ${p.msg.author.id}),${bet},'${flags}') ON DUPLICATE KEY UPDATE time = NOW(), sender = (SELECT uid FROM user WHERE id = ${p.msg.author.id}), bet = ${bet}, flags = '${flags}';`;
+	sql = `INSERT INTO user_battle (user1,user2,sender,bet,flags,channel) values ((SELECT uid FROM user WHERE id = ${user1}),(SELECT uid FROM user WHERE id = ${user2}),(SELECT uid FROM user WHERE id = ${p.msg.author.id}),${bet},'${flags}',${p.msg.channel.id}) ON DUPLICATE KEY UPDATE time = NOW(), sender = (SELECT uid FROM user WHERE id = ${p.msg.author.id}), bet = ${bet}, flags = '${flags}', channel = ${p.msg.channel.id};`;
 	result = p.query(sql);
 
 	/* Send challenge request */

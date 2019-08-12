@@ -28,7 +28,7 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: async function(p){
-		let sql = `SELECT (SELECT id FROM user WHERE uid = sender) AS sender,bet,flags
+		let sql = `SELECT (SELECT id FROM user WHERE uid = sender) AS sender,bet,flags,channel
 			FROM user_battle JOIN
 				(SELECT uid FROM user WHERE id = ${p.msg.author.id}) AS user
 			WHERE
@@ -50,6 +50,11 @@ module.exports = new CommandInterface({
 
 		if(!result[0][0]||result[1].changedRows==0){
 			p.errorMsg(", You do not have any pending battles!",3000);
+			return;
+		}
+
+		if(result[0][0].channel!=p.msg.channel.id){
+			p.errorMsg(", You can only accept battle requests from the same channel!",3000);
 			return;
 		}
 
