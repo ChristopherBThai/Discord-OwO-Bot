@@ -25,7 +25,8 @@ exports.check = async function(ShardingManager){
 
 /* Checks ram and initial resetShards() if not enough */
 async function ramCheck(){
-	let ram = (await si.mem()).available;
+	let mem = await si.mem();
+	let ram = mem.available - mem.swaptotal;
 	console.log("CURRENT RAM: "+(ram/(1024*1024*1024))+"G");
 	if(ram<=resetbyte){
 		console.log("NOT ENOUGH RAM. RESETTING SHARDS");
@@ -46,8 +47,8 @@ function resetShard(id){
 	var num = id;
 	return function(){
 		Manager.broadcastEval(`
-			if(this.shard.id==${num}){
-				console.log("["+this.shard.id+"] Shard is restarting!");
+			if(this.shard.ids[0]==${num}){
+				console.log("["+this.shard.ids[0]+"] Shard is restarting!");
 				process.exit(0);
 			}
 		`);

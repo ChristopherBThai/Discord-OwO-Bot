@@ -45,11 +45,13 @@ module.exports = new CommandInterface({
 		}
 
 		// You can only divorce if you have married your SO for over a day
+		/*
 		let afterMid = dateUtil.afterMidnight(result[0].marriedDate);
 		if(!afterMid.after){
 			p.errorMsg(", you can only divorce after you have been with them for one day!",3000);
 			return;
 		}
+		*/
 
 		// Grab user and ring information
 		let ring = rings[result[0].rid];

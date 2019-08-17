@@ -331,7 +331,7 @@ function display(msg,con,send){
 				},
 				{
 					"name": "<a:essence:451638978299428875> Animal Essence - `"+(global.toFancyNum(essence))+"`",
-					"value": "`Current Max Autohunt: "+global.toFancyNum(maxhunt)+" animals, "+global.toFancyNum(Math.floor(gain.stat*duration.stat))+" essences, and "+global.toFancyNum(Math.floor(exp.stat*duration.stat))+" xp for "+(global.toFancyNum(maxhunt*cost.stat))+" cowoncy`",
+					"value": "`Current Max Autohunt: "+global.toFancyNum(maxhunt)+" animals, "+global.toFancyNum(Math.floor(gain.stat*duration.stat))+" essence, and "+global.toFancyNum(Math.floor(exp.stat*duration.stat))+" xp for "+(global.toFancyNum(maxhunt*cost.stat))+" cowoncy`",
 					"inline": false
 				}
 				]
