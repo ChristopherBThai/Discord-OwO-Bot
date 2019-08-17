@@ -37,7 +37,9 @@ module.exports = new CommandInterface({
 		/* Describe weapon */
 		}else if(p.args.length==1){
 
-			if(p.global.isUser(p.args[0])){
+			if(p.global.isInt(p.args[0])&&weaponUtil.getWID(parseInt(p.args[0])-100)){
+				await weaponUtil.display(p,0,0,{wid:parseInt(p.args[0])-100});
+			}else if(p.global.isUser(p.args[0])){
 				await weaponUtil.askDisplay(p,p.args[0].match(/[0-9]+/)[0]);
 			}else{
 				var uwid = p.args[0];
