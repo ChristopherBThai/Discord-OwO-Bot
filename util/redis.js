@@ -63,9 +63,9 @@ exports.getRange = function(table,min,max){
 	});
 }
 
-exports.getXP = function(id){
+exports.getXP = function(table,id){
 	return new Promise(function(res,rej){
-		client.zscore("user_xp",id,function(err,reply){
+		client.zscore(table,id,function(err,reply){
 			if(err)
 				rej(err);
 			else
