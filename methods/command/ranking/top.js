@@ -422,10 +422,18 @@ function getDailyRanking(globalRank, con, msg, count){
 }
 
 async function getLevelRanking(global, p, count){
-	let ranking = await levels.getGlobalRanking(count);
-	let userRank = await levels.getUserRank(p.msg.author.id);
-	let userLevel = await levels.getUserLevel(p.msg.author.id);
-	let text = "```md\n< Top "+count+" Global Level Rankings >\n> Your Rank: "+p.global.toFancyNum(userRank)+"\n>\t\tLvl "+userLevel.level+" "+userLevel.currentxp+"xp\n\n";
+	let ranking,userRank,userLevel,text;
+	if(global){
+		ranking = await levels.getGlobalRanking(count);
+		userRank = await levels.getUserRank(p.msg.author.id);
+		userLevel = await levels.getUserLevel(p.msg.author.id);
+		text = "```md\n< Top "+count+" Global Level Rankings >\n> Your Rank: "+p.global.toFancyNum(userRank)+"\n>\t\tLvl "+userLevel.level+" "+userLevel.currentxp+"xp\n\n";
+	}else{
+		ranking = await levels.getServerRanking(p.msg.guild.id,count);
+		userRank = await levels.getUserServerRank(p.msg.author.id,p.msg.guild.id);
+		userLevel = await levels.getUserServerLevel(p.msg.author.id,p.msg.guild.id);
+		text = "```md\n< Top "+count+" Level Rankings for "+p.msg.guild.name+" >\n> Your Rank: "+p.global.toFancyNum(userRank)+"\n>\t\tLvl "+userLevel.level+" "+userLevel.currentxp+"xp\n\n";
+	}
 	let counter = 0;
 
 	for(let i in ranking){

@@ -513,11 +513,19 @@ const apoints = "(a.common*"+animals.points.common+"+"+
 		"a.fabled*"+animals.points.fabled+")";
 
 async function getLevelRanking(global,p){
-	let userRank = await levels.getUserRank(p.msg.author.id);
-	let userLevel = await levels.getUserLevel(p.msg.author.id);
-	let ranking = await levels.getNearbyXP(userRank);
-	
-	let text = "```md\n< "+p.msg.author.username+"'s Global Level Ranking >\n> Your Rank: "+p.global.toFancyNum(userRank)+"\n>\t\tLvl "+userLevel.level+" "+userLevel.currentxp+"xp\n\n";
+	let userRank,userLevel,ranking,text;
+	if(global){
+		userRank = await levels.getUserRank(p.msg.author.id);
+		userLevel = await levels.getUserLevel(p.msg.author.id);
+		ranking = await levels.getNearbyXP(userRank);
+		text = "```md\n< "+p.msg.author.username+"'s Global Level Ranking >\n> Your Rank: "+p.global.toFancyNum(userRank)+"\n>\t\tLvl "+userLevel.level+" "+userLevel.currentxp+"xp\n\n";
+	}else{
+		userRank = await levels.getUserServerRank(p.msg.author.id,p.msg.guild.id);
+		userLevel = await levels.getUserServerLevel(p.msg.author.id,p.msg.guild.id);
+		ranking = await levels.getNearbyServerXP(userRank,p.msg.guild.id);
+		text = "```md\n< "+p.msg.author.username+"'s Level Ranking for "+p.msg.guild.name+" >\n> Your Rank: "+p.global.toFancyNum(userRank)+"\n>\t\tLvl "+userLevel.level+" "+userLevel.currentxp+"xp\n\n";
+	}
+
 	let counter = userRank-2;
 	if(counter<=1) counter = 1;
 	else text += ">...\n";
@@ -529,6 +537,7 @@ async function getLevelRanking(global,p){
 		}else{
 			counter++;
 			if(ranking[i]==p.msg.author.id){
+				counter = userRank;
 				let user = p.msg.author.username;
 				text += "< "+counter+"\t"+user+" >\n";
 			}else{

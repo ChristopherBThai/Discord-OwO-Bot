@@ -13,21 +13,25 @@ module.exports = new CommandInterface({
 
 	alias:["level","lvl","levels","xp"],
 
-	args:"",
+	args:"{server}",
 
 	desc:"Display your Level!",
 
-	example:[],
+	example:["owo level","owo level server"],
 
 	related:[],
 
-	cooldown:3000,
+	cooldown:15000,
 	half:100,
 	six:500,
 
 	execute: async function(p){
 		try{
-			let uuid = await levelUtil.display(p,p.msg.author);
+			let opt = {};
+			if(p.args[0]=='s'||p.args[0]=="server"||p.args[0]=='g'||p.args[0]=="guild"){
+				opt.guild = true;
+			}
+			let uuid = await levelUtil.display(p,p.msg.author,opt);
 
 			if(!uuid){
 				p.errorMsg(", I could not generate the image...",3000);

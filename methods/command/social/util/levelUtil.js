@@ -9,9 +9,9 @@ const request = require('request');
 const imagegenAuth = require('../../../../../tokens/imagegen.json');
 const levels = require('../../../../util/levels.js');
 
-exports.display = async function(p,user){
+exports.display = async function(p,user,opt){
 	/* Construct json for POST request */
-	let info = await generateJson(p,user);
+	let info = await generateJson(p,user,opt);
 	info.password = imagegenAuth.password;
 
 	/* Returns a promise to avoid callback hell */
@@ -39,12 +39,12 @@ exports.display = async function(p,user){
 	}
 }
 
-async function generateJson(p,user){
+async function generateJson(p,user,opt){
 	let avatarURL = user.avatarURL()
 	if(!avatarURL) avatarURL= user.defaultAvatarURL;
 	avatarURL = avatarURL.replace('.gif','.png').replace(/\?[a-zA-Z0-9=?&]+/gi,'');
 
-	let promises = [getRank(p,user),getBackground(p,user),levels.getUserLevel(user.id),getInfo(p,user)]
+	let promises = [getRank(p,user,opt),getBackground(p,user),opt.guild?levels.getUserServerLevel(user.id,p.msg.guild.id):levels.getUserLevel(user.id),getInfo(p,user)]
 	promises = await Promise.all(promises);
 
 	let rank = promises[0];
@@ -76,11 +76,19 @@ async function generateJson(p,user){
 	}
 }
 
-async function getRank(p,user){
-	let rank = p.global.toFancyNum(await levels.getUserRank(user.id));
+async function getRank(p,user,opt){
+	let rank;
+	if(opt.guild)
+		rank = p.global.toFancyNum(await levels.getUserServerRank(user.id,p.msg.guild.id));
+	else
+		rank = p.global.toFancyNum(await levels.getUserRank(user.id));
+	if(!rank||rank=="NaN")
+		rank = "Last";
+	else
+		rank = '#'+rank;
 	return {
 		img:'trophy.png',
-		text:'#'+rank
+		text:rank
 	}
 }
 
