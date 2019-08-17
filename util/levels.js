@@ -27,16 +27,18 @@ exports.giveXP = async function(msg){
 		if(limit.xp>dailyLimit) return;
 		else limit.xp = parseInt(limit.xp)+gain;
 	}else{
-		limit = {day:getDate(),xp:gain,guilds:[]};
+		limit = {day:getDate(),xp:gain,guilds:""};
 		bonus += 500;
 	}
 
 	let guildBonus = 0;
 	if(!limit.guilds) limit.guilds = [];
+	else limit.guilds = limit.guilds.split(",");
 	if(!limit.guilds.includes(msg.guild.id)){
 		limit.guilds.push(msg.guild.id);
 		guildBonus += 500;
 	}
+	limit.guilds = limit.guilds.join(",");
 
 	// Check for macros
 	if(macro&&!macro.levelCheck(msg,limit))
