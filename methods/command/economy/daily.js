@@ -52,7 +52,7 @@ module.exports = new CommandInterface({
 			if(err){console.error(err);return;}
 
 			/* Parse user's date info */
-			var afterMid = dateUtil.afterMidnight((rows[0][0])?rows[0][0].daily:undefined);
+			let afterMid = dateUtil.afterMidnight((rows[0][0])?rows[0][0].daily:undefined);
 
 			/* If it's not past midnight */
 			if(afterMid&&!afterMid.after){
@@ -120,39 +120,43 @@ module.exports = new CommandInterface({
 				// Check if married
 				let marriageText = "";
 				if(rows[2][0]&&rows[2][0].daily1&&rows[2][0].daily2){
-					let soID,soStreak,soDaily;
-					if(p.msg.author.id == rows[2][0].id1){
-						soID = rows[2][0].id2;
-						soStreak = rows[2][0].streak2;
-						soDaily = rows[2][0].daily2;
-					}else{
-						soID = rows[2][0].id1;
-						soStreak = rows[2][0].streak1;
-						soDaily = rows[2][0].daily1;
-					}
 
-					// If the parter has claimed their daily.. bonuses!
-					afterMid = dateUtil.afterMidnight(soDaily);
-					if(!afterMid.after){
-						let totalStreak = streak + soStreak;
-						let totalGain = Math.round(100 + Math.floor(Math.random()*100)+totalStreak*12.5);
-						if(totalGain>1000) totalGain = 1000;
-						sql += `UPDATE cowoncy SET money = money + ${totalGain} WHERE id IN (${soID},${p.msg.author.id});`;
-						sql += `UPDATE marriage SET dailies = dailies + 1 WHERE uid1 = ${rows[2][0].uid1} AND uid2 = ${rows[2][0].uid2};`;
+					// daily can only be claimed the day after married
+					afterMid = dateUtil.afterMidnight(rows[2][0].marriedDate);
+					if(afterMid.after){
 
-						let so = await p.global.getUser(soID);
-						let ring = rings[rows[2][0].rid];
-						text += "\n"+ring.emoji+"** |** You and "+(so?so.username:"your partner")+" received <:cowoncy:416043450337853441> **"+totalGain+" Cowoncy** and a ";
-
-						if(Math.random()<.5){
-							sql += "INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES ("+p.msg.author.id+",1,0,'2017-01-01'),("+soID+",1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
-							text += "<:box:427352600476647425> **lootbox**!";
+						let soID,soStreak,soDaily;
+						if(p.msg.author.id == rows[2][0].id1){
+							soID = rows[2][0].id2;
+							soStreak = rows[2][0].streak2;
+							soDaily = rows[2][0].daily2;
 						}else{
-							sql += "INSERT INTO crate(uid,cratetype,boxcount,claimcount,claim) VALUES ((SELECT uid FROM user WHERE id = "+p.msg.author.id+"),0,1,0,'2017-01-01'),((SELECT uid FROM user WHERE id = "+soID+"),0,1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
-							text += "<:crate:523771259302182922> **weapon crate**!";
+							soID = rows[2][0].id1;
+							soStreak = rows[2][0].streak1;
+							soDaily = rows[2][0].daily1;
 						}
 
+						// If the parter has claimed their daily.. bonuses!
+						afterMid = dateUtil.afterMidnight(soDaily);
+						if(!afterMid.after){
+							let totalStreak = streak + soStreak;
+							let totalGain = Math.round(100 + Math.floor(Math.random()*100)+totalStreak*12.5);
+							if(totalGain>1000) totalGain = 1000;
+							sql += `UPDATE cowoncy SET money = money + ${totalGain} WHERE id IN (${soID},${p.msg.author.id});`;
+							sql += `UPDATE marriage SET dailies = dailies + 1 WHERE uid1 = ${rows[2][0].uid1} AND uid2 = ${rows[2][0].uid2};`;
 
+							let so = await p.global.getUser(soID);
+							let ring = rings[rows[2][0].rid];
+							text += "\n"+ring.emoji+"** |** You and "+(so?so.username:"your partner")+" received <:cowoncy:416043450337853441> **"+totalGain+" Cowoncy** and a ";
+
+							if(Math.random()<.5){
+								sql += "INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES ("+p.msg.author.id+",1,0,'2017-01-01'),("+soID+",1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
+								text += "<:box:427352600476647425> **lootbox**!";
+							}else{
+								sql += "INSERT INTO crate(uid,cratetype,boxcount,claimcount,claim) VALUES ((SELECT uid FROM user WHERE id = "+p.msg.author.id+"),0,1,0,'2017-01-01'),((SELECT uid FROM user WHERE id = "+soID+"),0,1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
+								text += "<:crate:523771259302182922> **weapon crate**!";
+							}
+						}
 					}
 				}
 
