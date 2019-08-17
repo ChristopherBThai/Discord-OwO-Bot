@@ -123,7 +123,7 @@ var display = exports.display = async function(p,pageNum=0,sort=0,opt){
 	users.push(user.id);
 
 	/* Construct initial page */
-	let page = await getDisplayPage(p,user,pageNum,sort);
+	let page = await getDisplayPage(p,user,pageNum,sort,opt);
 	if(!page) return;
 
 	/* Send msg and add reactions */
@@ -149,18 +149,18 @@ var display = exports.display = async function(p,pageNum=0,sort=0,opt){
 			if(r.emoji.name===nextPageEmoji) {
 				if(pageNum+1<page.maxPage) pageNum++;
 				else pageNum = 0;
-				page = await getDisplayPage(p,user,pageNum,sort);
+				page = await getDisplayPage(p,user,pageNum,sort,opt);
 				if(page) await msg.edit({embed:page.embed});
 			}
 			else if(r.emoji.name===prevPageEmoji){
 				if(pageNum>0) pageNum--;
 				else pageNum = page.maxPage-1;
-				page = await getDisplayPage(p,user,pageNum,sort);
+				page = await getDisplayPage(p,user,pageNum,sort,opt);
 				if(page) await msg.edit({embed:page.embed});
 			}
 			else if(r.emoji.name===sortEmoji){
 				sort = (sort+1)%4;
-				page = await getDisplayPage(p,user,pageNum,sort);
+				page = await getDisplayPage(p,user,pageNum,sort,opt);
 				if(page) await msg.edit({embed:page.embed});
 			}
 			}
@@ -236,7 +236,8 @@ exports.askDisplay = async function(p, id){
 }
 
 /* Gets a single page */
-var getDisplayPage = async function(p,user,page,sort){
+var getDisplayPage = async function(p,user,page,sort,opt={}){
+	let {wid} = opt;
 	/* Query all weapons */
 	let sql = `SELECT temp.*,user_weapon_passive.wpid,user_weapon_passive.pcount,user_weapon_passive.stat as pstat
 		FROM
@@ -245,8 +246,10 @@ var getDisplayPage = async function(p,user,page,sort){
 				INNER JOIN user_weapon ON user.uid = user_weapon.uid
 				LEFT JOIN animal ON animal.pid = user_weapon.pid
 			WHERE
-				user.id = ${user.id}
-			ORDER BY `;
+				user.id = ${user.id} `;
+			if(wid)
+				sql += `AND user_weapon.wid = ${wid} `;
+	sql += 		`ORDER BY `;
 
 			if(sort===1)
 				sql += 'user_weapon.avg DESC,';
@@ -264,7 +267,10 @@ var getDisplayPage = async function(p,user,page,sort){
 	sql += `SELECT COUNT(uwid) as count FROM user
 			INNER JOIN user_weapon ON user.uid = user_weapon.uid
 		WHERE
-			user.id = ${user.id};`;
+			user.id = ${user.id} `;
+		if(wid)
+			sql += `AND user_weapon.wid = ${wid} `;
+	sql += ';';
 	var result = await p.query(sql);
 
 	/* out of bounds or no weapon */
@@ -281,29 +287,30 @@ var getDisplayPage = async function(p,user,page,sort){
 
 
 	/* Parse all weapons */
-	let weapons = parseWeaponQuery(result[0]);
+	let user_weapons = parseWeaponQuery(result[0]);
 
 	/* Parse actual weapon data for each weapon */
 	let desc = "Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nSell `owo sell {weaponID|commonweapons,rareweapons...}`\n";
-	for(var key in weapons){
-		let weapon = parseWeapon(weapons[key]);
+	for(var key in user_weapons){
+		let weapon = parseWeapon(user_weapons[key]);
 		if(weapon){
 			let emoji = `${weapon.rank.emoji}${weapon.emoji}`;
 			for(var i=0;i<weapon.passives.length;i++){
 				let passive = weapon.passives[i];
 				emoji += passive.emoji;
 			}
-			desc += `\n\`${weapons[key].uwid}\` ${emoji} **${weapon.name}** | Quality: ${weapon.avgQuality}%`;
-			if(weapons[key].animal.name){
-				let animal = p.global.validAnimal(weapons[key].animal.name);
-				desc += ` | ${(animal.uni)?animal.uni:animal.value} ${(weapons[key].animal.nickname)?weapons[key].animal.nickname:""}`;
+			desc += `\n\`${user_weapons[key].uwid}\` ${emoji} **${weapon.name}** | Quality: ${weapon.avgQuality}%`;
+			if(user_weapons[key].animal.name){
+				let animal = p.global.validAnimal(user_weapons[key].animal.name);
+				desc += ` | ${(animal.uni)?animal.uni:animal.value} ${(user_weapons[key].animal.nickname)?user_weapons[key].animal.nickname:""}`;
 			}
 		}
 	}
 	/* Construct msg */
+	let title = user.username+"'s "+((wid)?weapons[wid].name:"weapons");
 	let embed = {
 		"author":{
-			"name":user.username+"'s weapons",
+			"name":title,
 			"icon_url":user.avatarURL()
 		},
 		"description":desc,
@@ -684,4 +691,8 @@ var expandUWID = exports.expandUWID = function(euwid){
 	euwid = euwid+'';
 	if(!(/^[a-zA-Z0-9]+$/.test(euwid))) return;
 	return parseInt(euwid.toLowerCase(),36);
+}
+
+exports.getWID = function(id){
+	return weapons[id];
 }
