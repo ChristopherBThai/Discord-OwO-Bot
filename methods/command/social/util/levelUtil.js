@@ -109,10 +109,11 @@ function shortenInt(value){
 }
 
 async function getBackground(p,user){
-	let random = Math.floor(Math.random()*8)+1
-	let sql = `SELECT name_color FROM backgrounds WHERE bid = ${random};`
+	let sql = `SELECT b.name_color,b.bid FROM user u INNER JOIN user_profile up ON u.uid = up.uid INNER JOIN backgrounds b ON up.bid = b.bid WHERE id = ${user.id};`
 	let result = await p.query(sql);
-	return {id:random,color:result[0].name_color};
+	if(!result[0])
+		return {id:1};
+	return {id:result[0].bid,color:result[0].name_color};
 }
 
 async function getInfo(p,user){

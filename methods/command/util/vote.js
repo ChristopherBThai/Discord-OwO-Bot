@@ -62,7 +62,7 @@ module.exports = new CommandInterface({
 							text += box.text;
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
-							console.log("\x1b[33m",id+" has voted for the first time!");
+							//console.log("\x1b[33m",id+" has voted for the first time!");
 							p.logger.increment("votecount");
 						});
 					}else if(result[0][0].time>=12){
@@ -91,7 +91,7 @@ module.exports = new CommandInterface({
 							text += box.text;
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
-							console.log("\x1b[33m",id+" has voted and  received cowoncy!");
+							//console.log("\x1b[33m",id+" has voted and  received cowoncy!");
 							p.logger.increment("votecount");
 						});
 					}else{
@@ -101,7 +101,7 @@ module.exports = new CommandInterface({
 						//text += "**<:blank:427371936482328596> |** Please retype `owo vote` 1-10min after you vote!\n";
 						text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 						p.send(text);
-						console.log("\x1b[33m",id+" tried to vote again");
+						//console.log("\x1b[33m",id+" tried to vote again");
 					}
 				});
 			});

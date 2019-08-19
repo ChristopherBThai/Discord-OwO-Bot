@@ -5,14 +5,8 @@
  * For more information, see README.md and LICENSE
   */
 
-const fid = {};
-const food = require('../../../../json/food.json');
 const global = require('../../../../util/global.js');
 const numbers = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
-
-for(var key in food){
-	fid[food[key].id] = key;
-}
 
 exports.getItem = function(args){
 	var id = 0;
@@ -47,11 +41,3 @@ exports.toSmallNum = function(count,digits){
 		return result;
 }
 
-function getFood(id){
-	var key = fid[id];
-	if(!key){return "That id is wrong!";}
-	item = food[key];
-	if(!item){return "I could not find that item!";}
-	item.key = key;
-	return item;
-}

@@ -13,6 +13,7 @@ const gemUtil = require('../zoo/gemUtil.js');
 const shopUtil = require('./util/shopUtil.js');
 const weaponUtil = require('../battle/util/weaponUtil.js');
 const crateUtil = require('../battle/util/crateUtil.js');
+const wallpaperUtil = require('../social/util/wallpaperUtil.js');
 
 module.exports = new CommandInterface({
 
@@ -35,12 +36,15 @@ module.exports = new CommandInterface({
 
 		/* {emoji,id,count} */
 		try{
-			let ringItems = await ringUtil.getItems(p);
-			let lootboxItems = await lootboxUtil.getItems(p);
-			let gemItems = await gemUtil.getItems(p);
-			let weaponItems = await weaponUtil.getItems(p);
-			let crateItems = await crateUtil.getItems(p);
-			var text = addToString([ringItems,lootboxItems,gemItems,weaponItems,crateItems]);
+			let promises = await Promise.all([
+				ringUtil.getItems(p),
+				lootboxUtil.getItems(p),
+				gemUtil.getItems(p),
+				weaponUtil.getItems(p),
+				crateUtil.getItems(p),
+				wallpaperUtil.getItems(p)
+			]);
+			var text = addToString(promises);
 		}catch(err){
 			console.error(err);
 			return;
