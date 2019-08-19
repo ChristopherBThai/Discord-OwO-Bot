@@ -7,8 +7,19 @@
 
 const CommandInterface = require('../../commandinterface.js');
 
-const charLen = 30;
-const rings = require('../../../json/rings.json');
+const shopUtil = require('./util/shopUtil.js');
+const PageClass = require('./PageClass.js');
+const requireDir = require('require-dir');
+const dir = requireDir('./pages',{recurse:true});
+const nextPageEmoji = '➡';
+const prevPageEmoji = '⬅';
+
+var initialPages = [];
+for(let key in dir){
+	if(new dir[key]() instanceof PageClass){
+		initialPages.splice((new dir[key]()).id,0,dir[key]);
+	}
+}
 
 module.exports = new CommandInterface({
 
@@ -25,39 +36,70 @@ module.exports = new CommandInterface({
 	cooldown:15000,
 
 	execute: async function(p){
-		let embed = getPage(p,1);
-		embed.author.icon_url = p.msg.author.avatarURL();
-		p.send({embed});	
+		let pages = await initPages(p);
+
+		let embed = await getPage(p,pages);
+		let msg = await p.send({embed});	
+		let filter = (reaction,user) => (reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&user.id==p.msg.author.id;
+		let collector = await msg.createReactionCollector(filter,{time:180000});
+
+		await msg.react(prevPageEmoji);
+		await msg.react(nextPageEmoji);
+
+		collector.on('collect', async function(r){
+			if(r.emoji.name===nextPageEmoji) {
+				if(pages.currentPage<pages.totalPages) pages.currentPage++;
+				else pages.currentPage = 1;
+				embed = await getPage(p,pages);
+				await msg.edit({embed});
+			}
+			else if(r.emoji.name===prevPageEmoji){
+				if(pages.currentPage>1) pages.currentPage--;
+				else pages.currentPage = pages.totalPages;
+				embed = await getPage(p,pages);
+				await msg.edit({embed});
+			}
+		});
+
+		collector.on('end',async function(collected){
+			embed = await getPage(p,pages);
+			embed.color = 6381923;
+			await msg.edit("This message is now inactive",{embed});
+		});
 	}
 });
 
-function getPage(p,i){
-	switch(i){
-		case 1:
-			return {
-				"description": "Purchase a ring to propose to someone!\nAll rings are the same. Different tiers are available to show off your love!\n- **`owo buy {id}`** to buy an item\n- **`owo sell {id}`** to sell an item for 75% of its original price\n"+('═'.repeat(charLen+2))+"\n"+getRings(p),
-				"color": 4886754,
-				"author": {
-					"name": "OwO Shop: Rings",
-				},
-				"footer":{
-					"text": "Page 1/1"
-				}
-			}
-			break;
-		default:
-			return null;
+async function getPage(p,pages){
+	let embed = {
+		"author":{
+			"icon_url":p.msg.author.avatarURL()
+		},
+		"color": 4886754,
+		"footer":{
+			"text": "Page "+pages.currentPage+"/"+pages.totalPages
+		}
+	};
+	let tempPage = pages.currentPage;
+	for(let i in pages.pages){
+		let page = pages.pages[i];
+		if(tempPage <= page.totalPages){
+			return await page.getPage(tempPage,embed);
+		}else{
+			tempPage -= page.totalPages;
+		}
 	}
 }
 
-function getRings(p){
-	let result = "";
-	for(let i in rings){
-		let ring = rings[i];
-		let price = p.global.toShortNum(ring.price);
-		let cLength = charLen-ring.name.length+(4-(""+price).length);
-		if(cLength<0) cLength = 0;
-		result += "`"+ring.id+"` "+ring.emoji+" **`"+ring.name+" `**`"+("-".repeat(cLength))+" "+price+"` <:cowoncy:416043450337853441>\n";
+async function initPages(p){
+	let pages = [];
+	let totalPages = 0;
+	for(let i in initialPages){
+		let page = new initialPages[i](p);
+		let pageNum = await page.totalPages();
+		totalPages += pageNum;
+		page.totalPages = totalPages;
+		pages.push(page);
 	}
-	return result;
+
+	return {totalPages,pages,currentPage:1};
 }
