@@ -1,8 +1,8 @@
 {
 	"client":{
-		"messageCacheMaxSize":100,
-		"messageCacheLifetime":300,
-		"messageSweepInterval":500,
+		"messageCacheMaxSize":10,
+		"messageCacheLifetime":60,
+		"messageSweepInterval":60,
 		"disableEveryone":true,
 		"disabledEvents":[
 			"TYPEING_START",
