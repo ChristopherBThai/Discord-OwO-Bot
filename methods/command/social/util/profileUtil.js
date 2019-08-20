@@ -59,6 +59,7 @@ async function generateJson(p,user){
 	let userInfo = promises[6];
 
 	let aboutme = userInfo.about;
+	let title = userInfo.title;
 	let accent = userInfo.accent;
 	let accent2 = userInfo.accent2;
 
@@ -79,7 +80,7 @@ async function generateJson(p,user){
 			avatarURL,
 			name:user.username,
 			discriminator:user.discriminator,
-			title:'An OwO Bot User'
+			title
 		},
 		aboutme,
 		level,
@@ -153,7 +154,8 @@ async function getTeam(p,user){
 		FROM user INNER JOIN pet_team ON user.uid = pet_team.uid 
 			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid 
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid 
-		WHERE user.id = ${user.id}`;
+		WHERE user.id = ${user.id}
+		ORDER BY pos DESC`;
 	let result = await p.query(sql);
 	if(!result||!result[0]) return;
 	let animals = []
@@ -194,6 +196,10 @@ async function getInfo(p,user){
 			info.accent = result[0].accent;
 		if(result[0].accent2)
 			info.accent2 = result[0].accent2;
+		if(result[0].title)
+			info.title = result[0].title;
+		else
+			info.title = 'An OwO Bot User';
 	}
 	return info;
 }
@@ -261,6 +267,26 @@ exports.editAbout = async function(p){
 
 	let sql = `INSERT INTO user_profile (uid,about) VALUES (${uid},?) ON DUPLICATE KEY UPDATE about = ?;`;
 	await p.query(sql,[about,about]);
+	await displayProfile(p,p.msg.author);
+}
+
+exports.editTitle = async function(p){
+	if(p.args.length<3){
+		p.errorMsg(', Invalid arguments! Please use `owo profile set title {text}`',6000);
+		return;
+	}
+
+	let uid = await getUid(p,p.msg.author.id);
+
+	if(!uid){
+		p.errorMsg(", failed to change settings",3000);
+		return;
+	}
+
+	let title = p.args.slice(2,p.args.length).join(" ");
+
+	let sql = `INSERT INTO user_profile (uid,title) VALUES (${uid},?) ON DUPLICATE KEY UPDATE title = ?;`;
+	await p.query(sql,[title,title]);
 	await displayProfile(p,p.msg.author);
 }
 

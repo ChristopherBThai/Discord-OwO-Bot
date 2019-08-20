@@ -36,6 +36,15 @@ module.exports = new CommandInterface({
 	cooldown:15000,
 
 	execute: async function(p){
+		if(p.args.length&&["wallpaper","wp","wallpapers","background","backgrounds"].includes(p.args[0].toLowerCase())){
+			await shopUtil.displayWallpaperShop(p);
+		}else{
+			await displayShop(p);
+		}
+	}
+});
+
+async function displayShop(p){
 		let pages = await initPages(p);
 
 		let embed = await getPage(p,pages);
@@ -66,8 +75,7 @@ module.exports = new CommandInterface({
 			embed.color = 6381923;
 			await msg.edit("This message is now inactive",{embed});
 		});
-	}
-});
+}
 
 async function getPage(p,pages){
 	let embed = {

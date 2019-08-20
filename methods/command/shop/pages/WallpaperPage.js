@@ -20,7 +20,7 @@ module.exports = class WallpaperPage extends PageClass {
 	}
 
 	async totalPages(){
-		let sql = `SELECT COUNT(bid) AS count FROM backgrounds;`;
+		let sql = `SELECT COUNT(bid) AS count FROM backgrounds WHERE active = 1;`;
 		let result = await this.p.query(sql);
 		let pages = Math.ceil(result[0].count/perPage);
 		return pages;
@@ -28,8 +28,8 @@ module.exports = class WallpaperPage extends PageClass {
 
 	async getPage(page,embed){
 		embed.author.name = "OwO Shop: Wallpapers";
-		embed.description = "Purchase a wallpaper for your profile!\n- **`owo buy ${id}`** to buy an item\n- **`owo wallpaper`** to view your wallpapers\n- **`owo profile set wallpaper {id}`** to use it\n"+('═'.repeat(this.charLen+2));
-		let sql = `SELECT user_backgrounds.uid,backgrounds.* FROM backgrounds LEFT JOIN user_backgrounds ON backgrounds.bid = user_backgrounds.bid WHERE uid = (SELECT uid FROM user WHERE id = ${this.p.msg.author.id}) OR uid IS NULL LIMIT ${perPage} OFFSET ${perPage*(page-1)};`;
+		embed.description = "Purchase a wallpaper for your profile!\n- **`owo shop wp {page}`** to view the wallpaper as images\n- **`owo buy {id}`** to buy an item\n- **`owo wallpaper`** to view your wallpapers\n- **`owo profile set wallpaper {id}`** to use it\n"+('═'.repeat(this.charLen+2));
+		let sql = `SELECT user_backgrounds.uid,backgrounds.* FROM backgrounds LEFT JOIN user_backgrounds ON backgrounds.bid = user_backgrounds.bid WHERE backgrounds.active = 1 AND (uid = (SELECT uid FROM user WHERE id = ${this.p.msg.author.id}) OR uid IS NULL) LIMIT ${perPage} OFFSET ${perPage*(page-1)};`;
 		let result = await this.p.query(sql);
 		for(let i in result){
 			let wallpaper = result[i];
