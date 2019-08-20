@@ -10,7 +10,7 @@ const imagegen = require('../../../../../tokens/imagegen.json');
 const wallpaperEmoji = '🖼';
 
 exports.buy = async function(p,id){
-	let sql = `SELECT * FROM backgrounds WHERE bid = ${id-offsetID};`;
+	let sql = `SELECT * FROM backgrounds WHERE bid = ${id-offsetID} AND active = 1;`;
 	sql += `SELECT u.uid,b.bid FROM user u LEFT JOIN user_backgrounds b ON u.uid = b.uid AND b.bid = ${id-offsetID} WHERE id = ${p.msg.author.id};`;
 	let result = await p.query(sql);
 

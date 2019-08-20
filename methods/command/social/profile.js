@@ -14,7 +14,7 @@ module.exports = new CommandInterface({
 
 	alias:["profile"],
 
-	args:"set [about|background] {argument}",
+	args:"set [about|background|wallpaper|title] {argument}",
 
 	desc:"Display your profile!",
 
@@ -40,10 +40,12 @@ module.exports = new CommandInterface({
 				await displayProfile(p,user);
 			*/
 		}else if(p.args.length>1&&p.args[0]=='set'){
-			if(['about'].includes(p.args[1])){
+			if(['about'].includes(p.args[1].toLowerCase())){
 				profileUtil.editAbout(p);
-			}else if(['background','wallpaper','wp'].includes(p.args[1])){
+			}else if(['background','wallpaper','wp'].includes(p.args[1].toLowerCase())){
 				profileUtil.editBackground(p);
+			}else if(['title','status'].includes(p.args[1].toLowerCase())){
+				profileUtil.editTitle(p);
 			}else{
 				p.errorMsg(", Invalid arguments! You can only edit `about` and `background`!",3000);
 			}
