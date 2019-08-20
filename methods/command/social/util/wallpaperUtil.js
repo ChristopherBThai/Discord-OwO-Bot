@@ -66,6 +66,7 @@ exports.getItems = async function(p){
 	let sql = `SELECT COUNT(bid) AS count FROM user INNER JOIN user_backgrounds ON user.uid = user_backgrounds.uid WHERE id = ${p.msg.author.id};`;
 	let result = await p.query(sql);
 	if(!result[0]){return {}}
+	if(result[0].count<=0){return {};}
 
 	let items = {
 		'2--':{
