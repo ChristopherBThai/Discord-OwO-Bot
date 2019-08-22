@@ -187,7 +187,8 @@ async function getInfo(p,user){
 	let sql = `SELECT user_profile.* from user_profile INNER JOIN user ON user.uid = user_profile.uid WHERE user.id = ${user.id};`;
 	let result = await p.query(sql);
 	let info = {
-		about:"I'm just a plain human."
+		about:"I'm just a plain human.",
+		title:'An OwO Bot User'
 	};
 	if(result[0]){
 		if(result[0].about)
@@ -198,8 +199,6 @@ async function getInfo(p,user){
 			info.accent2 = result[0].accent2;
 		if(result[0].title)
 			info.title = result[0].title;
-		else
-			info.title = 'An OwO Bot User';
 	}
 	return info;
 }
@@ -216,7 +215,6 @@ var displayProfile = exports.displayProfile = async function(p,user){
 			}else
 				throw "Not found"
 		}catch(e){
-			console.log(e);
 			p.errorMsg(", failed to create profile image... Try again later :(",3000);
 		}
 }

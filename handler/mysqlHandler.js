@@ -15,14 +15,15 @@ module.exports = class MySQL{
 	constructor(connection) {
 		if(connection)
 			this.con = connection
-		else
+		else{
 			this.con =  require('../util/mysql.js').con;
+		}
 	}
 
 	/* Converts mysql queries to Promises */
 	query(sql,variables = []) {
 		return new Promise( (resolve, reject) => {
-			var query = this.con.query(sql,variables,function(err,rows){
+			let query = this.con.query(sql,variables,function(err,rows){
 				if(err) return reject(err);
 				resolve(rows);
 			});
