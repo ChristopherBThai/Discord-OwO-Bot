@@ -34,7 +34,7 @@ module.exports = new CommandInterface({
 			if(err){console.error(err);return;}
 			var question = p.args.join(" ");
 
-			p.send("**🎱 | "+p.msg.author+" asked:**  "+question+"\n**<:blank:427371936482328596> | Answer:**  "+rows[0].answer);
+			p.send("**🎱 | "+p.msg.author.username+" asked:**  "+question+"\n**<:blank:427371936482328596> | Answer:**  "+rows[0].answer);
 		});
 	}
 

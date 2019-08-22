@@ -55,6 +55,7 @@ async function generateJson(p,user,opt){
 	let aboutme = userInfo.about;
 	let accent = userInfo.accent;
 	let accent2 = userInfo.accent2;
+	let title = userInfo.title;
 
 	level = {lvl:level.level,maxxp:level.maxxp,currentxp:level.currentxp}
 
@@ -68,7 +69,7 @@ async function generateJson(p,user,opt){
 			avatarURL,
 			name:user.username,
 			discriminator:user.discriminator,
-			title:'An OwO Bot User'
+			title
 		},
 		aboutme,
 		level,
@@ -120,7 +121,8 @@ async function getInfo(p,user){
 	let sql = `SELECT user_profile.* from user_profile INNER JOIN user ON user.uid = user_profile.uid WHERE user.id = ${user.id};`;
 	let result = await p.query(sql);
 	let info = {
-		about:"I'm just a plain human."
+		about:"I'm just a plain human.",
+		title:'An OwO Bot User'
 	};
 	if(result[0]){
 		if(result[0].about)
@@ -129,6 +131,8 @@ async function getInfo(p,user){
 			info.accent = result[0].accent;
 		if(result[0].accent2)
 			info.accent2 = result[0].accent2;
+		if(result[0].title)
+			info.title = result[0].title;
 	}
 	return info;
 }

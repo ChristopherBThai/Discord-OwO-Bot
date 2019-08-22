@@ -7,6 +7,7 @@
 
 const CommandInterface = require('../../commandinterface.js');
 const imagegenAuth = require('../../../../tokens/imagegen.json');
+const levelRewards = require('../../../util/levelRewards.js');
 const levelUtil = require('./util/levelUtil.js');
 
 module.exports = new CommandInterface({
@@ -41,6 +42,7 @@ module.exports = new CommandInterface({
 			let url = imagegenAuth.imageGenUrl+'/level/'+uuid+'.png';
 			let warning = '⚠';
 			await p.send(warning+" **|** THIS COMMAND IS STILL A WORK IN PROGRESS",null,{files:[url]});
+			if(!opt.guild) await levelRewards.distributeRewards(p.msg);
 		}catch(e){
 			console.error(e);
 			p.errorMsg(", failed to create level image... Try again later :(",3000);
