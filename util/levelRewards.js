@@ -106,9 +106,9 @@ async function generateImage(msg,reward){
 		},
 		level:reward.level,
 		rewards:[
-			{img:'cowoncy.png',text:global.toFancyNum(reward.cowoncy)},
-			{img:'lootbox.png',text:global.toFancyNum(reward.lootbox)},
-			{img:'crate.png',text:global.toFancyNum(reward.weaponcrate)},
+			{img:'cowoncy.png',text:'+'+global.toFancyNum(reward.cowoncy)},
+			{img:'lootbox.png',text:'+'+global.toFancyNum(reward.lootbox)},
+			{img:'crate.png',text:'+'+global.toFancyNum(reward.weaponcrate)},
 		]
 	};
 	info.password = imagegenAuth.password;
