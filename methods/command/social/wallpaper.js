@@ -11,6 +11,7 @@ const imagegen = require('../../../../tokens/imagegen.json');
 const offsetID = 200;
 const nextPageEmoji = '➡';
 const prevPageEmoji = '⬅';
+const buyEmoji = '🖼';
 
 module.exports = new CommandInterface({
 
@@ -18,7 +19,7 @@ module.exports = new CommandInterface({
 
 	args:"{id}",
 
-	desc:"View your current wallpapers!",
+	desc:"View your current wallpapers! Equipped them by clicking the wallpaper emoji.\nYou can buy more wallpapers from the shop.",
 
 	example:["owo wallpaper","owo wallpaper 201"],
 
@@ -34,11 +35,12 @@ module.exports = new CommandInterface({
 
 		if(totalPages<=0) return;
 
-		let filter = (reaction,user) => (reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&user.id==p.msg.author.id;
+		let filter = (reaction,user) => (reaction.emoji.name===buyEmoji||reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&user.id==p.msg.author.id;
 		let collector = await msg.createReactionCollector(filter,{time:180000});
 
 		await msg.react(prevPageEmoji);
 		await msg.react(nextPageEmoji);
+		await msg.react(buyEmoji);
 
 		collector.on('collect', async function(r){
 			if(r.emoji.name===nextPageEmoji) {
@@ -46,12 +48,18 @@ module.exports = new CommandInterface({
 				else currentPage = 1;
 				page = await createPage(p,currentPage,totalPages);
 				await msg.edit(page);
-			}
-			else if(r.emoji.name===prevPageEmoji){
+			}else if(r.emoji.name===prevPageEmoji){
 				if(currentPage>1) currentPage--;
 				else currentPage = totalPages;
 				page = await createPage(p,currentPage,totalPages);
 				await msg.edit(page);
+			}else if(r.emoji.name==buyEmoji){
+				if(page.embed.bid){
+					let sql = `INSERT INTO user_profile (uid,bid) VALUES ((SELECT uid FROM user WHERE id = ${p.msg.author.id}),${page.embed.bid}) ON DUPLICATE KEY UPDATE bid = ${page.embed.bid};`;
+					await p.query(sql);
+					page = await createPage(p,currentPage,totalPages);
+					await msg.edit(page);
+				}
 			}
 		});
 
@@ -85,7 +93,8 @@ async function createPage(p,page,totalPages){
 			"url":imagegen.assetUrl+"/background/"+result[0].bid+".png"
 		};
 		if(result[0].profile)
-			embed.description = "*"+embed.description;
+			embed.description += "   *Currently Equipped*";
+		embed.bid = result[0].bid;
 	}else{
 		embed.description = "You don't have any wallpapers! :c Purchase one in `owo shop`!";
 		delete embed.footer;

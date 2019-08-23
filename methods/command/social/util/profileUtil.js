@@ -211,7 +211,7 @@ var displayProfile = exports.displayProfile = async function(p,user){
 			let url = imagegenAuth.imageGenUrl+'/profile/'+uuid+'.png';
 			if(uuid){
 				let warning = '⚠';
-				await p.send(warning+" **|** THIS COMMAND IS STILL A WORK IN PROGRESS",null,{files:[url]});
+				await p.send({files:[url]});
 			}else
 				throw "Not found"
 		}catch(e){

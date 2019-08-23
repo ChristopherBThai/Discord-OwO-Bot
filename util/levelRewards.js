@@ -11,27 +11,27 @@ exports.distributeRewards = async function(msg){
 	let perms = msg.channel.permissionsFor(msg.guild.me);
 	if(!perms.has('SEND_MESSAGES')||!perms.has('ATTACH_FILES')) return;
 
-	// Ignore any guild except support guild (for testing purpose)
-	if(msg.guild.id!='420104212895105044') return;
-
 	let level = (await levels.getUserLevel(msg.author.id)).level;
 	let sql = `SELECT user.uid,user_level_rewards.rewardLvl FROM user LEFT JOIN user_level_rewards ON user.uid = user_level_rewards.uid WHERE id = ${msg.author.id};`;
+	sql += `SELECT levelup FROM guild_setting WHERE id = ${msg.guild.id};`;
 	let result = await mysql.query(sql);
 	let uid,plevel = 0;
 
+	// level up is disabled in the guild
+	if(result[1][0]&&result[1][0].levelup==1) return;
+
 	// No uid
-	if(!result[0]||!result[0].uid){
+	if(!result[0][0]||!result[0][0].uid){
 		sql = `INSERT IGNORE INTO user (id,count) VALUES (${msg.author.id},0);`;
 		let result2 = await mysql.query(sql);
 		uid = result2.insertId;
 	}else{
-		uid = result[0].uid;
+		uid = result[0][0].uid;
 	}
 	
-	if(result[0]&&result[0].rewardLvl)
-		plevel = result[0].rewardLvl;
+	if(result[0][0]&&result[0][0].rewardLvl)
+		plevel = result[0][0].rewardLvl;
 
-	//console.log(plevel+" => "+level);
 	// If user already got the reward, ignore.
 	if(plevel >= level) return;
 
@@ -75,10 +75,9 @@ exports.distributeRewards = async function(msg){
 	let url = imagegenAuth.imageGenUrl+'/levelup/'+uuid+'.png';
 	let text = levelupEmoji+" **| "+msg.author.username+"** leveled up!";
 	if(level-plevel>1) text += "\n<:blank:427371936482328596> **|** Extra rewards were added for missing levels";
-	text += "\nREWARDS ARE NOT REAL. THIS IS A TEST. DO NOT PANIC.";
 
 	// distribute and send
-	//await mysql.query(sql);
+	await mysql.query(sql);
 	await msg.channel.send(text,{files:[url]});
 }
 
