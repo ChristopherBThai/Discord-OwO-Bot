@@ -16,7 +16,7 @@ module.exports = new CommandInterface({
 
 	args:"set [about|background|wallpaper|title] {argument}",
 
-	desc:"Display your profile!",
+	desc:"Display your profile! Level up by talking on Discord!",
 
 	example:["owo profile","owo profile set about Hello!"],
 

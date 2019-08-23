@@ -9,14 +9,15 @@ const CommandInterface = require('../../commandinterface.js');
 const imagegenAuth = require('../../../../tokens/imagegen.json');
 const levelRewards = require('../../../util/levelRewards.js');
 const levelUtil = require('./util/levelUtil.js');
+const settingEmoji = '⚙';
 
 module.exports = new CommandInterface({
 
 	alias:["level","lvl","levels","xp"],
 
-	args:"{server}",
+	args:"[server]",
 
-	desc:"Display your Level!",
+	desc:"Display your Level! Increase your level by talking on Discord! You will get rewards for leveling up. If you missed a level up reward, you can type this command to claim it.\nDisable level up messages for the guild by using 'owo level disabletext'",
 
 	example:["owo level","owo level server"],
 
@@ -27,25 +28,45 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: async function(p){
-		try{
-			let opt = {};
-			if(p.args[0]=='s'||p.args[0]=="server"||p.args[0]=='g'||p.args[0]=="guild"){
-				opt.guild = true;
-			}
-			let uuid = await levelUtil.display(p,p.msg.author,opt);
-
-			if(!uuid){
-				p.errorMsg(", I could not generate the image...",3000);
+		if(p.args.length>=1&&["disable","disabledtext","dt"].includes(p.args[0].toLowerCase())){
+			if(p.msg.member.hasPermission('MANAGE_CHANNELS')){
+				let sql = `INSERT INTO guild_setting (id,levelup) VALUES (${p.msg.guild.id},1) ON DUPLICATE KEY UPDATE levelup = 1;`;
+				await p.query(sql);
+				await p.replyMsg(settingEmoji,", level up messages will **not** be displayed in this guild.");
+			}else{
+				p.errorMsg(", you do not have the `MANAGE_CHANNELS` permission!",3000);
 				return;
 			}
+		}else if(p.args.length>=1&&["enable","enabletext","et"].includes(p.args[0].toLowerCase())){
+			if(p.msg.member.hasPermission('MANAGE_CHANNELS')){
+				let sql = `UPDATE guild_setting SET levelup = 0 WHERE id = ${p.msg.guild.id};`;
+				await p.query(sql);
+				await p.replyMsg(settingEmoji,", level up messages will be displayed in this guild.");
+			}else{
+				p.errorMsg(", you do not have the `MANAGE_CHANNELS` permission!",3000);
+				return;
+			}
+		}else{
+			try{
+				let opt = {};
+				if(p.args[0]=='s'||p.args[0]=="server"||p.args[0]=='g'||p.args[0]=="guild"){
+					opt.guild = true;
+				}
+				let uuid = await levelUtil.display(p,p.msg.author,opt);
 
-			let url = imagegenAuth.imageGenUrl+'/level/'+uuid+'.png';
-			let warning = '⚠';
-			await p.send(warning+" **|** THIS COMMAND IS STILL A WORK IN PROGRESS",null,{files:[url]});
-			if(!opt.guild) await levelRewards.distributeRewards(p.msg);
-		}catch(e){
-			console.error(e);
-			p.errorMsg(", failed to create level image... Try again later :(",3000);
+				if(!uuid){
+					p.errorMsg(", I could not generate the image...",3000);
+					return;
+				}
+
+				let url = imagegenAuth.imageGenUrl+'/level/'+uuid+'.png';
+				let warning = '⚠';
+				await p.send({files:[url]});
+				if(!opt.guild) await levelRewards.distributeRewards(p.msg);
+			}catch(e){
+				//console.error(e);
+				p.errorMsg(", failed to create level image... Try again later :(",3000);
+			}
 		}
 	}
 
