@@ -16,10 +16,10 @@ module.exports = class AbsorbWand extends WeaponInterface{
 		this.basicDesc = "";
 		this.emojis = ["<:cawand:572620164164747265>","<:uawand:572620164495966258>","<:rawand:572620164495966259>","<:eawand:572620164361617408>","<:mawand:572620164538040330>","<:lawand:572620164655480847>","<:fawand:572620164588240896>"]
 		this.defaultEmoji = "<:awand:572620163434676265>";
-		this.statDesc = "Deal **?%** of your "+WeaponInterface.magEmoji+"MAG to a random enemy and transfer **?%** of their max "+WeaponInterface.wpEmoji+"WP to an ally";
+		this.statDesc = "Deal **?%** of your "+WeaponInterface.magEmoji+"MAG to a random enemy and transfer their "+WeaponInterface.wpEmoji+"WP to an ally equal to **?%** of the damage done";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
-		this.qualityList = [[60,80],[10,30]];
+		this.qualityList = [[80,100],[10,30]];
 		this.manaRange = [250,150];
 	}
 
@@ -48,7 +48,7 @@ module.exports = class AbsorbWand extends WeaponInterface{
 		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.MAGICAL,{me,allies:team,enemies:enemy});
 
 		/* Steal WP */
-		let stole = (attacking.stats.wp[1]+attacking.stats.wp[3])*this.stats[1]/100;
+		let stole = damage*this.stats[1]/100;
 		if(stole > attacking.stats.wp[0]) stole = attacking.stats.wp[0];
 		attacking.stats.wp[0] -= stole;
 
