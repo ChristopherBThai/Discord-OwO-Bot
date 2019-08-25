@@ -16,6 +16,7 @@ const battleImageUtil = require('../battleImage.js');
 const WeaponInterface = require('../WeaponInterface.js');
 var allBuffs = WeaponInterface.allBuffs;
 const imagegenAuth = require('../../../../../tokens/imagegen.json');
+const request = require('request');
 const crateUtil = require('./crateUtil.js');
 
 const maxAnimals = 6;
@@ -620,6 +621,8 @@ var calculateAll = exports.calculateAll = function(p,battle,logs = []){
 /* Displays all the battle results according to setting */
 exports.displayAllBattles = async function(p,battle,logs,setting){
 	let endResult = logs[logs.length-1];
+	let logUUID = await createLogUUID(logs.slice(0,-1));
+	console.log("uuid: "+logUUID);
 	/* Instant mode sends just one message */
 	if(setting.speed=="instant"){
 		let battleLogs = [];
@@ -1100,7 +1103,9 @@ function updateTeamStats(team,stats){
 function saveStates(battle){
 	let player = [];
 	for(let i in battle.player.team){
+		let info = parseAnimalInfo(battle.player.team[i]);
 		let result = {
+			info,
 			hp:battle.player.team[i].stats.hp.slice(),
 			wp:battle.player.team[i].stats.wp.slice(),
 			buffs:[]
@@ -1123,6 +1128,12 @@ function saveStates(battle){
 		enemy.push(result);
 	}
 	return {player,enemy};
+}
+
+/* parses animal info for logs */
+function parseAnimalInfo(animal){
+	let info = animal;
+	return info;
 }
 
 /* Updates the previous hp/wp */
@@ -1155,3 +1166,30 @@ function parseLogs(logs){
 	text += "```";
 	return text;
 }
+
+/* Creates a uuid for battle logs website */
+async function createLogUUID(logs){
+	let info = {logs,password:imagegenAuth.password};
+	try{
+		return new Promise( (resolve, reject) => {
+			let req = request({
+				method:'POST',
+				uri:imagegenAuth.battleLogUri,
+				json:true,
+				body: info,
+			},(error,res,body)=>{
+				if(error){
+					resolve("");
+					return;
+				}
+				if(res.statusCode==200)
+					resolve(body);
+				else
+					resolve("");
+			});
+		});
+	}catch (err){
+		return;
+	}
+}
+
