@@ -4,7 +4,6 @@ const levelRewards = require('./levelRewards.js');
 var macro;
 try{macro = require('../../tokens/macro.js');}catch(e){console.error("Missing macro.js. Please add this file to ../tokens/macro.js\n",e)}
 const minXP = 10, maxXP = 15, dailyLimit = 3000;
-var cooldown = {};
 var banned = {};
 
 exports.giveXP = async function(msg){
@@ -12,11 +11,11 @@ exports.giveXP = async function(msg){
 	// must be a text channel
 	if(msg.channel.type=="dm") return;
 	
-	// Return if on cooldown (1min) or is a bot
-	if(!cooldown||msg.author.bot||cooldown[msg.author.id]||banned[msg.author.id]||banned[msg.channel.id]) return;
+	// Return if on banned or is a bot
+	if(msg.author.bot||banned[msg.author.id]||banned[msg.channel.id]) return;
 
-	// Set cooldown of 1 minute
-	cooldown[msg.author.id] = 1;
+	// Set cooldown 
+	if(!await redis.sadd('user_xp_cooldown',msg.author.id)) return;
 
 	// Give random amount of xp
 	let gain = minXP + Math.floor(Math.random()*(1+maxXP-minXP));
@@ -165,10 +164,3 @@ function getDate(date){
 	if(date) return (new Date(date)).toLocaleDateString("default",dateOptions);
 	return (new Date()).toLocaleDateString("default",dateOptions);
 }
-
-/* Reset cooldown every minute
- * This method is more efficient
- */
-setInterval(() => {
-	cooldown = {};
-}, 60000);
