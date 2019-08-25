@@ -5,8 +5,8 @@
  * For more information, see README.md and LICENSE
   */
 	
-const tracer = require('dd-trace').init()
 const debug = false;
+if(!debug) var tracer = require('dd-trace').init()
 
 /* Default is 4. Use higher numbers if you have enough cores */
 process.env.UV_THREADPOOL_SIZE = 17;
@@ -25,6 +25,7 @@ const ramCheck = require('./parent_methods/ramCheck.js');
 const vote = require('./parent_methods/vote.js');
 const lottery = require('./parent_methods/lottery.js');
 const messageHandler = require('./parent_methods/messageHandler.js');
+const levelCooldown = require('./parent_methods/levelCooldown.js');
 
 
 Manager.on('shardCreate', function(shard){
