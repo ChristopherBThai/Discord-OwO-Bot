@@ -5,6 +5,7 @@ const request = require('request');
 const levels = require('./levels.js');
 const global = require('./global.js');
 const levelupEmoji = '🎉';
+const infoEmoji = 'ℹ';
 
 exports.distributeRewards = async function(msg){
 	// If bot does not have permission to send a message, ignore.
@@ -75,6 +76,7 @@ exports.distributeRewards = async function(msg){
 	let url = imagegenAuth.imageGenUrl+'/levelup/'+uuid+'.png';
 	let text = levelupEmoji+" **| "+msg.author.username+"** leveled up!";
 	if(level-plevel>1) text += "\n<:blank:427371936482328596> **|** Extra rewards were added for missing levels";
+	if(!plevel) text += "\n"+infoEmoji+" **|** Level up messages can be disabled for the guild with `owo level disabletext`";
 
 	// distribute and send
 	await mysql.query(sql);
