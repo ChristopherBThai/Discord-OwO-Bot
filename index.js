@@ -5,8 +5,8 @@
  * For more information, see README.md and LICENSE
   */
 	
-const tracer = require('dd-trace').init()
 const debug = false;
+if(!debug) var tracer = require('dd-trace').init()
 
 /* Default is 4. Use higher numbers if you have enough cores */
 process.env.UV_THREADPOOL_SIZE = 17;
