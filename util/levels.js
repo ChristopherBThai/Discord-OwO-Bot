@@ -62,6 +62,11 @@ exports.giveXP = async function(msg){
 
 }
 
+/* Give xp to a user */
+exports.giveUserXP = async function(id,xp){
+	return await redis.incr("user_xp",id,xp);
+}
+
 /* Get global user level */
 exports.getUserLevel = async function(id){
 	let xp = parseInt(await redis.getXP("user_xp",id));
