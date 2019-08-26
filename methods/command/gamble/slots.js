@@ -8,8 +8,9 @@
 const CommandInterface = require('../../commandinterface.js');
 
 const maxBet = 50000;
-var slots = ["<:eggplant:417475705719226369>","<:heart:417475705899712522>","<:cherry:417475705178161162>","<:cowoncy:417475705912426496>","<:o_:417475705899843604>","<:w_:417475705920684053>"];
-var moving = "<a:slot_gif:417473893368987649>";
+const slots = ["<:eggplant:417475705719226369>","<:heart:417475705899712522>","<:cherry:417475705178161162>","<:cowoncy:417475705912426496>","<:o_:417475705899843604>","<:w_:417475705920684053>"];
+const moving = "<a:slot_gif:417473893368987649>";
+const alterSlot = require('../patreon/alterSlot.js');
 
 module.exports = new CommandInterface({
 
@@ -124,19 +125,23 @@ module.exports = new CommandInterface({
 				});
 
 				//Display slots
-				var machine = "**`___SLOTS___  `**\n"+moving+" "+moving+" "+moving+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+(p.global.toFancyNum(amount))+"\n`|         |`\n`|         |`";
+				let machine = "**`___SLOTS___  `**\n"+moving+" "+moving+" "+moving+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+(p.global.toFancyNum(amount))+"\n`|         |`\n`|         |`";
+				machine = alterSlot.alter(p.msg.author.id,machine);
 				msg.channel.send(machine)
 				.then(message => setTimeout(function(){
 
-				var machine = "**`___SLOTS___  `**\n"+rslots[0]+" "+moving+" "+moving+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+(p.global.toFancyNum(amount))+"\n`|         |`\n`|         |`";
+				machine = "**`___SLOTS___  `**\n"+rslots[0]+" "+moving+" "+moving+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+(p.global.toFancyNum(amount))+"\n`|         |`\n`|         |`";
+				machine = alterSlot.alter(p.msg.author.id,machine);
 				message.edit(machine)
 				.then(message => setTimeout(function(){
 
-				var machine = "**`___SLOTS___  `**\n"+rslots[0]+" "+moving+" "+rslots[2]+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+(p.global.toFancyNum(amount))+"\n`|         |`\n`|         |`";
+				machine = "**`___SLOTS___  `**\n"+rslots[0]+" "+moving+" "+rslots[2]+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+(p.global.toFancyNum(amount))+"\n`|         |`\n`|         |`";
+				machine = alterSlot.alter(p.msg.author.id,machine);
 				message.edit(machine)
 				.then(message => setTimeout(function(){
 
-				var machine = "**`___SLOTS___  `**\n"+rslots[0]+" "+rslots[1]+" "+rslots[2]+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+(p.global.toFancyNum(amount))+"\n`|         |`  and won "+winmsg+"\n`|         |`";
+				machine = "**`___SLOTS___  `**\n"+rslots[0]+" "+rslots[1]+" "+rslots[2]+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+(p.global.toFancyNum(amount))+"\n`|         |`  and won "+winmsg+"\n`|         |`";
+				machine = alterSlot.alter(p.msg.author.id,machine);
 				message.edit(machine);
 
 
