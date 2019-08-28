@@ -60,7 +60,7 @@ function lexus(text,type){
 				.replace("BEEP BOOP. I AM BACK WITH","Woof! I am back with")
 				.replace("ANIMALS","friends")
 				.replace("ESSENCE, AND","essence, and")
-				.replace("EXPERIENCE","exprerience!");
+				.replace("EXPERIENCE","experience!");
 		default:
 			return text;
 	}

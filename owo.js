@@ -6,7 +6,7 @@
   */
 
 //const tracer = require('dd-trace').init()
-const debug = true;
+const debug = false;
 if(!debug) var tracer = require('dd-trace').init()
 const whitelist = ['409959187229966337','420104212895105044','552384921914572802']
 if(debug) var auth = require('../tokens/scuttester-auth.json');
@@ -37,7 +37,7 @@ client.on('message',msg => {
 	if(msg.author.bot) return;
 
 	/* Ignore guilds if in debug mode */
-	else if(debug&&msg.guild&&!whitelist.includes(msg.guild.id)) return;
+	//else if(debug&&msg.guild&&!whitelist.includes(msg.guild.id)) return;
 
 	else if(msg.channel.id==modChannel) command.executeMod(msg);
 
