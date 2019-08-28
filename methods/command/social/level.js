@@ -28,7 +28,7 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: async function(p){
-		if(p.args.length>=1&&["disable","disabledtext","dt"].includes(p.args[0].toLowerCase())){
+		if(p.args.length>=1&&["disable","disabletext","dt"].includes(p.args[0].toLowerCase())){
 			if(p.msg.member.hasPermission('MANAGE_CHANNELS')){
 				let sql = `INSERT INTO guild_setting (id,levelup) VALUES (${p.msg.guild.id},1) ON DUPLICATE KEY UPDATE levelup = 1;`;
 				await p.query(sql);

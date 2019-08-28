@@ -132,12 +132,12 @@ process.on('message',message => {
 
 
 process.on('unhandledRejection', (reason, promise) => {
-	console.error("unhandledRejection at Shard "+client.shard.id+" error "+(new Date()).toLocaleString());
+	console.error("unhandledRejection at Shard "+client.shard.ids[0]+" error "+(new Date()).toLocaleString());
 	console.error(reason);
 });
 
 process.on('uncaughtException', err => {
-	console.error("uncaughtException at Shard "+client.shard.id+" error "+(new Date()).toLocaleString());
+	console.error("uncaughtException at Shard "+client.shard.ids[0]+" error "+(new Date()).toLocaleString());
 	console.error(err);
 	uncaughtHandler.handle(err);
 });
