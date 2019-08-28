@@ -16,7 +16,7 @@ const moving = "<a:slot_gif:417473893368987649>";
 
 exports.alter = function(id,text){
 	switch(id){
-		case '184587051943985152':
+		case '220934553861226498':
 			return geist(text);
 		default:
 			return text;
