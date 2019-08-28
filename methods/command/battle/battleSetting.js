@@ -109,6 +109,8 @@ async function changeSettings(p){
 			setting = 0;
 		}else if(args[1]=='true'){
 			setting = 1;
+		}else if(args[1]=='link'){
+			setting = 2;
 		}else{
 			p.errorMsg(", the log settings can only be `true`, or `false`!");
 			return;
@@ -154,6 +156,8 @@ function parseSettings(query){
 			speed = "lengthy";
 		if(query[0].logs==1)
 			logs = true;
+		else if(query[0].logs==2)
+			logs = "link";
 	}
 	return {auto,display,speed,showLogs:logs};
 }
