@@ -125,6 +125,10 @@ function parseSetting(query){
 			showLogs = true;
 			auto = true;
 			speed = "instant";
+		}else if(query[0].logs==2){
+			showLogs = "link";
+			auto = true;
+			speed = "instant";
 		}
 	}
 

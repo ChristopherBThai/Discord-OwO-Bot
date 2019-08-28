@@ -16,7 +16,9 @@ const battleImageUtil = require('../battleImage.js');
 const WeaponInterface = require('../WeaponInterface.js');
 var allBuffs = WeaponInterface.allBuffs;
 const imagegenAuth = require('../../../../../tokens/imagegen.json');
+const request = require('request');
 const crateUtil = require('./crateUtil.js');
+const alterBattle = require('../../patreon/alterBattle.js');
 
 const maxAnimals = 6;
 const attack = '👊🏼';
@@ -198,15 +200,14 @@ exports.initBattle = async function(p,setting){
 /* ==================================== battle display methods ====================================  */
 
 /* Generates a display for the current battle (image mode)*/
-var display = exports.display = async function(p,team,logs,{display,title,showLogs}){
-
+var display = exports.display = async function(p,team,logs,{display,title,showLogs,logLink}){
 	if(display=="text")
-		return displayText(p,team,logs,{title,showLogs});
+		return displayText(p,team,logs,{title,showLogs,logLink});
 	else if(display=="compact")
-		return displayCompact(p,team,logs,{title,showLogs});
+		return displayCompact(p,team,logs,{title,showLogs,logLink});
 	let image = await battleImageUtil.generateImage(team);
 	if(!image||image=="")
-		return displayCompact(p,team,logs,{title,showLogs});
+		return displayCompact(p,team,logs,{title,showLogs,logLink});
 	let logtext = "";
 	let pTeam = "";
 	for(var i=0;i<team.player.team.length;i++){
@@ -271,13 +272,14 @@ var display = exports.display = async function(p,team,logs,{display,title,showLo
 		}
 	}
 
-	if(showLogs) embed.description = parseLogs(logs);
+	if(logLink) embed.description = "[Log Link]("+logLink+")";
+	else if(showLogs) embed.description = parseLogs(logs);
 
 	return {embed}
 }
 
 /* displays the battle as text */
-var displayText = exports.displayText = async function(p,team,logs,{title,showLogs}){
+var displayText = exports.displayText = async function(p,team,logs,{title,showLogs,logLink}){
 	let logtext = "";
 	let pTeam = [];
 	for(var i=0;i<team.player.team.length;i++){
@@ -342,12 +344,13 @@ var displayText = exports.displayText = async function(p,team,logs,{title,showLo
 			"inline":true
 		});
 	}
-	if(showLogs) embed.description = parseLogs(logs);
+	if(logLink) embed.description = "[Log Link]("+logLink+")";
+	else if(showLogs) embed.description = parseLogs(logs);
 	return {embed};
 }
 
 /* displays the battle as compact mode*/
-var displayCompact = exports.displayCompact= async function(p,team,logs,{title,showLogs}){
+var displayCompact = exports.displayCompact= async function(p,team,logs,{title,showLogs,logLink}){
 	let pTeam = [];
 	for(var i=0;i<team.player.team.length;i++){
 		let player = team.player.team[i];
@@ -399,7 +402,8 @@ var displayCompact = exports.displayCompact= async function(p,team,logs,{title,s
 			"inline":true
 		});
 	}
-	if(showLogs) embed.description = parseLogs(logs);
+	if(logLink) embed.description = "[Log Link]("+logLink+")";
+	else if(showLogs) embed.description = parseLogs(logs);
 	return {embed};
 }
 
@@ -620,6 +624,12 @@ var calculateAll = exports.calculateAll = function(p,battle,logs = []){
 /* Displays all the battle results according to setting */
 exports.displayAllBattles = async function(p,battle,logs,setting){
 	let endResult = logs[logs.length-1];
+	let logLink;
+	if(setting.showLogs=="link"){
+		let uuid = await createLogUUID(logs.slice(0,-1));
+		if(uuid) logLink = imagegenAuth.owobotSite+"/battle-log/"+uuid;
+	}
+	setting.logLink = logLink;
 	/* Instant mode sends just one message */
 	if(setting.speed=="instant"){
 		let battleLogs = [];
@@ -663,6 +673,7 @@ exports.displayAllBattles = async function(p,battle,logs,setting){
 	updatePreviousStats(battle);
 	let embed = await display(p,battle,undefined,setting);
 	embed.embed.footer = {"text":"Turn 0/"+(logs.length-1)};
+	embed.embed = alterBattle.alter(p.msg.author.id,embed.embed);
 	let msg = await p.msg.channel.send(embed);
 
 	/* Update the message for each log in log timeline */
@@ -928,6 +939,7 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 				text+=`! Streak: ${battle.player.streak}`;
 		}else text += '!';
 		embed.embed.footer = {text};
+		embed.embed = alterBattle.alter(p.msg.author.id,embed.embed);
 		if(msg) await msg.edit(embed);
 		else p.send(embed);
 	}
@@ -942,6 +954,7 @@ async function finishFriendlyBattle(msg,p,battle,color,text,playerWin,enemyWin,l
 	let embed = await display(p,battle,logs,setting);
 	embed.embed.color = color;
 	embed.embed.footer = {text};
+	embed.embed = alterBattle.alter(p.msg.author.id,embed.embed);
 	if(msg) await msg.edit(embed);
 	else await p.send(embed);
 }
@@ -1100,7 +1113,9 @@ function updateTeamStats(team,stats){
 function saveStates(battle){
 	let player = [];
 	for(let i in battle.player.team){
+		let info = parseAnimalInfo(battle.player.team[i]);
 		let result = {
+			info,
 			hp:battle.player.team[i].stats.hp.slice(),
 			wp:battle.player.team[i].stats.wp.slice(),
 			buffs:[]
@@ -1112,7 +1127,9 @@ function saveStates(battle){
 	}
 	let enemy = [];
 	for(let i in battle.enemy.team){
+		let info = parseAnimalInfo(battle.enemy.team[i]);
 		let result = {
+			info,
 			hp:battle.enemy.team[i].stats.hp.slice(),
 			wp:battle.enemy.team[i].stats.wp.slice(),
 			buffs:[]
@@ -1123,6 +1140,12 @@ function saveStates(battle){
 		enemy.push(result);
 	}
 	return {player,enemy};
+}
+
+/* parses animal info for logs */
+function parseAnimalInfo(animal){
+	let info = animal;
+	return info;
 }
 
 /* Updates the previous hp/wp */
@@ -1155,3 +1178,30 @@ function parseLogs(logs){
 	text += "```";
 	return text;
 }
+
+/* Creates a uuid for battle logs website */
+async function createLogUUID(logs){
+	let info = {logs,password:imagegenAuth.password};
+	try{
+		return new Promise( (resolve, reject) => {
+			let req = request({
+				method:'POST',
+				uri:imagegenAuth.battleLogUri,
+				json:true,
+				body: info,
+			},(error,res,body)=>{
+				if(error){
+					resolve("");
+					return;
+				}
+				if(res.statusCode==200)
+					resolve(body);
+				else
+					resolve("");
+			});
+		});
+	}catch (err){
+		return;
+	}
+}
+
