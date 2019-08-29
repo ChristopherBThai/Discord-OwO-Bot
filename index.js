@@ -25,6 +25,7 @@ const ramCheck = require('./parent_methods/ramCheck.js');
 const vote = require('./parent_methods/vote.js');
 const lottery = require('./parent_methods/lottery.js');
 const messageHandler = require('./parent_methods/messageHandler.js');
+const levelCooldown = require('./parent_methods/levelCooldown.js');
 
 
 Manager.on('shardCreate', function(shard){

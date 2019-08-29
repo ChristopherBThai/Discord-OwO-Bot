@@ -13,6 +13,7 @@ const CommandInterface = require('../../commandinterface.js');
  */
 
 const dateUtil = require('../../../util/dateUtil.js');
+const levels = require('../../../util/levels.js');
 const rings = require('../../../json/rings.json');
 
 module.exports = new CommandInterface({
@@ -171,6 +172,7 @@ module.exports = new CommandInterface({
 							console.error(err);
 						});
 					}else p.send(text);
+					levels.giveUserXP(p.msg.author.id,100);
 				});
 			}
 		});
