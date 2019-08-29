@@ -48,7 +48,7 @@ module.exports = class AbsorbWand extends WeaponInterface{
 		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.MAGICAL,{me,allies:team,enemies:enemy});
 
 		/* Steal WP */
-		let stole = damage*this.stats[1]/100;
+		let stole = damage.amount*this.stats[1]/100;
 		if(stole > attacking.stats.wp[0]) stole = attacking.stats.wp[0];
 		attacking.stats.wp[0] -= stole;
 
