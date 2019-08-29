@@ -85,6 +85,28 @@ exports.getRank = function(table,id){
 	});
 }
 
+exports.sadd = function(table,value){
+	return new Promise(function(res,rej){
+		client.sadd(table,value,function(err,reply){
+			if(err)
+				rej(err);
+			else
+				res(reply);
+		});
+	});
+}
+
+exports.del = function(table){
+	return new Promise(function(res,rej){
+		client.del(table,function(err,reply){
+			if(err)
+				rej(err);
+			else
+				res(reply);
+		});
+	});
+}
+
 client.on('connect',function(){
 	console.log('Redis connected');
 });
