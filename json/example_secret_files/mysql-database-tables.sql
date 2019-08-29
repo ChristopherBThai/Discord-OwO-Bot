@@ -27,16 +27,9 @@ CREATE TABLE `animal` (
   `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `pid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `count` int(4) NOT NULL,
-  `lvl` int(11) NOT NULL DEFAULT '1',
-  `hp` int(11) NOT NULL DEFAULT '100',
   `xp` int(11) NOT NULL DEFAULT '0',
-  `won` int(11) NOT NULL DEFAULT '0',
-  `lost` int(11) NOT NULL DEFAULT '0',
-  `att` int(11) NOT NULL DEFAULT '65',
   `ispet` tinyint(4) DEFAULT '0',
   `nickname` varchar(35) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `draw` int(11) NOT NULL DEFAULT '0',
-  `streak` int(11) NOT NULL DEFAULT '0',
   `totalcount` int(4) NOT NULL DEFAULT '0',
   `offensive` tinyint(4) DEFAULT '0',
   `sellcount` int(10) unsigned DEFAULT '0',
@@ -44,8 +37,10 @@ CREATE TABLE `animal` (
   PRIMARY KEY (`id`,`name`),
   UNIQUE KEY `pid` (`pid`),
   UNIQUE KEY `pid_2` (`pid`),
-  UNIQUE KEY `pid_3` (`pid`)
-) ENGINE=InnoDB AUTO_INCREMENT=225187160 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  UNIQUE KEY `pid_3` (`pid`),
+  KEY `name` (`name`),
+  CONSTRAINT `animal_ibfk_1` FOREIGN KEY (`name`) REFERENCES `animals` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=225738192 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -92,6 +87,19 @@ CREATE TABLE `animal_food` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `animals`
+--
+
+DROP TABLE IF EXISTS `animals`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `animals` (
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `announcement`
 --
 
@@ -103,7 +111,7 @@ CREATE TABLE `announcement` (
   `url` varchar(75) NOT NULL,
   `adate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`aid`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -128,6 +136,23 @@ CREATE TABLE `autohunt` (
   `passwordtime` timestamp NOT NULL DEFAULT '2001-01-01 08:00:00',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `backgrounds`
+--
+
+DROP TABLE IF EXISTS `backgrounds`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `backgrounds` (
+  `bid` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `name_color` varchar(15) DEFAULT '255,255,255,255',
+  `bname` varchar(30) NOT NULL,
+  `price` int(10) unsigned NOT NULL DEFAULT '0',
+  `active` tinyint(4) DEFAULT '1',
+  PRIMARY KEY (`bid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -178,7 +203,7 @@ CREATE TABLE `blackjack` (
   `active` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `bjid` (`bjid`)
-) ENGINE=InnoDB AUTO_INCREMENT=2071451 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2088872 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -303,6 +328,20 @@ CREATE TABLE `eightball` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `emoji_steal`
+--
+
+DROP TABLE IF EXISTS `emoji_steal`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `emoji_steal` (
+  `uid` int(11) NOT NULL,
+  `guild` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `feedback`
 --
 
@@ -315,7 +354,7 @@ CREATE TABLE `feedback` (
   `message` varchar(255) NOT NULL,
   `sender` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6084 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7226 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -361,6 +400,20 @@ CREATE TABLE `guild` (
   `young` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `guild_setting`
+--
+
+DROP TABLE IF EXISTS `guild_setting`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `guild_setting` (
+  `id` bigint(20) unsigned NOT NULL,
+  `levelup` tinyint(4) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -481,7 +534,7 @@ CREATE TABLE `pet_team` (
   PRIMARY KEY (`pgid`,`uid`),
   KEY `uid` (`uid`),
   CONSTRAINT `pet_team_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=41300 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=64528 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -724,7 +777,7 @@ CREATE TABLE `transaction` (
   PRIMARY KEY (`sender`,`reciever`,`time`),
   UNIQUE KEY `tid` (`tid`),
   CONSTRAINT `transaction_ibfk_1` FOREIGN KEY (`sender`) REFERENCES `cowoncy` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=644001 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=917821 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -743,7 +796,7 @@ CREATE TABLE `user` (
   `started` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uid` (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=22097551 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=22354913 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -765,6 +818,23 @@ CREATE TABLE `user_announcement` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `user_backgrounds`
+--
+
+DROP TABLE IF EXISTS `user_backgrounds`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_backgrounds` (
+  `uid` int(11) NOT NULL DEFAULT '0',
+  `bid` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`uid`,`bid`),
+  KEY `bid` (`bid`),
+  CONSTRAINT `user_backgrounds_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`),
+  CONSTRAINT `user_backgrounds_ibfk_2` FOREIGN KEY (`bid`) REFERENCES `backgrounds` (`bid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `user_battle`
 --
 
@@ -781,6 +851,7 @@ CREATE TABLE `user_battle` (
   `win2` int(10) unsigned NOT NULL DEFAULT '0',
   `tie` int(10) unsigned NOT NULL DEFAULT '0',
   `flags` varchar(30) DEFAULT NULL,
+  `channel` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`user1`,`user2`),
   KEY `user2` (`user2`),
   KEY `sender` (`sender`),
@@ -828,6 +899,42 @@ CREATE TABLE `user_gem` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `user_level_rewards`
+--
+
+DROP TABLE IF EXISTS `user_level_rewards`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_level_rewards` (
+  `uid` int(11) NOT NULL,
+  `rewardLvl` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`uid`),
+  CONSTRAINT `user_level_rewards_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `user_profile`
+--
+
+DROP TABLE IF EXISTS `user_profile`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_profile` (
+  `uid` int(11) NOT NULL,
+  `bid` tinyint(3) unsigned DEFAULT NULL,
+  `accent` varchar(15) DEFAULT NULL,
+  `about` varchar(255) NOT NULL DEFAULT '',
+  `accent2` varchar(15) DEFAULT NULL,
+  `title` varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`uid`),
+  KEY `user_profile_ibfk_2` (`bid`),
+  CONSTRAINT `user_profile_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`),
+  CONSTRAINT `user_profile_ibfk_2` FOREIGN KEY (`bid`) REFERENCES `backgrounds` (`bid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `user_ring`
 --
 
@@ -864,7 +971,7 @@ CREATE TABLE `user_weapon` (
   KEY `wid` (`wid`),
   CONSTRAINT `user_weapon_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`),
   CONSTRAINT `user_weapon_ibfk_2` FOREIGN KEY (`wid`) REFERENCES `weapon` (`wid`)
-) ENGINE=InnoDB AUTO_INCREMENT=2486474 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3935932 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1066,35 +1173,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-06-21 14:52:01
-
-/* Extra data needed for owo bot to work: */
-LOCK TABLES `gem` WRITE;
-/*!40000 ALTER TABLE `gem` DISABLE KEYS */;
-INSERT INTO `gem` VALUES ('cgem1','multi'),('cgem2','patreon'),('cgem3','empow'),('cgem4','lucky'),('egem1','multi'),('egem2','patreon'),('egem3','empow'),('egem4','lucky'),('fgem1','multi'),('fgem2','patreon'),('fgem3','empow'),('fgem4','lucky'),('lgem1','multi'),('lgem2','patreon'),('lgem3','empow'),('lgem4','lucky'),('mgem1','multi'),('mgem2','patreon'),('mgem3','empow'),('mgem4','lucky'),('rgem1','multi'),('rgem2','patreon'),('rgem3','empow'),('rgem4','lucky'),('ugem1','multi'),('ugem2','patreon'),('ugem3','empow'),('ugem4','lucky');
-/*!40000 ALTER TABLE `gem` ENABLE KEYS */;
-UNLOCK TABLES;
-
-LOCK TABLES `buff` WRITE;
-/*!40000 ALTER TABLE `buff` DISABLE KEYS */;
-INSERT INTO `buff` VALUES (1),(2),(3),(4);
-/*!40000 ALTER TABLE `buff` ENABLE KEYS */;
-UNLOCK TABLES;
-
-LOCK TABLES `ring` WRITE;
-/*!40000 ALTER TABLE `ring` DISABLE KEYS */;
-INSERT INTO `ring` VALUES (1),(2),(3),(4),(5),(6),(7);
-/*!40000 ALTER TABLE `ring` ENABLE KEYS */;
-UNLOCK TABLES;
-
-LOCK TABLES `weapon` WRITE;
-/*!40000 ALTER TABLE `weapon` DISABLE KEYS */;
-INSERT INTO `weapon` VALUES (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12);
-/*!40000 ALTER TABLE `weapon` ENABLE KEYS */;
-UNLOCK TABLES;
-
-LOCK TABLES `weapon_passive` WRITE;
-/*!40000 ALTER TABLE `weapon_passive` DISABLE KEYS */;
-INSERT INTO `weapon_passive` VALUES (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),(13);
-/*!40000 ALTER TABLE `weapon_passive` ENABLE KEYS */;
-UNLOCK TABLES;
+-- Dump completed on 2019-08-29 16:01:17
