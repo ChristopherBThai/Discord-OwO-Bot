@@ -76,7 +76,7 @@ module.exports = new CommandInterface({
 			if(err) {console.error(err);return;}
 			text += "\n**<:blank:427371936482328596> |** You have **"+(result[1][0].lcount)+"** luck point(s)!";
 			p.send(text);
-			if(user&&quest) p.quest(quest,1,user);
+			if(user&&quest) p.quest(quest,1,user.user);
 		});
 	}
 
