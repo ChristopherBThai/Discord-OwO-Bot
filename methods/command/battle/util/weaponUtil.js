@@ -412,7 +412,7 @@ exports.describe = async function(p,uwid){
 exports.equip = async function(p,uwid,pet){
 	uwid = expandUWID(uwid);
 	if(!uwid){
-		p.errorMsg(", could not find that weapon or animal! The correct command is `owo weapon {weaponID} {animal}`");
+		p.errorMsg(", could not find that weapon or animal! The correct command is `owo weapon {weaponID} {animal}`\n"+p.config.emoji.blank+" **|** The weaponID can be found in the command `owo weapon`");
 		return;
 	}
 	/* Construct sql depending in pet parameter */
@@ -460,7 +460,7 @@ exports.equip = async function(p,uwid,pet){
 
 	/* A Failure (like me!) */
 	}else{
-		p.errorMsg(", could not find that weapon or animal! The correct command is `owo weapon {weaponID} {animal}`");
+		p.errorMsg(", could not find that weapon or animal! The correct command is `owo weapon {weaponID} {animal}`\n"+p.config.emoji.blank+" **|** The weaponID can be found in the command `owo weapon`");
 	}
 }
 

@@ -11,6 +11,7 @@ const rings = require('../../../../json/rings.json');
 const levels = require('../../../../util/levels.js');
 const animalUtil = require('../../battle/util/animalUtil.js');
 const offsetID = 200;
+const settingEmoji = '⚙';
 
 var display = exports.display = async function(p,user){
 	/* Construct json for POST request */
@@ -62,6 +63,7 @@ async function generateJson(p,user){
 	let title = userInfo.title;
 	let accent = userInfo.accent;
 	let accent2 = userInfo.accent2;
+	if(accent) background.color = accent;
 
 	level = {lvl:level.level,maxxp:level.maxxp,currentxp:level.currentxp}
 
@@ -340,6 +342,30 @@ exports.editAccent2 = async function(p){
 	let sql = `INSERT INTO user_profile (uid,accent2) VALUES (${uid},?) ON DUPLICATE KEY UPDATE accent2 = ?;`;
 	await p.query(sql,[rgb,rgb]);
 	await displayProfile(p,p.msg.author);
+}
+
+exports.setPublic = async function(p){
+	let uid = await getUid(p,p.msg.author.id);
+	if(!uid){
+		p.errorMsg(", failed to change settings",3000);
+		return;
+	}
+	let sql = `INSERT INTO user_profile (uid,private) VALUES (${uid},0) ON DUPLICATE KEY UPDATE private = 0;`;
+	await p.query(sql);
+
+	p.replyMsg(settingEmoji,", Your profile can now be seen by anyone!");
+}
+
+exports.setPrivate = async function(p){
+	let uid = await getUid(p,p.msg.author.id);
+	if(!uid){
+		p.errorMsg(", failed to change settings",3000);
+		return;
+	}
+	let sql = `INSERT INTO user_profile (uid,private) VALUES (${uid},1) ON DUPLICATE KEY UPDATE private = 1;`;
+	await p.query(sql);
+
+	p.replyMsg(settingEmoji,", Your profile can **not** be seen by anyone!");
 }
 
 async function getUid(p,id){
