@@ -14,11 +14,11 @@ module.exports = new CommandInterface({
 
 	alias:["profile"],
 
-	args:"set [about|background|wallpaper|title] {argument}",
+	args:"set [about|background|wallpaper|title|accent|public|private] {argument}",
 
 	desc:"Display your profile! Level up by talking on Discord!",
 
-	example:["owo profile","owo profile set about Hello!"],
+	example:["owo profile","owo profile set about Hello!","owo profile set private","owo profile set accent #FFFFFF"],
 
 	related:[],
 
@@ -56,7 +56,7 @@ module.exports = new CommandInterface({
 			}else if(['accent'].includes(p.args[1].toLowerCase())){
 				profileUtil.editAccent(p);
 			}else{
-				p.errorMsg(", Invalid arguments! You can only edit `about` and `background`!",3000);
+				p.errorMsg(", Invalid arguments! You can only edit `about`, `background`,`title` and `accent`!",3000);
 			}
 		}
 	}

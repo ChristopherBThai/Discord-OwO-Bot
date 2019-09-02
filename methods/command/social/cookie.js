@@ -76,7 +76,7 @@ async function give(p,con,msg,args,global,send){
 
 	result = await p.query(sql);
 	send("**<a:cookieeat:423020737364885525> | "+user.user.username+"**! You got a cookie from **"+msg.author.username+"**! *nom nom nom c:<*");
-	p.quest("cookieBy",1,user);
+	p.quest("cookieBy",1,user.user);
 
 }
 
