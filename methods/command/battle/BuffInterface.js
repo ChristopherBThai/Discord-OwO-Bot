@@ -103,9 +103,10 @@ module.exports = class BuffInterface{
 	postTurn(animal,ally,enemy,action){
 		this.duration -= 1;
 		if(this.duration<=0){
-			for(let i in animal.buffs){
+			for(let i=0;i<animal.buffs.length;i++){
 				if(animal.buffs[i].id == this.id && animal.buffs[i].from.pid==this.from.pid){
 					animal.buffs.splice(i,1);
+					i--;
 				}
 			}
 		}

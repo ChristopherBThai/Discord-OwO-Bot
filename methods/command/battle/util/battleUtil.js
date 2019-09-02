@@ -862,11 +862,14 @@ function postTurn(team,enemy,action){
 	let logs = [];
 	for(let i in team){
 		let animal= team[i];
-		for(let j in animal.buffs){
+		// Start from the top down to avoid splice errors
+		let j = animal.buffs.length;
+		while(j--){
 			let log = animal.buffs[j].postTurn(animal,team,enemy,action[i]);
 			if(log) logs = logs.concat(log.logs);
 		}
-		for(let j in animal.debuffs){
+		j = animal.debuffs.length;
+		while(j--){
 			let log = animal.debuffs[j].postTurn(animal,team,enemy,action[i]);
 			if(log) logs = logs.concat(log.logs);
 		}
