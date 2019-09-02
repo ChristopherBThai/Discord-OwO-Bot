@@ -76,6 +76,15 @@ exports.getUser = async function(mention,cache = false){
 	}
 }
 
+exports.getMember = async function(guild,user,cache=false){
+	if(!user) return;
+	try{
+		return await guild.members.fetch(user,cache);
+	}catch(e){
+		return;
+	}
+}
+
 exports.parseID = function(id){
 	id = id.match(/[:@][0-9]+>/);
 	if(!id) return;

@@ -215,7 +215,7 @@ async function display(p){
 	let result = await p.query(sql);
 
 	if(result.length<1){
-		p.errorMsg(", you are not married! Please purchase and include the ring id in the command!",3000);
+		p.errorMsg(", you are not married! Please purchase and include the ring id in the command! ex. `owo marry @user {ringID}`",3000);
 		return;
 	}
 
