@@ -30,15 +30,18 @@ module.exports = new CommandInterface({
 		if(p.args.length<=0){
 			await profileUtil.displayProfile(p,p.msg.author);
 		}else if(p.global.isUser(p.args[0])||p.global.isInt(p.args[0])){
-			await profileUtil.displayProfile(p,p.msg.author);
-			/*
 			let user = p.args[0].match(/[0-9]+/)[0];
 			user = await p.global.getUser(user);
 			if(!user)
 				p.errorMsg(", I couldn't find that user!",3000);
-			else
-				await displayProfile(p,user);
-			*/
+			else{
+				let sql = `SELECT private FROM user INNER JOIN user_profile ON user.uid = user_profile.uid WHERE id = ${user.id};`;
+				let result = await p.query(sql);
+				if(!result[0]||!result[0].private)
+					await profileUtil.displayProfile(p,user);
+				else
+					p.errorMsg(", **"+user.username+"** has their profile set to private");
+			}
 		}else if(p.args.length>1&&p.args[0]=='set'){
 			if(['about'].includes(p.args[1].toLowerCase())){
 				profileUtil.editAbout(p);
@@ -46,6 +49,12 @@ module.exports = new CommandInterface({
 				profileUtil.editBackground(p);
 			}else if(['title','status'].includes(p.args[1].toLowerCase())){
 				profileUtil.editTitle(p);
+			}else if(['private'].includes(p.args[1].toLowerCase())){
+				profileUtil.setPrivate(p);
+			}else if(['public'].includes(p.args[1].toLowerCase())){
+				profileUtil.setPublic(p);
+			}else if(['accent'].includes(p.args[1].toLowerCase())){
+				profileUtil.editAccent(p);
 			}else{
 				p.errorMsg(", Invalid arguments! You can only edit `about` and `background`!",3000);
 			}
