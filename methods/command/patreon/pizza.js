@@ -40,8 +40,14 @@ module.exports = new CommandInterface({
 			}else if(user.id==p.msg.author.id){
 				p.errorMsg(", You cannot give pizza to yourself!!",3000);
 				return;
+			}else{
+				user = await p.global.getMember(p.msg.guild,user);
+				if(!user){
+					p.errorMsg(", That user is not in this guild!",3000);
+					return;
+				}
 			}
-			give(p,user);
+			give(p,user.user);
 		}
 	}
 });

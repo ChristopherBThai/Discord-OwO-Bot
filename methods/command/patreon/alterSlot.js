@@ -24,7 +24,6 @@ exports.alter = function(id,text){
 }
 
 function geist(text){
-	console.log(text);
 	let fw = "<:fw:615450761911861261>";
 	let fo = "<:fo:615450761890889738>";
 	let fheart = "<:fheart:615450761962323978>"; 
@@ -43,12 +42,12 @@ function geist(text){
 		.replace("`|         |`","`|           |`")
 		.replace("`|         |`","`|    OwO    |`")
 		.replace("\n<","\n      <");
-	let line1 = text.match(/[^>]+bet <:cowoncy:416043450337853441> [0-9]+/gi);
+	let line1 = text.match(/[^>]+bet <:cowoncy:416043450337853441> [0-9,]+/gi);
 	if(line1){
 		text = text.replace(line1[0],"");
 		text += "\n"+line1[0].trim();
 	}
-	let line2 = text.match(/  and won <:cowoncy:416043450337853441> [0-9]+/gi);
+	let line2 = text.match(/  and won <:cowoncy:416043450337853441> [0-9,]+/gi);
 	if(line2){
 		text = text.replace(line2[0],"");
 		text += "\n"+line2[0].trim();

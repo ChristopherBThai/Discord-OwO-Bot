@@ -29,8 +29,16 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 		var user = undefined;
-		if(p.args.length>0)
+		if(p.args.length>0){
 			user = await p.global.getUser(p.args[0]);
+			if(user){
+				user = await p.global.getMember(p.msg.guild,user);
+				if(!user){
+					p.errorMsg(", That user is not in this guild!",3000);
+					return;
+				}
+			}
+		}
 		if(user&&user.id == p.msg.author.id)
 			user = undefined;
 		let quest;
@@ -40,7 +48,7 @@ module.exports = new CommandInterface({
 		if(p.command=="pray"){
 			const prayLine = prayLines[Math.floor(Math.random()*prayLines.length)];
 			if(user){
-				text = "**🙏 | "+p.msg.author.username+"** prays for **"+user.username+"**! "+prayLine;
+				text = "**🙏 | "+p.msg.author.username+"** prays for **"+user.user.username+"**! "+prayLine;
 				authorPoints = -1;
 				opponentPoints = 1;
 				quest = "prayBy";
@@ -51,7 +59,7 @@ module.exports = new CommandInterface({
 		}else{
 			const curseLine = curseLines[Math.floor(Math.random()*curseLines.length)];
 			if(user){
-				text = "**👻 | "+p.msg.author.username+"** puts a curse on **"+user.username+"**! "+curseLine;
+				text = "**👻 | "+p.msg.author.username+"** puts a curse on **"+user.user.username+"**! "+curseLine;
 				authorPoints = 1;
 				opponentPoints = -1;
 				quest = "curseBy";

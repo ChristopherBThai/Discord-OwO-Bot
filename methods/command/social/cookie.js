@@ -52,6 +52,12 @@ async function give(p,con,msg,args,global,send){
 	}else if(msg.author.id==user.id){
 		send("**🚫 |** You can't give yourself a cookie, silly!",3000);
 		return;
+	}else{
+		user = await p.global.getMember(p.msg.guild,user);
+		if(!user){
+			p.errorMsg(", That user is not in this guild!",3000);
+			return;
+		}
 	}
 
 	let sql = "SELECT user.uid,cookieTime FROM user LEFT JOIN timers ON user.uid = timers.uid WHERE id = "+p.msg.author.id+";";
@@ -69,7 +75,7 @@ async function give(p,con,msg,args,global,send){
 	sql += "INSERT INTO timers (uid,cookieTime) VALUES ((SELECT uid FROM user WHERE id = "+p.msg.author.id+"),"+afterMid.sql+") ON DUPLICATE KEY UPDATE cookieTime = "+afterMid.sql+";";
 
 	result = await p.query(sql);
-	send("**<a:cookieeat:423020737364885525> | "+user.username+"**! You got a cookie from **"+msg.author.username+"**! *nom nom nom c:<*");
+	send("**<a:cookieeat:423020737364885525> | "+user.user.username+"**! You got a cookie from **"+msg.author.username+"**! *nom nom nom c:<*");
 	p.quest("cookieBy",1,user);
 
 }
