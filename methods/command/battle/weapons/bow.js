@@ -19,7 +19,7 @@ module.exports = class Bow extends WeaponInterface{
 		this.statDesc = "Deals **?%** of your "+WeaponInterface.strEmoji+"STR to a random opponent";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
-		this.qualityList = [[100,160]];
+		this.qualityList = [[120,160]];
 		this.manaRange = [220,120];
 	}
 

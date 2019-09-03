@@ -17,7 +17,7 @@ module.exports = class Safeguard extends PassiveInterface{
 		this.basicDesc= "";
 		this.emojis = ["<:csafeguard:562175426026405913>","<:usafeguard:562175424852000788>","<:rsafeguard:562175425112178688>","<:esafeguard:562175424701136917>","<:msafeguard:562175425112047626>","<:lsafeguard:562175425061715978>","<:fsafeguard:562175424793411586>"];
 		this.statDesc = "Negate **?**% of the damage dealt to you with WP";
-		this.qualityList = [[25,50]];
+		this.qualityList = [[20,40]];
 	}
 
 	attacked(animal,attacker,damage,type,tags){
