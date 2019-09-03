@@ -127,7 +127,7 @@ for(let i=1;i<51;i++){
 	let xp = getXpRequired(i);
 	total += xp;
 	totali += i;
-	console.log(i+" | "+xp+" ("+Math.round(xp/3500)+") | "+total+" ("+Math.round(total/3500)+") | "+totali);
+	console.log(i+" | "+xp+" ("+Math.round(xp/3600)+") | "+total+" ("+Math.round(total/3600)+") | "+totali);
 }
 */
 
@@ -145,7 +145,7 @@ var getLevel = exports.getLevel = function(xp){
 }
 
 /* Ban a user from getting xp */
-function ban(id,time=3600000){
+function ban(id,time=1800000){
 	banned[id] = true;
 	setTimeout(() => { delete banned[id]; },time);
 }

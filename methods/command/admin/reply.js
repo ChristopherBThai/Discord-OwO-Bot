@@ -15,58 +15,78 @@ module.exports = new CommandInterface({
 
 	admin:true,
 	dm:true,
+	mod:true,
 
-	execute: function(p){
-		var global=p.global,con=p.con,args=p.args,msg=p.msg;
-		var dm = msg.channel;
-		var feedbackId = parseInt(args.shift());
-		var reply = args.join(' ');
-		if(reply.length > 250){
-			console.log("Admin Command: reply "+feedbackId+" {"+reply+"}");
-			console.log("\tMessage too big");
-			dm.send("Sorry! Messages must be under 250 character!!!")
-				.catch(err => console.error(err));
+	execute: async function(p){
+
+		// Get feedback ID
+		let feedbackId = p.args.shift();
+		if(!p.global.isInt(feedbackId)){
+			p.errorMsg(", Invalid feedback id!",3000);
 			return;
 		}
-		var sql = "SELECT type,message,sender FROM feedback WHERE id = "+feedbackId+";";
-		con.query(sql,async function(err,rows,field){
-			if(err) throw err;
-			var user = await global.getUser(String(rows[0].sender));
-			const embed = {
-				"color": 10590193,
-				"timestamp": new Date(),
-				"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
-				"author": {
-					"name": "OwO Bot Support",
-					"icon_url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"
-				},
-				"fields": [
-					{
-						"name":"Thank you for your feedback!",
-						"value": "==============================================="
-					},{
-						"name": "Message ID",
-						"value": feedbackId,
-						"inline": true
-					},{
-						"name": "Message Type",
-						"value": rows[0].type,
-						"inline": true
-					},{
-						"name": "Your Message",
-						"value": "```"+rows[0].message+"```"
-					},{
-						"name": "Reply from Admin",
-						"value": "```"+reply+"```\n\n==============================================="
-					}
-				]
-			};
+		feedbackId = parseInt(feedbackId);
 
+		// Parse reply msgs
+		let reply = p.args.join(' ');
+		if(reply.length > 250){
+			p.errorMsg(", Sorry! Messages must be under 250 character!!!");
+			return;
+		}else if(!reply||reply.length==0){
+			p.errorMsg(", Please include a message!",3000);
+			return;
+		}
+
+		// query
+		var sql = "SELECT type,message,sender FROM feedback WHERE id = "+feedbackId+";";
+		let result = await p.query(sql);
+		if(!result|!result[0]){
+			p.errorMsg(", Could not find that feedback id!",3000);
+			return;
+		}
+
+		// Create reply msg
+		let user = await p.global.getUser(String(result[0].sender));
+		if(!user){
+			p.errorMsg(", Could not find that user!",3000);
+			return;
+		}
+		let embed = {
+			"color": 10590193,
+			"timestamp": new Date(),
+			"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
+			"author": {
+				"name": "OwO Bot Support",
+				"icon_url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"
+			},
+			"fields": [
+				{
+					"name":"Thank you for your feedback!",
+					"value": "==============================================="
+				},{
+					"name": "Message ID",
+					"value": feedbackId,
+					"inline": true
+				},{
+					"name": "Message Type",
+					"value": result[0].type,
+					"inline": true
+				},{
+					"name": "Your Message",
+					"value": "```"+result[0].message+"```"
+				},{
+					"name": "Reply from Admin",
+					"value": "```"+reply+"```\n\n==============================================="
+				}
+			]
+		};
+
+		try{
 			user.send({embed})
-				.catch(err => console.error(err));
-			dm.send("Replied to user "+user.username)
-				.catch(err => console.error(err));
-		});
+			p.send("Replied to user "+user.username);
+		}catch(e){
+			p.errorMsg("Failed to message that user :(",3000);
+		}
 	}
 
 })
