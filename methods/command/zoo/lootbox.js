@@ -46,8 +46,6 @@ module.exports = new CommandInterface({
 		p.con.query(gem.sql,function(err,result){
 
 			if(err){
-				console.error(gem.sql);
-				console.error(err);
 				p.con.query("INSERT IGNORE INTO user (id) VALUES ("+p.msg.author.id+");"+gem.sql,function(err,result){
 					if(err){console.error(err);return;}
 				});
