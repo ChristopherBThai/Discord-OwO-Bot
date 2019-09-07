@@ -4,6 +4,7 @@
   "description": "a discord bot!",
   "main": "index.js",
   "dependencies": {
+    "@zuzak/owo": "^1.2.0",
     "bufferutil": "^4.0.1",
     "canvas": "^2.5.0",
     "dbl-api": "^1.2.1",
