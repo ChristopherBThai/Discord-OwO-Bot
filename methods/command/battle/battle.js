@@ -24,7 +24,7 @@ module.exports = new CommandInterface({
 
 	related:["owo zoo","owo pet","owo team","owo weapon"],
 
-	cooldown:15000,
+	cooldown:1000,//15000,
 	half:80,
 	six:500,
 	bot:true,

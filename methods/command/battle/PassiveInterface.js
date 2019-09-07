@@ -108,4 +108,7 @@ module.exports = class PassiveInterface{
 	/* If the passive owner is replenished (after bonus heal) */
 	postReplenished(animal,healer,amount,tag){}
 
+	/* If the passive owner is allowed to attack */
+	canAttack(me,ally,enemy,action,result){}
+
 }

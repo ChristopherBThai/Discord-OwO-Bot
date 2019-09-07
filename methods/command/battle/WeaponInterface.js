@@ -457,10 +457,39 @@ module.exports = class WeaponInterface{
 		return lowest;
 	}
 
+	/* Gets a dead animal */
+	static getDead(team){
+		for(let i=0;i<team.length;i++)
+			if(team[i].stats.hp[0]<=0)
+				return team[i];
+	}
+
 	/* Check if the animal is at max or higher health */
 	static isMaxHp(animal){
 		let hp = animal.stats.hp;
 		return hp[0] >= hp[1]+hp[3];
+	}
+
+	/* Check if the animal is at max or higher health */
+	static isMaxWp(animal){
+		let wp = animal.stats.wp;
+		return wp[0] >= wp[1]+wp[3];
+	}
+
+	/* Checks if the animal can attack or not */
+	static canAttack(animal,ally,enemy,action){
+		let result = {alive:animal.stats.hp[0]>0};
+		result.result = result.alive;
+
+		let subLogs = new Logs();
+		for(let i in animal.buffs)
+			subLogs.push(animal.buffs[i].canAttack(animal,ally,enemy,action,result));
+		if(animal.weapon)
+			for(let i in animal.weapon.passives)
+				subLogs.push(animal.weapon.passives[i].canAttack(animal,ally,enemy,action,result));
+
+		result = result.result;
+		return {canAttack:result,logs:subLogs};
 	}
 
 	/* Convert resistance to percent */
