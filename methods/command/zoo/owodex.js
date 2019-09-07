@@ -12,7 +12,7 @@ const animals = require('../../../../tokens/owo-animals.json');
 
 module.exports = new CommandInterface({
 
-	alias:["owodex","od","dex"],
+	alias:["owodex","od","dex","d"],
 
 	args:"{animal}",
 

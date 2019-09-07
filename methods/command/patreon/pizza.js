@@ -31,7 +31,7 @@ module.exports = new CommandInterface({
 	execute: async function(p){
 		if(p.args.length==0){
 			display(p);
-			p.setCooldown(10);
+			p.setCooldown(5);
 		}else{
 			let user = await p.global.getUser(p.args[0]);
 			if(!user){

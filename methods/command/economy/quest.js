@@ -28,7 +28,7 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	cooldown:1000,
+	cooldown:5000,
 	half:100,
 	six:500,
 
