@@ -35,6 +35,7 @@ module.exports = new CommandInterface({
 				user = await p.global.getMember(p.msg.guild,user);
 				if(!user){
 					p.errorMsg(", That user is not in this guild!",3000);
+					p.setCooldown(5);
 					return;
 				}
 			}
