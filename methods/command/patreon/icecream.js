@@ -7,17 +7,17 @@
 
 const CommandInterface = require('../../commandinterface.js');
 
-const pizzaEmoji = "🍕";
-const cosmonaut = "207298141731422211";
-const words = ["Yum!","Delicious!","*Drools...*","Lucky!!",":0","Yummy!"];
+const icecreamEmoji = "🍨";
+const lord = "520399213683671074";
+const words = ["Brain freeze!!!","Yum!","Delicious!","*Drools...*","Lucky!!",":0","Yummy!","Gimme gimme!"];
 
 module.exports = new CommandInterface({
 
-	alias:["pizza"],
+	alias:["icecream"],
 
 	args:"{@user}",
 
-	desc:"Give a pizza to someone! You can only gain pizza if you receive it! This command was created by Cosmonaut",
+	desc:"Give an ice cream to someone! You can only gain ice cream if you receive it! This command was created by Łord",
 
 	example:[],
 
@@ -31,7 +31,7 @@ module.exports = new CommandInterface({
 	execute: async function(p){
 		if(p.args.length==0){
 			display(p);
-			p.setCooldown(10);
+			p.setCooldown(5);
 		}else{
 			let user = await p.global.getUser(p.args[0]);
 			if(!user){
@@ -39,7 +39,7 @@ module.exports = new CommandInterface({
 				p.setCooldown(5);
 				return;
 			}else if(user.id==p.msg.author.id){
-				p.errorMsg(", You cannot give pizza to yourself!!",3000);
+				p.errorMsg(", You cannot give ice cream to yourself!!",3000);
 				p.setCooldown(5);
 				return;
 			}else{
@@ -56,36 +56,36 @@ module.exports = new CommandInterface({
 });
 
 async function display(p){
-	let sql = `SELECT pizza.count FROM user LEFT JOIN pizza ON user.uid = pizza.uid WHERE id = ${p.msg.author.id};`;
+	let sql = `SELECT icecream.count FROM user LEFT JOIN icecream ON user.uid = icecream.uid WHERE id = ${p.msg.author.id};`;
 	let result = await p.query(sql);
 
 	let count = 0;
 	if(result[0]&&result[0].count) count = result[0].count;
 
-	p.replyMsg(pizzaEmoji,", You currently have **"+count+"** pizzas to give!");
+	p.replyMsg(icecreamEmoji,", You currently have **"+count+"** scoops of ice cream to give!");
 }
 
 async function give(p,user){
-	if(p.msg.author.id!=cosmonaut){
-		// Subtract pizza
-		let sql = `UPDATE user LEFT JOIN pizza ON user.uid = pizza.uid SET pizza.count = pizza.count -1 WHERE id = ${p.msg.author.id} AND pizza.count>0;`;
+	if(p.msg.author.id!=lord){
+		// Subtract icecream 
+		let sql = `UPDATE user LEFT JOIN icecream ON user.uid = icecream.uid SET icecream.count = icecream.count -1 WHERE id = ${p.msg.author.id} AND icecream.count>0;`;
 		let result = await p.query(sql);
 
 		// Error checking
 		if(result.changedRows==0){
-			p.errorMsg(", you do not have any pizza! >:c",3000);
+			p.errorMsg(", you do not have any ice cream! >:c",3000);
 			p.setCooldown(5);
 			return;
 		}
 	}
 
-	// Add two pizza
-	sql = `INSERT IGNORE INTO pizza (uid,count) VALUES ((SELECT uid FROM user WHERE id = ${user.id}),2) ON DUPLICATE KEY UPDATE count = count + 2;`;
+	// Add two scoops 
+	sql = `INSERT IGNORE INTO icecream (uid,count) VALUES ((SELECT uid FROM user WHERE id = ${user.id}),2) ON DUPLICATE KEY UPDATE count = count + 2;`;
 	result = await p.query(sql);
 	if(result.warningCount>0){
 		sql = `INSERT IGNORE INTO user (id,count) VALUES (${user.id},0);${sql}`;
 		await p.query(sql);
 	}
 
-	p.replyMsg(pizzaEmoji,", you gave two pizzas to **"+user.username+"**! "+words[Math.floor(Math.random()*words.length)]);
+	p.replyMsg(icecreamEmoji,", you gave two scoops of ice cream to **"+user.username+"**! "+words[Math.floor(Math.random()*words.length)]);
 }

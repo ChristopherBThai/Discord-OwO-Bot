@@ -63,7 +63,7 @@ class Command {
 
 	execute(msg){
 		//Gets command arguments
-		var args;
+		let args;
 		if(msg.content.toLowerCase().indexOf(prefix) === 0)
 			args = msg.content.slice(prefix.length).trim().split(/ +/g);
 		else{
