@@ -10,6 +10,8 @@ exports.alter = function(id,text,type){
 	switch(id){
 		case '176046069954641921':
 			return crown(text,type);
+		case '250383887312748545':
+			return elsa(text,type);
 		default:
 			return text;
 	}
@@ -22,5 +24,14 @@ function crown(text,type){
 	}
 	text.author.name = "Someone accidently stepped on "+text.author.name.replace(" goes into battle","'s garden");
 	text.color = 16776960;
+	return text;
+}
+
+function elsa(text,type){
+	text.thumbnail = {
+		"url":"https://i.imgur.com/HovVT8A.gif"
+	}
+	text.color = 7319500;
+	text.author.name = text.author.name.replace(" goes into battle!","'s Knights fight for their Queen's Glory!");
 	return text;
 }

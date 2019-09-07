@@ -36,14 +36,17 @@ module.exports = new CommandInterface({
 			let user = await p.global.getUser(p.args[0]);
 			if(!user){
 				p.errorMsg(", Invalid syntax! Please tag a user!",3000);
+				p.setCooldown(5);
 				return;
 			}else if(user.id==p.msg.author.id){
 				p.errorMsg(", You cannot give pizza to yourself!!",3000);
+				p.setCooldown(5);
 				return;
 			}else{
 				user = await p.global.getMember(p.msg.guild,user);
 				if(!user){
 					p.errorMsg(", That user is not in this guild!",3000);
+					p.setCooldown(5);
 					return;
 				}
 			}
@@ -71,6 +74,7 @@ async function give(p,user){
 		// Error checking
 		if(result.changedRows==0){
 			p.errorMsg(", you do not have any pizza! >:c",3000);
+			p.setCooldown(5);
 			return;
 		}
 	}

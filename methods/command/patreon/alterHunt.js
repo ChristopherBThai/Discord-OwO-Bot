@@ -27,6 +27,8 @@ exports.alter = function(id,text){
 			return louis(text);
 		case '348828692539113490':
 			return michelle(text);
+		case '250383887312748545':
+			return elsa(text);
 		default:
 			return text;
 	}
@@ -66,7 +68,7 @@ function shippig(text){
 		.replace("You found: ","I broke into a zoo and kidnapped:\n**<:blank:427371936482328596> |** ")
 		.replace("spent 5 <:cowoncy:416043450337853441> and caught an ","I broke into a zoo and kidnapped an\n**<:blank:427371936482328596> |** ")
 		.replace("spent 5 <:cowoncy:416043450337853441> and caught a ","I broke into a zoo and kidnapped a\n**<:blank:427371936482328596> |** ");
-	var embed = {
+	let embed = {
 		"description":text,
 		"color":6315775,
 		"thumbnail":{
@@ -203,4 +205,21 @@ function michelle(text){
 			.replace("!\n<:blank","!\n"+blank+" **|** It returned and evolved into a Persian "+persian+"\n<:blank")
 	}
 	return text;
+}
+
+function elsa(text){
+	console.log(text);
+	if(text.indexOf("empowered by")>=0){
+		text = text.replace(", hunt is empowered by","'s Knights gather recruits! Using");
+	}else{
+		text = text.replace(" spent 5 <:cowoncy:416043450337853441> and caught","'s Knights found");
+	}
+	let embed = {
+		"description":text,
+		"color":7319500,
+		"thumbnail":{
+			"url":"https://i.imgur.com/yHXDB4y.gif"
+		}
+	};
+	return {embed};
 }
