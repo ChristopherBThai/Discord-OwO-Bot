@@ -208,7 +208,6 @@ function michelle(text){
 }
 
 function elsa(text){
-	console.log(text);
 	if(text.indexOf("empowered by")>=0){
 		text = text.replace(", hunt is empowered by","'s Knights gather recruits! Using");
 	}else{
@@ -218,7 +217,7 @@ function elsa(text){
 		"description":text,
 		"color":7319500,
 		"thumbnail":{
-			"url":"https://i.imgur.com/yHXDB4y.gif"
+			"url":"https://i.imgur.com/kDnD8WQ.gif"
 		}
 	};
 	return {embed};
