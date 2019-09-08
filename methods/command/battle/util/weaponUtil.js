@@ -17,6 +17,8 @@ const weaponEmoji = "🗡";
 const weaponPerPage = 10;
 const nextPageEmoji = '➡';
 const prevPageEmoji = '⬅';
+const rewindEmoji = '⏪';
+const fastForwardEmoji = '⏩';
 const sortEmoji = '🔃';
 
 /* Initialize all the weapons */
@@ -132,10 +134,13 @@ var display = exports.display = async function(p,pageNum=0,sort=0,opt){
 		msg = await p.msg.channel.send({embed:page.embed});
 	else
 		await msg.edit({embed:page.embed});
+
+	if(page.maxPage>19) await msg.react(rewindEmoji);
 	await msg.react(prevPageEmoji);
 	await msg.react(nextPageEmoji);
+	if(page.maxPage>19) await msg.react(fastForwardEmoji);
 	await msg.react(sortEmoji);
-	let filter = (reaction,user) => (reaction.emoji.name===sortEmoji||reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&users.includes(user.id);
+	let filter = (reaction,user) => [sortEmoji,nextPageEmoji,prevPageEmoji,rewindEmoji,fastForwardEmoji].includes(reaction.emoji.name)&&users.includes(user.id);
 	let collector = await msg.createReactionCollector(filter,{time:900000});
 
 	let timer = setTimeout(function(){collector.stop()},120000);
@@ -152,20 +157,28 @@ var display = exports.display = async function(p,pageNum=0,sort=0,opt){
 				else pageNum = 0;
 				page = await getDisplayPage(p,user,pageNum,sort,opt);
 				if(page) await msg.edit({embed:page.embed});
-			}
-			else if(r.emoji.name===prevPageEmoji){
+			}else if(r.emoji.name===prevPageEmoji){
 				if(pageNum>0) pageNum--;
 				else pageNum = page.maxPage-1;
 				page = await getDisplayPage(p,user,pageNum,sort,opt);
 				if(page) await msg.edit({embed:page.embed});
-			}
-			else if(r.emoji.name===sortEmoji){
+			}else if(r.emoji.name===sortEmoji){
 				sort = (sort+1)%4;
+				page = await getDisplayPage(p,user,pageNum,sort,opt);
+				if(page) await msg.edit({embed:page.embed});
+			}else if(r.emoji.name===rewindEmoji){
+				pageNum -= 5;
+				if(pageNum<0) pageNum = 0;
+				page = await getDisplayPage(p,user,pageNum,sort,opt);
+				if(page) await msg.edit({embed:page.embed});
+			}else if(r.emoji.name===fastForwardEmoji){
+				pageNum += 5;
+				if(pageNum>=page.maxPage) pageNum = page.maxPage-1;
 				page = await getDisplayPage(p,user,pageNum,sort,opt);
 				if(page) await msg.edit({embed:page.embed});
 			}
 			}
-		}catch(err){console.error(err);}
+		}catch(err){}
 	});
 
 	collector.on('end',async function(collected){
