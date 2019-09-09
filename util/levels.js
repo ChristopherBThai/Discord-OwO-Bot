@@ -22,42 +22,54 @@ exports.giveXP = async function(msg){
 
 	//Check if we hit the daily limit of xp
 	let limit = await redis.hgetall("xplimit_"+msg.author.id);
-	let bonus = 0;
+	let bonus = 0,guildBonus = 0;
+	let limitHit,guildLimitHit;
 	if(limit&&limit.day==getDate()){
-		if(limit.xp>dailyLimit) return;
+		// If global xp hit daily cap
+		if(limit.xp>dailyLimit) limitHit = true;
 		else limit.xp = parseInt(limit.xp)+gain;
+
+		if(limit[msg.guild.id]){
+			// If server xp hit daily cap
+			if(limit[msg.guild.id]>dailyLimit) guildLimitHit = true;
+			else limit[msg.guild.id] = parseInt(limit[msg.guild.id]) + gain;
+		}else{
+			// first msg in guild 
+			limit[msg.guild.id] = gain;
+			guildBonus = 500;
+		}
 	}else{
-		limit = {day:getDate(),xp:gain,guilds:""};
+		limit = {day:getDate(),xp:gain};
+		limit[msg.guild.id] = gain;
 		// Daily bonus xp
 		bonus += 500;
+		guildBonus = 500;
 	}
-
-	// Distribute daily bonus for the server
-	let guildBonus = 0;
-	if(!limit.guilds) limit.guilds = [];
-	else limit.guilds = limit.guilds.split(",");
-	if(!limit.guilds.includes(msg.guild.id)){
-		limit.guilds.push(msg.guild.id);
-		guildBonus += 500;
-	}
-	limit.guilds = limit.guilds.join(",");
 
 	// Check for macros
 	if(macro&&!macro.levelCheck(msg,limit))
 		return;
 
 	// Distribute xp
-	//console.log("["+msg.channel.id+"]"+msg.author.username+" earned "+gain+"xp");
-	redis.hmset("xplimit_"+msg.author.id,limit);
-	logger.value('xp',gain+bonus,['id:'+msg.author.id,'channel:'+msg.channel.id,'guild:'+msg.guild.id]);
-	let xp = await redis.incr("user_xp",msg.author.id,gain+bonus);
-	await redis.incr("user_xp_"+msg.guild.id,msg.author.id,gain+guildBonus);
+	if(!limitHit||!guildLimitHit){
+		redis.hmset("xplimit_"+msg.author.id,limit);
+	}
+	let xp;
+	if(!limitHit){
+		logger.value('xp',gain+bonus,['id:'+msg.author.id,'channel:'+msg.channel.id,'guild:'+msg.guild.id]);
+		xp = await redis.incr("user_xp",msg.author.id,gain+bonus);
+	}
+	if(!guildLimitHit){
+		await redis.incr("user_xp_"+msg.guild.id,msg.author.id,gain+guildBonus);
+	}
 
 	// Check if user leveled up
-	let previousLvl = getLevel(xp-(gain+bonus)).level;
-	let currentLvl = getLevel(xp).level;
-	if(previousLvl != currentLvl){
-		levelRewards.distributeRewards(msg);
+	if(!limitHit&&xp){
+		let previousLvl = getLevel(xp-(gain+bonus)).level;
+		let currentLvl = getLevel(xp).level;
+		if(previousLvl != currentLvl){
+			levelRewards.distributeRewards(msg);
+		}
 	}
 
 }
