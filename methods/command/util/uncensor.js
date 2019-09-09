@@ -19,6 +19,8 @@ module.exports = new CommandInterface({
 
 	related:["owo censor"],
 
+	permissions:["SEND_MESSAGES"],
+
 	cooldown:5000,
 	half:100,
 	six:500,

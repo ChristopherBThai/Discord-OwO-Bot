@@ -21,6 +21,8 @@ module.exports = new CommandInterface({
 
 	related:["owo autohunt","owo upgrade"],
 
+	permissions:["SEND_MESSAGES"],
+
 	cooldown:1000,
 	half:120,
 	six:500,

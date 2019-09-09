@@ -31,6 +31,8 @@ module.exports = new CommandInterface({
 
 	example:["owo help cowoncy","owo help"],
 
+	permissions:["SEND_MESSAGES","EMBED_LINKS"],
+
 	related:[],
 
 	cooldown:1000,

@@ -22,6 +22,8 @@ module.exports = new CommandInterface({
 
 	related:["owo zoo"],
 
+	permissions:["SEND_MESSAGES","EMBED_LINKS"],
+
 	cooldown:3000,
 	half:150,
 	six:500,
