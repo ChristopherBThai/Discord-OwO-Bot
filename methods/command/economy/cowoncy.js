@@ -19,6 +19,8 @@ module.exports = new CommandInterface({
 
 	related:["owo give","owo daily","owo vote","owo my money"],
 
+	permissions:["SEND_MESSAGES"],
+
 	cooldown:5000,
 	half:100,
 	six:500,

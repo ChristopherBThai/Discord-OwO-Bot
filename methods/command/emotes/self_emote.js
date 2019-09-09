@@ -26,6 +26,8 @@ module.exports = new CommandInterface({
 
 	related:["owo slap","owo kiss","owo hug","and more"],
 
+	permissions:["SEND_MESSAGES","EMBED_LINKS","ATTACH_FILES"],
+
 	cooldown:5000,
 	half:100,
 	six:500,

@@ -24,6 +24,8 @@ module.exports = new CommandInterface({
 
 	related:["owo hunt"],
 
+	permissions:["SEND_MESSAGES"],
+
 	cooldown:1000,
 	half:150,
 	six:500,

@@ -25,6 +25,8 @@ module.exports = new CommandInterface({
 
 	related:["owo inv","owo weapon"],
 
+	permissions:["SEND_MESSAGES","EMBED_LINKS","ATTACH_FILES"],
+
 	cooldown:1000,
 	half:80,
 	six:500,

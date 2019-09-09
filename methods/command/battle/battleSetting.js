@@ -19,6 +19,8 @@ module.exports = new CommandInterface({
 
 	related:["owo battle"],
 
+	permissions:["SEND_MESSAGES","EMBED_LINKS"],
+
 	cooldown:3000,
 	half:80,
 	six:500,

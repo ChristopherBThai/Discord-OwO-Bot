@@ -26,6 +26,8 @@ module.exports = new CommandInterface({
 
 	example:['owo quest','owo quest rr 1'],
 
+	permissions:["SEND_MESSAGES","EMBED_LINKS"],
+
 	related:[],
 
 	cooldown:5000,

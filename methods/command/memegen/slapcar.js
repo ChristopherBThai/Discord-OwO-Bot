@@ -29,6 +29,8 @@ module.exports = new CommandInterface({
 	six:500,
 	bot:true,
 
+	permissions:["SEND_MESSAGES","ATTACH_FILES"],
+
 	execute: function(p){
 		if(p.global.isUser(p.args[p.args.length-1]))
 			user(p);
