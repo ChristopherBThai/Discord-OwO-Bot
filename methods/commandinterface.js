@@ -34,6 +34,7 @@ module.exports = class CommandInterface{
 				if(!channelPerms.has(this.permissions[i])){
 					if(channelPerms.has("SEND_MESSAGES"))
 						params.errorMsg(", the bot does not have the `"+this.permissions[i]+"` permission! Please reinvite the bot, or contact your server admin!",4000);
+					params.logger.increment("noperms",['permission:'+this.permissions[i],'channel:'+params.msg.channel.id,'guild:'+params.msg.guild.id],'id:'+params.msg.author.id);
 					return;
 				}
 			}
