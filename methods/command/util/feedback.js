@@ -123,6 +123,7 @@ async function suggest(p,message){
 				await confirmSuggestion(p,message);
 			}else if(r.emoji.name===cross){
 				confirmation.fields[0].value = cross+" You decided not to post the suggestion!";
+				p.setCooldown(5);
 				collector.stop();
 			}
 	});
@@ -136,11 +137,16 @@ async function suggest(p,message){
 
 // Sends suggestion to support channel
 async function confirmSuggestion(p,message){
+	if(!message||message.length<10){
+		p.errorMsg(", Your suggestion is too short!");
+		p.setCooldown(5);
+		return;
+	}
 	// Check for banned words
-	let temp = message.replace(/\s/gi,"");
+	let temp = message.replace(/\s/gi,"").toLowerCase();
 	for(let i in badwords){
 		if(temp.indexOf(badwords[i])>=0){
-			await ban.banCommand(p,p.msg.author,p.commandAlias,'Your suggestion did not seem appropriate');
+			await ban.banCommand(p,p.msg.author,p.commandAlias,'Your suggestion did not seem appropriate\n'+p.config.emoji.blank+' **| Your suggestion:** '+message);
 			return;
 		}
 	}
