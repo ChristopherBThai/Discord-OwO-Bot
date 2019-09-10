@@ -63,7 +63,7 @@ class Command {
 
 	execute(msg){
 		//Gets command arguments
-		var args;
+		let args;
 		if(msg.content.toLowerCase().indexOf(prefix) === 0)
 			args = msg.content.slice(prefix.length).trim().split(/ +/g);
 		else{
@@ -150,60 +150,23 @@ function addCommand(command){
 }
 
 function executeCommand(param){
-	var command = param.command;
-	var msg = param.msg;
-	var name = aliasToCommand[command];
+	let command = param.command;
+	let msg = param.msg;
+	let name = aliasToCommand[command];
 	ban.check(con,msg,param.client,name,function(){
 		macro.check(msg,aliasToCommand[command],async function(){
 			try{
-				var result = await commands[command].execute(param);
+				let result = await commands[command].execute(param);
 			}catch(err){
 				console.error(err);
 			}
 			logger.increment("command",['command:'+aliasToCommand[command],'id:'+msg.author.id]);
-			if(command!="points"){
-				/*
-				param.log.verbose({
-					msg:msg.content,
-					command:aliasToCommand[command],
-					args:param.args,
-					from:msg.author.username,
-					id:msg.author.id,
-					channel:msg.channel.id,
-					guild:msg.guild.id,
-					alias:command
-				});
-				*/
-				/*
-				console.log("\x1b[0m\x1b[4mCommand\x1b[0m: %s\x1b[0m \x1b[36m{%s}\x1b[0m \x1b[0m%s\x1b[36m[%s][%s][%s]",
-					command,
-					param.args,
-					msg.author.username,
-					msg.author.id,
-					msg.guild.name,
-					msg.channel.name);
-				if(result)
-					console.log("\t\x1b[36m%s\x1b[0m",result);
-					*/
-			}else{
-				/*
-				console.log("\x1b[0m\x1b[4mCommand\x1b[0m: %s\x1b[0m \x1b[36m{%s}\x1b[0m \x1b[0m%s\x1b[36m[%s][%s][%s]",
-					command,
-					msg.content.replace(/(\n)+/g," | "),
-					msg.author.username,
-					msg.author.id,
-					msg.guild.name,
-					msg.channel.name);
-				*/
-			}
-			//user requests help of a command
-			//if(param.help)
 		});
 	},false);
 }
 
 function initParam(msg,command,args,client,dbl){
-	var param = {
+	let param = {
 		"msg":msg,
 		"args":args,
 		"command":command,

@@ -9,10 +9,14 @@ const CommandInterface = require('../../commandinterface.js');
 
 const global = require('../../../util/global.js');
 const sender = require('../../../util/sender.js');
+const ban = require('../../../util/ban.js');
+const badwords = require('../../../../tokens/badwords.json');
 
 const feedbackChannel = "519778148888346635";
 const reportChannel = "596220958730223619";
 const supportGuild = "420104212895105044";
+const check = '✅';
+const cross = '❎';
 
 module.exports = new CommandInterface({
 
@@ -26,12 +30,14 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	cooldown:300000,
+	permissions:["SEND_MESSAGES","EMBED_LINKS","ATTACH_FILES","ADD_REACTIONS"],
+
+	cooldown:1,//300000,
 	half:15,
 	six:30,
 	bot:true,
 
-	execute: function(p){
+	execute: async function(p){
 		var message = p.args.join(" ");
 		if(!message||message === ''){
 			p.send("**🚫 |** Silly **"+p.msg.author.username+"**, you need to add a message!",3000);
@@ -48,7 +54,7 @@ module.exports = new CommandInterface({
 			return;
 		}
 		if(p.command == "suggest"){
-			suggest(p,message);
+			await suggest(p,message);
 			return;
 		}
 		let sql = "INSERT INTO feedback (type,message,sender) values ('"+p.command+"',?,"+p.msg.author.id+");";
@@ -89,7 +95,56 @@ module.exports = new CommandInterface({
 
 })
 
-function suggest(p,message){
+// Allow the user to confirm the suggestion before sending
+async function suggest(p,message){
+	let confirmation = {
+		"color": p.config.embed_color,
+		"author": {
+			"name": p.msg.author.username+"'s suggestion",
+			"icon_url":p.msg.author.avatarURL(),
+		},
+		"description":message,
+		"fields":[
+			{
+				"name":"This suggestion will be sent to the OwO bot support server. Suggestions should not be abused. Do you confirm that this is appropriate and a valid suggestion?",
+				"value":check+" to confirm. "+cross+" to decline"
+			}
+		]
+	}
+	let msg = await p.send({embed:confirmation});
+	await msg.react(check);
+	await msg.react(cross);
+	let filter = (reaction, user) => [check,cross].includes(reaction.emoji.name) && user.id === p.msg.author.id;
+	let collector = msg.createReactionCollector(filter,{time:60000});
+	collector.on('collect',async r => {
+			if(r.emoji.name===check) {
+				confirmation.fields[0].value = check+" The suggestion has been posted! Thank you!\n"+p.config.emoji.blank+" Suggestions can be viewed at "+p.config.guildlink;
+				collector.stop();
+				await confirmSuggestion(p,message);
+			}else if(r.emoji.name===cross){
+				confirmation.fields[0].value = cross+" You decided not to post the suggestion!";
+				collector.stop();
+			}
+	});
+
+	collector.on('end',async function(collected){
+		confirmation.color = 6381923;
+		await msg.edit("This message is now inactive",{embed:confirmation});
+	});
+
+}
+
+// Sends suggestion to support channel
+async function confirmSuggestion(p,message){
+	// Check for banned words
+	let temp = message.replace(/\s/gi,"");
+	for(let i in badwords){
+		if(temp.indexOf(badwords[i])>=0){
+			await ban.banCommand(p,p.msg.author,p.commandAlias,'Your suggestion did not seem appropriate');
+			return;
+		}
+	}
+	
 	let embed = {
 		"color": p.config.embed_color,
 		"timestamp": new Date(),
@@ -104,8 +159,4 @@ function suggest(p,message){
 	};
 	p.sender.msgChannel(feedbackChannel,{embed},{react:['👍','🔁','👎']});
 
-	if(p.msg.guild.id==supportGuild)
-		p.send("**📨 |** *OwO What's this?!*  "+p.msg.author.username+", Thanks for the suggestion!\n"+p.config.emoji.blank+" **|** Abuse of this command will result in a ban.");
-	else
-		p.send("**📨 |** *OwO What's this?!*  "+p.msg.author.username+", Thanks for the suggestion! Your suggestion can be viewed in our server! Come join!\n"+p.config.emoji.blank+" **|** Abuse of this command will result in a ban.\n"+p.config.emoji.blank+" **|** "+p.config.guildlink);
 }

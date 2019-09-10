@@ -31,6 +31,8 @@ module.exports = new CommandInterface({
 
 	example:["owo help cowoncy","owo help"],
 
+	permissions:["SEND_MESSAGES","EMBED_LINKS"],
+
 	related:[],
 
 	cooldown:1000,
@@ -84,7 +86,7 @@ function display(p){
 			{"name":"🎱 Fun",
 				"value":"`8b`  `define`  `gif`  `pic`  `translate`  `roll`"},
 			{"name":"🎭 Social",
-				"value":"`cookie` `ship`  `pray`  `curse`  `marry`  `emoji`  `profile`  `level`  `wallpaper`  `bell`"},
+				"value":"`cookie` `ship`  `pray`  `curse`  `marry`  `emoji`  `profile`  `level`  `wallpaper`  `bell`  `owoify`"},
 			{"name":"😂 Meme Generation",
 				"value":"`spongebobchicken`  `slapcar`  `isthisa`  `drake`  `distractedbf`"},
 			{"name":"🙂 Emotes",

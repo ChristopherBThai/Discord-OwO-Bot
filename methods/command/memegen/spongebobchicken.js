@@ -27,6 +27,8 @@ module.exports = new CommandInterface({
 	six:500,
 	bot:true,
 
+	permissions:["SEND_MESSAGES","ATTACH_FILES"],
+
 	execute: function(p){
 		fs.readFile('./json/images/spongebob_chicken.jpg',function(err,image){
 			if(err){ console.error(err); return;}

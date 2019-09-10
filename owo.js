@@ -14,6 +14,7 @@ else var auth = require('../tokens/owo-auth.json');
 
 const login = require('../tokens/owo-login.json');
 const config = require('./json/botConfig.json');
+client.login(auth.token);
 
 const Discord = require("discord.js");
 const client = new Discord.Client(config.client);
@@ -49,9 +50,6 @@ client.on('message',msg => {
 		command.execute(msg);
 	levels.giveXP(msg);
 });
-
-//Discord login
-client.login(auth.token);
 
 //=============================================================================Console Logs===============================================================
 
@@ -133,18 +131,16 @@ process.on('message',message => {
 
 
 process.on('unhandledRejection', (reason, promise) => {
-	console.error("unhandledRejection at Shard "+client.shard.ids[0]+" error "+(new Date()).toLocaleString());
-	console.error(reason);
+	uncaughtHandler.handle(reason,"unhandledRejection",client);
 });
 
 process.on('uncaughtException', err => {
-	console.error("uncaughtException at Shard "+client.shard.ids[0]+" error "+(new Date()).toLocaleString());
-	console.error(err);
-	uncaughtHandler.handle(err);
+	uncaughtHandler.handle(err,"uncaughtException",client);
 });
 
 client.on('rateLimit',function(info){
 	//console.log(info);
+	logger.increment("rateLimit");
 });
 
 client.on('debug',(msg) => {

@@ -21,6 +21,8 @@ module.exports = new CommandInterface({
 
 	related:["owo marry","owo am"],
 
+	permissions:["SEND_MESSAGES","EMBED_LINKS","ADD_REACTIONS"],
+
 	cooldown:3000,
 
 	execute: async function(p){

@@ -7,6 +7,8 @@
 
 var cooldown = {};
 const permissions = require('../json/permissions.json');
+const noEmoji = '🚫';
+const skullEmoji = '☠';
 
 exports.check = async function(con,msg,client,command,callback,ignore){
 	//Check if the channel has all the valid permissions
@@ -21,11 +23,14 @@ exports.check = async function(con,msg,client,command,callback,ignore){
 	var channel = msg.channel.id;
 
 	//Check if there is a global cooldown
-	if(cooldown[msg.author.id]==undefined){
+	if(cooldown[msg.author.id+command]){
+		return;
+	}else if(cooldown[msg.author.id]==undefined){
 		cooldown[msg.author.id] = 1;
 		setTimeout(() => {delete cooldown[msg.author.id];}, 5000);
 	}else if(cooldown[msg.author.id]>=3) {
-		if(command!="points")
+		cooldown[msg.author.id]++;
+		if(command!="points"&&cooldown[msg.author.id]==4)
 			msg.channel.send("**⏱ | "+msg.author.username+"**, Please slow down~ You're a little **too fast** for me :c")
 				.then(message => message.delete({timeout:3000}))
 				.catch(err => console.info(err));
@@ -36,18 +41,39 @@ exports.check = async function(con,msg,client,command,callback,ignore){
 
 
 	//Check if the command is enabled
-	var sql = "SELECT * FROM disabled WHERE command = '"+command+"' AND channel = "+channel+";";
+	var sql = "SELECT * FROM disabled WHERE (command = '"+command+"' OR command = 'all') AND channel = "+channel+";";
 	sql += "SELECT id FROM timeout WHERE id IN ("+msg.author.id+","+msg.guild.id+") AND TIMESTAMPDIFF(HOUR,time,NOW()) < penalty;";
+	sql += "SELECT * FROM user_ban WHERE id = "+msg.author.id+" AND command = '"+command+"';";
 	con.query(sql,function(err,rows,fields){
 		if(err) throw err;
 		if(rows[1][0]!=undefined){
-		}else if(rows[0][0]==undefined||command=="points"){
+		}else if(rows[2][0]){
+			if(msg.channel.memberPermissions(msg.guild.me).has("SEND_MESSAGES")){
+				msg.channel.send("**🚫 |** You're banned from this command.")
+					.then(message => message.delete({timeout:3000}))
+			}
+			cooldown[msg.author.id+command] = true;
+			setTimeout(() => {delete cooldown[msg.author.id+command];}, 10000);
+		}else if(rows[0][0]==undefined||["points","disable","enable"].includes(command)){
 			callback();
-		}else
-			msg.channel.send("**🚫 |** That command is disabled on this channel!")
-				.then(message => message.delete({timeout:3000}))
-				.catch(err => console.info(err));
+		}else{
+			if(msg.channel.memberPermissions(msg.guild.me).has("SEND_MESSAGES")){
+				msg.channel.send("**🚫 |** That command is disabled on this channel!")
+					.then(message => message.delete({timeout:3000}))
+			}
+		}
 	});
+}
+
+exports.banCommand = async function(p,user,command,reason){
+	let sql = `INSERT IGNORE INTO user_ban (id,command) VALUES (${user.id},?);`;
+	let result = await p.query(sql,[command]);
+	if(!result.affectedRows){
+		sql = `INSERT IGNORE INTO user (id,count) VALUES (${user.id},0);${sql}`;
+		await p.query(sql,[command]);
+	}
+	await user.send(noEmoji+" **|** You have been banned from using the command: `"+command+"`\n"+p.config.emoji.blank+" **| Reason:** "+reason);
+	await p.sender.msgModLogChannel(skullEmoji+" **| "+user.tag+"** is banned from using `"+command+"` forever.\n"+p.config.emoji.blank+" **| Reason:** "+reason);
 }
 
 function checkPermissions(msg,client){

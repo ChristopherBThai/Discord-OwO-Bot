@@ -30,21 +30,21 @@ module.exports = new CommandInterface({
 			return;
 		}
 
-		var msg=p.msg,con=p.con;
+		let msg=p.msg,con=p.con;
 
 		/* Parse commands */
-		var commands = p.args.slice();
+		let commands = p.args.slice();
 		for(let i = 0;i<commands.length;i++)
 			commands[i] = commands[i].toLowerCase();
 
 		/* If the user wants to enable all commands */
 		if(commands.includes("all")){
-			var list = "";
+			let list = "('all'),";
 			for(var key in p.mcommands){
 				list += "('"+key+"'),";
 			}
 			list = list.slice(0,-1);
-			var sql = "DELETE FROM disabled WHERE channel = "+msg.channel.id+" AND command IN ("+list+");";
+			let sql = "DELETE FROM disabled WHERE channel = "+msg.channel.id+" AND command IN ("+list+");";
 			con.query(sql,function(err,rows,field){
 				if(err){console.error(err);return;}
 				p.send("**⚙ | All** commands have been **enable** for this channel!");
@@ -53,8 +53,8 @@ module.exports = new CommandInterface({
 		}
 
 		/* Construct query statement */
-		var sql = "DELETE FROM disabled WHERE channel = "+msg.channel.id+" AND command IN (";
-		var validCommand = false;
+		let sql = "DELETE FROM disabled WHERE channel = "+msg.channel.id+" AND command IN ('all',";
+		let validCommand = false;
 		for(let i=0;i<commands.length;i++){
 			/* Convert command name to proper name */
 			let command = p.aliasToCommand[commands[i]];
@@ -75,15 +75,22 @@ module.exports = new CommandInterface({
 				rows = rows[1];
 
 			/* Construct message */
-			var enabled = Object.keys(p.mcommands);
-			var disabled = [];
+			let enabled = Object.keys(p.mcommands);
+			let disabled = [];
+			let all = false;
 
 			for(let i=0;i<rows.length;i++){
 				let command = rows[i].command;
+				if(command == 'all') all = true;
 				if(enabled.includes(command)){
 					disabled.push(command);
 					enabled.splice(enabled.indexOf(command),1);
 				}
+			}
+
+			if(all){
+				disabled = Object.keys(p.mcommands);
+				enabled = [];
 			}
 
 			if(enabled.length==0) enabled.push("NONE");

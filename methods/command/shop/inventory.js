@@ -27,6 +27,8 @@ module.exports = new CommandInterface({
 
 	related:["owo equip"],
 
+	permissions:["SEND_MESSAGES","EMBED_LINKS"],
+
 	cooldown:10000,
 	half:80,
 	six:500,

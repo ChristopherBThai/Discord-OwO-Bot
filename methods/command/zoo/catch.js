@@ -27,6 +27,8 @@ module.exports = new CommandInterface({
 
 	related:["owo zoo","owo sell","owo lootbox"],
 
+	permissions:["SEND_MESSAGES"],
+
 	cooldown:15000,
 	half:80,
 	six:500,

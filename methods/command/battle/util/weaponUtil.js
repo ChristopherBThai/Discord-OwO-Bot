@@ -356,8 +356,8 @@ exports.describe = async function(p,uwid){
 	}
 
 	/* sql query */
-	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid WHERE a.uwid = ${uwid} AND uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
-	var result = await p.query(sql);
+	let sql = `SELECT user.id,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat FROM user INNER JOIN user_weapon a ON user.uid = a.uid LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid WHERE a.uwid = ${uwid};`;
+	let result = await p.query(sql);
 
 	/* Check if valid */
 	if(!result[0]){
@@ -366,7 +366,7 @@ exports.describe = async function(p,uwid){
 	}
 
 	/* parse weapon to get info */
-	var weapon = this.parseWeaponQuery(result);
+	let weapon = this.parseWeaponQuery(result);
 	weapon = weapon[Object.keys(weapon)[0]];
 	weapon = this.parseWeapon(weapon);
 
@@ -387,8 +387,14 @@ exports.describe = async function(p,uwid){
 		url = temp;
 	}
 
+	// Grab user
+	let user = await p.global.getUser(result[0].id);
+	if(user) user = user.username;
+	else user = "A User";
+
 	/* Make description */
 	let desc = `**Name:** ${weapon.name}\n`;
+	desc += `**Owner:** ${user}\n`;
 	desc += `**ID:** \`${shortenUWID(uwid)}\`\n`;
 	desc += `**Sell Value:** ${weapon.unsellable?"UNSELLABLE":prices[weapon.rank.name]}\n`;
 	desc += `**Quality:** ${weapon.rank.emoji} ${weapon.avgQuality}%\n`;
@@ -411,7 +417,7 @@ exports.describe = async function(p,uwid){
 	/* Construct embed */
 	const embed ={
 		"author":{
-			"name":p.msg.author.username+"'s "+weapon.name,
+			"name":user+"'s "+weapon.name,
 			"icon_url":p.msg.author.avatarURL()
 		},
 		"color":p.config.embed_color,

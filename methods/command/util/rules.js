@@ -23,6 +23,8 @@ module.exports = new CommandInterface({
 
 	related:["owo help"],
 
+	permissions:["SEND_MESSAGES","EMBED_LINKS","ATTACH_FILES","ADD_REACTIONS"],
+
 	cooldown:10000,
 	half:80,
 	six:500,
