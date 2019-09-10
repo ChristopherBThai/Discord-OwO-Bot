@@ -14,10 +14,11 @@ else var auth = require('../tokens/owo-auth.json');
 
 const login = require('../tokens/owo-login.json');
 const config = require('./json/botConfig.json');
-client.login(auth.token);
 
 const Discord = require("discord.js");
 const client = new Discord.Client(config.client);
+client.login(auth.token);
+
 const DBL = require("dblapi.js");
 const dbl = new DBL(auth.dbl);
 
@@ -31,7 +32,7 @@ const patreon = require('./util/patreon.js');
 const broadcastHandler = require('./handler/broadcastHandler');
 const levels = require('./util/levels.js');
 
-const modChannel = "471579186059018241";
+const modChannel = ["471579186059018241","596220958730223619"];
 
 client.on('message',msg => {
 	//Ignore if bot
@@ -40,7 +41,7 @@ client.on('message',msg => {
 	/* Ignore guilds if in debug mode */
 	//else if(debug&&msg.guild&&!whitelist.includes(msg.guild.id)) return;
 
-	else if(msg.channel.id==modChannel) command.executeMod(msg);
+	else if(modChannel.includes(msg.channel.id)) command.executeMod(msg);
 
 	else if(msg.author.id==auth.admin) command.executeAdmin(msg);
 
