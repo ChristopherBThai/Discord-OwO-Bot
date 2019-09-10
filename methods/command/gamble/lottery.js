@@ -21,6 +21,8 @@ module.exports = new CommandInterface({
 
 	related:["owo money"],
 
+	permissions:["SEND_MESSAGES","EMBED_LINKS"],
+
 	cooldown:5000,
 	half:80,
 	six:500,

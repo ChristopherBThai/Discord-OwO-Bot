@@ -19,6 +19,8 @@ module.exports = new CommandInterface({
 
 	related:[""],
 
+	permissions:["SEND_MESSAGES"],
+
 	cooldown:15000,
 	half:80,
 	six:500,

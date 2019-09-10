@@ -26,6 +26,8 @@ module.exports = new CommandInterface({
 
 	related:["owo daily","owo shop"],
 
+	permissions:["SEND_MESSAGES","EMBED_LINKS","ADD_REACTIONS"],
+
 	cooldown:30000,
 
 	execute: async function(p){

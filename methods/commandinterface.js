@@ -13,7 +13,7 @@ module.exports = class CommandInterface{
 		this.args = args.args;
 		this.example = args.example;
 		this.related = args.related;
-		this.execute = args.execute;
+		this.executeCommand = args.execute;
 		this.cooldown = args.cooldown;
 		this.half = args.half;
 		this.six = args.six;
@@ -26,7 +26,20 @@ module.exports = class CommandInterface{
 	}
 
 	execute(params){
-		this.execute(params);
+		// Check if the bot has the correct perms first
+		if(this.permissions){
+			let me = params.msg.guild.me;
+			let channelPerms = params.msg.channel.memberPermissions(me);
+			for(let i in this.permissions){
+				if(!channelPerms.has(this.permissions[i])){
+					if(channelPerms.has("SEND_MESSAGES"))
+						params.errorMsg(", the bot does not have the `"+this.permissions[i]+"` permission! Please reinvite the bot, or contact your server admin!",4000);
+					params.logger.increment("noperms",['permission:'+this.permissions[i],'channel:'+params.msg.channel.id,'guild:'+params.msg.guild.id],'id:'+params.msg.author.id);
+					return;
+				}
+			}
+		}
+		this.executeCommand(params);
 	}
 
 }
