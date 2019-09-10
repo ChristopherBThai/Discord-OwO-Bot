@@ -6,12 +6,17 @@
   */
 
 const mysql = require('../util/mysql.js');
+const logger = require('../util/logger.js');
 
-exports.handle = function(err){
-	console.log(err.code);
-	switch(err.code){
-		case "PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR":
-			//mysql.reconnect();
-			break;
+exports.handle = function(err,type,client){
+	if(err.name=='DiscordAPIError'){
+		handleDiscordAPIError(err,type);
+	}else{
+		console.error(type+" at Shard "+client.shard.ids[0]+" error "+(new Date()).toLocaleString());
+		console.error(err);
 	}
+}
+
+function handleDiscordAPIError(err,type){
+	logger.increment("error",["type:"+type,"code:"+err.code,"httpStatus:"+err.httpStatus]);
 }
