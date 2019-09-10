@@ -14,6 +14,7 @@ else var auth = require('../tokens/owo-auth.json');
 
 const login = require('../tokens/owo-login.json');
 const config = require('./json/botConfig.json');
+client.login(auth.token);
 
 const Discord = require("discord.js");
 const client = new Discord.Client(config.client);
@@ -49,9 +50,6 @@ client.on('message',msg => {
 		command.execute(msg);
 	levels.giveXP(msg);
 });
-
-//Discord login
-client.login(auth.token);
 
 //=============================================================================Console Logs===============================================================
 
