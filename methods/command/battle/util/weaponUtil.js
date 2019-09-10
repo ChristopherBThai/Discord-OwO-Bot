@@ -7,6 +7,7 @@
 
 const requireDir = require('require-dir');
 const WeaponInterface = require('../WeaponInterface.js');
+const ReactionOverride = require('../../../../overrides/ReactionSocketOverride.js');
 
 const prices = {"Common":100,"Uncommon":250,"Rare":400,"Epic":600,"Mythical":2000,"Legendary":5000,"Fabled":20000};
 const ranks = [['cw','commonweapons','commonweapon'],['uw','uncommonweapons','uncommonweapon'],['rw','rareweapon','rareweapons'],
@@ -135,21 +136,19 @@ var display = exports.display = async function(p,pageNum=0,sort=0,opt){
 	else
 		await msg.edit({embed:page.embed});
 
+	msg = await msg.channel.messages.fetch(msg.id);
+
 	if(page.maxPage>19) await msg.react(rewindEmoji);
 	await msg.react(prevPageEmoji);
 	await msg.react(nextPageEmoji);
 	if(page.maxPage>19) await msg.react(fastForwardEmoji);
 	await msg.react(sortEmoji);
 	let filter = (reaction,user) => [sortEmoji,nextPageEmoji,prevPageEmoji,rewindEmoji,fastForwardEmoji].includes(reaction.emoji.name)&&users.includes(user.id);
-	let collector = await msg.createReactionCollector(filter,{time:900000});
+	let collector = await msg.createReactionCollector(filter,{time:900000,idle:120000});
+	ReactionOverride.addEmitter(collector,msg);
 
-	let timer = setTimeout(function(){collector.stop()},120000);
-
-	collector.on('collect', async function(r){
+	let handler = async function(r){
 		try{
-			clearTimeout(timer);
-			timer = setTimeout(function(){collector.stop()},120000);
-
 			if(page){
 			/* Save the animal's action */
 			if(r.emoji.name===nextPageEmoji) {
@@ -179,8 +178,9 @@ var display = exports.display = async function(p,pageNum=0,sort=0,opt){
 			}
 			}
 		}catch(err){}
-	});
+	}
 
+	collector.on('collect', handler);
 	collector.on('end',async function(collected){
 		if(page){
 			page.embed.color = 6381923;
