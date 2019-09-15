@@ -9,11 +9,11 @@ const WeaponInterface = require('../WeaponInterface.js');
 const battleUtil = require('../util/battleUtil.js');
 const Logs = require('../util/logUtil.js');
 
-module.exports = class CullingSythe extends WeaponInterface{
+module.exports = class CullingScythe extends WeaponInterface{
 
 	init(){
 		this.id = 17;
-		this.name = "Culling Sythe";
+		this.name = "Culling Scythe";
 		this.basicDesc = "";
 		this.emojis = ["<:csythe:618001307181252623>","<:usythe:618001307869118474>","<:rsythe:618001307856404505>","<:esythe:618001307562672128>","<:msythe:618001308426960896>","<:lsythe:618001308607184896>","<:fsythe:618001308196012042>"];
 		this.defaultEmoji = "<:sythe:618001309622337566>";
@@ -41,7 +41,7 @@ module.exports = class CullingSythe extends WeaponInterface{
 		/* deplete weapon points*/
 		let mana = WeaponInterface.useMana(me,this.manaCost,me,{me,allies:team,enemies:enemy});
 		let manaLogs = new Logs();
-		manaLogs.push(`[SYTHE] ${me.nickname} used ${mana.amount} WP`,mana.logs);
+		manaLogs.push(`[SCYTH] ${me.nickname} used ${mana.amount} WP`,mana.logs);
 
 		/* Calculate damage */
 		let damage = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);
@@ -50,7 +50,7 @@ module.exports = class CullingSythe extends WeaponInterface{
 		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.PHYSICAL,{me,allies:team,enemies:enemy});
 		let buff = this.getBuffs(me)[0];
 		let buffLogs = buff.bind(attacking,2,{me,allies:team,enemies:enemy});
-		logs.push(`[SYTHE] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP and applied Mortality`, damage.logs);
+		logs.push(`[SCYTH] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP and applied Mortality`, damage.logs);
 		logs.addSubLogs(buffLogs);
 
 		logs.addSubLogs(manaLogs);
