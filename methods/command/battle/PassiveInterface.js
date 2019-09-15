@@ -82,6 +82,10 @@ module.exports = class PassiveInterface{
 	alterStats(stats){}
 
 	static get getID(){return new this(null,true).id}
+	/* Before a turn executes */
+	preTurn(animal,ally,enemy,action){}
+	/* After a turn executes */
+	postTurn(animal,ally,enemy,action){}
 
 	/* If the passive owner is attacking*/
 	attack(animal,attackee,damage,type,last){}

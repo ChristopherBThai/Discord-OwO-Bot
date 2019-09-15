@@ -806,6 +806,10 @@ function preTurn(team,enemy,action){
 		if(animal.weapon){
 			let log = animal.weapon.preTurn(animal,team,enemy,action[i]);
 			if(log) logs = logs.concat(log.logs);
+			for(let j in animal.weapon.passives){
+				let log2 = animal.weapon.passives[j].preTurn(animal,team,enemy,action[i]);
+				if(log2) logs = logs.concat(log2.logs);
+			}
 		}
 	}
 
@@ -887,6 +891,10 @@ function postTurn(team,enemy,action){
 		if(animal.weapon){
 			let log = animal.weapon.postTurn(animal,team,enemy,action[i]);
 			if(log) logs = logs.concat(log.logs);
+			for(let j in animal.weapon.passives){
+				let log2 = animal.weapon.passives[j].postTurn(animal,team,enemy,action[i]);
+				if(log2) logs = logs.concat(log2.logs);
+			}
 		}
 	}
 
