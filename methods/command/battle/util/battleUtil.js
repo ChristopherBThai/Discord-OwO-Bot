@@ -806,6 +806,10 @@ function preTurn(team,enemy,action){
 		if(animal.weapon){
 			let log = animal.weapon.preTurn(animal,team,enemy,action[i]);
 			if(log) logs = logs.concat(log.logs);
+			for(let j in animal.weapon.passives){
+				let log2 = animal.weapon.passives[j].preTurn(animal,team,enemy,action[i]);
+				if(log2) logs = logs.concat(log2.logs);
+			}
 		}
 	}
 
@@ -840,17 +844,28 @@ function executeTurn(team,enemy,action){
 		let log;
 
 		if(animal){
-			/* Check if animal has weapon */
-			if(animal.weapon){
+
+			// Check if the animal is allowed to attack
+			check = WeaponInterface.canAttack(animal,tempAlly,tempEnemy,tempAction);
+			if(check&&check.logs&&check.logs.logs.length>0) logs = logs.concat(check.logs.logs);
+
+			// Animal is not allowed to attack
+			if(check&&!check.canAttack){
+
+			// Animal has a weapon
+			}else if(animal.weapon){
 				if(tempAction==weapon)
 					log = animal.weapon.attackWeapon(animal,tempAlly,tempEnemy);
 				else
 					log = animal.weapon.attackPhysical(animal,tempAlly,tempEnemy);
+
+			// Animal has no weapon
 			}else{
 				log = WeaponInterface.basicAttack(animal,tempAlly,tempEnemy);
 			}
 		}
 
+		// Combine all the logs
 		if(log) logs = logs.concat(log.logs);
 	}
 
@@ -876,6 +891,10 @@ function postTurn(team,enemy,action){
 		if(animal.weapon){
 			let log = animal.weapon.postTurn(animal,team,enemy,action[i]);
 			if(log) logs = logs.concat(log.logs);
+			for(let j in animal.weapon.passives){
+				let log2 = animal.weapon.passives[j].postTurn(animal,team,enemy,action[i]);
+				if(log2) logs = logs.concat(log2.logs);
+			}
 		}
 	}
 

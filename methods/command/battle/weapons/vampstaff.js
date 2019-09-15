@@ -20,7 +20,7 @@ module.exports = class VampStaff extends WeaponInterface{
 		this.availablePassives = "all";
 		this.passiveCount = 1;
 		this.qualityList = [[25,45]];
-		this.manaRange = [250,150];
+		this.manaRange = [200,100];
 	}
 
 	attackWeapon(me,team,enemy){

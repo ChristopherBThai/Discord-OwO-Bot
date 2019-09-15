@@ -25,7 +25,7 @@ module.exports = class Flame extends BuffInterface{
 		if(tags.flame) return;
 		let logs = new Logs();
 		for(let i in animal.buffs){
-			if(animal.buffs[i].id == this.id && animal.buffs[i].from.pid==this.from.pid){
+			if(animal.buffs[i].id == this.id){
 				animal.buffs.splice(i,1);
 				let damage = WeaponInterface.getDamage(this.from.stats.mag,this.stats[1]/100);
 				damage = WeaponInterface.inflictDamage(this.from,animal,damage,WeaponInterface.MAGICAL,{...tags,flame:true});
@@ -39,6 +39,7 @@ module.exports = class Flame extends BuffInterface{
 
 	postTurn(animal,ally,enemy,action){
 		if(!this.from) return;
+		if(animal.stats.hp[0]<=0) return;
 
 		let logs = new Logs();
 
