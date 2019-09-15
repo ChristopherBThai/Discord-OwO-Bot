@@ -19,7 +19,7 @@ module.exports = class GlacialAxe extends WeaponInterface{
 		this.statDesc = "Deals **?%** of your "+WeaponInterface.strEmoji+"STR to a random opponent and apply **Freeze**";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
-		this.qualityList = [[60,80]];
+		this.qualityList = [[50,80]];
 		this.manaRange = [220,120];
 		this.buffList = [5];
 	}
