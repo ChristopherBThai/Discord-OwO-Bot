@@ -44,7 +44,7 @@ module.exports = class CullingScythe extends WeaponInterface{
 		manaLogs.push(`[SCYTH] ${me.nickname} used ${mana.amount} WP`,mana.logs);
 
 		/* Calculate damage */
-		let damage = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);
+		let damage = WeaponInterface.getDamage(me.stats.att,this.stats[0]/100);
 
 		/* Deal damage */
 		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.PHYSICAL,{me,allies:team,enemies:enemy});

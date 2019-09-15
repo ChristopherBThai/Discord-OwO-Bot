@@ -32,7 +32,7 @@ module.exports = new CommandInterface({
 
 	permissions:["SEND_MESSAGES","EMBED_LINKS","ATTACH_FILES","ADD_REACTIONS"],
 
-	cooldown:1,//300000,
+	cooldown:300000,
 	half:15,
 	six:30,
 	bot:true,
