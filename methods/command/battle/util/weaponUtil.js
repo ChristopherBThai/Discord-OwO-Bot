@@ -389,12 +389,12 @@ exports.describe = async function(p,uwid){
 
 	// Grab user
 	let user = await p.global.getUser(result[0].id);
-	if(user) user = user.username;
-	else user = "A User";
+	let username = "A User";
+	if(user) username = user.username;
 
 	/* Make description */
 	let desc = `**Name:** ${weapon.name}\n`;
-	desc += `**Owner:** ${user}\n`;
+	desc += `**Owner:** ${username}\n`;
 	desc += `**ID:** \`${shortenUWID(uwid)}\`\n`;
 	desc += `**Sell Value:** ${weapon.unsellable?"UNSELLABLE":prices[weapon.rank.name]}\n`;
 	desc += `**Quality:** ${weapon.rank.emoji} ${weapon.avgQuality}%\n`;
@@ -417,8 +417,7 @@ exports.describe = async function(p,uwid){
 	/* Construct embed */
 	const embed ={
 		"author":{
-			"name":user+"'s "+weapon.name,
-			"icon_url":p.msg.author.avatarURL()
+			"name":username+"'s "+weapon.name,
 		},
 		"color":p.config.embed_color,
 		"thumbnail":{
@@ -426,6 +425,7 @@ exports.describe = async function(p,uwid){
 		},
 		"description":desc
 	};
+	if(user) embed.author.icon_url = user.avatarURL();
 	p.send({embed});
 }
 

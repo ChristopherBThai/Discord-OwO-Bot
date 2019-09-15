@@ -17,10 +17,10 @@ module.exports = class CullingSythe extends WeaponInterface{
 		this.basicDesc = "";
 		this.emojis = ["<:csythe:618001307181252623>","<:usythe:618001307869118474>","<:rsythe:618001307856404505>","<:esythe:618001307562672128>","<:msythe:618001308426960896>","<:lsythe:618001308607184896>","<:fsythe:618001308196012042>"];
 		this.defaultEmoji = "<:sythe:618001309622337566>";
-		this.statDesc = "Deals **?%** of your "+WeaponInterface.magEmoji+" STR to a random enemy and applies **Mortality** for 2 turns";
+		this.statDesc = "Deals **?%** of your "+WeaponInterface.strEmoji+" STR to a random enemy and applies **Mortality** for 2 turns";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
-		this.qualityList = [[60,80]];
+		this.qualityList = [[70,100]];
 		this.manaRange = [200,100];
 		this.buffList = [9];
 	}
