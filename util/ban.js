@@ -9,6 +9,7 @@ var cooldown = {};
 const permissions = require('../json/permissions.json');
 const noEmoji = '🚫';
 const skullEmoji = '☠';
+const liftEmoji = '🙇';
 
 exports.check = async function(con,msg,client,command,callback,ignore){
 	//Check if the channel has all the valid permissions
@@ -73,8 +74,21 @@ exports.banCommand = async function(p,user,command,reason){
 		await p.query(sql,[command]);
 	}
 	await user.send(noEmoji+" **|** You have been banned from using the command: `"+command+"`\n"+p.config.emoji.blank+" **| Reason:** "+reason);
-	await p.sender.msgModLogChannel(skullEmoji+" **| "+user.tag+"** is banned from using `"+command+"` forever.\n"+p.config.emoji.blank+" **| Reason:** "+reason);
+	await p.sender.msgModLogChannel(skullEmoji+" **| "+user.tag+"** is banned from using `"+command+"` forever.\n"+p.config.emoji.blank+" **| ID:** "+user.id+"\n"+p.config.emoji.blank+" **| Reason:** "+reason);
 }
+
+exports.liftCommand = async function(p,user,command){
+	let sql = `DELETE FROM user_ban WHERE id = ${user.id} AND command = ?;`;
+	let result = await p.query(sql,[command]);
+
+	if(result.affectedRows){
+		await user.send(liftEmoji+" **|** An admin has lifted your ban from the `"+command+"` command!");
+		await p.send(liftEmoji+" **| "+user.tag+"**'s ban on `"+command+"` has been lifted!\n"+p.config.emoji.blank+" **| ID:** "+user.id);
+	}else{
+		await p.errorMsg(", **"+user.tag+"** does not have a ban on `"+command+"`!");
+	}
+}
+
 
 function checkPermissions(msg,client){
 	if(msg.channel.type!="text")
