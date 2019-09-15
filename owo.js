@@ -18,6 +18,7 @@ const config = require('./json/botConfig.json');
 const Discord = require("discord.js");
 const client = new Discord.Client(config.client);
 client.login(auth.token);
+require("./overrides/index.js").override(client);
 
 const DBL = require("dblapi.js");
 const dbl = new DBL(auth.dbl);

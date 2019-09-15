@@ -16,7 +16,7 @@ module.exports = class ManaTap extends PassiveInterface{
 		this.name = "Mana Tap";
 		this.basicDesc= "";
 		this.emojis = ["<:cmanatap:562175424742948865>","<:umanatap:562175425028292618>","<:rmanatap:562175424902332446>","<:emanatap:562175424814120970>","<:mmanatap:562175424918978580>","<:lmanatap:562175425175093279>","<:fmanatap:562175424403079199>"];
-		this.statDesc = "All damage you deal replenishes your WP for **?%** of the damage dealt!";
+		this.statDesc = "All damage you deal replenishes your "+WeaponInterface.wpEmoji+"WP for **?%** of the damage dealt!";
 		this.qualityList = [[15,30]];
 	}
 

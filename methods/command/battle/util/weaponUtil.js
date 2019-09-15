@@ -7,6 +7,7 @@
 
 const requireDir = require('require-dir');
 const WeaponInterface = require('../WeaponInterface.js');
+const ReactionOverride = require('../../../../overrides/ReactionSocketOverride.js');
 
 const prices = {"Common":100,"Uncommon":250,"Rare":400,"Epic":600,"Mythical":2000,"Legendary":5000,"Fabled":20000};
 const ranks = [['cw','commonweapons','commonweapon'],['uw','uncommonweapons','uncommonweapon'],['rw','rareweapon','rareweapons'],
@@ -17,6 +18,8 @@ const weaponEmoji = "🗡";
 const weaponPerPage = 10;
 const nextPageEmoji = '➡';
 const prevPageEmoji = '⬅';
+const rewindEmoji = '⏪';
+const fastForwardEmoji = '⏩';
 const sortEmoji = '🔃';
 
 /* Initialize all the weapons */
@@ -33,6 +36,7 @@ exports.getRandomWeapon = function(id){
 	/* Grab a random weapon */
 	let keys = Object.keys(availableWeapons);
 	let random = keys[Math.floor(Math.random()*keys.length)];
+
 	let weapon = availableWeapons[random];
 
 	/* Initialize random stats */
@@ -131,19 +135,20 @@ var display = exports.display = async function(p,pageNum=0,sort=0,opt){
 		msg = await p.msg.channel.send({embed:page.embed});
 	else
 		await msg.edit({embed:page.embed});
+
+	msg = await msg.channel.messages.fetch(msg.id);
+
+	if(page.maxPage>19) await msg.react(rewindEmoji);
 	await msg.react(prevPageEmoji);
 	await msg.react(nextPageEmoji);
+	if(page.maxPage>19) await msg.react(fastForwardEmoji);
 	await msg.react(sortEmoji);
-	let filter = (reaction,user) => (reaction.emoji.name===sortEmoji||reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&users.includes(user.id);
-	let collector = await msg.createReactionCollector(filter,{time:900000});
+	let filter = (reaction,user) => [sortEmoji,nextPageEmoji,prevPageEmoji,rewindEmoji,fastForwardEmoji].includes(reaction.emoji.name)&&users.includes(user.id);
+	let collector = await msg.createReactionCollector(filter,{time:900000,idle:120000});
+	ReactionOverride.addEmitter(collector,msg);
 
-	let timer = setTimeout(function(){collector.stop()},120000);
-
-	collector.on('collect', async function(r){
+	let handler = async function(r){
 		try{
-			clearTimeout(timer);
-			timer = setTimeout(function(){collector.stop()},120000);
-
 			if(page){
 			/* Save the animal's action */
 			if(r.emoji.name===nextPageEmoji) {
@@ -151,22 +156,31 @@ var display = exports.display = async function(p,pageNum=0,sort=0,opt){
 				else pageNum = 0;
 				page = await getDisplayPage(p,user,pageNum,sort,opt);
 				if(page) await msg.edit({embed:page.embed});
-			}
-			else if(r.emoji.name===prevPageEmoji){
+			}else if(r.emoji.name===prevPageEmoji){
 				if(pageNum>0) pageNum--;
 				else pageNum = page.maxPage-1;
 				page = await getDisplayPage(p,user,pageNum,sort,opt);
 				if(page) await msg.edit({embed:page.embed});
-			}
-			else if(r.emoji.name===sortEmoji){
+			}else if(r.emoji.name===sortEmoji){
 				sort = (sort+1)%4;
+				page = await getDisplayPage(p,user,pageNum,sort,opt);
+				if(page) await msg.edit({embed:page.embed});
+			}else if(r.emoji.name===rewindEmoji){
+				pageNum -= 5;
+				if(pageNum<0) pageNum = 0;
+				page = await getDisplayPage(p,user,pageNum,sort,opt);
+				if(page) await msg.edit({embed:page.embed});
+			}else if(r.emoji.name===fastForwardEmoji){
+				pageNum += 5;
+				if(pageNum>=page.maxPage) pageNum = page.maxPage-1;
 				page = await getDisplayPage(p,user,pageNum,sort,opt);
 				if(page) await msg.edit({embed:page.embed});
 			}
 			}
-		}catch(err){console.error(err);}
-	});
+		}catch(err){}
+	}
 
+	collector.on('collect', handler);
 	collector.on('end',async function(collected){
 		if(page){
 			page.embed.color = 6381923;
@@ -375,12 +389,12 @@ exports.describe = async function(p,uwid){
 
 	// Grab user
 	let user = await p.global.getUser(result[0].id);
-	if(user) user = user.username;
-	else user = "A User";
+	let username = "A User";
+	if(user) username = user.username;
 
 	/* Make description */
 	let desc = `**Name:** ${weapon.name}\n`;
-	desc += `**Owner:** ${user}\n`;
+	desc += `**Owner:** ${username}\n`;
 	desc += `**ID:** \`${shortenUWID(uwid)}\`\n`;
 	desc += `**Sell Value:** ${weapon.unsellable?"UNSELLABLE":prices[weapon.rank.name]}\n`;
 	desc += `**Quality:** ${weapon.rank.emoji} ${weapon.avgQuality}%\n`;
@@ -403,8 +417,7 @@ exports.describe = async function(p,uwid){
 	/* Construct embed */
 	const embed ={
 		"author":{
-			"name":user+"'s "+weapon.name,
-			"icon_url":p.msg.author.avatarURL()
+			"name":username+"'s "+weapon.name,
 		},
 		"color":p.config.embed_color,
 		"thumbnail":{
@@ -412,6 +425,7 @@ exports.describe = async function(p,uwid){
 		},
 		"description":desc
 	};
+	if(user) embed.author.icon_url = user.avatarURL();
 	p.send({embed});
 }
 

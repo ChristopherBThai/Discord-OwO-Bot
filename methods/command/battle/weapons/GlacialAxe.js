@@ -8,19 +8,20 @@
 const WeaponInterface = require('../WeaponInterface.js');
 const Logs = require('../util/logUtil.js');
 
-module.exports = class Bow extends WeaponInterface{
+module.exports = class GlacialAxe extends WeaponInterface{
 
 	init(){
-		this.id = 3;
-		this.name = "Bow";
-		this.basicDesc = "An accurate bow that will deal alot of damage to a single opponent";
-		this.emojis = ["<:cbow:535283611260420096>","<:ubow:535283613198188594>","<:rbow:535283613374349316>","<:ebow:535283614334844937>","<:mbow:535283613802168323>","<:lbow:535283613391126529>","<:fbow:535283614099832872>"];
-		this.defaultEmoji = "<:bow:538196864277807105>";
-		this.statDesc = "Deals **?%** of your "+WeaponInterface.strEmoji+"STR to a random opponent";
+		this.id = 15;
+		this.name = "Glacial Axe";
+		this.basicDesc = "";
+		this.emojis = ["<:cgaxe:618389128311996427>","<:ugaxe:618389128077377547>","<:rgaxe:618389128517648392>","<:egaxe:618389128064794646>","<:mgaxe:618389128949661716>","<:lgaxe:618389129817882625>","<:fgaxe:618389128396013598>"];
+		this.defaultEmoji = "<:gaxe:618389128043692043>";
+		this.statDesc = "Deals **?%** of your "+WeaponInterface.strEmoji+"STR to a random opponent and apply **Freeze**";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
-		this.qualityList = [[110,160]];
+		this.qualityList = [[60,80]];
 		this.manaRange = [220,120];
+		this.buffList = [5];
 	}
 
 	attackWeapon(me,team,enemy){
@@ -39,14 +40,17 @@ module.exports = class Bow extends WeaponInterface{
 		/* deplete weapon points*/
 		let mana = WeaponInterface.useMana(me,this.manaCost,me,{me,allies:team,enemies:enemy});
 		let manaLogs = new Logs();
-		manaLogs.push(`[BOW] ${me.nickname} used ${mana.amount} WP`,mana.logs);
+		manaLogs.push(`[GAXE] ${me.nickname} used ${mana.amount} WP`,mana.logs);
 
 		/* Calculate damage */
 		let damage = WeaponInterface.getDamage(me.stats.att,this.stats[0]/100);
 
-		/* Deal damage */
+		/* Deal damage and freeze*/
 		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.PHYSICAL,{me,allies:team,enemies:enemy});
-		logs.push(`[BOW] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
+		let buff = this.getBuffs(me)[0];
+		let buffLogs = buff.bind(attacking,1,{me,allies:team,enemies:enemy});
+		logs.push(`[GAXE] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP and applied freeze`, damage.logs);
+		logs.addSubLogs(buffLogs);
 
 		logs.addSubLogs(manaLogs);
 

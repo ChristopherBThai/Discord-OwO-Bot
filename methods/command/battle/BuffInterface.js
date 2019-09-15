@@ -99,6 +99,9 @@ module.exports = class BuffInterface{
 	/* when an enemy chooses an opponent */
 	enemyChooseAttack(animal,attacker,attackee,ally,enemy){return attackee}
 
+	/* If the passive owner is allowed to attack */
+	canAttack(me,ally,enemy,action,result){}
+
 	/* End of turn. Descrease duration by one */
 	postTurn(animal,ally,enemy,action){
 		this.duration -= 1;

@@ -12,6 +12,8 @@ exports.alter = function(id,text,type){
 			return crown(text,type);
 		case '250383887312748545':
 			return elsa(text,type);
+		case '323347251705544704':
+			return rikudou(text,type);
 		default:
 			return text;
 	}
@@ -33,5 +35,14 @@ function elsa(text,type){
 	}
 	text.color = 7319500;
 	text.author.name = text.author.name.replace(" goes into battle!","'s Knights fight for their Queen's Glory!");
+	return text;
+}
+
+function rikudou(text,type){
+	text.thumbnail = {
+		"url":"https://cdn.discordapp.com/attachments/598318102307930114/620814063764766725/image0.gif"
+	}
+	text.color = 255;
+	text.author.name = "Rikudou Sennin Arrives on the Battlefield";
 	return text;
 }
