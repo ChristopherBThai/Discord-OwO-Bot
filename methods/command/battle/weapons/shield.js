@@ -29,6 +29,9 @@ module.exports = class Shield extends WeaponInterface{
 		if(action!=battleUtil.weapon)
 			return;
 
+		if(animal.disabled&&!animal.disabled.canAttack)
+			return;
+
 		/* If dead */
 		if(animal.stats.hp[0]<=0) return;
 
