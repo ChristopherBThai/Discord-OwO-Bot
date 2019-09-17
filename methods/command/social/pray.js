@@ -30,7 +30,7 @@ module.exports = new CommandInterface({
 	bot:true,
 
 	execute: async function(p){
-		var user = undefined;
+		let user = undefined;
 		if(p.args.length>0){
 			user = await p.global.getUser(p.args[0]);
 			if(user){
@@ -46,10 +46,10 @@ module.exports = new CommandInterface({
 			user = undefined;
 		let quest;
 
-		var text = "";
-		var authorPoints = 0, opponentPoints = 0;
+		let text = "";
+		let authorPoints = 0, opponentPoints = 0;
 		if(p.command=="pray"){
-			const prayLine = prayLines[Math.floor(Math.random()*prayLines.length)];
+			let prayLine = prayLines[Math.floor(Math.random()*prayLines.length)];
 			if(user){
 				text = "**🙏 | "+p.msg.author.username+"** prays for **"+user.user.username+"**! "+prayLine;
 				authorPoints = -1;
@@ -60,7 +60,7 @@ module.exports = new CommandInterface({
 				authorPoints = 1;
 			}
 		}else{
-			const curseLine = curseLines[Math.floor(Math.random()*curseLines.length)];
+			let curseLine = curseLines[Math.floor(Math.random()*curseLines.length)];
 			if(user){
 				text = "**👻 | "+p.msg.author.username+"** puts a curse on **"+user.user.username+"**! "+curseLine;
 				authorPoints = 1;
@@ -71,15 +71,21 @@ module.exports = new CommandInterface({
 				authorPoints = -1;
 			}
 		}
-		var sql = "INSERT INTO luck (id,lcount) VALUES ("+p.msg.author.id+","+authorPoints+") ON DUPLICATE KEY UPDATE lcount = lcount "+((authorPoints>0)?"+"+authorPoints:authorPoints)+";";
+		let sql = "INSERT INTO luck (id,lcount) VALUES ("+p.msg.author.id+","+authorPoints+") ON DUPLICATE KEY UPDATE lcount = lcount "+((authorPoints>0)?"+"+authorPoints:authorPoints)+";";
 		sql += "SELECT lcount FROM luck WHERE id = "+p.msg.author.id+";";
-		if(opponentPoints&&user)
+		if(opponentPoints&&user){
 			sql += "INSERT INTO luck (id,lcount) VALUES ("+user.id+","+opponentPoints+") ON DUPLICATE KEY UPDATE lcount = lcount "+((opponentPoints>0)?"+"+opponentPoints:opponentPoints)+";";
+			sql += "INSERT INTO user_pray (sender,receiver,count,latest) VALUES ("+p.msg.author.id+","+user.id+",1,NOW()) ON DUPLICATE KEY UPDATE count = count + 1, latest = NOW();";
+		}
 		p.con.query(sql,function(err,result){
 			if(err) {console.error(err);return;}
 			text += "\n**<:blank:427371936482328596> |** You have **"+(result[1][0].lcount)+"** luck point(s)!";
 			p.send(text);
 			if(user&&quest) p.quest(quest,1,user.user);
+			if(opponentPoints&&user)
+				p.logger.value(p.command,1,['guild:'+p.msg.guild.id,'channel:'+p.msg.channel.id,'to:'+user.id,'from:'+p.msg.author.id]);
+			else
+				p.logger.value(p.command,1,['guild:'+p.msg.guild.id,'channel:'+p.msg.channel.id,'to:'+p.msg.author.id,'from:'+p.msg.author.id]);
 		});
 	}
 
