@@ -32,25 +32,30 @@ module.exports = new CommandInterface({
 				user = p.msg.member;
 			}else if(p.global.isUser(p.args[0])||p.global.isInt(p.args[0])){
 				let id = p.args[0].match(/[0-9]+/)[0];
-				user = await p.msg.guild.members.fetch(id);
+				user = await p.global.getUser(id);
 			}
 
 			if(!user){
-				p.errorMsg(", that user is not in this guild!",3000);
+			p.errorMsg(", I failed to fetch user information... sowwy",3000);
 				return;
 			}
 
-			const embed = {
+			let embed = {
 				"fields": [{
-						"name":user.user.tag+((user.user.bot)?" <:bot:489278383646048286>":"")+"  `"+user.presence.status+"`",
-						"value":((user.nickname)?"`Nickname: "+user.nickname+"`\n":"")+"`ID: "+user.user.id+"`"+((user.roles.color)?"\n`RoleColor: "+user.displayHexColor+"`":"")
+						"name":user.tag+((user.bot)?" <:bot:489278383646048286>":"")+"  `"+user.presence.status+"`",
+						"value":"`ID: "+user.id+"`"
 				}],
 				"color": 4886754,
-				"image":{"url":user.user.avatarURL({size:1024})},
+				"image":{"url":user.avatarURL({size:1024})},
 			}
-			p.send({embed});
+
+			if(member = await p.global.getMember(p.msg.guild,user)){
+				embed.fields[0].value = ((member.nickname)?"`Nickname: "+member.nickname+"`\n":"")+"`ID: "+member.user.id+"`"+((member.roles.color)?"\n`RoleColor: "+member.displayHexColor+"`":"")
+			}
+
+			await p.send({embed});
 		}catch(e){
-				p.errorMsg(", that user is not in this guild!",3000);
+			p.errorMsg(", I failed to fetch user information... sowwy",3000);
 		}
 	}
 
