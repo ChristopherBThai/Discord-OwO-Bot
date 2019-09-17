@@ -795,6 +795,8 @@ function preTurn(team,enemy,action){
 
 	for(let i in team){
 		let animal= team[i];
+		check = WeaponInterface.canAttack(animal,team,enemy,action);
+		animal.disabled = check;
 		for(let j in animal.buffs){
 			let log = animal.buffs[j].preTurn(animal,team,enemy,action[i]);
 			if(log) logs = logs.concat(log.logs);
@@ -845,12 +847,10 @@ function executeTurn(team,enemy,action){
 
 		if(animal){
 
-			// Check if the animal is allowed to attack
-			check = WeaponInterface.canAttack(animal,tempAlly,tempEnemy,tempAction);
-			if(check&&check.logs&&check.logs.logs.length>0) logs = logs.concat(check.logs.logs);
-
 			// Animal is not allowed to attack
-			if(check&&!check.canAttack){
+			if(animal.disabled&&!animal.disabled.canAttack){
+				if(animal.disabled.logs&&animal.disabled.logs.logs.length>0)
+					logs = logs.concat(animal.disabled.logs.logs);
 
 			// Animal has a weapon
 			}else if(animal.weapon){
