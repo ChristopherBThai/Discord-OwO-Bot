@@ -27,7 +27,7 @@ module.exports = class Energize extends PassiveInterface{
 		
 		let logs = new Log();
 		let replenish = this.stats[0];
-		replenish = WeaponInterface.replenish(animal,replenish,animal);
+		replenish = WeaponInterface.replenish(animal,replenish,animal,{me:animal,allies:ally,enemies:enemy});
 		logs.push(`[ENERG] ${animal.nickname} replenished ${replenish.amount} WP`,replenish.logs);
 
 		return logs;
