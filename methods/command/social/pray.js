@@ -75,7 +75,7 @@ module.exports = new CommandInterface({
 		sql += "SELECT lcount FROM luck WHERE id = "+p.msg.author.id+";";
 		if(opponentPoints&&user){
 			sql += "INSERT INTO luck (id,lcount) VALUES ("+user.id+","+opponentPoints+") ON DUPLICATE KEY UPDATE lcount = lcount "+((opponentPoints>0)?"+"+opponentPoints:opponentPoints)+";";
-			sql += "INSERT INTO user_pray (sender,receiver,count,latest) VALUES ("+p.msg.author.id+","+user.id+",1,NOW()) ON DUPLICATE KEY UPDATE count = count + 1, latest = NOW();";
+			sql += "INSERT IGNORE INTO user_pray (sender,receiver,count,latest) VALUES ("+p.msg.author.id+","+user.id+",1,NOW()) ON DUPLICATE KEY UPDATE count = count + 1, latest = NOW();";
 		}
 		p.con.query(sql,function(err,result){
 			if(err) {console.error(err);return;}
