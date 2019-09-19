@@ -770,6 +770,8 @@ function parseSqlBuffs(team,buffs,otherTeam){
 				let buff = allBuffs[buffs[j].bfid];
 				if(buff){
 					let qualities = buffs[j].qualities.split(",").map(x=>parseInt(x));
+					if(!buffs[j].qualities||buffs[j].qualities=="")
+						qualities = [];
 					owner = null;
 					for(let k in team){
 						if(team[k].pid==buffs[j].pfrom)
