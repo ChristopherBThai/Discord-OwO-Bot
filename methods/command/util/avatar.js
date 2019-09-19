@@ -29,7 +29,7 @@ module.exports = new CommandInterface({
 		try{
 			let user = undefined;
 			if(p.args.length==0){
-				user = p.msg.member;
+				user = p.msg.author;
 			}else if(p.global.isUser(p.args[0])||p.global.isInt(p.args[0])){
 				let id = p.args[0].match(/[0-9]+/)[0];
 				user = await p.global.getUser(id);
