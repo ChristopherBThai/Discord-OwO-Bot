@@ -71,7 +71,23 @@ module.exports = new CommandInterface({
 				authorPoints = -1;
 			}
 		}
-		let sql = "INSERT INTO luck (id,lcount) VALUES ("+p.msg.author.id+","+authorPoints+") ON DUPLICATE KEY UPDATE lcount = lcount "+((authorPoints>0)?"+"+authorPoints:authorPoints)+";";
+
+		// Check if id exists first
+		let sql = "SELECT id FROM user WHERE id in ("+p.msg.author.id;
+		let len = 1;
+		if(opponentPoints&&user){
+			sql += ","+user.id;
+			len++;
+		}
+		sql += ");";
+		let result = await p.query(sql);
+		if(result.length<len){
+			sql = "INSERT IGNORE INTO user (id,count) VALUES ("+p.msg.author.id+",0)";
+			if(opponentPoints&&user)
+				sql += ",("+(user.id)+",0);";
+		}
+
+		sql = "INSERT INTO luck (id,lcount) VALUES ("+p.msg.author.id+","+authorPoints+") ON DUPLICATE KEY UPDATE lcount = lcount "+((authorPoints>0)?"+"+authorPoints:authorPoints)+";";
 		sql += "SELECT lcount FROM luck WHERE id = "+p.msg.author.id+";";
 		if(opponentPoints&&user){
 			sql += "INSERT INTO luck (id,lcount) VALUES ("+user.id+","+opponentPoints+") ON DUPLICATE KEY UPDATE lcount = lcount "+((opponentPoints>0)?"+"+opponentPoints:opponentPoints)+";";
