@@ -398,7 +398,7 @@ exports.describe = async function(p,uwid){
 	desc += `**ID:** \`${shortenUWID(uwid)}\`\n`;
 	desc += `**Sell Value:** ${weapon.unsellable?"UNSELLABLE":prices[weapon.rank.name]}\n`;
 	desc += `**Quality:** ${weapon.rank.emoji} ${weapon.avgQuality}%\n`;
-	desc += `**WP Cost:** ${weapon.manaCost} <:wp:531620120976687114>`;
+	desc += `**WP Cost:** ${Math.round(weapon.manaCost)} <:wp:531620120976687114>`;
 	desc += `\n**Description:** ${weapon.desc}\n`;
 	if(weapon.buffList.length>0){
 		desc += `\n`;

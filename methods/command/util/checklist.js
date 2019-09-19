@@ -10,10 +10,11 @@ const CommandInterface = require('../../commandinterface.js');
 const dateUtil = require('../../../util/dateUtil.js');
 const check = "☑";
 const box = "⬛";
+const tada = "🎉";
 
 module.exports = new CommandInterface({
 
-	alias:["checklist","task","tasks"],
+	alias:["checklist","task","tasks","cl"],
 
 	args:"",
 
@@ -34,12 +35,13 @@ module.exports = new CommandInterface({
 
 		let description = "";
 
+		// Construct all sqls
 		let checklist = [];
 		checklist.push(daily(p));
 		checklist.push(vote(p));
 		checklist.push(cookie(p));
 		checklist.push(quests(p));
-		checklist.push(questrr(p));
+		//checklist.push(questrr(p));
 		checklist.push(lootboxes(p));
 		checklist.push(crates(p));
 
@@ -47,12 +49,36 @@ module.exports = new CommandInterface({
 		for(let i in checklist){
 			sql += checklist[i].sql;
 		}
-
+		sql += `SELECT checklist,user.uid FROM user LEFT JOIN timers ON user.uid = timers.uid WHERE user.id = ${p.msg.author.id};`;
 		let result = await p.query(sql);
 
+		let reward = true;
+
+		// Combine parse query and check if they completed all quests
 		for(let i in checklist){
 			let task = checklist[i].parse(result[i]);
 			description += "\n"+(task.done?check:box)+" "+task.emoji+" "+task.desc;
+			if(!task.done) reward = false;
+		}
+
+		// Check if they already claimed
+		let afterMid = dateUtil.afterMidnight((result[result.length-1][0])?result[result.length-1][0].checklist:undefined);
+		if(afterMid&&!afterMid.after){
+			reward = false;
+			description += "\n"+check+" "+tada+" You already claimed your checklist rewards!";
+		}else if(!reward){
+			description += "\n"+box+" "+tada+" Complete your checklist to get a reward!";
+		}else{
+			description += "\n"+check+" "+tada+" You earned 1,000 "+p.config.emoji.cowoncy+", 1 "+p.config.emoji.lootbox+", and 1 "+p.config.emoji.crate+"!";
+		}
+
+		if(reward){
+			let uid = result[result.length-1][0].uid;
+			sql = `UPDATE timers SET checklist = ${afterMid.sql} WHERE uid = ${uid};
+					UPDATE lootbox SET boxcount = boxcount + 1 WHERE id = ${p.msg.author.id};
+					UPDATE crate SET boxcount = boxcount + 1 WHERE uid = ${uid};
+					UPDATE cowoncy SET money = money + 1000 WHERE id = ${p.msg.author.id};`;
+			result = await p.query(sql);
 		}
 
 		let embed = {
@@ -112,13 +138,17 @@ function cookie(p){
 
 function quests(p){
 	return {
-		sql:`SELECT questTime FROM user INNER JOIN timers ON user.uid = timers.uid WHERE id = ${p.msg.author.id};`,
+		sql:`SELECT questrrTime,questTime FROM user INNER JOIN timers ON user.uid = timers.uid WHERE id = ${p.msg.author.id};`,
 		parse:function(result){
 			let afterMid = dateUtil.afterMidnight((result[0])?result[0].questTime:undefined);
-			if(afterMid&&!afterMid.after)
-				return {done:true,desc:"You already claimed today's quest!",emoji:'📜'}
-			else
-				return {done:false,desc:"You can still claim a quest!",emoji:'📜'}
+			if(afterMid&&!afterMid.after){
+				afterMid = dateUtil.afterMidnight((result[0])?result[0].questrrTime:undefined);
+				if(afterMid&&!afterMid.after)
+					return {done:true,desc:"You already claimed today's quest!",emoji:'📜'}
+				else
+					return {done:true,desc:"You already claimed today's quest! (+rr)",emoji:'📜'}
+			}else
+				return {done:false,desc:"You can still claim a quest! (+rr)",emoji:'📜'}
 		}
 	}
 }

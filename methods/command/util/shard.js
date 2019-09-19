@@ -7,6 +7,11 @@
 
 const CommandInterface = require('../../commandinterface.js');
 
+const ReactionOverride = require('../../../overrides/ReactionSocketOverride.js');
+const perPage = 15;
+const nextPageEmoji = '➡';
+const prevPageEmoji = '⬅';
+
 module.exports = new CommandInterface({
 
 	alias:["shards","shard"],
@@ -27,9 +32,8 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 		let shardInfo = await fetchInfo(p);
-		let shards = {};
+		let shards = [];
 		// char size: 5 4 13 4 6 8 5
-		let title = `[ID]  ping uptime        guilds channels users`;
 		for(let i in shardInfo){
 			let shard = shardInfo[i];
 			let id = '['+shardInfo[i].id+']';
@@ -46,21 +50,63 @@ module.exports = new CommandInterface({
 			users += ' '.repeat((5-users.length<0)?0:5-users.length);
 
 			let text = `${id} ${ping} ${uptime} ${guilds} ${channels} ${users}`;
-			shards[parseInt(shardInfo[i].id)] = text;
+			shards.push(text);
 		}
 
-		let result = "```\n"+title;
-		for(let i=0;i<shardInfo.length;i++){
-			let text = shards[i];
-			result += "\n"+(i==p.client.shard.ids[0]?'>':'')+text+(i==p.client.shard.id?'<':'');
-		}
-		result += "```";
+		let currentPage = Math.floor(p.client.shard.ids[0]/perPage);
+		let page = getPage(p,currentPage,shards);
+		let maxPage = Math.ceil(shards.length/perPage);
 
-		p.msg.channel.send(result,{split:{prepend:'```',append:'```'}})
-			.catch(console.error);
+		let msg = await p.send(page);
+		await msg.react(prevPageEmoji);
+		await msg.react(nextPageEmoji);
+
+		let filter = (reaction,user) => [nextPageEmoji,prevPageEmoji].includes(reaction.emoji.name)&&p.msg.author.id==user.id;
+		let collector = await msg.createReactionCollector(filter,{time:900000,idle:120000});
+		ReactionOverride.addEmitter(collector,msg);
+
+		collector.on('collect', async function(r){
+			if(r.emoji.name===nextPageEmoji) {
+				if(currentPage+1<maxPage) currentPage++;
+				else currentPage = 0;
+				page = getPage(p,currentPage,shards);
+				await msg.edit(page);
+			}else if(r.emoji.name===prevPageEmoji){
+				if(currentPage>0) currentPage--;
+				else currentPage = maxPage-1;
+				page = getPage(p,currentPage,shards);
+				await msg.edit(page);
+			}
+		});
+		collector.on('end',async function(collected){
+			page.embed.color = 6381923;
+			await msg.edit("This message is now inactive",page);
+		});
 	}
 
 })
+
+function getPage(p,currentPage,shards){
+	let desc = `\`\`\`\n[ID]  ping uptime        guilds channels users\n`;
+	for(let i = currentPage*perPage;i<perPage+(currentPage*perPage);i++){
+		if(shards[i])
+			desc += (i==p.client.shard.ids[0]?">":"")+""+shards[i]+""+(i==p.client.shard.ids[0]?"<":"")+"\n";
+	}
+	desc += "```";
+	let embed = {
+		"author":{
+			"name":p.msg.author.username+", here are the bot's shards!",
+			"icon_url":p.msg.author.avatarURL()
+		},
+		"description":desc,
+		"color": p.config.embed_color,
+		"footer":{
+			"text":"Page "+(currentPage+1)+"/"+Math.ceil(shards.length/perPage)
+		}
+	};
+
+	return {embed};
+}
 
 async function fetchInfo(p){
 	return result = await p.client.shard.broadcastEval(`

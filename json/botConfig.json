@@ -20,7 +20,9 @@
 	"emoji":{
 		"cowoncy":"<:cowoncy:416043450337853441>",
 		"blank":"<:blank:427371936482328596>",
-		"invalid":"🚫"
+		"invalid":"🚫",
+		"crate":"<:crate:523771259302182922>",
+		"lootbox":"<:box:427352600476647425>"
 	},
 	"guildlink":"https://discord.gg/VKesv7J"
 }
