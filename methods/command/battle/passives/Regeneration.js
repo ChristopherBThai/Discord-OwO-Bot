@@ -25,7 +25,7 @@ module.exports = class Regeneration extends PassiveInterface{
 		
 		let logs = new Log();
 		let heal = (animal.stats.hp[1]+animal.stats.hp[3])*(this.stats[0]/100);
-		heal = WeaponInterface.heal(animal,heal,animal);
+		heal = WeaponInterface.heal(animal,heal,animal,{me:animal,allies:ally,enemies:enemy});
 		logs.push(`[REGEN] ${animal.nickname} heals for ${heal.amount} HP`,heal.logs);
 
 		return logs;
