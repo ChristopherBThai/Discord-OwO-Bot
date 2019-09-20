@@ -21,12 +21,30 @@ exports.check = async function(con,msg,client,command,callback,ignore){
 		return;
 	}
 
-	var channel = msg.channel.id;
+	let channel = msg.channel.id;
 
-	//Check if there is a global cooldown
 	if(cooldown[msg.author.id+command]){
 		return;
-	}else if(cooldown[msg.author.id]==undefined){
+	}
+
+	//Check for channel cooldown
+	if(!cooldown[msg.channel.id]){
+		cooldown[msg.channel.id] = 1;
+		setTimeout(() => {delete cooldown[msg.channel.id];}, 5000);
+	}else if(cooldown[msg.channel.id]>=6){
+		cooldown[msg.channel.id]++;
+		if(command!="points"&&cooldown[msg.channel.id]==8){
+			msg.channel.send("** |** This channel is getting a little too crowded! Please slow down for me! ;c")
+				.then(message => message.delete({timeout:4000}))
+				.catch(err => console.info(err));
+		}
+		return;
+	}else if(cooldown[msg.channel.id]<7){
+		cooldown[msg.channel.id]++;
+	}
+
+	//Check if there is a global cooldown
+	if(cooldown[msg.author.id]==undefined){
 		cooldown[msg.author.id] = 1;
 		setTimeout(() => {delete cooldown[msg.author.id];}, 5000);
 	}else if(cooldown[msg.author.id]>=3) {
@@ -61,6 +79,8 @@ exports.check = async function(con,msg,client,command,callback,ignore){
 			if(msg.channel.memberPermissions(msg.guild.me).has("SEND_MESSAGES")){
 				msg.channel.send("**🚫 |** That command is disabled on this channel!")
 					.then(message => message.delete({timeout:3000}))
+				cooldown[msg.author.id+command] = true;
+				setTimeout(() => {delete cooldown[msg.author.id+command];}, 30000);
 			}
 		}
 	});
