@@ -39,6 +39,7 @@ exports.giveXP = async function(msg){
 			guildBonus = 500;
 		}
 	}else{
+		await redis.del("xplimit_"+msg.author.id);
 		limit = {day:getDate(),xp:gain};
 		limit[msg.guild.id] = gain;
 		// Daily bonus xp

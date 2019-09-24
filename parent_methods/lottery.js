@@ -75,7 +75,7 @@ function msgUsers(winnername,winner,chance,winnerChannel,prize,loser,loserchance
 		global.msgUser(loser[i],text);
 		console.log("\x1b[36m%s\x1b[0m","    msg sent to "+loser[i]+" for losing");
 	}
-	setTimeout(function(){msgUsers(winnername,winner,chance,winnerChannel,prize,loser,loserchance,i+1)},6000);
+	setTimeout(function(){msgUsers(winnername,winner,chance,winnerChannel,prize,loser,loserchance,i+1)},15000);
 }
 
 

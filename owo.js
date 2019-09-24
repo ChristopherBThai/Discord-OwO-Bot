@@ -145,5 +145,7 @@ client.on('rateLimit',function(info){
 });
 
 client.on('debug',(msg) => {
-	//console.log(msg);
+	//console.log("["+client.shard.ids[0]+"] "+msg);
+	//if(msg.toLowerCase().indexOf('429') === 0){
+	//}
 });
