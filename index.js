@@ -55,7 +55,7 @@ process.on('exit', function(code) {
 });
 
 try{
-	Manager.spawn(Manager.totalShards).catch(console.error);
+	Manager.spawn(Manager.totalShards,5500,120000).catch(console.error);
 }catch(err){
 	console.error(err);
 }

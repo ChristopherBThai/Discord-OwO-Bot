@@ -85,6 +85,7 @@ module.exports = new CommandInterface({
 
 				//Alter text for legendary tier patreons
 				text = alterHunt.alter(p.msg.author.id,text);
+				//text += "\n⚠ **|** `battle` and `hunt` cooldowns have increased to prevent rateLimits issues.\n<:blank:427371936482328596> **|** They will revert back to `15s` in the future.";
 
 				con.query(sql,function(err,result2){
 					if(err) {console.error(err); return;}
