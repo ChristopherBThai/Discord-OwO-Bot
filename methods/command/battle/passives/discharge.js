@@ -20,7 +20,7 @@ module.exports = class Discharge extends PassiveInterface{
 		this.qualityList = [[100,140]];
 	}
 
-	postReplenish(animal,from,amount,tags){
+	postReplenished(animal,from,amount,tags){
 		/* Ignore if tags.thorns flag is true */
 		if(tags.discharge) return;
 		let totalDamage = amount.reduce((a,b)=>a+b,0)*this.stats[0]/100;
