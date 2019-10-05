@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 	
-const debug = false;
+const debug = true;
 if(!debug) var tracer = require('dd-trace').init()
 
 /* Default is 4. Use higher numbers if you have enough cores */

@@ -27,9 +27,9 @@ exports.getItems = async function(p){
 
 exports.getRandomGem = function(id,patreon){
 	patreon = true;
-	var rand= Math.trunc(Math.random()*(typeCount-1));//(typeCount-((patreon)?1:0)));
-	var count = 0;
-	var type = "Hunting";
+	let rand= Math.trunc(Math.random()*(typeCount-1));//(typeCount-((patreon)?1:0)));
+	let count = 0;
+	let type = "Hunting";
 	for (var key in gems){
 		/*
 		if(!(patreon&&key=="Patreon")){
@@ -52,9 +52,9 @@ exports.getRandomGem = function(id,patreon){
 		type = Object.keys(gems)[0];
 
 	type = gems[type];
-	var rand = Math.random();
-	var gem;
-	var sum = 0
+	rand = Math.random();
+	let gem;
+	let sum = 0
 	for(var x in type){
 		sum += type[x].chance;
 		if(rand<sum){
@@ -68,6 +68,62 @@ exports.getRandomGem = function(id,patreon){
 			(SELECT uid FROM user WHERE id = ${id}),
 			(SELECT gname FROM gem WHERE gname = '${gem.key}'),
 			1
+		) ON DUPLICATE KEY UPDATE
+			gcount = gcount + 1;`
+
+	return {gem:gem,
+		name:rank+" "+gem.type+" Gem",
+		sql:sql};
+}
+
+exports.getRandomGems = function(p,count){
+	allGems = {};
+	for(let i=0;i<count;i++){
+		let rand= Math.trunc(Math.random()*(typeCount-1));
+		let count = 0;
+		let type = "Hunting";
+		for (let key in gems){
+			if(key=="Patreon"){
+				count++;
+				rand++;
+			}else if(count==rand){
+				type = key;
+				count++;
+			}else{
+				count++;
+			}
+		}
+		if(global.isInt(type))
+			type = Object.keys(gems)[0];
+
+		type = gems[type];
+		rand = Math.random();
+		let gem;
+		let sum = 0
+		for(var x in type){
+			sum += type[x].chance;
+			if(rand<sum){
+				gem = type[x];
+				rand = 100;
+			}
+		}
+		if(allGems[gem.key]){
+			allGems[gem.key].count++;
+		}else{
+			let rank = ranks[gem.key[0]];
+			allGems[gem.key] = {
+				gem:gem,
+				name:rank+" "+gem.type+" Gem",
+				count:1
+			}
+		}
+	}
+	console.log(allGems);
+
+	return;
+	var sql = `INSERT INTO user_gem (uid,gname,gcount) VALUES (
+			(SELECT uid FROM user WHERE id = ${id}),
+			'${gem.key}',1
 		) ON DUPLICATE KEY UPDATE
 			gcount = gcount + 1;`
 

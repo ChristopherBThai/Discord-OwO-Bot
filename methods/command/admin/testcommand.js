@@ -10,6 +10,7 @@ const imagegen = require('../battle/battleImage.js');
 const mysql = require('../../../util/mysql.js');
 
 const captcha = require('../../../../tokens/captcha.js');
+const nodeEmoji = require('node-emoji');
 
 module.exports = new CommandInterface({
 
@@ -18,8 +19,20 @@ module.exports = new CommandInterface({
 	admin:true,
 
 	execute: async function(p){
-		let data = await captcha();
-		p.send(data.text,null,{files:[data.buffer]});
-		
+		let text = p.args;
+		let emojis = {};
+		for(let i in text){
+			let name = nodeEmoji.find(text[i]);
+			emojis[text[i]] = {
+				"unicode":text[i],
+				"name":name.key,
+				"base":"",
+				"eyes":"",
+				"mouth":"",
+				"detail":""
+			}
+		}
+		let result = "```js\n"+JSON.stringify(emojis,null,"  ")+"\n```";
+		p.send(result);
 	}
 })
