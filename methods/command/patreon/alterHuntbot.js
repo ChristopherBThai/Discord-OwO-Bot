@@ -160,6 +160,7 @@ function elsa(text,type){
 		case 'hb':
 			text.author.name = text.author.name.replace("HuntBot","Bronze Knight");
 			text.description = shiryu1+" **`I will scour the cosmos for you, my mistress`**";
+			text.color = 7319500;
 			if(text.fields.length>=8){
 				text.fields[7].name = shiryu1+" I'm still gathering knights.";
 				text.fields[7].value = text.fields[7].value.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","I'll be back in")

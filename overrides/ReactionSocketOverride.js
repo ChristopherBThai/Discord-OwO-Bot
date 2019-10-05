@@ -14,7 +14,7 @@ var Messages = {};
 module.exports = new class ReactionSocketOverride extends OverrideInterface{
 
 	override(client){
-		console.log("Overriding handlers/index.js");
+		//console.log("Overriding handlers/index.js");
 		let handler = require('../node_modules/discord.js/src/client/websocket/handlers/index.js');
 		handler['MESSAGE_REACTION_ADD'] = (client, packet) => {
 			if(!client.actions.MessageReactionAdd.handle(packet.d)&&Messages[packet.d.message_id]){
