@@ -57,8 +57,7 @@ client.on('message',msg => {
 
 //When the bot client starts
 client.on('ready',()=>{
-	console.log('Logged in as '+client.user.tag+'!');
-	console.log('Bot has started, with '+client.users.size+' users, in '+client.channels.size+' channels of '+client.guilds.size+' guilds.');
+	console.log('['+client.shard.ids[0]+'/'+client.shard.count+'] '+client.user.tag+' has started, with '+client.users.size+' users, in '+client.channels.size+' channels of '+client.guilds.size+' guilds.');
 	if(!debug){
 		logger.increment("ready");
 		setInterval(() => {
@@ -145,7 +144,16 @@ client.on('rateLimit',function(info){
 });
 
 client.on('debug',(msg) => {
-	//console.log("["+client.shard.ids[0]+"] "+msg);
-	//if(msg.toLowerCase().indexOf('429') === 0){
-	//}
+	if(msg.indexOf('GUILD_CREATE') >= 0){
+		return;
+	}else if(msg.indexOf('Swept') >= 0){
+		return;
+	}else if(msg.indexOf('Sending a heartbeat.') >= 0){
+		return;
+	}else if(msg.indexOf('Heartbeat acknowledged') >= 0){
+		return;
+	}else if(msg.indexOf('429 hit') >= 0){
+		return;
+	}
+	console.log("["+client.shard.ids[0]+"] "+msg);
 });

@@ -108,7 +108,7 @@ exports.del = function(table){
 }
 
 client.on('connect',function(){
-	console.log('Redis connected');
+	//console.log('Redis connected');
 });
 
 client.on('error',function(err){
