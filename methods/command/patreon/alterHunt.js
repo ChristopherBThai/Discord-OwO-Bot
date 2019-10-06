@@ -82,6 +82,7 @@ function spotifybot(text){
 	let spotify = '<a:spotify:577027003656437766>';
 	let swipeup = '<a:swipeup:577026648646483969>';
 	let nowplaying = '<a:nowplaying:577026647434330132>';
+	let img = 'https://cdn.discordapp.com/attachments/547465561919979551/628087450815823912/image0.gif';
 	if(text.indexOf("empowered by")>=0){
 		text = spotify+" Hey **Spotify** *Make a New Playlist!*\n"+
 			text.replace(", hunt is empowered by","'s Playlist is Sponsored by")
@@ -94,7 +95,14 @@ function spotifybot(text){
 			.replace("caught","added")
 			.replace("xp**!","xp**! *Shuffle Play* "+swipeup)
 	}
-	return text;
+	let embed = {
+		description:text,
+		color:1947988,
+		thumbnail:{
+			url:img
+		}
+	}
+	return {embed};
 }
 
 function oliverLaVey(text){
