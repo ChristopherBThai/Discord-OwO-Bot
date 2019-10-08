@@ -56,7 +56,7 @@ process.on('exit', function(code) {
 
 try{
 	console.log("Manager is going to spawn "+Manager.totalShards+" shards...");
-	Manager.spawn(Manager.totalShards,5500,120000).catch(console.error);
+	Manager.spawn(Manager.totalShards,5500,360000).catch(console.error);
 }catch(err){
 	console.log("Manager Spawner Error");
 	console.error(err);
