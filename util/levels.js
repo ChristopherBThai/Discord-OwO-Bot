@@ -58,6 +58,7 @@ exports.giveXP = async function(msg){
 	let xp;
 	if(!limitHit){
 		logger.value('xp',gain+bonus,['id:'+msg.author.id,'channel:'+msg.channel.id,'guild:'+msg.guild.id]);
+		logger.value('xplimit',limit.xp,['id:'+msg.author.id,'channel:'+msg.channel.id,'guild:'+msg.guild.id]);
 		xp = await redis.incr("user_xp",msg.author.id,gain+bonus);
 	}
 	if(!guildLimitHit){
