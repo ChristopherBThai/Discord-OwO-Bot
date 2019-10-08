@@ -9,18 +9,22 @@ const CommandInterface = require('../../commandinterface.js');
 
 const request = require('request');
 const imagegenAuth = require('../../../../tokens/imagegen.json');
+const ReactionOverride = require('../../../overrides/ReactionSocketOverride.js');
 const maxInt = 16777215;
+const Vibrant = require('node-vibrant');
 const colorEmoji = '🎨';
+const nextPageEmoji = '➡';
+const prevPageEmoji = '⬅';
 
 module.exports = new CommandInterface({
 
 	alias:["color","randcolor","colour","randcolour"],
 
-	args:"{@user|RGB}",
+	args:"{@user|role @user|RGB|HEX|HSL}",
 
-	desc:"Get a random color! You can also add an user argument or rgb value to view their colors!\n\nIf you want to get real technical, you can adjust the saturation and light value of the random colors like in the example below!",
+	desc:"Use the command without any parameters to get a random color!\n\nYou can also tag a user as an argument to parse prominent colors from their avatar!\n\nYou can view color roles by adding the text "role" and tagging a user\n\nYou can also view specific colors with RGB, HEX, or HSL values!",
 
-	example:["owo color","owo color @user","owo color #FFFFFF","owo color 255,255,255","owo color S:50% L:50%"],
+	example:["owo color","owo color @user","owo color role @user","owo color #FFFFFF","owo color 255,255,255","owo color S:50% L:50%"],
 
 	related:[],
 
@@ -30,7 +34,7 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 		
-		let color,title;
+		let color,title,colors;
 
 		// No argument = random color
 		if(!p.args.length){
@@ -41,9 +45,34 @@ module.exports = new CommandInterface({
 			let args2 = p.args.join("").replace('#','').toUpperCase();
 			title = ", here is your color for \""+p.args.join(" ")+"\"";
 			
-			//user value
+			//parse user's avatar color
 			if(args.length==1&&(p.global.isUser(p.args[0])||(p.global.isInt(p.args[0])&&parseInt(p.args[0])>maxInt))){
 				let id = p.args[0].match(/[0-9]+/)[0];
+				let user = await p.global.getUser(id);
+				if(!user){
+					p.errorMsg(", That user does not exist!",3000);
+					return;
+				}
+				let url = user.displayAvatarURL({format:'png',size:32});
+				let palette;
+				try{
+					palette = await Vibrant.from(url).getPalette();
+				}catch(err){
+					p.errorMsg("... sowwy, I couldnt parse the average color of "+user.username+"'s profile!",3000);
+				}
+				title = ", here is the prominent color for "+user.username+"'s profile picture!";
+				colors = [];
+				for(let i in palette){
+					let values = parseRGB(palette[i]._rgb);
+					values.name = i;
+					values.population = palette[i]._population;
+					values.avatar = user.displayAvatarURL({format:'png',size:256});
+					colors.push(values);
+				}
+
+			//user role color
+			}else if(args.length==2&&['r','role'].includes(args[0].toLowerCase())&&(p.global.isUser(p.args[1])||(p.global.isInt(p.args[1])&&parseInt(p.args[1])>maxInt))){
+				let id = p.args[1].match(/[0-9]+/)[0];
 				let user = await p.global.getUser(id);
 				if(!user){
 					p.errorMsg(", That user does not exist!",3000);
@@ -75,13 +104,61 @@ module.exports = new CommandInterface({
 			}
 		}
 
-		if(!color||color.r>255||color.g>255||color.b>255||!/[0-9,A-F]{6}/g.test(color.hex)){
+		if(!colors&&(!color||color.r>255||color.g>255||color.b>255||!/[0-9,A-F]{6}/g.test(color.hex))){
 			p.errorMsg(", that's an invalid color!",3000);
 			return;
 		}
 
-		let embed = await constructEmbed(color,p);
-		await p.send(colorEmoji+" **| "+p.msg.author.username+"**"+title,null,embed);
+		if(!colors){
+			let embed = await constructEmbed(color,p);
+			await p.send(colorEmoji+" **| "+p.msg.author.username+"**"+title,null,embed);
+		}else{
+			let page = 0;
+			let embed = await constructEmbed(colors[page],p);
+			embed.embed.footer = {
+				text:colors[page].name+" - population: "+colors[page].population
+			};
+			embed.embed.image = {
+				url:colors[page].avatar
+			};
+			let msg = await p.send(colorEmoji+" **| "+p.msg.author.username+"**"+title,null,embed);
+			await msg.react(prevPageEmoji);
+			await msg.react(nextPageEmoji);
+
+			let filter = (reaction,user) => [nextPageEmoji,prevPageEmoji].includes(reaction.emoji.name)&&user.id==p.msg.author.id
+			let collector = await msg.createReactionCollector(filter,{time:900000,idle:120000});
+			ReactionOverride.addEmitter(collector,msg);
+
+			collector.on('collect', async function(r){
+				if(r.emoji.name===nextPageEmoji) {
+					if(page+1<colors.length) page++;
+					else page = 0;
+					embed = await constructEmbed(colors[page],p);
+					embed.embed.footer = {
+						text:colors[page].name+" - population: "+colors[page].population
+					};
+					embed.embed.image = {
+						url:colors[page].avatar
+					};
+					await msg.edit(colorEmoji+" **| "+p.msg.author.username+"**"+title,embed);
+				}else if(r.emoji.name===prevPageEmoji){
+					if(page>0) page--;
+					else page = colors.length-1;
+					embed = await constructEmbed(colors[page],p);
+					embed.embed.footer = {
+						text:colors[page].name+" - population: "+colors[page].population
+					};
+					embed.embed.image = {
+						url:colors[page].avatar
+					};
+					await msg.edit(colorEmoji+" **| "+p.msg.author.username+"**"+title,embed);
+				}
+			});
+
+			collector.on('end',async function(collected){
+				await msg.edit("This message is now inactive",embed);
+			});
+		}
 
 	}
 
@@ -166,7 +243,6 @@ function randColor(){
 function randHSL(p,args){
 	let h,s,l;
 	let parsePercent = function(perc){
-		console.log(perc);
 		perc = parseFloat(perc.replace(/[HSVL%]/gi,""));
 		if(!perc) return -1;
 		perc /= 100;
@@ -176,7 +252,6 @@ function randHSL(p,args){
 	}
 	for(let i in args){
 		let arg = args[i].replace(/[:=]/gi,"").toUpperCase();
-		console.log(arg);
 		switch(arg.charAt(0)){
 			case 'H':
 				h = parsePercent(arg);
