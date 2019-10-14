@@ -10,19 +10,19 @@ const dir = requireDir('./command',{recurse:true});
 
 const CommandInterface = require('./commandinterface');
 
-const sender = require('../util/sender.js');
+const sender = require('../utils/sender.js');
 const Error = require("../handler/errorHandler.js");
 const mysqlHandler = require("../handler/mysqlHandler.js");
 const questHandler = new (require("../handler/questHandler.js"))();
 
-const logger = require('../util/logger.js');
-const mysql = require('../util/mysql.js');
+const logger = require('../utils/logger.js');
+const mysql = require('../utils/mysql.js');
 const con = mysql.con;
-const global = require('../util/global.js');
+const global = require('../utils/global.js');
 const config = require('../json/botConfig.json');
 
 const macro = require('../../tokens/macro.js');
-const ban = require('../util/ban.js');
+const ban = require('../utils/ban.js');
 
 const prefix = config.prefix;
 var query;
@@ -40,7 +40,8 @@ var modCommands = {};
 class Command {
 
 	//Grabs all commands in ./command/
-	constructor(Client,dbl){
+	constructor(main){
+		/*
 		this.client = Client;
 		this.dbl = dbl;
 		global.client(Client);
@@ -50,6 +51,7 @@ class Command {
 		macro.sender(sender);
 		macro.global(global);
 		query = new mysqlHandler(con).query;
+		*/
 		for(var key in dir){
 			if(dir[key] instanceof CommandInterface)
 				addCommand(dir[key]);

@@ -1,0 +1,51 @@
+{
+	"1":{
+		"id":1,
+		"name":"Common Ring",
+		"emoji":"<:cring:590393333331918859>",
+		"rarity":"common",
+		"price":10
+	},
+	"2":{
+		"id":2,
+		"name":"Uncommon Ring",
+		"emoji":"<:uring:590393334015721524>",
+		"rarity":"uncommon",
+		"price":100
+	},
+	"3":{
+		"id":3,
+		"name":"Rare Ring",
+		"emoji":"<:rring:590393334384558110>",
+		"rarity":"rare",
+		"price":1000
+	},
+	"4":{
+		"id":4,
+		"name":"Epic Ring",
+		"emoji":"<:ering:590393334036693004>",
+		"rarity":"epic",
+		"price":10000
+	},
+	"5":{
+		"id":5,
+		"name":"Mythical Ring",
+		"emoji":"<:mring:590393334003138570>",
+		"rarity":"mythical",
+		"price":100000
+	},
+	"6":{
+		"id":6,
+		"name":"Legendary Ring",
+		"emoji":"<a:lring:590393335819272203>",
+		"rarity":"legendary",
+		"price":1000000
+	},
+	"7":{
+		"id":7,
+		"name":"Fabled Ring",
+		"emoji":"<a:fring:590393335915479040>",
+		"rarity":"fabled",
+		"price":10000000
+	}
+}

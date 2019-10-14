@@ -5,71 +5,54 @@
  * For more information, see README.md and LICENSE
   */
 	
-const debug = false;
+// Grab tokens and secret files
+const debug = true;
 if(!debug) var tracer = require('dd-trace').init()
-
-/* Default is 4. Use higher numbers if you have enough cores */
-process.env.UV_THREADPOOL_SIZE = 17;
-
 if(debug) var auth = require('../tokens/scuttester-auth.json');
 else var auth = require('../tokens/owo-auth.json');
 
-const Discord = require('discord.js');
-const Manager = new Discord.ShardingManager('./owo.js',{
-		token:auth.token
-});
-
-var loaded = false;
-const global = require('./parent_methods/global.js');
-const ramCheck = require('./parent_methods/ramCheck.js');
-const vote = require('./parent_methods/vote.js');
-const lottery = require('./parent_methods/lottery.js');
-const messageHandler = require('./parent_methods/messageHandler.js');
-const levelCooldown = require('./parent_methods/levelCooldown.js');
-
-
-Manager.on('shardCreate', function(shard){
-	console.log(`Launched shard ${shard.id}`);
-	if(!loaded && shard.id == Manager.totalShards-1){
-		loaded = true;
-		setTimeout(updateActivity,15000);
-	}
-	shard.on('message',(message) => {
-		messageHandler.handle(Manager,shard,message);
-	});
-});
-
-function updateActivity(){
-	console.log("Done loading all the shards");
-	if(!debug){
-		lottery.init();
-		vote.setManager(Manager);
-	}
-	global.setManager(Manager);
-	Manager.broadcastEval("this.shard.fetchClientValues('guilds.size').then(results => {var result = results.reduce((prev, val) => prev + val, 0);this.user.setActivity('with '+result+' Servers!')}).catch(err => console.error(err))");
+// Config file
+const config = require('./src/data/config.json');
+const request = require('./utils/request.js');
+var io;
+if (require('cluster').isMaster){
+	io = require('./utils/socket.js');
 }
+// Eris-Sharder
+const Sharder = require('eris-sharder').Master;
+var result,shards,firstShardID,lastShardID;
 
-process.on('exit', function(code) {
-	console.log("exiting...");
-	Manager.broadcastEval("process.exit()");
-});
+(async () => {
+	try{
+		//determine how many shards we will need for this manager
+		if (require('cluster').isMaster){
+			result = await request.fetchInit();
+			shards = result["shards"];
+			firstShardID = result["firstShardID"];
+			lastShardID = result["lastShardID"];
+		}
+		// How many clusters we will have
+		var clusters = Math.ceil(shards/5);
+		if(debug){
+			shards = 2;
+			firstShardID = 0;
+			lastShardID = shards-1;
+			clusters = 2
+		}
+		console.log("Creating shards "+firstShardID+"~"+lastShardID+" out of "+shards+" total shards!");
 
-try{
-	console.log("Manager is going to spawn "+Manager.totalShards+" shards...");
-	Manager.spawn(Manager.totalShards,5500,360000).catch(console.error);
-}catch(err){
-	console.log("Manager Spawner Error");
-	console.error(err);
-}
+		// Start sharder
+		const sharder = new Sharder("Bot "+auth.token, config.sharder.path, {
+			name: config.sharder.name,
+			clientOptions: config.eris.clientOptions,
+			debug:true,
+			shards,clusters,
+			firstShardID,
+			lastShardID,
+		});
 
-ramCheck.check(Manager);
-
-process.on('unhandledRejection', (reason, promise) => {
-	console.error("unhandledRejection at index.js error "+(new Date()).toLocaleString());
-	console.error(reason);
-});
-
-process.on('uncaughtException', (err) => {
-	console.error("uncaughtException at index.js error "+(new Date()).toLocaleString());
-	console.error(err);
-});
+	}catch(e){
+		console.error("Failed to start eris sharder");
+		console.error(e);
+	}
+})();
