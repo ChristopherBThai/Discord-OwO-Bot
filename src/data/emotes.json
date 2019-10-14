@@ -1,0 +1,360 @@
+{
+	"sEmote":{
+		"blush":{
+			"name":"blush",
+			"msg":[
+				"? blushed!! >///<",
+				"? is blushing! cute~",
+				"?'s face is red~"
+			]
+		},
+		"cry":{
+			"name":"cry",
+			"msg":[
+				"? is crying... :c",
+				"? needs a hug...",
+				"? is crying... there there...",
+				"? cries... :'c"
+			]
+		},
+		"dance":{
+			"name":"dance",
+			"msg":[
+				"? is dancing!!",
+				"? loves to dance!",
+				"? is shaking some booty!!"
+			]
+		},
+		"lewd":{
+			"name":"lewd",
+			"msg":[
+				"? thinks thats lewd...",
+				"? says, thats lewd!",
+				"? is not old enough for that!",
+				"?! Cover your eyes! It's too lewd!"
+			]
+		},
+		"pout":{
+			"name":"pout",
+			"msg":[
+				"? pouts >:c",
+				"? is pouting!",
+				"? doesn't like that!"
+			]
+		},
+		"shrug":{
+			"name":"shrug",
+			"msg":[
+				"? shrugs",
+				"? doesn't care~",
+				"? says, 'o well'"
+			]
+		},
+		"sleepy":{
+			"name":"sleepy",
+			"msg":[
+				"? is sleepy...",
+				"? is tired...",
+				"? needs a nap...",
+				"? wants to sleep..."
+			]
+		},
+		"smile":{
+			"name":"smile",
+			"msg":[
+				"? smiles! c:",
+				"? has a grin!!",
+				"? is happy!"
+			]
+		},
+		"smug":{
+			"name":"smug",
+			"msg":[
+				"? scoffs c:<",
+				"? has a smug look c;",
+				"? thinks little of you ;)"
+			]
+		},
+		"thumbsup":{
+			"name":"thumbsup",
+			"msg":[
+				"? gives a thumbs up!",
+				"? agrees!",
+				"? has a thumbs up!"
+			]
+		},
+		"wag":{
+			"name":"wag",
+			"msg":[
+				"? wags its tail!",
+				"?'s tail is wagging~",
+				"? says, 'bork bork!'"
+			]
+		},
+		"thinking":{
+			"name":"thinking",
+			"msg":[
+				"? is thinking...",
+				"? is trying to understand",
+				"? cannot process that..."
+			]
+		},
+		"triggered":{
+			"name":"triggered",
+			"msg":[
+				"? is triggered!",
+				"? is TRIGGERED.",
+				"? is TRIGGERED!!!!"
+			]
+		},
+		"teehee":{
+			"name":"teehee",
+			"msg":[
+				"? giggles~",
+				"? c;",
+				"? ;P"
+			]
+		},
+		"deredere":{
+			"name":"deredere",
+			"msg":[
+				"? is in love~",
+				"? loves that~",
+				"? <3"
+			]
+		},
+		"thonking":{
+			"alt":"thinking"
+		},
+		"scoff":{
+			"alt":"smug"
+		},
+		"happy":{
+			"alt":"smile"
+		},
+		"thumbs":{
+			"alt":"thumbsup"
+		},
+		"grin":{
+			"alt":"smile"
+		}
+	},
+	"uEmote":{
+		"cuddle":{
+			"name":"cuddle",
+			"msg":[
+				"? snuggles ?~ cute!",
+				"? cuddles ?~ adorable!",
+				"? cuddles ?~~ kyaaaa!!"
+			],
+			"self":[
+				"oh noo ;-; I'll cuddle you ?...",
+				"D-do you need a hug ?...?"
+			]
+		},
+		"hug":{
+			"name":"hug",
+			"msg":[
+				"? hugs ?!",
+				"? gives ? a big hug!",
+				"? hugs ?!! Don't squeeze too hard!"
+			],
+			"self":[
+				"D-do you need a hug ?...?",
+				"I'll hug you ?... ;-;"
+			]
+		},
+		"insult":{
+			"name":"insult",
+			"msg":[
+				"? insults ?! Rude!!!",
+				"? insults ?! Deserves it.",
+				"? insults ?! Oh my."
+			],
+			"self":[
+				"Don't say that to yourself ?!"
+			]
+		},
+		"kiss":{
+			"name":"kiss",
+			"msg":[
+				"? kissed ?! Cute!",
+				"? kisses ?!! OwO",
+				"? kisses ?'s lips~"
+			],
+			"self":[
+				"H-how do you kiss yourself, ??",
+				"I'll kiss you instead, ? ;c",
+				"... There there ?..."
+			]
+		},
+		"lick":{
+			"name":"lick",
+			"msg":[
+				"? licks ?! lewd~",
+				"? licks ?! OwO",
+				"? gives ? a lick!",
+				"? licks ?!! Yummy!!",
+				"? licks ?!! How does it taste?!"
+			],
+			"self":[
+				"Are you a cat, ??",
+				"Silly ?! You can't lick yourself!"
+			]
+		},
+		"nom":{
+			"name":"bite",
+			"msg":[
+				"? noms on ?",
+				"? noms ?! Yummy!",
+				"? noms ?!"
+			],
+			"self":[
+				"?! You can't nom yourself silly!"
+			]
+		},
+		"pat":{
+			"name":"pat",
+			"msg":[
+				"? pets ?! There there!",
+				"? pets ?! Adorable~",
+				"? pets ?! *pat pat*"
+			],
+			"self":[
+				"oh noo ;-; I'll pat you ?...",
+				"There there ?..."
+			]
+		},
+		"poke":{
+			"name":"poke",
+			"msg":[
+				"? boops ? .-.",
+				"? pokes ?! boop!", 
+				"? boops ?! Not too hard now!",
+				"? boops ? ;)"
+			],
+			"self":[
+				"Did you.... poke yourself, ??"
+			]
+		},
+		"slap":{
+			"name":"slap",
+			"msg":[
+				"? slaps ?!! Deserves it!",
+				"? slaps ?!! oof.",
+				"? slaps ?!! That looks like it hurt..."
+			],
+			"self":[
+				"Did you... slap yourself, ??? :c",
+				"Don't do that to yourself, ?!"
+			]
+		},
+		"stare":{
+			"name":"stare",
+			"msg":[
+				"? stares at ?...",
+				"? looks directly at ?'s eyes...",
+				"? stares at ?... What did you do??"
+			],
+			"self":[
+				"Are you... looking at a mirror, ??"
+			]
+		},
+		"highfive":{
+			"name":"highfive",
+			"msg":[
+				"? gives ? a highfive!",
+				"? highfives ?!",
+				"? highfives ?! Nice!"
+			],
+			"self":[
+				";-; ?, there there...",
+				"Isn't that just clapping, ??"
+			]
+		},
+		"bite":{
+			"name":"bite",
+			"msg":[
+				"? bites ?! Owie",
+				"? bites ?!! Kinky ;)",
+				"? gives ? a bite! Yumm~"
+			],
+			"self":[
+				"?! Don't bite yourself!"
+			]
+		},
+		"greet":{
+			"name":"greet",
+			"msg":[
+				"? says hello to ?",
+				"? waves at ?",
+				"? says hi to ?!"
+			],
+			"self":[
+				"Poor ?... Do you need friends...?"
+			]
+		},
+		"punch":{
+			"name":"punch",
+			"msg":[
+				"? punches ?!! Oof",
+				"? gives ? a punch! Ouch!",
+				"? gives ? a wack! Ha!"
+			],
+			"self":[
+				"Whats wrong ??",
+				"Are you okay ??"
+			]
+		},
+		"handholding":{
+			"name":"handholding",
+			"msg":[
+				"? holds ?'s hands~ adorable!",
+				"? holds ?'s hands~ LEWD.",
+				"? grabs ?'s hands~ awww"
+			],
+			"self":[
+				"You can't hold your own hand, ?..."
+			]
+		},
+		"tickle":{
+			"name":"tickle",
+			"msg":[
+				"? tickles ?! Ha!",
+				"? tickles ?! OwO!",
+				"? tickles ?! Hehe~!"
+			],
+			"self":[
+				"You can't tickle yourself, ?..."
+			]
+		},
+		"kill":{
+			"name":"wasted",
+			"msg":[
+				"? killed ?! Brutal!",
+				"? killed ?! Oh my...",
+				"? killed ?! oof!"
+			],
+			"self":[
+				"Lets... not do that, ?...",
+				"No... ?... nu.... ;-;"
+			]
+		},
+		"hold":{"alt":"handholding"},
+		"pats":{"alt":"pat"},
+		"wave":{"alt":"greet"},
+		"boop":{"alt":"poke"},
+		"snuggle":{"alt":"cuddle"},
+		"fuck":{
+			"name":"handholding",
+			"msg":[
+				"? does lewd things to ?... ;o",
+				"?... What are you doing to ?! Oh my..."
+			],
+			"self":[
+				"You can do that privately..."
+			]
+		},
+		"sex":{"alt":"fuck"}
+	}
+}

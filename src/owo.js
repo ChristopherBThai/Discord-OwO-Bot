@@ -1,0 +1,76 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
+const Base = require('eris-sharder').Base;
+const EventHandler = require('./eventHandlers/EventHandler.js');
+
+// Secret file
+const auth = require('../../tokens/owo-auth.json');
+
+// Discordbots.org api
+const DBL = require("dblapi.js");
+const dbl = new DBL(auth.dbl);
+
+class OwO extends Base{
+	constructor(bot){
+		super(bot);
+		this.debug = true;
+		this.auth = auth;
+		this.dbl = dbl;
+
+		// Mysql connection
+		this.mysql = require('./utils/mysql.js');
+
+		// Redis connection
+		this.redis = require('./utils/redis.js');
+
+		// Logger
+		this.logger = require('./utils/logger.js');
+
+		// Bot config file
+		this.config = require('./data/config.json');
+		this.prefix = this.config.prefix;
+
+		// Ban check 
+		this.ban = require('./utils/ban.js');
+
+		// Cooldown check 
+		this.cooldown = require('./utils/cooldown.js');
+
+		// Quest Handler
+		this.questHandler = new (require("./botHandlers/questHandler.js"))();
+
+		// Mysql Query Handler
+		this.query = new (require("./botHandlers/mysqlHandler.js"))(this.con).query;
+
+		// Global helper methods
+		this.global = require('./utils/global.js');
+		this.global.client(this.bot);
+		this.global.con(this.mysql.con);
+
+		// Message sender helper methods
+		this.sender = require('./utils/sender.js');
+		this.sender.client(this.bot);
+
+		// Hidden macro detection file
+		this.macro = require('./../../tokens/macro2.js');
+		this.macro.bind(this,require('merge-images'),require('canvas'));
+
+		// Allows me to check catch before any fetch requests (reduces api calls)
+		this.fetch = new (require('./utils/fetch.js'))(this);
+		
+		// Create commands
+		this.command = new (require('./commands/command.js'))(this);
+	}
+
+	launch(){
+		// Bind bot events 
+		this.eventHandler = new EventHandler(this);
+	}
+}
+
+module.exports = OwO;
