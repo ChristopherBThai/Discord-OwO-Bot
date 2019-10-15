@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 module.exports = new CommandInterface({
 
@@ -19,7 +19,7 @@ module.exports = new CommandInterface({
 
 	related:["owo battle"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ADD_REACTIONS"],
+	permissions:["sendMessages","embedLinks","addReactions"],
 
 	cooldown:5000,
 	half:80,
@@ -50,7 +50,7 @@ module.exports = new CommandInterface({
 		let user = result[0][0];
 		if(user.user1==p.msg.author.id) user = user.user2;
 		else user = user.user1;
-		user = await p.global.getUser(user);
+		user = await p.fetch.getUser(user);
 		if(!user) user = "an opponent";
 
 		p.replyMsg('⚔',`, You have declined your battle with **${user.username}**`);

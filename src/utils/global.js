@@ -58,53 +58,11 @@ exports.isUser = function(id){
 	return id.search(/<@!?[0-9]+>/)>=0;
 }
 
-/*
- * gets a user
- */
-exports.getUser = async function(mention,cache = false){
-	if(!mention)
-		return undefined;
-	id = (mention+'').match(/[0-9]+/);
-	if(id)
-		id = id[0];
-	else
-		return undefined;
-	try{
-		return await client.users.fetch(id,cache);
-	}catch(e) {
-		return undefined;
-	}
-}
-
-exports.getMember = async function(guild,user,cache=false){
-	if(!user) return;
-	try{
-		return await guild.members.fetch(user,cache);
-	}catch(e){
-		return;
-	}
-}
-
 exports.parseID = function(id){
 	id = id.match(/[:@][0-9]+>/);
 	if(!id) return;
 	id = id[0];
 	return id.match(/[0-9]+/)[0];
-}
-
-/*
- * Gets name of guild
- */
-exports.getGuildName = async function(id){
-	id = id.match(/[0-9]+/)[0];
-	var result = await client.shard.broadcastEval(`
-		var temp = this.guilds.get('${id}');
-		if(temp!=undefined)
-			temp = temp.name;
-		temp;
-	`);
-	var result = result.reduce((fin, val) => fin = (val)?val:fin);
-	return result;
 }
 
 /**

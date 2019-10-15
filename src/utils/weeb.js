@@ -6,7 +6,7 @@
   */
 	
 const weeb = require("weeb.js");
-const auth = require('../../tokens/owo-auth.json');
+const auth = require('../../../tokens/owo-auth.json');
 const sh = new weeb("Wolke "+auth.weebsh,"owo/1.0");
 
 /**

@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 const crate = "<:crate:523771259302182922>";
 const crateShake = "<a:crateshake:523771259172028420>";
@@ -24,7 +24,7 @@ module.exports = new CommandInterface({
 
 	related:["owo weapon","owo battle"],
 
-	permissions:["SEND_MESSAGES"],
+	permissions:["sendMessages"],
 
 	cooldown:5000,
 	half:100,
@@ -84,7 +84,7 @@ module.exports = new CommandInterface({
 		text2 += " "+weapon.avgQuality+"%";
 
 		/* Send and edit message */
-		let message = await p.msg.channel.send(text1);
+		let message = await p.send(text1);
 		setTimeout(function(){message.edit(text2)},3000);
 	}
 })

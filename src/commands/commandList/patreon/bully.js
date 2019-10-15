@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 const emotes = ["https://imgur.com/3SsZUVT.gif",
 		"https://imgur.com/g005tMV.gif",

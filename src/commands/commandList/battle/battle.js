@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 const battleUtil = require('./util/battleUtil.js');
 const battleFriendUtil = require('./util/battleFriendUtil.js');
@@ -24,7 +24,7 @@ module.exports = new CommandInterface({
 
 	related:["owo zoo","owo pet","owo team","owo weapon"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ADD_REACTIONS"],
+	permissions:["sendMessages","embedLinks","addReactions"],
 
 	cooldown:15000,
 	half:80,
@@ -73,7 +73,7 @@ module.exports = new CommandInterface({
 		}else{
 			/* Display the first message */
 			let embed = await battleUtil.display(p,battle,undefined,setting);
-			let msg = await p.msg.channel.send(embed);
+			let msg = await p.send(embed);
 			await battleUtil.reactionCollector(p,msg,battle,setting.auto,(setting.auto?"www":undefined),setting);
 		}
 	}
@@ -113,8 +113,8 @@ function parseSetting(query){
 	let instant = false;
 
 	if(query[0]){
-		if(query[0].auto==1)
-			auto = false;
+		//if(query[0].auto==1)
+			//auto = false;
 		if(query[0].speed==0)
 			speed = "instant";
 		else if(query[0].speed==2)

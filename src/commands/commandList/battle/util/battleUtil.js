@@ -5,17 +5,15 @@
  * For more information, see README.md and LICENSE
   */
 
-const Discord = require('discord.js');
-const Error = require('../../../../handler/errorHandler.js');
-const dateUtil = require('../../../../util/dateUtil.js');
-const global = require('../../../../util/global.js');
+const dateUtil = require('../../../../utils/dateUtil.js');
+const global = require('../../../../utils/global.js');
 const teamUtil = require('./teamUtil.js');
 const weaponUtil = require('./weaponUtil.js');
 const animalUtil = require('./animalUtil.js');
 const battleImageUtil = require('../battleImage.js');
 const WeaponInterface = require('../WeaponInterface.js');
 var allBuffs = WeaponInterface.allBuffs;
-const imagegenAuth = require('../../../../../tokens/imagegen.json');
+const imagegenAuth = require('../../../../../../tokens/imagegen.json');
 const request = require('request');
 const crateUtil = require('./crateUtil.js');
 const alterBattle = require('../../patreon/alterBattle.js');
@@ -63,7 +61,7 @@ var getBattle = exports.getBattle = async function(p,setting){
 		WHERE user.id = ${p.msg.author.id};`
 
 	/* Should we censor? */
-	sql += `SELECT young FROM guild WHERE id = ${p.msg.guild.id} AND young = 1;`;
+	sql += `SELECT young FROM guild WHERE id = ${p.msg.channel.guild.id} AND young = 1;`;
 
 	let result = await p.query(sql);
 
@@ -125,7 +123,7 @@ exports.initBattle = async function(p,setting){
 	pgid = pgid.pgid
 	count = count[0];
 
-	if(!count[0]) throw new Error("battleUtil sql is broken");
+	if(!count[0]) throw "battleUtil sql is broken";
 
 	count = Math.floor(Math.random()*(count[0].count-1));
 
@@ -145,7 +143,7 @@ exports.initBattle = async function(p,setting){
 	sql += `SELECT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND a.pid IN (SELECT pid FROM pet_team LEFT JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}));`;
 
 	/* Should we censor? */
-	sql += `SELECT young FROM guild WHERE id = ${p.msg.guild.id} AND young = 1;`;
+	sql += `SELECT young FROM guild WHERE id = ${p.msg.channel.guild.id} AND young = 1;`;
 
 	let result = await p.query(sql);
 
@@ -254,7 +252,7 @@ var display = exports.display = async function(p,team,logs,{display,title,showLo
 		"color":p.config.embed_color,
 		"author":{
 			"name":title?title:p.msg.author.username+" goes into battle!",
-			"icon_url":p.msg.author.avatarURL()
+			"icon_url":p.msg.author.avatarURL
 		},
 		"fields":[
 		{
@@ -310,7 +308,7 @@ var displayText = exports.displayText = async function(p,team,logs,{title,showLo
 		"color":p.config.embed_color,
 		"author":{
 			"name":title?title:p.msg.author.username+" goes into battle!",
-			"icon_url":p.msg.author.avatarURL()
+			"icon_url":p.msg.author.avatarURL
 		},
 		"fields":[]
 	}
@@ -370,7 +368,7 @@ var displayCompact = exports.displayCompact= async function(p,team,logs,{title,s
 		"color":p.config.embed_color,
 		"author":{
 			"name":title?title:p.msg.author.username+" goes into battle!",
-			"icon_url":p.msg.author.avatarURL()
+			"icon_url":p.msg.author.avatarURL
 		},
 		"fields":[]
 	}
@@ -674,7 +672,7 @@ exports.displayAllBattles = async function(p,battle,logs,setting){
 	let embed = await display(p,battle,undefined,setting);
 	embed.embed.footer = {"text":"Turn 0/"+(logs.length-1)};
 	embed.embed = alterBattle.alter(p.msg.author.id,embed.embed);
-	let msg = await p.msg.channel.send(embed);
+	let msg = await p.send(embed);
 
 	/* Update the message for each log in log timeline */
 	const gap = 2000;

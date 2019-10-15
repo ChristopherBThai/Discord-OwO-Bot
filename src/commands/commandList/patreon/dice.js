@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 const message = ["What a lucky day!","What a bad day...","Nice!","Oof","Oh no...","Yikes","Hurray!","Amazing!","Yes!","Oh!","Oh my.","Lucky!","Aw..","Booo.."];
 

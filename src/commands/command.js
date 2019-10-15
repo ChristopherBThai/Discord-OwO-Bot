@@ -1,3 +1,10 @@
+/*
+ * OwO Bot for Discord
+ * Copyright (C) 2019 Christopher Thai
+ * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+ * For more information, see README.md and LICENSE
+  */
+
 const requireDir = require('require-dir');
 const dir = requireDir('./commandList',{recurse:true});
 
@@ -120,9 +127,18 @@ function initParam(msg,command,args,main){
 		"config":main.config,
 		"fetch":main.fetch,
 		"quest":function(questName,count,extra){main.questHandler.increment(msg,questName,count,extra).catch(console.error)},
+		"reactionCollector":main.reactionCollector
 	};
 	param.setCooldown = function(cooldown){
 		main.cooldown.setCooldown(param,aliasToCommand[command],cooldown);
+	}
+	param.getMention = function(id){
+		for(let i in param.msg.mentions){
+			let tempUser = param.msg.mentions[i];
+			if(tempUser.id == id){
+				return tempUser;
+			}
+		}
 	}
 	return param;
 }

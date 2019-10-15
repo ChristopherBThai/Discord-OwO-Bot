@@ -7,7 +7,7 @@
 
 const requireDir = require('require-dir');
 const WeaponInterface = require('../WeaponInterface.js');
-const ReactionOverride = require('../../../../overrides/ReactionSocketOverride.js');
+//const ReactionOverride = require('../../../../overrides/ReactionSocketOverride.js');
 
 const prices = {"Common":100,"Uncommon":250,"Rare":400,"Epic":600,"Mythical":2000,"Legendary":5000,"Fabled":20000};
 const ranks = [['cw','commonweapons','commonweapon'],['uw','uncommonweapons','uncommonweapon'],['rw','rareweapon','rareweapons'],
@@ -132,45 +132,42 @@ var display = exports.display = async function(p,pageNum=0,sort=0,opt){
 
 	/* Send msg and add reactions */
 	if(!msg)
-		msg = await p.msg.channel.send({embed:page.embed});
+		msg = await p.send({embed:page.embed});
 	else
 		await msg.edit({embed:page.embed});
 
-	msg = await msg.channel.messages.fetch(msg.id);
+	if(page.maxPage>19) await msg.addReaction(rewindEmoji);
+	await msg.addReaction(prevPageEmoji);
+	await msg.addReaction(nextPageEmoji);
+	if(page.maxPage>19) await msg.addReaction(fastForwardEmoji);
+	await msg.addReaction(sortEmoji);
+	let filter = (emoji,userID) => [sortEmoji,nextPageEmoji,prevPageEmoji,rewindEmoji,fastForwardEmoji].includes(emoji.name)&&users.includes(userID);
+	let collector = p.reactionCollector.create(msg,filter,{time:900000,idle:120000});
 
-	if(page.maxPage>19) await msg.react(rewindEmoji);
-	await msg.react(prevPageEmoji);
-	await msg.react(nextPageEmoji);
-	if(page.maxPage>19) await msg.react(fastForwardEmoji);
-	await msg.react(sortEmoji);
-	let filter = (reaction,user) => [sortEmoji,nextPageEmoji,prevPageEmoji,rewindEmoji,fastForwardEmoji].includes(reaction.emoji.name)&&users.includes(user.id);
-	let collector = await msg.createReactionCollector(filter,{time:900000,idle:120000});
-	ReactionOverride.addEmitter(collector,msg);
-
-	let handler = async function(r){
+	let handler = async function(emoji){
 		try{
 			if(page){
 			/* Save the animal's action */
-			if(r.emoji.name===nextPageEmoji) {
+			if(emoji.name===nextPageEmoji) {
 				if(pageNum+1<page.maxPage) pageNum++;
 				else pageNum = 0;
 				page = await getDisplayPage(p,user,pageNum,sort,opt);
 				if(page) await msg.edit({embed:page.embed});
-			}else if(r.emoji.name===prevPageEmoji){
+			}else if(emoji.name===prevPageEmoji){
 				if(pageNum>0) pageNum--;
 				else pageNum = page.maxPage-1;
 				page = await getDisplayPage(p,user,pageNum,sort,opt);
 				if(page) await msg.edit({embed:page.embed});
-			}else if(r.emoji.name===sortEmoji){
+			}else if(emoji.name===sortEmoji){
 				sort = (sort+1)%4;
 				page = await getDisplayPage(p,user,pageNum,sort,opt);
 				if(page) await msg.edit({embed:page.embed});
-			}else if(r.emoji.name===rewindEmoji){
+			}else if(emoji.name===rewindEmoji){
 				pageNum -= 5;
 				if(pageNum<0) pageNum = 0;
 				page = await getDisplayPage(p,user,pageNum,sort,opt);
 				if(page) await msg.edit({embed:page.embed});
-			}else if(r.emoji.name===fastForwardEmoji){
+			}else if(emoji.name===fastForwardEmoji){
 				pageNum += 5;
 				if(pageNum>=page.maxPage) pageNum = page.maxPage-1;
 				page = await getDisplayPage(p,user,pageNum,sort,opt);
@@ -184,7 +181,7 @@ var display = exports.display = async function(p,pageNum=0,sort=0,opt){
 	collector.on('end',async function(collected){
 		if(page){
 			page.embed.color = 6381923;
-			await msg.edit("This message is now inactive",{embed:page.embed});
+			await msg.edit({content:"This message is now inactive",embed:page.embed});
 		}
 	});
 
@@ -203,20 +200,21 @@ exports.askDisplay = async function(p, id){
 		p.errorMsg("... trust me. You don't want to see what I have.",3000);
 		return;
 	}
-	let member = await p.msg.guild.members.fetch(id);
-	if(!member){
+
+	let user = p.getMention(id);
+	if(!user){
 		p.errorMsg(", I couldn't find that user! :(",3000);
 		return;
 	}
-	if(member.user.bot){
+	if(user.bot){
 		p.errorMsg(", you dum dum! Bots don't carry weapons!",3000);
 		return;
 	}
 
 	let embed = {
 		"author":{
-			"name":member.user.username+", "+p.msg.author.username+" wants to see your weapons!",
-			"icon_url":p.msg.author.avatarURL()
+			"name":user.username+", "+p.msg.author.username+" wants to see your weapons!",
+			"icon_url":p.msg.author.avatarURL
 		},
 		"description":"Do you give permission for this user to view your weapons?",
 		"color": p.config.embed_color,
@@ -224,27 +222,27 @@ exports.askDisplay = async function(p, id){
 
 	let msg = await p.send({embed});
 
-	await msg.react(acceptEmoji);
-	await msg.react(declineEmoji);
+	await msg.addReaction(acceptEmoji);
+	await msg.addReaction(declineEmoji);
 
-	let filter = (reaction, user) => (reaction.emoji.name === acceptEmoji||reaction.emoji.name === declineEmoji) && user.id === member.id;
-	let collector = msg.createReactionCollector(filter,{time:60000});
-	collector.on('collect',async r => {
+	let filter = (emoji, userID) => (emoji.name === acceptEmoji||emoji.name === declineEmoji) && user.id === userID;
+	let collector = p.reactionCollector.create(msg,filter,{time:60000});
+	collector.on('collect',async emoji => {
 		collector.stop("done");
-		if(r.emoji.name==declineEmoji){
+		if(emoji.name==declineEmoji){
 			embed.color = 16711680;
 			msg.edit({embed});
 		}else{
-			try{await msg.clearReactions();}catch(e){}
-			display(p,0,0,{users:[p.msg.author.id],msg,user:member.user});
+			try{await msg.removeReactions();}catch(e){}
+			display(p,0,0,{users:[p.msg.author.id],msg,user:user});
 		}
 
 	});
 
-	collector.on('end',async function(collected,reason){
+	collector.on('end',async function(reason){
 		if(reason!="done"){
 			embed.color = 6381923;
-			await msg.edit("This message is now inactive",{embed});
+			await msg.edit({content:"This message is now inactive",embed});
 		}
 	});
 }
@@ -325,7 +323,7 @@ var getDisplayPage = async function(p,user,page,sort,opt={}){
 	let embed = {
 		"author":{
 			"name":title,
-			"icon_url":user.avatarURL()
+			"icon_url":user.avatarURL
 		},
 		"description":desc,
 		"color": p.config.embed_color,
@@ -388,7 +386,7 @@ exports.describe = async function(p,uwid){
 	}
 
 	// Grab user
-	let user = await p.global.getUser(result[0].id);
+	let user = await p.fetch.getUser(result[0].id);
 	let username = "A User";
 	if(user) username = user.username;
 
@@ -425,7 +423,7 @@ exports.describe = async function(p,uwid){
 		},
 		"description":desc
 	};
-	if(user) embed.author.icon_url = user.avatarURL();
+	if(user) embed.author.icon_url = user.avatarURL;
 	p.send({embed});
 }
 

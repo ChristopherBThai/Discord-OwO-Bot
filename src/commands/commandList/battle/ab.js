@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 const animalUtil = require('./util/animalUtil.js');
 const teamUtil = require('./util/teamUtil.js');
@@ -23,7 +23,7 @@ module.exports = new CommandInterface({
 
 	related:["owo battle"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ADD_REACTIONS"],
+	permissions:["sendMessages","embedLinks","addReactions"],
 
 	cooldown:5000,
 	half:80,
@@ -66,7 +66,11 @@ module.exports = new CommandInterface({
 
 		/* Get opponent name */
 		let sender = result[0][0].sender;
-		sender = await p.global.getUser(sender);
+		sender = await p.fetch.getUser(sender);
+		if(!sender){
+			p.errorMsg(", I could not find your opponent!",3000);
+			return;
+		}
 
 		/* Grab teams */
 		let teams = await parseTeams(p, p.msg.author,sender,flags);

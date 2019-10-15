@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require ('../../commandinterface.js');
+const CommandInterface = require ('../../CommandInterface.js');
 
 const user_emote = require('../emotes/user_emote.js');
 const petUtil = require('./util/petUtil.js');
@@ -22,7 +22,7 @@ module.exports = new CommandInterface({
 
 	related:["owo battle","owo zoo"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ADD_REACTIONS"],
+	permissions:["sendMessages","embedLinks","addReactions"],
 
 	cooldown:5000,
 	half:200,

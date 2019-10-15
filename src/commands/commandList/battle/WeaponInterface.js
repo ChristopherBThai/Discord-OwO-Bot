@@ -5,7 +5,6 @@
  * For more information, see README.md and LICENSE
   */
 
-const Error = require('../../../handler/errorHandler.js');
 const PassiveInterface = require('./PassiveInterface.js');
 const Logs = require('./util/logUtil.js');
 const requireDir = require('require-dir');
@@ -45,7 +44,7 @@ module.exports = class WeaponInterface{
 		let stats = this.toStats(qualities);
 
 		/* Check if it has enough emojis */
-		if(this.emojis.length!=7) throw new Error(`[${this.id}] does not have 7 emojis`);
+		if(this.emojis.length!=7) throw `[${this.id}] does not have 7 emojis`;
 
 		/* Get the quality of the weapon */
 		let avgQuality = 0;
@@ -113,7 +112,7 @@ module.exports = class WeaponInterface{
 			let passive = this.availablePassives[rand];
 			passive = passives[passive];
 			if(!passive)
-				throw new Error("Could not get passive["+this.availablePassives[rand]+"] for weapon["+this.id+"]");
+				throw "Could not get passive["+this.availablePassives[rand]+"] for weapon["+this.id+"]";
 			randPassives.push(new passive());
 		}
 		return randPassives;
@@ -130,7 +129,7 @@ module.exports = class WeaponInterface{
 	/* Converts qualities to stats */
 	toStats(qualities){
 		if(qualities.length != this.qualityList.length)
-			throw new Error("Array size does not match in toStats. Weapon id:"+this.id);
+			throw "Array size does not match in toStats. Weapon id:"+this.id;
 		var stats = [];
 		for(var i=0;i<qualities.length;i++){
 			let quality = qualities[i];
@@ -247,7 +246,7 @@ module.exports = class WeaponInterface{
 		else if(type==WeaponInterface.TRUE)
 			totalDamage = damage;
 		else
-			throw new Error("Invalid attack type");
+			throw "Invalid attack type";
 
 		let subLogs = new Logs();
 
