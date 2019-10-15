@@ -40,30 +40,31 @@ module.exports = new CommandInterface({
 
 	related:["owo hug"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ATTACH_FILES"],
+	permissions:["sendMessages","embedLinks","attachFiles"],
 
 	cooldown:5000,
 	half:100,
 	six:500,
 
 	execute: async function(p){
-		var global=p.global,args=p.args,msg=p.msg,client=p.client;
-		if(args.length!=1||!global.isUser(args[0]))
+		if(p.args.length!=1||!p.global.isUser(p.args[0])){
+			p.errorMsg(", Please @tag someone to use this command!",3000);
 			return;
-		var target = await global.getUser(args[0]);
+		}
+		let target = p.getMention(p.args[0]);
 		if(target == undefined){
 			p.send("**🚫 |** I couldn't find that user :c",3000);
 			return;
 		}
-		if(msg.author.id==target.id){
-			var text = "**"+p.msg.author.username+"**! Don't bully yourself!";
+		if(p.msg.author.id==target.id){
+			let text = "**"+p.msg.author.username+"**! Don't bully yourself!";
 			p.send(text);
 			return;
 		}
 
-		var emote = emotes[Math.trunc(Math.random()*emotes.length)];
-		var comment = comments[Math.trunc(Math.random()*comments.length)];
-		const embed = {
+		let emote = emotes[Math.trunc(Math.random()*emotes.length)];
+		let comment = comments[Math.trunc(Math.random()*comments.length)];
+		let embed = {
 			"color": 6315775,
 			"image": {
 				"url": emote
@@ -71,7 +72,7 @@ module.exports = new CommandInterface({
 			"author": {
 				"name" : p.msg.author.username+" bullies "+target.username+"! "+comment,
 				"url":emote,
-				"icon_url": p.msg.author.avatarURL()
+				"icon_url": p.msg.author.avatarURL
 			}
 		};
 		p.send({embed});

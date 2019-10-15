@@ -40,7 +40,7 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ADD_REACTIONS"],
+	permissions:["sendMessages","embedLinks","addReactions"],
 
 	cooldown:5000,
 	half:80,
@@ -52,7 +52,7 @@ module.exports = new CommandInterface({
 		poll += blank+"Step right up! Come test your strength!";
 		let embed = {
 			"author":{
-				"icon_url":p.msg.author.avatarURL(),
+				"icon_url":p.msg.author.avatarURL,
 				"name":p.msg.author.username+" wants to test their strength!"
 			},
 			"color": 4886754,
@@ -60,11 +60,11 @@ module.exports = new CommandInterface({
 		};
 
 		let msg = await p.send({embed});
-		await msg.react(hammer);
-		let filter = (reaction,user) => (reaction.emoji.name===hammer)&&user.id==p.msg.author.id;
-		let collector = await msg.createReactionCollector(filter,{time:30000});
+		await msg.addReaction(hammer);
+		let filter = (emoji,userID) => (emoji.name===hammer)&&userID==p.msg.author.id;
+		let collector = await p.reactionCollector.create(msg,filter,{time:30000});
 
-		collector.on('collect', async function(r){
+		collector.on('collect', async function(emoji){
 			collector.stop();
 			let rand = Math.random();
 			if(geist==p.msg.author.id){
