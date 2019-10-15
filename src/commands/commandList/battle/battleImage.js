@@ -6,7 +6,7 @@
   */
 
 const request = require('request');
-const imagegenAuth = require('../../../../tokens/imagegen.json');
+const imagegenAuth = require('../../../../../tokens/imagegen.json');
 const WeaponInterface = require('./WeaponInterface.js');
 
 /* Generates a battle image by my battle image generation api */

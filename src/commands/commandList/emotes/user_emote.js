@@ -5,10 +5,10 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
-const weeb = require('../../../util/weeb.js');
-const emotes = require('../../../json/emotes.json').uEmote;
+const weeb = require('../../../utils/weeb.js');
+const emotes = require('../../../data/emotes.json').uEmote;
 var emoteList = [];
 for(var key in emotes)
 	emoteList.push(key);

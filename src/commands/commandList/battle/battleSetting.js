@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 module.exports = new CommandInterface({
 
@@ -19,7 +19,7 @@ module.exports = new CommandInterface({
 
 	related:["owo battle"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS"],
+	permissions:["sendMessages","embedLinks"],
 
 	cooldown:3000,
 	half:80,
@@ -40,8 +40,8 @@ async function display(p){
 
 	let settings = parseSettings(result);
 
-	let text = (settings.showLogs?"~~":"")+"**Auto = ** `"+settings.auto+"`"+(settings.showLogs?"~~":"")+"\n";
-	text += "**Display = ** `"+settings.display+"`\n";
+	//let text = (settings.showLogs?"~~":"")+"**Auto = ** `"+settings.auto+"`"+(settings.showLogs?"~~":"")+"\n";
+	let text = "**Display = ** `"+settings.display+"`\n";
 	if(settings.showLogs||!settings.auto) text += "~~";
 	text += "**Speed = ** `"+settings.speed+"`";
 	if(settings.showLogs||!settings.auto) text += "~~";
@@ -51,7 +51,7 @@ async function display(p){
 		"color":p.config.embed_color,
 		"author":{
 			"name":p.msg.author.username+"'s battle settings",
-			"icon_url":p.msg.author.avatarURL()
+			"icon_url":p.msg.author.avatarURL
 		},
 		"description":text
 	}
@@ -71,7 +71,7 @@ async function changeSettings(p){
 	let field = '';
 	let setting = '';
 
-	if(args[0]=='auto'){
+	/*if(args[0]=='auto'){
 		field = 'auto';
 		if(args[1]=='false'){
 			setting = 1;
@@ -81,7 +81,7 @@ async function changeSettings(p){
 			p.errorMsg(", the auto settings can only be `true`, or `false`!");
 			return;
 		}
-	}else if(args[0]=='display'){
+	}else*/ if(args[0]=='display'){
 		field = 'display';
 		if(args[1]=='image'){
 			setting = '\'image\'';
@@ -118,7 +118,7 @@ async function changeSettings(p){
 			return;
 		}
 	}else{
-		p.errorMsg(", the display settings can only be `auto`, `display`, or `speed`!");
+		p.errorMsg(", the display settings can only be `logs`, `display`, or `speed`!");
 		return;
 	}
 
@@ -144,8 +144,8 @@ function parseSettings(query){
 	let logs = false;
 
 	if(query[0]){
-		if(query[0].auto==1)
-			auto = false;
+		//if(query[0].auto==1)
+			//auto = false;
 		if(query[0].display=="text")
 			display = "text";
 		else if(query[0].display=="compact")

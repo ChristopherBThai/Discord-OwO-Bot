@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 const weaponUtil = require('./util/weaponUtil.js');
 const battleUtil = require('./util/battleUtil.js');
@@ -24,7 +24,7 @@ module.exports = new CommandInterface({
 
 	related:["owo crate","owo battle"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ADD_REACTIONS"],
+	permissions:["sendMessages","embedLinks","addReactions"],
 
 	cooldown:5000,
 	half:100,

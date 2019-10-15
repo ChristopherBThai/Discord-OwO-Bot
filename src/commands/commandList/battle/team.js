@@ -5,9 +5,9 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
-const global = require('../../../util/global.js');
+const global = require('../../../utils/global.js');
 const teamUtil = require('./util/teamUtil.js');
 const battleUtil = require('./util/battleUtil.js');
 const battleFriendUtil = require('./util/battleFriendUtil.js');
@@ -18,13 +18,13 @@ module.exports = new CommandInterface({
 
 	args:"{add|remove|rename}",
 
-	desc:"",
+	desc:"Display your team! ",
 
-	example:[],
+	example:["owo team","owo team add dog 1","owo team rename My Team"],
 
-	related:[],
+	related:["owo battle"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ADD_REACTIONS"],
+	permissions:["sendMessages","embedLinks","addReactions"],
 
 	cooldown:3000,
 	half:80,

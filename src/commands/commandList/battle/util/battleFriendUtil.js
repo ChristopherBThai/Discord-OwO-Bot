@@ -11,7 +11,7 @@ const animalUtil = require('./animalUtil.js');
 exports.challenge = async function(p,id,bet){
 
 	/* Get opponent info */
-	var opponent = await p.global.getUser(id);
+	let opponent = p.msg.mentions[0];
 	if(!opponent){
 		p.errorMsg(", That is not a valid id!");
 		return;
@@ -152,10 +152,10 @@ function toEmbedRequest(p,stats,bet,sender,receiver,flags){
 	}
 	if(flagText!="") flagText = "\nFlags: "+flagText;
 
-	var embed = {
+	let embed = {
 		author:{
 			name: sender.username+" challenged "+receiver.username+" to a battle!",
-			icon_url: p.msg.author.avatarURL()
+			icon_url: p.msg.author.avatarURL
 		},
 		description: "Bet amount: "+bet+" cowoncy"+flagText+"\n`owo ab` to accept the battle!\n`owo db` to decline the battle!",
 		color:p.config.embed_color,

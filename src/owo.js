@@ -62,6 +62,9 @@ class OwO extends Base{
 
 		// Allows me to check catch before any fetch requests (reduces api calls)
 		this.fetch = new (require('./utils/fetch.js'))(this);
+
+		// Creates a reaction collector for a message (works for uncached messages too)
+		this.reactionCollector = new (require('./utils/reactionCollector.js'))(this);
 		
 		// Create commands
 		this.command = new (require('./commands/command.js'))(this);

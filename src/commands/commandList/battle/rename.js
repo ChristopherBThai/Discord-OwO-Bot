@@ -5,9 +5,9 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
-const badwords = require('../../../../tokens/badwords.json');
+const badwords = require('../../../../../tokens/badwords.json');
 
 module.exports = new CommandInterface({
 
@@ -21,7 +21,7 @@ module.exports = new CommandInterface({
 
 	related:["owo zoo","owo battle", "owo hunt"],
 
-	permissions:["SEND_MESSAGES"],
+	permissions:["sendMessages"],
 
 	cooldown:3000,
 	half:200,
