@@ -76,11 +76,9 @@ function parseTimer(diff){
 
 exports.setCooldown = async function(p,command,cooldown=0){
 	let key = "cd_"+command+"_"+p.msg.author.id;
-	let commandCooldown = p.commands[p.aliasToCommand(command)].cd
-	let ccd = await p.redis.hgetall(key);
+	let commandCooldown = p.commands[p.commandAlias].cooldown;
 
 	let past = new Date(Date.now() + (cooldown*1000) - commandCooldown);
-	ccd.lasttime = past;
-	await p.redis.hmset(key,ccd);
+	await p.redis.hmset(key,{lasttime:past});
 }
 

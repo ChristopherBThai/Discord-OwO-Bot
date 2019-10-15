@@ -21,7 +21,7 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	permissions:["SEND_MESSAGES"],
+	permissions:["sendMessages"],
 
 	cooldown:5000,
 	half:80,
@@ -34,7 +34,7 @@ module.exports = new CommandInterface({
 		if(p.args.length>0&&p.global.isInt(p.args[0]))
 			sides = parseInt(p.args[0]);
 
-		var result = Math.ceil(sides*Math.random());
+		let result = Math.ceil(sides*Math.random());
 		result = "**<:blank:427371936482328596> |**  "+message[Math.trunc(Math.random()*message.length)] + " It's a **"+result+"**!";
 
 		p.send("**🎲 | "+p.msg.author.username+"** rolls a "+sides+"-sided die.\n"+result);

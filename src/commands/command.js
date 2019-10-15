@@ -133,6 +133,9 @@ function initParam(msg,command,args,main){
 		main.cooldown.setCooldown(param,aliasToCommand[command],cooldown);
 	}
 	param.getMention = function(id){
+		id = id.match(/[0-9]+/);
+		if(!id) return;
+		id = id[0];
 		for(let i in param.msg.mentions){
 			let tempUser = param.msg.mentions[i];
 			if(tempUser.id == id){
