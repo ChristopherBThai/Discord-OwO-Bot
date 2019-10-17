@@ -15,9 +15,9 @@ module.exports = new CommandInterface({
 
 	alias:["ab","acceptbattle"],
 
-	args:"",
+	args:"[bet]",
 
-	desc:"Accept a battle request!",
+	desc:"Accept a battle request! If a bet was added, you will have to add the amount to accept it in addition to the battle.",
 
 	example:[""],
 
@@ -71,8 +71,14 @@ module.exports = new CommandInterface({
 		/* Grab teams */
 		let teams = await parseTeams(p, p.msg.author,sender,flags);
 		if(!teams) return;
+
+		/* Handle bet */
 		let bet = result[0][0].bet;
 		if(!p.global.isInt(bet)) bet = 0;
+
+		let acceptedBet = 0;
+		if(p.global.isInt(p.args[0])) acceptedBet = parseInt(p.args[0]);
+		if (bet !== acceptedBet) bet = 0;
 
 		/* calculate battle */
 		let logs = await battleUtil.calculateAll(p,teams);
