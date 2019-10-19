@@ -116,7 +116,7 @@ function vote(p){
 		sql:`SELECT TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = ${p.msg.author.id};`,
 		parse:function(result){
 			if(result[0]&&result[0].time<12)
-				return {done:true,desc:"You can claim your vote in "+(12-result[0].time)+" hours!",emoji:'📝'}
+				return {done:true,desc:"You can claim your vote in "+(12-result[0].time)+(result[0].time<11?" hours!":" hour!"),emoji:'📝'}
 			else
 				return {done:false,desc:"You can claim your vote!",emoji:'📝'}
 		}

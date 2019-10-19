@@ -152,12 +152,17 @@ function toEmbedRequest(p,stats,bet,sender,receiver,flags){
 	}
 	if(flagText!="") flagText = "\nFlags: "+flagText;
 
+	let acceptText = "\n`owo ab` to accept the battle!";
+	if (bet > 0) {
+		acceptText = "\n`owo ab " + bet + "` to accept the battle with the bet!\n`owo ab` to accept the battle without the bet!";
+	}
+
 	var embed = {
 		author:{
 			name: sender.username+" challenged "+receiver.username+" to a battle!",
 			icon_url: p.msg.author.avatarURL()
 		},
-		description: "Bet amount: "+bet+" cowoncy"+flagText+"\n`owo ab` to accept the battle!\n`owo db` to decline the battle!",
+		description: "Bet amount: "+bet+" cowoncy"+flagText+acceptText+"\n`owo db` to decline the battle!",
 		color:p.config.embed_color,
 		footer:{
 			text:"This challenge will expire in 10 minutes"
