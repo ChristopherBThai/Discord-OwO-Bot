@@ -2,7 +2,7 @@ const redis = require('./redis.js');
 const logger = require('./logger.js');
 const levelRewards = require('./levelRewards.js');
 var macro;
-try{macro = require('../../tokens/macro.js');}catch(e){console.error("Missing macro.js. Please add this file to ../tokens/macro.js\n",e)}
+try{macro = require('../../../tokens/macro.js');}catch(e){console.error("Missing macro.js. Please add this file to ../tokens/macro.js\n",e)}
 const minXP = 10, maxXP = 15, dailyLimit = 3000;
 var banned = {};
 

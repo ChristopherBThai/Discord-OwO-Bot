@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 module.exports = new CommandInterface({
 
@@ -19,7 +19,7 @@ module.exports = new CommandInterface({
 
 	related:["owo money"],
 
-	permissions:["SEND_MESSAGES"],
+	permissions:["sendMessages"],
 
 	cooldown:5000,
 	half:100,
@@ -27,8 +27,8 @@ module.exports = new CommandInterface({
 	bot:true,
 
 	execute: async function(p){
-		var msg=p.msg, args=p.args, con=p.con, global=p.global;
-		var amount=-1, id="", invalid=false;
+		let msg=p.msg, args=p.args, con=p.con, global=p.global;
+		let amount=-1, id="", invalid=false;
 
 		//Grab ID and Amount
 		for(var i = 0;i<args.length;i++){
@@ -50,7 +50,7 @@ module.exports = new CommandInterface({
 
 
 		//Check if valid user
-		var user = await global.getUser(id);
+		let user = await p.getMention(id);
 		if(user==undefined){
 			p.send("**🚫 | "+msg.author.username+"**, I could not find that user!",3000);
 			return

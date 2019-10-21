@@ -5,16 +5,16 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 /*
  * Quest command.
  * Users can claim 1 quest a day up to 3 quests in total
  */
 
-const dateUtil = require('../../../util/dateUtil.js');
-const global = require('../../../util/global.js');
-const questJson = require('../../../json/quests.json');
+const dateUtil = require('../../../utils/dateUtil.js');
+const global = require('../../../utils/global.js');
+const questJson = require('../../../data/quests.json');
 
 module.exports = new CommandInterface({
 
@@ -26,7 +26,7 @@ module.exports = new CommandInterface({
 
 	example:['owo quest','owo quest rr 1'],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS"],
+	permissions:["sendMessages","embedLinks"],
 
 	related:[],
 
@@ -137,7 +137,7 @@ function constructEmbed(p,afterMid,quests){
 		},
 		"author": {
 			"name": p.msg.author.username+"'s Quest Log",
-			"icon_url":p.msg.author.avatarURL()
+			"icon_url":p.msg.author.avatarURL
 		},
 		"description":quests.text
 	};
