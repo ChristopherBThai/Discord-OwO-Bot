@@ -26,24 +26,24 @@ module.exports = new CommandInterface({
 
 	related:["owo cry","owo pout","owo dance","and more"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ATTACH_FILES"],
+	permissions:["sendMessages","embedLinks","attachFiles"],
 
 	cooldown:5000,
 	half:100,
 	six:500,
 
 	execute: async function(p){
-		var global=p.global,args=p.args,msg=p.msg,client=p.client;
+		let global=p.global,args=p.args,msg=p.msg,client=p.client;
 		if(!global.isUser(args[0])){
 			p.send("**🚫 |** Wrong arguments! Please tag someone!",3000);
 			return;
 		}
-		var target = await global.getUser(args[0]);
+		let target = await p.getMention(args[0]);
 		if(target == undefined){
 			p.send("**🚫 |** I couldn't find that user :c",3000);
 			return;
 		}
-		var emote = emotes[p.command];
+		let emote = emotes[p.command];
 		if(emote == undefined){
 			p.send("**🚫 |** Wrong arguments! Please tag someone!",3000);
 			return;
@@ -51,16 +51,15 @@ module.exports = new CommandInterface({
 		if(emote.alt!=undefined)
 			emote = emotes[emote.alt];
 		if(msg.author.id==target.id){
-			var text = emote.self[Math.floor(Math.random()*emote.self.length)];
+			let text = emote.self[Math.floor(Math.random()*emote.self.length)];
 			text = text.replace(/\?/,msg.author.username);
-			msg.channel.send(text)
-				.catch(err => console.error(err));
+			p.send(text);
 			return;
 		}
-		var text = emote.msg[Math.floor(Math.random()*emote.msg.length)];
+		let text = emote.msg[Math.floor(Math.random()*emote.msg.length)];
 		text = text.replace(/\?/,msg.author.username);
 		text = text.replace(/\?/,target.username);
-		weeb.grab(msg,emote.name,"gif",text);
+		weeb.grab(p,emote.name,"gif",text);
 		p.quest("emoteTo");
 		p.quest("emoteBy",1,target);
 	}
