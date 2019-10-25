@@ -25,7 +25,7 @@ exports.loadBackground = async function(file,callback){
 	});
 }
 exports.addText = async function (args,p,ctx,canvas,callback){
-	var text = args.text;
+	let text = args.text;
 	if(!text){ callback(); return;}
 	if(p.global.isUser(text)){
 		addUser(args,p,ctx,canvas,callback);
@@ -37,15 +37,15 @@ exports.addText = async function (args,p,ctx,canvas,callback){
 }
 
 async function addUser(args,p,ctx,canvas,callback){
-	var text = args.text;
-	var url = await p.global.getUser(text);
+	let text = args.text;
+	let url = await p.getMention(text);
 	if(!url){  p.send("**🚫 | "+p.msg.author.username+"**, I could not find that user",3000); return;}
 
 	ctx.save();
 
 	ctx.font = '20px '+(args.font?args.font:font);
-	var x = args.x + (args.width/2) - (args.imageSize/2);
-	var y = args.y - (args.imageSize/2);
+	let x = args.x + (args.width/2) - (args.imageSize/2);
+	let y = args.y - (args.imageSize/2);
 	if(args.imageX) x = args.imageX;
 	if(args.imageY) y = args.imageY;
 
@@ -62,7 +62,7 @@ async function addUser(args,p,ctx,canvas,callback){
 
 	ctx.restore();
 
-	url = url.avatarURL({format:'png'});
+	url = url.avatarURL.replace(".jpg",".png").replace(".gif",".png");
 	if(!url){  p.send("**🚫 | "+p.msg.author.username+"**, I could not find that user",3000); return;}
 
 	try{
@@ -74,15 +74,15 @@ async function addUser(args,p,ctx,canvas,callback){
 }
 
 async function addEmoji(args,p,ctx,canvas,callback){
-	var text = args.text;
-	var url = text.match(/:[0-9]+>/gi);
+	let text = args.text;
+	let url = text.match(/:[0-9]+>/gi);
 	if(!url||!url[0]){
 		p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the emoji",3000);
 		return;
 	}
 	url = "https://cdn.discordapp.com/emojis/"+url[0].slice(1,url[0].length-1)+".png";
-	var x = args.x + (args.width/2) - (args.imageSize/2);
-	var y = args.y - (args.imageSize/2);
+	let x = args.x + (args.width/2) - (args.imageSize/2);
+	let y = args.y - (args.imageSize/2);
 	if(args.imageX) x = args.imageX;
 	if(args.imageY) y = args.imageY;
 
@@ -115,7 +115,7 @@ function callbackImage(ctx,x,y,size,callback){
 function addText(args,p,ctx,canvas,callback){
 	ctx.save();
 
-	var text = args.text;
+	let text = args.text;
 	text = text.replace(/<a?:/gi,"");
 	text = text.replace(/:[0-9]+>/gi,"");
 	//Check if we need to downsize font
@@ -124,7 +124,7 @@ function addText(args,p,ctx,canvas,callback){
 		ctx.font = (args.size-10)+'px '+(args.font?args.font:font);
 
 	//Format the text with new lines
-	var tempText = text.split(" ");
+	let tempText = text.split(" ");
 	text = "";
 	for (var i = 0;i<tempText.length;i++){
 		if(ctx.measureText(text+tempText[i]+" ").width > args.width&& i>0)
@@ -133,8 +133,8 @@ function addText(args,p,ctx,canvas,callback){
 	}
 
 	//Check if it will fit
-	var measure = ctx.measureText(text);
-	var height = Math.abs(measure.actualBoundingBoxAscent - measure.actualBoundingBoxDescent);
+	let measure = ctx.measureText(text);
+	let height = Math.abs(measure.actualBoundingBoxAscent - measure.actualBoundingBoxDescent);
 	if(measure.width>args.width||height>args.height){
 		p.send("**🚫 | "+p.msg.author.username+"**, The text is too long!",3000);
 		return;

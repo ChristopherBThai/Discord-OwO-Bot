@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 const fs = require('fs');
 const request = require('request');
@@ -29,7 +29,7 @@ module.exports = new CommandInterface({
 	six:500,
 	bot:true,
 
-	permissions:["SEND_MESSAGES","ATTACH_FILES"],
+	permissions:["sendMessages","attachFiles"],
 
 	execute: function(p){
 		if(p.global.isUser(p.args[p.args.length-1]))
@@ -43,7 +43,7 @@ module.exports = new CommandInterface({
 })
 
 function car(p){
-	fs.readFile('./json/images/slap_car.jpg',function(err,image){
+	fs.readFile('./src/data/images/slap_car.jpg',function(err,image){
 		if(err){ console.error(err); return;}
 
 		img = new Image;
@@ -60,7 +60,7 @@ function car(p){
 		//Format text
 		if(p.args.join(" ").length>120) ctx.font = '20px Arial';
 		else ctx.font = '30px Arial';
-		var text = "";
+		let text = "";
 		for (var i = 0;i<p.args.length;i++){
 			if(ctx.measureText(text+p.args[i]).width > 700 && i>0)
 				text += "\n";
@@ -77,17 +77,17 @@ function car(p){
 		ctx.fillText(text,10,80-(lines*15));
 
 		buf = canvas.toBuffer();
-		p.msg.channel.send("**🖼 | "+p.msg.author.username+"** generated a meme!",{files:[buf]})
-			.catch(err => console.error(err));
+		p.send("**🖼 | "+p.msg.author.username+"** generated a meme!",
+				null,{file:buf,name:"meme.png"});
 	});
 }
 
 function user(p){
-	fs.readFile('./json/images/slap_transparent.png',async function(err,image){
+	fs.readFile('./src/data/images/slap_transparent.png',async function(err,image){
 		if(err){ console.error(err); return;}
-		var url = await p.global.getUser(p.args[p.args.length-1]);
+		let url = await p.getMention(p.args[p.args.length-1]);
 		if(!url){  p.send("**🚫 | "+p.msg.author.username+"**, I could not find that user",3000); return;}
-		url = url.avatarURL({format:'png'});
+		url = url.avatarURL.replace(".jpg",".png").replace(".gif",".png");
 
 		request({url:url,method:'GET',encoding:null},function(err,response,body){
 			if(!err && response.statusCode==200){
@@ -126,8 +126,8 @@ function user(p){
 				ctx.fillText(text,10,80-(lines*15));
 
 				buf = canvas.toBuffer();
-				p.msg.channel.send("**🖼 | "+p.msg.author.username+"** generated a meme!",{files:[buf]})
-					.catch(err => console.error(err));
+				p.send("**🖼 | "+p.msg.author.username+"** generated a meme!",
+						null,{file:buf,name:"meme.png"});
 			}
 			img2.onerror = function(){p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the image",3000);}
 			img2.src = body;
@@ -137,7 +137,7 @@ function user(p){
 }
 
 function emoji(p){
-	fs.readFile('./json/images/slap_transparent.png',async function(err,image){
+	fs.readFile('./src/data/images/slap_transparent.png',async function(err,image){
 		if(err){ console.error(err); return;}
 
 		var url = p.args[p.args.length-1].match(/:[0-9]+>/gi);
@@ -185,8 +185,8 @@ function emoji(p){
 				ctx.fillText(text,10,80-(lines*15));
 
 				buf = canvas.toBuffer();
-				p.msg.channel.send("**🖼 | "+p.msg.author.username+"** generated a meme!",{files:[buf]})
-					.catch(err => console.error(err));
+				p.send("**🖼 | "+p.msg.author.username+"** generated a meme!",
+						null,{file:buf,name:"meme.png"});
 			}
 			img2.onerror = function(){p.send("**🚫 | "+p.msg.author.username+"**, I could not grab the image",3000);}
 			img2.src = body;
