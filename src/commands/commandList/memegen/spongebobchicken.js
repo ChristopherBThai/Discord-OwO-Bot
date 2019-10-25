@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 const fs = require('fs');
 const {createCanvas, Canvas, Image} = require('canvas')
@@ -27,10 +27,10 @@ module.exports = new CommandInterface({
 	six:500,
 	bot:true,
 
-	permissions:["SEND_MESSAGES","ATTACH_FILES"],
+	permissions:["sendMessages","attachFiles"],
 
 	execute: function(p){
-		fs.readFile('./json/images/spongebob_chicken.jpg',function(err,image){
+		fs.readFile('./src/data/images/spongebob_chicken.jpg',function(err,image){
 			if(err){ console.error(err); return;}
 
 			img = new Image;
@@ -64,8 +64,8 @@ module.exports = new CommandInterface({
 			ctx.fillText(text,10,80-(lines*15));
 
 			buf = canvas.toBuffer();
-			p.msg.channel.send("**🖼 | "+p.msg.author.username+"** generated a meme!",{files:[buf]})
-				.catch(err => console.error(err));
+			p.send("**🖼 | "+p.msg.author.username+"** generated a meme!",
+					null,{file:buf,name:"meme.png"});
 		});
 	}
 
