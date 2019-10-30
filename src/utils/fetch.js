@@ -16,7 +16,11 @@ class Fetch{
 		if(!userID) return;
 		let user = this.bot.users.get(userID);
 		if(!user){
-			user = await this.bot.getRESTUser(userID);
+			try{
+				user = await this.bot.getRESTUser(userID);
+			}catch(e){
+				return;
+			}
 			if(user&&cache){
 				this.bot.users.add(user,this.bot,false);
 			}
@@ -30,7 +34,11 @@ class Fetch{
 		if(!guild) return;
 		let member = guild.members.get(userID);
 		if(!member){
-			member = await guild.getRESTMember(userID);
+			try{
+				member = await guild.getRESTMember(userID);
+			}catch(e){
+				return;
+			}
 			if(!member.id) member.id = member.user.id;
 			if(member&&cache){
 				guild.members.add(member,guild,false);
@@ -43,7 +51,11 @@ class Fetch{
 		if(!guildID) return;
 		let guild = this.bot.guilds.get(guildID);
 		if(!guild){
-			guild = await this.bot.getRESTGuild(guildID);
+			try{
+				guild = await this.bot.getRESTGuild(guildID);
+			}catch(e){
+				return;
+			}
 			if(guild&&cache){
 				this.bot.guilds.add(guild,this.bot,false);
 			}
