@@ -15,7 +15,7 @@ var modLogChannel = "471579186059018241";
  * Sends a msg to channel
  */
 exports.send = function(msg){
-	return function(content,del,file){
+	return function(content,del,file,opt){
 		if(del)
 			return msg.channel.createMessage(content,file)
 				.then(message => setTimeout(function(){
@@ -30,7 +30,7 @@ exports.send = function(msg){
  * Sends a msg to channel
  */
 exports.reply = function(msg){
-	return function(emoji,content,del,file){
+	return function(emoji,content,del,file,opt){
 		let username = msg.author.username;
 		let tempContent = {};
 		if(typeof content === "string")
@@ -54,7 +54,7 @@ exports.reply = function(msg){
  * Sends a msg to channel
  */
 exports.error = function(errorEmoji,msg){
-	return function(content,del,file){
+	return function(content,del,file,opt){
 		let username = msg.author.username;
 		let emoji = errorEmoji;
 		let tempContent = {};

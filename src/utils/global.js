@@ -33,9 +33,9 @@ exports.isInt = function(value){
  * Grabs all id from guild
  */
 exports.getids = function(members){
-	var result = "";
-	members.keyArray().forEach(function(ele){
-		result += ele+",";
+	let result = "";
+	members.forEach(function(ele,key,map){
+		result += key+",";
 	});
 	return result.slice(0,-1);
 }
