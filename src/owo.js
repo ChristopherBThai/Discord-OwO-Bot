@@ -65,6 +65,12 @@ class OwO extends Base{
 
 		// Creates a reaction collector for a message (works for uncached messages too)
 		this.reactionCollector = new (require('./utils/reactionCollector.js'))(this);
+
+		// Redis pubsub to communicate with all the other shards/processes
+		this.pubsub = new (require('./utils/pubsub.js'))(this);
+
+		// Fetches images and converts them to buffers
+		this.DataResolver = require('./utils/dataResolver.js');
 		
 		// Create commands
 		this.command = new (require('./commands/command.js'))(this);

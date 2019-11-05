@@ -126,6 +126,7 @@ function initParam(msg,command,args,main){
 		"log":main.logger.log,
 		"config":main.config,
 		"fetch":main.fetch,
+		"pubsub":main.pubsub,
 		"quest":function(questName,count,extra){main.questHandler.increment(msg,questName,count,extra).catch(console.error)},
 		"reactionCollector":main.reactionCollector
 	};
