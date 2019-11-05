@@ -21,7 +21,7 @@ module.exports = new CommandInterface({
 
 	related:["owo marry","owo am"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ADD_REACTIONS"],
+	permissions:["sendMessages","embedLinks","addReactions"],
 
 	cooldown:3000,
 
@@ -40,7 +40,7 @@ module.exports = new CommandInterface({
 				user = result[0][0].receiver;
 				preposition = "to";
 			}
-			user = await p.global.getUser(user);
+			user = await p.fetch.getUser(user);
 			if(!user){
 				p.replyMsg(declineEmoji,", you have declined a marriage request!");
 			}else{

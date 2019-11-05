@@ -27,7 +27,7 @@ module.exports = new CommandInterface({
 
 	related:["owo marry","owo dm"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ADD_REACTIONS"],
+	permissions:["sendMessages","embedLinks","addReactions"],
 
 	cooldown:3000,
 
@@ -46,25 +46,16 @@ module.exports = new CommandInterface({
 			return;
 		}
 
-		// You can only divorce if you have married your SO for over a day
-		/*
-		let afterMid = dateUtil.afterMidnight(result[0].marriedDate);
-		if(!afterMid.after){
-			p.errorMsg(", you can only divorce after you have been with them for one day!",3000);
-			return;
-		}
-		*/
-
 		// Grab user and ring information
 		let ring = rings[result[0].rid];
 		let so = p.msg.author.id==result[0].id1?result[0].id2:result[0].id1;
-		so = await p.global.getUser(so);
+		so = await p.fetch.getUser(so);
 
 		// Ask for confirmation
 		let embed = {
 			"author": {
 				"name": p.msg.author.username+", are you sure you want to divorce"+(so?" "+so.username:"")+"?",
-				"icon_url": p.msg.author.avatarURL()
+				"icon_url": p.msg.author.avatarURL
 			},
 			"description":"You married on **"+(new Date(result[0].marriedDate)).toLocaleDateString("default",dateOptions)+"** and have been married for **"+result[0].days+"** days and claimed **"+result[0].dailies+"** dailies together... Once you divorce, the ring will break and disappear.",
 			"thumbnail":{
@@ -75,15 +66,15 @@ module.exports = new CommandInterface({
 		let msg = await p.send({embed});
 
 		// Add reaction collector 
-		await msg.react(yes);
-		await msg.react(no);
-		let filter = (reaction, user) => (reaction.emoji.name === yes||reaction.emoji.name === no) && user.id === p.msg.author.id;
-		let collector = msg.createReactionCollector(filter,{time:60000});
+		await msg.addReaction(yes);
+		await msg.addReaction(no);
+		let filter = (emoji, userID) => (emoji.name === yes||emoji.name === no) && userID === p.msg.author.id;
+		let collector = p.reactionCollector.create(msg,filter,{time:60000});
 		let reacted = false;
-		collector.on('collect',r => {
+		collector.on('collect',emoji => {
 			if(reacted) return;
 			reacted = true;
-			if(r.emoji.name==yes){
+			if(emoji.name==yes){
 				embed.description = embed.description+"\n\n "+heartBreak+" You have decided to divorce.";
 				collector.stop();
 				let sql = `DELETE FROM marriage WHERE uid1 = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) OR uid2 = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;

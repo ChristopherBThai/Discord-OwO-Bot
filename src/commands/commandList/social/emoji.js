@@ -15,6 +15,7 @@ const stealEmoji = '🕵';
 const errorEmoji = '';
 const successMsg = "Successfully stolen"
 const failureMsg = "Failed to steal"
+const progressMsg = "progress";
 
 module.exports = new CommandInterface({
 
@@ -28,7 +29,7 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ADD_REACTIONS"],
+	permissions:["sendMessages","embedLinks","addReactions"],
 
 	cooldown:7000,
 	half:100,
@@ -37,7 +38,7 @@ module.exports = new CommandInterface({
 	execute: async function(p){
 		/* Look at previous message */
 		if(p.args.length==0||p.args[0]&&(p.args[0].toLowerCase()=="prev"||p.args[0].toLowerCase()=="previous"||p.args[0].toLowerCase()=="p")){
-			let msgs = (await p.msg.channel.messages.fetch({limit:10,before:p.msg.id})).array();
+			let msgs = await p.msg.channel.getMessages(10);
 			if(!msgs){
 				p.errorMsg(", There are no emojis! >:c",3000);
 				return;
@@ -103,10 +104,14 @@ async function display(p,emojis){
 		canSteal = result[0].guild;
 	}
 
+	let buffers = {};
 	let saved = {};
 	let save = function(loc,id,message){
-		if(!saved[loc]) saved[loc] = {success:[],failure:[]};
-		if(message==successMsg){
+		if(!saved[loc]) saved[loc] = {progress:{},success:[],failure:[]};
+		if(message==progressMsg){
+			saved[loc].progress[id] = true;
+			return;
+		}else if(message==successMsg){
 			saved[loc].success.push(id);
 		}else if(!saved[loc].failure.includes(id)){
 			saved[loc].failure.push(id);
@@ -116,71 +121,78 @@ async function display(p,emojis){
 	}
 
 	/* Add a reaction collector to update the pages */
-	await msg.react(prevPageEmoji);
-	await msg.react(nextPageEmoji);
-	if(canSteal) await msg.react(stealEmoji);
+	await msg.addReaction(prevPageEmoji);
+	await msg.addReaction(nextPageEmoji);
+	if(canSteal) await msg.addReaction(stealEmoji);
 
-	let filter = (reaction,user) => {
-		// I need to deal with the steal in the filter since the Discord.Js does not return the user id on 'collect'
-		if(reaction.emoji.name==stealEmoji){
-
-			// if user has already stolen the emoji, ignore
-			if(saved[loc]&&saved[loc].success.includes(user.id)) return;
-
-			let sql = `SELECT emoji_steal.guild FROM emoji_steal INNER JOIN user ON emoji_steal.uid = user.uid WHERE id = ${user.id};`;
-			p.query(sql).then(function(result){
-				if(!result[0])
-					return;
-
-				// Parse steal server id
-				let guild = result[0].guild;
-
-
-				//Save the emoji
-				let name = emojis[loc].name;
-				let url = emojis[loc].url;
-				addEmoji(p,name,url,guild,loc,user.id,save);
-			});
-
-		}
-
-		return (reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji||(canSteal&&reaction.emoji.name===stealEmoji))&&user.id==p.msg.author.id;
+	let filter = (emoji,userID) => {
+		if(emoji.name==stealEmoji&&userID!=p.client.user.id){
+			return true;
+		}else return ([nextPageEmoji,prevPageEmoji].includes(emoji.name)&&userID==p.msg.author.id);
 	}
-	let collector = await msg.createReactionCollector(filter,{time:120000});
 
+	let collector = p.reactionCollector.create(msg,filter,{idle:120000});
 
 	/* Flip the page if reaction is pressed */
-	collector.on('collect', async function(r,c){
-		/* Save the animal's action */
-		if(r.emoji.name===nextPageEmoji&&loc+1<emojis.length) {
+	collector.on('collect', async function(emoji,userID){
+		if(emoji.name===nextPageEmoji&&loc+1<emojis.length) {
 			loc++;
 			embed = createEmbed(p,loc,emojis,saved);
 			await msg.edit({embed});
-		}
-		if(r.emoji.name===prevPageEmoji&&loc>0){
+		}else if(emoji.name===prevPageEmoji&&loc>0){
 			loc--;
 			embed = createEmbed(p,loc,emojis,saved);
 			await msg.edit({embed});
+		}else if(emoji.name===stealEmoji){
+			// if user has already stolen the emoji, ignore
+			if(saved[loc]&&saved[loc].success.includes(userID)) return;
+			// If it is currently stealing... ignore (we don't want duplicates)
+			if(saved[loc]&&saved[loc].progress[userID]) return;
+			save(loc,userID,progressMsg);
+
+			let sql = `SELECT emoji_steal.guild FROM emoji_steal INNER JOIN user ON emoji_steal.uid = user.uid WHERE id = ${userID};`;
+			p.query(sql).then(async function(result){
+				if(result[0]){
+					// Parse steal server id
+					let guild = result[0].guild;
+
+					//Save the emoji
+					let name = emojis[loc].name;
+					let url = emojis[loc].url;
+					let id = emojis[loc].id;
+					
+					try{
+						let result = await addEmoji(p,guild,name,url,id,loc,buffers[loc]);
+						if(result.buffer) buffers[result.loc] = result.buffer;
+						save(loc,userID,successMsg);
+					}catch(err){
+						save(loc,userID,failureMsg);
+					}
+				}
+				delete saved[loc].progress[userID];
+
+			});
+
 		}
 	});
 
 	collector.on('end',async function(collected){
 		embed = createEmbed(p,loc,emojis,saved);
 		embed.color = 6381923;
-		await msg.edit("This message is now inactive",{embed});
+		await msg.edit({content:"This message is now inactive",embed});
 	});
 
 }
 
 function createEmbed(p,loc,emojis,saved={}){
 	let emoji = emojis[loc];
-	if(!emoji) emoji = p.client.user.avatarURL();
+	if(!emoji) emoji = p.client.user.avatarURL;
 
 	let embed = {
 		"author":{
 			"name":"Enlarged Emojis!",
 			"url":emoji.url,
-			"icon_url":p.msg.author.avatarURL()
+			"icon_url":p.msg.author.avatarURL
 		},
 		"description":`\`${emoji.name}\` \`${emoji.id}\``,
 		"color":p.config.embed_color,
@@ -209,20 +221,19 @@ function createEmbed(p,loc,emojis,saved={}){
 
 async function setServer(p){
 	// Check if the user has emoji permissions
-	if(!p.msg.member.hasPermission('MANAGE_EMOJIS')){
+	if(!p.msg.member.permission.has('manageEmojis')){
 		p.errorMsg(", you do not have permissions to edit emojis on this server!",3000);
 		return;
 	}
 
 	// Check if the bot has permissions
-	if(!p.msg.guild.me.hasPermission('MANAGE_EMOJIS')){
-		let link = await p.client.generateInvite(permissions);
-		p.errorMsg(", I don't have permissions to add emojis! Please give me permission or reinvite me!\n"+link);
+	if(!p.msg.channel.guild.members.get(p.client.user.id).permission.has("manageEmojis")){
+		p.errorMsg(", I don't have permissions to add emojis! Please give me permission or reinvite me!\n"+p.config.invitelink);
 		return;
 	}
 	
 
-	let sql = `INSERT INTO emoji_steal (uid,guild) VALUES ((SELECT uid FROM user WHERE id = ${p.msg.author.id}),${p.msg.guild.id}) ON DUPLICATE KEY UPDATE guild = ${p.msg.guild.id};`;
+	let sql = `INSERT INTO emoji_steal (uid,guild) VALUES ((SELECT uid FROM user WHERE id = ${p.msg.author.id}),${p.msg.channel.guild.id}) ON DUPLICATE KEY UPDATE guild = ${p.msg.channel.guild.id};`;
 	try{
 		await p.query(sql);
 	}catch(e){
@@ -241,41 +252,17 @@ async function unsetServer(p){
 	p.replyMsg(stealEmoji,", your server has been unset for stealing!");
 }
 
-async function addEmoji(p,name,url,guild,loc,id,callback){
-	let result = await p.client.shard.broadcastEval(`(function(client){
-		let guild = client.guilds.get('${guild}');
-		if(guild==undefined) return;
-		if(!guild.me.hasPermission('MANAGE_EMOJIS')) return;
-		guild.emojis.create('${url}','${name}');
-		return guild.emojis.size;
-	}(this))`);
-	let emoji;
-	for(let i in result){
-		if(result[i]) emoji = result[i];
-	}
-
-	if(!emoji||!p.global.isInt(emoji)){
-		callback(loc,id,failureMsg);
-		return;
-	}
-
-	setTimeout(async function(){
-		let result = await p.client.shard.broadcastEval(`(function(client){
-			let guild = client.guilds.get('${guild}');
-			if(guild==undefined) return;
-			return guild.emojis.size;
-		}(this))`);
-		let after;
-		for(let i in result){
-			if(result[i]) after= result[i];
+function addEmoji(p,guild,name,url,emojiID,loc,buffer){
+	return new Promise(function(res,rej){
+		let callbackID = p.msg.author.id+""+emojiID;
+		let callback = function(err,buffer,loc){
+			if(err){
+				rej(err);
+			}else{
+				res({buffer,loc});
+			}
 		}
-
-		if(!p.global.isInt(after)||emoji==after){
-			callback(loc,id,failureMsg);
-			return;
-		}
-
-		callback(loc,id,successMsg);
-		
-	},1000);
+		p.pubsub.channels.addEmojiCallback.addCallback(callbackID,callback);
+		p.pubsub.publish("addEmoji",{guild,name,url,userID:p.msg.author.id,callbackID,buffer,loc});
+	});
 }

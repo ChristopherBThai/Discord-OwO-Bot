@@ -22,7 +22,7 @@ module.exports = new CommandInterface({
 
 	related:["owo marry","owo dm"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ADD_REACTIONS"],
+	permissions:["sendMessages","embedLinks","addReactions"],
 
 	cooldown:3000,
 
@@ -40,7 +40,7 @@ module.exports = new CommandInterface({
 		if(result[0].length>0&&result[1].affectedRows>0){
 
 			// Grab user info
-			let sender = await p.global.getUser(result[0][0].sender);
+			let sender = await p.fetch.getUser(result[0][0].sender);
 
 			//Insert the users and ring into the marriage database
 			let uid1 = result[0][0]['sender_uid'];

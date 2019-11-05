@@ -115,3 +115,4 @@ client.on('error',function(err){
 	console.error("Redis error on "+(new Date()).toLocaleString());
 	console.error(err);
 });
+exports.client = client;

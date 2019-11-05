@@ -7,7 +7,11 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-var eightballCount = 55;
+const eightballEmoji = '🎱';
+const pronouns = ["silly","senpai","daddy","mommy","dad","mom","master","nii-san","onee-san","love","ma'am","sir","friend","b-baka","honey"];
+const answer = ["nu","yus","yes","no","never","of course","hell yeah","hell no","negative","positive","not today","only today","sadly yes","sadly no","maybe","you bet","not a chance","it's a secret","only for today"];
+const faces = ["^_^","UwU","OwO",":(",":)",";c","c;",":c","c:","._.",".-.","xD",":x",";x",">///<",";-;","( ͡° ͜ʖ ͡°)"];
+const result = ["?a? ?p?...","?f? ?a? ?p?!!","?a?","?a?.","?a?!!","?p?... ?a?","?a?! ?f?","don't tell anyone but ?a? ?f?"];
 
 module.exports = new CommandInterface({
 
@@ -21,23 +25,29 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	permissions:["SEND_MESSAGES"],
+	permissions:["sendMessages"],
 
 	cooldown:5000,
 	half:100,
 	six:500,
 
 	execute: function(p){
-		if(p.args.length==0)
+		if(p.args.length<=0){
+			p.errorMsg("You need to ask a question silly!",3000);
 			return;
-		var id = Math.ceil(Math.random()*eightballCount);
-		var sql = "SELECT answer FROM eightball WHERE id = "+id+";";
-		p.con.query(sql,function(err,rows,field){
-			if(err){console.error(err);return;}
-			var question = p.args.join(" ");
+		}
 
-			p.send("**🎱 | "+p.msg.author.username+" asked:**  "+question+"\n**<:blank:427371936482328596> | Answer:**  "+rows[0].answer);
-		});
+		let question = p.args.join(" ");
+		let reply = getAnswer();
+		p.replyMsg(eightballEmoji," **asked:** "+question+"\n"+p.config.emoji.blank+" **| Answer:** "+reply);
 	}
 
 })
+
+function getAnswer(){
+	let reply = result[Math.floor(Math.random()*result.length)];
+	reply = reply.replace("?a?",answer[Math.floor(Math.random()*answer.length)])
+		.replace("?p?",pronouns[Math.floor(Math.random()*pronouns.length)])
+		.replace("?f?",faces[Math.floor(Math.random()*faces.length)]);
+	return reply;
+}

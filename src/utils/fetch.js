@@ -57,7 +57,7 @@ class Fetch{
 				return;
 			}
 			if(guild&&cache){
-				this.bot.guilds.add(guild,this.bot,false);
+				//this.bot.guilds.add(guild,this.bot,false);
 			}
 		}
 		return guild;
