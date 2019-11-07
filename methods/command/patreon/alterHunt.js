@@ -29,6 +29,10 @@ exports.alter = function(id,text){
 			return michelle(text);
 		case '250383887312748545':
 			return elsa(text);
+		case '181264821713371136':
+			return pheonix(text);
+		case '192692796841263104':
+			return dalu(text);
 		default:
 			return text;
 	}
@@ -226,6 +230,37 @@ function elsa(text){
 		"color":7319500,
 		"thumbnail":{
 			"url":"https://i.imgur.com/kDnD8WQ.gif"
+		}
+	};
+	return {embed};
+}
+
+function pheonix(text){
+	if(text.indexOf("empowered by")>=0){
+		text = text.replace(", hunt is empowered by"," has searched far and wide all over the galaxy with")
+			.replace("You found","and found")
+			.replace("  !","");
+	}else{
+		text = text.replace("spent 5 <:cowoncy:416043450337853441> and caught a **","has searched far and wide all over the galaxy\n**<:blank:427371936482328596> |** and found an **amazing")
+		.replace("spent 5 <:cowoncy:416043450337853441> and caught an **","has searched far and wide\n**<:blank:427371936482328596> |** and found an **incredible ");
+	}
+	return text;
+}
+
+function dalu(text){
+	let foxhappy = "<:foxhappy:641916900544217088>";
+	let foxlove = "<:foxlove:641916900212867073>";
+	if(text.indexOf("empowered by")>=0){
+		text = text.replace(", hunt is empowered by"," is searching for food and uses ")
+			.replace("  !"," to help him.")
+			.replace("You found","He found  his pray not far away");
+	}else{
+	}
+	let embed = {
+		"description":text,
+		"color":63996,
+		"thumbnail":{
+			"url":"https://i.imgur.com/sa5IZRo.gif"
 		}
 	};
 	return {embed};
