@@ -39,7 +39,7 @@ module.exports = new CommandInterface({
 		/* Validity check */
 		animal = p.global.validAnimal(animal);
 		if(!animal){
-			p.errorMsg(", I coulnd't find that animal! D:");
+			p.errorMsg(", I couldn't find that animal! D:");
 			return;
 		}
 		if(name.length>35){

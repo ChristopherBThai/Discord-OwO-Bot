@@ -4,17 +4,18 @@ const imagegenAuth = require('../../../tokens/imagegen.json');
 const request = require('request');
 const levels = require('./levels.js');
 const global = require('./global.js');
+const DataResolver = require('./dataResolver.js');
 const levelupEmoji = '🎉';
 const infoEmoji = 'ℹ';
 
 exports.distributeRewards = async function(msg){
 	// If bot does not have permission to send a message, ignore.
-	let perms = msg.channel.permissionsFor(msg.guild.me);
-	if(!perms.has('SEND_MESSAGES')||!perms.has('ATTACH_FILES')) return;
+	let perms = msg.channel.permissionsOf(global.getClient().user.id);
+	if(!perms.has('sendMessages')||!perms.has('attachFiles')) return;
 
 	let level = (await levels.getUserLevel(msg.author.id)).level;
 	let sql = `SELECT user.uid,user_level_rewards.rewardLvl FROM user LEFT JOIN user_level_rewards ON user.uid = user_level_rewards.uid WHERE id = ${msg.author.id};`;
-	sql += `SELECT levelup FROM guild_setting WHERE id = ${msg.guild.id};`;
+	sql += `SELECT levelup FROM guild_setting WHERE id = ${msg.channel.guild.id};`;
 	let result = await mysql.query(sql);
 	let uid,plevel = 0;
 
@@ -48,10 +49,12 @@ exports.distributeRewards = async function(msg){
 	}
 
 	// Grab Image
-	let uuid;
+	let uuid,url,buffer;
 	try{
 		uuid = await generateImage(msg,{level,cowoncy,lootbox,weaponcrate});
 		if(!uuid||uuid=="") throw "No uuid";
+		url = imagegenAuth.imageGenUrl+'/levelup/'+uuid+'.png';
+		buffer = await DataResolver.urlToBuffer(url);
 	}catch(e){
 		return;
 	}
@@ -73,14 +76,13 @@ exports.distributeRewards = async function(msg){
 			INSERT INTO lootbox(id,boxcount) VALUES (${msg.author.id},${lootbox}) ON DUPLICATE KEY UPDATE boxcount = boxcount + ${lootbox};`;
 	
 	// Set up reply text
-	let url = imagegenAuth.imageGenUrl+'/levelup/'+uuid+'.png';
 	let text = levelupEmoji+" **| "+msg.author.username+"** leveled up!";
 	if(level-plevel>1) text += "\n<:blank:427371936482328596> **|** Extra rewards were added for missing levels";
 	if(!plevel) text += "\n"+infoEmoji+" **|** Level up messages can be disabled for the guild with `owo level disabletext`";
 
 	// distribute and send
 	await mysql.query(sql);
-	await msg.channel.send(text,{files:[url]});
+	await msg.channel.createMessage(text,{file:buffer,name:"levelup.png"});
 }
 
 function getReward(lvl){
@@ -93,7 +95,7 @@ function getReward(lvl){
 async function generateImage(msg,reward){
 	let background = await getBackground(msg.author);
 
-	let avatarURL = msg.author.avatarURL()
+	let avatarURL = msg.author.avatarURL
 	if(!avatarURL) avatarURL= msg.author.defaultAvatarURL;
 	avatarURL = avatarURL.replace('.gif','.png').replace(/\?[a-zA-Z0-9=?&]+/gi,'');
 

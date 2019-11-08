@@ -23,15 +23,16 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	permissions:["SEND_MESSAGES","ATTACH_FILES"],
+	permissions:["sendMessages","attachFiles"],
 
 	cooldown:15000,
 	half:100,
 	six:500,
 
 	execute: async function(p){
+		let perms = p.msg.member.permission;
 		if(p.args.length>=1&&["disable","disabletext","dt"].includes(p.args[0].toLowerCase())){
-			if(p.msg.member.hasPermission('MANAGE_CHANNELS')){
+			if(perms.has('manageChannels')){
 				let sql = `INSERT INTO guild_setting (id,levelup) VALUES (${p.msg.guild.id},1) ON DUPLICATE KEY UPDATE levelup = 1;`;
 				await p.query(sql);
 				await p.replyMsg(settingEmoji,", level up messages will **not** be displayed in this guild.");
@@ -40,7 +41,7 @@ module.exports = new CommandInterface({
 				return;
 			}
 		}else if(p.args.length>=1&&["enable","enabletext","et"].includes(p.args[0].toLowerCase())){
-			if(p.msg.member.hasPermission('MANAGE_CHANNELS')){
+			if(perms.has('manageChannels')){
 				let sql = `UPDATE guild_setting SET levelup = 0 WHERE id = ${p.msg.guild.id};`;
 				await p.query(sql);
 				await p.replyMsg(settingEmoji,", level up messages will be displayed in this guild.");
@@ -49,7 +50,7 @@ module.exports = new CommandInterface({
 				return;
 			}
 		}else{
-			try{
+			//try{
 				let opt = {};
 				if(p.args[0]=='s'||p.args[0]=="server"||p.args[0]=='g'||p.args[0]=="guild"){
 					opt.guild = true;
@@ -62,13 +63,15 @@ module.exports = new CommandInterface({
 				}
 
 				let url = imagegenAuth.imageGenUrl+'/level/'+uuid+'.png';
-				let warning = '⚠';
-				await p.send({files:[url]});
+				let data = await p.DataResolver.urlToBuffer(url);
+				await p.send("",null,{file:data,name:"level.png"});
 				if(!opt.guild) await levelRewards.distributeRewards(p.msg);
+			/*
 			}catch(e){
-				//console.error(e);
+				console.error(e);
 				p.errorMsg(", failed to create level image... Try again later :(",3000);
 			}
+			*/
 		}
 	}
 

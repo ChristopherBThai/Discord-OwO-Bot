@@ -21,7 +21,7 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	permissions:["SEND_MESSAGES"],
+	permissions:["sendMessages"],
 
 	cooldown:5000,
 	half:100,
@@ -31,36 +31,21 @@ module.exports = new CommandInterface({
 		var args=p.args,msg=p.msg,global=p.global;
 		var user1, user2;
 		if(args.length==2){
-			if(global.isUser(args[0])){
-				user1 = await global.getUser(args[0]);
-				if(user1==undefined){
-					p.send("**🚫 |** Could not find that user!",3000);
-					return;
-				}
-			}else{
-				p.send("**🚫 |** That's not a user!",3000);
-				return;;
+			user1 = await p.fetch.getMember(p.msg.channel.guild.id,args[0]);
+			if(user1==undefined){
+				p.send("**🚫 |** Could not find that user!",3000);
+				return;
 			}
-			if(global.isUser(args[1])){
-				user2 = await global.getUser(args[1]);
-				if(user2==undefined){
-					p.send("**🚫 |** Could not find that user!",3000);
-					return;
-				}
-			}else{
-				p.send("**🚫 |** That's not a user!",3000);
+			user2 = await p.fetch.getMember(p.msg.channel.guild.id,args[1]);
+			if(user2==undefined){
+				p.send("**🚫 |** Could not find that user!",3000);
 				return;
 			}
 		}else if(args.length==1){
-			user1 = msg.author;
-			if(global.isUser(args[0])){
-				user2 = await global.getUser(args[0]);
-				if(user2==undefined){
-					p.send("**🚫 |** Could not find that user!",3000);
-					return;
-				}
-			}else{
-				p.send("**🚫 |** That's not a user!",3000);
+			user1 = msg.member;
+			user2 = await p.fetch.getMember(p.msg.channel.guild.id,args[0]);
+			if(user2==undefined){
+				p.send("**🚫 |** Could not find that user!",3000);
 				return;
 			}
 		}else{
@@ -68,8 +53,8 @@ module.exports = new CommandInterface({
 			return;
 		}
 
-		var name1 = user1.username;
-		var name2 = user2.username;
+		var name1 = user1.nick?user1.nick:user1.username;
+		var name2 = user2.nick?user2.nick:user2.username;
 		var name = combinename(name1,name2);
 		p.send("**"+name1+"** 💞 **"+name2+"** = **" + name+"**");
 	}
@@ -111,3 +96,4 @@ function combinename(name1,name2){
 	}
 	return name;
 }
+

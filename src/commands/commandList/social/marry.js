@@ -26,7 +26,7 @@ module.exports = new CommandInterface({
 
 	related:["owo daily","owo shop"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ADD_REACTIONS"],
+	permissions:["sendMessages","embedLinks","addReactions"],
 
 	cooldown:30000,
 
@@ -63,8 +63,11 @@ module.exports = new CommandInterface({
 			return;
 		}
 
-		let user = await p.global.getUser(id);
-		if(user.bot){
+		let user = await p.getMention(id);
+		if(!user){
+			p.errorMsg(", please tag a user to marry them!",3000);
+			return;
+		}else if(user.bot){
 			p.errorMsg(", you silly hooman! You can't marry a bot!",3000);
 			return;
 		}
@@ -119,7 +122,7 @@ async function propose(p,user,ringId){
 		"color": p.config.embed_color,
 		"author": {
 			"name": p.msg.author.username+" has proposed to "+user.username+" with a "+ring.name+"!",
-			"icon_url": p.msg.author.avatarURL()
+			"icon_url": p.msg.author.avatarURL
 		},
 		"timestamp":new Date(),
 		"thumbnail":{
@@ -155,16 +158,16 @@ async function upgradeRing(p,user,ringId,result,ringResult){
 	let msg = await p.send({embed});
 
 	// Add reaction collector 
-	await msg.react(yes);
-	await msg.react(no);
-	let filter = (reaction, user) => (reaction.emoji.name === yes||reaction.emoji.name === no) && user.id === p.msg.author.id;
-	let collector = msg.createReactionCollector(filter,{time:60000});
+	await msg.addReaction(yes);
+	await msg.addReaction(no);
+	let filter = (emoji, userID) => (emoji.name === yes||emoji.name === no) && userID === p.msg.author.id;
+	let collector = p.reactionCollector.create(msg,filter,{time:60000});
 	let reacted = false;
-	collector.on('collect',async function(r){
+	collector.on('collect',async function(emoji){
 		if(reacted) return;
 		reacted = true;
 		collector.stop("done");
-		if(r.emoji.name==yes){
+		if(emoji.name==yes){
 			embed.color = 6381923;
 			
 			// Delete ring from user inventory
@@ -224,13 +227,13 @@ async function display(p){
 	// Grab user and ring information
 	let ring = rings[result[0].rid];
 	let so = p.msg.author.id==result[0].id1?result[0].id2:result[0].id1;
-	so = await p.global.getUser(so);
+	so = await p.fetch.getUser(so);
 
 	// Display marriage info
 	let embed = {
 		"author": {
 			"name": p.msg.author.username+", you are happily married to "+(so?so.username:"someone")+"!",
-			"icon_url": p.msg.author.avatarURL()
+			"icon_url": p.msg.author.avatarURL
 		},
 		"description":"Married since **"+(new Date(result[0].marriedDate)).toLocaleDateString("default",dateOptions)+"** (**"+result[0].days+" days**)\nYou have claimed **"+result[0].dailies+" dailies** together!\n"+quotes[Math.floor(Math.random()*quotes.length)]+" "+quotes2[Math.floor(Math.random()*quotes2.length)],
 		"thumbnail":{

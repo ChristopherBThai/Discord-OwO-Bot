@@ -14,6 +14,7 @@ const timerEmoji = '⏱';
 
 //exports.check = async function(con,msg,client,command,callback,ignore){
 exports.check = async function(p,command){
+	//TODO SKIP FOR POINTS
 
 	let channel = p.msg.channel.id;
 	let guild = p.msg.channel.guild.id;

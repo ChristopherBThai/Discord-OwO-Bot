@@ -44,7 +44,7 @@ var display = exports.display = async function(p,user){
 }
 
 async function generateJson(p,user){
-	let avatarURL = user.avatarURL()
+	let avatarURL = user.avatarURL
 	if(!avatarURL) avatarURL= user.defaultAvatarURL;
 	avatarURL = avatarURL.replace('.gif','.png').replace(/\?[a-zA-Z0-9=?&]+/gi,'');
 
@@ -125,7 +125,7 @@ async function getMarriage(p,user){
 	// Grab user and ring information
 	let ring = rings[result[0].rid];
 	let so = user.id==result[0].id1?result[0].id2:result[0].id1;
-	so = await p.global.getUser(so);
+	so = await p.fetch.getUser(so);
 	tag = "";
 	if(!so) so = "Someone";
 	else {
@@ -211,9 +211,10 @@ var displayProfile = exports.displayProfile = async function(p,user){
 		try{
 			let uuid = await display(p,user);
 			let url = imagegenAuth.imageGenUrl+'/profile/'+uuid+'.png';
+			let data = await p.DataResolver.urlToBuffer(url);
 			if(uuid){
 				let warning = '⚠';
-				await p.send({files:[url]});
+				await p.send("",null,{file:data,name:"profile.png"});
 			}else
 				throw "Not found"
 		}catch(e){

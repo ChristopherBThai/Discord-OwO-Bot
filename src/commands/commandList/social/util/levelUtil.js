@@ -40,7 +40,7 @@ exports.display = async function(p,user,opt){
 }
 
 async function generateJson(p,user,opt){
-	let avatarURL = user.avatarURL()
+	let avatarURL = user.avatarURL
 	if(!avatarURL) avatarURL= user.defaultAvatarURL;
 	avatarURL = avatarURL.replace('.gif','.png').replace(/\?[a-zA-Z0-9=?&]+/gi,'');
 
