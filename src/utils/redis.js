@@ -63,6 +63,17 @@ exports.getRange = function(table,min,max){
 	});
 }
 
+exports.zscore = function(table,id){
+	return new Promise(function(res,rej){
+		client.zscore(table,id,function(err,reply){
+			if(err)
+				rej(err);
+			else
+				res(reply);
+		});
+	});
+}
+
 exports.getXP = function(table,id){
 	return new Promise(function(res,rej){
 		client.zscore(table,id,function(err,reply){

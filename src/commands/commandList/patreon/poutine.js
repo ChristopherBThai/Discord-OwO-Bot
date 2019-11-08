@@ -5,12 +5,11 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 const poutineEmoji = "<:poutine:641879181684244494>";
 const owner = "146273323339218944";
 const words = ["Bon appétit!","Yum!","Delicious!","*Drools...*","Lucky!!",":0","Yummy!","Gimme gimme!"];
-const redis = require('../../../util/redis.js');
 
 module.exports = new CommandInterface({
 
@@ -24,7 +23,7 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	permissions:["SEND_MESSAGES"],
+	permissions:["sendMessages"],
 
 	cooldown:30000,
 	half:80,
@@ -59,7 +58,7 @@ module.exports = new CommandInterface({
 });
 
 async function display(p){
-	let count = await redis.zscore("poutine",p.msg.author.id);
+	let count = await p.redis.zscore("poutine",p.msg.author.id);
 	if(!count) count = 0;
 
 	p.replyMsg(poutineEmoji,", You currently have **"+count+"** dish(es) of poutine to give!");
@@ -67,17 +66,17 @@ async function display(p){
 
 async function give(p,user){
 	if(p.msg.author.id!=owner){
-		let result = await redis.incr("poutine",p.msg.author.id,-1);
+		let result = await p.redis.incr("poutine",p.msg.author.id,-1);
 
 		// Error checking
 		if(result==null||result<0){
-			if(result<0) redis.incr("poutine",p.msg.author.id,1);
+			if(result<0) p.redis.incr("poutine",p.msg.author.id,1);
 			p.errorMsg(", you do not have any poutine! >:c",3000);
 			p.setCooldown(5);
 			return;
 		}
 	}
 
-	await redis.incr("poutine",user.id,2);
+	await p.redis.incr("poutine",user.id,2);
 	p.replyMsg(poutineEmoji,", you gave two dishes of poutine to **"+user.username+"**! "+words[Math.floor(Math.random()*words.length)]);
 }
