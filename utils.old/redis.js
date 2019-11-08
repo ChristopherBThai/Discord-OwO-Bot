@@ -1,17 +1,6 @@
 const redis = require('redis');
 const client = redis.createClient();
 
-exports.incr = function(key,value=1){
-	return new Promise(function(res,rej){
-		client.incrby(key,value,function(err,reply){
-			if(err)
-				rej(err);
-			else
-				res(reply);
-		});
-	});
-}
-
 exports.hgetall = function(key){
 	return new Promise(function(res,rej){
 		client.hgetall(key,function(err,val){
@@ -55,6 +44,17 @@ exports.getTop = function(table,count = 5){
 exports.getRange = function(table,min,max){
 	return new Promise(function(res,rej){
 		client.zrevrange(table,min,max,'WITHSCORES',function(err,reply){
+			if(err)
+				rej(err);
+			else
+				res(reply);
+		});
+	});
+}
+
+exports.zscore = function(table,id){
+	return new Promise(function(res,rej){
+		client.zscore(table,id,function(err,reply){
 			if(err)
 				rej(err);
 			else

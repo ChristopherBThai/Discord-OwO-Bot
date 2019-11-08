@@ -7,6 +7,7 @@
 
 const blank = '<:blank:427371936482328596>';
 exports.alter = function(id,text,type){
+	return dalu(text,type);
 	switch(id){
 		case '176046069954641921':
 			return crown(text,type);
@@ -14,6 +15,8 @@ exports.alter = function(id,text,type){
 			return elsa(text,type);
 		case '323347251705544704':
 			return rikudou(text,type);
+		case '192692796841263104':
+			return dalu(text,type);
 		default:
 			return text;
 	}
@@ -44,5 +47,14 @@ function rikudou(text,type){
 	}
 	text.color = 255;
 	text.author.name = "Rikudou Sennin Arrives on the Battlefield";
+	return text;
+}
+
+function dalu(text,type){
+	text.thumbnail = {
+		"url":"https://i.imgur.com/iks7lY3.gif"
+	};
+	text.color = 63996;
+	text.author.name = text.author.name.replace(" goes into battle!"," starts it off with a bite!");
 	return text;
 }
