@@ -151,10 +151,23 @@ function getAnimals(p,result,gems,uid){
 	sql += insertCount+"UPDATE cowoncy SET money = money - 5 WHERE id = "+p.msg.author.id+";";
 
 	/* Construct sql statements for gem usage */
-	if(gems["Patreon"]) sql += "UPDATE user_gem SET activecount = activecount - 1 WHERE uid = "+uid+" AND gname = '"+gems["Patreon"].gname+"';";
-	if(gems["Hunting"]) sql += "UPDATE user_gem SET activecount = activecount - 1 WHERE uid = "+uid+" AND gname = '"+gems["Hunting"].gname+"';";
-	if(gems["Empowering"]) sql += "UPDATE user_gem SET activecount = activecount - "+Math.trunc(animal.length/2)+" WHERE uid = "+uid+" AND gname = '"+gems["Empowering"].gname+"';";
-	if(gems["Lucky"]) sql += "UPDATE user_gem SET activecount = activecount - "+animal.length+" WHERE uid = "+uid+" AND gname = '"+gems["Lucky"].gname+"';";
+	var huntingActive = false;
+	var empoweringActive = false;
+	if(gems["Patreon"]) sql += "UPDATE user_gem SET activecount = GREATEST(activecount - 1, 0) WHERE uid = "+uid+" AND gname = '"+gems["Patreon"].gname+"';";
+	if(gems["Hunting"]) {
+		huntingActive = true;
+		sql += "UPDATE user_gem SET activecount = GREATEST(activecount - 1, 0) WHERE uid = "+uid+" AND gname = '"+gems["Hunting"].gname+"';";
+	}
+	if(gems["Empowering"]) {
+		empoweringActive = true;
+		sql += "UPDATE user_gem SET activecount = GREATEST(activecount - "+Math.trunc(animal.length/2)+", 0) WHERE uid = "+uid+" AND gname = '"+gems["Empowering"].gname+"';";
+	}
+	if(gems["Lucky"]) {
+		// make lucky gems last twice as long if you're running all 3 gems
+		var luckySubtract = (huntingActive && empoweringActive) ? Math.trunc(animal.length/2) : animal.length;
+
+		sql += "UPDATE user_gem SET activecount = GREATEST(activecount - "+luckySubtract+", 0) WHERE uid = "+uid+" AND gname = '"+gems["Lucky"].gname+"';";
+	} 
 
 	/* Construct output message for user */
 	var text = "**🌱 | "+p.msg.author.username+"** spent 5 <:cowoncy:416043450337853441> and caught a "+animal[0][0]+" "+global.unicodeAnimal(animal[0][1])+"!";
@@ -162,7 +175,7 @@ function getAnimals(p,result,gems,uid){
 	if(gemLength>0){
 		text = "**🌱 | "+p.msg.author.username+"**, hunt is empowered by ";
 		for(let i in gems){
-			let remaining = gems[i].activecount-((gems[i].type=="Patreon"||gems[i].type=="Hunting")?1:((gems[i].type=="Empowering")?Math.trunc(animal.length/2):animal.length));
+			let remaining = gems[i].activecount-((gems[i].type=="Patreon"||gems[i].type=="Hunting")?1:((gems[i].type=="Empowering"||(gems[i].type=="Lucky"&& huntingActive && empoweringActive))?Math.trunc(animal.length/2):animal.length));
 			if(remaining<0) remaining = 0;
 			text += gems[i].emoji+"`["+remaining+"/"+gems[i].length+"]` ";
 		}
