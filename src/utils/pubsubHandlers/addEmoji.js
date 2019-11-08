@@ -22,7 +22,7 @@ exports.handle = async function(main, message){
 		try{
 			let data = buffer;
 			if(!data){
-				data = await main.DataResolver.urlToBuffer(url);
+				data = await main.DataResolver.urlToBufferString(url);
 			}
 			await guild.createEmoji({name,image:data},"Requested by "+userID);
 			if(buffer)

@@ -22,7 +22,7 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	permissions:["SEND_MESSAGES","ATTACH_FILES"],
+	permissions:["sendMessages","attachFiles"],
 
 	cooldown:3000,
 	half:100,
@@ -33,7 +33,7 @@ module.exports = new CommandInterface({
 			await profileUtil.displayProfile(p,p.msg.author);
 		}else if(p.global.isUser(p.args[0])||p.global.isInt(p.args[0])){
 			let user = p.args[0].match(/[0-9]+/)[0];
-			user = await p.global.getUser(user);
+			user = await p.fetch.getUser(user);
 			if(!user)
 				p.errorMsg(", I couldn't find that user!",3000);
 			else{

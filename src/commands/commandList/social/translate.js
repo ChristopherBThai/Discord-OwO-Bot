@@ -21,7 +21,7 @@ module.exports = new CommandInterface({
 
 	related:["owo listlang"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS"],
+	permissions:["sendMessages","embedLinks"],
 
 	cooldown:5000,
 	half:100,
@@ -29,51 +29,49 @@ module.exports = new CommandInterface({
 
 	execute: function(p){
 		if(p.command=="listlang")
-			listlang(p.msg);
+			listlang(p);
 		else
-			translate(p.msg,p.args);
+			translate(p);
 	}
 
 })
 
-function translate(msg,args){
-	if(args.length==0)
+function translate(p){
+	if(p.args.length==0){
+		p.errorMsg(", please include a message to translate!",3000);
 		return;
+	}
 	//Get language
-	var lang = args[args.length-1];
+	let lang = p.args[p.args.length-1];
 	if(lang.charAt(0)=='-'){
 		lang = lang.substring(1);
-		args.pop();
+		p.args.pop();
 	}else{
 		lang = "en"
 	}
 
 	//Get text
-	var text = args.join(" ");
+	let text = p.args.join(" ");
 	if(text.length>700){
-		msg.channel.send("**🚫 |** Message is too long")
-			.catch(err => console.error(err));
+		p.errorMsg(", The message is too long!!",3000);
 		return;
 	}
-	var ptext = text;
+	let ptext = text;
 	text = text.split(/(?=[?!.])/gi);
 	text.push("");
 	gtranslate(text, {to: lang}).then(res => {
-		const embed = {
+		let embed = {
 			"description":""+res.join(" "),
 			"color":4886754,
 			"footer":{"text":"Translated from \""+ptext+"\""}
 		};
-		msg.channel.send({embed})
-			.catch(err => msg.channel.send("**🚫 |** I don't have permission to send embedded links! :c")
-			.catch(err => console.error(err)));
+		p.send({embed});
 	}).catch(err => {
-		msg.channel.send("**🚫 |** Could not find that language! Use `owo listlang` to see available languages")
-			.catch(err => console.error(err));
+		p.errorMsg(", Could not find that language! Use `owo listlang` to see available languages")
 	})
 }
 
-function listlang(msg){
+function listlang(p){
 	var text = "Available languages: \n";
 	var done = false;
 	for(key in gtranslate.languages){
@@ -82,6 +80,5 @@ function listlang(msg){
 		if(!done)
 			text += "`"+key+"`-"+gtranslate.languages[key]+"  ";
 	}
-	msg.channel.send(text)
-		.catch(err => console.error(err));
+	p.send(text);
 }

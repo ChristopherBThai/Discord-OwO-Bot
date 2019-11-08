@@ -163,7 +163,6 @@ module.exports = new CommandInterface({
 			}
 
 			text += "\n**⏱ |** Your next daily is in: "+afterMid.hours+"H "+afterMid.minutes+"M "+afterMid.seconds+"S";
-			console.log(sql);
 			rows = await p.query(sql);
 			p.logger.value('cowoncy',(gain+extra),['command:daily','id:'+msg.author.id]);
 			if(announcement&&rows[0][0]){

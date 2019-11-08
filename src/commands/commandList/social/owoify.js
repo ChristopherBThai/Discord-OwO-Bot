@@ -21,7 +21,7 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	permissions:["SEND_MESSAGES"],
+	permissions:["sendMessages"],
 
 	cooldown:3000,
 	half:100,
@@ -33,7 +33,7 @@ module.exports = new CommandInterface({
 
 		// Check if we need to view previous msgs
 		if(p.args.length<=0){
-			let msgs = (await p.msg.channel.messages.fetch({limit:1,before:p.msg.id})).array();
+			let msgs = await p.msg.channel.getMessages(1,p.msg.id);
 			if(!msgs||!msgs[0]||!msgs[0].content){
 				p.errorMsg(", there is no message before yours! UwU",3000);
 				return;

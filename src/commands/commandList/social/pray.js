@@ -22,7 +22,7 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	permissions:["SEND_MESSAGES"],
+	permissions:["sendMessages"],
 
 	cooldown:300000,
 	half:100,
@@ -32,14 +32,11 @@ module.exports = new CommandInterface({
 	execute: async function(p){
 		let user = undefined;
 		if(p.args.length>0){
-			user = await p.global.getUser(p.args[0]);
-			if(user){
-				user = await p.global.getMember(p.msg.guild,user);
-				if(!user){
-					p.errorMsg(", That user is not in this guild!",3000);
-					p.setCooldown(5);
-					return;
-				}
+			user = p.getMention(p.args[0].match(/[0-9]+/)[0]);
+			if(!user){
+				p.errorMsg(", I could not find that user!",3000);
+				p.setCooldown(5);
+				return;
 			}
 		}
 		if(user&&user.id == p.msg.author.id)
@@ -51,7 +48,7 @@ module.exports = new CommandInterface({
 		if(p.command=="pray"){
 			let prayLine = prayLines[Math.floor(Math.random()*prayLines.length)];
 			if(user){
-				text = "**🙏 | "+p.msg.author.username+"** prays for **"+user.user.username+"**! "+prayLine;
+				text = "**🙏 | "+p.msg.author.username+"** prays for **"+user.username+"**! "+prayLine;
 				authorPoints = -1;
 				opponentPoints = 1;
 				quest = "prayBy";
@@ -62,7 +59,7 @@ module.exports = new CommandInterface({
 		}else{
 			let curseLine = curseLines[Math.floor(Math.random()*curseLines.length)];
 			if(user){
-				text = "**👻 | "+p.msg.author.username+"** puts a curse on **"+user.user.username+"**! "+curseLine;
+				text = "**👻 | "+p.msg.author.username+"** puts a curse on **"+user.username+"**! "+curseLine;
 				authorPoints = 1;
 				opponentPoints = -1;
 				quest = "curseBy";
@@ -97,11 +94,11 @@ module.exports = new CommandInterface({
 			if(err) {console.error(err);return;}
 			text += "\n**<:blank:427371936482328596> |** You have **"+(result[1][0].lcount)+"** luck point(s)!";
 			p.send(text);
-			if(user&&quest) p.quest(quest,1,user.user);
+			if(user&&quest) p.quest(quest,1,user);
 			if(opponentPoints&&user)
-				p.logger.value(p.command,1,['guild:'+p.msg.guild.id,'channel:'+p.msg.channel.id,'to:'+user.id,'from:'+p.msg.author.id]);
+				p.logger.value(p.command,1,['guild:'+p.msg.channel.guild.id,'channel:'+p.msg.channel.id,'to:'+user.id,'from:'+p.msg.author.id]);
 			else
-				p.logger.value(p.command,1,['guild:'+p.msg.guild.id,'channel:'+p.msg.channel.id,'to:'+p.msg.author.id,'from:'+p.msg.author.id]);
+				p.logger.value(p.command,1,['guild:'+p.msg.channel.guild.id,'channel:'+p.msg.channel.id,'to:'+p.msg.author.id,'from:'+p.msg.author.id]);
 		});
 	}
 

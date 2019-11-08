@@ -25,7 +25,7 @@ module.exports = new CommandInterface({
 
 	related:["owo shop","owo profile"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ATTACH_FILES","ADD_REACTIONS"],
+	permissions:["sendMessages","embedLinks","attachFiles","addReactions"],
 
 	cooldown:15000,
 
@@ -37,25 +37,25 @@ module.exports = new CommandInterface({
 
 		if(totalPages<=0) return;
 
-		let filter = (reaction,user) => (reaction.emoji.name===buyEmoji||reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&user.id==p.msg.author.id;
-		let collector = await msg.createReactionCollector(filter,{time:180000});
+		let filter = (emoji,userID) => (emoji.name===buyEmoji||emoji.name===nextPageEmoji||emoji.name===prevPageEmoji)&&userID==p.msg.author.id;
+		let collector = p.reactionCollector.create(msg,filter,{time:900000,idle:120000});
 
-		await msg.react(prevPageEmoji);
-		await msg.react(nextPageEmoji);
-		await msg.react(buyEmoji);
+		await msg.addReaction(prevPageEmoji);
+		await msg.addReaction(nextPageEmoji);
+		await msg.addReaction(buyEmoji);
 
-		collector.on('collect', async function(r){
-			if(r.emoji.name===nextPageEmoji) {
+		collector.on('collect', async function(emoji){
+			if(emoji.name===nextPageEmoji) {
 				if(currentPage<totalPages) currentPage++;
 				else currentPage = 1;
 				page = await createPage(p,currentPage,totalPages);
 				await msg.edit(page);
-			}else if(r.emoji.name===prevPageEmoji){
+			}else if(emoji.name===prevPageEmoji){
 				if(currentPage>1) currentPage--;
 				else currentPage = totalPages;
 				page = await createPage(p,currentPage,totalPages);
 				await msg.edit(page);
-			}else if(r.emoji.name==buyEmoji){
+			}else if(emoji.name==buyEmoji){
 				if(page.embed.bid){
 					let sql = `INSERT INTO user_profile (uid,bid) VALUES ((SELECT uid FROM user WHERE id = ${p.msg.author.id}),${page.embed.bid}) ON DUPLICATE KEY UPDATE bid = ${page.embed.bid};`;
 					await p.query(sql);
@@ -68,7 +68,7 @@ module.exports = new CommandInterface({
 		collector.on('end',async function(collected){
 			page = await createPage(p,currentPage,totalPages);
 			page.embed.color = 6381923;
-			await msg.edit("This message is now inactive",page);
+			await msg.edit({content:"This message is now inactive",embed:page.embed});
 		});
 	}
 
@@ -78,10 +78,10 @@ async function createPage(p,page,totalPages){
 	let sql = `SELECT b.*,up.uid AS profile FROM user u INNER JOIN user_backgrounds ub ON u.uid = ub.uid INNER JOIN backgrounds b ON ub.bid = b.bid LEFT JOIN user_profile up ON u.uid = up.uid AND up.bid = ub.bid WHERE id = ${p.msg.author.id} ORDER BY ub.bid LIMIT 1 OFFSET ${page-1}`;
 	let result = await p.query(sql);
 
-	embed = {
+	let embed = {
 		"author":{
 			"name":p.msg.author.username+"'s wallpapers",
-			"icon_url":p.msg.author.avatarURL()
+			"icon_url":p.msg.author.avatarURL
 		},
 		"color": 4886754,
 		"footer":{

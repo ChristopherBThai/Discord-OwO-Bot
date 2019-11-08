@@ -203,3 +203,7 @@ exports.toShortNum = function(num){
 	else
 		return num;
 }
+
+exports.getClient = function(){
+	return client;
+}
