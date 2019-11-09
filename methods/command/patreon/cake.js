@@ -10,7 +10,7 @@ const CommandInterface = require('../../commandinterface.js');
 const cakeEmoji = "🍰";
 const cupcakeEmoji = "<:cupcake:641879181680181248>";
 const sliceEmoji = "🎂";
-const owner = "184587051943985152";
+const owner = "520399213683671074";
 const words = ["Yum!","Delicious!","*Drools...*","Lucky!!",":0","Yummy!","Gimme gimme!"];
 const redis = require('../../../util/redis.js');
 
