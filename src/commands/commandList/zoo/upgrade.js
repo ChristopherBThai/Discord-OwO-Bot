@@ -40,7 +40,7 @@ module.exports = new CommandInterface({
 
 	related:["owo autohunt","owo sacrifice"],
 
-	permissions:["SEND_MESSAGES"],
+	permissions:["sendMessages"],
 
 	cooldown:1000,
 	half:120,
@@ -48,10 +48,10 @@ module.exports = new CommandInterface({
 	bot:true,
 
 	execute: async function(p){
-		var global=p.global,con=p.con,msg=p.msg,args=p.args;
+		let global=p.global,con=p.con,msg=p.msg,args=p.args;
 
-		var count = undefined;
-		var trait = undefined;
+		let count = undefined;
+		let trait = undefined;
 
 		//if arg0 is an int
 		if(global.isInt(args[0])){
@@ -80,29 +80,27 @@ module.exports = new CommandInterface({
 			return;
 		}
 
-		var sql = "SELECT * FROM autohunt WHERE id = "+msg.author.id+";";
+		let sql = "SELECT * FROM autohunt WHERE id = "+msg.author.id+";";
 		sql += "UPDATE autohunt SET essence = essence - "+count+","+trait+"="+trait+"+"+count+" WHERE id = "+msg.author.id+" AND essence >= "+count+";";
-		con.query(sql,async function(err,result){
-			if(err){console.error(err);return;}
-			if(!result[0][0]||result[1].affectedRows==0){
-				p.send("**🚫 | "+msg.author.username+"** You do not have enough animal essence!",3000);
-				return;
-			}
-			var stat = autohuntUtil.getLvl(result[0][0][trait],count,trait);
-			/* Refund overflowing mana */
-			if(stat.max){
-				sql += "UPDATE autohunt SET essence = essence + "+stat.currentxp+","+trait+"="+trait+"-"+stat.currentxp+" WHERE id = "+msg.author.id+";";
-				await p.query(sql);
-			}
-			var text = "**🛠 | "+msg.author.username+"**, You successfully upgraded `"+trait+"` with  **"+(p.global.toFancyNum(count))+" Animal Essence** "+essence+"!";
-			text += "\n**<:blank:427371936482328596> |** `"+trait+": "+stat.stat+stat.prefix+" -  Lvl "+stat.lvl+" "+((stat.max)?"[MAX]":"["+stat.currentxp+"/"+stat.maxxp+"]")+"`";
-			if(stat.max)
-				text += "\n**<:blank:427371936482328596> |** HuntBot is at max level!";
-			else if(stat.lvlup)
-				text += "\n**<:blank:427371936482328596> |** HuntBot Leveled Up!! 🎉";
-			text = alterUpgrade.alter(p.msg.author.id,text);
-			p.send(text);
-		});
+		let result = await p.query(sql);
+		if(!result[0][0]||result[1].affectedRows==0){
+			p.send("**🚫 | "+msg.author.username+"** You do not have enough animal essence!",3000);
+			return;
+		}
+		let stat = autohuntUtil.getLvl(result[0][0][trait],count,trait);
+		/* Refund overflowing mana */
+		if(stat.max){
+			sql += "UPDATE autohunt SET essence = essence + "+stat.currentxp+","+trait+"="+trait+"-"+stat.currentxp+" WHERE id = "+msg.author.id+";";
+			await p.query(sql);
+		}
+		let text = "**🛠 | "+msg.author.username+"**, You successfully upgraded `"+trait+"` with  **"+(p.global.toFancyNum(count))+" Animal Essence** "+essence+"!";
+		text += "\n**<:blank:427371936482328596> |** `"+trait+": "+stat.stat+stat.prefix+" -  Lvl "+stat.lvl+" "+((stat.max)?"[MAX]":"["+stat.currentxp+"/"+stat.maxxp+"]")+"`";
+		if(stat.max)
+			text += "\n**<:blank:427371936482328596> |** HuntBot is at max level!";
+		else if(stat.lvlup)
+			text += "\n**<:blank:427371936482328596> |** HuntBot Leveled Up!! 🎉";
+		text = alterUpgrade.alter(p.msg.author.id,text);
+		p.send(text);
 
 	}
 
