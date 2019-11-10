@@ -21,7 +21,7 @@ module.exports = new CommandInterface({
 
 	related:["owo autohunt","owo upgrade"],
 
-	permissions:["SEND_MESSAGES"],
+	permissions:["sendMessages"],
 
 	cooldown:1000,
 	half:120,
@@ -29,15 +29,15 @@ module.exports = new CommandInterface({
 	bot:true,
 
 	execute: async function(p){
-		var global=p.global,con=p.con,msg=p.msg,args=p.args;
+		let global=p.global,con=p.con,msg=p.msg,args=p.args;
 
-		var name = undefined;
-		var count = 1;
-		var ranks;
+		let name = undefined;
+		let count = 1;
+		let ranks;
 
 		/* If no args */
 		if(args.length==0){
-			p.send("**🚫 | "+msg.author.username+"**, Please specify what rank/animal to sacrifice!",3000);
+			p.errorMsg(", Please specify what rank/animal to sacrifice!",3000);
 			return;
 
 		/* if arg0 is a count */
@@ -65,7 +65,7 @@ module.exports = new CommandInterface({
 			for(i=0;i<args.length;i++){
 				let tempRank = global.validRank(args[i].toLowerCase());
 				if(!tempRank){
-					p.send("**🚫 | "+msg.author.username+"**, Invalid arguments!",3000);
+					p.errorMsg(", Invalid arguments!",3000);
 					return;
 				}
 				if(!(tempRank in ranks)){
@@ -85,18 +85,18 @@ module.exports = new CommandInterface({
 			if(args.length<3)
 				await sellAnimal(p,msg,con,animal,count,p.send,global);
 			else
-				p.send("**🚫 | "+msg.author.username+"**, The correct syntax for sacrificing ranks is `owo sacrifice {animal} {count}`!",3000);
+				p.errorMsg(", The correct syntax for sacrificing ranks is `owo sacrifice {animal} {count}`!",3000);
 
 		//if rank...
 		}else if(rank = global.validRank(name)){
 			if(args.length!=1)
-				await p.send("**🚫 | "+msg.author.username+"**, The correct syntax for sacrificing ranks is `owo sacrifice {rank}`!",3000);
+				p.errorMsg(", The correct syntax for sacrificing ranks is `owo sacrifice {rank}`!",3000);
 			else
 				sellRank(p,msg,con,rank,p.send,global);
 
 		//if neither...
 		}else{
-			p.send("**🚫 |** I could not find that animal or rank!",3000);
+			p.errorMsg(", I could not find that animal or rank!",3000);
 		}
 	}
 
@@ -127,11 +127,11 @@ async function sellAnimal(p,msg,con,animal,count,send,global){
 		}else{
 			count = result[0][0].count;
 			send("**🔪 | "+msg.author.username+"** sacrificed **"+global.unicodeAnimal(animal.value)+"x"+count+"** for **"+essence+" "+(global.toFancyNum(count*animal.essence))+"**");
-			p.logger.value('essence',count*animal.essence,['id:'+p.msg.author.id,'guild:'+p.msg.guild.id,'animal:'+animal.value,'count:'+count,'command:sacrifice']);
+			p.logger.value('essence',count*animal.essence,['id:'+p.msg.author.id,'guild:'+p.msg.channel.guild.id,'animal:'+animal.value,'count:'+count,'command:sacrifice']);
 		}
 	}else if(result[1]&&result[1].affectedRows>0){
 		send("**🔪 | "+msg.author.username+"** sacrificed **"+global.unicodeAnimal(animal.value)+"x"+count+"** for **"+essence+" "+(global.toFancyNum(count*animal.essence))+"**");
-		p.logger.value('essence',count*animal.essence,['id:'+p.msg.author.id,'guild:'+p.msg.guild.id,'animal:'+animal.value,'count:'+count,'rank:'+animal.rank,'command:sacrifice']);
+		p.logger.value('essence',count*animal.essence,['id:'+p.msg.author.id,'guild:'+p.msg.channel.guild.id,'animal:'+animal.value,'count:'+count,'rank:'+animal.rank,'command:sacrifice']);
 	}else{
 		send("**🚫 | "+msg.author.username+"**, You can't sacrifice more than you have silly! >:c",3000);
 	}
@@ -159,7 +159,7 @@ async function sellRank(p,msg,con,rank,send,global){
 
 		for(let i in result[0]){
 			let tempAnimal = p.global.validAnimal(result[0][i].name);
-			p.logger.value('essence',result[0][i].count*rank.essence,['id:'+p.msg.author.id,'guild:'+p.msg.guild.id,'animal:'+tempAnimal.name,'count:'+result[0][i].count,'rank:'+rank.rank,'command:sacrifice']);
+			p.logger.value('essence',result[0][i].count*rank.essence,['id:'+p.msg.author.id,'guild:'+p.msg.channel.guild.id,'animal:'+tempAnimal.name,'count:'+result[0][i].count,'rank:'+rank.rank,'command:sacrifice']);
 		}
 	}
 }
@@ -204,7 +204,7 @@ async function sellRanks(p,msg,con,ranks,send,global,p){
 			for(let j in result[count*2]){
 				let temp = result[count*2][j];
 				let tempAnimal = p.global.validAnimal(temp.name);
-				p.logger.value('essence',temp.count*rank.essence,['id:'+p.msg.author.id,'guild:'+p.msg.guild.id,'animal:'+tempAnimal.name,'count:'+temp.count,'rank:'+rank.rank,'command:sacrifice']);
+				p.logger.value('essence',temp.count*rank.essence,['id:'+p.msg.author.id,'guild:'+p.msg.channel.guild.id,'animal:'+tempAnimal.name,'count:'+temp.count,'rank:'+rank.rank,'command:sacrifice']);
 			}
 			count++;
 		}

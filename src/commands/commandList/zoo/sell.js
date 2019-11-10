@@ -24,7 +24,7 @@ module.exports = new CommandInterface({
 
 	related:["owo hunt"],
 
-	permissions:["SEND_MESSAGES"],
+	permissions:["sendMessages"],
 
 	cooldown:1000,
 	half:150,
@@ -32,11 +32,11 @@ module.exports = new CommandInterface({
 	bot:true,
 
 	execute: async function(p){
-		var global=p.global,con=p.con,msg=p.msg,args=p.args;
+		let global=p.global,con=p.con,msg=p.msg,args=p.args;
 
-		var name = undefined;
-		var count = 1;
-		var ranks;
+		let name = undefined;
+		let count = 1;
+		let ranks;
 
 		/* If no args */
 		if(args.length==0){

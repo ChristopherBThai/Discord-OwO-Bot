@@ -27,81 +27,77 @@ module.exports = new CommandInterface({
 
 	related:["owo zoo","owo sell","owo lootbox"],
 
-	permissions:["SEND_MESSAGES"],
+	permissions:["sendMessages"],
 
 	cooldown:15000,
 	half:80,
 	six:500,
 	bot:true,
 
-	execute: function(p){
-		var msg=p.msg,con=p.con;
+	execute: async function(p){
+		let msg=p.msg,con=p.con;
 
-		var sql = "SELECT money,IF(patreonAnimal = 1 OR (TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths),1,0) as patreon FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id LEFT JOIN patreons ON user.uid = patreons.uid WHERE cowoncy.id = "+msg.author.id+";";
+		let sql = "SELECT money,IF(patreonAnimal = 1 OR (TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths),1,0) as patreon FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id LEFT JOIN patreons ON user.uid = patreons.uid WHERE cowoncy.id = "+msg.author.id+";";
 		sql += `SELECT name,nickname,animal.pid FROM user INNER JOIN pet_team ON user.uid = pet_team.uid INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid INNER JOIN animal ON pet_team_animal.pid = animal.pid
 				WHERE user.id = ${p.msg.author.id};`;
 		sql += "SELECT *,TIMESTAMPDIFF(HOUR,claim,NOW()) as time FROM lootbox WHERE id = "+msg.author.id+";";
 		sql += "SELECT uid,activecount,gname,type FROM user NATURAL JOIN user_gem NATURAL JOIN gem WHERE id = "+msg.author.id+" AND activecount > 0;";
-		con.query(sql,function(err,result){
-			if(err) {console.error(err);return;}
-			if(result[0][0]==undefined||result[0][0].money<animals.rollprice){
-				p.send("**🚫 | "+msg.author.username+"**, You don't have enough cowoncy!",3000);
-			}else{
-				//Sort gem benefits
-				let gems = {}
-				let uid = undefined;
-				for(var i=0;i<result[3].length;i++){
-					tempGem = gemUtil.getGem(result[3][i].gname);
-					tempGem.uid = result[3][i].uid;
-					tempGem.activecount = result[3][i].activecount;
-					tempGem.gname = result[3][i].gname;
-					gems[tempGem.type] = tempGem;
-					uid = result[3][i].uid;
-				}
-
-				//Get animal
-				let animal = getAnimals(p,result,gems,uid);
-				let sql = animal.sql;
-				let text = animal.text;
-
-				//Get Xp
-				if(result[1][0]){
-					text += `\n${p.config.emoji.blank} **|** `;
-					for(let i in result[1]){
-						sql += `UPDATE animal SET xp = xp + ${animal.xp} WHERE pid = ${result[1][i].pid};`;
-						let pet =  p.global.validAnimal(result[1][i].name);
-						text += (pet.uni?pet.uni:pet.value)+" ";
-					}
-					text += `gained **${animal.xp}xp**!`;
-				}
-
-				//Get Lootbox
-				let lbReset = dateUtil.afterMidnight((result[2][0])?result[2][0].claim:undefined);
-				if(!result[2][0]||result[2][0].claimcount<3||lbReset.after){
-					var lootbox = getLootbox(p,result[2][0],lbReset);
-					sql += lootbox.sql;
-					text += lootbox.text;
-				}
-
-				//Alter text for legendary tier patreons
-				text = alterHunt.alter(p.msg.author.id,text);
-				//text += "\n⚠ **|** `battle` and `hunt` cooldowns have increased to prevent rateLimits issues.\n<:blank:427371936482328596> **|** They will revert back to `15s` in the future.";
-
-				con.query(sql,function(err,result2){
-					if(err) {console.error(err); return;}
-					p.logger.value('cowoncy',-5,['command:hunt','id:'+msg.author.id]);
-					for(let i in animal.animal){
-						let tempAnimal = p.global.validAnimal(animal.animal[i][1]);
-						p.logger.value('animal',1,['animal:'+tempAnimal.name,'rank:'+tempAnimal.rank,'id:'+p.msg.author.id,'guild:'+p.msg.guild.id]);
-						p.logger.value('animal.points',tempAnimal.points,['animal:'+tempAnimal.name,'rank:'+tempAnimal.rank,'id:'+p.msg.author.id,'guild:'+p.msg.guild.id]);
-					}
-					p.quest("hunt");
-					p.quest("find",1,animal.typeCount);
-					p.quest("xp",animal.xp);
-					p.send(text);
-				});
+		let result = await p.query(sql);
+		if(result[0][0]==undefined||result[0][0].money<animals.rollprice){
+			p.errorMsg(", You don't have enough cowoncy!",3000);
+		}else{
+			//Sort gem benefits
+			let gems = {}
+			let uid = undefined;
+			for(var i=0;i<result[3].length;i++){
+				tempGem = gemUtil.getGem(result[3][i].gname);
+				tempGem.uid = result[3][i].uid;
+				tempGem.activecount = result[3][i].activecount;
+				tempGem.gname = result[3][i].gname;
+				gems[tempGem.type] = tempGem;
+				uid = result[3][i].uid;
 			}
-		});
+
+			//Get animal
+			let animal = getAnimals(p,result,gems,uid);
+			let sql = animal.sql;
+			let text = animal.text;
+
+			//Get Xp
+			if(result[1][0]){
+				text += `\n${p.config.emoji.blank} **|** `;
+				for(let i in result[1]){
+					sql += `UPDATE animal SET xp = xp + ${animal.xp} WHERE pid = ${result[1][i].pid};`;
+					let pet =  p.global.validAnimal(result[1][i].name);
+					text += (pet.uni?pet.uni:pet.value)+" ";
+				}
+				text += `gained **${animal.xp}xp**!`;
+			}
+
+			//Get Lootbox
+			let lbReset = dateUtil.afterMidnight((result[2][0])?result[2][0].claim:undefined);
+			if(!result[2][0]||result[2][0].claimcount<3||lbReset.after){
+				var lootbox = getLootbox(p,result[2][0],lbReset);
+				sql += lootbox.sql;
+				text += lootbox.text;
+			}
+
+			//Alter text for legendary tier patreons
+			text = alterHunt.alter(p.msg.author.id,text);
+			//text += "\n⚠ **|** `battle` and `hunt` cooldowns have increased to prevent rateLimits issues.\n<:blank:427371936482328596> **|** They will revert back to `15s` in the future.";
+
+			let result2 = await p.query(sql);
+			p.logger.value('cowoncy',-5,['command:hunt','id:'+msg.author.id]);
+			for(let i in animal.animal){
+				let tempAnimal = p.global.validAnimal(animal.animal[i][1]);
+				p.logger.value('animal',1,['animal:'+tempAnimal.name,'rank:'+tempAnimal.rank,'id:'+p.msg.author.id,'guild:'+p.msg.channel.guild.id]);
+				p.logger.value('animal.points',tempAnimal.points,['animal:'+tempAnimal.name,'rank:'+tempAnimal.rank,'id:'+p.msg.author.id,'guild:'+p.msg.channel.guild.id]);
+			}
+			p.quest("hunt");
+			p.quest("find",1,animal.typeCount);
+			p.quest("xp",animal.xp);
+			p.send(text);
+		}
 	}
 })
 

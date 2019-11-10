@@ -7,6 +7,8 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
+const nextPageEmoji = '➡';
+const prevPageEmoji = '⬅';
 const animalUtil = require('./animalUtil.js');
 var animals = require('../../../../../tokens/owo-animals.json');
 var patreon = "";
@@ -32,15 +34,15 @@ module.exports = new CommandInterface({
 
 	related:["owo hunt","owo sell"],
 
-	permissions:["SEND_MESSAGES"],
+	permissions:["sendMessages"],
 
 	cooldown:45000,
 	half:20,
 	six:100,
 
 	execute: function(p){
-		var con=p.con,msg=p.msg,global=p.global;
-		var sql = "SELECT count,name FROM animal WHERE id = "+msg.author.id+";";
+		let con=p.con,msg=p.msg,global=p.global;
+		let sql = "SELECT count,name FROM animal WHERE id = "+msg.author.id+";";
 		if(p.args[0]&&p.args[0].toLowerCase()=="display"){
 			sql = "SELECT (totalcount) as count,name FROM animal WHERE id = "+msg.author.id+";";
 			sql += "SELECT common,uncommon,rare,epic,mythical,gem,legendary,fabled,patreon,cpatreon,hidden,special,MAX(totalcount) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
@@ -49,8 +51,8 @@ module.exports = new CommandInterface({
 		}
 		con.query(sql,function(err,result){
 			if(err){console.error(err);return;}
-			var text = "🌿 🌱 🌳** "+msg.author.username+"'s zoo! **🌳 🌿 🌱\n";
-			text += display;
+			let header = "🌿 🌱 🌳** "+msg.author.username+"'s zoo! **🌳 🌿 🌱\n";
+			let text = display;
 			var additional0 = "";
 			var additional = "";
 			var additional2 = "";
@@ -114,6 +116,7 @@ module.exports = new CommandInterface({
 			text += additional2;
 			text += additional3;
 			text += additional5;
+			let footer = "";
 			if(count!=undefined){
 				var total = count.common*animals.points.common+
 					count.uncommon*animals.points.uncommon+
@@ -127,15 +130,86 @@ module.exports = new CommandInterface({
 					count.legendary*animals.points.legendary+
 					count.fabled*animals.points.fabled+
 					count.hidden*animals.points.hidden;
-				text += "\n**Zoo Points: __"+(p.global.toFancyNum(total))+"__**\n\t**";
-				text += animalUtil.zooScore(count)+"**";
+				footer += "\n**Zoo Points: __"+(p.global.toFancyNum(total))+"__**\n\t**";
+				footer += animalUtil.zooScore(count)+"**";
 			}
-			p.msg.channel.send(text,{split:true})
-				.catch(err => console.error(err));
+			let pages = toPages(text);
+			sendPages(p,pages,header,footer);
 		});
 	}
 
 })
+
+function toPages(text){
+	text = text.split("\n");
+	let pages = [];
+	let page = "";
+	const max = 1600;
+	for(let i in text){
+		if(page.length+text[i].length>=max){
+			pages.push(page+"\n"+text[i]);
+			page = "";
+		}else{
+			page += "\n"+text[i];
+		}
+	}
+	if(page!="") pages.push(page);
+	return pages;
+}
+
+async function sendPages(p,pages,header,footer){
+	if(pages.length<=3){
+		for(let i in pages){
+			let text = pages[i].trim();
+			if(i==0) text = header + text;
+			if(i == pages.length-1) text += footer;
+			await p.send(text);
+		}
+		return;
+	}
+
+	let page = 0;
+	let embed = toEmbed(p,header,pages,footer,page);
+	let msg = await p.send({embed});
+	await msg.addReaction(prevPageEmoji);
+	await msg.addReaction(nextPageEmoji);
+	let filter = (emoji,userID) => (emoji.name===nextPageEmoji||emoji.name===prevPageEmoji)&&userID===p.msg.author.id;
+	let collector = p.reactionCollector.create(msg,filter,{time:900000,idle:120000});
+
+	collector.on('collect', async function(emoji){
+		if(emoji.name===nextPageEmoji) {
+			page++;
+			if(page>=pages.length) page = 0;
+			embed = toEmbed(p,header,pages,footer,page);
+			await msg.edit({embed});
+		}
+		if(emoji.name===prevPageEmoji){
+			page--;
+			if(page<0) page = pages.length-1;
+			embed = toEmbed(p,header,pages,footer,page);
+			await msg.edit({embed});
+		}
+	});
+	collector.on('end',async function(collected){
+		embed.color = 6381923;
+		await msg.edit({content:"This message is now inactive",embed});
+	});
+}
+
+function toEmbed(p,header,pages,footer,loc){
+	let embed = {
+		"description": pages[loc].trim()+footer,
+		"color": p.config.embed_color,
+		"author": {
+			"name": header.replace(/\*\*/gi,""),
+			"icon_url": p.msg.author.avatarURL
+			},
+		"footer":{
+			"text":"Page "+(loc+1)+"/"+pages.length 
+		}
+	};
+	return embed;
+}
 
 function toSmallNum(count,digits){
 	var result = "";
