@@ -51,7 +51,7 @@ exports.buy = async function(p,id){
 	let embed = {
 		"author":{
 			"name":p.msg.author.username+", you have successfully purchased \""+result[0][0].bname+"\"!",
-			"icon_url":p.msg.author.avatarURL()
+			"icon_url":p.msg.author.avatarURL
 		},
 		"color": 4886754,
 		"image":{

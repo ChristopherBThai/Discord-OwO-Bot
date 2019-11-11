@@ -5,9 +5,9 @@
  * For more information, see README.md and LICENSE
   */
 
-const global = require('../../../../util/global.js');
+const global = require('../../../../utils/global.js');
 const numbers = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
-const imagegen = require('../../../../../tokens/imagegen.json');
+const imagegen = require('../../../../../../tokens/imagegen.json');
 const nextPageEmoji = '➡';
 const prevPageEmoji = '⬅';
 
@@ -92,7 +92,7 @@ async function getWallpaperPage(p,currentPage,totalPages){
 	embed = {
 		"author":{
 			"name":"OwO Shop: Wallpapers",
-			"icon_url":p.msg.author.avatarURL()
+			"icon_url":p.msg.author.avatarURL
 		},
 		"color": 4886754,
 		"footer":{
