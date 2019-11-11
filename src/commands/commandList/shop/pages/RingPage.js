@@ -7,7 +7,7 @@
 
 const PageClass = require('./../PageClass.js');
 
-const rings = require('../../../../json/rings.json');
+const rings = require('../../../../data/rings.json');
 
 module.exports = class RingPage extends PageClass {
 

@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 const shopUtil = require('./util/shopUtil.js');
 const lootbox = require('../zoo/lootbox.js');
@@ -25,15 +25,15 @@ module.exports = new CommandInterface({
 
 	related:["owo inv","owo weapon"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ATTACH_FILES"],
+	permissions:["sendMessages","embedLinks","attachFiles"],
 
-	cooldown:3000,
+	cooldown:5000,
 	half:80,
 	six:500,
 
 	execute: function(p){
-		var con=p.con,msg=p.msg,args=p.args;
-		var item = shopUtil.getItem(args);
+		let con=p.con,msg=p.msg,args=p.args;
+		let item = shopUtil.getItem(args);
 		if(typeof item === 'string' || item instanceof String){
 			p.send("**🚫 | "+msg.author.username+"**, "+item,3000);
 			return;

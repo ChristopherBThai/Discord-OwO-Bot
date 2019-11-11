@@ -25,7 +25,7 @@ var result,shards,firstShardID,lastShardID;
 (async () => {
 	try{
 		//determine how many shards we will need for this manager
-		if (require('cluster').isMaster){
+		if (!debug&&require('cluster').isMaster){
 			result = await request.fetchInit();
 			shards = result["shards"];
 			firstShardID = result["firstShardID"];

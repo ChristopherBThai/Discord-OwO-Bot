@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 const shopUtil = require('./util/shopUtil.js');
 const PageClass = require('./PageClass.js');
@@ -33,7 +33,7 @@ module.exports = new CommandInterface({
 
 	related:["owo money"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ATTACH_FILES","ADD_REACTIONS"],
+	permissions:["sendMessages","embedLinks","attachFiles","addReactions"],
 
 	cooldown:15000,
 
@@ -51,20 +51,20 @@ async function displayShop(p){
 
 		let embed = await getPage(p,pages);
 		let msg = await p.send({embed});	
-		let filter = (reaction,user) => (reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&user.id==p.msg.author.id;
-		let collector = await msg.createReactionCollector(filter,{time:180000});
+		let filter = (emoji,userID) => (emoji.name===nextPageEmoji||emoji.name===prevPageEmoji)&&userID===p.msg.author.id;
+		let collector = p.reactionCollector.create(msg,filter,{time:900000,idle:120000});
 
-		await msg.react(prevPageEmoji);
-		await msg.react(nextPageEmoji);
+		await msg.addReaction(prevPageEmoji);
+		await msg.addReaction(nextPageEmoji);
 
-		collector.on('collect', async function(r){
-			if(r.emoji.name===nextPageEmoji) {
+		collector.on('collect', async function(emoji){
+			if(emoji.name===nextPageEmoji) {
 				if(pages.currentPage<pages.totalPages) pages.currentPage++;
 				else pages.currentPage = 1;
 				embed = await getPage(p,pages);
 				await msg.edit({embed});
 			}
-			else if(r.emoji.name===prevPageEmoji){
+			else if(emoji.name===prevPageEmoji){
 				if(pages.currentPage>1) pages.currentPage--;
 				else pages.currentPage = pages.totalPages;
 				embed = await getPage(p,pages);
@@ -75,14 +75,14 @@ async function displayShop(p){
 		collector.on('end',async function(collected){
 			embed = await getPage(p,pages);
 			embed.color = 6381923;
-			await msg.edit("This message is now inactive",{embed});
+			await msg.edit({content:"This message is now inactive",embed});
 		});
 }
 
 async function getPage(p,pages){
 	let embed = {
 		"author":{
-			"icon_url":p.msg.author.avatarURL()
+			"icon_url":p.msg.author.avatarURL
 		},
 		"color": 4886754,
 		"footer":{

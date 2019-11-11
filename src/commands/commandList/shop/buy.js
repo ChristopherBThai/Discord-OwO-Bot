@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 const ringUtil = require('../social/util/ringUtil.js');
 const wallpaperUtil = require('../social/util/wallpaperUtil.js');
@@ -22,7 +22,7 @@ module.exports = new CommandInterface({
 
 	related:["owo shop"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ATTACH_FILES"],
+	permissions:["sendMessages","embedLinks","attachFiles"],
 
 	cooldown:5000,
 

@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 const lootboxUtil = require('../zoo/lootboxUtil.js');
 const ringUtil = require('../social/util/ringUtil.js');
@@ -27,48 +27,43 @@ module.exports = new CommandInterface({
 
 	related:["owo equip"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS"],
+	permissions:["sendMessages","embedLinks"],
 
 	cooldown:10000,
 	half:80,
 	six:500,
 
 	execute: async function(p){
-		var con=p.con,msg=p.msg;
+		let con=p.con,msg=p.msg;
 
 		/* {emoji,id,count} */
-		try{
-			let promises = await Promise.all([
-				ringUtil.getItems(p),
-				lootboxUtil.getItems(p),
-				gemUtil.getItems(p),
-				weaponUtil.getItems(p),
-				crateUtil.getItems(p),
-				wallpaperUtil.getItems(p)
-			]);
-			var text = addToString(promises);
-		}catch(err){
-			console.error(err);
-			return;
-		}
+		let promises = await Promise.all([
+			ringUtil.getItems(p),
+			lootboxUtil.getItems(p),
+			gemUtil.getItems(p),
+			weaponUtil.getItems(p),
+			crateUtil.getItems(p),
+			wallpaperUtil.getItems(p)
+		]);
+		let text = addToString(promises);
 
 
 		if(text=="") text = "Your inventory is empty :c";
 		text = "**====== "+msg.author.username+"'s Inventory ======**\n"+text;
-		p.send(text,null,{split:true});
+		p.send(text);
 	}
 
 })
 
 /* Converts an array of items to strings */
 function addToString(items){
-	var sorted = [];
-	var itemsID = {};
-	var maxCount = 0;
+	let sorted = [];
+	let itemsID = {};
+	let maxCount = 0;
 	/* Sort items by id and get largest count*/
-	for(var i=0;i<items.length;i++){
-		var itemList = items[i];
-		for(var key in itemList){
+	for(let i=0;i<items.length;i++){
+		let itemList = items[i];
+		for(let key in itemList){
 			sorted.push(itemList[key].id);
 			itemsID[itemList[key].id] = itemList[key];
 			itemList[key].count = parseInt(itemList[key].count);
@@ -77,16 +72,16 @@ function addToString(items){
 	}
 	sorted.sort((a,b) => a-b);
 	items = [];
-	for(var i=0;i<sorted.length;i++){
+	for(let i=0;i<sorted.length;i++){
 		items.push(itemsID[sorted[i]]);
 	}
-	var digits = Math.trunc(Math.log10(maxCount)+1);
+	let digits = Math.trunc(Math.log10(maxCount)+1);
 
 	/* Add to text */
-	var text = "";
-	var count = 0;
-	for(var i=0;i<items.length;i++){
-		var item = items[i];
+	let text = "";
+	let count = 0;
+	for(let i=0;i<items.length;i++){
+		let item = items[i];
 		text += "`"+((item.id<9)?"0":"")+item.id+"`"+item.emoji+ shopUtil.toSmallNum(item.count,digits);
 		count++;
 		if(count==4){

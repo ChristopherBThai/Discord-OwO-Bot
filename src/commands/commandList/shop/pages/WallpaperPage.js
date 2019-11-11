@@ -7,7 +7,7 @@
 
 const PageClass = require('./../PageClass.js');
 
-const imagegen = require('../../../../../tokens/imagegen.json');
+const imagegen = require('../../../../../../tokens/imagegen.json');
 const perPage = 10;
 const pictureEmoji = '🖼';
 const idOffset = 200;
