@@ -135,3 +135,7 @@ function lostAnimal(user){
 		console.log(user.user.username+"["+user.id+"] lost patreon animal perk!");
 	});
 }
+
+exports.checkPatreon = function(p,userID){
+	p.pubsub.publish("checkPatreon",{userID});
+}

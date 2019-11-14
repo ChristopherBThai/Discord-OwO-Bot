@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 module.exports = new CommandInterface({
 
@@ -19,14 +19,14 @@ module.exports = new CommandInterface({
 
 	related:["owo link"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS"],
+	permissions:["sendMessages","embedLinks"],
 
 	cooldown:5000,
 	half:100,
 	six:500,
 
 	execute: function(p){
-		var text = "**<:owo:448256976141549568> |** Come join our discord to ask for help or just have fun!\n";
+		let text = "**<:owo:448256976141549568> |** Come join our discord to ask for help or just have fun!\n";
 		text += "**<:blank:427371936482328596> |** "+p.config.guildlink;
 		p.send(text);
 	}

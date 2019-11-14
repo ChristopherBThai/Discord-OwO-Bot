@@ -27,7 +27,6 @@ module.exports = class MySQL{
 				if(err) return reject(err);
 				resolve(rows);
 			});
-			//console.log(query.sql);
 		});
 	}
 }

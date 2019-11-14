@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 const mathEmoji = '<a:naruhodo:593971680737624065>';
 
@@ -24,7 +24,7 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	permissions:["SEND_MESSAGES"],
+	permissions:["sendMessages"],
 
 	cooldown:5000,
 	half:100,
@@ -33,7 +33,7 @@ module.exports = new CommandInterface({
 
 	execute: function(p){
 		pool.exec('compute',[p.args.join(" ")])
-			.timeout(1000)
+			.timeout(3000)
 			.then(function(result){
 				if(result.mathjs){
 					if(result.data)

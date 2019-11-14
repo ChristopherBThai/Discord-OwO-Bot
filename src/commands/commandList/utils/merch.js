@@ -24,7 +24,6 @@ module.exports = new CommandInterface({
 	cooldown:6000,
 	half:100,
 	six:500,
-	bot:true,
 
 	execute: function(p){
 		let embed = {

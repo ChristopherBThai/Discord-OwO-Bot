@@ -28,6 +28,9 @@ class OwO extends Base{
 		// Redis connection
 		this.redis = require('./utils/redis.js');
 
+		// Redis pubsub to communicate with all the other shards/processes
+		this.pubsub = new (require('./utils/pubsub.js'))(this);
+
 		// Logger
 		this.logger = require('./utils/logger.js');
 
@@ -45,7 +48,8 @@ class OwO extends Base{
 		this.questHandler = new (require("./botHandlers/questHandler.js"))();
 
 		// Mysql Query Handler
-		this.query = new (require("./botHandlers/mysqlHandler.js"))(this.con).query;
+		this.mysqlhandler = new (require("./botHandlers/mysqlHandler.js"))(this.con);
+		this.query = this.mysqlhandler.query;
 
 		// Global helper methods
 		this.global = require('./utils/global.js');
@@ -54,7 +58,7 @@ class OwO extends Base{
 
 		// Message sender helper methods
 		this.sender = require('./utils/sender.js');
-		this.sender.client(this.bot);
+		this.sender.init(this);
 
 		// Hidden macro detection file
 		this.macro = require('./../../tokens/macro2.js');
@@ -66,9 +70,6 @@ class OwO extends Base{
 		// Creates a reaction collector for a message (works for uncached messages too)
 		this.reactionCollector = new (require('./utils/reactionCollector.js'))(this);
 
-		// Redis pubsub to communicate with all the other shards/processes
-		this.pubsub = new (require('./utils/pubsub.js'))(this);
-
 		// Fetches images and converts them to buffers
 		this.DataResolver = require('./utils/dataResolver.js');
 		
@@ -79,6 +80,10 @@ class OwO extends Base{
 	launch(){
 		// Bind bot events 
 		this.eventHandler = new EventHandler(this);
+
+		// sends info to our main server every X seconds
+		this.InfoUpdater = new (require('./utils/InfoUpdater.js'))(this);
+		this.InfoUpdater.update();
 	}
 }
 

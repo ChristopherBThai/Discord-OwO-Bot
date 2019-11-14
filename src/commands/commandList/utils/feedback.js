@@ -5,12 +5,9 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
-
-const global = require('../../../util/global.js');
-const sender = require('../../../util/sender.js');
-const ban = require('../../../util/ban.js');
-const badwords = require('../../../../tokens/badwords.json');
+const CommandInterface = require('../../CommandInterface.js');
+const ban = require('../../../utils/ban.js');
+const badwords = require('../../../../../tokens/badwords.json');
 
 const feedbackChannel = "519778148888346635";
 const reportChannel = "596220958730223619";
@@ -30,15 +27,15 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ATTACH_FILES","ADD_REACTIONS"],
+	permissions:["sendMessages","embedLinks","attachFiles","addReactions"],
 
-	cooldown:300000,
+	cooldown:600000,
 	half:15,
 	six:30,
 	bot:true,
 
 	execute: async function(p){
-		var message = p.args.join(" ");
+		let message = p.args.join(" ");
 		if(!message||message === ''){
 			p.send("**🚫 |** Silly **"+p.msg.author.username+"**, you need to add a message!",3000);
 			p.setCooldown(5);
@@ -59,38 +56,36 @@ module.exports = new CommandInterface({
 		}
 		let sql = "INSERT INTO feedback (type,message,sender) values ('"+p.command+"',?,"+p.msg.author.id+");";
 		sql = p.mysql.mysql.format(sql,message);
-		p.con.query(sql,function(err,rows,field){
-			if(err){console.error(err);return;}
-			let avatar = "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png";
-			let embed = {
-				"color": 10590193,
-				"timestamp": new Date(),
-				"thumbnail":{"url":avatar},
-				"author": {
-					"name": "OwO Bot Support",
-					"icon_url":avatar
-				},
-				"fields": [
-					{
-						"name":"A user sent a feedback!",
-						"value": "==============================================="
-					},{
-						"name": "Message ID",
-						"value": rows.insertId,
-						"inline": true
-					},{
-						"name": "Message Type",
-						"value": p.command,
-						"inline": true
-					},{
-						"name": "From "+p.msg.author.username+" ("+p.msg.author.id+")",
-						"value": "```"+message+"```\n\n==============================================="
-					}
-				]
-			};
-			p.send("**📨 |** *OwO What's this?!*  "+p.msg.author.username+", Thanks for the "+p.command+"!");
-			p.sender.msgChannel(reportChannel,{embed});
-		});
+		let rows = await p.query(sql);
+		let avatar = "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png";
+		let embed = {
+			"color": 10590193,
+			"timestamp": new Date(),
+			"thumbnail":{"url":avatar},
+			"author": {
+				"name": "OwO Bot Support",
+				"icon_url":avatar
+			},
+			"fields": [
+				{
+					"name":"A user sent a feedback!",
+					"value": "==============================================="
+				},{
+					"name": "Message ID",
+					"value": rows.insertId,
+					"inline": true
+				},{
+					"name": "Message Type",
+					"value": p.command,
+					"inline": true
+				},{
+					"name": "From "+p.msg.author.username+" ("+p.msg.author.id+")",
+					"value": "```"+message+"```\n\n==============================================="
+				}
+			]
+		};
+		p.send("**📨 |** *OwO What's this?!*  "+p.msg.author.username+", Thanks for the "+p.command+"!");
+		p.sender.msgChannel(reportChannel,{embed});
 	}
 
 })
@@ -101,7 +96,7 @@ async function suggest(p,message){
 		"color": p.config.embed_color,
 		"author": {
 			"name": p.msg.author.username+"'s suggestion",
-			"icon_url":p.msg.author.avatarURL(),
+			"icon_url":p.msg.author.avatarURL,
 		},
 		"description":message,
 		"fields":[
@@ -112,16 +107,16 @@ async function suggest(p,message){
 		]
 	}
 	let msg = await p.send({embed:confirmation});
-	await msg.react(check);
-	await msg.react(cross);
-	let filter = (reaction, user) => [check,cross].includes(reaction.emoji.name) && user.id === p.msg.author.id;
-	let collector = msg.createReactionCollector(filter,{time:60000});
-	collector.on('collect',async r => {
-			if(r.emoji.name===check) {
+	await msg.addReaction(check);
+	await msg.addReaction(cross);
+	let filter = (emoji, userID) => [check,cross].includes(emoji.name) && userID === p.msg.author.id;
+	let collector = p.reactionCollector.create(msg,filter,{time:60000});
+	collector.on('collect',async emoji => {
+			if(emoji.name===check) {
 				confirmation.fields[0].value = check+" The suggestion has been posted! Thank you!\n"+p.config.emoji.blank+" Suggestions can be viewed at "+p.config.guildlink;
 				collector.stop();
 				await confirmSuggestion(p,message);
-			}else if(r.emoji.name===cross){
+			}else if(emoji.name===cross){
 				confirmation.fields[0].value = cross+" You decided not to post the suggestion!";
 				p.setCooldown(5);
 				collector.stop();
@@ -130,7 +125,7 @@ async function suggest(p,message){
 
 	collector.on('end',async function(collected){
 		confirmation.color = 6381923;
-		await msg.edit("This message is now inactive",{embed:confirmation});
+		await msg.edit({content:"This message is now inactive",embed:confirmation});
 	});
 
 }
@@ -156,7 +151,7 @@ async function confirmSuggestion(p,message){
 		"timestamp": new Date(),
 		"author": {
 			"name": p.msg.author.username+"'s suggestion",
-			"icon_url":p.msg.author.avatarURL(),
+			"icon_url":p.msg.author.avatarURL,
 		},
 		"description":message,
 		"footer": {

@@ -14,10 +14,6 @@ else var auth = require('../tokens/owo-auth.json');
 // Config file
 const config = require('./src/data/config.json');
 const request = require('./utils/request.js');
-var io;
-if (require('cluster').isMaster){
-	io = require('./utils/socket.js');
-}
 // Eris-Sharder
 const Sharder = require('eris-sharder').Master;
 var result,shards,firstShardID,lastShardID;

@@ -11,7 +11,7 @@ const infoEmoji = 'ℹ';
 exports.distributeRewards = async function(msg){
 	// If bot does not have permission to send a message, ignore.
 	let perms = msg.channel.permissionsOf(global.getClient().user.id);
-	if(!perms.has('sendMessages')||!perms.has('attachFiles')) return;
+	if(!perms.has('readMessages')||!perms.has('sendMessages')||!perms.has('attachFiles')) return;
 
 	let level = (await levels.getUserLevel(msg.author.id)).level;
 	let sql = `SELECT user.uid,user_level_rewards.rewardLvl FROM user LEFT JOIN user_level_rewards ON user.uid = user_level_rewards.uid WHERE id = ${msg.author.id};`;

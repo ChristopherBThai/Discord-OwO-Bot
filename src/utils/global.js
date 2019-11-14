@@ -207,3 +207,19 @@ exports.toShortNum = function(num){
 exports.getClient = function(){
 	return client;
 }
+
+exports.getRoleColor = function(member){
+	if(!member) return null;
+	let color,pos=-1;
+	for(let i in member.roles){
+		let role = member.guild.roles.get(member.roles[i]);
+		if(role&&role.color){
+			if(role.position>pos){
+				color = role.color;
+				pos = role.position;
+			}
+		}
+	}
+	if(color) return "#"+color.toString(16);
+	else return null;
+}

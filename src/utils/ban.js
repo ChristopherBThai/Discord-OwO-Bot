@@ -60,15 +60,15 @@ exports.check = async function(p,command){
 		// User is banned from this command
 		cooldown[author+command] = true;
 		setTimeout(() => {delete cooldown[author+command];}, 10000);
-		await msg.errorMsg(", you're banned from this command! >:c",3000);
+		await p.errorMsg(", you're banned from this command! >:c",3000);
 	}else if(!result[0][0]||["points","disable","enable"].includes(command)){
 		// Success
 		return true;
 	}else{
 		// Command is disabled in the channel
-		cooldown[msg.author.id+command] = true;
-		setTimeout(() => {delete cooldown[msg.author.id+command];}, 30000);
-		await msg.errorMsg(", that command is disabled on this channel!",3000);
+		cooldown[p.msg.author.id+command] = true;
+		setTimeout(() => {delete cooldown[p.msg.author.id+command];}, 30000);
+		await p.errorMsg(", that command is disabled on this channel!",3000);
 	}
 }
 
@@ -79,8 +79,8 @@ exports.banCommand = async function(p,user,command,reason){
 		sql = `INSERT IGNORE INTO user (id,count) VALUES (${user.id},0);${sql}`;
 		await p.query(sql,[command]);
 	}
-	await user.send(noEmoji+" **|** You have been banned from using the command: `"+command+"`\n"+p.config.emoji.blank+" **| Reason:** "+reason);
-	await p.sender.msgModLogChannel(skullEmoji+" **| "+user.tag+"** is banned from using `"+command+"` forever.\n"+p.config.emoji.blank+" **| ID:** "+user.id+"\n"+p.config.emoji.blank+" **| Reason:** "+reason);
+	await (await user.getDMChannel()).createMessage(noEmoji+" **|** You have been banned from using the command: `"+command+"`\n"+p.config.emoji.blank+" **| Reason:** "+reason);
+	await p.sender.msgModLogChannel(skullEmoji+" **| "+user.username+"#"+user.discriminator+"** is banned from using `"+command+"` forever.\n"+p.config.emoji.blank+" **| ID:** "+user.id+"\n"+p.config.emoji.blank+" **| Reason:** "+reason);
 }
 
 exports.liftCommand = async function(p,user,command){

@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 	
-var client;
+var client,pubsub;
 var auth = require('../../../tokens/owo-auth.json');
 var admin;
 var logChannel = "469352773314412555";
@@ -100,35 +100,30 @@ exports.msgAdmin = async function (message){
 			.catch(err => console.error(err));
 }
 
-exports.msgChannel = async function (id,message,options){
-	if(!message||!id) return;
-	id = id.match(/[0-9]+/)[0];
-	client.shard.send({
-		type:"sendChannel",
-		to:id,
-		msg:message,
-		options
-	});
+exports.msgChannel = async function (channel,msg,options){
+	if(!msg||!channel) return;
+	channel = channel.match(/[0-9]+/)[0];
+	let message = await client.createMessage(channel,msg);
+
+	// Add reactions if there are any
+	if(options&&options.react){
+		for(let i in options.react){
+			await message.addReaction(options.react[i]);
+		}
+	}
 }
 
-exports.msgLogChannel = async function (message){
-	if(!message) return;
-	client.shard.send({
-		type:"sendChannel",
-		to:logChannel,
-		msg:message
-	});
+exports.msgLogChannel = async function (msg){
+	if(!msg) return;
+	client.createMessage(logChannel,msg);
 }
 
-exports.msgModLogChannel = async function (message){
-	if(!message) return;
-	client.shard.send({
-		type:"sendChannel",
-		to:modLogChannel,
-		msg:message
-	});
+exports.msgModLogChannel = async function (msg){
+	if(!msg) return;
+	client.createMessage(modLogChannel,msg);
 }
 
-exports.client = function(tClient){
-	client = tClient;
+exports.init = function(main){
+	client = main.bot;
+	pubsub = main.pubsub;
 }

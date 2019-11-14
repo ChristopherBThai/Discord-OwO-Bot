@@ -5,10 +5,10 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 const battleHelpUtil = require('../battle/util/battleHelpUtil.js');
-const emotes = require('../../../json/emotes.json');
+const emotes = require('../../../data/emotes.json');
 var sEmotes= [];
 for(var key in emotes.sEmote)
 	sEmotes.push(key);
@@ -31,7 +31,7 @@ module.exports = new CommandInterface({
 
 	example:["owo help cowoncy","owo help"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS"],
+	permissions:["sendMessages","embedLinks"],
 
 	related:[],
 
@@ -69,11 +69,11 @@ module.exports = new CommandInterface({
 })
 
 function display(p){
-	var embed = {
+	let embed = {
 	"description": "Here is the list of commands!\nFor more info on a specific command, use `owo help {command}`\nNeed more help? Come join our [guild]("+p.config.guildlink+")",
 		"color": 4886754,
 		"author": {"name": "Command List",
-			"icon_url": p.msg.author.avatarURL()},
+			"icon_url": p.msg.author.avatarURL},
 		"fields": [
 			{"name":"🎖 Rankings",
 				"value":"`top`  `my`"},
@@ -106,11 +106,11 @@ function describe(send,commandName,command){
 		send("**🚫 |** Could not find that command :c");
 		return;
 	}
-	var desc = "\n# Description\n"+command.desc;
-	var example = "";
-	var related = "";
-	var alias = "";
-	var title= "< owo "+commandName+" ";
+	let desc = "\n# Description\n"+command.desc;
+	let example = "";
+	let related = "";
+	let alias = "";
+	let title= "< owo "+commandName+" ";
 	if(command.args!="")
 		title+= command.args+" >";
 	else
@@ -134,6 +134,6 @@ function describe(send,commandName,command){
 			related += command.related[i]+" , ";
 		related = related.substr(0,related.length-3);
 	}
-	var text = "```md\n"+title+"``````md"+alias+desc+example+related+"``````md\n> Remove brackets when typing commands\n> [] = optional arguments\n> {} = optional user input```";
+	let text = "```md\n"+title+"``````md"+alias+desc+example+related+"``````md\n> Remove brackets when typing commands\n> [] = optional arguments\n> {} = optional user input```";
 	send(text);
 }
