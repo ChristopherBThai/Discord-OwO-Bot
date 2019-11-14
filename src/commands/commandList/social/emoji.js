@@ -159,10 +159,9 @@ async function display(p,emojis){
 					//Save the emoji
 					let name = emojis[loc].name;
 					let url = emojis[loc].url;
-					let id = emojis[loc].id;
 					
 					try{
-						let result = await addEmoji(p,guild,name,url,id,loc,buffers[loc]);
+						let result = await addEmoji(p,guild,name,url,loc,buffers[loc]);
 						if(result.buffer) buffers[result.loc] = result.buffer;
 						save(loc,userID,successMsg);
 					}catch(err){
@@ -252,17 +251,8 @@ async function unsetServer(p){
 	p.replyMsg(stealEmoji,", your server has been unset for stealing!");
 }
 
-function addEmoji(p,guild,name,url,emojiID,loc,buffer){
-	return new Promise(function(res,rej){
-		let callbackID = p.msg.author.id+""+emojiID;
-		let callback = function(err,buffer,loc){
-			if(err){
-				rej(err);
-			}else{
-				res({buffer,loc});
-			}
-		}
-		p.pubsub.channels.addEmojiCallback.addCallback(callbackID,callback);
-		p.pubsub.publish("addEmoji",{guild,name,url,userID:p.msg.author.id,callbackID,buffer,loc});
-	});
+async function addEmoji(p,guild,name,url,loc,buffer){
+	if(!buffer) buffer = await p.DataResolver.urlToBufferString(url);
+	await p.client.createGuildEmoji(guild,{name,image:buffer},"Requested by "+p.msg.author.username+"#"+p.msg.author.discriminator);
+	return {buffer,loc};
 }

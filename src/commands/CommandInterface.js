@@ -32,7 +32,7 @@ module.exports = class CommandInterface{
 			let channelPerms = channel.permissionsOf(params.client.user.id);
 			for(let i in this.permissions){
 				if(!channelPerms.has(this.permissions[i])){
-					if(channelPerms.has("sendMessages"))
+					if(channelPerms.has("sendMessages")&&channelPerms.has("readMessages"))
 						params.errorMsg(", the bot does not have the `"+this.permissions[i]+"` permission! Please reinvite the bot, or contact your server admin!",4000);
 					params.logger.increment("noperms",['permission:'+this.permissions[i],'channel:'+params.msg.channel.id,'guild:'+params.msg.channel.guild.id],'id:'+params.msg.author.id);
 					return;

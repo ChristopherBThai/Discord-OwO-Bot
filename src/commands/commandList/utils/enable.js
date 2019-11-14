@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 module.exports = new CommandInterface({
 
@@ -19,13 +19,15 @@ module.exports = new CommandInterface({
 
 	related:["owo disable"],
 
+	permissions:["sendMessages"],
+
 	cooldown:1000,
 	half:100,
 	six:500,
 
 	execute: function(p){
 		/* Checks if the user has permission */
-		if(!p.msg.member.permissions.has('MANAGE_CHANNELS')){
+		if(!p.msg.member.permission.has('manageChannels')){
 			p.send("**🚫 | "+p.msg.author.username+"**, You are not an admin!",3000);
 			return;
 		}
@@ -101,7 +103,7 @@ module.exports = new CommandInterface({
 			desc += "\n**✅ Enabled Commands for this channel:**";
 			desc += "\n`"+enabled.join("`  `")+"`";
 
-			const embed = {
+			let embed = {
 				"color":4886754,
 				"description":desc
 			}

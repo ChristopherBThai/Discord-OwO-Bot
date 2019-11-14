@@ -5,9 +5,9 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
-const permissions = require('../../../json/permissions.json');
+const permissions = require('../../../data/permissions.json');
 
 module.exports = new CommandInterface({
 
@@ -21,15 +21,15 @@ module.exports = new CommandInterface({
 
 	related:["owo guildlink"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS"],
+	permissions:["sendMessages","embedLinks"],
 
 	cooldown:5000,
 	half:100,
 	six:500,
 
 	execute: async function(p){
-		var link = await p.client.generateInvite(permissions);
-		const embed = {
+		let link = p.config.invitelink;
+		let embed = {
 			"title":"OwO! Click me to invite me to your server!",
 			"url":link,
 			"color": 4886754,

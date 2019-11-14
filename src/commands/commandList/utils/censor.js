@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 module.exports = new CommandInterface({
 
@@ -19,14 +19,14 @@ module.exports = new CommandInterface({
 
 	related:["owo uncensor"],
 
-	permissions:["SEND_MESSAGES"],
+	permissions:["sendMessages"],
 
 	cooldown:5000,
 	half:100,
 	six:500,
 
-	execute: function(p){
-		if(!p.msg.member.permissions.has('MANAGE_CHANNELS')){
+	execute: async function(p){
+		if(!p.msg.member.permission.has('manageChannels')){
 			p.send("**🚫 | "+p.msg.author.username+"**, You are not an admin!",3000);
 			return;
 		}
@@ -35,11 +35,9 @@ module.exports = new CommandInterface({
 			return;
 		}
 
-		var sql = "INSERT INTO guild (id,count,young) VALUES ("+p.msg.guild.id+",0,1) ON DUPLICATE KEY UPDATE young = 1;";
-		p.con.query(sql,function(err,result){
-			if(err){ console.error(err); return;}
-				p.send("**⚙ |** This guild is now kid friendly! Any offensive names in `battle` will be censored!");
-		});
+		let sql = "INSERT INTO guild (id,count,young) VALUES ("+p.msg.channel.guild.id+",0,1) ON DUPLICATE KEY UPDATE young = 1;";
+		await p.query(sql);
+		p.send("**⚙ |** This guild is now kid friendly! Any offensive names in `battle` will be censored!");
 	}
 
 })

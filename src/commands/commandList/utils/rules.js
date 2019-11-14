@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 const description = "•  Any actions performed to gain an unfair advantage over other users are explicitly against the rules. This includes but not limited to:\n├> Using macros/scripts for any commands\n└> Using multiple accounts for any reason\n\n•  Do **not** use any exploits and report any found in the bot\n\n•  You can **not** sell/trade cowoncy or any bot goods for anything outside of the bot\n\n•  If you have any questions come ask us in our [server](https://discord.gg/VKesv7J)!";
 const agreeEmoji = '👍';
@@ -23,7 +23,7 @@ module.exports = new CommandInterface({
 
 	related:["owo help"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ATTACH_FILES","ADD_REACTIONS"],
+	permissions:["sendMessages","embedLinks","attachFiles","addReactions"],
 
 	cooldown:10000,
 	half:80,
@@ -58,7 +58,7 @@ module.exports = new CommandInterface({
 			},
 			"author": {
 				"name": "OwO Bot Rules",
-				"icon_url": p.client.user.avatarURL()
+				"icon_url": p.client.user.avatarURL
 			}
 		};
 
@@ -66,16 +66,17 @@ module.exports = new CommandInterface({
 		let message = await p.send({embed});
 		if(voted) return;
 		
-		await message.react(agreeEmoji)
+		await message.addReaction(agreeEmoji)
 
 		/* Reaction collector */
-		let filter = (reaction, user) => reaction.emoji.name === agreeEmoji && user.id === p.msg.author.id;
-		let collector = message.createReactionCollector(filter,{time:60000});
+		let filter = (emoji, userID) => emoji.name === agreeEmoji && userID === p.msg.author.id;
+		let collector = p.reactionCollector.create(message,filter,{time:60000});
+
 		collector.on('collect',async r => {
 			collector.stop("done");
 
 			/* Construct sql */
-			var sql = "INSERT IGNORE INTO rules (uid,opinion) VALUES ((SELECT uid FROM user WHERE id = ?),1)";
+			let sql = "INSERT IGNORE INTO rules (uid,opinion) VALUES ((SELECT uid FROM user WHERE id = ?),1)";
 			embed.footer.text = p.global.toFancyNum(agree+1)+" Users agreed";
 			embed.description = description + "\n\nOwO what's this? You agreed to these rules! <3";
 			sql = "INSERT IGNORE INTO user (id,count) VALUES (?,0);"+sql;

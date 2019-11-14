@@ -5,11 +5,10 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 const request = require('request');
-const imagegenAuth = require('../../../../tokens/imagegen.json');
-const ReactionOverride = require('../../../overrides/ReactionSocketOverride.js');
+const imagegenAuth = require('../../../../../tokens/imagegen.json');
 const maxInt = 16777215;
 const Vibrant = require('node-vibrant');
 const colorEmoji = '🎨';
@@ -28,7 +27,7 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ATTACH_FILES"],
+	permissions:["sendMessages","embedLinks","attachFiles"],
 
 	cooldown:4000,
 
@@ -48,12 +47,12 @@ module.exports = new CommandInterface({
 			//parse user's avatar color
 			if(args.length==1&&(p.global.isUser(p.args[0])||(p.global.isInt(p.args[0])&&parseInt(p.args[0])>maxInt))){
 				let id = p.args[0].match(/[0-9]+/)[0];
-				let user = await p.global.getUser(id);
+				let user = await p.fetch.getUser(id);
 				if(!user){
 					p.errorMsg(", That user does not exist!",3000);
 					return;
 				}
-				let url = user.displayAvatarURL({format:'png',size:32});
+				let url = user.dynamicAvatarURL(null,32);
 				let palette;
 				try{
 					palette = await Vibrant.from(url).getPalette();
@@ -66,25 +65,26 @@ module.exports = new CommandInterface({
 					let values = parseRGB(palette[i]._rgb);
 					values.name = i;
 					values.population = palette[i]._population;
-					values.avatar = user.displayAvatarURL({format:'png',size:256});
+					values.avatar = user.dynamicAvatarURL("png",256);
 					colors.push(values);
 				}
 
 			//user role color
 			}else if(args.length==2&&['r','role'].includes(args[0].toLowerCase())&&(p.global.isUser(p.args[1])||(p.global.isInt(p.args[1])&&parseInt(p.args[1])>maxInt))){
 				let id = p.args[1].match(/[0-9]+/)[0];
-				let user = await p.global.getUser(id);
+				let user = await p.getMention(id);
 				if(!user){
 					p.errorMsg(", That user does not exist!",3000);
 					return;
 				}
-				user = await p.global.getMember(p.msg.guild,user);
-				if(!user||!user.displayColor){
+				user = await p.fetch.getMember(p.msg.channel.guild,user.id);
+				color = p.global.getRoleColor(user);
+				if(!color){
 					p.errorMsg(", That user does not have a role color!",3000);
 					return;
 				}
-				color = parseMember(user);
-				title = ", here is the role color for **"+user.user.username+"**";
+				title = ", here is the role color for **"+user.username+"**";
+				color = parseHex(color.replace('#','').toUpperCase());
 
 			//randomHSL
 			}else if(p.args.join(" ").includes("%")){
@@ -111,52 +111,51 @@ module.exports = new CommandInterface({
 
 		if(!colors){
 			let embed = await constructEmbed(color,p);
-			await p.send(colorEmoji+" **| "+p.msg.author.username+"**"+title,null,embed);
+			await p.send({content:colorEmoji+" **| "+p.msg.author.username+"**"+title,embed});
 		}else{
 			let page = 0;
 			let embed = await constructEmbed(colors[page],p);
-			embed.embed.footer = {
+			embed.footer = {
 				text:colors[page].name+" - population: "+colors[page].population
 			};
-			embed.embed.image = {
+			embed.image = {
 				url:colors[page].avatar
 			};
-			let msg = await p.send(colorEmoji+" **| "+p.msg.author.username+"**"+title,null,embed);
-			await msg.react(prevPageEmoji);
-			await msg.react(nextPageEmoji);
+			let msg = await p.send({content:colorEmoji+" **| "+p.msg.author.username+"**"+title,embed});
+			await msg.addReaction(prevPageEmoji);
+			await msg.addReaction(nextPageEmoji);
 
-			let filter = (reaction,user) => [nextPageEmoji,prevPageEmoji].includes(reaction.emoji.name)&&user.id==p.msg.author.id
-			let collector = await msg.createReactionCollector(filter,{time:900000,idle:120000});
-			ReactionOverride.addEmitter(collector,msg);
+			let filter = (emoji,userID) => [nextPageEmoji,prevPageEmoji].includes(emoji.name)&&userID==p.msg.author.id
+			let collector = p.reactionCollector.create(msg,filter,{time:900000,idle:120000});
 
-			collector.on('collect', async function(r){
-				if(r.emoji.name===nextPageEmoji) {
+			collector.on('collect', async function(emoji){
+				if(emoji.name===nextPageEmoji) {
 					if(page+1<colors.length) page++;
 					else page = 0;
 					embed = await constructEmbed(colors[page],p);
-					embed.embed.footer = {
+					embed.footer = {
 						text:colors[page].name+" - population: "+colors[page].population
 					};
-					embed.embed.image = {
+					embed.image = {
 						url:colors[page].avatar
 					};
-					await msg.edit(colorEmoji+" **| "+p.msg.author.username+"**"+title,embed);
-				}else if(r.emoji.name===prevPageEmoji){
+					await msg.edit({content:colorEmoji+" **| "+p.msg.author.username+"**"+title,embed});
+				}else if(emoji.name===prevPageEmoji){
 					if(page>0) page--;
 					else page = colors.length-1;
 					embed = await constructEmbed(colors[page],p);
-					embed.embed.footer = {
+					embed.footer = {
 						text:colors[page].name+" - population: "+colors[page].population
 					};
-					embed.embed.image = {
+					embed.image = {
 						url:colors[page].avatar
 					};
-					await msg.edit(colorEmoji+" **| "+p.msg.author.username+"**"+title,embed);
+					await msg.edit({content:colorEmoji+" **| "+p.msg.author.username+"**"+title,embed});
 				}
 			});
 
 			collector.on('end',async function(collected){
-				await msg.edit("This message is now inactive",embed);
+				await msg.edit({content:"This message is now inactive",embed});
 			});
 		}
 
@@ -177,7 +176,7 @@ async function constructEmbed(color,p){
 			url:imagegenAuth.imageGenUrl+"/color/"+uuid
 		}
 	}
-	return {embed};
+	return embed;
 }
 
 function parseMember(member){

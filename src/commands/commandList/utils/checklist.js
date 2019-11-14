@@ -5,9 +5,9 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
-const dateUtil = require('../../../util/dateUtil.js');
+const dateUtil = require('../../../utils/dateUtil.js');
 const check = "☑";
 const box = "⬛";
 const tada = "🎉";
@@ -24,7 +24,7 @@ module.exports = new CommandInterface({
 
 	related:[],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS"],
+	permissions:["sendMessages","embedLinks"],
 
 	cooldown:15000,
 	half:100,
@@ -41,7 +41,6 @@ module.exports = new CommandInterface({
 		checklist.push(vote(p));
 		checklist.push(cookie(p));
 		checklist.push(quests(p));
-		//checklist.push(questrr(p));
 		checklist.push(lootboxes(p));
 		checklist.push(crates(p));
 
@@ -84,7 +83,7 @@ module.exports = new CommandInterface({
 		let embed = {
 			author:{
 				name:p.msg.author.username+"'s Checklist",
-				icon_url:p.msg.author.avatarURL()
+				icon_url:p.msg.author.avatarURL
 			},
 			color:p.config.embed_color,
 			footer:{

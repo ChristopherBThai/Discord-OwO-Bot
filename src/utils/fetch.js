@@ -31,7 +31,9 @@ class Fetch{
 
 	async getMember(guildID,userID,cache=true){
 		if(!userID) return;
-		let guild = await this.getGuild(guildID,cache);
+		let guild = guildID;
+		if(typeof guildID == "string")
+			guild = await this.getGuild(guildID,cache);
 		if(!guild) return;
 		userID = userID.match(/[0-9]+/)[0];
 		let member = guild.members.get(userID);

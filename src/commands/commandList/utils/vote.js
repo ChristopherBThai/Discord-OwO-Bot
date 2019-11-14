@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 module.exports = new CommandInterface({
 
@@ -19,23 +19,22 @@ module.exports = new CommandInterface({
 
 	related:["owo daily","owo money"],
 
-	permissions:["SEND_MESSAGES","EMBED_LINKS","ATTACH_FILES"],
+	permissions:["sendMessages","embedLinks","attachFiles"],
 
 	cooldown:5000,
 	half:100,
 	six:500,
 
 	execute: async function(p){
-		var con = p.con;
-		var id = p.msg.author.id;
+		let con = p.con,id = p.msg.author.id;
 		p.dbl.hasVoted(""+p.msg.author.id).then(voted => {
 			if(voted){
 			p.dbl.isWeekend().then(weekend => {
-				var sql = "SELECT count,TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = "+id+";";
+				let sql = "SELECT count,TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = "+id+";";
 				sql += "SELECT IF(patreonDaily = 1 OR ((TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths) AND patreonType = 3),1,0) as patreon FROM user LEFT JOIN patreons ON user.uid = patreons.uid WHERE user.id = "+id+";";
 				con.query(sql,function(err,result){
 					if(err) return;
-					var patreon = false;
+					let patreon = false;
 					if(result[1][0]&&result[1][0].patreon==1)
 						patreon = true;
 					if(result[0][0]==undefined){

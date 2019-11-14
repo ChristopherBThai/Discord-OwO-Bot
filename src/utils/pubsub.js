@@ -33,7 +33,7 @@ class PubSub{
 
 	}
 
-	async publish(channel,message){
+	async publish(channel,message=true){
 		if(typeof message == "object")
 			message = JSON.stringify(message);
 		return await pub.publish(channel,message);
