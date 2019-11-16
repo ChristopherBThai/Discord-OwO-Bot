@@ -207,7 +207,7 @@ function michelle(text){
 	let persian = '<a:persian:605676882599477249>';
 	if(text.indexOf("empowered by")>=0){
 		text = text.replace(huntEmoji,meowth)
-			.replace(/[a-zA-z0-9!?]+\*\*,\shunt/gi,"Meowth**")
+			.replace(/[\s\[\]a-zA-z0-9!?]+\*\*,\shunt/gi,"Meowth**")
 			.replace("You found","It returned with")
 			.replace("\n<:blank","\n"+blank+" **|** and evolved into a Persian "+persian+"\n<:blank");
 	}else{
