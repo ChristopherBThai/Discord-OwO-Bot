@@ -80,13 +80,15 @@ exports.error = function(errorEmoji,msg){
  */
 exports.msgUser = async function(id,msg){
 	id = id.match(/[0-9]+/)[0];
-	var user = await client.users.fetch(id,false).catch((err)=>{});
-	var success;
-	if(user)
-		await user.send(msg)
-		.then(success = {username:user.username,id:user.id,tag:user.tag})
-		.catch(err => success = false);
-	return success;
+	let channel;
+	try{
+		channel = await client.getDMChannel(id);
+	}catch(err){
+		return;
+	}
+	let user = await channel.recipient;
+	if(channel) await channel.createMessage(msg);
+	return user;
 }
 
 /**
@@ -94,10 +96,9 @@ exports.msgUser = async function(id,msg){
  */
 exports.msgAdmin = async function (message){
 	if(admin==undefined)
-		admin = await client.users.fetch(auth.admin,true);
-	if(admin!=undefined)
-		admin.send(message)
-			.catch(err => console.error(err));
+		admin = await client.getDMChannel(auth.admin,true);
+	if(admin)
+		admin.createMessage(message);
 }
 
 exports.msgChannel = async function (channel,msg,options){

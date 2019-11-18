@@ -88,10 +88,10 @@ exports.liftCommand = async function(p,user,command){
 	let result = await p.query(sql,[command]);
 
 	if(result.affectedRows){
-		await user.send(liftEmoji+" **|** An admin has lifted your ban from the `"+command+"` command!");
-		await p.send(liftEmoji+" **| "+user.tag+"**'s ban on `"+command+"` has been lifted!\n"+p.config.emoji.blank+" **| ID:** "+user.id);
+		await (await user.getDMChannel()).createMessage(liftEmoji+" **|** An admin has lifted your ban from the `"+command+"` command!");
+		await p.send(liftEmoji+" **| "+user.username+"#"+user.discriminator+"**'s ban on `"+command+"` has been lifted!\n"+p.config.emoji.blank+" **| ID:** "+user.id);
 	}else{
-		await p.errorMsg(", **"+user.tag+"** does not have a ban on `"+command+"`!");
+		await p.errorMsg(", **"+user.username+"#"+user.discriminator+"** does not have a ban on `"+command+"`!");
 	}
 }
 

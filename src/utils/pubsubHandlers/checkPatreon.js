@@ -29,10 +29,6 @@ exports.handle = async function(main, message){
 		if(role == animal) animalPerk = true;
 	}
 
-	console.log(dailyPerk);
-	console.log(animalPerk);
-	
-
 	// Add to database
 	let sql = "UPDATE IGNORE user SET patreonDaily = "+(dailyPerk?1:0)+",patreonAnimal = "+(animalPerk?1:0)+" WHERE id = "+userID+";";
 	await main.mysqlhandler.query(sql);

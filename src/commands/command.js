@@ -11,6 +11,9 @@ const dir = requireDir('./commandList',{recurse:true});
 const CommandInterface = require('./CommandInterface.js');
 
 const commands = {};
+const adminCommands = {};
+const modCommands = {};
+
 const aliasToCommand = {};
 const mcommands = {};
 
@@ -49,6 +52,43 @@ class Command {
 		//Execute the command
 		await executeCommand(this.main,param);
 	}
+
+	async executeAdmin(msg){
+		let args;
+		if(msg.content.toLowerCase().indexOf(this.prefix) === 0)
+			args = msg.content.slice(this.prefix.length).trim().split(/ +/g);
+		else {
+			this.execute(msg);
+			return;
+		}
+
+		let command = args.shift().toLowerCase();
+
+		let param = initParam(msg,command,args,this.main);
+
+		if(msg.channel.type==1){
+			if(adminCommands[command]&&adminCommands[command].dm)
+				adminCommands[command].execute(param);
+		}else{
+			if(adminCommands[command]&&!adminCommands[command].dm)
+				adminCommands[command].execute(param);
+			else
+				this.execute(msg);
+		}
+	}
+
+	async executeMod(msg){
+		let args;
+		if(msg.content.toLowerCase().indexOf(this.prefix) === 0)
+			args = msg.content.slice(this.prefix.length).trim().split(/ +/g);
+		else return;
+
+		let command = args.shift().toLowerCase();
+		let param = initParam(msg,command,args,this.main);
+
+		if(modCommands[command]) modCommands[command].execute(param);
+
+	}
 }
 
 async function executeCommand(main,p){
@@ -79,6 +119,8 @@ function initCommands(){
 		if(alias){
 			for(let i=0;i<alias.length;i++){
 				commands[alias[i]] = command;
+				if(command.admin) adminCommands[alias[i]] = command;
+				if(command.mod) modCommands[alias[i]] = command;
 				if(command.distinctAlias){
 					aliasToCommand[alias[i]] = alias[i];
 					mcommands[alias[i]] = {botcheck:command.bot,cd:command.cooldown,ban:12,half:command.half,six:command.six};

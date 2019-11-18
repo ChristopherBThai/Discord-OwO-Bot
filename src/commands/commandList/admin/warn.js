@@ -5,9 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
-
-var sender = require('../../../util/sender.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 module.exports = new CommandInterface({
 
@@ -29,10 +27,10 @@ module.exports = new CommandInterface({
 		}
 
 		let warn = p.args.slice(1).join(" ");
-		let user = await sender.msgUser(p.args[0],"**⚠ |** You received a warning from a moderator: **"+warn+"**");
+		let user = await p.sender.msgUser(p.args[0],"**⚠ |** You received a warning from a moderator: **"+warn+"**");
 
 		if(user){
-			p.send(`📨 **|** Sent a warning to **${user.tag}**`);
+			p.send(`📨 **|** Sent a warning to **${user.username}#${user.discriminator}**`);
 		}else{
 			p.send(`⚠ **|** Failed to send a warning for that user`);
 		}

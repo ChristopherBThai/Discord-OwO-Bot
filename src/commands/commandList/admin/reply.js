@@ -5,9 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
-
-const sender = require('../../../util/sender.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 module.exports = new CommandInterface({
 
@@ -38,7 +36,7 @@ module.exports = new CommandInterface({
 		}
 
 		// query
-		var sql = "SELECT type,message,sender FROM feedback WHERE id = "+feedbackId+";";
+		let sql = "SELECT type,message,sender FROM feedback WHERE id = "+feedbackId+";";
 		let result = await p.query(sql);
 		if(!result|!result[0]){
 			p.errorMsg(", Could not find that feedback id!",3000);
@@ -46,7 +44,7 @@ module.exports = new CommandInterface({
 		}
 
 		// Create reply msg
-		let user = await p.global.getUser(String(result[0].sender));
+		let user = await p.fetch.getUser(String(result[0].sender));
 		if(!user){
 			p.errorMsg(", Could not find that user!",3000);
 			return;
@@ -82,7 +80,7 @@ module.exports = new CommandInterface({
 		};
 
 		try{
-			user.send({embed})
+			(await user.getDMChannel()).createMessage({embed});
 			p.send("Replied to user "+user.username);
 		}catch(e){
 			p.errorMsg("Failed to message that user :(",3000);

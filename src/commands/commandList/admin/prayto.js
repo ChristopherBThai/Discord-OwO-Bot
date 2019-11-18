@@ -5,10 +5,8 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
-const sender = require('../../../util/sender.js');
-const ReactionOverride = require('../../../overrides/ReactionSocketOverride.js');
 const dateOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
 const perPage = 15;
 const nextPageEmoji = '➡';
@@ -49,7 +47,7 @@ async function banList(p){
 		}
 
 		min = parseInt(min);
-		let user = await p.global.getUser(userid);
+		let user = await p.fetch.getUser(userid);
 		let username = user?user.username:userid;
 
 		let sql = `SELECT sender FROM user_pray WHERE receiver = ${userid} AND count >= ${min};`;
@@ -69,7 +67,7 @@ async function banList(p){
 		
 		if(user){
 			try{
-				await user.send("Your accounts has been banned for abusing pray/curse");
+				await (await user.getDMChannel()).createMessage("Your accounts has been banned for abusing pray/curse");
 			}catch(e){}
 		}
 
@@ -83,7 +81,7 @@ async function displayList(p){
 			return;
 		}
 
-		let user = await p.global.getUser(userid);
+		let user = await p.fetch.getUser(userid);
 		let username = user?user.username:userid;
 
 		let page = 0;
@@ -96,23 +94,22 @@ async function displayList(p){
 		}
 
 		let maxPage = Math.ceil(result[0].count/15);
-		let opt = {id:userid,username,avatar:user?user.avatarURL():null};
+		let opt = {id:userid,username,avatar:user?user.avatarURL:null};
 		let embed = await getPage(p,opt,page,maxPage);
 		let msg = await p.send(embed);
 
-		await msg.react(prevPageEmoji);
-		await msg.react(nextPageEmoji);
-		let filter = (reaction,user) => [nextPageEmoji,prevPageEmoji].includes(reaction.emoji.name)&&user.id == p.msg.author.id;
-		let collector = await msg.createReactionCollector(filter,{time:900000,idle:120000});
-		ReactionOverride.addEmitter(collector,msg);
+		await msg.addReaction(prevPageEmoji);
+		await msg.addReaction(nextPageEmoji);
+		let filter = (emoji,userID) => [nextPageEmoji,prevPageEmoji].includes(emoji.name)&&userID == p.msg.author.id;
+		let collector = p.reactionCollector.create(msg,filter,{time:900000,idle:120000});
 
-		collector.on('collect',async function(r){
-			if(r.emoji.name==nextPageEmoji){
+		collector.on('collect',async function(emoji){
+			if(emoji.name==nextPageEmoji){
 				if(page+1<maxPage) page++;
 				else page = 0;
 				embed = await getPage(p,opt,page,maxPage);
 				msg.edit(embed);
-			}else if(r.emoji.name===prevPageEmoji){
+			}else if(emoji.name===prevPageEmoji){
 				if(page>0) page--;
 				else page = maxPage-1;
 				embed = await getPage(p,opt,page,maxPage);
@@ -121,7 +118,7 @@ async function displayList(p){
 		});
 		collector.on('end',async function(collected){
 			embed.embed.color = 6381923;
-			await msg.edit("This message is now inactive",embed);
+			await msg.edit({content:"This message is now inactive",embed:embed.embed});
 		});
 }
 

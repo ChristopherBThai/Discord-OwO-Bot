@@ -5,14 +5,13 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
-const sender = require('../../../util/sender.js');
-const ban = require('../../../util/ban.js');
+const ban = require('../../../utils/ban.js');
 
 module.exports = new CommandInterface({
 
-	alias:["bancommand","bc"],
+	alias:["liftcommand","lc"],
 
 	admin:true,
 	mod:true,
@@ -27,7 +26,7 @@ module.exports = new CommandInterface({
 		}
 
 		// Check if its an id
-		let user = await p.global.getUser(p.args[0]);
+		let user = await p.fetch.getUser(p.args[0]);
 		if(!user){
 			p.errorMsg(", Invalid user");
 			return;
@@ -41,12 +40,7 @@ module.exports = new CommandInterface({
 			return;
 		}
 
-		// Parse reason
-		let reason = p.args.slice(2).join(" ");
-		if(!reason||reason=="")
-			reason = "no reason given";
-
-		await ban.banCommand(p,user,command,reason);
+		await ban.liftCommand(p,user,command);
 	}
 
 })
