@@ -5,9 +5,9 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
-const patreon = require('../../../handler/patreonHandler.js');
+const patreon = require('../../../botHandlers/patreonHandler.js');
 var cowoncy = ["184587051943985152","184587051943985152","184587051943985152","184587051943985152","184587051943985152","184587051943985152","184587051943985152"];
 
 module.exports = new CommandInterface({

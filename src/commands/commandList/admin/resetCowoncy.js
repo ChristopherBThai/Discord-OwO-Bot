@@ -5,9 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
-
-var sender = require('../../../util/sender.js');
+const CommandInterface = require('../../CommandInterface.js');
 
 module.exports = new CommandInterface({
 
@@ -34,9 +32,9 @@ module.exports = new CommandInterface({
 		let cowoncy = (result[0][0])?result[0][0].money:undefined;
 
 		let warn = p.args.slice(1).join(" ");
-		let user = await sender.msgUser(p.args[0],"**⚠ |** Your cowoncy has been reset due to: **"+warn+"**");
+		let user = await p.sender.msgUser(p.args[0],"**⚠ |** Your cowoncy has been reset due to: **"+warn+"**");
 		if(user&&cowoncy){
-			p.send(`📨 **|** Successfully reset cowoncy for **${user.tag}**\n${p.config.emoji.blank} **|** Previously had: ${cowoncy} cowoncy`);
+			p.send(`📨 **|** Successfully reset cowoncy for **${user.username+"#"+user.discriminator}**\n${p.config.emoji.blank} **|** Previously had: ${cowoncy} cowoncy`);
 		}else if(cowoncy){
 			p.send(`⚠ **|** Failed to send msg for that user\n${p.config.emoji.blank} **|** Previously had: ${cowoncy} cowoncy`);
 		}else{

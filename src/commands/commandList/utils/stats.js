@@ -23,7 +23,7 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages","embedLinks"],
 
-	cooldown:0000,
+	cooldown:60000,
 	half:100,
 	six:500,
 

@@ -5,9 +5,8 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../../commandinterface.js');
+const CommandInterface = require('../../CommandInterface.js');
 
-const sender = require('../../../util/sender.js');
 const tada = '🎉';
 const gear = '⚙';
 
@@ -16,6 +15,7 @@ module.exports = new CommandInterface({
 	alias:["addpatreon"],
 
 	admin:true,
+	dm:true,
 
 	execute: async function(p){
 		//Parse id
@@ -77,11 +77,11 @@ module.exports = new CommandInterface({
 		// Send msgs
 		let user;
 		if(addMonths>0)
-			user = await sender.msgUser(p.args[0],`${tada} **|** Your patreon has been extended by ${addMonths} month(s)!\n${p.config.emoji.blank} **|** Expires on: **${date}**`);
+			user = await p.sender.msgUser(p.args[0],`${tada} **|** Your patreon has been extended by ${addMonths} month(s)!\n${p.config.emoji.blank} **|** Expires on: **${date}**`);
 		else
-			user = await sender.msgUser(p.args[0],`${gear} **|** Your patreon perks have been changed!\n${p.config.emoji.blank} **|** Expires on: **${date}**`);
+			user = await p.sender.msgUser(p.args[0],`${gear} **|** Your patreon perks have been changed!\n${p.config.emoji.blank} **|** Expires on: **${date}**`);
 		if(user)
-			await p.replyMsg(tada,`, Updated **${user.tag}** patreon perks until **${date}**`);
+			await p.replyMsg(tada,`, Updated **${user.username+"#"+user.discriminator}** patreon perks until **${date}**`);
 		else
 			await p.errorMsg(', Failed to message user',3000);
 	}

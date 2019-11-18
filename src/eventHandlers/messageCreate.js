@@ -6,7 +6,8 @@
   */
 
 const whitelist = ['409959187229966337','420104212895105044','552384921914572802']
-const modChannel = ["471579186059018241","596220958730223619"];
+const modChannel = ["471579186059018241","596220958730223619","645501936036216862"];
+const PrivateChannel = 1;
 
 // Fired when a message is created
 exports.handle = function(msg){
@@ -18,9 +19,9 @@ exports.handle = function(msg){
 
 	else if(modChannel.includes(msg.channel.id)) this.command.executeMod(msg);
 
-	//else if(msg.author.id==this.auth.admin) this.command.executeAdmin(msg);
+	else if(msg.author.id==this.auth.admin) this.command.executeAdmin(msg);
 
-	else if(msg.channel.type==="dm") this.macro.verify(msg,msg.content.trim());
+	//else if(msg.channel.type===PrivateChannel) this.macro.verify(msg,msg.content.trim());
 
 	else 
 		this.command.execute(msg);

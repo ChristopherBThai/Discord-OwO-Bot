@@ -9,7 +9,7 @@ var url = require('url');
 var patreon = require('patreon');
 
 // Use the client id and secret you received when setting up your OAuth account
-const auth = require('../../tokens/owo-auth.json');
+const auth = require('../../../tokens/owo-auth.json');
 var CLIENT_ID = auth.patreonID;
 var CLIENT_SECRET = auth.patreonSecret;
 
