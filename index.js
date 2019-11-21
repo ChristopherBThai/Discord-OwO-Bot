@@ -30,7 +30,7 @@ var result,shards,firstShardID,lastShardID;
 		// How many clusters we will have
 		var clusters = Math.ceil(shards/5);
 		if(debug){
-			shards = 2;
+			shards = 4;
 			firstShardID = 0;
 			lastShardID = shards-1;
 			clusters = 2
