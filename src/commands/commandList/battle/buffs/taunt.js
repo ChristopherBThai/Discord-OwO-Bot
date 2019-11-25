@@ -7,6 +7,7 @@
 
 const BuffInterface = require('../BuffInterface.js');
 const WeaponInterface = require('../WeaponInterface.js');
+const Logs = require('../util/logUtil.js');
 
 module.exports = class Taunt extends BuffInterface{
 
