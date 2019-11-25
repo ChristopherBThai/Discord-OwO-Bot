@@ -5,16 +5,9 @@
  * For more information, see README.md and LICENSE
   */
 
-/*
- * Handles messages sent to parent
- */
-
-exports.handle = function(manager,shard,msg){
-	switch(msg.type){
-		case "sendChannel":
-			manager.broadcast(msg);
-			break;
-		default:
-			break;
-	}
+exports.handle = async function(main, message){
+	let {channelID,msg} = JSON.parse(message);
+	if(!main.bot.channelGuildMap[channelID]) return;
+	main.bot.createMessage(channelID,msg);
 }
+	

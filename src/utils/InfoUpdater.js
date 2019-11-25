@@ -12,12 +12,15 @@ const secret = require('../../../tokens/wsserver.json');
 class InfoUpdater{
 	constructor(main){
 		this.main = main;
-		setInterval(() => {
-			this.update();
-		},interval);
+		this.totalShards = false;
+		if(!main.debug){
+			setInterval(() => { this.updateBotInfo(); },interval);
+			setInterval(() => { this.updateDBLInfo(); },5000/*3200000*/);
+			this.updateBotInfo();
+		}
 	}
 
-	update(){
+	updateBotInfo(){
 		let info = {
 			password:secret.password,
 			guilds:this.main.bot.guilds.size,
@@ -30,11 +33,23 @@ class InfoUpdater{
 			uri:secret.url+"/update-bot/"+this.main.bot.clusterID,
 			json:true,
 			body: info,
-		},function(err,res,body){
+		},(err,res,body) => {
 			if(err) {
 				console.error(err);
 				throw err;
 			}
+			let guilds = res.body.guilds;
+			guilds = this.main.global.toFancyNum(guilds);
+			this.main.bot.editStatus(null,{name:guilds+" servers!",type:3});
+		});
+	}
+
+	async updateDBLInfo(){
+		if(!this.totalShards)
+			this.totalShards = await this.main.global.getTotalShardCount();
+		let guildSize = Math.floor(this.main.bot.guilds.size/this.main.bot.shards.size);
+		this.main.bot.shards.forEach((val,key,map) => {
+			this.main.dbl.postStats(guildSize,val.id,this.totalsShards);
 		});
 	}
 

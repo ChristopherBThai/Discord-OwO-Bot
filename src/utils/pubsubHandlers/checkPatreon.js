@@ -21,12 +21,17 @@ exports.handle = async function(main, message){
 	// Grab member
 	let member = await main.fetch.getMember(guild,userID);
 
-	//Check user has the roles
 	let dailyPerk,animalPerk;
-	for(let i in member.roles){
-		let role = member.roles[i];
-		if(role == daily) dailyPerk = true;
-		if(role == animal) animalPerk = true;
+	if(member){
+		//Check user has the roles
+		for(let i in member.roles){
+			let role = member.roles[i];
+			if(role == daily) dailyPerk = true;
+			if(role == animal) animalPerk = true;
+		}
+	}else{
+		dailyPerk = 0;
+		animalPerk = 0;
 	}
 
 	// Add to database

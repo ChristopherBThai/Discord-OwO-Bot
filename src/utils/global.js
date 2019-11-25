@@ -10,6 +10,8 @@
  */
 
 const numbers = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
+const request = require('request');
+const secret = require('../../../tokens/wsserver.json');
 var animaljson = require('../../../tokens/owo-animals.json');
 var animalunicode = {};
 var commands = {};
@@ -17,6 +19,7 @@ var animals = {};
 var ranks = {};
 var rankAlias = {};
 var client,con;
+var totalShards,sharders;
 
 /**
  * Checks if its an integer
@@ -222,4 +225,27 @@ exports.getRoleColor = function(member){
 	}
 	if(color) return "#"+color.toString(16);
 	else return null;
+}
+
+exports.getTotalShardCount = function(){
+	if(totalShards) return totalShards;
+	return new Promise( (resolve, reject) => {
+		let req = request({
+			method:'GET',
+			uri:secret.url+"/totalShards",
+		},(error,res,body)=>{
+			if(error){
+				reject();
+				return;
+			}
+			if(res.statusCode==200){
+				body = JSON.parse(body);
+				totalShards = body.totalShards;
+				sharders = body.sharders;
+				resolve(totalShards);
+			}else{
+				reject();
+			}
+		});
+	});
 }

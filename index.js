@@ -18,6 +18,12 @@ const request = require('./utils/request.js');
 const Sharder = require('eris-sharder').Master;
 var result,shards,firstShardID,lastShardID;
 
+// Helper files
+if(require('cluster').isMaster){
+	const global = require('./utils/global.js');
+	const RamCheck = new (require('./utils/ramCheck.js'))(global);
+}
+
 (async () => {
 	try{
 		//determine how many shards we will need for this manager
