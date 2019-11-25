@@ -5,8 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-// Fired when a shard resumes
-exports.handle = function(id){
-	console.log('['+id+']--------------- Bot has resumed ---------------');
-	if(!this.debug) this.logger.increment("reconnecting");
+// When guild member is updated
+exports.handle = function(guild,member,oldMember){
+	this.patreon.update(guild,oldMember,member);
 }

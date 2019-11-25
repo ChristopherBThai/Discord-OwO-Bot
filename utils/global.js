@@ -4,9 +4,8 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
-
-// Fired when a shard resumes
-exports.handle = function(id){
-	console.log('['+id+']--------------- Bot has resumed ---------------');
-	if(!this.debug) this.logger.increment("reconnecting");
+const pub = require('redis').createClient();
+	
+exports.resetBot = async function(){
+	pub.publish("endProcess",true);
 }

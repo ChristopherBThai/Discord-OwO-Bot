@@ -72,6 +72,10 @@ class OwO extends Base{
 
 		// Fetches images and converts them to buffers
 		this.DataResolver = require('./utils/dataResolver.js');
+
+		// Helper for patreon benefits
+		this.patreon = require('./utils/patreon.js');
+		this.patreon.init(this);
 		
 		// Create commands
 		this.command = new (require('./commands/command.js'))(this);
@@ -83,7 +87,6 @@ class OwO extends Base{
 
 		// sends info to our main server every X seconds
 		this.InfoUpdater = new (require('./utils/InfoUpdater.js'))(this);
-		this.InfoUpdater.update();
 	}
 }
 

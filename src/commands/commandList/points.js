@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-const CommandInterface = require('../commandinterface.js');
+const CommandInterface = require('../CommandInterface.js');
 
 module.exports = new CommandInterface({
 

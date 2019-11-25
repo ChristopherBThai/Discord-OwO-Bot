@@ -5,6 +5,9 @@
  * For more information, see README.md and LICENSE
   */
 
-// Fired when a shard turns ready
-exports.handle = function(id){
+exports.handle = async function(main, message){
+	let {clusterID,userID,msg} = JSON.parse(message);
+	if(clusterID!=main.clusterID) return;
+	main.sender.msgUser(userID,msg);
 }
+	
