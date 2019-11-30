@@ -42,9 +42,10 @@ class Command {
 		let command = args.shift().toLowerCase();
 
 		//  Check if that command exists
-		if(!commands[command]) return;
-		//  Check admin
-		//  TODO
+		if(!commands[command]) {
+			executeCommand(this.main,initParam(msg,"points",[],this.main));
+			return;
+		}
 
 		//Init params to pass into command
 		let param = initParam(msg,command,args,this.main);

@@ -6,7 +6,7 @@
   */
 	
 // Grab tokens and secret files
-const debug = true;
+const debug = false;
 if(!debug) var tracer = require('dd-trace').init()
 if(debug) var auth = require('../tokens/scuttester-auth.json');
 else var auth = require('../tokens/owo-auth.json');
