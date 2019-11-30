@@ -84,8 +84,7 @@ async function display(p,con, msg, args){
 
 	if(invalid){
 		p.errorMsg(", Invalid ranking type!",3000);
-	}
-	else{
+	}else{
 		if(points) getPointRanking(aglobal,con,msg,p);
 		else if(guild) getGuildRanking(con,msg,msg.channel.guild.id,p);
 		else if(zoo) getZooRanking(aglobal,con,msg,p);
