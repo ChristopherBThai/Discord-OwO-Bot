@@ -15,7 +15,7 @@ class InfoUpdater{
 		this.totalShards = false;
 		if(!main.debug){
 			setInterval(() => { this.updateBotInfo(); },interval);
-			setInterval(() => { this.updateDBLInfo(); },5000/*3200000*/);
+			setInterval(() => { this.updateDBLInfo(); },3200000);
 			this.updateBotInfo();
 		}
 	}
@@ -48,8 +48,9 @@ class InfoUpdater{
 		if(!this.totalShards)
 			this.totalShards = await this.main.global.getTotalShardCount();
 		let guildSize = Math.floor(this.main.bot.guilds.size/this.main.bot.shards.size);
+
 		this.main.bot.shards.forEach((val,key,map) => {
-			this.main.dbl.postStats(guildSize,val.id,this.totalsShards);
+			this.main.dbl.postStats(guildSize,val.id,this.totalShards);
 		});
 	}
 

@@ -9,7 +9,7 @@ var banned = {};
 exports.giveXP = async function(msg){
 
 	// must be a text channel
-	if(msg.channel.type=="dm") return;
+	if(msg.channel.type===1) return;
 	
 	// Return if on banned or is a bot
 	if(msg.author.bot||banned[msg.author.id]||banned[msg.channel.id]) return;
@@ -29,19 +29,19 @@ exports.giveXP = async function(msg){
 		if(limit.xp>dailyLimit) limitHit = true;
 		else limit.xp = parseInt(limit.xp)+gain;
 
-		if(limit[msg.guild.id]){
+		if(limit[msg.channel.guild.id]){
 			// If server xp hit daily cap
-			if(limit[msg.guild.id]>dailyLimit) guildLimitHit = true;
-			else limit[msg.guild.id] = parseInt(limit[msg.guild.id]) + gain;
+			if(limit[msg.channel.guild.id]>dailyLimit) guildLimitHit = true;
+			else limit[msg.channel.guild.id] = parseInt(limit[msg.channel.guild.id]) + gain;
 		}else{
 			// first msg in guild 
-			limit[msg.guild.id] = gain;
+			limit[msg.channel.guild.id] = gain;
 			guildBonus = 500;
 		}
 	}else{
 		await redis.del("xplimit_"+msg.author.id);
 		limit = {day:getDate(),xp:gain};
-		limit[msg.guild.id] = gain;
+		limit[msg.channel.guild.id] = gain;
 		// Daily bonus xp
 		bonus += 500;
 		guildBonus = 500;
@@ -57,12 +57,12 @@ exports.giveXP = async function(msg){
 	}
 	let xp;
 	if(!limitHit){
-		logger.value('xp',gain+bonus,['id:'+msg.author.id,'channel:'+msg.channel.id,'guild:'+msg.guild.id]);
-		logger.value('xplimit',limit.xp,['id:'+msg.author.id,'channel:'+msg.channel.id,'guild:'+msg.guild.id]);
+		logger.value('xp',gain+bonus,['id:'+msg.author.id,'channel:'+msg.channel.id,'guild:'+msg.channel.guild.id]);
+		logger.value('xplimit',limit.xp,['id:'+msg.author.id,'channel:'+msg.channel.id,'guild:'+msg.channel.guild.id]);
 		xp = await redis.incr("user_xp",msg.author.id,gain+bonus);
 	}
 	if(!guildLimitHit){
-		await redis.incr("user_xp_"+msg.guild.id,msg.author.id,gain+guildBonus);
+		await redis.incr("user_xp_"+msg.channel.guild.id,msg.author.id,gain+guildBonus);
 	}
 
 	// Check if user leveled up
