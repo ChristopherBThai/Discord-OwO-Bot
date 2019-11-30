@@ -82,9 +82,9 @@ async function display(p,con, msg, args){
 		else invalid = true;
 	}
 
-	if(invalid)
-		msg.channel.send("**🚫 |** Wrong arguments! :c Go check `owo help`!")
-			.catch(err => console.error(err));
+	if(invalid){
+		p.errorMsg(", Invalid ranking type!",3000);
+	}
 	else{
 		if(points) getPointRanking(aglobal,con,msg,p);
 		else if(guild) getGuildRanking(con,msg,msg.channel.guild.id,p);
