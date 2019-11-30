@@ -16,11 +16,11 @@ module.exports = new CommandInterface({
 
 	alias:["team","squad"],
 
-	args:"{add|remove|rename}",
+	args:"{add|remove|rename|swapactive}",
 
 	desc:"Display your team! ",
 
-	example:["owo team","owo team add dog 1","owo team rename My Team"],
+	example:["owo team","owo team add dog 1","owo team rename My Team","owo team swapactive"],
 
 	related:["owo battle"],
 
@@ -61,8 +61,12 @@ module.exports = new CommandInterface({
 				await remove(p);
 
 		/* Rename the team */
-		}else if(subcommand=="rename"||subcommand=="r"||subcommand=="name")
+		}else if(subcommand=="rename"||subcommand=="r"||subcommand=="name"){
 			await rename(p);
+		}
+		else if(subcommand=="swapactive") {
+			await swapActive(p);
+		}
 
 		/* If they need help
 		else if(subcommand=="help"){
@@ -175,4 +179,16 @@ async function rename(p){
 		p.errorMsg(`, something went wrong... Try again!`,5000);
 	}
 
+}
+
+/*
+ * swap active team
+ */
+async function swapActive(p) {
+	try{
+		await teamUtil.swapActive(p);
+	}catch(err){
+		console.error(err);
+		p.errorMsg(`, something went wrong... Try again!`,5000);
+	}
 }

@@ -20,7 +20,7 @@ const WeaponInterface = require('../WeaponInterface.js');
  */
 exports.addMember = async function(p,animal,pos){
 	/* Get team and animal pid */
-	var sql = `SELECT pos,pet_team.pgid,pid,name FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
+	var sql = `SELECT pos,pet_team.pgid,pid,name FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE pet_team.uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) and pet_team.active = 1 ORDER BY pos ASC;`;
 	sql += `SELECT pid,count FROM animal WHERE name = ? AND ID = ${p.msg.author.id};`;
 	var result = await p.query(sql,[animal.value]);
 
@@ -63,9 +63,9 @@ exports.addMember = async function(p,animal,pos){
 	/* If there is no team, create one */
 	if(!result[0][0]){
 		sql = `INSERT IGNORE INTO user (id) VALUES (${p.msg.author.id});
-			INSERT IGNORE INTO pet_team (uid) VALUES ((SELECT uid FROM user WHERE id = ${p.msg.author.id} AND (SELECT pgid FROM pet_team p WHERE p.uid = user.uid) IS NULL));
+			INSERT IGNORE INTO pet_team (uid, active) VALUES ((SELECT uid FROM user WHERE id = ${p.msg.author.id} AND (SELECT pgid FROM pet_team p WHERE p.uid = user.uid and p.active = 1) IS NULL), 1);
 			INSERT IGNORE INTO pet_team_animal (pgid,pid,pos) VALUES (
-				(SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id})),
+				(SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) and active = 1),
 				${result[1][0].pid},
 				1
 			);`
@@ -102,22 +102,22 @@ exports.addMember = async function(p,animal,pos){
  * remove = must be either 1-3 or an animal
  */
 exports.removeMember = async function(p,remove){
-	let sql = `SELECT pos,animal.pid,name FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE user.id = ${p.msg.author.id} ORDER BY pos ASC;`;
+	let sql = `SELECT pos,animal.pid,name FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE user.id = ${p.msg.author.id} AND pet_team.active = 1 ORDER BY pos ASC;`;
 
 	/* If its a position */
 	if(p.global.isInt(remove)){
 		sql = `DELETE FROM pet_team_animal WHERE
-			pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id})) AND
+			pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND pet_team.active = 1) AND
 			pos = ? AND
-			(SELECT count FROM (SELECT COUNT(pid) as count FROM pet_team_animal WHERE pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}))) as a) > 1;
+			(SELECT count FROM (SELECT COUNT(pid) as count FROM pet_team_animal WHERE pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND pet_team.active = 1)) as a) > 1;
 		${sql}`;
 
 	/* If its an animal */
 	}else{
 		sql = `DELETE FROM pet_team_animal WHERE
-			pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id})) AND
+			pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND pet_team.active = 1) AND
 			pid = (SELECT pid FROM animal WHERE name = ? AND id = ${p.msg.author.id}) AND
-			(SELECT count FROM (SELECT COUNT(pid) as count FROM pet_team_animal WHERE pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}))) as a) > 1;
+			(SELECT count FROM (SELECT COUNT(pid) as count FROM pet_team_animal WHERE pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND pet_team.active = 1)) as a) > 1;
 		${sql}`;
 	}
 
@@ -168,7 +168,7 @@ exports.renameTeam = async function(p,name){
 		return;
 	}
 
-	var sql = `UPDATE IGNORE pet_team SET tname = ?, censor = ${offensive} WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id})`;
+	var sql = `UPDATE IGNORE pet_team SET tname = ?, censor = ${offensive} WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND active = 1`;
 	var result = await p.query(sql,name);
 	if(result.affectedRows>0){
 		p.replyMsg(battleEmoji,`, You successfully changed your team name to: **${name}**`);
@@ -182,8 +182,8 @@ exports.renameTeam = async function(p,name){
  */
 exports.displayTeam = async function(p){
 	/* Query info */
-	let sql = `SELECT tname,pos,name,nickname,pid,xp,pet_team.streak,highest_streak FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
-	sql += `SELECT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND a.pid IN (SELECT pid FROM pet_team LEFT JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}));`;
+	let sql = `SELECT tname,pos,name,nickname,pid,xp,pet_team.streak,highest_streak FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND pet_team.active = 1 ORDER BY pos ASC;`;
+	sql += `SELECT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND a.pid IN (SELECT pid FROM pet_team LEFT JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND pet_team.active = 1);`;
 	let result = await p.query(sql);
 	if(!result[0][0]){
 		p.errorMsg(", you don't have a team! Make one with `owo team add {animal}`");
@@ -343,4 +343,39 @@ exports.giveXP = async function(p,team,xp){
 	if(resetStreak) sql += `UPDATE pet_team SET streak = 0 WHERE pgid = ${team.pgid};`;
 
 	return await p.query(sql);
+}
+
+/* Swaps active team */
+exports.swapActive = async function(p) {
+	let query = `SELECT uid, pgid, active FROM pet_team  WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`
+	let teams = await p.query(query);
+	if(!teams[0]){
+		p.errorMsg(", you don't have a team! Make one with `owo team add {animal}`");
+		return;
+	}
+	let active;
+	let inactive;
+	for (let i in teams) {
+		if (teams[i].active == 1) {
+			active = teams[i];
+		}
+		else {
+			inactive = teams[i];
+		}
+	}
+	let update = '';
+	if (active) {
+		update += `UPDATE pet_team SET active = 0 WHERE pgid = ${active.pgid};`;
+	}
+	if (inactive) {
+		update +=`UPDATE pet_team SET active = 1 WHERE pgid = ${inactive.pgid};`;
+	}
+
+	let result = await p.query(update);
+	let affectedRows = result.reduce((a,b) => a+b.affectedRows, 0);
+	if(affectedRows>0){
+		p.replyMsg(battleEmoji,`, You successfully swapped your active team!`);
+	}else{
+		p.errorMsg(", You don't have a team! Please set one with `owo team add {animal}`",5000);
+	}
 }

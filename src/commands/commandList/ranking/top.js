@@ -236,11 +236,11 @@ function getPetRanking(globalRank, con, msg, count,p){
 	let sql;
 	if(globalRank){
 		sql = "SELECT * FROM animal ORDER BY xp DESC LIMIT "+count+";";
-		sql +=  "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE xp > c.xp) AS rank FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY xp DESC LIMIT 1;";
+		sql +=  "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE xp > c.xp) AS 'rank' FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY xp DESC LIMIT 1;";
 	}else{
 		let users = global.getids(msg.channel.guild.members);
 		sql = "SELECT * FROM animal WHERE id IN ("+users+") ORDER BY xp DESC LIMIT "+count+";";
-		sql +=  "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE id IN ("+users+") AND xp > c.xp) AS rank FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY xp DESC LIMIT 1;";
+		sql +=  "SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE id IN ("+users+") AND xp > c.xp) AS 'rank' FROM animal c WHERE c.id = "+msg.author.id+" ORDER BY xp DESC LIMIT 1;";
 	}
 
 	displayRanking(con,msg,count,globalRank,sql,
@@ -370,11 +370,11 @@ function getGuildRanking(con, msg, count,p){
 function getBattleRanking(globalRank, con, msg, count,p){
 	let sql;
 	if(globalRank){
-		sql = "SELECT * FROM pet_team INNER JOIN user ON user.uid = pet_team.uid ORDER BY streak DESC LIMIT "+count+";";
-		sql +=  "SELECT *, (SELECT COUNT(*)+1 FROM pet_team WHERE streak > c.streak) AS rank FROM pet_team c INNER JOIN user ON c.uid = user.uid WHERE user.id = "+msg.author.id+";";
+		sql = "SELECT * FROM pet_team INNER JOIN user ON user.uid = pet_team.uid WHERE pet_team.active = 1 ORDER BY streak DESC LIMIT "+count+";";
+		sql +=  "SELECT *, (SELECT COUNT(*)+1 FROM pet_team WHERE streak > c.streak) AS 'rank' FROM pet_team c INNER JOIN user ON c.uid = user.uid WHERE user.id = "+msg.author.id+";";
 	}else{
 		let users = global.getids(msg.channel.guild.members);
-		sql = "SELECT * FROM pet_team INNER JOIN user ON pet_team.uid = user.uid WHERE id IN ("+users+") ORDER BY streak DESC LIMIT "+count+";";
+		sql = "SELECT * FROM pet_team INNER JOIN user ON pet_team.uid = user.uid WHERE id IN ("+users+") and pet_team.active = 1 ORDER BY streak DESC LIMIT "+count+";";
 		sql +=  "SELECT *, (SELECT COUNT(*)+1 FROM pet_team LEFT JOIN user ON pet_team.uid = user.uid WHERE id IN ("+users+") AND streak > c.streak) AS rank FROM pet_team c INNER JOIN user ON c.uid = user.uid WHERE user.id = "+msg.author.id+";";
 	}
 

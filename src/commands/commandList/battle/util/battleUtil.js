@@ -39,7 +39,7 @@ var getBattle = exports.getBattle = async function(p,setting){
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
 			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
 		WHERE user.id = ${p.msg.author.id}
-			AND active = 1
+			AND pet_team_battle.active = 1
 		ORDER BY pos ASC;`;
 	/* Query enemy team */
 	sql += `SELECT pet_team.censor as ptcensor,animal.offensive as acensor,pet_team_battle.epgid,enemyTeam.tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat,cphp,cpwp,cehp,cewp
@@ -52,7 +52,7 @@ var getBattle = exports.getBattle = async function(p,setting){
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
 			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
 		WHERE user.id = ${p.msg.author.id}
-			AND active = 1
+			AND pet_team_battle.active = 1
 		ORDER BY pos ASC;`;
 	sql += `SELECT pet_team_battle_buff.*
 		FROM user
@@ -113,7 +113,7 @@ var getBattle = exports.getBattle = async function(p,setting){
 /* Creates a brand new battle */
 exports.initBattle = async function(p,setting){
 	/* Find random opponent */
-	let sql = `SELECT COUNT(pgid) as count FROM pet_team;SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id}`;
+	let sql = `SELECT COUNT(pgid) as count FROM pet_team;SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid and pet_team.active = 1 WHERE id = ${p.msg.author.id}`;
 	let count = await p.query(sql);
 	let pgid = count[1][0];
 	if(!pgid){
@@ -139,8 +139,8 @@ exports.initBattle = async function(p,setting){
 				SELECT pid FROM pet_team LEFT JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid WHERE pet_team.pgid = (SELECT pgid FROM pet_team WHERE pgid != ${pgid}  LIMIT 1 OFFSET ${count})
 			);`;
 	/* And our team */
-	sql += `SELECT pet_team.streak,pet_team.highest_streak,pet_team.pgid,tname,pos,name,nickname,pid,xp FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
-	sql += `SELECT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND a.pid IN (SELECT pid FROM pet_team LEFT JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}));`;
+	sql += `SELECT pet_team.streak,pet_team.highest_streak,pet_team.pgid,tname,pos,name,nickname,pid,xp FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) and pet_team.active=1 ORDER BY pos ASC;`;
+	sql += `SELECT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND a.pid IN (SELECT pid FROM pet_team LEFT JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) and pet_team.active = 1);`;
 
 	/* Should we censor? */
 	sql += `SELECT young FROM guild WHERE id = ${p.msg.channel.guild.id} AND young = 1;`;
@@ -905,10 +905,10 @@ function postTurn(team,enemy,action){
 async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,setting){
 	/* Check if the battle is still active and if the player should receive rewards */
 	let sql = "";
-	if(!battle) sql = `UPDATE pet_team_battle SET active = 0 WHERE active = 1 and pgid = (SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id});`;
+	if(!battle) sql = `UPDATE pet_team_battle SET active = 0 WHERE active = 1 and pgid = (SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid AND pet_team.active = 1 WHERE id = ${p.msg.author.id});`;
 	else if(!setting.instant) sql = `UPDATE pet_team_battle SET active = 0 WHERE active = 1 and pgid = ${battle.player.pgid};`;
 	sql +=  `SELECT * FROM user INNER JOIN crate ON user.uid = crate.uid WHERE id = ${p.msg.author.id};`;
-	sql += `DELETE FROM pet_team_battle_buff WHERE pgid = (SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id});`;
+	sql += `DELETE FROM pet_team_battle_buff WHERE pgid = (SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid AND pet_team.active = 1 WHERE id = ${p.msg.author.id});`;
 	let result = await p.query(sql);
 	if((!setting||!setting.instant)&&result[0].changedRows == 0) return;
 
@@ -1052,7 +1052,7 @@ for(let i = 35000;i<=40000;i+=10){
 
 /* Returns if the player is in battle or not */
 exports.inBattle = async function(p){
-	let sql = `SELECT pet_team_battle.pgid FROM user INNER JOIN pet_team ON user.uid = pet_team.uid INNER JOIN pet_team_battle ON pet_team.pgid = pet_team_battle.pgid WHERE id = ${p.msg.author.id} AND active = 1;`;
+	let sql = `SELECT pet_team_battle.pgid FROM user INNER JOIN pet_team ON user.uid = pet_team.uid INNER JOIN pet_team_battle ON pet_team.pgid = pet_team_battle.pgid WHERE id = ${p.msg.author.id} AND pet_team_battle.active = 1;`;
 	return ((await p.query(sql))[0])
 }
 
