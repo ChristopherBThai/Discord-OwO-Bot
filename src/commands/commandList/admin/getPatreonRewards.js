@@ -64,7 +64,7 @@ async function getPatreons(p){
 		let list = patreons["Custom Pet"];
 		for(let i in list){
 			text += "<@"+list[i].discordID+"> | **"+list[i].name+"** | "+list[i].discordID+"\n";
-			let user = await p.global.getUser(list[i].discordID);
+			let user = await p.fetch.getUser(list[i].discordID);
 			csv += (user?user.username:"A User")+","+list[i].discordID+","+list[i].name+"\n";
 		}
 	}

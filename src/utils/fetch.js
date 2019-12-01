@@ -14,7 +14,9 @@ class Fetch{
 
 	async getUser(userID,cache=true){
 		if(!userID) return;
-		userID = userID.match(/[0-9]+/)[0];
+		userID = userID.match(/[0-9]+/);
+		if(!userID) return;
+		userID = userID[0];
 		let user = this.bot.users.get(userID);
 		if(!user){
 			try{
@@ -35,7 +37,9 @@ class Fetch{
 		if(typeof guildID == "string")
 			guild = await this.getGuild(guildID,cache);
 		if(!guild) return;
-		userID = userID.match(/[0-9]+/)[0];
+		userID = userID.match(/[0-9]+/);
+		if(!userID) return;
+		userID = userID[0];
 		let member = guild.members.get(userID);
 		if(!member){
 			try{

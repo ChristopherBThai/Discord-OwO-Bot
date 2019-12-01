@@ -16,7 +16,25 @@ var modLogChannel = "471579186059018241";
  */
 exports.send = function(msg){
 	return function(content,del,file,opt){
-		if(del)
+		if(typeof content === "string"&&content.length>=2000){
+			let split = content.split("\n");
+			let total = "";
+			for(let i in split){
+				if(total.length+split[i].length>=2000){
+					if(total===""){
+						return msg.channel.createMessage("ERROR: The message is too long to send");
+					}else{
+						msg.channel.createMessage(total);
+						total = split[i];
+					}
+				}else{
+					total += "\n"+split[i];
+				}
+			}
+			if(total!==""){
+				return msg.channel.createMessage(total);
+			}
+		}else if(del)
 			return msg.channel.createMessage(content,file)
 				.then(message => setTimeout(function(){
 					try{message.delete();}catch(e){}
@@ -40,7 +58,26 @@ exports.reply = function(msg){
 			tempContent.content = `**${emoji} | ${username}**${content.content}`;
 		}
 
-		if(del)
+		if(typeof content === "string"&&tempContent.content.length>=2000){
+			content = tempContent.content;
+			let split = content.split("\n");
+			let total = "";
+			for(let i in split){
+				if(total.length+split[i].length>=2000){
+					if(total===""){
+						return msg.channel.createMessage("ERROR: The message is too long to send");
+					}else{
+						msg.channel.createMessage(total);
+						total = split[i];
+					}
+				}else{
+					total += "\n"+split[i];
+				}
+			}
+			if(total!==""){
+				return msg.channel.createMessage(total);
+			}
+		}else if(del)
 			return msg.channel.createMessage(tempContent,file)
 				.then(message => setTimeout(function(){
 					try{message.delete();}catch(e){}

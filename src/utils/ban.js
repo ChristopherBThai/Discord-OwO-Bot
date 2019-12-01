@@ -96,18 +96,3 @@ exports.liftCommand = async function(p,user,command){
 }
 
 
-function checkPermissions(msg,client){
-	if(msg.channel.type!="text")
-		return true;
-	var perm = msg.channel.memberPermissions(client.user);
-	perm = perm.toArray();
-	for(var i=0;i<permissions.length;i++){
-		if(!perm.includes(permissions[i])){
-			msg.channel.send("**🚫 |** I don't have permissions for: `"+permissions[i]+"`!\n**<:blank:427371936482328596> |** Please contact an admin on your server or reinvite me with `owo invite`!")
-				.catch(err => {console.info("I can't send messange in this channel! [ban.js/checkPermissions]")});
-			console.info("Missing permission "+permissions[i]+" for "+msg.channel.id);
-			return false;
-		}
-	}
-	return true;
-}

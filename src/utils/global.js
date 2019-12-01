@@ -158,29 +158,6 @@ exports.unicodeAnimal = function(animal){
 	return (unicode==undefined)?animal:unicode;
 }
 
-/**
- * Checks if user has enough cowoncy
- */
-exports.checkCowoncy = function(msg,cowoncy,callback){
-	if(!msg) return;
-	if(!cowoncy){
-		msg.channel.send("**🚫 | "+msg.author.username+"**, You don't have enough cowoncy!")
-			.then(message => message.delete(3000))
-			.catch(err => console.error(err));
-	}
-	var sql = "SELECT id FROM cowoncy WHERE id = "+msg.author.id+" AND money >= "+cowoncy+";";
-	con.query(sql,function(err,rows,fields){
-		if(err){console.error(err);return;}
-		if(rows[0]==undefined){
-			msg.channel.send("**🚫 | "+msg.author.username+"**, You don't have enough cowoncy!")
-				.then(message => message.delete(3000))
-				.catch(err => console.error(err));
-		}else{
-			callback();
-		}
-	});
-}
-
 exports.toSmallNum = function(count,digits){
 	var result = "";
 	var num = count;

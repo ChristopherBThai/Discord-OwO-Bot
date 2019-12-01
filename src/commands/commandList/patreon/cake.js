@@ -37,7 +37,7 @@ module.exports = new CommandInterface({
 			display(p);
 			p.setCooldown(5);
 		}else{
-			let user = await p.global.getUser(p.args[0]);
+			let user = p.getMention(p.args[0]);
 			if(!user){
 				p.errorMsg(", Invalid syntax! Please tag a user!",3000);
 				p.setCooldown(5);
@@ -46,15 +46,8 @@ module.exports = new CommandInterface({
 				p.errorMsg(", You cannot give cake to yourself!!",3000);
 				p.setCooldown(5);
 				return;
-			}else{
-				user = await p.global.getMember(p.msg.guild,user);
-				if(!user){
-					p.errorMsg(", That user is not in this guild!",3000);
-					p.setCooldown(5);
-					return;
-				}
 			}
-			give(p,user.user);
+			give(p,user);
 		}
 	}
 });

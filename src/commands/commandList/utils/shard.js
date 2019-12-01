@@ -10,7 +10,7 @@ const CommandInterface = require('../../CommandInterface.js');
 const request = require('request');
 const secret = require('../../../../../tokens/wsserver.json');
 const maxDiff = 5000;
-const perPage = 2;
+const perPage = 20;
 const nextPageEmoji = '➡';
 const prevPageEmoji = '⬅';
 

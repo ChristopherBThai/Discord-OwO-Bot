@@ -91,7 +91,7 @@ async function addButterflyText(p,text,ctx,canvas,callback){
 	if(!text){ callback(); return;}
 	ctx.textAlign = "center";
 	if(p.global.isUser(text)){
-		var url = await p.global.getUser(text);
+		var url = await p.fetch.getUser(text);
 		if(!url){  p.send("**🚫 | "+p.msg.author.username+"**, I could not find that user",3000); return;}
 		ctx.font = '20px Impact';
 		writeText(582,210,ctx,url.username,3);
@@ -143,7 +143,7 @@ async function addPersonText(p,text,ctx,canvas,callback){
 	if(!text){ callback(); return;}
 	ctx.textAlign = "center";
 	if(p.global.isUser(text)){
-		var url = await p.global.getUser(text);
+		var url = await p.fetch.getUser(text);
 		if(!url){  p.send("**🚫 | "+p.msg.author.username+"**, I could not find that user",3000); return;}
 		ctx.font = '20px Impact';
 		writeText(270,350,ctx,url.username,3);

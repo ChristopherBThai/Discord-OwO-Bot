@@ -44,7 +44,7 @@ async function generateJson(p,user,opt){
 	if(!avatarURL) avatarURL= user.defaultAvatarURL;
 	avatarURL = avatarURL.replace('.gif','.png').replace(/\?[a-zA-Z0-9=?&]+/gi,'');
 
-	let promises = [getRank(p,user,opt),getBackground(p,user),opt.guild?levels.getUserServerLevel(user.id,p.msg.guild.id):levels.getUserLevel(user.id),getInfo(p,user)]
+	let promises = [getRank(p,user,opt),getBackground(p,user),opt.guild?levels.getUserServerLevel(user.id,p.msg.channel.guild.id):levels.getUserLevel(user.id),getInfo(p,user)]
 	promises = await Promise.all(promises);
 
 	let rank = promises[0];
@@ -80,7 +80,7 @@ async function generateJson(p,user,opt){
 async function getRank(p,user,opt){
 	let rank;
 	if(opt.guild)
-		rank = p.global.toFancyNum(await levels.getUserServerRank(user.id,p.msg.guild.id));
+		rank = p.global.toFancyNum(await levels.getUserServerRank(user.id,p.msg.channel.guild.id));
 	else
 		rank = p.global.toFancyNum(await levels.getUserRank(user.id));
 	if(!rank||rank=="NaN")
