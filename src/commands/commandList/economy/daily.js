@@ -147,7 +147,7 @@ module.exports = new CommandInterface({
 						sql += `UPDATE cowoncy SET money = money + ${totalGain} WHERE id IN (${soID},${p.msg.author.id});`;
 						sql += `UPDATE marriage SET dailies = dailies + 1 WHERE uid1 = ${rows[2][0].uid1} AND uid2 = ${rows[2][0].uid2};`;
 
-						let so = await p.fetch.fetchUser(soID);
+						let so = await p.fetch.getUser(soID);
 						let ring = rings[rows[2][0].rid];
 						text += "\n"+ring.emoji+"** |** You and "+(so?so.username:"your partner")+" received <:cowoncy:416043450337853441> **"+totalGain+" Cowoncy** and a ";
 

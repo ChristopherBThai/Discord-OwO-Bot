@@ -33,7 +33,7 @@ module.exports = new CommandInterface({
 		let perms = p.msg.member.permission;
 		if(p.args.length>=1&&["disable","disabletext","dt"].includes(p.args[0].toLowerCase())){
 			if(perms.has('manageChannels')){
-				let sql = `INSERT INTO guild_setting (id,levelup) VALUES (${p.msg.guild.id},1) ON DUPLICATE KEY UPDATE levelup = 1;`;
+				let sql = `INSERT INTO guild_setting (id,levelup) VALUES (${p.msg.channel.guild.id},1) ON DUPLICATE KEY UPDATE levelup = 1;`;
 				await p.query(sql);
 				await p.replyMsg(settingEmoji,", level up messages will **not** be displayed in this guild.");
 			}else{
@@ -42,7 +42,7 @@ module.exports = new CommandInterface({
 			}
 		}else if(p.args.length>=1&&["enable","enabletext","et"].includes(p.args[0].toLowerCase())){
 			if(perms.has('manageChannels')){
-				let sql = `UPDATE guild_setting SET levelup = 0 WHERE id = ${p.msg.guild.id};`;
+				let sql = `UPDATE guild_setting SET levelup = 0 WHERE id = ${p.msg.channel.guild.id};`;
 				await p.query(sql);
 				await p.replyMsg(settingEmoji,", level up messages will be displayed in this guild.");
 			}else{

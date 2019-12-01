@@ -41,7 +41,7 @@ module.exports = class Quest{
 		var result = await mysql.query(
 			"SELECT * FROM quest WHERE qname = ? AND uid = (SELECT uid FROM user WHERE id = ?);",
 			[questName,id]
-		).catch(console.error);
+		);
 
 		if(!result[0]) return;
 
@@ -100,10 +100,9 @@ async function check(msg,id,username,questName,result,count,extra){
 	}
 
 	/* Query sql */
-	var result = await mysql.query(sql,variables).catch(console.error);
+	var result = await mysql.query(sql,variables);
 	if(result.affectedRows==1&&rewardSql){
-		await mysql.query(rewardSql,rewardVar).then(
-				await msg.channel.send(text).catch(console.error)
-			).catch(console.error);
+		await mysql.query(rewardSql,rewardVar);
+		await msg.channel.createMessage(text);
 	}
 }

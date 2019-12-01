@@ -47,6 +47,7 @@ exports.check = async function(p,command){
 			await redis.hmset(key,ccd);
 		}
 	}catch(e){
+		console.error("cooldown.js check command");
 		console.error(e);
 		return;
 	}finally{

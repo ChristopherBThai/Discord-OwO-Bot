@@ -32,7 +32,7 @@ module.exports = new CommandInterface({
 	execute: async function(p){
 		let user = undefined;
 		if(p.args.length>0){
-			user = p.getMention(p.args[0].match(/[0-9]+/)[0]);
+			user = p.getMention(p.args[0]);
 			if(!user){
 				p.errorMsg(", I could not find that user!",3000);
 				p.setCooldown(5);

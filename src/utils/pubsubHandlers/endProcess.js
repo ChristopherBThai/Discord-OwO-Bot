@@ -12,7 +12,7 @@ exports.handle = async function(main, message){
 		clearTimeout(timer);
 		delete timer;
 	}
-	let time = main.clusterID*5000;
+	let time = main.clusterID*30000;
 	console.log("ending "+main.clusterID+" in "+time+"ms");
 	timer = setTimeout(function(){
 		process.exit(0);

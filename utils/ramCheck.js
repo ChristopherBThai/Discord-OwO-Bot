@@ -13,7 +13,7 @@ const global = require('./global.js');
 /* Interval to check (0.5H) */
 const interval = 3600000/2;
 /* Minimum ram (1.5GB) */
-const resetbyte = 1.5*1024*1024*1024;
+const resetbyte = 2.5*1024*1024*1024;
 
 class RamCheck{
 

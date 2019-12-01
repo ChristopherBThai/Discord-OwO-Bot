@@ -57,20 +57,20 @@ exports.displayWallpaperShop = async function(p){
 
 	let embed = await getWallpaperPage(p,currentPage,totalPages);
 	let msg = await p.send({embed});	
-	let filter = (reaction,user) => (reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&user.id==p.msg.author.id;
-	let collector = await msg.createReactionCollector(filter,{time:180000});
+	let filter = (emoji,userID) => (emoji.name===nextPageEmoji||emoji.name===prevPageEmoji)&&userID==p.msg.author.id;
+	let collector = p.reactionCollector.create(msg,filter,{time:900000,idle:120000});
 
-	await msg.react(prevPageEmoji);
-	await msg.react(nextPageEmoji);
+	await msg.addReaction(prevPageEmoji);
+	await msg.addReaction(nextPageEmoji);
 
-	collector.on('collect', async function(r){
-		if(r.emoji.name===nextPageEmoji) {
+	collector.on('collect', async function(emoji){
+		if(emoji.name===nextPageEmoji) {
 			if(currentPage<totalPages) currentPage++;
 			else currentPage = 1;
 			embed = await getWallpaperPage(p,currentPage,totalPages);
 			await msg.edit({embed});
 		}
-		else if(r.emoji.name===prevPageEmoji){
+		else if(emoji.name===prevPageEmoji){
 			if(currentPage>1) currentPage--;
 			else currentPage = totalPages;
 			embed = await getWallpaperPage(p,currentPage,totalPages);
@@ -81,7 +81,7 @@ exports.displayWallpaperShop = async function(p){
 	collector.on('end',async function(collected){
 		embed = await getWallpaperPage(p,currentPage,totalPages);
 		embed.color = 6381923;
-		await msg.edit("This message is now inactive",{embed});
+		await msg.edit({content:"This message is now inactive",embed});
 	});
 }
 

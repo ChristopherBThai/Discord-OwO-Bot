@@ -33,21 +33,21 @@ exports.help = async function(p,page=0){
 	let msg = await p.send({embed});
 
 	/* Add a reaction collector to update the pages */
-	await msg.react(prevPageEmoji);
-	await msg.react(nextPageEmoji);
-	let filter = (reaction,user) => (reaction.emoji.name===nextPageEmoji||reaction.emoji.name===prevPageEmoji)&&user.id===p.msg.author.id;
-	let collector = await msg.createReactionCollector(filter,{time:60000});
+	await msg.addReaction(prevPageEmoji);
+	await msg.addReaction(nextPageEmoji);
+	let filter = (emoji,userID) => (emoji.name===nextPageEmoji||emoji.name===prevPageEmoji)&&userID===p.msg.author.id;
+	let collector = p.reactionCollector.create(msg,filter,{time:900000,idle:120000});
 
 	/* Flip the page if reaction is pressed */
-	collector.on('collect', async function(r){
+	collector.on('collect', async function(emoji){
 		/* Save the animal's action */
-		if(r.emoji.name===nextPageEmoji&&page+1<pages.length) {
+		if(emoji.name===nextPageEmoji&&page+1<pages.length) {
 			page++;
 			embed.image.url = pages[page];
 			embed.footer.text = "page "+(page+1)+"/"+(pages.length);
 			await msg.edit({embed});
 		}
-		if(r.emoji.name===prevPageEmoji&&page>0){
+		if(emoji.name===prevPageEmoji&&page>0){
 			page--;
 			embed.image.url = pages[page];
 			embed.footer.text = "page "+(page+1)+"/"+(pages.length);
@@ -57,6 +57,6 @@ exports.help = async function(p,page=0){
 
 	collector.on('end',async function(collected){
 		embed.color = 6381923;
-		await msg.edit("This message is now inactive",{embed});
+		await msg.edit({content:"This message is now inactive",embed});
 	});
 }

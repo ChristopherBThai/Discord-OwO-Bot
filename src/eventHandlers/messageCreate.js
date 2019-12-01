@@ -16,7 +16,7 @@ exports.handle = function(msg){
 	if(msg.author.bot) return;
 
 	/* Ignore guilds if in debug mode */
-	else if(this.debug&&msg.guild&&!whitelist.includes(msg.guild.id)) return;
+	//else if(this.debug&&msg.channel.guild&&!whitelist.includes(msg.channel.guild.id)) return;
 
 	else if(modChannel.includes(msg.channel.id)) this.command.executeMod(msg);
 
