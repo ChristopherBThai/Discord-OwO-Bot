@@ -34,9 +34,12 @@ module.exports = new CommandInterface({
 		if(p.args.length>0){
 			user = p.getMention(p.args[0]);
 			if(!user){
-				p.errorMsg(", I could not find that user!",3000);
-				p.setCooldown(5);
-				return;
+				user = await p.fetch.getMember(p.msg.channel.guild,p.args[0]);
+				if(!user){
+					p.errorMsg(", I could not find that user!",3000);
+					p.setCooldown(5);
+					return;
+				}
 			}
 		}
 		if(user&&user.id == p.msg.author.id)
@@ -90,16 +93,15 @@ module.exports = new CommandInterface({
 			sql += "INSERT INTO luck (id,lcount) VALUES ("+user.id+","+opponentPoints+") ON DUPLICATE KEY UPDATE lcount = lcount "+((opponentPoints>0)?"+"+opponentPoints:opponentPoints)+";";
 			sql += "INSERT IGNORE INTO user_pray (sender,receiver,count,latest) VALUES ("+p.msg.author.id+","+user.id+",1,NOW()) ON DUPLICATE KEY UPDATE count = count + 1, latest = NOW();";
 		}
-		p.con.query(sql,function(err,result){
-			if(err) {console.error(err);return;}
-			text += "\n**<:blank:427371936482328596> |** You have **"+(result[1][0].lcount)+"** luck point(s)!";
-			p.send(text);
-			if(user&&quest) p.quest(quest,1,user);
-			if(opponentPoints&&user)
-				p.logger.value(p.command,1,['guild:'+p.msg.channel.guild.id,'channel:'+p.msg.channel.id,'to:'+user.id,'from:'+p.msg.author.id]);
-			else
-				p.logger.value(p.command,1,['guild:'+p.msg.channel.guild.id,'channel:'+p.msg.channel.id,'to:'+p.msg.author.id,'from:'+p.msg.author.id]);
-		});
+
+		let result = await p.query(sql);
+		text += "\n**<:blank:427371936482328596> |** You have **"+(result[1][0].lcount)+"** luck point(s)!";
+		p.send(text);
+		if(user&&quest) p.quest(quest,1,user);
+		if(opponentPoints&&user)
+			p.logger.value(p.command,1,['guild:'+p.msg.channel.guild.id,'channel:'+p.msg.channel.id,'to:'+user.id,'from:'+p.msg.author.id]);
+		else
+			p.logger.value(p.command,1,['guild:'+p.msg.channel.guild.id,'channel:'+p.msg.channel.id,'to:'+p.msg.author.id,'from:'+p.msg.author.id]);
 	}
 
 })
