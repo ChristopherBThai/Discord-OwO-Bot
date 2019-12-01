@@ -94,7 +94,7 @@ module.exports = new CommandInterface({
 			sql += "INSERT IGNORE INTO user_pray (sender,receiver,count,latest) VALUES ("+p.msg.author.id+","+user.id+",1,NOW()) ON DUPLICATE KEY UPDATE count = count + 1, latest = NOW();";
 		}
 
-		let result = await p.query(sql);
+		result = await p.query(sql);
 		text += "\n**<:blank:427371936482328596> |** You have **"+(result[1][0].lcount)+"** luck point(s)!";
 		p.send(text);
 		if(user&&quest) p.quest(quest,1,user);

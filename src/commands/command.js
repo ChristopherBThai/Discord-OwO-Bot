@@ -120,8 +120,6 @@ function initCommands(){
 		if(alias){
 			for(let i=0;i<alias.length;i++){
 				commands[alias[i]] = command;
-				if(command.admin) adminCommands[alias[i]] = command;
-				if(command.mod) modCommands[alias[i]] = command;
 				if(command.distinctAlias){
 					aliasToCommand[alias[i]] = alias[i];
 					mcommands[alias[i]] = {botcheck:command.bot,cd:command.cooldown,ban:12,half:command.half,six:command.six};
@@ -132,13 +130,33 @@ function initCommands(){
 		if(!command.distinctAlias)
 			mcommands[name] = {botcheck:command.bot,cd:command.cooldown,ban:12,half:command.half,six:command.six};
 	}
+
+	let addAdminCommand = function(command){
+		let alias = command.alias;
+		let name = alias[0];
+		if(alias){
+			for(let i=0;i<alias.length;i++){
+				adminCommands[alias[i]] = command;
+				if(command.mod) modCommands[alias[i]] = command;
+			}
+		}
+	}
 	for(var key in dir){
-		if(dir[key] instanceof CommandInterface)
-			addCommand(dir[key]);
-		else
-			for(var key2 in dir[key])
-				if(dir[key][key2] instanceof CommandInterface)
-					addCommand(dir[key][key2]);
+		if(dir[key] instanceof CommandInterface){
+			if(dir[key].admin||dir[key].mod)
+				addAdminCommand(dir[key]);
+			else
+				addCommand(dir[key]);
+		}else{
+			for(var key2 in dir[key]){
+				if(dir[key][key2] instanceof CommandInterface){
+					if(dir[key][key2].admin||dir[key][key2].mod)
+						addAdminCommand(dir[key][key2]);
+					else
+						addCommand(dir[key][key2]);
+				}
+			}
+		}
 	}
 }
 

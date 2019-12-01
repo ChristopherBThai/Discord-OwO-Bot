@@ -104,7 +104,7 @@ function shippig(text,type){
 				.replace("BEEP BOOP. I AM BACK WITH","Roo kidnapped")
 				.replace("ANIMALS","animals")
 				.replace("ESSENCE, AND","essence, and")
-				.replace("EXPERIENCE","exprerience!");
+				.replace("EXPERIENCE","experience!");
 		default:
 			return text;
 	}
@@ -192,7 +192,7 @@ function elsa(text,type){
 				.replace("BEEP BOOP. I AM BACK WITH","Mistress, I have returned with")
 				.replace("ANIMALS","knights")
 				.replace("ESSENCE, AND","essence, and")
-				.replace("EXPERIENCE","exprerience");
+				.replace("EXPERIENCE","experience");
 		default:
 			return text;
 	}
