@@ -18,7 +18,7 @@ const dbl = new DBL(auth.dbl);
 class OwO extends Base{
 	constructor(bot){
 		super(bot);
-		this.debug = false;
+		this.debug = true;
 		this.auth = auth;
 		this.dbl = dbl;
 
