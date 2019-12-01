@@ -95,7 +95,7 @@ async function addButterflyText(p,text,ctx,canvas,callback){
 		if(!url){  p.send("**🚫 | "+p.msg.author.username+"**, I could not find that user",3000); return;}
 		ctx.font = '20px Impact';
 		writeText(582,210,ctx,url.username,3);
-		url = url.avatarURL({format:'png'});
+		url = url.avatarURL;
 		if(!url){  p.send("**🚫 | "+p.msg.author.username+"**, I could not find that user",3000); return;}
 		try{
 			await request.get(url,callbackImage(p,ctx,537,75,90,callback));
@@ -147,7 +147,7 @@ async function addPersonText(p,text,ctx,canvas,callback){
 		if(!url){  p.send("**🚫 | "+p.msg.author.username+"**, I could not find that user",3000); return;}
 		ctx.font = '20px Impact';
 		writeText(270,350,ctx,url.username,3);
-		url = url.avatarURL({format:'png'});
+		url = url.avatarURL;
 		if(!url){  p.send("**🚫 | "+p.msg.author.username+"**, I could not find that user",3000); return;}
 		try{
 			await request.get(url,callbackImage(p,ctx,195,170,150,callback));

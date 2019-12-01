@@ -104,7 +104,7 @@ module.exports = new CommandInterface({
 			}
 		}
 
-		if(!colors&&(!color||color.r>255||color.g>255||color.b>255||!/[0-9,A-F]{6}/g.test(color.hex))){
+		if((!colors||colors.length==0)&&(!color||color.r>255||color.g>255||color.b>255||!/[0-9,A-F]{6}/g.test(color.hex))){
 			p.errorMsg(", that's an invalid color!",3000);
 			return;
 		}
