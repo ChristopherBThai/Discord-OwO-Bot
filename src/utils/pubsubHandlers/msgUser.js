@@ -6,6 +6,7 @@
   */
 
 exports.handle = async function(main, message){
+	if(main.debug) return;
 	let {clusterID,userID,msg} = JSON.parse(message);
 	if(clusterID!=main.clusterID) return;
 	main.sender.msgUser(userID,msg);

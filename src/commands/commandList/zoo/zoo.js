@@ -133,8 +133,11 @@ module.exports = new CommandInterface({
 				footer += "\n**Zoo Points: __"+(p.global.toFancyNum(total))+"__**\n\t**";
 				footer += animalUtil.zooScore(count)+"**";
 			}
+			p.send(header+text+footer);
+			/*
 			let pages = toPages(text);
 			sendPages(p,pages,header,footer);
+			*/
 		});
 	}
 
