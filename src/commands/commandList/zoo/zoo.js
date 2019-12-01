@@ -26,11 +26,11 @@ module.exports = new CommandInterface({
 
 	alias:["zoo"],
 
-	args:"{display}",
+	args:"{display|list}",
 
 	desc:"Displays your zoo! Some animals are rarer than others! Use the 'display' args to display all your animals from your history!",
 
-	example:["owo zoo","owo zoo display"],
+	example:["owo zoo","owo zoo display","owo zoo list"],
 
 	related:["owo hunt","owo sell"],
 
@@ -43,7 +43,7 @@ module.exports = new CommandInterface({
 	execute: function(p){
 		let con=p.con,msg=p.msg,global=p.global;
 		let sql = "SELECT count,name FROM animal WHERE id = "+msg.author.id+";";
-		if(p.args[0]&&p.args[0].toLowerCase()=="display"){
+		if(p.args && p.args.find(arg => arg.toLowerCase()=="display")){
 			sql = "SELECT (totalcount) as count,name FROM animal WHERE id = "+msg.author.id+";";
 			sql += "SELECT common,uncommon,rare,epic,mythical,gem,legendary,fabled,patreon,cpatreon,hidden,special,MAX(totalcount) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
 		}else{
@@ -51,109 +51,183 @@ module.exports = new CommandInterface({
 		}
 		con.query(sql,function(err,result){
 			if(err){console.error(err);return;}
-			let header = "🌿 🌱 🌳** "+msg.author.username+"'s zoo! **🌳 🌿 🌱\n";
-			let text = display;
-			var additional0 = "";
-			var additional = "";
-			var additional2 = "";
-			var additional3 = "";
-			var additional4 = "";
-			var additional5 = "";
-			var additional6 = "";
 			var row = result[0];
 			var count = result[1][0];
-			var cpatreonCount = 0;
-			var specialCount = 0;
-			var digits= 2;
-			if(count!=undefined)
-				digits= Math.trunc(Math.log10(count.biggest)+1);
-			for(var i=0;i<row.length;i++){
-				text = text.replace("~"+row[i].name,global.unicodeAnimal(row[i].name)+toSmallNum(row[i].count,digits));
-				if(animals.patreon.indexOf(row[i].name)>0){
-					if(additional0=="") additional0 = patreon;
-					additional0 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
-				}
-				else if(animals.cpatreon.indexOf(row[i].name)>0){
-					if(additional4=="") additional4 = cpatreon;
-					if(cpatreonCount>=5){
-						cpatreonCount = 0;
-						additional4 += "\n<:blank:427371936482328596>    ";
+			if(p.args[0]&&p.args[0].toLowerCase()=="list"){
+				let header = "🌿 🌱 🌳** "+msg.author.username+"'s zoo! **🌳 🌿 🌱\n";
+				let pages = [];
+				// construct pages
+				for (var rank in animals.ranks) {
+					// construct pages, one row of 5 at a time
+					if (rank === 'cpatreon' || rank === 'special') {
+						// possibly multiple pages per rank
+						let pets = animals[rank].filter(animal => row.map(r => r.name).includes(animal));
+
+						let rankPages = [];
+						let rankPageSize = 5;
+						for (var i = 0; i < pets.length; i += rankPageSize) {
+							rankPages.push(pets.slice(i, i + rankPageSize));
+						}
+						rankPages.forEach(page => {
+							let text = '';
+							page.forEach(emoji => {
+								let result = row.find(r => r.name === emoji);
+								let animalKey = Object.keys(animals.list).find(key => animals.list[key].value === emoji);
+								 text += `\r\n${global.unicodeAnimal(emoji)} Name: \`${animalKey}\`, Count: \`${result.count}\``;
+							});
+							if (page.length < rankPageSize) {
+								for (var i = page.length; i < rankPageSize; i++) {
+									text += `\r\n${animals.question} Name: \`?????\`, Count: \`0\``;
+								}
+							}
+							text = animals.ranks[rank] + ' ' + rank + text;
+							pages.push(text);
+						});
 					}
-					additional4 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
-					cpatreonCount++;
-				}
-				else if(animals.gem.indexOf(row[i].name)>0){
-					if(additional6=="") additional6 = secret5;
-					additional6 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
-				}
-				else if(animals.legendary.indexOf(row[i].name)>0){
-					if(additional=="") additional = secret;
-					additional += row[i].name+toSmallNum(row[i].count,digits)+"  ";
-				}
-				else if(animals.fabled.indexOf(row[i].name)>0){
-					if(additional2=="") additional2 = secret2;
-					additional2 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
-				}
-				else if(animals.special.indexOf(row[i].name)>0){
-					if(additional3=="") additional3 = secret3;
-					if(specialCount>=5){
-						specialCount=0;
-						additional3 += "\n<:blank:427371936482328596>    ";
+					else {
+						let text = '';
+						let addPage = false;
+						// one page per rank
+						for (var i = 1; i < animals[rank].length; i++) {
+							let emoji = animals[rank][i];
+							let result = row.find(r => r.name === emoji);
+							// see if they has a pet in this tier
+							if (result) {
+								addPage = true;
+								 let animalKey = Object.keys(animals.list).find(key => animals.list[key].value === emoji);
+								 text += `\r\n${global.unicodeAnimal(emoji)} Name: \`${animalKey}\`, Count: \`${result.count}\``;
+							}
+							else {
+								text += `\r\n${animals.question} Name: \`?????\`, Count: \`0\``;
+							}
+						}
+						if (addPage) {
+							text = animals.ranks[rank] + ' ' + rank + text;
+							pages.push(text);
+						}
 					}
-					additional3 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
-					specialCount++;
 				}
-				else if(animals.hidden.indexOf(row[i].name)>0){
-					if(additional5=="") additional5 = secret4;
-					additional5 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
+				let footer = "";
+				if(count!=undefined){
+					var total = count.common*animals.points.common+
+						count.uncommon*animals.points.uncommon+
+						count.rare*animals.points.rare+
+						count.epic*animals.points.epic+
+						count.mythical*animals.points.mythical+
+						count.patreon*animals.points.patreon+
+						count.cpatreon*animals.points.cpatreon+
+						count.special*animals.points.special+
+						count.gem*animals.points.gem+
+						count.legendary*animals.points.legendary+
+						count.fabled*animals.points.fabled+
+						count.hidden*animals.points.hidden;
+					footer += "\n**Zoo Points: __"+(p.global.toFancyNum(total))+"__**\n\t**";
+					footer += animalUtil.zooScore(count)+"**";
 				}
+				sendPages(p,pages,header,footer);
 			}
-			text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question+toSmallNum(0,digits));
-			text += additional0;
-			text += additional4;
-			text += additional;
-			text += additional6;
-			text += additional2;
-			text += additional3;
-			text += additional5;
-			let footer = "";
-			if(count!=undefined){
-				var total = count.common*animals.points.common+
-					count.uncommon*animals.points.uncommon+
-					count.rare*animals.points.rare+
-					count.epic*animals.points.epic+
-					count.mythical*animals.points.mythical+
-					count.patreon*animals.points.patreon+
-					count.cpatreon*animals.points.cpatreon+
-					count.special*animals.points.special+
-					count.gem*animals.points.gem+
-					count.legendary*animals.points.legendary+
-					count.fabled*animals.points.fabled+
-					count.hidden*animals.points.hidden;
-				footer += "\n**Zoo Points: __"+(p.global.toFancyNum(total))+"__**\n\t**";
-				footer += animalUtil.zooScore(count)+"**";
+			else {
+				let header = "🌿 🌱 🌳** "+msg.author.username+"'s zoo! **🌳 🌿 🌱\n";
+				let text = display;
+				var additional0 = "";
+				var additional = "";
+				var additional2 = "";
+				var additional3 = "";
+				var additional4 = "";
+				var additional5 = "";
+				var additional6 = "";
+				var cpatreonCount = 0;
+				var specialCount = 0;
+				var digits= 2;
+				if(count!=undefined)
+					digits= Math.trunc(Math.log10(count.biggest)+1);
+				for(var i=0;i<row.length;i++){
+					text = text.replace("~"+row[i].name,global.unicodeAnimal(row[i].name)+toSmallNum(row[i].count,digits));
+					if(animals.patreon.indexOf(row[i].name)>0){
+						if(additional0=="") additional0 = patreon;
+						additional0 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
+					}
+					else if(animals.cpatreon.indexOf(row[i].name)>0){
+						if(additional4=="") additional4 = cpatreon;
+						if(cpatreonCount>=5){
+							cpatreonCount = 0;
+							additional4 += "\n<:blank:427371936482328596>    ";
+						}
+						additional4 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
+						cpatreonCount++;
+					}
+					else if(animals.gem.indexOf(row[i].name)>0){
+						if(additional6=="") additional6 = secret5;
+						additional6 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
+					}
+					else if(animals.legendary.indexOf(row[i].name)>0){
+						if(additional=="") additional = secret;
+						additional += row[i].name+toSmallNum(row[i].count,digits)+"  ";
+					}
+					else if(animals.fabled.indexOf(row[i].name)>0){
+						if(additional2=="") additional2 = secret2;
+						additional2 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
+					}
+					else if(animals.special.indexOf(row[i].name)>0){
+						if(additional3=="") additional3 = secret3;
+						if(specialCount>=5){
+							specialCount=0;
+							additional3 += "\n<:blank:427371936482328596>    ";
+						}
+						additional3 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
+						specialCount++;
+					}
+					else if(animals.hidden.indexOf(row[i].name)>0){
+						if(additional5=="") additional5 = secret4;
+						additional5 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
+					}
+				}
+				text = text.replace(/~:[a-zA-Z_0-9]+:/g,animals.question+toSmallNum(0,digits));
+				text += additional0;
+				text += additional4;
+				text += additional;
+				text += additional6;
+				text += additional2;
+				text += additional3;
+				text += additional5;
+				let footer = "";
+				if(count!=undefined){
+					var total = count.common*animals.points.common+
+						count.uncommon*animals.points.uncommon+
+						count.rare*animals.points.rare+
+						count.epic*animals.points.epic+
+						count.mythical*animals.points.mythical+
+						count.patreon*animals.points.patreon+
+						count.cpatreon*animals.points.cpatreon+
+						count.special*animals.points.special+
+						count.gem*animals.points.gem+
+						count.legendary*animals.points.legendary+
+						count.fabled*animals.points.fabled+
+						count.hidden*animals.points.hidden;
+					footer += "\n**Zoo Points: __"+(p.global.toFancyNum(total))+"__**\n\t**";
+					footer += animalUtil.zooScore(count)+"**";
+				}
+				
+				let pages = toPages(text);
+				sendPages(p,pages,header,footer);
+				
 			}
-			p.send(header+text+footer);
-			/*
-			let pages = toPages(text);
-			sendPages(p,pages,header,footer);
-			*/
 		});
 	}
 
 })
 
 function toPages(text){
-	text = text.split("\n");
+	text = text.split("\r\n");
 	let pages = [];
 	let page = "";
 	const max = 1600;
 	for(let i in text){
 		if(page.length+text[i].length>=max){
-			pages.push(page+"\n"+text[i]);
+			pages.push(page+"\r\n"+text[i]);
 			page = "";
 		}else{
-			page += "\n"+text[i];
+			page += "\r\n"+text[i];
 		}
 	}
 	if(page!="") pages.push(page);
@@ -230,23 +304,23 @@ function initDisplay(){
 	display = animals.ranks.common+"   ";
 	for (i=1;i<animals.common.length;i++)
 		display += "~"+animals.common[i]+gap;
-	display += "\n"+animals.ranks.uncommon+"   ";
+	display += "\r\n"+animals.ranks.uncommon+"   ";
 	for (i=1;i<animals.uncommon.length;i++)
 		display += "~"+animals.uncommon[i]+gap;
-	display += "\n"+animals.ranks.rare+"   ";
+	display += "\r\n"+animals.ranks.rare+"   ";
 	for (i=1;i<animals.rare.length;i++)
 		display += "~"+animals.rare[i]+gap;
-	display += "\n"+animals.ranks.epic+"   ";
+	display += "\r\n"+animals.ranks.epic+"   ";
 	for (i=1;i<animals.epic.length;i++)
 		display += "~"+animals.epic[i]+gap;
-	display += "\n"+animals.ranks.mythical+"   ";
+	display += "\r\n"+animals.ranks.mythical+"   ";
 	for (i=1;i<animals.mythical.length;i++)
 		display += "~"+animals.mythical[i]+gap;
-	patreon = "\n"+animals.ranks.patreon+"    ";
-	cpatreon = "\n"+animals.ranks.cpatreon+"    ";
-	secret = "\n"+animals.ranks.legendary+"    ";
-	secret2 = "\n"+animals.ranks.fabled+"    ";
-	secret3 = "\n"+animals.ranks.special+"    ";
-	secret4 = "\n"+animals.ranks.hidden+"    ";
-	secret5 = "\n"+animals.ranks.gem+"    ";
+	patreon = "\r\n"+animals.ranks.patreon+"    ";
+	cpatreon = "\r\n"+animals.ranks.cpatreon+"    ";
+	secret = "\r\n"+animals.ranks.legendary+"    ";
+	secret2 = "\r\n"+animals.ranks.fabled+"    ";
+	secret3 = "\r\n"+animals.ranks.special+"    ";
+	secret4 = "\r\n"+animals.ranks.hidden+"    ";
+	secret5 = "\r\n"+animals.ranks.gem+"    ";
 }
