@@ -57,6 +57,7 @@ exports.check = async function(p,command){
 
 	// Everything was a success, lets check for macro/botting
 	if(now){
+		if(command == "points") return true;
 		let valid = !!await macro.check(p,command,{diff,now});
 		return valid;
 	}
