@@ -32,7 +32,9 @@ module.exports = new CommandInterface({
 	bot:true,
 
 	execute: function(p){
-		pool.exec('compute',[p.args.join(" ")])
+		// quick and dirty fix for function calls and tags
+		let expression = p.args.join(" ").replace(/\.(?=[a-zA-Z_]+\()/gm, '\\.').replace(/@/gm, '\\@');
+		pool.exec('compute',[expression])
 			.timeout(3000)
 			.then(function(result){
 				if(result.mathjs){
