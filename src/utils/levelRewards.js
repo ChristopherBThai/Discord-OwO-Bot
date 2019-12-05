@@ -95,9 +95,8 @@ function getReward(lvl){
 async function generateImage(msg,reward){
 	let background = await getBackground(msg.author);
 
-	let avatarURL = msg.author.avatarURL
-	if(!avatarURL) avatarURL= msg.author.defaultAvatarURL;
-	avatarURL = avatarURL.replace('.gif','.png').replace(/\?[a-zA-Z0-9=?&]+/gi,'');
+	let avatarURL = msg.author.dynamicAvatarURL("png");
+	avatarURL = avatarURL.replace(/\?[a-zA-Z0-9=?&]+/gi,'');
 
 	let info = {
 		theme:{
