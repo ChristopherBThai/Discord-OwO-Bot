@@ -37,10 +37,14 @@ module.exports = new CommandInterface({
 		}else{
 			let user = p.getMention(p.args[0]);
 			if(!user){
-				p.errorMsg(", Invalid syntax! Please tag a user!",3000);
-				p.setCooldown(5);
-				return;
-			}else if(user.id==p.msg.author.id){
+				user = await p.fetch.getMember(p.msg.channel.guild,p.args[0]);
+				if(!user){
+					p.errorMsg(", Invalid syntax! Please tag a user!",3000);
+					p.setCooldown(5);
+					return;
+				}
+			}
+			if(user.id==p.msg.author.id){
 				p.errorMsg(", You cannot give ice cream to yourself!!",3000);
 				p.setCooldown(5);
 				return;
