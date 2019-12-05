@@ -16,19 +16,26 @@ var modLogChannel = "471579186059018241";
  */
 exports.send = function(msg){
 	return function(content,del,file,opt){
-		if(typeof content === "string"&&content.length>=2000){
-			let split = content.split("\n");
-			let total = "";
-			for(let i in split){
-				if(total.length+split[i].length>=2000){
+		let maxLength = 2000;
+		if(typeof content === "string"&&content.length>=maxLength){
+			let prepend = '';
+			let append = '';
+			if (opt && opt.split) {
+				prepend = opt.split.prepend ? opt.split.prepend : '';
+				append = opt.split.append ? opt.split.append : '';
+			}
+			let fragments = content.split("\n");
+			let total = content.startsWith(prepend) ? '' : prepend;
+			for(let i in fragments){
+				if(total.length+fragments[i].length+append.length>=maxLength){
 					if(total===""){
 						return msg.channel.createMessage("ERROR: The message is too long to send");
 					}else{
-						msg.channel.createMessage(total);
-						total = split[i];
+						msg.channel.createMessage(total.endsWith(append) ? total : total + append);
+						total = prepend + fragments[i];
 					}
 				}else{
-					total += "\n"+split[i];
+					total += "\n"+fragments[i];
 				}
 			}
 			if(total!==""){
