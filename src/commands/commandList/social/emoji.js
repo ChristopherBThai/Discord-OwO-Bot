@@ -253,6 +253,6 @@ async function unsetServer(p){
 
 async function addEmoji(p,guild,name,url,loc,buffer){
 	if(!buffer) buffer = await p.DataResolver.urlToBufferString(url);
-	await p.client.createGuildEmoji(guild,{name,image:buffer},"Requested by "+p.msg.author.username+"#"+p.msg.author.discriminator);
+	await p.client.createGuildEmoji(guild,{name,image:buffer},"Requested by "+p.msg.author.id);
 	return {buffer,loc};
 }
