@@ -17,6 +17,8 @@ var modLogChannel = "471579186059018241";
 exports.send = function(msg){
 	return function(content,del,file,opt){
 		let maxLength = 2000;
+		let maxSends = 10;
+		let sendCount = 0;
 		if(typeof content === "string"&&content.length>=maxLength){
 			let prepend = '';
 			let append = '';
@@ -27,12 +29,15 @@ exports.send = function(msg){
 			let fragments = content.split("\n");
 			let total = content.startsWith(prepend) ? '' : prepend;
 			for(let i in fragments){
-				if(total.length+fragments[i].length+append.length>=maxLength){
+				if(sendCount>=maxSends){
+					// Do not send more than 10 messages
+				}else if(total.length+fragments[i].length+append.length>=maxLength){
 					if(total===""){
 						return msg.channel.createMessage("ERROR: The message is too long to send");
 					}else{
 						msg.channel.createMessage(total.endsWith(append) ? total : total + append);
 						total = prepend + fragments[i];
+						sendCount++;
 					}
 				}else{
 					total += "\n"+fragments[i];
