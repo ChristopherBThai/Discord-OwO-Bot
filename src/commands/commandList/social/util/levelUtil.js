@@ -40,9 +40,8 @@ exports.display = async function(p,user,opt){
 }
 
 async function generateJson(p,user,opt){
-	let avatarURL = user.avatarURL
-	if(!avatarURL) avatarURL= user.defaultAvatarURL;
-	avatarURL = avatarURL.replace('.gif','.png').replace(/\?[a-zA-Z0-9=?&]+/gi,'');
+	let avatarURL = user.dynamicAvatarURL("png");
+	avatarURL = avatarURL.replace(/\?[a-zA-Z0-9=?&]+/gi,'');
 
 	let promises = [getRank(p,user,opt),getBackground(p,user),opt.guild?levels.getUserServerLevel(user.id,p.msg.channel.guild.id):levels.getUserLevel(user.id),getInfo(p,user)]
 	promises = await Promise.all(promises);
