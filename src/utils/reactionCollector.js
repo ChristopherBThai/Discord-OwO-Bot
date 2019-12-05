@@ -47,6 +47,7 @@ class ReactionEventEmitter extends EventEmitter{
 	collect(emoji, userID, type){
 		if(!this.checkFilter(emoji,userID)) return;
 		if(this.ended) return;
+
 		this.emit('collect',emoji,userID,type);
 
 		if(this.idleTimeout){

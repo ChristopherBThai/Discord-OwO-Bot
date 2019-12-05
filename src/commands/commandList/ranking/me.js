@@ -529,9 +529,7 @@ async function getLevelRanking(global,p){
 			let tempLevel = await levels.getLevel(ranking[i]);
 			text += "\t\tLvl "+tempLevel.level+" "+tempLevel.currentxp+"xp\n";
 		}else{
-			counter++;
 			if(ranking[i]==p.msg.author.id){
-				counter = userRank;
 				let user = p.msg.author.username;
 				text += "< "+counter+"\t"+user+" >\n";
 			}else{
@@ -540,6 +538,7 @@ async function getLevelRanking(global,p){
 				else user = user.username;
 				text += "#"+counter+"\t"+user+"\n";
 			}
+			counter++;
 		}
 	}
 	let date = new Date();
