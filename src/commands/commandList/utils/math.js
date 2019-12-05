@@ -49,11 +49,11 @@ module.exports = new CommandInterface({
 					if(result.length>1000)
 						p.replyMsg(mathEmoji,", the answer is: **"+result.substr(0,1000).replace(/@/gm, '\\@')+"**...");
 					else
-						p.replyMsg(mathEmoji,", the answer is: **"+result.replace(/@/gm, '\\@')+"**");
+						p.replyMsg(mathEmoji,(", the answer is: **"+result+"**").replace(/@/gm, '\\@'));
 				}else if(typeof result == 'object')
 					p.replyMsg(mathEmoji,", the answer is: **"+JSON.stringify(result).replace(/@/gm, '\\@')+"**");
 				else
-					p.replyMsg(mathEmoji,", the answer is: **"+result.replace(/@/gm, '\\@')+"**");
+					p.replyMsg(mathEmoji,(", the answer is: **"+result+"**").replace(/@/gm, '\\@'));
 			}).catch(function(err){
 				if(err.message=='Promise timed out after 1000 ms')
 					p.errorMsg(", that equation is too difficult for me... :c",3000);
