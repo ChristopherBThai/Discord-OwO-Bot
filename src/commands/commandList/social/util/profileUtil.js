@@ -44,9 +44,8 @@ var display = exports.display = async function(p,user){
 }
 
 async function generateJson(p,user){
-	let avatarURL = user.avatarURL
-	if(!avatarURL) avatarURL= user.defaultAvatarURL;
-	avatarURL = avatarURL.replace('.gif','.png').replace(/\?[a-zA-Z0-9=?&]+/gi,'');
+	let avatarURL = user.dynamicAvatarURL("png");
+	avatarURL = avatarURL.replace(/\?[a-zA-Z0-9=?&]+/gi,'');
 
 	let promises = [getMarriage(p,user),getRank(p,user),getCookie(p,user),getTeam(p,user),getBackground(p,user),levels.getUserLevel(user.id),getInfo(p,user)]
 	promises = await Promise.all(promises);
