@@ -10,6 +10,7 @@ const CommandInterface = require('../../CommandInterface.js');
 const nextPageEmoji = '➡';
 const prevPageEmoji = '⬅';
 const animalUtil = require('./animalUtil.js');
+const alterZoo = require('../patreon/alterZoo.js');
 var animals = require('../../../../../tokens/owo-animals.json');
 var patreon = "";
 var cpatreon = "";
@@ -133,7 +134,9 @@ module.exports = new CommandInterface({
 				footer += "\n**Zoo Points: __"+(p.global.toFancyNum(total))+"__**\n\t**";
 				footer += animalUtil.zooScore(count)+"**";
 			}
-			p.send(header+text+footer);
+			let zooText = header+text+footer;
+			zooText = alterZoo.alter(p.msg.author.id,zooText);
+			p.send(zooText);
 			/*
 			let pages = toPages(text);
 			sendPages(p,pages,header,footer);

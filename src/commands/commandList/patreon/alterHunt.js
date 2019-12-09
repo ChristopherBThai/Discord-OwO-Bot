@@ -33,6 +33,8 @@ exports.alter = function(id,text){
 			return pheonix(text);
 		case '192692796841263104':
 			return dalu(text);
+		case '336611676604596227':
+			return blacky(text);
 		default:
 			return text;
 	}
@@ -212,7 +214,7 @@ function michelle(text){
 			.replace("\n<:blank","\n"+blank+" **|** and evolved into a Persian "+persian+"\n<:blank");
 	}else{
 		text = text.replace(huntEmoji,meowth)
-			.replace(/[\s\[\]a-zA-z0-9!?]+\*\*\sspent/gi,"Meowth** went out andspent")
+			.replace(/[\s\[\]a-zA-z0-9!?]+\*\*\sspent/gi," Meowth** went out andspent")
 			.replace("spent 5 <:cowoncy:416043450337853441> and","")
 			.replace("!\n<:blank","!\n"+blank+" **|** It returned and evolved into a Persian "+persian+"\n<:blank")
 	}
@@ -261,6 +263,24 @@ function dalu(text){
 		"color":63996,
 		"thumbnail":{
 			"url":"https://i.imgur.com/sa5IZRo.gif"
+		}
+	};
+	return {embed};
+}
+
+function blacky(text){
+	text = text.replace(huntEmoji,"<a:running:653370372997120010>");
+	if(text.indexOf("empowered by")>=0){
+		text = text.replace(", hunt is empowered by","'s umbreon is empowered by\n"+blank+" **|**")
+			.replace("You found","and found");
+	}else{
+		text = text.replace(" spent 5 <:cowoncy:416043450337853441> and caught a **",", your umbreon went out for a walk\n"+blank+" **|** and came back with an **amazing ");
+	}
+	let embed = {
+		"description":text,
+		"color":1,
+		"thumbnail":{
+			"url":"https://cdn.discordapp.com/emojis/648999664963551284.gif"
 		}
 	};
 	return {embed};
