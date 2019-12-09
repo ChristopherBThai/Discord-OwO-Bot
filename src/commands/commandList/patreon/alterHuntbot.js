@@ -8,6 +8,7 @@
 const blank = '<:blank:427371936482328596>';
 
 exports.alter = function(id,text,type){
+	return dalu(text,type);
 	switch(id){
 		case '111619509529387008':
 			return lexus(text,type);
@@ -208,7 +209,7 @@ function dalu(text,type){
 		case 'hb':
 			text.fields[0].name = foxbot+' `Hai Hai Master. I am KitsuneBot. Ready to find more food for you!`';
 			text.fields[0].value = blank;
-			text.author.name = text.author.name.replace("Huntbot","KitsuneBot");
+			text.author.name = text.author.name.replace("HuntBot","KitsuneBot");
 			text.color = 63996;
 			text.fields[1].name = text.fields[1].name.replace("⏱ Efficiency","<a:foxefficiency:653394748333096960> Found Enemies");
 			text.fields[2].name = text.fields[2].name.replace("⏳ Duration","<a:foxduration:653394748501131293> Hunt Time");
