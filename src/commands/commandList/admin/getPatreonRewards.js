@@ -85,7 +85,7 @@ async function getPatreons(p){
 
 	await p.send(text,null,{split:true});
 	await p.send("Type `owo distributecowoncy {amount}` to send monthly cowoncy to "+cowoncy.length+" users");
-	await p.send('```'+csv+'```',null,{split:{prepend:'```',append:'```'}})
+	await p.send('```'+csv+'```',null,null,{split:{prepend:'```',append:'```'}})
 }
 
 async function distributeCowoncy(p){

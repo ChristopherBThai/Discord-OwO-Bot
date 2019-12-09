@@ -17,7 +17,7 @@ var modLogChannel = "471579186059018241";
 exports.send = function(msg){
 	return function(content,del,file,opt){
 		let maxLength = 2000;
-		let maxSends = 10;
+		let maxSends = 11;
 		let sendCount = 0;
 		if(typeof content === "string"&&content.length>=maxLength){
 			let prepend = '';

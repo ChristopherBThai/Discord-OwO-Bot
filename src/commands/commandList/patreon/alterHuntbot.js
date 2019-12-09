@@ -5,6 +5,8 @@
  * For more information, see README.md and LICENSE
   */
 
+const blank = '<:blank:427371936482328596>';
+
 exports.alter = function(id,text,type){
 	switch(id){
 		case '111619509529387008':
@@ -15,6 +17,8 @@ exports.alter = function(id,text,type){
 			return spotifybot(text,type);
 		case '250383887312748545':
 			return elsa(text,type);
+		case '192692796841263104':
+			return dalu(text,type);
 		default:
 			return text;
 	}
@@ -197,3 +201,54 @@ function elsa(text,type){
 			return text;
 	}
 }
+
+function dalu(text,type){
+	let foxbot = '<:foxbot:653394747880374272>';
+	switch(type){
+		case 'hb':
+			text.fields[0].name = foxbot+' `Hai Hai Master. I am KitsuneBot. Ready to find more food for you!`';
+			text.fields[0].value = blank;
+			text.author.name = text.author.name.replace("Huntbot","KitsuneBot");
+			text.color = 63996;
+			text.fields[1].name = text.fields[1].name.replace("⏱ Efficiency","<a:foxefficiency:653394748333096960> Found Enemies");
+			text.fields[2].name = text.fields[2].name.replace("⏳ Duration","<a:foxduration:653394748501131293> Hunt Time");
+			text.fields[3].name = text.fields[3].name.replace("<:cowoncy:416043450337853441> Cost","<a:foxcost:653394748446343168> Endurance");
+			text.fields[4].name = text.fields[4].name.replace("🔧 Gain","<a:foxgain:653394748836675594> Hunting Friends");
+			text.fields[5].name = text.fields[5].name.replace("⚔ Experience","<a:foxxp:653394749604233286> Combat Amount");
+			text.fields[6].name = text.fields[6].name.replace("<a:essence:451638978299428875> Animal Essence","<a:foxessence:653394748777824259> Fox Helpers");
+			if(text.fields.length>=8){
+				text.fields[7].name = foxbot+" KitsuneBot will be back soon!";
+				text.fields[7].value = text.fields[7].value.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","Estimated time to be back:");
+			}
+			return text;
+		case 'progress':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,foxbot)
+				.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","Estimated time to be back:");
+			return text;
+		case 'password':
+			text = text.split("\n")[0].replace(/<:[a-z]bot:[0-9]+>/gi,foxbot);
+			return text
+		case 'spent':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,foxbot)
+				.replace("`BEEP BOOP. `","")
+				.replace("YOU SPENT","you spent")
+				.replace("I WILL BE BACK IN","I will be back soon in")
+				.replace("WITH","with")
+				.replace("ANIMALS","animals")
+				.replace("ESSENCE","Hunting Friends")
+				.replace("AND","and")
+				.replace("EXPERIENCE","Combat Amount");
+			return text;
+		case 'returned':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,foxbot)
+				.replace("BEEP BOOP. I AM BACK WITH","I am back with")
+				.replace("ANIMALS","animals")
+				.replace("AND","and")
+				.replace("ESSENCE","Hunting Friends")
+				.replace("EXPERIENCE","Combat Amount");
+			return text;
+		default:
+			return text;
+	}
+}
+
