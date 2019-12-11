@@ -165,7 +165,7 @@ module.exports = new CommandInterface({
 async function parseTeams(p, user, sender,flags){
 	let sql = `SELECT pet_team.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
 		FROM user
-			INNER JOIN pet_team ON user.uid = pet_team.uid
+			INNER JOIN pet_team ON user.uid = pet_team.uid AND pet_team.active = 1
 			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
@@ -174,7 +174,7 @@ async function parseTeams(p, user, sender,flags){
 		ORDER BY pos ASC;`;
 	sql += `SELECT pet_team.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
 		FROM user
-			INNER JOIN pet_team ON user.uid = pet_team.uid
+			INNER JOIN pet_team ON user.uid = pet_team.uid AND pet_team.active = 1
 			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid

@@ -102,7 +102,7 @@ exports.addMember = async function(p,animal,pos){
  * remove = must be either 1-3 or an animal
  */
 exports.removeMember = async function(p,remove){
-	let sql = `SELECT pos,animal.pid,name FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE user.id = ${p.msg.author.id} AND pet_team.active = 1 ORDER BY pos ASC;`;
+	let sql = `SELECT pos,animal.pid,name FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid AND pet_team.active = 1 LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE user.id = ${p.msg.author.id} ORDER BY pos ASC;`;
 
 	/* If its a position */
 	if(p.global.isInt(remove)){

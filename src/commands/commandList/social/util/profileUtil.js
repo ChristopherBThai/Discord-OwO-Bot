@@ -152,10 +152,10 @@ function shortenInt(value){
 
 async function getTeam(p,user){
 	let sql = `SELECT tname,name,xp
-		FROM user INNER JOIN pet_team ON user.uid = pet_team.uid 
+		FROM user INNER JOIN pet_team ON user.uid = pet_team.uid AND pet_team.active = 1 
 			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid 
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid 
-		WHERE user.id = ${user.id}
+		WHERE user.id = ${user.id} 
 		ORDER BY pos DESC`;
 	let result = await p.query(sql);
 	if(!result||!result[0]) return;

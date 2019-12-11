@@ -546,6 +546,7 @@ CREATE TABLE `pet_team` (
   `censor` tinyint(1) DEFAULT '0',
   `streak` int(10) unsigned DEFAULT '0',
   `highest_streak` int(10) unsigned DEFAULT '0',
+  `active` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`pgid`,`uid`),
   KEY `uid` (`uid`),
   CONSTRAINT `pet_team_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`)

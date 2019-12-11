@@ -32,19 +32,18 @@ var getBattle = exports.getBattle = async function(p,setting){
 	/* And our team */
 	let sql = `SELECT pet_team_battle.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat,cphp,cpwp,cehp,cewp,pet_team.streak,pet_team.highest_streak
 		FROM user
-			INNER JOIN pet_team ON user.uid = pet_team.uid
+			INNER JOIN pet_team ON user.uid = pet_team.uid AND pet_team.active = 1
 			INNER JOIN pet_team_battle ON pet_team.pgid = pet_team_battle.pgid
 			INNER JOIN pet_team_animal ON pet_team_battle.pgid = pet_team_animal.pgid
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
 			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
 		WHERE user.id = ${p.msg.author.id}
-			AND pet_team_battle.active = 1
 		ORDER BY pos ASC;`;
 	/* Query enemy team */
 	sql += `SELECT pet_team.censor as ptcensor,animal.offensive as acensor,pet_team_battle.epgid,enemyTeam.tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat,cphp,cpwp,cehp,cewp
 		FROM user
-			INNER JOIN pet_team ON user.uid = pet_team.uid
+			INNER JOIN pet_team ON user.uid = pet_team.uid AND pet_team.active = 1
 			INNER JOIN pet_team_battle ON pet_team.pgid = pet_team_battle.pgid
 			INNER JOIN pet_team_animal ON pet_team_battle.epgid = pet_team_animal.pgid
 			INNER JOIN pet_team enemyTeam ON pet_team_battle.epgid = enemyTeam.pgid
@@ -52,11 +51,10 @@ var getBattle = exports.getBattle = async function(p,setting){
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
 			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
 		WHERE user.id = ${p.msg.author.id}
-			AND pet_team_battle.active = 1
 		ORDER BY pos ASC;`;
 	sql += `SELECT pet_team_battle_buff.*
 		FROM user
-			INNER JOIN pet_team ON user.uid = pet_team.uid
+			INNER JOIN pet_team ON user.uid = pet_team.uid AND pet_team.active = 1
 			INNER JOIN pet_team_battle_buff ON pet_team.pgid = pet_team_battle_buff.pgid
 		WHERE user.id = ${p.msg.author.id};`
 

@@ -435,7 +435,7 @@ exports.equip = async function(p,uwid,pet){
 	}
 	/* Construct sql depending in pet parameter */
 	if(p.global.isInt(pet)){
-		var pid = `(SELECT pid FROM user a LEFT JOIN pet_team b ON a.uid = b.uid LEFT JOIN pet_team_animal c ON b.pgid = c.pgid WHERE a.id = ${p.msg.author.id} AND pos = ${pet})`
+		var pid = `(SELECT pid FROM user a LEFT JOIN pet_team b ON a.uid = b.uid AND b.active = 1 LEFT JOIN pet_team_animal c ON b.pgid = c.pgid WHERE a.id = ${p.msg.author.id} AND pos = ${pet})`
 	}else{
 		var pid = `(SELECT pid FROM animal WHERE name = '${pet.value}' AND id = ${p.msg.author.id})`;
 	}

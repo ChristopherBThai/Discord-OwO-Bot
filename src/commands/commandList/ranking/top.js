@@ -371,11 +371,11 @@ function getBattleRanking(globalRank, con, msg, count,p){
 	let sql;
 	if(globalRank){
 		sql = "SELECT * FROM pet_team INNER JOIN user ON user.uid = pet_team.uid WHERE pet_team.active = 1 ORDER BY streak DESC LIMIT "+count+";";
-		sql +=  "SELECT *, (SELECT COUNT(*)+1 FROM pet_team WHERE streak > c.streak) AS 'rank' FROM pet_team c INNER JOIN user ON c.uid = user.uid WHERE user.id = "+msg.author.id+";";
+		sql +=  "SELECT *, (SELECT COUNT(*)+1 FROM pet_team WHERE streak > c.streak) AS 'rank' FROM pet_team c INNER JOIN user ON c.uid = user.uid WHERE user.id = "+msg.author.id+" AND c.active = 1;";
 	}else{
 		let users = global.getids(msg.channel.guild.members);
 		sql = "SELECT * FROM pet_team INNER JOIN user ON pet_team.uid = user.uid WHERE id IN ("+users+") and pet_team.active = 1 ORDER BY streak DESC LIMIT "+count+";";
-		sql +=  "SELECT *, (SELECT COUNT(*)+1 FROM pet_team LEFT JOIN user ON pet_team.uid = user.uid WHERE id IN ("+users+") AND streak > c.streak) AS rank FROM pet_team c INNER JOIN user ON c.uid = user.uid WHERE user.id = "+msg.author.id+";";
+		sql +=  "SELECT *, (SELECT COUNT(*)+1 FROM pet_team LEFT JOIN user ON pet_team.uid = user.uid WHERE id IN ("+users+") AND streak > c.streak) AS rank FROM pet_team c INNER JOIN user ON c.uid = user.uid WHERE user.id = "+msg.author.id+" AND c.active = 1;";
 	}
 
 	displayRanking(con,msg,count,globalRank,sql,

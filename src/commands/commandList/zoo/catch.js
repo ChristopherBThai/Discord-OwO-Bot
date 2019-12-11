@@ -38,7 +38,7 @@ module.exports = new CommandInterface({
 		let msg=p.msg,con=p.con;
 
 		let sql = "SELECT money,IF(patreonAnimal = 1 OR (TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths),1,0) as patreon FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id LEFT JOIN patreons ON user.uid = patreons.uid WHERE cowoncy.id = "+msg.author.id+";";
-		sql += `SELECT name,nickname,animal.pid FROM user INNER JOIN pet_team ON user.uid = pet_team.uid and pet_team.active = 1 INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid INNER JOIN animal ON pet_team_animal.pid = animal.pid
+		sql += `SELECT name,nickname,animal.pid FROM user INNER JOIN pet_team ON user.uid = pet_team.uid AND pet_team.active = 1 INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid INNER JOIN animal ON pet_team_animal.pid = animal.pid
 				WHERE user.id = ${p.msg.author.id};`;
 		sql += "SELECT *,TIMESTAMPDIFF(HOUR,claim,NOW()) as time FROM lootbox WHERE id = "+msg.author.id+";";
 		sql += "SELECT uid,activecount,gname,type FROM user NATURAL JOIN user_gem NATURAL JOIN gem WHERE id = "+msg.author.id+" AND activecount > 0;";
