@@ -70,7 +70,7 @@ exports.getRandomGems = function(uid,count=1){
 	for(let i=0;i<count;i++){
 		let tempGem = getRandomGem();
 		if(!gemResult[tempGem.id]) gemResult[tempGem.id] = {gem:tempGem,count:1};
-		gemResult[tempGem.id].count++;
+		else gemResult[tempGem.id].count++;
 	}
 
 	let sql = `INSERT INTO user_gem (uid,gname,gcount) VALUES `;
