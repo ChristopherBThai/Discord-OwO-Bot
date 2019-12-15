@@ -44,7 +44,7 @@ function elsa(text){
 		m:"<:muppetstitlemythic:653376194460516362>",
 		p:"<:treasureplanettitlepat:653376194468773888>",
 		cp:"<:pixarcpat:653376193747222572>",
-		l:"<:lionkingtitlelegendary:653376194120646666>",
+		l:"<:lionkingtitlelegendary:655692394762731530>",
 		g:"<:pandfroggem:653376194170978306>",
 		f:"<:frozentitlefabled:653376194602991645>",
 		s:"<:atlantistitlespecial:653376193806204943>",
@@ -53,7 +53,7 @@ function elsa(text){
 	text = replaceRanks(text,newRanks)
 		.replace("Zoo Points","<:frozentitlefabled:653376194602991645>ilm Collection Points")
 		.split("\n");
-	text[0] = "<:elsasnowflake1:653376194414379029><:elsasnowflake2:653384773234065438> <:frozenN:653376194854518794>**erdy**<:frozenE:653376194594734117>**elsa's zoo!** <:elsasnowflake2:653384773234065438><:elsasnowflake1:653376194414379029>";
+	text[0] = "<:elsasnowflake1:653376194414379029><:elsasnowflake2:653384773234065438> <:frozenN:653376194854518794>**erdy**<:frozenE:653376194594734117>**lsa's zoo!** <:elsasnowflake2:653384773234065438><:elsasnowflake1:653376194414379029>";
 
 	return text.join("\n");
 }

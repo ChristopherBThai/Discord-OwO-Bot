@@ -8,7 +8,6 @@
 const blank = '<:blank:427371936482328596>';
 
 exports.alter = function(id,text,type){
-	return dalu(text,type);
 	switch(id){
 		case '111619509529387008':
 			return lexus(text,type);
@@ -20,6 +19,8 @@ exports.alter = function(id,text,type){
 			return elsa(text,type);
 		case '192692796841263104':
 			return dalu(text,type);
+		case '323347251705544704':
+			return rikudou(text,type);
 		default:
 			return text;
 	}
@@ -247,6 +248,56 @@ function dalu(text,type){
 				.replace("AND","and")
 				.replace("ESSENCE","Hunting Friends")
 				.replace("EXPERIENCE","Combat Amount");
+			return text;
+		default:
+			return text;
+	}
+}
+
+function rikudou(text,type){
+	let emoji1 = '<:emoji1:655689103014363157>';
+	let emoji2 = '<:emoji2:655689103316353034>';
+	let emoji3 = '<:emoji3:655689103555166208>';
+	switch(type){
+		case 'hb':
+			text.fields[0].name = emoji1+' `Rikudou, are you ready to go on another mission?`';
+			text.fields[0].value = emoji3+" The Mission Assignment Desk has a S rank mission for you!";
+			text.color = 255;
+			text.fields[1].name = text.fields[1].name.replace("Efficiency","Chakra Levels").slice(0,-1) + " How are your chakra Levels doing?`";
+			text.fields[2].name = text.fields[2].name.replace("Duration","Mission Length").slice(0,-1) + " Phew! This is one tedious mission!`";
+			text.fields[3].name = text.fields[3].name.replace("Cost","Ryō").slice(0,-1) + " Do you have enough Ryō?`";
+			text.fields[4].name = text.fields[4].name.slice(0,-1)+" Want to become Hokage? Time to gain more Reputation!`";
+			text.fields[5].name = text.fields[5].name.replace("Training"," Time for more training Shinobi!`");
+			if(text.fields.length>=8){
+				text.fields[7].name = emoji2+" Rikudou is currently out on a mission!";
+				text.fields[7].value = text.fields[7].value.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","Sorry, Rikudou is still out on a mission! You may request Rikudou for another mission at a later time. RIKUDOU WILL BE BACK IN");
+			}
+			return text;
+		case 'progress':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,emoji2)
+				.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","Sorry, Rikudou is still out on a mission! You may request Rikudou for another mission at a later time.`\n"+blank+" **|** `RIKUDOU WILL BE BACK IN");
+			return text;
+		case 'password':
+			text = text.split("\n")[0].replace(/<:[a-z]bot:[0-9]+>/gi,emoji1);
+			return text
+		case 'spent':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,emoji3)
+				.replace("`BEEP BOOP. `","")
+				.replace("YOU SPENT","you spent")
+				.replace("I WILL BE BACK IN","I will be back in")
+				.replace("WITH","with")
+				.replace("ANIMALS","ninjas")
+				.replace("ESSENCE","essence")
+				.replace("AND","and")
+				.replace("EXPERIENCE","experience");
+			return text;
+		case 'returned':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,emoji1)
+				.replace("BEEP BOOP. I AM BACK WITH","I am back with")
+				.replace("ANIMALS","ninjas")
+				.replace("AND","and")
+				.replace("ESSENCE","essence")
+				.replace("EXPERIENCE","experience");
 			return text;
 		default:
 			return text;

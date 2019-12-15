@@ -121,8 +121,8 @@ async function openMultiple(p,count){
 		let gem = gems.gems[key];
 		gemText += gem.gem.emoji+p.global.toSmallNum(gem.count)+" ";
 	}
-	let text1 = blank+" **| "+p.msg.author.username+"** opens "+count+" lootboxs\n"+boxShake+" **|** and finds...";
-	let text2 = blank+" **| "+p.msg.author.username+"** opens "+count+" lootbox\n"+boxOpen+" **|** and finds: " + gemText;
+	let text1 = blank+" **| "+p.msg.author.username+"** opens "+count+" lootboxes\n"+boxShake+" **|** and finds...";
+	let text2 = blank+" **| "+p.msg.author.username+"** opens "+count+" lootboxes\n"+boxOpen+" **|** and finds: " + gemText;
 
 	result = await p.query(gems.sql);
 

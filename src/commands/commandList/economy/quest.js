@@ -101,9 +101,7 @@ async function addQuest(p){
 	if(!result[0][0]){
 		sql = "INSERT IGNORE INTO user (id,count) values ("+p.msg.author.id+",0);";
 		sql += "INSERT INTO timers (uid) values ((SELECT uid FROM user WHERE id = "+p.msg.author.id+"));";
-		await p.query(sql).catch(err => {
-			throw new p.Error(err,"MySQL",sql);
-		});
+		await p.query(sql);
 	}
 
 	/* Parse dates */
