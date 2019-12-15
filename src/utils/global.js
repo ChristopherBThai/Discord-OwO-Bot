@@ -159,10 +159,11 @@ exports.unicodeAnimal = function(animal){
 }
 
 exports.toSmallNum = function(count,digits){
-	var result = "";
-	var num = count;
+	let result = "";
+	let num = count;
+	if(!digits) digits = count.toString().length;
 	for(i=0;i<digits;i++){
-		var digit = count%10;
+		let digit = count%10;
 		count = Math.trunc(count/10);
 		result = numbers[digit]+result;
 	}

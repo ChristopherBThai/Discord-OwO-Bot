@@ -32,7 +32,7 @@ for(var key in weaponsDir){
 	if(!weapon.disabled) availableWeapons[weapon.getID] = weapon;
 }
 
-exports.getRandomWeapon = function(id){
+const getRandomWeapon = exports.getRandomWeapon = function(){
 	/* Grab a random weapon */
 	let keys = Object.keys(availableWeapons);
 	let random = keys[Math.floor(Math.random()*keys.length)];
@@ -43,6 +43,26 @@ exports.getRandomWeapon = function(id){
 	weapon = new weapon();
 
 	return weapon;
+}
+
+exports.getRandomWeapons = function(uid, count){
+	let randomWeapons = [];
+	for(let i=0;i<count;i++){
+		let tempWeapon = getRandomWeapon();
+		let weaponSql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${uid},${tempWeapon.id},'${tempWeapon.sqlStat}',${tempWeapon.avgQuality});`;
+		let passiveSql = `INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES `;
+		for(let j=0;j<tempWeapon.passives.length;j++){
+			let tempPassive = tempWeapon.passives[j];
+			passiveSql += `(?,${j},${tempPassive.id},'${tempPassive.sqlStat}'),`;
+		}
+		passiveSql = `${passiveSql.slice(0,-1)};`;
+
+		tempWeapon.weaponSql = weaponSql;
+		tempWeapon.passiveSql = passiveSql;
+		randomWeapons.push(tempWeapon);
+	}
+	
+	return randomWeapons;
 }
 
 exports.getItems = async function(p){
