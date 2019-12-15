@@ -52,7 +52,7 @@ module.exports = new CommandInterface({
 })
 
 async function openBox(p){
-	let sql = `UPDATE IGNORE lootbox SET boxcount = boxcount - 1 WHERE id = ${p.msg.author.id} AND boxcount > 0;`;
+	let sql = `UPDATE lootbox SET boxcount = boxcount - 1 WHERE id = ${p.msg.author.id} AND boxcount > 0;`;
 	sql += `SELECT uid FROM user WHERE id = ${p.msg.author.id};`;
 	let result = await p.query(sql);
 

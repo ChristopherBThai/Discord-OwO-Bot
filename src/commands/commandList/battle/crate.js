@@ -11,6 +11,7 @@ const crate = "<:crate:523771259302182922>";
 const crateShake = "<a:crateshake:523771259172028420>";
 const crateOpen = "<a:crateopen:523771437408845852>";
 const weaponUtil = require('./util/weaponUtil.js');
+const maxBoxes = 50;
 
 module.exports = new CommandInterface({
 
@@ -31,60 +32,91 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: async function(p){
-		/* Decrement crate count */
-		let sql = "UPDATE IGNORE crate SET boxcount = boxcount - 1 WHERE uid = (SELECT uid FROM user WHERE id = "+p.msg.author.id+") AND boxcount > 0;";
-		sql += "SELECT uid FROM user WHERE id = "+p.msg.author.id+";";
-		let result = await p.query(sql);
+		if(p.args.length>0&&p.global.isInt(p.args[0]))
+			await openCrate(p,parseInt(p.args[0]));
+		else if(p.args.length>0&&p.args[0]=="all"){
+			let sql = `SELECT boxcount FROM crate INNER JOIN user ON crate.uid = user.uid WHERE id = ${p.msg.author.id};`;
+			let result = await p.query(sql);
+			if(!result||result[0].boxcount<=0){
+				p.errorMsg(", you don't have any more weapon crates!");
+				return;
+			}
+			let boxcount = result[0].boxcount;
+			if(boxcount > maxBoxes) boxcount = maxBoxes;
+			await openCrate(p,boxcount);
+		}else
+			await openCrate(p);
+		
+	}
+})
 
-		/* Validate query */
-		if((result[0].changedRows==0||!result[1][0])){
-			p.send("**🚫 | "+p.msg.author.username+"**, You don't have any weapon crates!",3000);
-			return;
-		}
+async function openCrate(p,count=1){
+	if(count<=0){
+		p.errorMsg(", you must open more than one crate silly!",3000);
+		return;
+	}
+	if(count>maxBoxes){
+		count = maxBoxes;
+	}
 
-		/* Parse uid */
-		let uid = result[1][0].uid;
-		if(!uid){
-			p.send("**🚫 | "+p.msg.author.username+"**, You don't have any weapon crates!",3000);
-			return;
-		}
+	/* Decrement crate count */
+	let sql = `UPDATE crate INNER JOIN user ON crate.uid = user.uid SET crate.boxcount = crate.boxcount - ${count} WHERE user.id = ${p.msg.author.id} AND boxcount >= ${count};`;
+	sql += `SELECT uid FROM user WHERE id = ${p.msg.author.id};`;
+	let result = await p.query(sql);
 
-		/* Get random weapon and construct sql */
-		let weapon = weaponUtil.getRandomWeapon(p.msg.author.id);
+	if(result[0].changedRows==0 || !result[1][0]){
+		p.errorMsg(", You don't have any weapon crates!",3000);
+		return;
+	}
 
-		/* construct sql */
-		sql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${uid},${weapon.id},'${weapon.sqlStat}',${weapon.avgQuality});`;
+	let uid = result[1][0].uid;
+	if(!uid){
+		p.errorMsg(", It looks like something went wrong...",3000);
+		return;
+	}
 
-		/* Insert weapon */
-		result = await p.query(sql);
+	let weaponsList = weaponUtil.getRandomWeapons(uid,count);
 
+	for(let i in weaponsList){
+		let weapon = weaponsList[i];
+		result = await p.query(weapon.weaponSql);
 		let uwid = result.insertId;
 		if(!uwid){
 			p.errorMsg(", Uh oh. Something went wrong! The weapon passive could not be applied");
 			console.error("Unable to add weapon passive to: "+uwid);
-			return;
+		}else{
+			weapon.uwid = uwid;
+			let uwidList = [];
+			for(let j=0; j<weapon.passives.length; j++)
+				uwidList.push(uwid);
+			await p.query(weapon.passiveSql,uwidList);
 		}
+	}
 
-		/* Insert passive */
-		if(weapon.passives.length>0){
-			sql = `INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES `;
-			for(var i=0;i<weapon.passives.length;i++){
-				sql += `(${uwid},${i},${weapon.passives[i].id},'${weapon.passives[i].sqlStat}'),`;
-			}
-			sql = `${sql.slice(0,-1)};`;
-			result = await p.query(sql);
-		}
-
-		/* Construct text */
-		let text1 = p.config.emoji.blank+" **| "+p.msg.author.username+"** opens a weapon crate\n"+crateShake+" **|** and finds a ...";
-		let text2 = weapon.emoji+" **| "+p.msg.author.username+"** opens a weapon crate\n"+crateOpen+" **|** and finds a `"+weaponUtil.shortenUWID(uwid)+"` "+weapon.rank.emoji+" "+weapon.emoji;
+	/* Construct text */
+	let text1,text2;
+	if(count==1){
+		let weapon = weaponsList[0];
+		text1 = p.config.emoji.blank+" **| "+p.msg.author.username+"** opens a weapon crate\n"+crateShake+" **|** and finds a ...";
+		text2 = weapon.emoji+" **| "+p.msg.author.username+"** opens a weapon crate\n"+crateOpen+" **|** and finds a `"+weaponUtil.shortenUWID(weapon.uwid)+"` "+weapon.rank.emoji+" "+weapon.emoji;
 		for(var i=0;i<weapon.passives.length;i++){
 			text2 += " "+weapon.passives[i].emoji;
 		}
 		text2 += " "+weapon.avgQuality+"%";
-
-		/* Send and edit message */
-		let message = await p.send(text1);
-		setTimeout(function(){message.edit(text2)},3000);
+	}else{
+		weaponsList.sort((a,b) => {
+			return b.avgQuality - a.avgQuality;
+		});
+		let allWeaponEmojis = "";
+		for(let i in weaponsList){
+			allWeaponEmojis += weaponsList[i].emoji;
+		}
+		text1 = p.config.emoji.blank+" **| "+p.msg.author.username+"** opens "+count+" weapon crates\n"+crateShake+" **|** and finds...";
+		text2 = p.config.emoji.blank+" **| "+p.msg.author.username+"** opens "+count+" weapon crates\n"+crateOpen+" **|** and finds: "+allWeaponEmojis;
 	}
-})
+
+	/* Send and edit message */
+	let message = await p.send(text1);
+	setTimeout(function(){message.edit(text2)},3000);
+
+}
