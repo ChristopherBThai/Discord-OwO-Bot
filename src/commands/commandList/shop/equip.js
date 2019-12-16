@@ -43,10 +43,12 @@ module.exports = new CommandInterface({
 		}
 
 		if(item.name=="lootbox"){
+			p.args = [];
 			lootbox.execute(p);
 		}else if(item.name=="gem"){
 			gemUtil.use(p,item.id);
 		}else if(item.name=="crate"){
+			p.args = [];
 			crate.execute(p);
 		}else if(item.name=="weapon"){
 			weapon.execute(p);

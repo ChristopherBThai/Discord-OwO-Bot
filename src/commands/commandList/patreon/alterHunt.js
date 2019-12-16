@@ -274,7 +274,8 @@ function blacky(text){
 		text = text.replace(", hunt is empowered by","'s umbreon is empowered by\n"+blank+" **|**")
 			.replace("You found","and found");
 	}else{
-		text = text.replace(" spent 5 <:cowoncy:416043450337853441> and caught a **",", your umbreon went out for a walk\n"+blank+" **|** and came back with an **amazing ");
+		text = text.replace(" spent 5 <:cowoncy:416043450337853441> and caught a **",", your umbreon went out for a walk\n"+blank+" **|** and came back with an **amazing ")
+			.replace(" spent 5 <:cowoncy:416043450337853441> and caught an **",", your umbreon went out for a walk\n"+blank+" **|** and came back with an **amazing ");
 	}
 	let embed = {
 		"description":text,
