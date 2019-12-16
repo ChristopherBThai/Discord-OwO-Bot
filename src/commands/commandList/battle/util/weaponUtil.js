@@ -9,7 +9,7 @@ const requireDir = require('require-dir');
 const WeaponInterface = require('../WeaponInterface.js');
 //const ReactionOverride = require('../../../../overrides/ReactionSocketOverride.js');
 
-const prices = {"Common":100,"Uncommon":250,"Rare":400,"Epic":600,"Mythical":2000,"Legendary":5000,"Fabled":20000};
+const prices = {"Common":100,"Uncommon":250,"Rare":400,"Epic":600,"Mythical":5000,"Legendary":15000,"Fabled":50000};
 const ranks = [['cw','commonweapons','commonweapon'],['uw','uncommonweapons','uncommonweapon'],['rw','rareweapon','rareweapons'],
       ['ew','epicweapons','epicweapon'],['mw','mythicalweapons','mythicalweapon','mythicweapons','mythicweapon'],
       ['lw','legendaryweapons','legendaryweapon'],['fw','fabledweapons','fabledweapon','fableweapons','fableweapon']];

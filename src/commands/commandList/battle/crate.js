@@ -17,7 +17,7 @@ module.exports = new CommandInterface({
 
 	alias:["crate","weaponcrate","wc"],
 
-	args:"",
+	args:"{count}",
 
 	desc:"Opens a crate to find weapons!",
 
