@@ -267,7 +267,7 @@ function rikudou(text,type){
 			text.fields[2].name = text.fields[2].name.replace("Duration","Mission Length").slice(0,-1) + " Phew! This is one tedious mission!`";
 			text.fields[3].name = text.fields[3].name.replace("Cost","Ryō").slice(0,-1) + " Do you have enough Ryō?`";
 			text.fields[4].name = text.fields[4].name.slice(0,-1)+" Want to become Hokage? Time to gain more Reputation!`";
-			text.fields[5].name = text.fields[5].name.replace("Training"," Time for more training Shinobi!`");
+			text.fields[5].name = text.fields[5].name.replace("Experience","Training").slice(0,-1) + " Time for more training Shinobi!`";
 			if(text.fields.length>=8){
 				text.fields[7].name = emoji2+" Rikudou is currently out on a mission!";
 				text.fields[7].value = text.fields[7].value.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","Sorry, Rikudou is still out on a mission! You may request Rikudou for another mission at a later time. RIKUDOU WILL BE BACK IN");
