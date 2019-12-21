@@ -434,6 +434,10 @@ module.exports = class WeaponInterface{
 
 	}
 
+	rerollStats(){
+		//TODO reroll
+	}
+
 	/* Get lowest hp animal */
 	static getLowestHp(team){
 		let lowest = undefined;
