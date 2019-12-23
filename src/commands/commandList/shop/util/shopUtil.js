@@ -8,8 +8,8 @@
 const global = require('../../../../utils/global.js');
 const numbers = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
 const imagegen = require('../../../../../../tokens/imagegen.json');
-const nextPageEmoji = '➡';
-const prevPageEmoji = '⬅';
+const nextPageEmoji = '➡️';
+const prevPageEmoji = '⬅️';
 
 exports.getItem = function(args){
 	var id = 0;

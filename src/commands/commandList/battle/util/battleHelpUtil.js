@@ -6,8 +6,8 @@
   */
 
 const pages = ["https://i.imgur.com/cJ9F3DM.png","https://i.imgur.com/uHyENGL.png","https://i.imgur.com/QjYt5Xv.png","https://i.imgur.com/mFWT5wg.png","https://i.imgur.com/G3zfrc6.png","https://i.imgur.com/9LXG4qy.png"];
-const nextPageEmoji = '➡';
-const prevPageEmoji = '⬅';
+const nextPageEmoji = '➡️';
+const prevPageEmoji = '⬅️';
 
 exports.help = async function(p,page=0){
 	/* Make sure we don't over or under shoot the page */

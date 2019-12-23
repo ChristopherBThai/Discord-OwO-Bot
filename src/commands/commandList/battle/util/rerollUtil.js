@@ -8,6 +8,9 @@
 const weaponUtil = require('./weaponUtil.js');
 const passiveArray = ["passive","p"];
 const statArray = ["stat","stats","s"];
+const yesEmoji = '✅';
+const noEmoji = '❎';
+const retryEmoji = '🔄';
 
 exports.reroll = async function(p){
 	/* Parse reroll type and weapon id */
@@ -63,10 +66,41 @@ exports.reroll = async function(p){
 }
 
 async function rerollStats(p,weapon){
-	p.send("```json\n"+JSON.stringify(weapon,null,2)+"\n```",null,null,{split:{prepend:'```md\n',append:'```'}});
-	weapon.rerollStats();
-	p.send("```json\n"+JSON.stringify(weapon,null,2)+"\n```",null,null,{split:{prepend:'```md\n',append:'```'}});
+	let newWeapon = weapon.rerollStats();
+	p.send({embed:createEmbed(weapon,newWeapon)});
 }
 
 async function rerollPassive(p,weapon){
+	let newWeapon = weapon.rerollPassives();
+	p.send({embed:createEmbed(weapon,newWeapon)});
+}
+
+function createEmbed(oldWeapon, newWeapon){
+	const embed = {
+		fields:[
+			parseDescription("**OLD WEAPON**", oldWeapon),
+			parseDescription("**NEW WEAPON**", newWeapon)
+		]
+	}
+	return embed;
+}
+
+function parseDescription(title,weapon){
+	let desc = `**Quality:** ${weapon.rank.emoji} ${weapon.avgQuality}%\n`;
+	desc += `**WP Cost:** ${Math.ceil(weapon.manaCost)} <:wp:531620120976687114>`;
+	desc += `\n**Description:** ${weapon.desc}\n`;
+	if(weapon.buffList.length>0){
+		desc += `\n`;
+		let buffs = weapon.getBuffs();
+		for(let i in buffs){
+			desc += `${buffs[i].emoji} **${buffs[i].name}** - ${buffs[i].desc}\n`;
+		}
+	}
+	if(weapon.passives.length<=0)
+		desc += `\n**Passives:** None`;
+	for(let i=0;i<weapon.passives.length;i++){
+		let passive = weapon.passives[i];
+		desc += `\n${passive.emoji} **${passive.name}** - ${passive.desc}`;
+	}
+	return {name:title,value:desc};
 }
