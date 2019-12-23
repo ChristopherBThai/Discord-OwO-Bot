@@ -18,7 +18,10 @@ module.exports = class WeaponInterface{
 		this.init();
 		if(this.availablePassives==="all"){
 			this.availablePassives=[];
-			for(let i in passives) this.availablePassives.push(i);
+			for(let i in passives){
+				if(!passives[i].disabled) 
+					this.availablePassives.push(i);
+			}
 		}
 		if(noCreate) return;
 
@@ -435,7 +438,25 @@ module.exports = class WeaponInterface{
 	}
 
 	rerollStats(){
-		//TODO reroll
+		let WeaponClass = weapons[this.id];
+		if(!WeaponClass) throw "Weapon Not Found for reroll";
+
+		let newQualities = this.randomQualities();
+		let newPassives = [];
+		for(let i in this.passives){
+			let PassiveClass = passives[this.passives[i].id];
+			if(!PassiveClass) throw "Weapon Passive Not Found for reroll";
+			newPassives.push(new PassiveClass());
+		}
+
+		return new WeaponClass(newPassives,newQualities);
+	}
+
+	rerollPassives(){
+		let WeaponClass = weapons[this.id];
+		if(!WeaponClass) throw "Weapon Not Found for reroll";
+
+		return new WeaponClass(null,this.qualiies);
 	}
 
 	/* Get lowest hp animal */
@@ -527,14 +548,20 @@ module.exports = class WeaponInterface{
 }
 
 const passiveDir = requireDir('./passives');
-var passives = {};
-for(var key in passiveDir){
+const passives = {};
+for(let key in passiveDir){
 	let passive = passiveDir[key];
-	if(!passive.disabled) passives[passive.getID] = passive;
+	passives[passive.getID] = passive;
 }
 const buffDir = requireDir('./buffs');
-var buffs = {};
-for(var key in buffDir){
+const buffs = {};
+for(let key in buffDir){
 	let buff = buffDir[key];
 	if(!buff.disabled) buffs[buff.getID] = buff;
+}
+const weaponDir = requireDir('./weapons');
+const weapons = {};
+for(let key in weaponDir){
+	let weapon = weaponDir[key];
+	weapons[weapon.getID] = weapon;
 }

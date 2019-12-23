@@ -9,9 +9,9 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const baseURL = "https://cdn.discordapp.com/emojis/";
 const permissions = require('../../../data/permissions.json');
-const nextPageEmoji = '➡';
-const prevPageEmoji = '⬅';
-const stealEmoji = '🕵';
+const nextPageEmoji = '➡️';
+const prevPageEmoji = '⬅️';
+const stealEmoji = '🕵️';
 const errorEmoji = '';
 const successMsg = "Successfully stolen"
 const failureMsg = "Failed to steal"

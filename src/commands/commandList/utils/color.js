@@ -12,8 +12,8 @@ const imagegenAuth = require('../../../../../tokens/imagegen.json');
 const maxInt = 16777215;
 const Vibrant = require('node-vibrant');
 const colorEmoji = '🎨';
-const nextPageEmoji = '➡';
-const prevPageEmoji = '⬅';
+const nextPageEmoji = '➡️';
+const prevPageEmoji = '⬅️';
 
 module.exports = new CommandInterface({
 
