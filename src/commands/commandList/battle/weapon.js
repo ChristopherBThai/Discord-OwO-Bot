@@ -9,6 +9,7 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const weaponUtil = require('./util/weaponUtil.js');
 const battleUtil = require('./util/battleUtil.js');
+const rerollUtil = require('./util/rerollUtil.js');
 const battleFriendUtil = require('./util/battleFriendUtil.js');
 const uwidMax = 10;
 
@@ -35,6 +36,10 @@ module.exports = new CommandInterface({
 		/* Display weapons */
 		if(p.args.length==0){
 			await weaponUtil.display(p);
+
+		/* Reroll weapon stats */
+		}else if(["rr","reroll"].includes(p.args[0])){
+			await rerollUtil.reroll(p);
 
 		/* Describe weapon */
 		}else if(p.args.length==1){

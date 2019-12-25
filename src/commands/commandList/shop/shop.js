@@ -11,8 +11,8 @@ const shopUtil = require('./util/shopUtil.js');
 const PageClass = require('./PageClass.js');
 const requireDir = require('require-dir');
 const dir = requireDir('./pages',{recurse:true});
-const nextPageEmoji = '➡';
-const prevPageEmoji = '⬅';
+const nextPageEmoji = '➡️';
+const prevPageEmoji = '⬅️';
 
 var initialPages = [];
 for(let key in dir){

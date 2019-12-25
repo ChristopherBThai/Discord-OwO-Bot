@@ -16,8 +16,8 @@ const ranks = [['cw','commonweapons','commonweapon'],['uw','uncommonweapons','un
 
 const weaponEmoji = "🗡";
 const weaponPerPage = 10;
-const nextPageEmoji = '➡';
-const prevPageEmoji = '⬅';
+const nextPageEmoji = '➡️';
+const prevPageEmoji = '⬅️';
 const rewindEmoji = '⏪';
 const fastForwardEmoji = '⏩';
 const sortEmoji = '🔃';

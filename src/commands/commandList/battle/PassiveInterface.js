@@ -82,6 +82,8 @@ module.exports = class PassiveInterface{
 	alterStats(stats){}
 
 	static get getID(){return new this(null,true).id}
+	static get disabled(){return new this(null,true).disabled}
+
 	/* Before a turn executes */
 	preTurn(animal,ally,enemy,action){}
 	/* After a turn executes */

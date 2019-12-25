@@ -77,7 +77,7 @@ async function give(p,con,msg,args,global,send){
 }
 
 async function display(p){
-	let sql = "SELECT cookieTime,rep.count FROM user LEFT JOIN timers ON user.uid = timers.uid JOIN rep ON user.id = rep.id WHERE user.id = "+p.msg.author.id+";";
+	let sql = "SELECT cookieTime,rep.count FROM user LEFT JOIN timers ON user.uid = timers.uid LEFT JOIN rep ON user.id = rep.id WHERE user.id = "+p.msg.author.id+";";
 	let result = await p.query(sql);
 	let afterMid = dateUtil.afterMidnight(result[0]?result[0].cookieTime:undefined);
 

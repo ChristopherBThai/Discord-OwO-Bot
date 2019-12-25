@@ -7,8 +7,8 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const nextPageEmoji = '➡';
-const prevPageEmoji = '⬅';
+const nextPageEmoji = '➡️';
+const prevPageEmoji = '⬅️';
 const animalUtil = require('./animalUtil.js');
 const alterZoo = require('../patreon/alterZoo.js');
 var animals = require('../../../../../tokens/owo-animals.json');
