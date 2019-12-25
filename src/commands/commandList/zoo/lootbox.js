@@ -92,6 +92,7 @@ async function openMultiple(p,count){
 	if(count > maxBoxes) count = maxBoxes;
 	if(count <= 0){
 		p.errorMsg(", you need to open at least one silly!",3000);
+		return;
 	}
 
 	let sql = `UPDATE IGNORE lootbox SET boxcount = boxcount - ${count} WHERE id = ${p.msg.author.id} AND boxcount >= ${count};`;

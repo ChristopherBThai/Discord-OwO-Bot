@@ -9,9 +9,9 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const imagegen = require('../../../../../tokens/imagegen.json');
 const offsetID = 200;
-const nextPageEmoji = '➡';
-const prevPageEmoji = '⬅';
-const buyEmoji = '🖼';
+const nextPageEmoji = '➡️';
+const prevPageEmoji = '⬅️';
+const buyEmoji = '🖼️';
 
 module.exports = new CommandInterface({
 
