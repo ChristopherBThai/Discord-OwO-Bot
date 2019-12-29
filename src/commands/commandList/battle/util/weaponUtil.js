@@ -7,7 +7,6 @@
 
 const requireDir = require('require-dir');
 const WeaponInterface = require('../WeaponInterface.js');
-//const ReactionOverride = require('../../../../overrides/ReactionSocketOverride.js');
 
 const prices = {"Common":100,"Uncommon":250,"Rare":400,"Epic":600,"Mythical":5000,"Legendary":15000,"Fabled":50000};
 const ranks = [['cw','commonweapons','commonweapon'],['uw','uncommonweapons','uncommonweapon'],['rw','rareweapon','rareweapons'],
@@ -91,6 +90,7 @@ var parseWeapon = exports.parseWeapon = function(data){
 			for(var j=0;j<stats.length;j++)
 				stats[j] = parseInt(stats[j]);
 			let passive = new (WeaponInterface.allPassives[data.passives[i].id])(stats);
+			passive.pcount = data.passives[i].pcount;
 			data.passives[i] = passive;
 		}
 		data.parsed = true;

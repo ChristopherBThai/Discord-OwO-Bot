@@ -456,7 +456,7 @@ module.exports = class WeaponInterface{
 		let WeaponClass = weapons[this.id];
 		if(!WeaponClass) throw "Weapon Not Found for reroll";
 
-		return new WeaponClass(null,this.qualiies);
+		return new WeaponClass(null,this.qualities);
 	}
 
 	/* Get lowest hp animal */
