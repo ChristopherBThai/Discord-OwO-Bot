@@ -15,7 +15,7 @@ const result = ["?a? ?p?...","?f? ?a? ?p?!!","?a?","?a?.","?a?!!","?p?... ?a?","
 
 module.exports = new CommandInterface({
 
-	alias:["eightball","8b","ask"],
+	alias:["eightball","8b","ask","8ball"],
 
 	args:"{question}",
 
