@@ -13,7 +13,6 @@ const shardEmoji = '<:weaponshard:655902978712272917>';
 const dismantleEmoji = '🔨';
 const weaponUtil = require('./util/weaponUtil.js');
 const WeaponInterface = require('./WeaponInterface.js');
-const prices = {"Common":1,"Uncommon":3,"Rare":5,"Epic":20,"Mythical":300,"Legendary":1000,"Fabled":10000};
 
 module.exports = new CommandInterface({
 
@@ -102,7 +101,7 @@ async function dismantleRank(p,rankLoc){
 		}
 		/* Get weapon price */
 		if(!price){
-			price = prices[tempWeapon.rank.name];
+			price = weaponUtil.shardPrices[tempWeapon.rank.name];
 			rank = tempWeapon.rank.emoji+" **"+tempWeapon.rank.name+"**";
 		}
 	}
@@ -197,7 +196,7 @@ async function dismantleId(p,uwid){
 	}
 
 	/* Get weapon price */
-	let price = prices[weapon.rank.name];
+	let price = weaponUtil.shardPrices[weapon.rank.name];
 	if(!price){
 		p.errorMsg(", Something went terribly wrong...");
 		return;

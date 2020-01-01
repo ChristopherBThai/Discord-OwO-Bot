@@ -21,6 +21,15 @@ exports.hgetall = function(key){
 	});
 }
 
+exports.hmget = function(key,field){
+	return new Promise(function(res,rej){
+		client.hmget(key,field,function(err,val){
+			if(err) rej(err);
+			else res(val);
+		});
+	});
+}
+
 exports.hmset = function(key,val){
 	return new Promise(function(res,rej){
 		client.hmset(key,val,function(err,val){

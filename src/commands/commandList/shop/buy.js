@@ -9,6 +9,7 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const ringUtil = require('../social/util/ringUtil.js');
 const wallpaperUtil = require('../social/util/wallpaperUtil.js');
+const dailyWeaponUtil = require('../battle/util/dailyWeaponUtil.js');
 
 module.exports = new CommandInterface({
 
@@ -40,6 +41,8 @@ function buy(p,id){
 		p.errorMsg(", that item does not exist! Please choose one from `owo shop`!",3000);
 	}else if(id<=7){
 		ringUtil.buy(p,id);
+	}else if(id<=150){
+		dailyWeaponUtil.buy(p,id);
 	}else if(id>200){
 		wallpaperUtil.buy(p,id);
 	}else{

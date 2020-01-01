@@ -531,6 +531,7 @@ module.exports = class WeaponInterface{
 
 	static get allPassives(){return passives}
 	static get allBuffs(){return buffs}
+	static get weapons(){return weapons}
 	static get PHYSICAL(){return 'p'}
 	static get MAGICAL(){return 'm'}
 	static get TRUE(){return 't'}
