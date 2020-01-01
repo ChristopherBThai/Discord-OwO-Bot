@@ -75,14 +75,14 @@ function parseArgs(p){
 		rrType = "s";
 		uwid = p.args[1];
 	}else{
-		p.errorMsg(", invalid syntax! Please use the format: `owo w rr {uwid} [passive|stat]`!",5000);
+		p.errorMsg(", invalid syntax! Please use the format: `owo w rr {weaponID} [passive|stat]`!",5000);
 		return;
 	}
 
 	/* Convert uwid into decimal */
 	uwid = weaponUtil.expandUWID(uwid);
 	if(!uwid){
-		p.errorMsg(", invalid syntax! Please use the format: `owo w rr {uwid} [passive|stat]`!",5000);
+		p.errorMsg(", invalid syntax! Please use the format: `owo w rr {weaponID} [passive|stat]`!",5000);
 		return;
 	}
 	return {rrType, uwid};
@@ -126,7 +126,7 @@ async function sendMessage(p,oldWeapon,newWeapon,rrType,msg){
 	}
 
 	let filter = (emoji,userID) => [yesEmoji, noEmoji, retryEmoji].includes(emoji.name)&&p.msg.author.id == userID;
-	let collector = p.reactionCollector.create(msg,filter,{time:120000});
+	let collector = p.reactionCollector.create(msg,filter,{time:900000,idle:120000});
 
 	collector.on('collect', async (emoji) => {
 			collector.stop("clicked");

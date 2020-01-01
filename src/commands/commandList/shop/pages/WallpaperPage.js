@@ -28,18 +28,20 @@ module.exports = class WallpaperPage extends PageClass {
 
 	async getPage(page,embed){
 		embed.author.name = "OwO Shop: Wallpapers";
-		embed.description = "Purchase a wallpaper for your profile!\n- **`owo shop wp {page}`** to view the wallpaper as images\n- **`owo buy {id}`** to buy an item\n- **`owo wallpaper`** to view your wallpapers\n- **`owo profile set wallpaper {id}`** to use it\n"+('═'.repeat(this.charLen+2));
+		embed.description = "Purchase a wallpaper for your profile!\n- **`owo shop wp {page}`** to view the wallpaper as images\n- **`owo buy {id}`** to buy an item\n- **`owo wallpaper`** to view your wallpapers\n- **`owo profile set wallpaper {id}`** to use it\n"+('═'.repeat(this.charLen+2))+"\n";
 		let sql = `SELECT b.*,user_backgrounds.uid  FROM backgrounds b LEFT JOIN (user INNER JOIN user_backgrounds ON user.uid = user_backgrounds.uid AND id = ${this.p.msg.author.id}) ON b.bid = user_backgrounds.bid WHERE b.active = 1 LIMIT ${perPage} OFFSET ${perPage*(page-1)};`
 		let result = await this.p.query(sql);
 		for(let i in result){
 			let wallpaper = result[i];
-			let price = this.p.global.toShortNum(wallpaper.price);
-			let cLength = this.charLen-wallpaper.bname.length+(4-(""+price).length);
-			if(cLength<0) cLength = 0;
-			embed.description += "\n";
-			if(wallpaper.uid) embed.description += "~~";
-			embed.description += `\`${idOffset+wallpaper.bid}\` ${pictureEmoji} **[\`${wallpaper.bname}\`](${imagegen.assetUrl}/background/${wallpaper.bid}.png)**\`${"-".repeat(cLength)} ${price}\` <:cowoncy:416043450337853441>`;
-			if(wallpaper.uid) embed.description += "~~";
+			embed.description += this.toItem({
+				id:idOffset+wallpaper.bid,
+				emoji: pictureEmoji,
+				name: wallpaper.bname,
+				url: `${imagegen.assetUrl}/background/${wallpaper.bid}.png`,
+				price: this.p.global.toShortNum(wallpaper.price),
+				priceEmoji: '<:cowoncy:416043450337853441>',
+				lineThrough: !!wallpaper.uid
+			});
 		}
 		return embed;
 	}

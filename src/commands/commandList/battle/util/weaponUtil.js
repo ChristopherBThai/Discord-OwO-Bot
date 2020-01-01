@@ -9,6 +9,7 @@ const requireDir = require('require-dir');
 const WeaponInterface = require('../WeaponInterface.js');
 
 const prices = {"Common":100,"Uncommon":250,"Rare":400,"Epic":600,"Mythical":5000,"Legendary":15000,"Fabled":50000};
+exports.shardPrices = {"Common":1,"Uncommon":3,"Rare":5,"Epic":20,"Mythical":300,"Legendary":1000,"Fabled":10000};
 const ranks = [['cw','commonweapons','commonweapon'],['uw','uncommonweapons','uncommonweapon'],['rw','rareweapon','rareweapons'],
       ['ew','epicweapons','epicweapon'],['mw','mythicalweapons','mythicalweapon','mythicweapons','mythicweapon'],
       ['lw','legendaryweapons','legendaryweapon'],['fw','fabledweapons','fabledweapon','fableweapons','fableweapon']];
@@ -21,15 +22,16 @@ const rewindEmoji = '⏪';
 const fastForwardEmoji = '⏩';
 const sortEmoji = '🔃';
 
-/* Initialize all the weapons */
-const weaponsDir = requireDir('../weapons');
+/* All weapons */
 var weapons = {};
 var availableWeapons = {};
-for(var key in weaponsDir){
-	let weapon = weaponsDir[key];
-	weapons[weapon.getID] = weapon;
-	if(!weapon.disabled) availableWeapons[weapon.getID] = weapon;
-}
+setTimeout(() => {
+	weapons = WeaponInterface.weapons;
+	for(let key in weapons){
+		let weapon = weapons[key];
+		if(!weapon.disabled) availableWeapons[key] = weapon;
+	}
+},0);
 
 const getRandomWeapon = exports.getRandomWeapon = function(){
 	/* Grab a random weapon */
@@ -48,7 +50,7 @@ exports.getRandomWeapons = function(uid, count){
 	let randomWeapons = [];
 	for(let i=0;i<count;i++){
 		let tempWeapon = getRandomWeapon();
-		let weaponSql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${uid},${tempWeapon.id},'${tempWeapon.sqlStat}',${tempWeapon.avgQuality});`;
+		let weaponSql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${uid?uid:'?'},${tempWeapon.id},'${tempWeapon.sqlStat}',${tempWeapon.avgQuality});`;
 		let passiveSql = `INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES `;
 		for(let j=0;j<tempWeapon.passives.length;j++){
 			let tempPassive = tempWeapon.passives[j];
@@ -322,7 +324,7 @@ var getDisplayPage = async function(p,user,page,sort,opt={}){
 	let user_weapons = parseWeaponQuery(result[0]);
 
 	/* Parse actual weapon data for each weapon */
-	let desc = "Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nSell `owo sell {weaponID|commonweapons,rareweapons...}`\n";
+	let desc = "Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nReroll: `owo w rr {weaponID} [passive|stat]`\nSell: `owo sell {weaponID|commonweapons,rareweapons...}`\nDismantle: `owo dismantle {weaponID|commonweapons,rareweapons...}`\n";
 	for(var key in user_weapons){
 		let weapon = parseWeapon(user_weapons[key]);
 		if(weapon){

@@ -89,7 +89,7 @@ async function getWallpaperPage(p,currentPage,totalPages){
 	let sql = `SELECT b.*,u.uid FROM backgrounds b LEFT JOIN (user_backgrounds ub INNER JOIN user u ON u.uid = ub.uid AND u.id = ${p.msg.author.id}) ON b.bid = ub.bid WHERE b.active = 1 ORDER BY b.bid LIMIT 1 OFFSET ${currentPage-1};`;
 	let result = await p.query(sql);
 
-	embed = {
+	let embed = {
 		"author":{
 			"name":"OwO Shop: Wallpapers",
 			"icon_url":p.msg.author.avatarURL

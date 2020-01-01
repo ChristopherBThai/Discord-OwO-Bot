@@ -8,6 +8,7 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const shopUtil = require('./util/shopUtil.js');
+const dailyWeaponUtil = require('../battle/util/dailyWeaponUtil.js');
 const PageClass = require('./PageClass.js');
 const requireDir = require('require-dir');
 const dir = requireDir('./pages',{recurse:true});
@@ -40,6 +41,8 @@ module.exports = new CommandInterface({
 	execute: async function(p){
 		if(p.args.length&&["wallpaper","wp","wallpapers","background","backgrounds"].includes(p.args[0].toLowerCase())){
 			await shopUtil.displayWallpaperShop(p);
+		}else if(p.args.length&&["weapon","w","shard","weapons","weaponshard","shards","weaponshards"].includes(p.args[0].toLowerCase())){
+			await dailyWeaponUtil.displayShop(p);
 		}else{
 			await displayShop(p);
 		}
@@ -107,7 +110,7 @@ async function initPages(p){
 		let page = new initialPages[i](p);
 		let pageNum = await page.totalPages();
 		totalPages += pageNum;
-		page.totalPages = totalPages;
+		page.totalPages = pageNum;
 		pages.push(page);
 	}
 
