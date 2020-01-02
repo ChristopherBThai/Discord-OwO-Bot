@@ -17,7 +17,7 @@ module.exports = new CommandInterface({
 
 	alias:["my","me","guild"],
 
-	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse|daily|battle|level [global]",
+	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse|daily|battle|level|shards [global]",
 
 	desc:"Displays your ranking of each category!\nYou can choose you rank within the server or globally!\nYou can also shorten the command like in the example!",
 
@@ -59,7 +59,7 @@ async function display(p,con, msg, args){
 	let rep = false;
 	let pet = false;
 	let team = false;
-	let huntbot,luck,curse,daily,battle,level;
+	let huntbot,luck,curse,daily,battle,level,shard;
 
 	for(var i=0;i<args.length;i++){
 		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet&&!huntbot&&!luck&&!curse&&!team&&!daily&&!battle&&!level){
@@ -75,7 +75,7 @@ async function display(p,con, msg, args){
 			else if(args[i]==="battle"||args[i]==="streak") battle = true;
 			else if(args[i]==="level"||args[i]==="lvl"||args[i]==="xp") level= true;
 			else if(args[i]==="daily") daily = true;
-			//else if(args[i]==="team"||args[i]==='t') team = true;
+			else if(args[i]==="shards"||args[i]==="shard"||args[i]==="ws"||args[i]==="weaponshard") shard = true;
 			else if(args[i]==="global"||args[i]==="g") aglobal = true;
 			else invalid = true;
 		}else if(args[i]==="global"||args[i]==="g") aglobal = true;
@@ -98,6 +98,7 @@ async function display(p,con, msg, args){
 		else if(battle) getBattleRanking(aglobal,con,msg,p);
 		else if(daily) getDailyRanking(aglobal,con,msg,p);
 		else if(level) await getLevelRanking(aglobal,p);
+		else if(shard) getShardRanking(aglobal,con,msg,p);
 		else getPointRanking(aglobal,con,msg,p);
 	}
 }
@@ -545,4 +546,26 @@ async function getLevelRanking(global,p){
 	text+= ">...\n\n"+date.toLocaleString("en-US", {month: '2-digit', day: '2-digit', year:'numeric', hour12:false, hour: '2-digit', minute:'2-digit'})+"```";
 
 	p.send(text,null,null,{split:{prepend:'```md\n',append:'```'}});
+}
+
+function getShardRanking(globalRank,con,msg,p){
+	let sql;
+	let table = "user u INNER JOIN shards s ON u.uid = s.uid";
+	let table2 = "user u2 INNER JOIN shards s2 ON u2.uid = s2.uid";
+	if(globalRank){
+		sql = "SELECT u.id,s.count, u1.id,u1.count FROM "+table+" LEFT JOIN ( SELECT id,s2.count FROM "+table2+" ORDER BY s2.count ASC ) AS u1 ON u1.count > s.count WHERE u.id = "+msg.author.id+" ORDER BY s.count ASC LIMIT 2;";
+		sql += "SELECT u.id,s.count, u1.id,u1.count FROM "+table+" LEFT JOIN ( SELECT id,s2.count FROM "+table2+" ORDER BY s2.count DESC ) AS u1 ON u1.count < s.count WHERE u.id = "+msg.author.id+" ORDER BY s.count DESC LIMIT 2;";
+		sql +=  "SELECT id,s.count,(SELECT COUNT(*)+1 FROM shards INNER JOIN user ON user.uid = shards.uid WHERE shards.count > s.count ) AS rank FROM shards s INNER JOIN user u ON u.uid = s.uid WHERE u.id = "+msg.author.id+";";
+	}else{
+		let users = global.getids(msg.channel.guild.members);
+		sql = "SELECT u.id,s.count, u1.id,u1.count FROM "+table+" LEFT JOIN ( SELECT id,s2.count FROM "+table2+" WHERE id IN ("+users+") ORDER BY s2.count ASC ) AS u1 ON u1.count > s.count WHERE u.id = "+msg.author.id+" ORDER BY s.count ASC LIMIT 2;";
+		sql += "SELECT u.id,s.count, u1.id,u1.count FROM "+table+" LEFT JOIN ( SELECT id,s2.count FROM "+table2+" WHERE id IN ("+users+") ORDER BY s2.count DESC ) AS u1 ON u1.count < s.count WHERE u.id = "+msg.author.id+" ORDER BY s.count DESC LIMIT 2;";
+		sql +=  "SELECT id,s.count,(SELECT COUNT(*)+1 FROM shards INNER JOIN user ON user.uid = shards.uid WHERE id IN ("+users+") AND shards.count > s.count ) AS rank FROM shards s INNER JOIN user u ON u.uid = s.uid WHERE u.id = "+msg.author.id+";";
+	}
+
+	displayRanking(con,msg,sql,
+			((globalRank)?"Global ":"")+"Weapon Shard Ranking",
+			function(query){
+				return "\t\tShards: "+global.toFancyNum(query.count);
+			},p);
 }

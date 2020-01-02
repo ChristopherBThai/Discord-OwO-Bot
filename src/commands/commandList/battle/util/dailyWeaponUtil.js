@@ -11,7 +11,7 @@ const weaponUtil = require('./weaponUtil.js');
 const dateUtil = require('../../../../utils/dateUtil.js');
 const cartEmoji = '🛒';
 const crateId = exports.crateId = 100;
-const cratePrice = exports.cratePrice = 100;
+const cratePrice = exports.cratePrice = 40;
 const crateEmoji = "<:crate:523771259302182922>";
 const shardEmoji = '<:weaponshard:655902978712272917>';
 const weaponCount = 10;
@@ -20,7 +20,7 @@ const prevPageEmoji = '⬅️';
 const redisKey = "dailyWeapons"
 const markupPrices = {};
 for(let i in weaponUtil.shardPrices){
-	markupPrices[i] = weaponUtil.shardPrices[i] * 2;
+	markupPrices[i] = Math.round(weaponUtil.shardPrices[i] * 2.5);
 }
 
 const qualityAvg = 70; // must be greater than 50
@@ -85,6 +85,7 @@ exports.resetDailyWeapons = async function(){
 	}
 
 	await redis.del(redisKey);
+	await redis.del(redisKey+"Purchased");
 	await redis.hmset(redisKey,jsonWeapons);
 }
 
@@ -170,7 +171,11 @@ async function useShards(p, count){
 	/* check if enough shards */
 	let sql = `UPDATE shards INNER JOIN user ON shards.uid = user.uid SET shards.count = shards.count - ${count} WHERE user.id = ${p.msg.author.id} AND shards.count >= ${count};`;
 	let result = await p.query(sql);
-	return result.changedRows >= 1
+	if(result.changedRows >= 1){
+		p.logger.value('weaponshards',(-1*count),['id:'+p.msg.author.id,'type:shop']);
+		return true;
+	}
+	return false;
 }
 
 exports.displayShop = async function(p){
@@ -198,7 +203,7 @@ exports.displayShop = async function(p){
 	});
 
 	collector.on('end',async function(collected){
-		page.embed.color = 6381923;
+		embed.color = 6381923;
 		await msg.edit({content:"This message is now inactive",embed});
 	});
 

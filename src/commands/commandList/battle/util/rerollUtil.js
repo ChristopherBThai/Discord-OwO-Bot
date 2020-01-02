@@ -11,7 +11,7 @@ const statArray = ["stat","stats","s"];
 const yesEmoji = '✅';
 const noEmoji = '❎';
 const retryEmoji = '🔄';
-const rerollPrice = 1;
+const rerollPrice = 50;
 const shardEmoji = '<:weaponshard:655902978712272917>';
 
 exports.reroll = async function(p){
@@ -108,6 +108,9 @@ async function getWeapon(p,uwid){
 	if(!weapon){
 		p.errorMsg(", I could not find a weapon with that unique weapon id! Please use `owo weapon` for the weapon ID!",4000);
 		return;
+	}else if(weapon.unsellable){
+		p.errorMsg(", I can't reroll this weapon!",4000);
+		return;
 	}
 
 	return weapon;
@@ -164,7 +167,11 @@ async function useShards(p){
 	/* check if enough shards */
 	let sql = `UPDATE shards INNER JOIN user ON shards.uid = user.uid SET shards.count = shards.count - ${rerollPrice} WHERE user.id = ${p.msg.author.id} AND shards.count >= ${rerollPrice};`;
 	let result = await p.query(sql);
-	return result.changedRows >= 1
+	if(result.changedRows >= 1){
+		p.logger.value('weaponshards',(-1*rerollPrice),['id:'+p.msg.author.id,'type:reroll']);
+		return true;
+	}
+	return false;
 }
 
 function fetchNewWeapon(weapon,type){

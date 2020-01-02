@@ -17,7 +17,7 @@ module.exports = new CommandInterface({
 
 	alias:["top","rank","ranking"],
 
-	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse|battle|daily|level [global] {count}",
+	args:"points|guild|zoo|money|cookie|pet|huntbot|luck|curse|battle|daily|level|shard [global] {count}",
 
 	desc:"Displays the top ranking of each category!",
 
@@ -54,7 +54,7 @@ async function display(p,con, msg, args){
 	let zoo = false;
 	let rep = false;
 	let pet = false;
-	let huntbot,luck,curse,daily,battle,level;
+	let huntbot,luck,curse,daily,battle,level,shard;
 
 	let invalid = false;
 	let count = 5;
@@ -73,6 +73,7 @@ async function display(p,con, msg, args){
 			else if(args[i]==="battle"||args[i]==="streak") battle = true;
 			else if(args[i]==="daily") daily = true;
 			else if(args[i]==="level"||args[i]==="lvl"||args[i]==="xp") level= true;
+			else if(args[i]==="shards"||args[i]==="shard"||args[i]==="ws"||args[i]==="weaponshard") shard = true;
 			else if(args[i]==="global"||args[i]==="g") globala = true;
 			else if(global.isInt(args[i])) count = parseInt(args[i]);
 			else invalid = true;
@@ -98,6 +99,7 @@ async function display(p,con, msg, args){
 		else if(battle) getBattleRanking(globala,con,msg,count,p);
 		else if(daily) getDailyRanking(globala,con,msg,count,p);
 		else if(level) await getLevelRanking(globala,p,count);
+		else if(shard) getShardRanking(globala,con,msg,count,p);
 		else getRanking(globala,con,msg,count,p);
 	}
 }
@@ -443,6 +445,31 @@ async function getLevelRanking(global, p, count){
 
 	p.send(text,null,null,{split:{prepend:'```md\n',append:'```'}});
 }
+
+/**
+ * displays weaponshard ranking
+ */
+function getShardRanking(globalRank, con, msg, count,p){
+	let sql;
+	if(globalRank){
+		sql = "SELECT id,shards.count FROM shards INNER JOIN user ON user.uid = shards.uid ORDER BY shards.count DESC LIMIT "+count+";";
+		sql +=  "SELECT id,s.count,(SELECT COUNT(*)+1 FROM shards INNER JOIN user ON user.uid = shards.uid WHERE shards.count > s.count ) AS rank FROM shards s INNER JOIN user u ON u.uid = s.uid WHERE u.id = "+msg.author.id+";";
+	}else{
+		let users = global.getids(msg.channel.guild.members);
+		sql = "SELECT id,shards.count FROM shards INNER JOIN user ON user.uid = shards.uid WHERE id IN ("+users+") ORDER BY shards.count DESC LIMIT "+count+";";
+		sql +=  "SELECT id,s.count,(SELECT COUNT(*)+1 FROM shards INNER JOIN user ON user.uid = shards.uid WHERE id IN ("+users+") AND shards.count > s.count ) AS rank FROM shards s INNER JOIN user u ON u.uid = s.uid WHERE u.id = "+msg.author.id+";";
+	}
+
+	displayRanking(con,msg,count,globalRank,sql,
+		"Top "+count+" "+((globalRank)?"Global Weapon Shard Rankings":"Weapon Shard Rankings for "+msg.channel.guild.name),
+		function(query,rank){
+			if(rank==0) return ">\t\tShards: "+global.toFancyNum(query.count)+"\n\n";
+			else return "\n\t\Shards: "+global.toFancyNum(query.count)+"\n";
+		}
+	,p);
+}
+
+
 
 const points = "(common*"+animals.points.common+"+"+
 		"uncommon*"+animals.points.uncommon+"+"+

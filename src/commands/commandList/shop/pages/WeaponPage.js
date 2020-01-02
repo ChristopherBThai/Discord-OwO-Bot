@@ -55,7 +55,7 @@ module.exports = class WeaponPage extends PageClass {
 		}
 
 		// Add description text
-		embed.description =  "Use your Weapon Shards to purchase weapons and crates!\nWeapons are randomly generated every day!\n- **`owo buy {id}`** to buy a weapon\n";
+		embed.description =  "Use your Weapon Shards to purchase weapons and crates!\nWeapons are randomly generated every day!\n- **`owo buy {id}`** to buy a weapon\n- **`owo shop weapon`** to view the weapons\n";
 		embed.description += ('═'.repeat(this.charLen+2))+"\n"+result;
 		embed.author.name = "OwO Shop: Weapons";
 
