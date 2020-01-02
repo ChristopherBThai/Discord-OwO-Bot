@@ -53,7 +53,7 @@ async function applyChange(p, weapon){
 
 	let result = await p.query(sql);
 	for(let i in result){
-		if(result[i].changedRows<=0)
+		if(result[i].affectedRows<=0)
 			return false;
 	}
 	return true;
