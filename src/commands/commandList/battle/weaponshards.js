@@ -91,18 +91,13 @@ async function dismantleRank(p,rankLoc){
 	let weapon = weaponUtil.parseWeaponQuery(result);
 	let weapons = [];
 	let weaponsSQL = [];
-	let price;
-	let rank;
+	let price = weaponUtil.shardPrices[WeaponInterface.ranks[rankLoc][1]];
+	let rank = WeaponInterface.ranks[rankLoc][2]+" **"+WeaponInterface.ranks[rankLoc][1]+"**";
 	for(var key in weapon){
 		let tempWeapon = weaponUtil.parseWeapon(weapon[key]);
 		if(!tempWeapon.unsellable){
 			weapons.push(tempWeapon.emoji);
 			weaponsSQL.push(tempWeapon.ruwid);
-		}
-		/* Get weapon price */
-		if(!price){
-			price = weaponUtil.shardPrices[tempWeapon.rank.name];
-			rank = tempWeapon.rank.emoji+" **"+tempWeapon.rank.name+"**";
 		}
 	}
 	weaponsSQL = '('+weaponsSQL.join(',')+')';
