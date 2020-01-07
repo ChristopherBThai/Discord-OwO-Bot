@@ -7,7 +7,9 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const crownEmoji = "👑";
+const crownEmoji = "<a:crown:663613803786797056>";
+const crownText = "<:crowntext:663613803702779904>";
+const crownCat = "<a:crowncat:663613804441108480>";
 const owner = "176046069954641921";
 const words = ["Fancy!","Shiny!","Cool!"];
 
@@ -75,5 +77,5 @@ async function give(p,user){
 	}
 
 	await p.redis.incr("crown",user.id,2);
-	p.send(`${crownEmoji} **| ${user.username}**, you have got the honor of receiving a crown ${crownEmoji} from ${p.msg.author.username} you gained 2 crowns`);
+	p.send(`${crownEmoji} **| ${user.username}**, See that Shiny Crown? It has your name on it! Thanks to ${p.msg.author.username}, you have received 2 of these priceless relics ${crownEmoji} ${crownCat}`);
 }
