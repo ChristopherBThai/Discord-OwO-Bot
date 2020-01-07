@@ -7,19 +7,16 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const crownEmoji = "<a:crown:663613803786797056>";
-const crownText = "<:crowntext:663613803702779904>";
-const crownCat = "<a:crowncat:663613804441108480>";
-const owner = "176046069954641921";
-const words = ["Fancy!","Shiny!","Cool!"];
+const coffeeEmoji = "<a:coffee:663951575848452117>";
+const owner = "310206001875910658";
 
 module.exports = new CommandInterface({
 
-	alias:["crown"],
+	alias:["coffee","java"],
 
 	args:"{@user}",
 
-	desc:"Give a crown to someone! You can only gain crown if you receive it! This command was created by crowN",
+	desc:"Give a coffee to someone! You can only gain coffee if you receive it! This command was created by ❄chocσ˚ℓαtte❄",
 
 	example:[],
 
@@ -47,7 +44,7 @@ module.exports = new CommandInterface({
 				}
 			}
 			if(user.id==p.msg.author.id){
-				p.errorMsg(", You cannot give a crown yourself!!",3000);
+				p.errorMsg(", You cannot give coffee yourself!!",3000);
 				p.setCooldown(5);
 				return;
 			}
@@ -57,25 +54,25 @@ module.exports = new CommandInterface({
 });
 
 async function display(p){
-	let count = await p.redis.zscore("crown",p.msg.author.id);
+	let count = await p.redis.zscore("coffee",p.msg.author.id);
 	if(!count) count = 0;
 
-	p.replyMsg(crownEmoji,", You currently have **"+count+"** crown(s) to give!");
+	p.replyMsg(coffeeEmoji,", You currently have **"+count+"** cups coffee to give!");
 }
 
 async function give(p,user){
 	if(p.msg.author.id!=owner){
-		let result = await p.redis.incr("crown",p.msg.author.id,-1);
+		let result = await p.redis.incr("coffee",p.msg.author.id,-1);
 
 		// Error checking
 		if(result==null||result<0){
-			if(result<0) p.redis.incr("crown",p.msg.author.id,1);
-			p.errorMsg(", you do not have any crowns! >:c",3000);
+			if(result<0) p.redis.incr("coffee",p.msg.author.id,1);
+			p.errorMsg(", you do not have any cups of coffee! >:c",3000);
 			p.setCooldown(5);
 			return;
 		}
 	}
 
-	await p.redis.incr("crown",user.id,2);
-	p.send(`${crownEmoji} **| ${user.username}**, See that Shiny Crown? It has your name on it! Thanks to ${p.msg.author.username}, you have received 2 of these priceless relics ${crownEmoji} ${crownCat}`);
+	await p.redis.incr("coffee",user.id,2);
+	p.send(`${coffeeEmoji} **| ${user.username}**, you received two steamy cups of coffee from ${p.msg.author.username}. Time to relax and enjoy~`);
 }

@@ -11,11 +11,46 @@ const statArray = ["stat","stats","s"];
 const yesEmoji = '✅';
 const noEmoji = '❎';
 const retryEmoji = '🔄';
-const rerollPrice = 50;
+const rerollPrice = 100;
 const shardEmoji = '<:weaponshard:655902978712272917>';
 
 exports.reroll = async function(p){
-	
+	const embed = {
+		author:{
+			name:p.msg.author.username+", are you sure you want to reroll?",
+			icon_url:p.msg.author.dynamicAvatarURL()
+		},
+		description:"Rerolling will cost **"+rerollPrice+" "+shardEmoji+" Weapon Shards** and AUTOMATICALLY APPLY THE CHANGES TO YOUR WEAPON!\nYour current stats/passives will be LOST!",
+		color: p.config.embed_color
+	}
+	let msg = await p.send({embed});
+
+	await msg.addReaction(yesEmoji);
+	await msg.addReaction(noEmoji);
+
+	let filter = (emoji,userID) => [yesEmoji,noEmoji].includes(emoji.name)&&p.msg.author.id == userID;
+	let collector = p.reactionCollector.create(msg,filter,{time:120000});
+
+	collector.on('collect', (emoji) => {
+		collector.stop("clicked");
+		if(emoji.name===yesEmoji){
+			initMsg(p, msg);
+		}else if(emoji.name===noEmoji){
+			embed.color = 16711680;
+			msg.edit({embed});
+		}
+	});
+
+	collector.on('end',async function(reason){
+		if(reason!="clicked"){
+			embed.color = 6381923;
+			await msg.edit({content:"This message is now inactive",embed});
+		}
+	});
+
+}
+
+async function initMsg(p,msg){
 	// Parse argments
 	let args = parseArgs(p);
 	if(!args) return;
@@ -32,17 +67,21 @@ exports.reroll = async function(p){
 	}
 
 	// Get rerolled weapon
-	let newWeapon = fetchNewWeapon(weapon,rrType);
+	let newWeapon = await fetchNewWeapon(p,weapon,rrType);
+	if(!newWeapon){
+		p.errorMsg(", failed to change weapon stats!");
+		return;
+	}
 	
 	// Send message
-	await sendMessage(p,weapon,newWeapon,rrType);
+	await sendMessage(p,weapon,newWeapon,rrType,msg,true);
 }
 
 async function applyChange(p, weapon){
 	let uwid = weapon.ruwid;
 	let stat = weapon.sqlStat;
 	let avg = weapon.avgQuality;
-	let sql = `UPDATE user_weapon SET stat = '${stat}', avg = ${avg} WHERE uwid = ${uwid};`;
+	let sql = `UPDATE user_weapon SET stat = '${stat}', avg = ${avg}, rrcount = rrcount + 1 WHERE uwid = ${uwid};`;
 	for(let i in weapon.passives){
 		let passive = weapon.passives[i];
 		let stat = passive.sqlStat;
@@ -116,41 +155,35 @@ async function getWeapon(p,uwid){
 	return weapon;
 }
 
-async function sendMessage(p,oldWeapon,newWeapon,rrType,msg){
+async function sendMessage(p,oldWeapon,newWeapon,rrType,msg,addRerollEmoji){
 	let embed = createEmbed(p,oldWeapon,newWeapon);
 	if(!msg){
 		/* send and construct reaction collector */
 		msg = await p.send({embed});
-		await msg.addReaction(yesEmoji);
-		await msg.addReaction(noEmoji);
-		await msg.addReaction(retryEmoji);
 	}else{
 		msg.edit({embed});
 	}
 
-	let filter = (emoji,userID) => [yesEmoji, noEmoji, retryEmoji].includes(emoji.name)&&p.msg.author.id == userID;
+	if(addRerollEmoji)
+		await msg.addReaction(retryEmoji);
+
+	let filter = (emoji,userID) => retryEmoji == emoji.name&&p.msg.author.id == userID;
 	let collector = p.reactionCollector.create(msg,filter,{time:900000,idle:120000});
 
 	collector.on('collect', async (emoji) => {
 			collector.stop("clicked");
-			if(emoji.name===yesEmoji){
-				if(await applyChange(p,newWeapon)){
-					embed.color = 65280;
-					msg.edit({embed});
-				}else{
-					embed.color = 16711680;
-					msg.edit({content:"Failed to change weapon stats! Please contact Scuttler#0001",embed});
-				}
-			}else if(emoji.name===noEmoji){
-				embed.color = 16711680;
-				msg.edit({embed});
-			}else if(emoji.name===retryEmoji){
+			if(emoji.name===retryEmoji){
 				if(!(await useShards(p))){
 					embed.color = 16711680;
 					msg.edit({content:"You don't have enough "+shardEmoji+" Weapon Shards!",embed});
 				}else{
-					newWeapon = fetchNewWeapon(oldWeapon,rrType);
-					sendMessage(p,oldWeapon,newWeapon,rrType,msg);
+					newWeapon = await fetchNewWeapon(p,oldWeapon,rrType);
+					if(!newWeapon){
+						embed.color = 16711680;
+						msg.edit({content:"Failed to change weapon stats!!",embed});
+					}else{
+						sendMessage(p,oldWeapon,newWeapon,rrType,msg);
+					}
 				}
 			}
 	});
@@ -174,7 +207,7 @@ async function useShards(p){
 	return false;
 }
 
-function fetchNewWeapon(weapon,type){
+async function fetchNewWeapon(p,weapon,type){
 	/* Get new weapon */
 	let newWeapon;
 	if(type=="p") newWeapon = weapon.rerollPassives();
@@ -185,7 +218,11 @@ function fetchNewWeapon(weapon,type){
 	for(let i in weapon.passives){
 		newWeapon.passives[i].pcount = weapon.passives[i].pcount;
 	}
-	return newWeapon;
+
+	if(await applyChange(p,newWeapon))
+		return newWeapon;
+	else
+		return null;
 }
 
 function createEmbed(p,oldWeapon, newWeapon){

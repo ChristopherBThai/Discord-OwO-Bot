@@ -164,6 +164,27 @@ function elsa(text,type){
 	let shiryu2 = "<a:shiryuuu:608487444836253696>";
 	switch(type){
 		case 'hb':
+			text.fields[1].name = text.fields[1].name.replace("Knights in Attendance","Chakra Levels");
+			text.fields[1].value = "*How many invitations are going out, my mistress?*\n"+text.fields[1].value;
+
+			text.fields[2].name = text.fields[2].name.replace("Duration","Tournament Deadline");
+			text.fields[2].value = "*We need time to prepare for the tournament*\n"+text.fields[2].value;
+
+			text.fields[3].name = text.fields[3].name.replace("Cost","Tournament Funds");
+			text.fields[3].value = "*How much is my mistress willing to spare?*\n"+text.fields[3].value;
+
+			text.fields[4].name = text.fields[4].name.replace("Gain","Cosmos Power");
+			text.fields[4].value = "*As your knights train, my mistress, the cosmos within them grows*\n"+text.fields[4].value;
+
+			text.fields[5].name = text.fields[5].name.replace("Experience","Training for the Tournament");
+			text.fields[5].value = "*Even the strongest of knights must train so they are prepared to defend you*\n"+text.fields[5].value;
+
+			text.fields[6].name = text.fields[6].name.replace("Animal Essence","The Cosmos Within You");
+			text.fields[6].value = text.fields[6].value.replace("animals","knights")
+				.replace("essence","cosmos power")
+				.replace("xp","training xp")
+				.replace(/`/g,"");
+
 			text.author.name = text.author.name.replace("HuntBot","Bronze Knight");
 			text.description = shiryu1+" **`I will scour the cosmos for you, my mistress`**";
 			text.color = 7319500;
@@ -216,7 +237,7 @@ function dalu(text,type){
 			text.fields[2].name = text.fields[2].name.replace("⏳ Duration","<a:foxduration:653394748501131293> Hunt Time");
 			text.fields[3].name = text.fields[3].name.replace("<:cowoncy:416043450337853441> Cost","<a:foxcost:653394748446343168> Endurance");
 			text.fields[4].name = text.fields[4].name.replace("🔧 Gain","<a:foxgain:653394748836675594> Hunting Friends");
-			text.fields[5].name = text.fields[5].name.replace("⚔ Experience","<a:foxxp:653394749604233286> Combat Amount");
+			text.fields[5].name = text.fields[5].name.replace("⚔ Experience","<a:foxxp:653394749604233286> Combat exp");
 			text.fields[6].name = text.fields[6].name.replace("<a:essence:451638978299428875> Animal Essence","<a:foxessence:653394748777824259> Fox Helpers");
 			if(text.fields.length>=8){
 				text.fields[7].name = foxbot+" KitsuneBot will be back soon!";
@@ -239,7 +260,7 @@ function dalu(text,type){
 				.replace("ANIMALS","animals")
 				.replace("ESSENCE","Hunting Friends")
 				.replace("AND","and")
-				.replace("EXPERIENCE","Combat Amount");
+				.replace("EXPERIENCE","Combat exp");
 			return text;
 		case 'returned':
 			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,foxbot)
@@ -247,7 +268,7 @@ function dalu(text,type){
 				.replace("ANIMALS","animals")
 				.replace("AND","and")
 				.replace("ESSENCE","Hunting Friends")
-				.replace("EXPERIENCE","Combat Amount");
+				.replace("EXPERIENCE","Combat exp");
 			return text;
 		default:
 			return text;
