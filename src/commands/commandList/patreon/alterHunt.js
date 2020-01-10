@@ -297,16 +297,16 @@ function papershark(text){
 	const shark5 = "<:shark5:663939570827657250>";
 	const shark6 = "<:shark6:663939570664210449>";
 	if(text.indexOf("empowered by")>=0){
-		text = text.replace(huntEmoji,'')
-			.replace(/^[*|,\d<:> \w]+empowered/i,`${shark2} Shark is lonely ${shark2}\n${shark3} Shark is empowered`)
-			.replace("**<:blank:427371936482328596> |** You found:",shark4+" Shark made friends with")
-			.replace(blank+" **|** ","")
-			+ "\n" + shark5 + " Shark is no longer lonely " + shark6;
+		text = "> "+text.replace(huntEmoji,'')
+			.replace(/^[*|,\d<:> \w]+empowered/i,`${shark2} Shark is lonely ${shark2}\n> ${shark3} Shark is empowered`)
+			.replace("**<:blank:427371936482328596> |** You found:","> "+shark4+" Shark made friends with")
+			.replace(blank+" **|** ","> ")
+			+ "\n> " + shark5 + " Shark is no longer lonely " + shark6;
 	}else{
 		text = text.replace(huntEmoji,'')
-			.replace(/^[*|\d<:> \w]+caught/i,`${shark2} Shark is lonely ${shark2}\n${shark4} Shark made friends with`)
-			.replace(blank+" **|** ","")
-			+ "\n" + shark5 + " Shark is no longer lonely " + shark6;
+			.replace(/^[*|\d<:> \w]+caught/i,`> ${shark2} Shark is lonely ${shark2}\n> ${shark4} Shark made friends with`)
+			.replace(blank+" **|** ","> ")
+			+ "\n> " + shark5 + " Shark is no longer lonely " + shark6;
 	}
 	return text;
 }

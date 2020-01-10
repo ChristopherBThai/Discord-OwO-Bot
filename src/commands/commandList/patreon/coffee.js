@@ -8,6 +8,7 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const coffeeEmoji = "<a:coffee:663951575848452117>";
+const coffeeEmoji2 = "<a:coffee2:664316331121967126>";
 const owner = "310206001875910658";
 
 module.exports = new CommandInterface({
@@ -57,7 +58,7 @@ async function display(p){
 	let count = await p.redis.zscore("coffee",p.msg.author.id);
 	if(!count) count = 0;
 
-	p.replyMsg(coffeeEmoji,", You currently have **"+count+"** cups coffee to give!");
+	p.replyMsg(coffeeEmoji,", You currently have **"+count+"** cups of coffee to give!");
 }
 
 async function give(p,user){
@@ -74,5 +75,5 @@ async function give(p,user){
 	}
 
 	await p.redis.incr("coffee",user.id,2);
-	p.send(`${coffeeEmoji} **| ${user.username}**, you received two steamy cups of coffee from ${p.msg.author.username}. Time to relax and enjoy~`);
+	p.send(`${coffeeEmoji} **| ${user.username}**, you received two steamy cups of coffee from ${p.msg.author.username}. Time to relax and enjoy~ ${coffeeEmoji2}`);
 }
