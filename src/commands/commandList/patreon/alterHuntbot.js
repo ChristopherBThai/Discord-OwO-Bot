@@ -162,24 +162,36 @@ function spotifybot(text,type){
 function elsa(text,type){
 	let shiryu1 = "<:shiryu:608487137058226186>";
 	let shiryu2 = "<a:shiryuuu:608487444836253696>";
+	let trait1 = "<:trait1:665092925058842624>";
+	let trait2 = "<a:trait2:665092925084139530>";
+	let trait3 = "<:trait3:665092925960486924>";
+	let trait4 = "<:trait4:665092925989978122>";
+	let trait5 = "<:trait5:665092925935452170>";
+	let trait6 = "<:trait6:665092925922738196>";
 	switch(type){
 		case 'hb':
-			text.fields[1].name = text.fields[1].name.replace("Knights in Attendance","Chakra Levels");
+			text.fields[1].name = text.fields[1].name.replace("Efficiency","Knights in Attendance")
+				.replace('⏱',trait1);
 			text.fields[1].value = "*How many invitations are going out, my mistress?*\n"+text.fields[1].value;
 
-			text.fields[2].name = text.fields[2].name.replace("Duration","Tournament Deadline");
+			text.fields[2].name = text.fields[2].name.replace("Duration","Tournament Deadline")
+				.replace('⏳',trait2);
 			text.fields[2].value = "*We need time to prepare for the tournament*\n"+text.fields[2].value;
 
-			text.fields[3].name = text.fields[3].name.replace("Cost","Tournament Funds");
+			text.fields[3].name = text.fields[3].name.replace("Cost","Tournament Funds")
+				.replace('<:cowoncy:416043450337853441>',trait3);
 			text.fields[3].value = "*How much is my mistress willing to spare?*\n"+text.fields[3].value;
 
-			text.fields[4].name = text.fields[4].name.replace("Gain","Cosmos Power");
+			text.fields[4].name = text.fields[4].name.replace("Gain","Cosmos Power")
+				.replace('🔧',trait4);
 			text.fields[4].value = "*As your knights train, my mistress, the cosmos within them grows*\n"+text.fields[4].value;
 
-			text.fields[5].name = text.fields[5].name.replace("Experience","Training for the Tournament");
+			text.fields[5].name = text.fields[5].name.replace("Experience","Training for the Tournament")
+				.replace('⚔',trait5);
 			text.fields[5].value = "*Even the strongest of knights must train so they are prepared to defend you*\n"+text.fields[5].value;
 
-			text.fields[6].name = text.fields[6].name.replace("Animal Essence","The Cosmos Within You");
+			text.fields[6].name = text.fields[6].name.replace("Animal Essence","The Cosmos Within You")
+				.replace('<a:essence:451638978299428875>',trait6);
 			text.fields[6].value = text.fields[6].value.replace("animals","knights")
 				.replace("essence","cosmos power")
 				.replace("xp","training xp")
