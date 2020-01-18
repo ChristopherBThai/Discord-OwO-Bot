@@ -34,6 +34,13 @@ module.exports = new CommandInterface({
 	execute: function(p){
 		let con=p.con,msg=p.msg,args=p.args;
 		let item = shopUtil.getItem(args);
+
+		// Check if command may be of the form : equip uwid pet
+		if (p.args.length == 2 && shopUtil.getItem([args[0]])=='weapon') {
+			weapon.execute(p);
+			return;
+		}
+
 		if(typeof item === 'string' || item instanceof String){
 			p.send("**🚫 | "+msg.author.username+"**, "+item,3000);
 			return;
