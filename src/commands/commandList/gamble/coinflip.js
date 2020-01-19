@@ -12,6 +12,7 @@ const maxBet = 50000;
 const cowoncy = "<:cowoncy:416043450337853441>";
 const spin = "<a:coinflip:436677458339823636>";
 const heads = "<:head:436677933977960478>";
+const random = require('random-number-csprng');
 const tails = "<:tail:436677926398853120>";
 
 module.exports = new CommandInterface({
@@ -89,13 +90,13 @@ module.exports = new CommandInterface({
 			if(maxBet&&bet>maxBet)
 				bet = maxBet;
 
-			let rand = Math.random();
+			let rand = await random(0,1);
 			let win = false;
 			//tails
-			if(rand>.5&&choice=="t")
+			if(rand==0&&choice=="t")
 				win = true;
 			//heads
-			else if(rand<.5&&choice=="h")
+			else if(rand==1&&choice=="h")
 				win = true;
 
 			sql = "UPDATE cowoncy SET money = money "+((win)?"+":"-")+" "+bet+" WHERE id = "+msg.author.id+";";

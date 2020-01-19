@@ -87,7 +87,7 @@ function display(p){
 			{"name":"🎲 Gambling",
 				"value":"`slots`  `coinflip`  `lottery`  `blackjack`  `drop`"},
 			{"name":"🎱 Fun",
-				"value":"`8b`  `define`  `gif`  `pic`  `translate`  `roll`"},
+				"value":"`8b`  `define`  `gif`  `pic`  `translate`  `roll`  `choose`"},
 			{"name":"🎭 Social",
 				"value":"`cookie` `ship`  `pray`  `curse`  `marry`  `emoji`  `profile`  `level`  `wallpaper`  `bell`  `owoify`"},
 			{"name":"😂 Meme Generation",

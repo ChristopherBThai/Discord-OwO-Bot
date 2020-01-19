@@ -112,12 +112,12 @@ async function blackjack(p,player,dealer,bet,resume){
 		}
 		//HIT
 		if(emoji.name==hitEmoji)
-			hit(p,nPlayer,nDealer,message,bet,collector);
+			await hit(p,nPlayer,nDealer,message,bet,collector);
 
 		//STOP
 		else if(emoji.name==stopEmoji){
 			collector.stop("done");
-			stop(p,nPlayer,nDealer,message,bet);
+			await stop(p,nPlayer,nDealer,message,bet);
 		}
 	});
 
@@ -138,8 +138,8 @@ async function initBlackjack(p,bet,existing){
 		await blackjack(p,player,dealer,bet,true);
 	}else{
 		let tdeck = deck.slice(0);
-		let player= [bjUtil.randCard(tdeck,'f'),bjUtil.randCard(tdeck,'f')];
-		let dealer = [bjUtil.randCard(tdeck,'f'),bjUtil.randCard(tdeck,'b')];
+		let player = [await bjUtil.randCard(tdeck,'f'),await bjUtil.randCard(tdeck,'f')];
+		let dealer = [await bjUtil.randCard(tdeck,'f'),await bjUtil.randCard(tdeck,'b')];
 		let sql = "INSERT INTO blackjack (id,bet,date,active) VALUES ("+p.msg.author.id+","+bet+",NOW(),1) ON DUPLICATE KEY UPDATE bet = "+bet+",date = NOW(), active = 1;";
 		sql += bjUtil.generateSQL(player,dealer,p.msg.author.id);
 		await p.query(sql);
@@ -148,7 +148,7 @@ async function initBlackjack(p,bet,existing){
 	}
 }
 
-function hit(p,player,dealer,msg,bet,collector){
+async function hit(p,player,dealer,msg,bet,collector){
 	for(let i=0;i<player.length;i++)
 		player[i].type = 'c';
 	for(let i=0;i<dealer.length;i++){
@@ -157,7 +157,7 @@ function hit(p,player,dealer,msg,bet,collector){
 	}
 
 	let tdeck = bjUtil.initDeck(deck.slice(0),player,dealer);
-	let card = bjUtil.randCard(tdeck,'f');
+	let card = await bjUtil.randCard(tdeck,'f');
 	player.push(card);
 	let ppoints = bjUtil.cardValue(player).points;
 	let dpoints = bjUtil.cardValue(dealer).points;
@@ -176,7 +176,7 @@ function hit(p,player,dealer,msg,bet,collector){
 	}
 }
 
-function stop(p,player,dealer,msg,bet,fromHit){
+async function stop(p,player,dealer,msg,bet,fromHit){
 	if(!fromHit)
 		for(let i=0;i<player.length;i++)
 			player[i].type = 'c';
@@ -192,7 +192,7 @@ function stop(p,player,dealer,msg,bet,fromHit){
 	let tdeck = bjUtil.initDeck(deck.slice(0),player,dealer);
 
 	while(dpoints<17){
-		dealer.push(bjUtil.randCard(tdeck,'f'));
+		dealer.push(await bjUtil.randCard(tdeck,'f'));
 		dpoints = bjUtil.cardValue(dealer).points;
 	}
 
