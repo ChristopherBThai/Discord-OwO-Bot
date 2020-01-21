@@ -1,0 +1,40 @@
+{
+	"sharder":{
+		"path":"/src/owo.js",
+		"name":"OwO Bot"
+	},
+	
+	"eris":{
+		"clientOptions":{
+			"autoreconnect":true,
+			"compress":false,
+			"disableEvents":{
+				"TYPEING_START":true,
+				"VOICE_SERVER_UPDATE":true,
+				"VOICE_STATE_UPDATE":true,
+				"USER_NOTE_UPDATE":true,
+				"CHANNEL_PINS_UPDATE":true,
+				"MESSAGE_UPDATE":true,
+				"RELATIONSHIP_ADD":true,
+				"RELATIONSHIP_REMOVE":true
+			},
+			"disableEveryone":true,
+			"messageLimit":10,
+			"defaultImageFormat":"png",
+			"defaultImageSize":128,
+			"restMode":true
+		}
+	},
+
+	"prefix":"owo",
+	"embed_color":4886754,
+	"emoji":{
+		"cowoncy":"<:cowoncy:416043450337853441>",
+		"blank":"<:blank:427371936482328596>",
+		"invalid":"🚫",
+		"crate":"<:crate:523771259302182922>",
+		"lootbox":"<:box:427352600476647425>"
+	},
+	"guildlink":"https://discord.gg/VKesv7J",
+	"invitelink":"https://discordapp.com/oauth2/authorize?client_id=408785106942164992&permissions=1074120776&scope=bot"
+}

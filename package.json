@@ -1,0 +1,49 @@
+{
+  "name": "owobot",
+  "version": "1.0.0",
+  "description": "a discord bot!",
+  "main": "index.js",
+  "dependencies": {
+    "@zuzak/owo": "^1.2.0",
+    "bufferutil": "^4.0.1",
+    "canvas": "^2.5.0",
+    "dbl-api": "^1.2.1",
+    "dblapi.js": "^2.3.0",
+    "dd-trace": "^0.14.0",
+    "eris-sharder": "^1.9.0",
+    "eventemitter3": "^4.0.0",
+    "express": "^4.16.4",
+    "libsodium-wrappers": "^0.7.4",
+    "mathjs": "^6.0.2",
+    "merge-images": "^1.1.0",
+    "mysql": "^2.17.1",
+    "node-dogstatsd": "0.0.7",
+    "node-vibrant": "^3.1.4",
+    "patreon": "^0.4.1",
+    "random-number-csprng": "^1.0.2",
+    "redis": "^2.8.0",
+    "request": "^2.88.0",
+    "require-dir": "^1.2.0",
+    "socket.io-client": "^2.3.0",
+    "systeminformation": "^4.4.1",
+    "translate-google": "^1.3.5",
+    "urban-dictionary": "^2.2.1",
+    "weeb.js": "^1.6.2",
+    "workerpool": "^3.1.2",
+    "ws": "^7.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChristopherBThai/Discord-OwO-Bot.git"
+  },
+  "author": "Christopher Thai",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ChristopherBThai/Discord-OwO-Bot/issues"
+  },
+  "homepage": "https://github.com/ChristopherBThai/Discord-OwO-Bot#readme"
+}
