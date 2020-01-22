@@ -19,7 +19,7 @@ module.exports = new CommandInterface({
 
     related: ["owo stats, owo shard"],
 
-    permissions: ["sendMessages", "embedLinks"],
+    permissions: ["sendMessages"],
 
     cooldown: 5000,
     half: 80,
@@ -28,7 +28,7 @@ module.exports = new CommandInterface({
     execute: async function (p) {
         //query ping from shard
         let ping = p.client.shards.get(p.client.guildShardMap[p.msg.channel.guild.id]).latency;
-        let str = (p.command == "ping") ? "pong" : "ping";
+        let str = (p.command === "ping") ? "pong" : "ping";
         p.send("..."+str+"! In " + ping + "ms");
     }
 
