@@ -6,8 +6,6 @@
   */
 
 const CommandInterface = require('../../CommandInterface.js');
-const request = require('request');
-const secret = require('../../../../../tokens/wsserver.json');
 
 module.exports = new CommandInterface({
 
@@ -30,7 +28,6 @@ module.exports = new CommandInterface({
     execute: async function (p) {
         //query ping from shard
         let ping = p.client.shards.get(p.client.guildShardMap[p.msg.channel.guild.id]).latency;
-
         let str = (p.command == "ping") ? "pong" : "ping";
         p.send("..."+str+"! In " + ping + "ms");
     }

@@ -34,7 +34,6 @@ module.exports = new CommandInterface({
 	execute: function(p){
 		let con=p.con,msg=p.msg,args=p.args;
 		let item = shopUtil.getItem(args);
-
 		if(typeof item === 'string' || item instanceof String){
 			p.send("**🚫 | "+msg.author.username+"**, "+item,3000);
 			return;
