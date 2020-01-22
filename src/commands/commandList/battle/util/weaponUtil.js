@@ -754,7 +754,7 @@ exports.replaceLastWithID = async function (p) {
 	let last = null;
 	//check all the arguments
 	for (let i = 0; i < p.args.length; i++) {
-		if (p.args[i] === "last" || p.args[i] === "l") {
+		if (p.args[i].toLowerCase() === "last" || p.args[i].toLowerCase() === "l") {
 			if (last === null) {
 				//save it in 'last' to prevent multiple await calls.
 				last = await this.getLastWeaponID(p);
