@@ -34,10 +34,14 @@ module.exports = new CommandInterface({
 	bot:true,
 
 	execute: async function(p){
+		/* Replace {l(ast)} in arguments with {getLastWeaponID} */
+		await weaponUtil.replaceLastWithID(p);
+
 		if(!p.args.length){
 			await displayWeaponShards(p);
 		}else{
 			let arg = p.args[0].toLowerCase();
+			//check if user wants to dismantle a rank
 			for(let i in ranks){
 				if(ranks[i].includes(arg)){
 					await dismantleRank(p,i);
