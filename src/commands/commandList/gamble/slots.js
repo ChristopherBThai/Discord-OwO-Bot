@@ -11,6 +11,7 @@ const maxBet = 50000;
 const slots = ["<:eggplant:417475705719226369>","<:heart:417475705899712522>","<:cherry:417475705178161162>","<:cowoncy:417475705912426496>","<:o_:417475705899843604>","<:w_:417475705920684053>"];
 const moving = "<a:slot_gif:417473893368987649>";
 const alterSlot = require('../patreon/alterSlot.js');
+const random = require('random-number-csprng');
 
 module.exports = new CommandInterface({
 
@@ -70,34 +71,34 @@ module.exports = new CommandInterface({
 		}else{
 			//Decide results
 			let rslots = [];
-			let rand = Math.random();
+			let rand = await random(1,1000)/10;
 			let win = 0;
 			let logging = 0;
-			if(rand<=.20){//1x 20%
+			if(rand<=20){//1x 20%
 				win = amount;
 				rslots.push(slots[0]);
 				rslots.push(slots[0]);
 				rslots.push(slots[0]);
 				logging = 0;
-			}else if(rand<=.40){ //2x 20%
+			}else if(rand<=40){ //2x 20%
 				win = amount*2;
 				rslots.push(slots[1]);
 				rslots.push(slots[1]);
 				rslots.push(slots[1]);
 				logging = 1;
-			}else if(rand<=.45){ //3x 5%
+			}else if(rand<=45){ //3x 5%
 				win = amount*3;
 				rslots.push(slots[2]);
 				rslots.push(slots[2]);
 				rslots.push(slots[2]);
 				logging = 2;
-			}else if(rand<=.475){ //4x 2.5%
+			}else if(rand<=47.5){ //4x 2.5%
 				win = amount*4;
 				rslots.push(slots[3]);
 				rslots.push(slots[3]);
 				rslots.push(slots[3]);
 				logging = 3;
-			}else if(rand<=.485){ //10x 1%
+			}else if(rand<=48.5){ //10x 1%
 				win = amount*10;
 				rslots.push(slots[4]);
 				rslots.push(slots[5]);
