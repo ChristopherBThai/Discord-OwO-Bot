@@ -16,6 +16,8 @@ exports.alter = function(id,text,type){
 			return rikudou(text,type);
 		case '192692796841263104':
 			return dalu(text,type);
+		case '283000589976338432':
+			return kuma(text,type);
 		default:
 			return text;
 	}
@@ -56,4 +58,13 @@ function dalu(text,type){
 	text.color = 63996;
 	text.author.name = text.author.name.replace(" goes into battle!"," starts it off with a bite!");
 	return text;
+}
+
+function kuma(text,type) {
+	text.thumbnail = {
+		"url":"https://cdn.discordapp.com/emojis/674153774088060957.png"
+	};
+	text.author.name = text.author.name.replace(" goes into battle!","'s minions defend the Cookie King");
+	return text;
+
 }
