@@ -37,6 +37,8 @@ exports.alter = function(id,text){
 			return blacky(text);
 		case '576758923688804357':
 			return papershark(text);
+		case '283000589976338432':
+			return kuma(text);
 		default:
 			return text;
 	}
@@ -309,4 +311,18 @@ function papershark(text){
 			+ "\n> " + shark5 + " Shark is no longer lonely " + shark6;
 	}
 	return text;
+}
+
+function kuma (text) {
+	const ck = "<:ck:674153651056410624>";
+	if(text.indexOf("empowered by")>=0){
+		text = text.replace(", hunt is empowered by"," sends out the Cookie minions using")
+			.replace("You found","and they returned with")
+			.replace(huntEmoji,ck);
+	}else{
+		text = text.replace(" spent 5 <:cowoncy:416043450337853441> and caught","'s Cookie minion came back with")
+			.replace(huntEmoji,ck);
+	}
+	return text;
+
 }

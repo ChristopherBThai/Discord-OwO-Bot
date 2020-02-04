@@ -98,7 +98,7 @@ async function claim(p,msg,con,query,bot){
 		let animalLoc = animals.order.indexOf(total[animal].rank);
 		if(animalLoc||animalLoc===0){
 			if(!tempText[animalLoc])
-				tempText[animalLoc] = " \n"+animals.ranks[animals.order[animalLoc]] + "**|**";
+				tempText[animalLoc] = " \n"+animals.ranks[animals.order[animalLoc]] + " **|**";
 			tempText[animalLoc] += " "+animalString;
 		}
 		count++;
