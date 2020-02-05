@@ -17,7 +17,7 @@ module.exports = class Mortality extends BuffInterface{
 		this.debuff = true;
 		this.emoji = "<:mortality:619458869730476042>";
 		this.statDesc = "Decreases all healing for this animal by **?%**";
-		this.qualityList = [[30,60]];
+		this.qualityList = [[20,50]];
 	}
 
 	// Override

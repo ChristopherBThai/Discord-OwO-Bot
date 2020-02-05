@@ -246,6 +246,8 @@ module.exports = class WeaponInterface{
 			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.pr));
 		else if(type==WeaponInterface.MAGICAL)
 			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.mr));
+		else if(type==WeaponInterface.MIXED) 
+			totalDamage = damage * (1-Math.min(WeaponInterface.resToPercent(attackee.stats.pr), WeaponInterface.resToPercent(attackee.stats.mr)));
 		else if(type==WeaponInterface.TRUE)
 			totalDamage = damage;
 		else
@@ -534,6 +536,7 @@ module.exports = class WeaponInterface{
 	static get weapons(){return weapons}
 	static get PHYSICAL(){return 'p'}
 	static get MAGICAL(){return 'm'}
+	static get MIXED(){return 'b'}
 	static get TRUE(){return 't'}
 	static get ranks(){return ranks}
 	static get strEmoji(){return '<:att:531616155450998794>'}

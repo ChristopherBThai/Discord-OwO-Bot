@@ -19,7 +19,7 @@ module.exports = class ResurrectionStaff extends WeaponInterface{
 		this.statDesc = "Revive a dead ally and heal them for **?%** of your "+WeaponInterface.magEmoji+"MAG";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
-		this.qualityList = [[50,80]];
+		this.qualityList = [[80,120]];
 		this.manaRange = [400,300];
 	}
 
@@ -51,6 +51,30 @@ module.exports = class ResurrectionStaff extends WeaponInterface{
 
 		logs.addSubLogs(manaLogs);
 
+		return logs;
+
+	}
+
+	attackPhysical(me,team,enemy){
+		if(me.stats.hp[0]<=0) return;
+
+		/* Grab an enemy that I'm attacking */
+		let attacking = WeaponInterface.getAttacking(me,team,enemy);
+		if(!attacking) return;
+
+		let logs = new Logs();
+
+		/* Calculate damage */
+		let damage = WeaponInterface.getMixedDamage(me.stats.att,1.00,me.stats.mag,.50);
+		
+		/* No mana */
+		if(me.stats.wp[0]<this.manaCost)
+			damage = WeaponInterface.getMixedDamage(me.stats.att,1.00,me.stats.mag,.30);
+
+		/* Deal damage */
+		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.MIXED,{me,allies:team,enemies:enemy});
+
+		logs.push(`[RSTAFF] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
 		return logs;
 
 	}

@@ -17,7 +17,7 @@ module.exports = class Regeneration extends PassiveInterface{
 		this.basicDesc= "";
 		this.emojis = ["<:chgen:621558017967652875>","<:uhgen:621558018420637696>","<:rhgen:621558017984299019>","<:ehgen:621558017791623178>","<:mhgen:621558018366111744>","<:lhgen:621558018265579530>","<:fhgen:621558018286419979>"];
 		this.statDesc = "Heal **?%** of your max "+WeaponInterface.hpEmoji+"HP after every turn";
-		this.qualityList = [[5,10]];
+		this.qualityList = [[3,8]];
 	}
 
 	postTurn(animal,ally,enemy,action){

@@ -16,8 +16,8 @@ module.exports = class Poison extends BuffInterface{
 		this.name = "Poison";
 		this.debuff = true;
 		this.emoji = "<:poison:572311805704273920>";
-		this.statDesc = "Deals **?%** of your "+WeaponInterface.magEmoji+" MAG as true damage at the end of the turn";
-		this.qualityList = [[40,65]];
+		this.statDesc = "Deals **?%** of your "+WeaponInterface.magEmoji+"MAG at the end of the turn";
+		this.qualityList = [[70,95]];
 	}
 
 	// Override
@@ -40,7 +40,7 @@ module.exports = class Poison extends BuffInterface{
 
 		// Calculate and deal damage
 		let damage = WeaponInterface.getDamage(this.from.stats.mag,this.stats[0]/100);
-		damage = WeaponInterface.inflictDamage(this.from,animal,damage,WeaponInterface.TRUE,{me:this.from,allies:enemy,enemies:ally});
+		damage = WeaponInterface.inflictDamage(this.from,animal,damage,WeaponInterface.MAGICAL,{me:this.from,allies:enemy,enemies:ally});
 		logs.push(`[POIS] ${this.from.nickname} damaged ${animal.nickname} for ${damage.amount} HP`, damage.logs);
 
 		super.postTurn(animal,ally,enemy,action);

@@ -17,7 +17,7 @@ module.exports = class AttackUp extends BuffInterface{
 		this.debuff = false;
 		this.emoji = "<:attuppp:619405867548147712>";
 		this.statDesc = "Increases all damage by **?%**. Cannot stack with other Attack Up++ buffs";
-		this.qualityList = [[30,40]];
+		this.qualityList = [[35,45]];
 	}
 
 	// Override
