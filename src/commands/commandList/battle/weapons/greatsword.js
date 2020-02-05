@@ -19,7 +19,7 @@ module.exports = class GreatSword extends WeaponInterface{
 		this.statDesc = "Deals **?%** of your "+WeaponInterface.strEmoji+"STR to all opponents";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
-		this.qualityList = [[40,60]];
+		this.qualityList = [[35,55]];
 		this.manaRange = [200,125];
 	}
 
