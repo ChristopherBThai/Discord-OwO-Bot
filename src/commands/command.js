@@ -178,6 +178,7 @@ function initParam(msg,command,args,main){
 		"replyMsg":main.sender.reply(msg),
 		"errorMsg":main.sender.error(main.config.emoji.invalid,msg),
 		"sender":main.sender,
+		"macro":main.macro,
 		"global":main.global,
 		"aliasToCommand":aliasToCommand,
 		"commandAlias":aliasToCommand[command],
