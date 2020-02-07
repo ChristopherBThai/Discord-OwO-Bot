@@ -21,7 +21,7 @@ module.exports = class VanguardsBanner extends WeaponInterface{
 		this.availablePassives = "all";
 		this.passiveCount = 1;
 		this.qualityList = [];
-		this.manaRange = [225,175];
+		this.manaRange = [250,200];
 		this.buffList = [6,7,8];
 	}
 

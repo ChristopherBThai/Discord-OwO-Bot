@@ -56,7 +56,6 @@ module.exports = class VampStaff extends WeaponInterface{
 		logs.push(logText,subLogs);
 
 		/* Heal all allies */
-		let alive = WeaponInterface.getAlive(team);
 		let heal = dealt/2;
 		logText = `[VSTAFF] ${me.nickname} healed `;
 		subLogs = new Logs();
