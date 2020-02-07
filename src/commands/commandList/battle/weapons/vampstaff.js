@@ -91,7 +91,7 @@ module.exports = class VampStaff extends WeaponInterface{
 		/* Deal damage */
 		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.MIXED,{me,allies:team,enemies:enemy});
 
-		logs.push(`[VSTAFF] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
+		logs.push(`[PHYS] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
 		return logs;
 
 	}

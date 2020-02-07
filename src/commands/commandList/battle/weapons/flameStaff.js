@@ -73,7 +73,7 @@ module.exports = class FStaff extends WeaponInterface{
 		/* Deal damage */
 		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.MIXED,{me,allies:team,enemies:enemy});
 
-		logs.push(`[FSTAFF] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
+		logs.push(`[PHYS] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
 		return logs;
 
 	}

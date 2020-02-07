@@ -32,9 +32,23 @@ module.exports = class ResurrectionStaff extends WeaponInterface{
 
 		let logs = new Logs();
 
-		/* Grab lowest wp */
+		/* Check for a dead friend */
 		let dead = WeaponInterface.getDead(team);
-		if(!dead) return this.attackPhysical(me,team,enemy);
+		if(!dead) {
+			/* smack some fool */
+			let attacking = WeaponInterface.getAttacking(me,team,enemy);
+			if(!attacking) return;
+
+			/* Calculate damage */
+			let damage = WeaponInterface.getMixedDamage(me.stats.att,1.00,me.stats.mag,.50);
+
+			/* Deal damage */
+			damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.MIXED,{me,allies:team,enemies:enemy});
+	
+			logs.push(`[RSTAFF] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
+			return logs;
+		}
+		/* res our friend */
 
 		/* Calculate heal */
 		let heal = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/100);
@@ -65,16 +79,12 @@ module.exports = class ResurrectionStaff extends WeaponInterface{
 		let logs = new Logs();
 
 		/* Calculate damage */
-		let damage = WeaponInterface.getMixedDamage(me.stats.att,1.00,me.stats.mag,.50);
-		
-		/* No mana */
-		if(me.stats.wp[0]<this.manaCost)
-			damage = WeaponInterface.getMixedDamage(me.stats.att,1.00,me.stats.mag,.30);
+		let damage = WeaponInterface.getMixedDamage(me.stats.att,1.00,me.stats.mag,.30);
 
 		/* Deal damage */
 		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.MIXED,{me,allies:team,enemies:enemy});
 
-		logs.push(`[RSTAFF] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
+		logs.push(`[PHYS] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
 		return logs;
 
 	}

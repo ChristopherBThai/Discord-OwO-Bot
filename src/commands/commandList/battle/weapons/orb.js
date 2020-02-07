@@ -6,6 +6,7 @@
   */
 
 const WeaponInterface = require('../WeaponInterface.js');
+const Logs = require('../util/logUtil.js');
 
 module.exports = class Orb extends WeaponInterface{
 
