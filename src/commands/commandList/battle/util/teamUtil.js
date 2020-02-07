@@ -190,8 +190,19 @@ exports.displayTeam = async function(p){
 		return;
 	}
 
+	const team = parseTeam(p,result[0],result[1]);
+	const other = {
+		streak: result[0][0].streak,
+		highestStreak: result[0][0].highest_streak,
+		tname: result[0][0].tname
+	}
+	const embed = createTeamEmbed(p,team,other);
+
+	p.send({embed});
+}
+
+const createTeamEmbed = exports.createTeamEmbed = function (p, team, other={}) {
 	/* Parse query */
-	let team = parseTeam(p,result[0],result[1]);
 	let digits = 1;
 	for(let i in team){
 		animalUtil.stats(team[i]);
@@ -209,8 +220,8 @@ exports.displayTeam = async function(p){
 		if(tempDigit>digits) digits = tempDigit;
 	}
 	digits = Math.trunc(digits);
-	let streak = result[0][0].streak;
-	let highestStreak = result[0][0].highest_streak;
+	let streak = other.streak || 0;
+	let highestStreak = other.highest_streak || 0;
 
 	/* Convert data to user readable strings */
 	let fields = [];
@@ -246,19 +257,18 @@ exports.displayTeam = async function(p){
 	}
 
 	/* Construct msg */
-	var embed = {
+	return embed = {
 		"author":{
-			"name":p.msg.author.username+"'s "+result[0][0].tname,
+			"name":p.msg.author.username+"'s "+other.tname,
 			"icon_url":p.msg.author.avatarURL
 		},
-		"description":"`owo team add {animal} {pos}` Add an animal to your team\n`owo team remove {pos}` Removes an animal from your team\n`owo team rename {name}` Renames your team\n`owo rename {animal} {name}` Rename an animal",
+		"description":"`owo team add {animal} {pos}` Add an animal to your team\n`owo team remove {pos}` Removes an animal from your team\n`owo team rename {name}` Renames your team\n`owo rename {animal} {name}` Rename an animal\n`owo teams` to set multiple teams",
 		"color": p.config.embed_color,
 		"footer":{
 			"text":`Current Streak: ${streak} | Highest Streak: ${highestStreak}`
 		},
 		fields
 	};
-	p.send({embed});
 }
 
 /* Parses animals and weapons into json */
