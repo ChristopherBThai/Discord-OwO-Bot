@@ -32,7 +32,7 @@ module.exports = class Orb extends WeaponInterface{
 		let logs = new Logs();
 
 		/* Calculate damage */
-		let damage = WeaponInterface.getMixedDamage(me.stats.att,.85,me.stats.mag,.85);
+		let damage = WeaponInterface.getMixedDamage(me.stats.att,.80,me.stats.mag,.80);
 
 		/* Deal damage */
 		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.MIXED,{me,allies:team,enemies:enemy});
