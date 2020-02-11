@@ -320,7 +320,7 @@ function kuma (text) {
 			.replace("You found","and they returned with")
 			.replace(huntEmoji,ck);
 	}else{
-		text = text.replace(" spent 5 <:cowoncy:416043450337853441> and caught","'s Cookie minion came back with")
+		text = text.replace(" spent 5 <:cowoncy:416043450337853441> and caught","'s Cookie minions came back with")
 			.replace(huntEmoji,ck);
 	}
 	return text;
