@@ -76,8 +76,8 @@ function generateEmbed(author,dealer,player,bet,end,winnings){
 			"text": footer
 		},
 		"author": {
-		"name": author.username+", you bet "+(global.toFancyNum(bet))+" to play blackjack",
-		"icon_url": author.avatarURL
+			"name": author.username+", you bet "+(global.toFancyNum(bet))+" to play blackjack",
+			"icon_url": author.avatarURL
 		},
 		"fields": [{
 			"name": "Dealer `["+dealerValue.points+"]`",
