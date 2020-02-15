@@ -39,6 +39,8 @@ exports.alter = function(id,text){
 			return papershark(text);
 		case '283000589976338432':
 			return kuma(text);
+		case '536711790558576651':
+			return garcom(text);
 		default:
 			return text;
 	}
@@ -325,4 +327,28 @@ function kuma (text) {
 	}
 	return text;
 
+}
+function garcom(text){
+	const yaf = "<:yaf:677746014064738354>";
+	const vold = "🌋";
+	const swords = "⚔️";
+	text = text.replace(huntEmoji,yaf);
+	if(text.indexOf("empowered by")>=0){
+		text = text.replace(", hunt is empowered by"," began wiping Predator II NA!\n"+yaf+" **|** Empowered by")
+			.replace("**<:blank:427371936482328596> |** You found:",yaf+" **|** returned with:")
+			.replace(blank+" **|** ",blank+" **|** and successfully claimed the "+vold+"\n"+blank+" **|** ")
+			+ "\n"+blank+" **|** "+swords+" YAF "+swords+" Hydra, Fancy, Lester, Imyo, Ntshai, Mog, Elwood, Danny, CC, Flame, Palu, Feli";
+	}else{
+		text = text.replace(" spent 5 <:cowoncy:416043450337853441> and caught"," began wiping Predator II NA!\n"+yaf+" **|** and returned with")
+			.replace("!\n<:blank","!\n"+blank+" **|** and successfully claimed the "+vold+"\n<:blank")
+			+ "\n"+blank+" **|** "+swords+" YAF "+swords+" Hydra, Fancy, Lester, Imyo, Ntshai, Mog, Elwood, Danny, CC, Flame, Palu, Feli";
+	}
+	const embed = {
+		"description":text,
+		"color":1,
+		"thumbnail":{
+			"url":"https://cdn.discordapp.com/attachments/674765942445703198/677421093392482324/ark.gif"
+		}
+	};
+	return {embed};
 }
