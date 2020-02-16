@@ -7,8 +7,9 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const cpcEmoji = "c";
-const owner = "";
+const cpcEmoji1 = "<:cupcake1:678512736300433408>";
+const cpcEmoji2 = "<a:cupcake2:678512736639909888>";
+const owner = "336006333524344832";
 
 module.exports = new CommandInterface({
 
@@ -57,11 +58,11 @@ async function display(p){
 	let count = await p.redis.zscore("cpc",p.msg.author.id);
 	if(!count) count = 0;
 
-	p.replyMsg(cpcEmoji,", You currently have **"+count+"** cupachicake(s) to give!");
+	p.replyMsg(cpcEmoji1,", You currently have **"+count+"** cupachicake(s) to give!");
 }
 
 async function give(p,user){
-	if(false && p.msg.author.id!=owner){
+	if(p.msg.author.id!=owner){
 		let result = await p.redis.incr("cpc",p.msg.author.id,-1);
 
 		// Error checking
@@ -74,5 +75,5 @@ async function give(p,user){
 	}
 
 	await p.redis.incr("cpc",user.id,2);
-	p.send(`${cpcEmoji} **| ${user.username}**, you have received two cupachicakes from ${p.msg.author.username}!\n${p.config.emoji.blank} **|** Cupcakes are sweet and they're even sweeter when shared. So I hope this cupcake bakes your day ${cpcEmoji}`);
+	p.send(`${cpcEmoji1} **| ${user.username}**, you have received two cupachicakes from ${p.msg.author.username}!\n${p.config.emoji.blank} **|** Cupcakes are sweet and they're even sweeter when shared. So I hope this cupcake bakes your day ${cpcEmoji2}`);
 }
