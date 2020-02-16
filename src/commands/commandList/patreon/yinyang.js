@@ -25,7 +25,7 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages"],
 
-	cooldown:3000,
+	cooldown:30000,
 	half:80,
 	six:400,
 	bot:true,
