@@ -10,6 +10,15 @@ const battleEmoji = "🛋";
 const weaponUtil = require('./weaponUtil.js');
 const animalUtil = require('./animalUtil.js');
 const WeaponInterface = require('../WeaponInterface.js');
+const filterTeams = `
+SELECT pt2.pgid
+FROM pet_team pt2
+	LEFT JOIN pet_team_active pt_act
+		ON pt2.pgid = pt_act.pgid
+WHERE u.uid = pt2.uid
+ORDER BY pt_act.pgid DESC, pt2.pgid ASC
+LIMIT 1
+`;
 
 /*
  * Adds a member to the user's team
@@ -20,13 +29,22 @@ const WeaponInterface = require('../WeaponInterface.js');
  */
 exports.addMember = async function(p,animal,pos){
 	/* Get team and animal pid */
-	var sql = `SELECT pos,pet_team.pgid,pid,name FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
-	sql += `SELECT pid,count FROM animal WHERE name = ? AND ID = ${p.msg.author.id};`;
-	var result = await p.query(sql,[animal.value]);
+	let sql = `SELECT pos,pt.pgid,a.pid,name
+		FROM user u
+			INNER JOIN pet_team pt
+				ON pt.uid = u.uid
+			LEFT JOIN pet_team_animal pt_ani
+				ON pt.pgid = pt_ani.pgid
+			LEFT JOIN animal a
+				ON pt_ani.pid = a.pid
+		WHERE u.id = ${p.msg.author.id} AND pt.pgid = (${filterTeams})
+		ORDER BY pos ASC;`;
+	sql += `SELECT pid,count FROM animal WHERE name = ? AND id = ${p.msg.author.id};`;
+	let result = await p.query(sql,[animal.value]);
 
 	/* Check if its not a duplicate animal in team */
-	var usedPos = [];
-	for(var i=0;i<result[0].length;i++){
+	let usedPos = [];
+	for(let i=0;i<result[0].length;i++){
 		if(result[0][i].name==animal.value){
 			p.errorMsg(`, This animal is already in your team!`,3000);
 			return;
@@ -38,7 +56,7 @@ exports.addMember = async function(p,animal,pos){
 
 	/* Check if position is available */
 	if(!pos){
-		for(var i=1;i<4;i++){
+		for(let i=1;i<4;i++){
 			if(!usedPos.includes(i)){
 				pos = i;
 				i = 4;
@@ -82,8 +100,8 @@ exports.addMember = async function(p,animal,pos){
 	/* Query and send message */
 	await p.query(sql);
 
-	for(var i=0;i<result[0].length;i++){
-		if(result[0][i].pos == pos)
+	for(let i=0;i<result[0].length;i++){
+		if(result[0][i].pos == pos || !result[0][i].pid)
 			result[0].splice(i,1);
 	}
 	result[0].splice(pos-1,0,{name:animal.value,pos:pos});
@@ -102,30 +120,52 @@ exports.addMember = async function(p,animal,pos){
  * remove = must be either 1-3 or an animal
  */
 exports.removeMember = async function(p,remove){
-	let sql = `SELECT pos,animal.pid,name FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE user.id = ${p.msg.author.id} ORDER BY pos ASC;`;
+
+	let sql = `SELECT pt.pgid
+		FROM user u
+			INNER JOIN pet_team pt
+				ON pt.uid = u.uid
+			LEFT JOIN pet_team_active pt_act
+				ON pt.pgid = pt_act.pgid
+		WHERE id = ${p.msg.author.id}
+		ORDER BY pt_act.pgid DESC, pt.pgid ASC
+		LIMIT 1;`;
+	let result = await p.query(sql);
+	if ( !result[0] || !result[0].pgid ) {
+		p.errorMsg(", your team is already empty!",3000);
+		return;
+	}
+	const pgid = result[0].pgid;
 
 	/* If its a position */
 	if(p.global.isInt(remove)){
 		sql = `DELETE FROM pet_team_animal WHERE
-			pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id})) AND
+			pgid = ${pgid} AND
 			pos = ? AND
-			(SELECT count FROM (SELECT COUNT(pid) as count FROM pet_team_animal WHERE pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}))) as a) > 1;
-		${sql}`;
+			(SELECT count FROM (SELECT COUNT(pid) AS count FROM pet_team_animal WHERE pgid = ${pgid}) a) > 1;`;
 
 	/* If its an animal */
 	}else{
 		sql = `DELETE FROM pet_team_animal WHERE
-			pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id})) AND
+			pgid = ${pgid} AND
 			pid = (SELECT pid FROM animal WHERE name = ? AND id = ${p.msg.author.id}) AND
-			(SELECT count FROM (SELECT COUNT(pid) as count FROM pet_team_animal WHERE pgid = (SELECT pgid FROM pet_team WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}))) as a) > 1;
-		${sql}`;
+			(SELECT count FROM (SELECT COUNT(pid) AS count FROM pet_team_animal WHERE pgid = ${pgid}) a) > 1;`;
 	}
+	sql += `SELECT pos,pt.pgid,a.pid,name
+		FROM user u
+			INNER JOIN pet_team pt
+				ON pt.uid = u.uid
+			LEFT JOIN pet_team_animal pt_ani
+				ON pt.pgid = pt_ani.pgid
+			LEFT JOIN animal a
+				ON pt_ani.pid = a.pid
+		WHERE u.id = ${p.msg.author.id} AND pt.pgid = (${filterTeams})
+		ORDER BY pos ASC;`;
+	result = await p.query(sql,remove);
 
-	let result = await p.query(sql,remove);
-
-	var team = parseTeam(p,result[1]);
+	let team = parseTeam(p,result[1]);
 	let text = "";
-	for(var i=0;i<team.length;i++){
+	for(let i=0;i<team.length;i++){
 		text += "["+team[i].pos+"]"+((team[i].animal.uni)?team[i].animal.uni:team[i].animal.value)+" ";
 	}
 	if(result[0].affectedRows>0){
@@ -177,49 +217,53 @@ exports.renameTeam = async function(p,name){
 	}
 }
 
+const getTeam = exports.getTeam = async function (p) {
+	/* Query info */
+	let sql = `SELECT tname,pos,name,nickname,a.pid,xp,pt.streak,highest_streak
+		FROM user u
+			INNER JOIN pet_team pt
+				ON u.uid = pt.uid
+			LEFT JOIN pet_team_animal pt_ani 
+				ON pt.pgid = pt_ani.pgid
+			INNER JOIN animal a
+				ON pt_ani.pid = a.pid
+		WHERE u.id = ${p.msg.author.id}
+			AND pt.pgid = ( SELECT pt2.pgid
+				FROM pet_team pt2
+					LEFT JOIN pet_team_active pt_act
+						ON pt2.pgid = pt_act.pgid
+				WHERE u.uid = pt2.uid
+				ORDER BY pt_act.pgid DESC, pt2.pgid ASC
+				LIMIT 1)
+		ORDER BY pos ASC;`;
+	sql += `SELECT uw.pid,uw.uwid,uw.wid,uw.stat,uwp.pcount,uwp.wpid,uwp.stat as pstat,a.name,a.nickname
+		FROM user u
+			INNER JOIN user_weapon uw
+				ON u.uid = uw.uid
+			LEFT JOIN user_weapon_passive uwp
+				ON uw.uwid = uwp.uwid
+			LEFT JOIN animal a
+				ON uw.pid = a.pid
+			LEFT JOIN pet_team_animal pt_ani
+				ON pt_ani.pid = a.pid
+			WHERE u.id = ${p.msg.author.id}
+				AND pt_ani.pgid = 
+					(SELECT pt.pgid FROM pet_team pt
+						LEFT JOIN pet_team_active pt_act
+							ON pt.pgid = pt_act.pgid
+						WHERE pt.uid = u.uid
+						ORDER BY pt_act.pgid DESC, pt.pgid ASC
+						LIMIT 1);`;
+	return await p.query(sql);
+}
+
 /*
  * Displays the team
  */
 exports.displayTeam = async function(p){
-	/* Query info */
-	let sql = `SELECT tname,pos,name,nickname,animal.pid,xp,pet_team.streak,highest_streak
-		FROM user
-			INNER JOIN pet_team
-				ON user.uid = pet_team.uid
-			LEFT JOIN pet_team_animal 
-				ON pet_team.pgid = pet_team_animal.pgid
-			INNER JOIN animal
-				ON pet_team_animal.pid = animal.pid
-		WHERE user.id = ${p.msg.author.id}
-			AND pet_team.pgid = ( SELECT pta.pgid FROM
-				pet_team pt2
-					LEFT JOIN pet_team_active pta
-						ON pt2.pgid = pta.pgid
-				WHERE user.uid = pt2.uid
-					AND pt2.pgid = pet_team_animal.pgid
-				ORDER BY pta.pgid DESC, pt2.pgid ASC
-				LIMIT 1)
-		ORDER BY pos ASC;`;
-	sql += `SELECT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
-		FROM user
-			INNER JOIN user_weapon a 
-				ON user.uid = a.uid
-			LEFT JOIN user_weapon_passive b
-				ON a.uwid = b.uwid
-			LEFT JOIN animal c
-				ON a.pid = c.pid
-			LEFT JOIN pet_team_animal pta
-				ON pta.pid = c.pid
-			WHERE user.id = ${p.msg.author.id}
-				AND pta.pgid = 
-					(SELECT pet_team.pgid FROM pet_team
-						LEFT JOIN pet_team_active
-							ON pet_team.pgid = pet_team_active.pgid
-						WHERE pet_team.uid = user.uid
-						ORDER BY pet_team_active.pgid DESC, pet_team_active.pgid ASC
-						LIMIT 1);`;
-	let result = await p.query(sql);
-	console.log(result);
+
+	let result = await getTeam(p);
+	
 	if(!result[0][0]){
 		p.errorMsg(", you don't have a team! Make one with `owo team add {animal}`");
 		return;
