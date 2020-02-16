@@ -182,9 +182,44 @@ exports.renameTeam = async function(p,name){
  */
 exports.displayTeam = async function(p){
 	/* Query info */
-	let sql = `SELECT tname,pos,name,nickname,pid,xp,pet_team.streak,highest_streak FROM pet_team LEFT JOIN (pet_team_animal NATURAL JOIN animal) ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY pos ASC;`;
-	sql += `SELECT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal c ON a.pid = c.pid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND a.pid IN (SELECT pid FROM pet_team LEFT JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}));`;
+	let sql = `SELECT tname,pos,name,nickname,animal.pid,xp,pet_team.streak,highest_streak
+		FROM user
+			INNER JOIN pet_team
+				ON user.uid = pet_team.uid
+			LEFT JOIN pet_team_animal 
+				ON pet_team.pgid = pet_team_animal.pgid
+			INNER JOIN animal
+				ON pet_team_animal.pid = animal.pid
+		WHERE user.id = ${p.msg.author.id}
+			AND pet_team.pgid = ( SELECT pta.pgid FROM
+				pet_team pt2
+					LEFT JOIN pet_team_active pta
+						ON pt2.pgid = pta.pgid
+				WHERE user.uid = pt2.uid
+					AND pt2.pgid = pet_team_animal.pgid
+				ORDER BY pta.pgid DESC, pt2.pgid ASC
+				LIMIT 1)
+		ORDER BY pos ASC;`;
+	sql += `SELECT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
+		FROM user
+			INNER JOIN user_weapon a 
+				ON user.uid = a.uid
+			LEFT JOIN user_weapon_passive b
+				ON a.uwid = b.uwid
+			LEFT JOIN animal c
+				ON a.pid = c.pid
+			LEFT JOIN pet_team_animal pta
+				ON pta.pid = c.pid
+			WHERE user.id = ${p.msg.author.id}
+				AND pta.pgid = 
+					(SELECT pet_team.pgid FROM pet_team
+						LEFT JOIN pet_team_active
+							ON pet_team.pgid = pet_team_active.pgid
+						WHERE pet_team.uid = user.uid
+						ORDER BY pet_team_active.pgid DESC, pet_team_active.pgid ASC
+						LIMIT 1);`;
 	let result = await p.query(sql);
+	console.log(result);
 	if(!result[0][0]){
 		p.errorMsg(", you don't have a team! Make one with `owo team add {animal}`");
 		return;
@@ -193,7 +228,7 @@ exports.displayTeam = async function(p){
 	const team = parseTeam(p,result[0],result[1]);
 	const other = {
 		streak: result[0][0].streak,
-		highestStreak: result[0][0].highest_streak,
+		highest_streak: result[0][0].highest_streak,
 		tname: result[0][0].tname
 	}
 	const embed = createTeamEmbed(p,team,other);

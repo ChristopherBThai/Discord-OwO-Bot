@@ -8,7 +8,10 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const teamUtil = require('./util/teamUtil.js');
-const maxTeams = 2;
+const maxTeams = 3;
+const nextPageEmoji = '➡️';
+const prevPageEmoji = '⬅️';
+const starEmoji = '⭐';
 
 module.exports = new CommandInterface({
 
@@ -34,13 +37,13 @@ module.exports = new CommandInterface({
 		} else if (p.global.isInt(p.args[0])) {
 			setTeam(p);
 		} else {
-			p.errorMsg(", the correct syntax is `owo teams use {teamNumber}`",3000);
+			p.errorMsg(", the correct syntax is `owo setteam {teamNumber}`",3000);
 		}
 	}
 })
 
 async function displayTeams (p) {
-	let sql = `SELECT pet_team.pgid,tname,pos,name,nickname,animal.pid,xp,pet_team.streak,highest_streak, pet_team_active.pgid AS active_team
+	let sql = `SELECT pet_team.pgid,tname,pos,name,nickname,animal.pid,xp,pet_team.streak,highest_streak
 		FROM user
 			INNER JOIN pet_team
 				ON user.uid = pet_team.uid
@@ -48,8 +51,6 @@ async function displayTeams (p) {
 				ON pet_team.pgid = pet_team_animal.pgid 
 			INNER JOIN animal
 				ON pet_team_animal.pid = animal.pid
-			LEFT JOIN pet_team_active
-				ON pet_team.pgid = pet_team_active.pgid
 		WHERE user.id = ${p.msg.author.id}
 		ORDER BY pgid ASC, pos ASC;`;
 	sql += `SELECT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
@@ -65,6 +66,13 @@ async function displayTeams (p) {
 			LEFT JOIN user_weapon_passive b
 				ON a.uwid = b.uwid
 		WHERE u.id = ${p.msg.author.id};`
+	sql += `SELECT pet_team.pgid, pet_team_active.pgid AS active FROM user
+		INNER JOIN pet_team
+			ON user.uid = pet_team.uid
+		LEFT JOIN pet_team_active
+			ON pet_team.pgid = pet_team_active.pgid
+		WHERE user.id = ${p.msg.author.id}
+		ORDER BY pgid ASC;`;
 	let result = await p.query(sql);
 
 	const teamsObj = {};
@@ -90,21 +98,96 @@ async function displayTeams (p) {
 		}
 	}
 
+	let activeTeam = 0;
+	const teamsOrder = {};
+	if ( !result[2].length ) {
+		p.errorMsg(", you don't have a team! Create one with `owo team add {animalName}`!",5000);
+		return;
+	}
+	for ( let i in result[2] ) {
+		teamsOrder[result[2][i].pgid] = i;
+		if ( result[2][i].active ) activeTeam = i;
+	}
+
+
 	const teams = [];
 	for (let i in teamsObj) {
 		let team = teamsObj[i];
+		const pgid = team.animals[0].pgid;
 		const other = {
 			streak: team.animals[0].streak,
-			highestStreak: team.animals[0].highest_streak,
+			highest_streak: team.animals[0].highest_streak,
 			tname: team.animals[0].tname
 		}
 		team = teamUtil.parseTeam(p,team.animals,team.weapons);
 		const embed = teamUtil.createTeamEmbed(p,team,other);
 		embed.description = "";
-		teams.push(embed);
+		const teamOrder = teamsOrder[pgid];
+		if ( teamOrder == null ) {
+			p.errorMsg(", I couldn't parse your team... something went terribly wrong!",3000);
+			return;
+		}
+		teams[teamOrder] = {embed};
 
-		p.send({embed});
 	}
+
+	for ( let i = 0; i < maxTeams; i++ ) {
+		if ( !teams[i] ) {
+			teams[i] = {embed:{
+				"author":{
+					"name":p.msg.author.username+"'s team",
+					"icon_url":p.msg.author.avatarURL
+				},
+				"description":"`owo team add {animal} {pos}` Add an animal to your team\n`owo team remove {pos}` Removes an animal from your team\n`owo team rename {name}` Renames your team\n`owo rename {animal} {name}` Rename an animal\n`owo teams` to set multiple teams",
+				"color": p.config.embed_color,
+				"footer":{
+					"text":`Current Streak: 0 | Highest Streak: 0 | Page ${i+1}/${maxTeams}`
+				},
+				fields: []
+			}};
+			for ( let j=1; j<=3; j++ ) {
+				teams[i].embed.fields.push({
+					name: "none",
+					value: "*`owo team add {animal} "+j+"`*",
+					inline: true
+				});
+			}
+
+		} else {
+			teams[i].embed.footer.text += ` | Page ${i+1}/${maxTeams}`;
+		}
+		if ( activeTeam == i ) {
+			teams[i].embed.footer.text += ' '+starEmoji;
+		}
+	}
+
+	let currPage = activeTeam;
+	let msg = await p.send(teams[currPage]);
+
+	let filter = (emoji,userID) => (emoji.name===nextPageEmoji||emoji.name===prevPageEmoji)&&userID===p.msg.author.id;
+	let collector = p.reactionCollector.create(msg,filter,{time:900000,idle:120000});
+
+	await msg.addReaction(prevPageEmoji);
+	await msg.addReaction(nextPageEmoji);
+
+	collector.on('collect', async function(emoji){
+		if(emoji.name===nextPageEmoji) {
+			if(currPage<maxTeams-1) currPage++;
+			else currPage = 0;
+			await msg.edit(teams[currPage]);
+		}
+		else if(emoji.name===prevPageEmoji){
+			if(currPage>1) currPage--;
+			else currPage = maxTeams-1;
+			await msg.edit(teams[currPage]);
+		}
+	});
+
+	collector.on('end',async function(collected){
+		embed = teams[currPage].embed;
+		embed.color = 6381923;
+		await msg.edit({content:"This message is now inactive",embed});
+	});
 
 }
 
