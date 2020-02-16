@@ -53,7 +53,7 @@ async function displayTeams (p) {
 				ON pet_team_animal.pid = animal.pid
 		WHERE user.id = ${p.msg.author.id}
 		ORDER BY pgid ASC, pos ASC;`;
-	sql += `SELECT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
+	sql += `SELECT DISTINCT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
 		FROM user u
 			INNER JOIN pet_team pt
 				ON u.uid = pt.uid
@@ -177,7 +177,7 @@ async function displayTeams (p) {
 			await msg.edit(teams[currPage]);
 		}
 		else if(emoji.name===prevPageEmoji){
-			if(currPage>1) currPage--;
+			if(currPage>0) currPage--;
 			else currPage = maxTeams-1;
 			await msg.edit(teams[currPage]);
 		}
