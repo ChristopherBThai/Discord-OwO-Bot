@@ -7,7 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const yinyangEmoji = "yinyang";
+const yinyangEmoji = "<a:yinyang:678514299219476490>";
 const ramenEmoji = "🍜";
 const owner = "549876586720133120";
 

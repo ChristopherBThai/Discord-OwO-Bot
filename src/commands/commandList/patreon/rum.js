@@ -7,17 +7,16 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const cpcEmoji1 = "<:cupcake1:678512736300433408>";
-const cpcEmoji2 = "<a:cupcake2:678512736639909888>";
-const owner = "336006333524344832";
+const rumEmoji = "<:rum:678515332411031552>";
+const owner = "334470442406379521";
 
 module.exports = new CommandInterface({
 
-	alias:["cupachicake","cpc"],
+	alias:["rum"],
 
 	args:"{@user}",
 
-	desc:"Give a cupachicake to someone! You can only gain one if you receive it! This command was created by Shadow Wolf",
+	desc:"Give a tankards of rum to someone! You can only gain one if you receive it! This command was created by Healoholic",
 
 	example:[],
 
@@ -55,25 +54,25 @@ module.exports = new CommandInterface({
 });
 
 async function display(p){
-	let count = await p.redis.zscore("cpc",p.msg.author.id);
+	let count = await p.redis.zscore("rum",p.msg.author.id);
 	if(!count) count = 0;
 
-	p.replyMsg(cpcEmoji1,", You currently have **"+count+"** cupachicake(s) to give!");
+	p.replyMsg(rumEmoji,", You currently have **"+count+"** tankards of rum in your stash to give!");
 }
 
 async function give(p,user){
 	if(p.msg.author.id!=owner){
-		let result = await p.redis.incr("cpc",p.msg.author.id,-1);
+		let result = await p.redis.incr("rum",p.msg.author.id,-1);
 
 		// Error checking
 		if(result==null||result<0){
-			if(result<0) p.redis.incr("cpc",p.msg.author.id,1);
-			p.errorMsg(", you do not have any cupachicakes! >:c",3000);
+			if(result<0) p.redis.incr("rum",p.msg.author.id,1);
+			p.errorMsg(", you do not have any rum! >:c",3000);
 			p.setCooldown(5);
 			return;
 		}
 	}
 
-	await p.redis.incr("cpc",user.id,2);
-	p.send(`${cpcEmoji1} **| ${user.username}**, you have received two cupachicakes from ${p.msg.author.username}!\n${p.config.emoji.blank} **|** Cupcakes are sweet and they're even sweeter when shared. So I hope this cupcake bakes your day ${cpcEmoji2}`);
+	await p.redis.incr("rum",user.id,2);
+	p.send(`${rumEmoji} **| ${user.username}**, you have received two tankards of rum from ${p.msg.author.username}! Yarrrr!`);
 }
