@@ -43,6 +43,7 @@ module.exports = new CommandInterface({
 })
 
 async function displayTeams (p) {
+	// Fetch all teams and weapons
 	let sql = `SELECT pet_team.pgid,tname,pos,name,nickname,animal.pid,xp,pet_team.streak,highest_streak
 		FROM user
 			INNER JOIN pet_team
@@ -75,6 +76,7 @@ async function displayTeams (p) {
 		ORDER BY pgid ASC;`;
 	let result = await p.query(sql);
 
+	// group animals by pgid
 	const teamsObj = {};
 	const animalMap = {};
 	for (let i in result[0]) {
@@ -87,6 +89,7 @@ async function displayTeams (p) {
 		teamsObj[pgid].animals.push(animal);
 	}
 
+	// group weapons by pgid
 	for (let i in result[1]) {
 		let weapon = result[1][i];
 		let pgids = animalMap[weapon.pid];
@@ -98,18 +101,21 @@ async function displayTeams (p) {
 		}
 	}
 
+	// Check if we even have 1 team
 	let activeTeam = 0;
 	const teamsOrder = {};
 	if ( !result[2].length ) {
 		p.errorMsg(", you don't have a team! Create one with `owo team add {animalName}`!",5000);
 		return;
 	}
+	// Find current active team
 	for ( let i in result[2] ) {
 		teamsOrder[result[2][i].pgid] = i;
 		if ( result[2][i].active ) activeTeam = i;
 	}
 
 
+	// Parse all teams and weapons
 	const teams = [];
 	for (let i in teamsObj) {
 		let team = teamsObj[i];
@@ -117,7 +123,7 @@ async function displayTeams (p) {
 		const other = {
 			streak: team.animals[0].streak,
 			highest_streak: team.animals[0].highest_streak,
-			tname: team.animals[0].tname
+			tname: team.animals[0].tname || 'team'
 		}
 		team = teamUtil.parseTeam(p,team.animals,team.weapons);
 		const embed = teamUtil.createTeamEmbed(p,team,other);
@@ -131,6 +137,7 @@ async function displayTeams (p) {
 
 	}
 
+	// Construct embed array to display message
 	for ( let i = 0; i < maxTeams; i++ ) {
 		if ( !teams[i] ) {
 			teams[i] = {embed:{
@@ -161,6 +168,7 @@ async function displayTeams (p) {
 		}
 	}
 
+	// Reaction collector logic
 	let currPage = activeTeam;
 	let msg = await p.send(teams[currPage]);
 
@@ -192,30 +200,33 @@ async function displayTeams (p) {
 }
 
 async function setTeam(p) {
+	// argument validation
 	let teamNum = +p.args[0];
 	if (!teamNum || teamNum < 1 || teamNum > maxTeams) {
 		p.errorMsg(", invalid team number!",3000);
 		return;
 	}
 
+	// Fetch uid and pgid
 	let sql = `SELECT uid FROM user WHERE id = ${p.msg.author.id};
 		SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id} ORDER BY pgid LIMIT 1 OFFSET ${teamNum-1}`;
 	let result = await p.query(sql);
 
 	if (!result[0]) {
-		p.errorMsg(", you don't have any anymals! Get some with `owo hunt`!",3000);
+		p.errorMsg(", you don't have any animals! Get some with `owo hunt`!",3000);
 		return;
 	}
 
 	let pgid = result[1][0];
 	let uid = result[0][0].uid;
+	// Insert it to db if it doesn't exist
 	if (!pgid) {
 		sql = `INSERT INTO pet_team (uid) VALUES (${uid});`;
 		result = await p.query(sql);
-		console.log(result);
 		pgid = result.insertId;
 	} else pgid = pgid.pgid;
 
+	// insert as the current active team
 	sql = `INSERT INTO pet_team_active (uid,pgid) VALUES (${uid},${pgid}) ON DUPLICATE KEY UPDATE pgid = ${pgid};`;
 	await p.query(sql);
 	displayTeams(p);
