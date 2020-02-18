@@ -5,7 +5,6 @@
  * For more information, see README.md and LICENSE
   */
 
-const badwords = require('../../../../../../tokens/badwords.json');
 const battleEmoji = "🛋";
 const weaponUtil = require('./weaponUtil.js');
 const animalUtil = require('./animalUtil.js');
@@ -163,6 +162,11 @@ exports.removeMember = async function(p,remove){
 		ORDER BY pos ASC;`;
 	result = await p.query(sql,remove);
 
+	if ( result[1][0] && !result[1][0].pid ) {
+		p.errorMsg(", your team doesn't have an animal!");
+		return;
+	}
+
 	let team = parseTeam(p,result[1]);
 	let text = "";
 	for(let i=0;i<team.length;i++){
@@ -183,21 +187,10 @@ exports.removeMember = async function(p,remove){
  * Renames the team
  * (Error check before calling this function
  */
-exports.renameTeam = async function(p,name){
+exports.renameTeam = async function(p,teamName){
 
 	/* Name filter */
-	var offensive = 0;
-	var shortnick = name.replace(/\s/g,"").toLowerCase();
-	for(var i=0;i<badwords.length;i++){
-		if(shortnick.includes(badwords[i]))
-			offensive = 1;
-	}
-	name = name.replace(/https:/gi,"https;");
-	name = name.replace(/http:/gi,"http;");
-	name = name.replace(/@everyone/gi,"everyone");
-	name = name.replace(/<@!?[0-9]+>/gi,"User");
-	name = name.replace(/[*`]+/gi,"'");
-	name = name.replace(/\n/g,"");
+	const { name, offensive } = p.global.filteredName(teamName);
 
 	/* Validation check */
 	if(name.length>35){
@@ -208,8 +201,21 @@ exports.renameTeam = async function(p,name){
 		return;
 	}
 
-	var sql = `UPDATE IGNORE pet_team SET tname = ?, censor = ${offensive} WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id})`;
-	var result = await p.query(sql,name);
+	const sql = `UPDATE IGNORE pet_team
+		SET tname = ?, censor = ${offensive}
+		WHERE pet_team.pgid = (SELECT pgid FROM
+			(SELECT pt2.pgid
+			FROM user
+			INNER JOIN pet_team pt2
+				ON user.uid = pt2.uid
+			LEFT JOIN pet_team_active pt_act
+				ON pt2.pgid = pt_act.pgid
+			WHERE user.id = ${p.msg.author.id}
+			ORDER BY pt_act.pgid DESC, pt2.pgid ASC
+			LIMIT 1) tmp
+		)`;
+	const result = await p.query(sql,name);
+	console.log(result);
 	if(result.affectedRows>0){
 		p.replyMsg(battleEmoji,`, You successfully changed your team name to: **${name}**`);
 	}else{
@@ -255,29 +261,6 @@ const getTeam = exports.getTeam = async function (p) {
 						ORDER BY pt_act.pgid DESC, pt.pgid ASC
 						LIMIT 1);`;
 	return await p.query(sql);
-}
-
-/*
- * Displays the team
- */
-exports.displayTeam = async function(p){
-
-	let result = await getTeam(p);
-	
-	if(!result[0][0]){
-		p.errorMsg(", you don't have a team! Make one with `owo team add {animal}`");
-		return;
-	}
-
-	const team = parseTeam(p,result[0],result[1]);
-	const other = {
-		streak: result[0][0].streak,
-		highest_streak: result[0][0].highest_streak,
-		tname: result[0][0].tname
-	}
-	const embed = createTeamEmbed(p,team,other);
-
-	p.send({embed});
 }
 
 const createTeamEmbed = exports.createTeamEmbed = function (p, team, other={}) {
