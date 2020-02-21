@@ -25,47 +25,55 @@ const weapon = '🗡';
 exports.weapon = weapon;
 const numEmojis = ['1⃣','2⃣','3⃣'];
 
+function teamFilter (userId) {
+	return `SELECT pt2.pgid FROM user u2
+		INNER JOIN pet_team pt2
+			ON pt2.uid = u2.uid
+		LEFT JOIN pet_team_active pt_act
+			ON pt2.pgid = pt_act.pgid
+	WHERE u2.uid = ${userId}
+	ORDER BY pt_act.pgid DESC, pt2.pgid ASC
+	LIMIT 1`;
+}
+
 
 /* ==================================== Grabs battle from sql ====================================  */
 /* Grabs existing battle */
 var getBattle = exports.getBattle = async function(p,setting){
 	/* And our team */
 	let sql = `SELECT pet_team_battle.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat,cphp,cpwp,cehp,cewp,pet_team.streak,pet_team.highest_streak
-		FROM user
-			INNER JOIN pet_team ON user.uid = pet_team.uid
+		FROM pet_team
 			INNER JOIN pet_team_battle ON pet_team.pgid = pet_team_battle.pgid
 			INNER JOIN pet_team_animal ON pet_team_battle.pgid = pet_team_animal.pgid
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
 			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
-		WHERE user.id = ${p.msg.author.id}
+		WHERE pet_team.pgid = (${teamFilter(p.msg.author.id)})
 			AND active = 1
 		ORDER BY pos ASC;`;
 	/* Query enemy team */
 	sql += `SELECT pet_team.censor as ptcensor,animal.offensive as acensor,pet_team_battle.epgid,enemyTeam.tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat,cphp,cpwp,cehp,cewp
-		FROM user
-			INNER JOIN pet_team ON user.uid = pet_team.uid
+		FROM pet_team
 			INNER JOIN pet_team_battle ON pet_team.pgid = pet_team_battle.pgid
 			INNER JOIN pet_team_animal ON pet_team_battle.epgid = pet_team_animal.pgid
 			INNER JOIN pet_team enemyTeam ON pet_team_battle.epgid = enemyTeam.pgid
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
 			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
-		WHERE user.id = ${p.msg.author.id}
+		WHERE pet_team.pgid = (${teamFilter(p.msg.author.id)})
 			AND active = 1
 		ORDER BY pos ASC;`;
 	sql += `SELECT pet_team_battle_buff.*
-		FROM user
-			INNER JOIN pet_team ON user.uid = pet_team.uid
+		FROM pet_team
 			INNER JOIN pet_team_battle_buff ON pet_team.pgid = pet_team_battle_buff.pgid
-		WHERE user.id = ${p.msg.author.id};`
-
-	/* Should we censor? */
-	sql += `SELECT young FROM guild WHERE id = ${p.msg.channel.guild.id} AND young = 1;`;
+		WHERE pet_team.pgid = (${teamFilter(p.msg.author.id)});`;
+	sql += teamFilter(p.msg.author.id)+';';
+	//TODO FIX FILTERTEAMS
 
 	let result = await p.query(sql);
+	console.log(result);
 
-	let censor = (result[3][0])?true:false;
+	let censor = true;
 
 	/* Grab pgid */
 	let pgid = result[0][0]?result[0][0].pgid:undefined;
