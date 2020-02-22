@@ -13,11 +13,11 @@ const owner = "549876586720133120";
 
 module.exports = new CommandInterface({
 
-	alias:["yinyang"],
+	alias:["yinyang","yy"],
 
 	args:"{@user}",
 
-	desc:"Give a ying and yang to someone! Collect 7 to combine them into ramen! You can only gain ying yangs if you receive it! This command was created by ! 「陰陽」 Kitsune ☯",
+	desc:"Give a yin and yang to someone! Collect 7 to combine them into ramen! You can only gain ying yangs if you receive it! This command was created by ! 「陰陽」 Kitsune ☯",
 
 	example:[],
 
