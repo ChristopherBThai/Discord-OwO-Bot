@@ -215,7 +215,6 @@ exports.renameTeam = async function(p,teamName){
 			LIMIT 1) tmp
 		)`;
 	const result = await p.query(sql,name);
-	console.log(result);
 	if(result.affectedRows>0){
 		p.replyMsg(battleEmoji,`, You successfully changed your team name to: **${name}**`);
 	}else{
@@ -401,14 +400,30 @@ exports.giveXP = async function(p,team,xp){
 			highestLvl = lvl;
 	}
 		
-	let sql = '';
+	let cases = '';
 	for(let i in team.team){
 		let mult = 1;
 		let lvl = team.team[i].stats.lvl;
 		if(lvl < highestLvl)
 			mult = 2 + ((highestLvl-lvl)/10)
 		if(mult>10) mult = 10;
-		sql += animalUtil.giveXP(team.team[i].pid,Math.round(total*mult));
+		cases += ` WHEN animal.pid = ${team.team[i].pid} THEN ${Math.round(total*mult)}`;
+	}
+
+	let sql = '';
+	if (isInt) {
+		sql = `UPDATE IGNORE pet_team
+			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
+			INNER JOIN animal ON pet_team_animal.pid = animal.pid
+		SET animal.xp = animal.xp + (CASE ${cases} ELSE ${Math.round(total/2)} END)
+		WHERE pet_team.pgid = ${team.pgid};`;
+	} else {
+		sql = `UPDATE IGNORE user 
+			INNER JOIN pet_team ON user.uid = pet_team.uid
+			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
+			INNER JOIN animal ON pet_team_animal.pid = animal.pid
+		SET animal.xp = animal.xp + (CASE ${cases} ELSE ${Math.round(total/2)} END)
+		WHERE user.id = ${p.msg.author.id};`;
 	}
 
 	if(addStreak) sql += `UPDATE pet_team SET highest_streak = IF(streak+1>highest_streak,streak+1,highest_streak), streak = streak + 1 WHERE pgid = ${team.pgid};`;
