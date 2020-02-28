@@ -16,3 +16,6 @@ exports.initLevelCheck = function(uBan){ }
 
 // Check for xp macros
 exports.levelCheck = function(msg,limit){ return true; }
+
+// check for flagged bots in the server (Fish bot / reaction bot etc)
+exports.checkNeighbors = async function(p, command) { return false; }

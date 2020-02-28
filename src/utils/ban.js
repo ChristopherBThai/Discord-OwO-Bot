@@ -7,6 +7,7 @@
 
 var cooldown = {};
 const permissions = require('../data/permissions.json');
+const macro = require('../../../tokens/macro.js');
 const noEmoji = '🚫';
 const skullEmoji = '☠';
 const liftEmoji = '🙇';
@@ -48,6 +49,11 @@ exports.check = async function(p,command){
 		cooldown[author]++;
 	}
 
+	// check for flagged bots
+	let naughtyChildren = !!await macro.checkNeighbors(p, command);
+	if (naughtyChildren) {
+		return;
+	}
 
 	//Check if the command is enabled
 	let sql = `SELECT * FROM disabled WHERE (command = '${command}' OR command = 'all') AND channel = ${channel};
