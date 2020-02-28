@@ -12,7 +12,7 @@ exports.giveXP = async function(msg){
 	if(msg.channel.type===1) return;
 	
 	// Return if on banned or is a bot
-	if(msg.author.bot||banned[msg.author.id]||banned[msg.channel.id]) return;
+	if(isBanned(msg)) return;
 
 	// Set cooldown 
 	if(!await redis.sadd('user_xp_cooldown',msg.author.id)) return;
@@ -73,7 +73,6 @@ exports.giveXP = async function(msg){
 			levelRewards.distributeRewards(msg);
 		}
 	}
-
 }
 
 /* Give xp to a user */
@@ -172,6 +171,11 @@ function permBan(id){
 /* Remove a ban */
 function removeBan(id){
 	delete banned[id];
+}
+
+/* check if banned */
+const isBanned = exports.isBanned = function(msg) {
+	return msg.author.bot || banned[msg.author.id] || banned[msg.channel.id];
 }
 
 /* Some cheat detection stuff */
