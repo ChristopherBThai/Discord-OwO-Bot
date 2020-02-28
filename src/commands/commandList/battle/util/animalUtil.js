@@ -73,7 +73,6 @@ function getXP(lvl){
 exports.giveXP = function(pid,xp){
 	let sql = `UPDATE IGNORE animal SET xp = xp + ${xp} WHERE pid = ${pid};`;
 	return sql;
-
 }
 
 const barLength = 24;
