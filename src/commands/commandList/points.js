@@ -7,6 +7,8 @@
 
 const CommandInterface = require('../CommandInterface.js');
 
+const levels = require('../../utils/levels.js');
+
 module.exports = new CommandInterface({
 
 	alias:["points"],
@@ -25,6 +27,9 @@ module.exports = new CommandInterface({
 	bot:true,
 
 	execute: async function(p){
+
+		if (levels.isBanned(p.msg)) return;
+
 		//Adds points
 		let sql = "INSERT INTO user (id,count) VALUES ("+p.msg.author.id+",1) ON DUPLICATE KEY "+
 			"UPDATE count = count + 1;";
