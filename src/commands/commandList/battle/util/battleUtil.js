@@ -944,18 +944,11 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 		/* An error occured */
 		if(!playerWin&&!enemyWin) return;
 
-		let now = new Date();
-		let test = await p.query("select distinct animal.pid,xp from user inner join pet_team on user.uid = pet_team.uid inner join pet_team_animal on pet_team.pgid = pet_team_animal.pgid inner join animal on pet_team_animal.pid = animal.pid where user.id = 184587051943985152;");
 		await teamUtil.giveXP(p,battle.player,pXP);
 		/* xp quest */
 		p.quest("xp",pXP.total);
 
 		await teamUtil.giveXP(p,battle.enemy,eXP.xp);
-		let test2 = await p.query("select distinct animal.pid,xp from user inner join pet_team on user.uid = pet_team.uid inner join pet_team_animal on pet_team.pgid = pet_team_animal.pgid inner join animal on pet_team_animal.pid = animal.pid where user.id = 184587051943985152;");
-		for (let i in test) {
-			console.log(test[i].pid+" "+(parseInt(test2[i].xp) - parseInt(test[i].xp)));
-		}
-		//TODO TEST ENEMYOUTPUT
 	}
 
 
