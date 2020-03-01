@@ -9,9 +9,13 @@ const whitelist = ['409959187229966337','420104212895105044','552384921914572802
 const modChannel = ["471579186059018241","596220958730223619","645501936036216862"];
 const PrivateChannel = 1;
 const levels = require('../utils/levels.js');
+const blacklist = require('../utils/blacklist.js');
 
 // Fired when a message is created
 exports.handle = function(msg){
+
+	if (blacklist.checkBot(msg)) return;
+
 	//Ignore if bot
 	if(msg.author.bot) return;
 

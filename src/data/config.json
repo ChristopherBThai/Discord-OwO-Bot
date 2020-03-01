@@ -36,5 +36,8 @@
 		"lootbox":"<:box:427352600476647425>"
 	},
 	"guildlink":"https://discord.gg/VKesv7J",
-	"invitelink":"https://discordapp.com/oauth2/authorize?client_id=408785106942164992&permissions=1074120776&scope=bot"
+	"invitelink":"https://discordapp.com/oauth2/authorize?client_id=408785106942164992&permissions=1074120776&scope=bot",
+	"blacklist": {
+		"486926264800903171":true
+	}
 }
