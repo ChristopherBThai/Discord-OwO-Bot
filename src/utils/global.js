@@ -239,6 +239,7 @@ exports.filteredName = function (name) {
 	}
 	name = name.replace(/https:/gi,"https;")
 		.replace(/http:/gi,"http;")
+		.replace(/discord.gg/gi,"discord,gg")
 		.replace(/@everyone/gi,"everyone")
 		.replace(/<@!?[0-9]+>/gi,"User")
 		.replace(/[*`]+/gi,"'")

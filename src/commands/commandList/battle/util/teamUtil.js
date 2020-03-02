@@ -323,7 +323,7 @@ const createTeamEmbed = exports.createTeamEmbed = function (p, team, other={}) {
 			"name":p.msg.author.username+"'s "+other.tname,
 			"icon_url":p.msg.author.avatarURL
 		},
-		"description":"`owo team add {animal} {pos}` Add an animal to your team\n`owo team remove {pos}` Removes an animal from your team\n`owo team rename {name}` Renames your team\n`owo rename {animal} {name}` Rename an animal\n`owo teams` to set multiple teams",
+		"description":"`owo team add {animal} {pos}` Add an animal to your team\n`owo team remove {pos}` Removes an animal from your team\n`owo team rename {name}` Renames your team\n`owo rename {animal} {name}` Rename an animal\n`owo setteam {teamNum}` to set multiple teams",
 		"color": p.config.embed_color,
 		"footer":{
 			"text":`Current Streak: ${streak} | Highest Streak: ${highestStreak}`

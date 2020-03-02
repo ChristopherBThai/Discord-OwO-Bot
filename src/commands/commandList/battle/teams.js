@@ -8,6 +8,8 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const teamUtil = require('./util/teamUtil.js');
+const battleUtil = require('./util/battleUtil.js');
+const battleFriendUtil = require('./util/battleFriendUtil.js');
 const maxTeams = 3;
 const nextPageEmoji = '➡️';
 const prevPageEmoji = '⬅️';
@@ -35,7 +37,7 @@ module.exports = new CommandInterface({
 		if (p.args.length < 1) {
 			displayTeams(p);
 		} else if (p.global.isInt(p.args[0])) {
-			setTeam(p);
+			setTeam(p,+p.args[0]);
 		} else {
 			p.errorMsg(", the correct syntax is `owo setteam {teamNumber}`",3000);
 		}
@@ -127,7 +129,6 @@ async function displayTeams (p) {
 		}
 		team = teamUtil.parseTeam(p,team.animals,team.weapons);
 		const embed = teamUtil.createTeamEmbed(p,team,other);
-		embed.description = "";
 		const teamOrder = teamsOrder[pgid];
 		if ( teamOrder == null ) {
 			p.errorMsg(", I couldn't parse your team... something went terribly wrong!",3000);
@@ -145,7 +146,7 @@ async function displayTeams (p) {
 					"name":p.msg.author.username+"'s team",
 					"icon_url":p.msg.author.avatarURL
 				},
-				"description":"`owo team add {animal} {pos}` Add an animal to your team\n`owo team remove {pos}` Removes an animal from your team\n`owo team rename {name}` Renames your team\n`owo rename {animal} {name}` Rename an animal\n`owo teams` to set multiple teams",
+				"description":"`owo team add {animal} {pos}` Add an animal to your team\n`owo team remove {pos}` Removes an animal from your team\n`owo team rename {name}` Renames your team\n`owo rename {animal} {name}` Rename an animal\n`owo setteam {teamNum}` to set multiple teams",
 				"color": p.config.embed_color,
 				"footer":{
 					"text":`Current Streak: 0 | Highest Streak: 0 | Page ${i+1}/${maxTeams}`
@@ -172,21 +173,28 @@ async function displayTeams (p) {
 	let currPage = activeTeam;
 	let msg = await p.send(teams[currPage]);
 
-	let filter = (emoji,userID) => (emoji.name===nextPageEmoji||emoji.name===prevPageEmoji)&&userID===p.msg.author.id;
+	let filter = (emoji,userID) => [nextPageEmoji, prevPageEmoji, starEmoji].includes(emoji.name)&&userID===p.msg.author.id;
 	let collector = p.reactionCollector.create(msg,filter,{time:900000,idle:120000});
 
 	await msg.addReaction(prevPageEmoji);
 	await msg.addReaction(nextPageEmoji);
+	await msg.addReaction(starEmoji);
 
 	collector.on('collect', async function(emoji){
 		if(emoji.name===nextPageEmoji) {
 			if(currPage<maxTeams-1) currPage++;
 			else currPage = 0;
 			await msg.edit(teams[currPage]);
-		}
-		else if(emoji.name===prevPageEmoji){
+		}else if(emoji.name===prevPageEmoji){
 			if(currPage>0) currPage--;
 			else currPage = maxTeams-1;
+			await msg.edit(teams[currPage]);
+		}else if(emoji.name===starEmoji){
+			await setTeam(p,currPage+1,true);
+			for (let i in teams) {
+				teams[i].embed.footer.text = teams[i].embed.footer.text.replace(` ${starEmoji}`,'');
+			}
+			teams[currPage].embed.footer.text += ` ${starEmoji}`;
 			await msg.edit(teams[currPage]);
 		}
 	});
@@ -199,11 +207,19 @@ async function displayTeams (p) {
 
 }
 
-async function setTeam(p) {
+async function setTeam(p, teamNum, dontDisplay) {
 	// argument validation
-	let teamNum = +p.args[0];
 	if (!teamNum || teamNum < 1 || teamNum > maxTeams) {
 		p.errorMsg(", invalid team number!",3000);
+		return;
+	}
+
+	// You cant change teams if in battle
+	if((await battleUtil.inBattle(p))){
+		p.errorMsg(", You cannot change your team while you're in battle! Please finish your `owo battle`!",3000);
+		return;
+	}else if((await battleFriendUtil.inBattle(p))){
+		p.errorMsg(", You cannot change your team while you have a pending battle! Use `owo db` to decline",3000);
 		return;
 	}
 
@@ -229,5 +245,5 @@ async function setTeam(p) {
 	// insert as the current active team
 	sql = `INSERT INTO pet_team_active (uid,pgid) VALUES (${uid},${pgid}) ON DUPLICATE KEY UPDATE pgid = ${pgid};`;
 	await p.query(sql);
-	displayTeams(p);
+	if (!dontDisplay) displayTeams(p);
 }
