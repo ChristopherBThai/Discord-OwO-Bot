@@ -106,7 +106,7 @@ async function executeCommand(main,p){
 
 	// Log stats to datadog api
 	let dm = p.msg.channel.type==1;
-	logger.increment("command",['command:'+p.commandAlias,'id:'+p.msg.author.id,'guild:'+(dm?p.msg.channel.id:p.msg.channel.guild.id),'channel:'+p.msg.channel.id,'dm:'+dm]);
+	logger.increment("command",['command:'+p.commandAlias,/*'id:'+p.msg.author.id,'guild:'+(dm?p.msg.channel.id:p.msg.channel.guild.id),'channel:'+p.msg.channel.id,*/'dm:'+dm]);
 }
 
 /**
@@ -178,6 +178,7 @@ function initParam(msg,command,args,main){
 		"replyMsg":main.sender.reply(msg),
 		"errorMsg":main.sender.error(main.config.emoji.invalid,msg),
 		"sender":main.sender,
+		"macro":main.macro,
 		"global":main.global,
 		"aliasToCommand":aliasToCommand,
 		"commandAlias":aliasToCommand[command],
