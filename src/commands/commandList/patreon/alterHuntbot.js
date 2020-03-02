@@ -7,7 +7,7 @@
 
 const blank = '<:blank:427371936482328596>';
 
-exports.alter = function(id,text,type){
+exports.alter = function(id,text,type) {
 	switch(id){
 		case '111619509529387008':
 			return lexus(text,type);
@@ -21,6 +21,8 @@ exports.alter = function(id,text,type){
 			return dalu(text,type);
 		case '323347251705544704':
 			return rikudou(text,type);
+		case '283000589976338432':
+			return kuma(text,type);
 		default:
 			return text;
 	}
@@ -337,3 +339,49 @@ function rikudou(text,type){
 	}
 }
 
+function kuma(text,type) {
+	const bear = "<:kuma:674153774088060957>";
+	switch(type){
+		case 'hb':
+			text.author.name = text.author.name.replace("'s HuntBot","'s Cookie Collector");
+			text.fields.shift();
+			text.color = 13344488;
+			if(text.fields.length>=7){
+				text.fields[6].name = bear+" I'm still collecting minions master"
+				text.fields[6].value = text.fields[6].value.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","I will be back in")
+					.replace("DONE","done")
+					.replace("ANIMALS CAPTURED","minions recruited");
+			}
+			return text;
+		case 'progress':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,bear)
+				.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","I'm still collecting minions, master. I'll be back in")
+				.replace("DONE","done")
+				.replace("ANIMALS CAPTURED","minions recruited");
+			return text;
+		case 'password':
+			text = text.split("\n")[0].replace(/<:[a-z]bot:[0-9]+>/gi,bear);
+			return text
+		case 'spent':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,bear)
+				.replace("`BEEP BOOP. `","")
+				.replace("YOU SPENT","you spent")
+				.replace("I WILL BE BACK IN","I will be back in")
+				.replace("WITH","with")
+				.replace("ANIMALS","minions")
+				.replace("ESSENCE","essence")
+				.replace("AND","and")
+				.replace("EXPERIENCE","experience");
+			return text;
+		case 'returned':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,bear)
+				.replace("BEEP BOOP. I AM BACK WITH","I am back with")
+				.replace("ANIMALS","minions")
+				.replace("AND","and")
+				.replace("ESSENCE","essence")
+				.replace("EXPERIENCE","experience");
+			return text;
+		default:
+			return text;
+	}
+}
