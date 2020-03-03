@@ -30,7 +30,6 @@ exports.check = async function(p,command){
 		//	Still in cooldown
 		if(diff<mcommands[ccd.command].cd){
 			if(command == "points"){
-				console.log(ccd)
 				/*
 				ccd.lasttime = now;
 				await redis.hmset(key,ccd);
