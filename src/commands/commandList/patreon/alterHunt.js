@@ -334,21 +334,23 @@ function garcom(text){
 	const swords = "⚔️";
 	text = text.replace(huntEmoji,yaf);
 	if(text.indexOf("empowered by")>=0){
-		text = text.replace(", hunt is empowered by"," began wiping Predator II NA!\n"+yaf+" **|** Empowered by")
-			.replace("**<:blank:427371936482328596> |** You found:",yaf+" **|** returned with:")
+		text = text.replace(", hunt is empowered by"," began wiping Predator II NA!\n"+blank+" **|** Empowered by")
+			.replace("**<:blank:427371936482328596> |** You found:",blank+" **|** they returned with:")
 			.replace(blank+" **|** ",blank+" **|** and successfully claimed the "+vold+"\n"+blank+" **|** ")
-			+ "\n"+blank+" **|** "+swords+" YAF "+swords+" Hydra, Fancy, Lester, Imyo, Ntshai, Mog, Elwood, Danny, CC, Flame, Palu, Feli";
+			+ "\n"+blank+" **|** "+swords+" **YAF** "+swords+" Hydra, Fancy, Lester, Imyo, Ntshai, Mog, Elwood, Danny, CC, Flame, Palu, Feli";
 	}else{
-		text = text.replace(" spent 5 <:cowoncy:416043450337853441> and caught"," began wiping Predator II NA!\n"+yaf+" **|** and returned with")
+		text = text.replace(" spent 5 <:cowoncy:416043450337853441> and caught"," began wiping Predator II NA!\n"+blank+" **|** and returned with")
 			.replace("!\n<:blank","!\n"+blank+" **|** and successfully claimed the "+vold+"\n<:blank")
-			+ "\n"+blank+" **|** "+swords+" YAF "+swords+" Hydra, Fancy, Lester, Imyo, Ntshai, Mog, Elwood, Danny, CC, Flame, Palu, Feli";
+			+ "\n"+blank+" **|** "+swords+" **YAF** "+swords+" Hydra, Fancy, Lester, Imyo, Ntshai, Mog, Elwood, Danny, CC, Flame, Palu, Feli";
 	}
 	const embed = {
 		"description":text,
 		"color":1,
+		/*
 		"thumbnail":{
 			"url":"https://cdn.discordapp.com/attachments/674765942445703198/677421093392482324/ark.gif"
 		}
+		*/
 	};
 	return {embed};
 }

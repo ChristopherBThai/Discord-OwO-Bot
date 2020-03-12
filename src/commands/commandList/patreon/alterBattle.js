@@ -18,6 +18,8 @@ exports.alter = function(id,text,type){
 			return dalu(text,type);
 		case '283000589976338432':
 			return kuma(text,type);
+		case '536711790558576651':
+			return garcom(text);
 		default:
 			return text;
 	}
@@ -67,4 +69,12 @@ function kuma(text,type) {
 	text.author.name = text.author.name.replace(" goes into battle!","'s minions defend the Cookie King");
 	return text;
 
+}
+
+function garcom(text,type) {
+	text.author.name = "전투를 시작합니다!";
+	text.thumbnail = {
+		url:"https://cdn.discordapp.com/attachments/674765942445703198/676257154893873172/C8fHZTfVYAIaFOc.png"
+	}
+	return text;
 }
