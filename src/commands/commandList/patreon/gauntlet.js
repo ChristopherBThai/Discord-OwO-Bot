@@ -20,7 +20,7 @@ module.exports = new CommandInterface({
 
 	args:"snap",
 
-	desc:"Combine 4 yinyangs to create a thanos gauntlet! Snap to choose one of 3 events! This command was created by ! 「陰陽」 Kitsune ☯",
+	desc:"Combine 1 yinyangs to create a thanos gauntlet! Snap to choose one of 3 events! This command was created by ! 「陰陽」 Kitsune ☯",
 
 	example:[],
 
@@ -49,18 +49,18 @@ async function createGauntlet(p) {
 		return;
 	}
 
-	let result = await p.redis.incr("yinyang",p.msg.author.id,-4);
-	const refund = +result<0||((+result+4)%6)<4;
+	let result = await p.redis.incr("yinyang",p.msg.author.id,-1);
+	const refund = +result<0||((+result+1)%6)<1;
 	const displayText = await getDisplayText(p);
 	if ( result==null || refund ) {
-		if(result<0) p.redis.incr("yinyang",p.msg.author.id,4);
+		if(result<0) p.redis.incr("yinyang",p.msg.author.id,1);
 		p.errorMsg(`, you don't have enough yin yangs!\n${p.config.emoji.blank} **|** ${displayText}`);
 		p.setCooldown(5);
 		return;
 	}
 
 	await p.redis.incr("gauntlet",p.msg.author.id,1);
-	p.replyMsg(gauntletEmoji,`, you combined 4 ${yinyangEmoji} to create one thanos gauntlet!\n${p.config.emoji.blank} **|** ${displayText}`);
+	p.replyMsg(gauntletEmoji,`, you converted 1 ${yinyangEmoji} to one thanos gauntlet!\n${p.config.emoji.blank} **|** ${displayText}`);
 }
 
 async function getDisplayText(p) {
