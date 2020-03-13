@@ -44,8 +44,8 @@ module.exports = new CommandInterface({
 
 async function createGauntlet(p) {
 	let gauntletCount = await p.redis.zscore("gauntlet",p.msg.author.id);
-	if (gauntletCount==null || +gauntletCount) {
-		p.send(await getDisplayText(p));
+	if (gauntletCount!=null && +gauntletCount) {
+		p.send(`${gauntletEmoji} : ${+gauntletCount}\n${await getDisplayText(p)}`);
 		return;
 	}
 
@@ -65,7 +65,7 @@ async function createGauntlet(p) {
 
 async function getDisplayText(p) {
 	const saved = await p.redis.zscore("universe_saved",p.msg.author.id) || 0;
-	const destroyed = await p.redis.zscore("universed_destroyed",p.msg.author.id) || 0;
+	const destroyed = await p.redis.zscore("universe_destroyed",p.msg.author.id) || 0;
 	const pears = await p.redis.zscore("pears",p.msg.author.id) || 0;
 	return `${reverseEmoji} Universe saved: ${saved} | ${snapEmoji} Universe destroyed: ${destroyed} | ${pearEmoji} Pears collected: ${pears}`;
 }

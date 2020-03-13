@@ -7,7 +7,7 @@
 
 const blank = '<:blank:427371936482328596>';
 const huntEmoji = "🌱";
-exports.alter = function(id,text){
+exports.alter = function(id,text,info){
 	switch(id){
 		case '220934553861226498':
 			return geist(text);
@@ -40,7 +40,7 @@ exports.alter = function(id,text){
 		case '283000589976338432':
 			return kuma(text);
 		case '536711790558576651':
-			return garcom(text);
+			return garcom(text,info);
 		default:
 			return text;
 	}
@@ -328,29 +328,22 @@ function kuma (text) {
 	return text;
 
 }
-function garcom(text){
-	const yaf = "<:yaf:677746014064738354>";
+function garcom(text, info){
 	const vold = "🌋";
 	const swords = "⚔️";
-	text = text.replace(huntEmoji,yaf);
-	if(text.indexOf("empowered by")>=0){
-		text = text.replace(", hunt is empowered by"," began wiping Predator II NA!\n"+blank+" **|** Empowered by")
-			.replace("**<:blank:427371936482328596> |** You found:",blank+" **|** they returned with:")
-			.replace(blank+" **|** ",blank+" **|** and successfully claimed the "+vold+"\n"+blank+" **|** ")
-			+ "\n"+blank+" **|** "+swords+" **YAF** "+swords+" Hydra, Fancy, Lester, Imyo, Ntshai, Mog, Elwood, Danny, CC, Flame, Palu, Feli";
+	if(info.gemText){
+		text = `**YAF** began wiping Predator II NA!\nand successfully claimed the ${vold}\nEmpowered by ${info.gemText} !\nthey returned with: ${info.animalEmojis}\n${info.petText} gained **${info.animalXp}xp**!\n`;
 	}else{
-		text = text.replace(" spent 5 <:cowoncy:416043450337853441> and caught"," began wiping Predator II NA!\n"+blank+" **|** and returned with")
-			.replace("!\n<:blank","!\n"+blank+" **|** and successfully claimed the "+vold+"\n<:blank")
-			+ "\n"+blank+" **|** "+swords+" **YAF** "+swords+" Hydra, Fancy, Lester, Imyo, Ntshai, Mog, Elwood, Danny, CC, Flame, Palu, Feli";
+		text = `**YAF** began wiping Predator II NA!\nand successfully claimed the ${vold}\nand returned with ${info.animalEmojis}\n${info.petText} gained **${info.animalXp}xp**!\n`;
 	}
+	text += `${swords} **YAF** ${swords} Hydra, Fancy, Lester, Imyo, Ntshai, Mog,\nElwood, Danny, CC, Flame, Palu, Feli`;
+	text += info.lootboxText || '';
 	const embed = {
 		"description":text,
 		"color":1,
-		/*
 		"thumbnail":{
 			"url":"https://cdn.discordapp.com/attachments/674765942445703198/677421093392482324/ark.gif"
 		}
-		*/
 	};
 	return {embed};
 }
