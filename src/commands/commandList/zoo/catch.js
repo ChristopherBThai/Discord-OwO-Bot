@@ -79,14 +79,15 @@ module.exports = new CommandInterface({
 
 			//Get Lootbox
 			let lbReset = dateUtil.afterMidnight((result[2][0])?result[2][0].claim:undefined);
+			let lootbox;
 			if(!result[2][0]||result[2][0].claimcount<3||lbReset.after){
-				var lootbox = getLootbox(p,result[2][0],lbReset);
+				lootbox = getLootbox(p,result[2][0],lbReset);
 				sql += lootbox.sql;
 				text += lootbox.text;
 			}
 
 			//Alter text for legendary tier patreons
-			text = alterHunt.alter(p.msg.author.id,text,{author:p.msg.author, lootboxText: lootbox.text, petText, animalXp, gemText: animal.gemText, animalText:animal.text, animalEmojis:animal.animalText});
+			text = alterHunt.alter(p.msg.author.id,text,{author:p.msg.author, lootboxText: lootbox ? lootbox.text || null, petText, animalXp, gemText: animal.gemText, animalText:animal.text, animalEmojis:animal.animalText});
 			//text += "\n⚠ **|** `battle` and `hunt` cooldowns have increased to prevent rateLimits issues.\n<:blank:427371936482328596> **|** They will revert back to `15s` in the future.";
 
 			let result2 = await p.query(sql);
