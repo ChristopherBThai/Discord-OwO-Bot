@@ -87,7 +87,7 @@ module.exports = new CommandInterface({
 			}
 
 			//Alter text for legendary tier patreons
-			text = alterHunt.alter(p.msg.author.id,text,{author:p.msg.author, lootboxText: lootbox ? lootbox.text || null, petText, animalXp, gemText: animal.gemText, animalText:animal.text, animalEmojis:animal.animalText});
+			text = alterHunt.alter(p.msg.author.id,text,{author:p.msg.author, lootboxText: (lootbox ? lootbox.text : ''), petText, animalXp, gemText: animal.gemText, animalText:animal.text, animalEmojis:animal.animalText});
 			//text += "\n⚠ **|** `battle` and `hunt` cooldowns have increased to prevent rateLimits issues.\n<:blank:427371936482328596> **|** They will revert back to `15s` in the future.";
 
 			let result2 = await p.query(sql);
