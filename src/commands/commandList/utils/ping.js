@@ -7,6 +7,8 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
+const pongEmoji = "🏓";
+
 module.exports = new CommandInterface({
 
     alias: ["ping", "pong"],
@@ -29,7 +31,7 @@ module.exports = new CommandInterface({
         //query ping from shard
         let ping = p.client.shards.get(p.client.guildShardMap[p.msg.channel.guild.id]).latency;
         let str = (p.command === "ping") ? "pong" : "ping";
-        p.send("..."+str+"! In " + ping + "ms");
+        p.send(pongEmoji + " **|** ..."+str+"! In " + ping + "ms");
     }
 
 });
