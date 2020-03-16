@@ -332,9 +332,9 @@ function garcom(text, info){
 	const vold = "🌋";
 	const swords = "⚔️";
 	if(info.gemText){
-		text = `**YAF** began wiping Predator II NA!\nand successfully claimed the ${vold}\nEmpowered by ${info.gemText} !\nthey returned with: ${info.animalEmojis}\n${info.petText} gained **${info.animalXp}xp**!\n`;
+		text = `**YAF** began wiping Predator II NA!\nEmpowered by ${info.gemText} !\nthey returned with: ${info.animalEmojis}\nand successfully claimed the ${vold}\n${info.petText} gained **${info.animalXp}xp**!\n`;
 	}else{
-		text = `**YAF** began wiping Predator II NA!\nand successfully claimed the ${vold}\nand returned with ${info.animalEmojis}\n${info.petText} gained **${info.animalXp}xp**!\n`;
+		text = `**YAF** began wiping Predator II NA!\nand successfully claimed the ${vold}\nand returned with ${info.animalEmojis}\nand successfully claimed the ${vold}\n${info.petText} gained **${info.animalXp}xp**!\n`;
 	}
 	text += `${swords} **YAF** ${swords} Hydra, Fancy, Lester, Imyo, Ntshai, Mog,\nElwood, Danny, CC, Flame, Palu, Feli`;
 	text += info.lootboxText || '';

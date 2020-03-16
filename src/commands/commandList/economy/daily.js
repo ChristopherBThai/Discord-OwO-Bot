@@ -22,7 +22,7 @@ module.exports = new CommandInterface({
 
 	args:"",
 
-	desc:"Grab you daily cowoncy every day after 12am PST! Daily streaks will give you extra cowoncy!",
+	desc:"Grab your daily cowoncy every day after 12am PST! Daily streaks will give you extra cowoncy!",
 
 	example:[],
 
