@@ -97,7 +97,7 @@ function display(p){
 			{"name":"🤗 Actions",
 				"value":uEmotes+"  `bully`"},
 			{"name":"🔧 Utility",
-				"value":"`ping`  `feedback`  `stats`  `link`  `guildlink`  `disable`  `censor`  `patreon`  `avatar`  `announcement`  `rules`  `suggest`  `shards`  `math`  `merch`  `color`"},
+				"value":"`ping`  `feedback`  `stats`  `link`  `guildlink`  `disable`  `censor`  `patreon`  `avatar`  `announcement`  `rules`  `suggest`  `shards`  `math`  `merch`  `color`  `prefix`"},
 		]
 	};
 
