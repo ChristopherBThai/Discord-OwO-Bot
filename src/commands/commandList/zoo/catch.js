@@ -75,8 +75,10 @@ module.exports = new CommandInterface({
 			let text = animal.text;
 
 			//Get Xp
+			let petText,animalXp;
 			if(result[1][0]){
 				text += `\n${p.config.emoji.blank} **|** `;
+				petText = '';
 				for(let i in result[1]){
 					sql += `UPDATE animal SET xp = xp + ${result[1][i].active?animal.xp:Math.round(animal.xp/2)} WHERE pid = ${result[1][i].pid};`;
 					if (result[1][i].active) {
@@ -84,19 +86,21 @@ module.exports = new CommandInterface({
 						text += (pet.uni?pet.uni:pet.value)+" ";
 					}
 				}
-				text += `gained **${animal.xp}xp**!`;
+				animalXp = animal.xp;
+				text += `${petText}gained **${animalXp}xp**!`;
 			}
 
 			//Get Lootbox
 			let lbReset = dateUtil.afterMidnight((result[2][0])?result[2][0].claim:undefined);
+			let lootbox;
 			if(!result[2][0]||result[2][0].claimcount<3||lbReset.after){
-				var lootbox = getLootbox(p,result[2][0],lbReset);
+				lootbox = getLootbox(p,result[2][0],lbReset);
 				sql += lootbox.sql;
 				text += lootbox.text;
 			}
 
 			//Alter text for legendary tier patreons
-			text = alterHunt.alter(p.msg.author.id,text);
+			text = alterHunt.alter(p.msg.author.id,text,{author:p.msg.author, lootboxText: (lootbox ? lootbox.text : ''), petText, animalXp, gemText: animal.gemText, animalText:animal.text, animalEmojis:animal.animalText});
 			//text += "\n⚠ **|** `battle` and `hunt` cooldowns have increased to prevent rateLimits issues.\n<:blank:427371936482328596> **|** They will revert back to `15s` in the future.";
 
 			let result2 = await p.query(sql);
@@ -179,20 +183,24 @@ function getAnimals(p,result,gems,uid){
 	} 
 
 	/* Construct output message for user */
-	var text = "**🌱 | "+p.msg.author.username+"** spent 5 <:cowoncy:416043450337853441> and caught a "+animal[0][0]+" "+global.unicodeAnimal(animal[0][1])+"!";
+	let animalText = global.unicodeAnimal(animal[0][1]);
+	let text = "**🌱 | "+p.msg.author.username+"** spent 5 <:cowoncy:416043450337853441> and caught a "+animal[0][0]+" "+global.unicodeAnimal(animal[0][1])+"!";
+	let gemText;
 	if(animal[0][0].charAt(2)=='u' || animal[0][0].charAt(2)=='e') text = text.replace(" a ", " an ");
 	if(gemLength>0){
 		text = "**🌱 | "+p.msg.author.username+"**, hunt is empowered by ";
+		gemText = "";
 		for(let i in gems){
 			let remaining = gems[i].activecount-((gems[i].type=="Patreon"||gems[i].type=="Hunting")?1:((gems[i].type=="Empowering"||(gems[i].type=="Lucky"&& huntingActive && empoweringActive))?Math.trunc(animal.length/2):animal.length));
 			if(remaining<0) remaining = 0;
-			text += gems[i].emoji+"`["+remaining+"/"+gems[i].length+"]` ";
+			gemText += gems[i].emoji+"`["+remaining+"/"+gems[i].length+"]` ";
 		}
-		text += " !\n**<:blank:427371936482328596> |** You found: "+global.unicodeAnimal(animal[0][1]);
-		for(var i=1;i<animal.length;i++) text += " "+global.unicodeAnimal(animal[i][1]);
+		text += gemText+" !\n**<:blank:427371936482328596> |** You found: ";
+		for(var i=1;i<animal.length;i++) animalText += " "+global.unicodeAnimal(animal[i][1]);
+		text += animalText;
 	}
 
-	return {"sql":sql,"xp":xp,"animal":animal,"text":text,"typeCount":typeCount};
+	return {"sql":sql,"xp":xp,"animal":animal,"text":text,"typeCount":typeCount, gemText, animalText};
 }
 
 function getLootbox(p,query,lbReset){

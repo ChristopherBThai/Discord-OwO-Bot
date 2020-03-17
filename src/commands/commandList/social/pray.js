@@ -9,6 +9,7 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const prayLines = ["May luck be in your favor.","You feel lucky!","You feel very lucky!","You can feel the luck within you!","Fortune favors you!","Luck is on your side!"];
 const curseLines = ["You feel unlucky...","You feel very unlucky.","Oh no.","You should be careful...","I've got a bad feeling about this...","oh boy.","rip"];
+const alterPray = require("../patreon/alterPray.js");
 
 module.exports = new CommandInterface({
 
@@ -96,6 +97,7 @@ module.exports = new CommandInterface({
 
 		result = await p.query(sql);
 		text += "\n**<:blank:427371936482328596> |** You have **"+(result[1][0].lcount)+"** luck point(s)!";
+		text = alterPray.alter(p.msg.author.id,text,{command:p.command, author:p.msg.author, user, luck:result[1][0].lcount});
 		p.send(text);
 		if(user&&quest) p.quest(quest,1,user);
 		if(opponentPoints&&user)

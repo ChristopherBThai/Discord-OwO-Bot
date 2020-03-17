@@ -17,7 +17,7 @@ module.exports = new CommandInterface({
 
 	args:"{@user}",
 
-	desc:"Give a yin and yang to someone! Collect 7 to combine them into ramen! You can only gain ying yangs if you receive it! This command was created by ! 「陰陽」 Kitsune ☯",
+	desc:"Give a yin and yang to someone! Collect 6 to combine them into ramen! You can only gain ying yangs if you receive it! This command was created by ! 「陰陽」 Kitsune ☯",
 
 	example:[],
 
@@ -58,7 +58,7 @@ async function display(p){
 	let count = await p.redis.zscore("yinyang",p.msg.author.id);
 	if(!count) count = 0;
 
-	p.replyMsg(yinyangEmoji,", You currently have "+(count%7)+" energy of Yin and Yang to bless! You can also enjoy "+Math.floor(count/7)+" cup(s) of "+ramenEmoji);
+	p.replyMsg(yinyangEmoji,", You currently have "+(count%6)+" energy of Yin and Yang to bless! You can also enjoy "+Math.floor(count/6)+" cup(s) of "+ramenEmoji);
 }
 
 async function give(p,user){
@@ -66,7 +66,7 @@ async function give(p,user){
 		let result = await p.redis.incr("yinyang",p.msg.author.id,-1);
 
 		// Error checking
-		const refund = +result<0||((+result+1)%7)<=0;
+		const refund = +result<0||((+result+1)%6)<=0;
 		if ( result==null || refund ) {
 			if(refund) p.redis.incr("yinyang",p.msg.author.id,1);
 			p.errorMsg(", you do not have any energy! >:c",3000);
@@ -77,7 +77,7 @@ async function give(p,user){
 
 	let result = await p.redis.incr("yinyang",user.id,2);
 	let text = ", you gave two dual energy of Yin and Yang to **"+user.username+"**! The blessing has empowered your botting spirit!!"
-	if ( (result%7) - 2 < 0 ) {
+	if ( (result%6) - 2 < 0 ) {
 		text += "\n"+p.config.emoji.blank+" **|** Wow! Yin and Yang fused and became a steaming hot ramen! "+ramenEmoji;
 	}
 	p.replyMsg(yinyangEmoji,text);
