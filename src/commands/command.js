@@ -27,10 +27,8 @@ class Command {
 
 	async execute(msg){
 		// Parse content info
-		let args;
-		if(msg.content.toLowerCase().indexOf(this.prefix) === 0)
-			args = msg.content.slice(this.prefix.length).trim().split(/ +/g);
-		else{
+		let args = await checkPrefix(this.main, msg);
+		if (!args) {
 			//if user said owo/uwu
 			if(msg.content.toLowerCase().includes('owo')||msg.content.toLowerCase().includes('uwu')){
 				executeCommand(this.main,initParam(msg,"points",[],this.main));
@@ -208,6 +206,25 @@ function initParam(msg,command,args,main){
 		}
 	}
 	return param;
+}
+
+async function checkPrefix(main, msg) {
+	const content = msg.content.toLowerCase();
+	if (content.startsWith(main.prefix)){
+		return msg.content.slice(main.prefix.length).trim().split(/ +/g);
+	}
+
+	// If prefix isn't saved, fetch it
+	if (msg.channel.guild.prefix === undefined) {
+		let prefix = await main.redis.hget(msg.channel.guild.id,"prefix");
+		if (prefix) msg.channel.guild.prefix = prefix;
+		else msg.channel.guild.prefix = false;
+	}
+
+	// check with custom prefix
+	if (msg.channel.guild.prefix && content.startsWith(msg.channel.guild.prefix)) {
+		return msg.content.slice(msg.channel.guild.prefix.length).trim().split(/ +/g);
+	}
 }
 
 module.exports = Command;

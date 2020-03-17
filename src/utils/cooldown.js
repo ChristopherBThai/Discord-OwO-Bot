@@ -30,8 +30,10 @@ exports.check = async function(p,command){
 		//	Still in cooldown
 		if(diff<mcommands[ccd.command].cd){
 			if(command == "points"){
+				/*
 				ccd.lasttime = now;
 				await redis.hmset(key,ccd);
+				*/
 				now = false;
 			}else{
 				let {timerText, time} = parseTimer(mcommands[ccd.command].cd-diff);
@@ -57,8 +59,10 @@ exports.check = async function(p,command){
 
 	// Everything was a success, lets check for macro/botting
 	if(now){
-		if(command == "points") return true;
 		let valid = !!await macro.check(p,command,{diff,now});
+		if(!valid && command=="points"){
+			await setCooldown(p,command,300);
+		}
 		return valid;
 	}
 }
@@ -76,7 +80,7 @@ function parseTimer(diff){
 	return {min,sec,timerText,time}
 }
 
-exports.setCooldown = async function(p,command,cooldown=0){
+const setCooldown = exports.setCooldown = async function(p,command,cooldown=0){
 	let key = "cd_"+command+"_"+p.msg.author.id;
 	let commandCooldown = p.commands[p.commandAlias].cooldown;
 

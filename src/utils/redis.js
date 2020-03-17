@@ -39,6 +39,15 @@ exports.hset = function(table, key, val=1){
 	});
 }
 
+exports.hdel = function(table, key,){
+	return new Promise(function(res,rej){
+		client.hdel(table,key,function(err,val){
+			if(err) rej(err);
+			else res(val);
+		});
+	});
+}
+
 exports.hmget = function(key,field){
 	return new Promise(function(res,rej){
 		client.hmget(key,field,function(err,val){
