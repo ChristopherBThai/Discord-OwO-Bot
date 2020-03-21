@@ -422,7 +422,7 @@ exports.giveXP = async function(p,team,xp){
 			INNER JOIN pet_team ON user.uid = pet_team.uid
 			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
-		SET animal.xp = animal.xp + (CASE ${cases} ELSE ${Math.round(total/2)} END)
+		SET animal.xp = animal.xp + (CASE ${cases} ELSE ${Math.round(xp.xp/2)} END)
 		WHERE user.id = ${p.msg.author.id};`;
 	}
 
