@@ -20,6 +20,8 @@ exports.alter = function(id,text,type){
 			return kuma(text,type);
 		case '536711790558576651':
 			return garcom(text);
+		case '229299825072537601':
+			return alradio(text,type);
 		default:
 			return text;
 	}
@@ -75,6 +77,22 @@ function garcom(text,type) {
 	text.author.name = "전투를 시작합니다!";
 	text.thumbnail = {
 		url:"https://cdn.discordapp.com/attachments/674765942445703198/676257154893873172/C8fHZTfVYAIaFOc.png"
+	}
+	return text;
+}
+
+function alradio(text,type) {
+	text.author.name = "Speech: ...then he'd broadcast his carnage all throughout Hell, just so everyone could witness his ability. Sinners started calling him, \"The Radio Demon.\"";
+	text.thumbnail = {
+		url: "https://cdn.discordapp.com/attachments/626155987904102402/686473789080600586/image0.gif"
+	}
+	switch (text.color) {
+		case 16711680:
+			text.color = 1;
+			break;
+		case 65280:
+			text.color = 16777214;
+			break;
 	}
 	return text;
 }

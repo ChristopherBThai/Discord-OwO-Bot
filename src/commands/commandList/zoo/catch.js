@@ -83,7 +83,7 @@ module.exports = new CommandInterface({
 					sql += `UPDATE animal SET xp = xp + ${result[1][i].active?animal.xp:Math.round(animal.xp/2)} WHERE pid = ${result[1][i].pid};`;
 					if (result[1][i].active) {
 						let pet =  p.global.validAnimal(result[1][i].name);
-						text += (pet.uni?pet.uni:pet.value)+" ";
+						petText += (pet.uni?pet.uni:pet.value)+" ";
 					}
 				}
 				animalXp = animal.xp;
