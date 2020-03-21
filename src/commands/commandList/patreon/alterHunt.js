@@ -41,6 +41,8 @@ exports.alter = function(id,text,info){
 			return kuma(text);
 		case '536711790558576651':
 			return garcom(text,info);
+		case '229299825072537601':
+			return alradio(text,info);
 		default:
 			return text;
 	}
@@ -343,6 +345,26 @@ function garcom(text, info){
 		"color":1,
 		"thumbnail":{
 			"url":"https://cdn.discordapp.com/attachments/674765942445703198/677421093392482324/ark.gif"
+		}
+	};
+	return {embed};
+}
+
+function alradio(text, info) {
+	if(info.gemText){
+		text = `${huntEmoji} **| ${info.author.username}** activated ${info.gemText}\n${blank} **|** and recruited ${info.animalEmojis}`;
+	}else{
+		text = `${huntEmoji} **| ${info.author.username}** donated 5 and recruited ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
+	}
+	text += info.lootboxText || '';
+	const embed = {
+		"description":text,
+		"color":1,
+		"thumbnail":{
+			"url":"https://cdn.discordapp.com/attachments/626155987904102402/686634765805289482/image0.gif"
 		}
 	};
 	return {embed};
