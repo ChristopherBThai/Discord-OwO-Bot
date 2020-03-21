@@ -249,7 +249,7 @@ function getPetRanking(globalRank, con, msg, count,p){
 		"Top "+count+" "+((globalRank)?"Global Pet Rankings":"Pet Rankings for "+msg.channel.guild.name),
 		function(query,rank){
 			let result = "\t\t ";
-			if(query.nickname!=null)
+			if(query.nickname)
 				result += query.nickname+" ";
 			let lvl = animalUtil.toLvl(query.xp);
 			result += `Lvl. ${lvl.lvl} ${lvl.currentXp}xp\n`;

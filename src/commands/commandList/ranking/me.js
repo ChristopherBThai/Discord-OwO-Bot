@@ -267,8 +267,8 @@ function getPetRanking(globalRank,con,msg,p){
 	displayRanking(con,msg,sql,
 			((globalRank)?"Global ":"")+"Pet Ranking",
 			function(query){
-				var result = "\t\t";
-				if(!query.nickname)
+				let result = "\t\t";
+				if(query.nickname)
 					result += query.nickname+" ";
 				let lvl = animalUtil.toLvl(query.xp);
 				result += `Lvl. ${lvl.lvl} ${lvl.currentXp}xp`;
@@ -436,7 +436,7 @@ function getTeamRanking(globalRank,con,msg,p){
 			((globalRank)?"Global ":"")+"Pet Ranking",
 			function(query){
 				var result = "\t\t";
-				if(!query.nickname)
+				if(query.nickname)
 					result += query.nickname+" ";
 				result += "Lvl:"+query.lvl+" Att:"+query.att+" Hp:"+query.hp;
 				return result;
