@@ -34,7 +34,7 @@ module.exports = new CommandInterface({
 		}
 
 		var animal = p.args.shift();
-		var name = p.args.join(" ");
+		var input = p.args.join(" ");
 
 		/* Validity check */
 		animal = p.global.validAnimal(animal);
@@ -42,27 +42,16 @@ module.exports = new CommandInterface({
 			p.errorMsg(", I couldn't find that animal! D:");
 			return;
 		}
-		if(name.length>35){
+		if(input.length>35){
 			p.errorMsg(", The nickname is too long!",3000);
 			return;
-		}else if(name==""){
+		}else if(input==""){
 			p.errorMsg(", Invalid nickname!",3000);
 			return;
 		}
 
 		/* Alter names to be appropriate */
-		var offensive = 0;
-		var shortnick = name.replace(/\s/g,"").toLowerCase();
-		for(var i=0;i<badwords.length;i++){
-			if(shortnick.includes(badwords[i]))
-				offensive = 1;
-		}
-		name = name.replace(/https:/gi,"https;");
-		name = name.replace(/http:/gi,"http;");
-		name = name.replace(/@everyone/gi,"everyone");
-		name = name.replace(/<@!?[0-9]+>/gi,"User");
-		name = name.replace(/[*`]+/gi,"'");
-		name = name.replace(/\n/g,"");
+		const { name, offensive } = p.global.filteredName(input);
 
 		let sql = `UPDATE animal SET nickname = ? , offensive = ${offensive} WHERE id = ${p.msg.author.id} AND name = '${animal.value}'`;
 		let result = await p.query(sql,[name]);

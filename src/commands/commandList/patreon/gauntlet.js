@@ -18,7 +18,7 @@ module.exports = new CommandInterface({
 
 	alias:["gauntlet"],
 
-	args:"snap",
+	args:"snap|ramen",
 
 	desc:"Combine 1 yinyangs to create a thanos gauntlet! Snap to choose one of 3 events! This command was created by ! 「陰陽」 Kitsune ☯",
 
@@ -36,6 +36,8 @@ module.exports = new CommandInterface({
 	execute: async function(p){
 		if(p.args.length==0){
 			createGauntlet(p);
+		} else if (p.args[0] == "ramen") {
+			useRamen(p);
 		}else{
 			useGauntlet(p);
 		}
@@ -61,6 +63,20 @@ async function createGauntlet(p) {
 
 	await p.redis.incr("gauntlet",p.msg.author.id,1);
 	p.replyMsg(gauntletEmoji,`, you converted 1 ${yinyangEmoji} to one thanos gauntlet!\n${p.config.emoji.blank} **|** ${displayText}`);
+}
+
+async function useRamen(p) {
+	let result = await p.redis.incr("yinyang",p.msg.author.id,-6);
+	const displayText = await getDisplayText(p);
+	if(result==null||result<0){
+		if(result<0) p.redis.incr("yinyang",p.msg.author.id,6);
+		p.errorMsg(`, you don't have enough ramen!\n${p.config.emoji.blank} **|** ${displayText}`);
+		p.setCooldown(5);
+		return;
+	}
+
+	await p.redis.incr("gauntlet",p.msg.author.id,5);
+	p.replyMsg(gauntletEmoji,`, you used the time stone to rewind ramen into yinyangs - They turned into 5 gauntlets!\n${p.config.emoji.blank} **|** ${displayText}`);
 }
 
 async function getDisplayText(p) {
