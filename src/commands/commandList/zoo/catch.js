@@ -50,7 +50,8 @@ module.exports = new CommandInterface({
 					ORDER BY pt_act.pgid DESC, pt2.pgid ASC LIMIT 1) tmp
 					ON tmp.pgid = pet_team.pgid
 				WHERE u.id = ${p.msg.author.id}
-				GROUP BY animal.pid;`;
+				GROUP BY animal.pid
+				ORDER BY pet_team_animal.pos ASC;`;
 		sql += "SELECT *,TIMESTAMPDIFF(HOUR,claim,NOW()) as time FROM lootbox WHERE id = "+msg.author.id+";";
 		sql += "SELECT uid,activecount,gname,type FROM user NATURAL JOIN user_gem NATURAL JOIN gem WHERE id = "+msg.author.id+" AND activecount > 0;";
 		let result = await p.query(sql);

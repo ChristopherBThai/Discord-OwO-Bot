@@ -161,7 +161,7 @@ async function getTeam(p,user){
 					ON pt2.uid = u2.uid
 				LEFT JOIN pet_team_active pt_act
 					ON pt2.pgid = pt_act.pgid
-			WHERE u2.id = ${p.msg.author.id}
+			WHERE u2.id = ${user.id}
 			ORDER BY pt_act.pgid DESC, pt2.pgid ASC
 			LIMIT 1)
 		ORDER BY pos DESC`;

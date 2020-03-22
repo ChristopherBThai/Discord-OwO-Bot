@@ -456,10 +456,21 @@ exports.equip = async function(p,uwid,pet){
 		return;
 	}
 	/* Construct sql depending in pet parameter */
+	let pid;
 	if(p.global.isInt(pet)){
-		var pid = `(SELECT pid FROM user a LEFT JOIN pet_team b ON a.uid = b.uid LEFT JOIN pet_team_animal c ON b.pgid = c.pgid WHERE a.id = ${p.msg.author.id} AND pos = ${pet})`
+		pid = `(SELECT pid FROM pet_team_animal c WHERE pos = ${pet}
+				AND pgid = (
+					SELECT pt2.pgid FROM user u2
+						INNER JOIN pet_team pt2
+							ON pt2.uid = u2.uid
+						LEFT JOIN pet_team_active pt_act
+							ON pt2.pgid = pt_act.pgid
+					WHERE u2.id = ${p.msg.author.id}
+					ORDER BY pt_act.pgid DESC, pt2.pgid ASC
+					LIMIT 1)
+				)`;
 	}else{
-		var pid = `(SELECT pid FROM animal WHERE name = '${pet.value}' AND id = ${p.msg.author.id})`;
+		pid = `(SELECT pid FROM animal WHERE name = '${pet.value}' AND id = ${p.msg.author.id})`;
 	}
 	let sql = `UPDATE IGNORE user_weapon SET pid = NULL WHERE
 			uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND
