@@ -119,7 +119,7 @@ var getBattle = exports.getBattle = async function(p,setting){
 /* Creates a brand new battle */
 exports.initBattle = async function(p,setting){
 	/* Find random opponent */
-	let sql = `SELECT COUNT(pgid) as count FROM pet_team;SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id}`;
+	let sql = `SELECT COUNT(DISTINCT pgid) AS count FROM pet_team_animal;SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id}`;
 	let count = await p.query(sql);
 	let pgid = count[1][0];
 	if(!pgid){
@@ -1018,10 +1018,11 @@ function calculateXP(team,enemy,currentStreak=0){
 	}else if(team.win){
 		resetStreak = false;
 		addStreak = true;
-		xp = Math.round(200+(600*lvlDiff));
+		xp = 200;
+		bonus = Math.round(600*lvlDiff);
 		/* Calculate bonus */
 		currentStreak++;
-		bonus = bonusXP(currentStreak);
+		bonus += bonusXP(currentStreak);
 	}
 
 	return {total:xp+bonus,bonus,xp,resetStreak,addStreak};

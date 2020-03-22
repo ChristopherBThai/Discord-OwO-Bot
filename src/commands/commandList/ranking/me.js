@@ -505,7 +505,7 @@ function getBattleRanking(globalRank,con,msg,p){
 			WHERE pt.pgid = (${teamSql})
 			ORDER BY tmp.streak
 			DESC LIMIT 2;`;
-		sql += `SELECT pt.tname,u.id,pt.streak,(SELECT COUNT(*)+1 FROM pet_team WHERE id IN (${users}) AND streak > pt.streak) AS rank
+		sql += `SELECT pt.tname,u.id,pt.streak,(SELECT COUNT(*)+1 FROM user INNER JOIN pet_team ON user.uid = pet_team.uid WHERE id IN (${users}) AND streak > pt.streak) AS rank
 			FROM user u
 				INNER JOIN pet_team pt ON pt.uid = u.uid
 				LEFT JOIN pet_team_active pt_act ON pt.pgid = pt_act.pgid
