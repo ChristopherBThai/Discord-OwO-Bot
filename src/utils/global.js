@@ -12,6 +12,7 @@
 const numbers = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
 const request = require('request');
 const secret = require('../../../tokens/wsserver.json');
+const badwords = require('../../../tokens/badwords.json');
 var animaljson = require('../../../tokens/owo-animals.json');
 var animalunicode = {};
 var commands = {};
@@ -226,4 +227,24 @@ exports.getTotalShardCount = function(){
 			}
 		});
 	});
+}
+
+/* Converts name to more kid-friendly */
+exports.filteredName = function (name) {
+	let offensive = false;
+	let shortnick = name.replace(/\s/g,"").toLowerCase();
+	for(let i=0;i<badwords.length;i++){
+		if(shortnick.includes(badwords[i]))
+			offensive: true;
+	}
+	name = name.replace(/https:/gi,"https;")
+		.replace(/http:/gi,"http;")
+		.replace(/discord.gg/gi,"discord,gg")
+		.replace(/@everyone/gi,"everyone")
+		.replace(/<@!?[0-9]+>/gi,"User")
+		.replace(/[*`]+/gi,"'")
+		.replace(/\n/g,"")
+		.replace(/\|\|/g,'│');
+
+	return { name, offensive }
 }
