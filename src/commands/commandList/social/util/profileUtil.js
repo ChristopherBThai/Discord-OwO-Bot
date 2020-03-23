@@ -152,10 +152,18 @@ function shortenInt(value){
 
 async function getTeam(p,user){
 	let sql = `SELECT tname,name,xp
-		FROM user INNER JOIN pet_team ON user.uid = pet_team.uid 
-			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid 
+		FROM pet_team
+			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid 
-		WHERE user.id = ${user.id}
+		WHERE pet_team.pgid = (
+			SELECT pt2.pgid FROM user u2
+				INNER JOIN pet_team pt2
+					ON pt2.uid = u2.uid
+				LEFT JOIN pet_team_active pt_act
+					ON pt2.pgid = pt_act.pgid
+			WHERE u2.id = ${user.id}
+			ORDER BY pt_act.pgid DESC, pt2.pgid ASC
+			LIMIT 1)
 		ORDER BY pos DESC`;
 	let result = await p.query(sql);
 	if(!result||!result[0]) return;
@@ -217,6 +225,7 @@ var displayProfile = exports.displayProfile = async function(p,user){
 			}else
 				throw "Not found"
 		}catch(e){
+			console.error(e);
 			p.errorMsg(", failed to create profile image... Try again later :(",3000);
 		}
 }

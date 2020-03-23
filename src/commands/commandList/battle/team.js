@@ -7,6 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
+const teams = require('./teams.js');
 const global = require('../../../utils/global.js');
 const teamUtil = require('./util/teamUtil.js');
 const battleUtil = require('./util/battleUtil.js');
@@ -37,15 +38,16 @@ module.exports = new CommandInterface({
 			subcommand = subcommand.toLowerCase();
 
 		/* Display team */
-		if(p.args.length==0||subcommand=="display")
-			await displayTeam(p);
+		if (p.args.length==0||subcommand=="display") {
+			p.args = [];
+			await teams.execute(p);
 
 		/* Add a new team member */
-		else if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a"||subcommand=="replace"){
+		} else if(subcommand=="set"||subcommand=="s"||subcommand=="add"||subcommand=="a"||subcommand=="replace") {
 			/* No changing while in battle */
 			if((await battleUtil.inBattle(p)))
 				p.errorMsg(", You cannot change your team while you're in battle! Please finish your `owo battle`!",3000);
-			if((await battleFriendUtil.inBattle(p)))
+			else if((await battleFriendUtil.inBattle(p)))
 				p.errorMsg(", You cannot change your team while you have a pending battle! Use `owo db` to decline",3000);
 			else
 				await add(p);
@@ -55,7 +57,7 @@ module.exports = new CommandInterface({
 			/* No changing while in battle */
 			if((await battleUtil.inBattle(p)))
 				p.errorMsg(", You cannot change your team while you're in battle! Please finish your `owo battle`!",3000);
-			if((await battleFriendUtil.inBattle(p)))
+			else if((await battleFriendUtil.inBattle(p)))
 				p.errorMsg(", You cannot change your team while you have a pending battle! Use `owo db` to decline",3000);
 			else
 				await remove(p);

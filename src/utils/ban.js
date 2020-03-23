@@ -13,8 +13,6 @@ const liftEmoji = '🙇';
 const timerEmoji = '⏱';
 
 exports.check = async function(p,command){
-	// skip for points
-	if(command=="points") return true;
 
 	let channel = p.msg.channel.id;
 	let guild = p.msg.channel.guild.id;
@@ -22,30 +20,33 @@ exports.check = async function(p,command){
 
 	if(cooldown[author+command]) return;
 
-	//Check for channel cooldown
-	if(!cooldown[channel]){
-		cooldown[channel] = 1;
-		setTimeout(() => {delete cooldown[channel];}, 5000);
-	}else if(cooldown[channel]>=6){
-		cooldown[channel]++;
-		if(command!="points"&&cooldown[channel]==8)
-			await p.send(timerEmoji+" **|** This channel is getting a little too crowded! Please slow down for me! ;c",3000);
-		return;
-	}else if(cooldown[channel]<7){
-		cooldown[channel]++;
-	}
+	// skip for points
+	if(command!="points"){
+		//Check for channel cooldown
+		if(!cooldown[channel]){
+			cooldown[channel] = 1;
+			setTimeout(() => {delete cooldown[channel];}, 5000);
+		}else if(cooldown[channel]>=6){
+			cooldown[channel]++;
+			if(command!="points"&&cooldown[channel]==8)
+				await p.send(timerEmoji+" **|** This channel is getting a little too crowded! Please slow down for me! ;c",3000);
+			return;
+		}else if(cooldown[channel]<7){
+			cooldown[channel]++;
+		}
 
-	//Check if there is a global cooldown
-	if(!cooldown[author]){
-		cooldown[author] = 1;
-		setTimeout(() => {delete cooldown[author];}, 5000);
-	}else if(cooldown[author]>=3) {
-		cooldown[author]++;
-		if(command!="points"&&cooldown[author]==4)
-			await p.replyMsg(timerEmoji,", Please slow down~ You're a little **too fast** for me :c",3000);
-		return;
-	}else if(cooldown[author]<3){
-		cooldown[author]++;
+		//Check if there is a global cooldown
+		if(!cooldown[author]){
+			cooldown[author] = 1;
+			setTimeout(() => {delete cooldown[author];}, 5000);
+		}else if(cooldown[author]>=3) {
+			cooldown[author]++;
+			if(command!="points"&&cooldown[author]==4)
+				await p.replyMsg(timerEmoji,", Please slow down~ You're a little **too fast** for me :c",3000);
+			return;
+		}else if(cooldown[author]<3){
+			cooldown[author]++;
+		}
 	}
 
 
@@ -60,7 +61,7 @@ exports.check = async function(p,command){
 		// User is banned from this command
 		cooldown[author+command] = true;
 		setTimeout(() => {delete cooldown[author+command];}, 10000);
-		await p.errorMsg(", you're banned from this command! >:c",3000);
+		if(command!="points") await p.errorMsg(", you're banned from this command! >:c",3000);
 	}else if(!result[0][0]||["points","disable","enable"].includes(command)){
 		// Success
 		return true;
@@ -68,7 +69,7 @@ exports.check = async function(p,command){
 		// Command is disabled in the channel
 		cooldown[p.msg.author.id+command] = true;
 		setTimeout(() => {delete cooldown[p.msg.author.id+command];}, 30000);
-		await p.errorMsg(", that command is disabled on this channel!",3000);
+		if(command!="points") await p.errorMsg(", that command is disabled on this channel!",3000);
 	}
 }
 
