@@ -7,6 +7,8 @@
 
 /* Utility to check/parse dates */
 
+const overrideWithinDay = true;
+
 /* Checks if the given date is past midnight */
 exports.afterMidnight = function(date){
 
@@ -26,19 +28,19 @@ exports.afterMidnight = function(date){
 	var days = temp;
 
 	/* If there is no data */
-	if(!date) return {after:true,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow};
+	if(!date) return {after:true,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow,now};
 
 	var pDate = new Date(date);
 	var diff = midnight - pDate;
 
 	/* Not past midnight */
-	if(diff<=0) return {after:false,diff:diff,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow};
+	if(diff<=0) return {after:false,diff:diff,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow,now};
 
 	/* Within 1 day */
-	else if(diff<=172810000) return {after:true,diff:diff,withinDay:true,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow};
+	else if(diff<=172810000) return {after:true,diff:diff,withinDay:true,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow,now};
 
 	/* Over 1 full day */
-	else return {after:true,diff:diff,withinDay:false,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow};
+	else return {after:true,diff:diff,withinDay: (overrideWithinDay || false) ,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow,now};
 }
 
 function toMySQL(date){

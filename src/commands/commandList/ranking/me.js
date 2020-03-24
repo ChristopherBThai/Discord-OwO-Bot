@@ -267,8 +267,8 @@ function getPetRanking(globalRank,con,msg,p){
 	displayRanking(con,msg,sql,
 			((globalRank)?"Global ":"")+"Pet Ranking",
 			function(query){
-				var result = "\t\t";
-				if(!query.nickname)
+				let result = "\t\t";
+				if(query.nickname)
 					result += query.nickname+" ";
 				let lvl = animalUtil.toLvl(query.xp);
 				result += `Lvl. ${lvl.lvl} ${lvl.currentXp}xp`;
@@ -436,7 +436,7 @@ function getTeamRanking(globalRank,con,msg,p){
 			((globalRank)?"Global ":"")+"Pet Ranking",
 			function(query){
 				var result = "\t\t";
-				if(!query.nickname)
+				if(query.nickname)
 					result += query.nickname+" ";
 				result += "Lvl:"+query.lvl+" Att:"+query.att+" Hp:"+query.hp;
 				return result;
@@ -445,15 +445,73 @@ function getTeamRanking(globalRank,con,msg,p){
 
 function getBattleRanking(globalRank,con,msg,p){
 	let sql;
+	const teamSql = `SELECT pt_tmp.pgid FROM user u_tmp
+				INNER JOIN pet_team pt_tmp
+					ON pt_tmp.uid = u_tmp.uid
+				LEFT JOIN pet_team_active pt_act
+					ON pt_tmp.pgid = pt_act.pgid
+			WHERE u_tmp.id = ${p.msg.author.id}
+			ORDER BY pt_act.pgid DESC, pt_tmp.pgid ASC
+			LIMIT 1`
 	if(globalRank){
-		sql = "SELECT u1.tname,u1.id,u1.streak FROM pet_team AS u INNER JOIN user ON u.uid = user.uid LEFT JOIN ( SELECT tname,id,streak FROM pet_team INNER JOIN user ON pet_team.uid = user.uid ORDER BY streak ASC ) AS u1 ON u1.streak > u.streak WHERE user.id = "+msg.author.id+" ORDER BY u1.streak ASC LIMIT 2;";
-		sql += "SELECT u1.tname,u1.id,u1.streak FROM pet_team AS u INNER JOIN user ON u.uid = user.uid LEFT JOIN ( SELECT tname,id,streak FROM pet_team INNER JOIN user ON pet_team.uid = user.uid ORDER BY streak DESC ) AS u1 ON u1.streak < u.streak WHERE user.id = "+msg.author.id+" ORDER BY u1.streak DESC LIMIT 2;";
-		sql +=  "SELECT c.tname,user.id,c.streak, (SELECT COUNT(*)+1 FROM pet_team WHERE streak > c.streak) AS rank FROM pet_team c INNER JOIN user ON c.uid = user.uid WHERE user.id = "+msg.author.id+";";
+		sql = `SELECT tmp.tname,tmp.id,tmp.streak
+			FROM pet_team AS pt
+				LEFT JOIN ( SELECT tname,id,streak
+					FROM pet_team pt2
+						INNER JOIN user u2 ON pt2.uid = u2.uid
+					ORDER BY streak ASC ) AS tmp
+					ON tmp.streak > pt.streak
+			WHERE pt.pgid = (${teamSql})
+			ORDER BY tmp.streak
+			ASC LIMIT 2;`;
+		sql += `SELECT tmp.tname,tmp.id,tmp.streak
+			FROM pet_team AS pt
+				LEFT JOIN ( SELECT tname,id,streak
+					FROM pet_team pt2
+						INNER JOIN user u2 ON pt2.uid = u2.uid
+					ORDER BY streak DESC ) AS tmp
+					ON tmp.streak < pt.streak
+			WHERE pt.pgid = (${teamSql})
+			ORDER BY tmp.streak
+			DESC LIMIT 2;`;
+		sql += `SELECT pt.tname,u.id,pt.streak,(SELECT COUNT(*)+1 FROM pet_team WHERE streak > pt.streak) AS rank
+			FROM user u
+				INNER JOIN pet_team pt ON pt.uid = u.uid
+				LEFT JOIN pet_team_active pt_act ON pt.pgid = pt_act.pgid
+			WHERE u.id = ${p.msg.author.id}
+			ORDER BY pt_act.pgid DESC, pt.pgid ASC
+			LIMIT 1;`;
 	}else{
 		let users = global.getids(msg.channel.guild.members);
-		sql = "SELECT u1.tname,u1.id,u1.streak FROM pet_team AS u INNER JOIN user ON u.uid = user.uid LEFT JOIN ( SELECT tname,id,streak FROM pet_team INNER JOIN user ON pet_team.uid = user.uid WHERE id IN ("+users+") ORDER BY streak ASC ) AS u1 ON u1.streak > u.streak WHERE user.id = "+msg.author.id+" ORDER BY u1.streak ASC LIMIT 2;";
-		sql += "SELECT u1.tname,u1.id,u1.streak FROM pet_team AS u INNER JOIN user ON u.uid = user.uid LEFT JOIN ( SELECT tname,id,streak FROM pet_team INNER JOIN user ON pet_team.uid = user.uid WHERE id IN ("+users+") ORDER BY streak DESC ) AS u1 ON u1.streak < u.streak WHERE user.id = "+msg.author.id+" ORDER BY u1.streak DESC LIMIT 2;";
-		sql +=  "SELECT c.tname,user.id,c.streak, (SELECT COUNT(*)+1 FROM pet_team LEFT JOIN user ON pet_team.uid = user.uid WHERE id IN ("+users+") AND streak > c.streak) AS rank FROM pet_team c INNER JOIN user ON c.uid = user.uid WHERE user.id = "+msg.author.id+";";
+		sql = `SELECT tmp.tname,tmp.id,tmp.streak
+			FROM pet_team AS pt
+				LEFT JOIN ( SELECT tname,id,streak
+					FROM pet_team pt2
+						INNER JOIN user u2 ON pt2.uid = u2.uid
+					WHERE id in (${users})
+					ORDER BY streak ASC ) AS tmp
+					ON tmp.streak > pt.streak
+			WHERE pt.pgid = (${teamSql})
+			ORDER BY tmp.streak
+			ASC LIMIT 2;`;
+		sql += `SELECT tmp.tname,tmp.id,tmp.streak
+			FROM pet_team AS pt
+				LEFT JOIN ( SELECT tname,id,streak
+					FROM pet_team pt2
+						INNER JOIN user u2 ON pt2.uid = u2.uid
+					WHERE id in (${users})
+					ORDER BY streak DESC ) AS tmp
+					ON tmp.streak < pt.streak
+			WHERE pt.pgid = (${teamSql})
+			ORDER BY tmp.streak
+			DESC LIMIT 2;`;
+		sql += `SELECT pt.tname,u.id,pt.streak,(SELECT COUNT(*)+1 FROM user INNER JOIN pet_team ON user.uid = pet_team.uid WHERE id IN (${users}) AND streak > pt.streak) AS rank
+			FROM user u
+				INNER JOIN pet_team pt ON pt.uid = u.uid
+				LEFT JOIN pet_team_active pt_act ON pt.pgid = pt_act.pgid
+			WHERE u.id = ${p.msg.author.id}
+			ORDER BY pt_act.pgid DESC, pt.pgid ASC
+			LIMIT 1;`;
 	}
 
 	displayRanking(con,msg,sql,

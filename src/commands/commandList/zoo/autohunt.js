@@ -74,7 +74,18 @@ async function claim(p,msg,con,query,bot){
 	sql = "";
 	//Get total exp
 	let totalExp = Math.floor(autohuntutil.getLvl(query.exp,0,"exp").stat*duration);
-	sql += `UPDATE IGNORE user INNER JOIN pet_team ON user.uid = pet_team.uid INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid INNER JOIN animal ON pet_team_animal.pid = animal.pid set animal.xp = animal.xp + ${totalExp} WHERE  user.id = ${msg.author.id};`;
+	sql += `UPDATE IGNORE user 
+			INNER JOIN pet_team ON user.uid = pet_team.uid
+			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
+			INNER JOIN animal ON pet_team_animal.pid = animal.pid
+			LEFT JOIN (SELECT pt2.pgid FROM user u2
+					INNER JOIN pet_team pt2 ON pt2.uid = u2.uid
+					LEFT JOIN pet_team_active pt_act ON pt2.pgid = pt_act.pgid
+					WHERE u2.id = ${msg.author.id}
+					ORDER BY pt_act.pgid DESC, pt2.pgid ASC LIMIT 1) tmp
+				ON tmp.pgid = pet_team.pgid
+		SET animal.xp = animal.xp + (CASE WHEN tmp.pgid IS NULL THEN ${Math.round(totalExp/2)} ELSE ${totalExp} END)
+		WHERE  user.id = ${msg.author.id};`;
 
 	//Get all animal
 	let total = {};

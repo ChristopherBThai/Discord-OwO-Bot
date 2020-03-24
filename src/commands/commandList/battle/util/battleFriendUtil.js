@@ -25,22 +25,36 @@ exports.challenge = async function(p,id,bet){
 
 	/* Query two teams */
 	let sql = `SELECT pet_team.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
-		FROM user
-			INNER JOIN pet_team ON user.uid = pet_team.uid
+		FROM pet_team
 			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
 			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
-		WHERE user.id = ${id}
+		WHERE pet_team.pgid = (
+			SELECT pt2.pgid FROM user u2
+				INNER JOIN pet_team pt2
+					ON pt2.uid = u2.uid
+				LEFT JOIN pet_team_active pt_act
+					ON pt2.pgid = pt_act.pgid
+			WHERE u2.id = ${id}
+			ORDER BY pt_act.pgid DESC, pt2.pgid ASC
+			LIMIT 1)
 		ORDER BY pos ASC;`;
 	sql += `SELECT pet_team.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
-		FROM user
-			INNER JOIN pet_team ON user.uid = pet_team.uid
+		FROM pet_team
 			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
 			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
-		WHERE user.id = ${p.msg.author.id}
+		WHERE pet_team.pgid = (
+			SELECT pt2.pgid FROM user u2
+				INNER JOIN pet_team pt2
+					ON pt2.uid = u2.uid
+				LEFT JOIN pet_team_active pt_act
+					ON pt2.pgid = pt_act.pgid
+			WHERE u2.id = ${p.msg.author.id}
+			ORDER BY pt_act.pgid DESC, pt2.pgid ASC
+			LIMIT 1)
 		ORDER BY pos ASC;`;
 	sql += `SELECT money from cowoncy where id = ${p.msg.author.id};`;
 	sql += `SELECT money from cowoncy where id = ${opponent.id};`;

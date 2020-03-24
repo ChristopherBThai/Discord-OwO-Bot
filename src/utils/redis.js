@@ -21,6 +21,33 @@ exports.hgetall = function(key){
 	});
 }
 
+exports.hget = function(table, key){
+	return new Promise(function(res,rej){
+		client.hget(table,key,function(err,val){
+			if(err) rej(err);
+			else res(val);
+		});
+	});
+}
+
+exports.hset = function(table, key, val=1){
+	return new Promise(function(res,rej){
+		client.hset(table,key,val,function(err,val){
+			if(err) rej(err);
+			else res(val);
+		});
+	});
+}
+
+exports.hdel = function(table, key,){
+	return new Promise(function(res,rej){
+		client.hdel(table,key,function(err,val){
+			if(err) rej(err);
+			else res(val);
+		});
+	});
+}
+
 exports.hmget = function(key,field){
 	return new Promise(function(res,rej){
 		client.hmget(key,field,function(err,val){
@@ -35,6 +62,17 @@ exports.hmset = function(key,val){
 		client.hmset(key,val,function(err,val){
 			if(err) rej(err);
 			else res(val);
+		});
+	});
+}
+
+exports.hincrby = function(table,key,val=1){
+	return new Promise(function(res,rej){
+		client.hincrby(table,key,val,function(err,reply){
+			if(err)
+				rej(err);
+			else
+				res(reply);
 		});
 	});
 }

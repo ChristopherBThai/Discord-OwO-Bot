@@ -4,7 +4,7 @@
 Here are the codes for OwO Bot! Feel free to submit an issue or open a pull request!
 
 ## Self hosting
-This discord bot uses [MariaDB](https://mariadb.org/) and [Redis](https://redis.io/) for its databases. Some files may be missing due to security reasons and can be found [here](https://github.com/ChristopherBThai/Discord-OwO-Bot/tree/master/json/example_secret_files).
+This discord bot uses [MariaDB](https://mariadb.org/) and [Redis](https://redis.io/) for its databases. Some files may be missing due to security reasons and can be found [here](https://github.com/ChristopherBThai/Discord-OwO-Bot/tree/master/secret).
 
 ## License
 OwO Bot is licensed under the terms of [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International](https://github.com/ChristopherBThai/Discord-OwO-Bot/blob/master/LICENSE) ("CC-BY-NC-SA-4.0"). Commercial use is not allowed under this license. This includes any kind of revenue made with or based upon the software, even donations.

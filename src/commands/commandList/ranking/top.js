@@ -249,7 +249,7 @@ function getPetRanking(globalRank, con, msg, count,p){
 		"Top "+count+" "+((globalRank)?"Global Pet Rankings":"Pet Rankings for "+msg.channel.guild.name),
 		function(query,rank){
 			let result = "\t\t ";
-			if(query.nickname!=null)
+			if(query.nickname)
 				result += query.nickname+" ";
 			let lvl = animalUtil.toLvl(query.xp);
 			result += `Lvl. ${lvl.lvl} ${lvl.currentXp}xp\n`;
@@ -372,12 +372,33 @@ function getGuildRanking(con, msg, count,p){
 function getBattleRanking(globalRank, con, msg, count,p){
 	let sql;
 	if(globalRank){
-		sql = "SELECT * FROM pet_team INNER JOIN user ON user.uid = pet_team.uid ORDER BY streak DESC LIMIT "+count+";";
-		sql +=  "SELECT *, (SELECT COUNT(*)+1 FROM pet_team WHERE streak > c.streak) AS rank FROM pet_team c INNER JOIN user ON c.uid = user.uid WHERE user.id = "+msg.author.id+";";
+		sql = `SELECT *
+			FROM pet_team
+				INNER JOIN user ON user.uid = pet_team.uid
+			ORDER BY streak
+			DESC LIMIT ${count};`;
+		sql += `SELECT pt.tname,u.id,pt.streak,(SELECT COUNT(*)+1 FROM pet_team WHERE streak > pt.streak) AS rank
+			FROM user u
+				INNER JOIN pet_team pt ON pt.uid = u.uid
+				LEFT JOIN pet_team_active pt_act ON pt.pgid = pt_act.pgid
+			WHERE u.id = ${p.msg.author.id}
+			ORDER BY pt_act.pgid DESC, pt.pgid ASC
+			LIMIT 1;`;
 	}else{
 		let users = global.getids(msg.channel.guild.members);
-		sql = "SELECT * FROM pet_team INNER JOIN user ON pet_team.uid = user.uid WHERE id IN ("+users+") ORDER BY streak DESC LIMIT "+count+";";
-		sql +=  "SELECT *, (SELECT COUNT(*)+1 FROM pet_team LEFT JOIN user ON pet_team.uid = user.uid WHERE id IN ("+users+") AND streak > c.streak) AS rank FROM pet_team c INNER JOIN user ON c.uid = user.uid WHERE user.id = "+msg.author.id+";";
+		sql = `SELECT *
+			FROM pet_team
+				INNER JOIN user ON pet_team.uid = user.uid
+			WHERE id IN (${users})
+			ORDER BY streak DESC
+			LIMIT ${count};`;
+		sql += `SELECT pt.tname,u.id,pt.streak,(SELECT COUNT(*)+1 FROM user INNER JOIN pet_team ON user.uid = pet_team.uid WHERE id IN (${users}) AND streak > pt.streak) AS rank
+			FROM user u
+				INNER JOIN pet_team pt ON pt.uid = u.uid
+				LEFT JOIN pet_team_active pt_act ON pt.pgid = pt_act.pgid
+			WHERE u.id = ${p.msg.author.id}
+			ORDER BY pt_act.pgid DESC, pt.pgid ASC
+			LIMIT 1;`;
 	}
 
 	displayRanking(con,msg,count,globalRank,sql,
