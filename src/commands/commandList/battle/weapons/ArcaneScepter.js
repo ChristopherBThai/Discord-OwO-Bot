@@ -60,24 +60,4 @@ module.exports = class ArcaneScepter extends WeaponInterface{
 		return logs;
 
 	}
-
-	attackPhysical(me,team,enemy){
-		if(me.stats.hp[0]<=0) return;
-
-		/* Grab an enemy that I'm attacking */
-		let attacking = WeaponInterface.getAttacking(me,team,enemy);
-		if(!attacking) return;
-
-		let logs = new Logs();
-
-		/* Calculate damage */
-		let damage = WeaponInterface.getMixedDamage(me.stats.att,1.00,me.stats.mag,.30);
-
-		/* Deal damage */
-		damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.MIXED,{me,allies:team,enemies:enemy});
-
-		logs.push(`[PHYS] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
-		return logs;
-
-	}
 }
