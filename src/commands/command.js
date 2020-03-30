@@ -16,6 +16,7 @@ const modCommands = {};
 
 const aliasToCommand = {};
 const mcommands = {};
+const commandGroups = {};
 
 class Command {
 
@@ -112,6 +113,20 @@ async function executeCommand(main,p){
  * Will sort them by type and aliases
  */
 function initCommands(){
+	let groupCommand = function(command, name) {
+		let groups = command.group;
+		if (groups && groups.length) {
+			for (let i in groups) {
+				let group = groups[i];
+				if (!commandGroups[group]) commandGroups[group] = [];
+				commandGroups[group].push(name);
+			}
+		} else {
+			if (!commandGroups['undefined']) commandGroups['undefined'] = [];
+			commandGroups['undefined'].push(name);
+		}
+	}
+
 	let addCommand = function(command){
 		let alias = command.alias;
 		let name = alias[0];
@@ -120,13 +135,29 @@ function initCommands(){
 				commands[alias[i]] = command;
 				if(command.distinctAlias){
 					aliasToCommand[alias[i]] = alias[i];
-					mcommands[alias[i]] = {botcheck:command.bot,cd:command.cooldown,ban:12,half:command.half,six:command.six};
+					groupCommand(command,alias[i]);
+					mcommands[alias[i]] = {
+						botcheck:command.bot,
+						cd:command.cooldown,
+						ban:12,
+						half:command.half,
+						six:command.six,
+						group:command.group
+					};
 				}else
 					aliasToCommand[alias[i]] = name;
 			}
 		}
 		if(!command.distinctAlias)
-			mcommands[name] = {botcheck:command.bot,cd:command.cooldown,ban:12,half:command.half,six:command.six};
+			groupCommand(command, name);
+			mcommands[name] = {
+				botcheck:command.bot,
+				cd:command.cooldown,
+				ban:12,
+				half:command.half,
+				six:command.six,
+				group:command.group
+			};
 	}
 
 	let addAdminCommand = function(command){
@@ -182,6 +213,7 @@ function initParam(msg,command,args,main){
 		"commandAlias":aliasToCommand[command],
 		"commands":commands,
 		"mcommands":mcommands,
+		"commandGroups":commandGroups,
 		"logger":main.logger,
 		"log":main.logger.log,
 		"config":main.config,
