@@ -33,6 +33,8 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages","embedLinks"],
 
+	group:["utility"],
+
 	related:[],
 
 	cooldown:1000,
@@ -87,9 +89,9 @@ function display(p){
 			{"name":"🎲 Gambling",
 				"value":"`slots`  `coinflip`  `lottery`  `blackjack`  `drop`"},
 			{"name":"🎱 Fun",
-				"value":"`8b`  `define`  `gif`  `pic`  `translate`  `roll`  `choose`"},
+				"value":"`8b`  `define`  `gif`  `pic`  `translate`  `roll`  `choose`  `bell`"},
 			{"name":"🎭 Social",
-				"value":"`cookie` `ship`  `pray`  `curse`  `marry`  `emoji`  `profile`  `level`  `wallpaper`  `bell`  `owoify`"},
+				"value":"`cookie` `ship`  `pray`  `curse`  `marry`  `emoji`  `profile`  `level`  `wallpaper`  `owoify`  `avatar`"},
 			{"name":"😂 Meme Generation",
 				"value":"`spongebobchicken`  `slapcar`  `isthisa`  `drake`  `distractedbf`"},
 			{"name":"🙂 Emotes",
@@ -97,7 +99,7 @@ function display(p){
 			{"name":"🤗 Actions",
 				"value":uEmotes+"  `bully`"},
 			{"name":"🔧 Utility",
-				"value":"`ping`  `feedback`  `stats`  `link`  `guildlink`  `disable`  `censor`  `patreon`  `avatar`  `announcement`  `rules`  `suggest`  `shards`  `math`  `merch`  `color`  `prefix`"},
+				"value":"`ping`  `feedback`  `stats`  `link`  `guildlink`  `disable`  `censor`  `patreon`  `announcement`  `rules`  `suggest`  `shards`  `math`  `merch`  `color`  `prefix`"},
 		]
 	};
 

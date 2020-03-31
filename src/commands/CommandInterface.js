@@ -23,6 +23,7 @@ module.exports = class CommandInterface{
 		this.bot = args.bot;
 		this.mod = args.mod;
 		this.permissions = args.permissions;
+		this.group = args.group;
 	}
 
 	async execute(params){

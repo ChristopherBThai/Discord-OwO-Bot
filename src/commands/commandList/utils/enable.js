@@ -7,13 +7,16 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
+const enabledUtil = require('./utils/enabledUtil.js');
+const settingEmoji = '⚙️';
+
 module.exports = new CommandInterface({
 
 	alias:["enable"],
 
 	args:"{command}",
 
-	desc:"Enable a command in the current channel",
+	desc:"Enable a command or a command group in the current channel",
 
 	example:["owo enable hunt","owo enable all"],
 
@@ -21,18 +24,18 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages"],
 
+	group:["utility"],
+
 	cooldown:1000,
 	half:100,
 	six:500,
 
-	execute: function(p){
+	execute: async function(p){
 		/* Checks if the user has permission */
 		if(!p.msg.member.permission.has('manageChannels')){
 			p.send("**🚫 | "+p.msg.author.username+"**, You are not an admin!",3000);
 			return;
 		}
-
-		let msg=p.msg,con=p.con;
 
 		/* Parse commands */
 		let commands = p.args.slice();
@@ -41,74 +44,41 @@ module.exports = new CommandInterface({
 
 		/* If the user wants to enable all commands */
 		if(commands.includes("all")){
-			let list = "('all'),";
-			for(var key in p.mcommands){
-				list += "('"+key+"'),";
-			}
-			list = list.slice(0,-1);
-			let sql = "DELETE FROM disabled WHERE channel = "+msg.channel.id+" AND command IN ("+list+");";
-			con.query(sql,function(err,rows,field){
-				if(err){console.error(err);return;}
-				p.send("**⚙ | All** commands have been **enable** for this channel!");
-			});
+			let sql = "DELETE FROM disabled WHERE channel = "+p.msg.channel.id;
+			await p.query(sql);
+			p.replyMsg(settingEmoji,", **All** commands have been **enable** for this channel!");
 			return;
 		}
 
-		/* Construct query statement */
-		let sql = "DELETE FROM disabled WHERE channel = "+msg.channel.id+" AND command IN ('all',";
-		let validCommand = false;
+		// Parse which commands to enable
+		let remove = new Set();
 		for(let i=0;i<commands.length;i++){
-			/* Convert command name to proper name */
-			let command = p.aliasToCommand[commands[i]];
-			if(command&&command!="disabled"&&command!="enable"){
-				validCommand = true;
-				sql += "'"+command+"',";
-			}
-		}
-		sql = sql.slice(0,-1) + ");";
-		if(!validCommand) sql = "";
-		sql += "SELECT * FROM disabled WHERE channel = "+msg.channel.id+";";
 
-		/* Query */
-		con.query(sql,function(err,rows,field){
-			if(err){console.error(err);return;}
+			// Remove group 
+			if (p.commandGroups[commands[i]]) {
+				let command = commands[i];
+				remove.add(command);
+				for (let i in p.commandGroups[command]) {
+					remove.add(p.commandGroups[command][i]);
+				}
 
-			if(validCommand)
-				rows = rows[1];
-
-			/* Construct message */
-			let enabled = Object.keys(p.mcommands);
-			let disabled = [];
-			let all = false;
-
-			for(let i=0;i<rows.length;i++){
-				let command = rows[i].command;
-				if(command == 'all') all = true;
-				if(enabled.includes(command)){
-					disabled.push(command);
-					enabled.splice(enabled.indexOf(command),1);
+			// Remove individual command
+			} else {
+				let command = p.aliasToCommand[commands[i]];
+				if (command&&command!="disabled"&&command!="enable") {
+					remove.add(command);
+					let group = p.commands[command].group;
+					for (let i in group) {
+						remove.add(group[i]);
+					}
 				}
 			}
+		}
+		if (remove.size) {
+			await p.query("DELETE FROM disabled WHERE channel = "+p.msg.channel.id+" AND command IN ('all','"+Array.from(remove).join("','")+"');");
+		}
 
-			if(all){
-				disabled = Object.keys(p.mcommands);
-				enabled = [];
-			}
-
-			if(enabled.length==0) enabled.push("NONE");
-			if(disabled.length==0) disabled.push("NONE");
-
-			let desc = "**❎ Disabled Commands for this channel:**";
-			desc += "\n`"+disabled.join("`  `")+"`";
-			desc += "\n**✅ Enabled Commands for this channel:**";
-			desc += "\n`"+enabled.join("`  `")+"`";
-
-			let embed = {
-				"color":4886754,
-				"description":desc
-			}
-			p.send({embed});
-		});
+		p.send(await enabledUtil.createEmbed(p));
 	}
 
 })
