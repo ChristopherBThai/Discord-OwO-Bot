@@ -25,6 +25,8 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages"],
 
+	group:["utility"],
+
 	cooldown:10000,
 
 	execute: async function(p) {
