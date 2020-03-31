@@ -38,7 +38,7 @@ exports.createEmbed = async function(p) {
 
 	let embed = {
 		"author": {
-			"name": "Enabled commands for "+p.msg.channel.name
+			"name": "Enabled commands for #"+p.msg.channel.name
 		},
 		"color":4886754,
 		"fields": []
