@@ -8,6 +8,7 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const enabledUtil = require('./utils/enabledUtil.js');
+const settingEmoji = '⚙️';
 
 module.exports = new CommandInterface({
 
@@ -45,7 +46,7 @@ module.exports = new CommandInterface({
 		if(commands.includes("all")){
 			let sql = "DELETE FROM disabled WHERE channel = "+p.msg.channel.id;
 			await p.query(sql);
-			p.errorMsg(", **All** commands have been **enable** for this channel!");
+			p.replyMsg(settingEmoji,", **All** commands have been **enable** for this channel!");
 			return;
 		}
 
