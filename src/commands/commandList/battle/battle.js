@@ -26,7 +26,7 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages","embedLinks","addReactions"],
 
-	group:["battle"],
+	group:["animals"],
 
 	cooldown:15000,
 	half:80,
