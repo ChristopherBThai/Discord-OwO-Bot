@@ -23,6 +23,8 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages"],
 
+	group:["social"],
+
 	cooldown:3000,
 	half:100,
 	six:500,
