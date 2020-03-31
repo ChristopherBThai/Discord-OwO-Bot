@@ -214,6 +214,8 @@ async function checkPrefix(main, msg) {
 		return msg.content.slice(main.prefix.length).trim().split(/ +/g);
 	}
 
+	if (!msg.channel.guild) return;
+
 	// If prefix isn't saved, fetch it
 	if (msg.channel.guild.prefix === undefined) {
 		let prefix = await main.redis.hget(msg.channel.guild.id,"prefix");
