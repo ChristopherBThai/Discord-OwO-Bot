@@ -23,7 +23,7 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages"],
 
-	group:["battle"],
+	group:["animals"],
 
 	cooldown:3000,
 	half:200,
