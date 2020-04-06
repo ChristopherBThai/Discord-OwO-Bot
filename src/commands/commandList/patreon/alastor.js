@@ -26,6 +26,8 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages","embedLinks"],
 
+	group:["patreon"],
+
 	cooldown:10000,
 	half:80,
 	six:400,

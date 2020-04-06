@@ -36,6 +36,8 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages","embedLinks","attachFiles","addReactions"],
 
+	group:["economy"],
+
 	cooldown:15000,
 
 	execute: async function(p){

@@ -29,6 +29,8 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages","embedLinks","attachFiles"],
 
+	group:["utility"],
+
 	cooldown:4000,
 
 	execute: async function(p){
