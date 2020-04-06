@@ -21,6 +21,8 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages"],
 
+	group:["gambling"],
+
 	cooldown:30000,
 	half:50,
 	six:300,

@@ -21,6 +21,8 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages","embedLinks","attachFiles"],
 
+	group:["utility"],
+
 	cooldown:10000,
 	half:100,
 	six:500,

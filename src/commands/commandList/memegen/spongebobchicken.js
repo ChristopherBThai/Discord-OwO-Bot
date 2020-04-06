@@ -29,6 +29,8 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages","attachFiles"],
 
+	group:["memegeneration"],
+
 	execute: function(p){
 		fs.readFile('./src/data/images/spongebob_chicken.jpg',function(err,image){
 			if(err){ console.error(err); return;}

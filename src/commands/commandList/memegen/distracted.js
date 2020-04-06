@@ -24,6 +24,8 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages","attachFiles"],
 
+	group:["memegeneration"],
+
 	cooldown:20000,
 	half:100,
 	six:500,
