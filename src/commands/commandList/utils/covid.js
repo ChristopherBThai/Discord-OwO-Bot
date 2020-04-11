@@ -18,7 +18,7 @@ module.exports = new CommandInterface({
 
     args: "{countryName}",
 
-    desc: "Shows the current coronavirus cases. You can specify a country in the arguments. Stay safe out there and please remember to wash your hands. The information is pulled from this github https://github.com/javieraviles/covidAPI",
+    desc: "Shows the current coronavirus cases. You can specify a country in the arguments. Stay safe out there and please remember to wash your hands. The information is pulled from this github https://www.worldometers.info/coronavirus/",
 
     example: ["owo covid", "owo coronavirus usa"],
 
