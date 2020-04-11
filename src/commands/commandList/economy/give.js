@@ -74,9 +74,8 @@ module.exports = new CommandInterface({
 			if(rows[0][0]==undefined||rows[0][0].money<amount){
 				p.send("**🚫 |** Silly **"+msg.author.username+"**, you don't have enough cowoncy!",3000);
 			}else{
-				p.logger.value('cowoncy',(amount),['command:given','id:'+id,'by:'+msg.author.id]);
-				p.logger.value('cowoncy',(amount*-1),['command:give','id:'+msg.author.id,'to:'+id]);
 				p.send("**💳 | "+msg.author.username+"** sent **"+(p.global.toFancyNum(amount))+" cowoncy** to **"+user.username+"**!");
+				p.neo4j.give(p.msg,user,amount);
 			}
 		});
 	}

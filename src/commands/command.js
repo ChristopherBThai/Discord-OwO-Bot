@@ -221,7 +221,8 @@ function initParam(msg,command,args,main){
 		"pubsub":main.pubsub,
 		"DataResolver":main.DataResolver,
 		"quest":function(questName,count,extra){main.questHandler.increment(msg,questName,count,extra).catch(console.error)},
-		"reactionCollector":main.reactionCollector
+		"reactionCollector":main.reactionCollector,
+		"neo4j":main.neo4j
 	};
 	param.setCooldown = function(cooldown){
 		main.cooldown.setCooldown(param,aliasToCommand[command],cooldown);

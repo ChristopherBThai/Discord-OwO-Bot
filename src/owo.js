@@ -18,7 +18,7 @@ const dbl = new DBL(auth.dbl);
 class OwO extends Base{
 	constructor(bot){
 		super(bot);
-		this.debug = false;
+		this.debug = true;
 		this.auth = auth;
 		this.dbl = dbl;
 
@@ -27,6 +27,10 @@ class OwO extends Base{
 
 		// Redis connection
 		this.redis = require('./utils/redis.js');
+
+
+		// Neo4j Logging
+		this.neo4j = require('./utils/neo4j.js');
 
 		// Redis pubsub to communicate with all the other shards/processes
 		this.pubsub = new (require('./utils/pubsub.js'))(this);
