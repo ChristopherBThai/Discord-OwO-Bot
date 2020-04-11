@@ -4,15 +4,16 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
-	
-// Grab tokens and secret files
-const debug = false;
-if(!debug) var tracer = require('dd-trace').init()
-if(debug) var auth = require('../tokens/scuttester-auth.json');
-else var auth = require('../tokens/owo-auth.json');
 
 // Config file
 const config = require('./src/data/config.json');
+
+// Grab tokens and secret files
+const debug = config.debug;
+if(!debug) var tracer = require('dd-trace').init();
+if(debug) var auth = require('../tokens/scuttester-auth.json');
+else var auth = require('../tokens/owo-auth.json');
+
 const request = require('./utils/request.js');
 // Eris-Sharder
 const Sharder = require('eris-sharder').Master;
@@ -38,10 +39,10 @@ const totalShards = 8;
 		// How many clusters we will have
 		var clusters = Math.ceil(shards/totalShards);
 		if(debug){
-			shards = 4;
+			shards = 2;
 			firstShardID = 0;
 			lastShardID = shards-1;
-			clusters = 2
+			clusters = 1;
 		}
 		console.log("Creating shards "+firstShardID+"~"+lastShardID+" out of "+shards+" total shards!");
 
