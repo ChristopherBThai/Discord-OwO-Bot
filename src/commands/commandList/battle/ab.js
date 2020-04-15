@@ -99,7 +99,7 @@ module.exports = new CommandInterface({
 		}
 		let winColumn = "tie";
 		let msg = "There are no winners!";
-		let winner;
+		let winner,loser;
 		if(outcome.player&&!outcome.enemy){
 			if(bet>0)
 				msg = p.msg.author.username+" wins "+bet+" cowoncy!";
@@ -109,8 +109,8 @@ module.exports = new CommandInterface({
 				winColumn = "win1";
 			else
 				winColumn = "win2";
-			winner = p.msg.author.id;
-			loser = sender.id;
+			winner = p.msg.author;
+			loser = sender;
 		}else if(outcome.enemy&&!outcome.player){
 			if(bet>0)
 				msg = sender.username+" wins "+bet+" cowoncy!";
@@ -120,8 +120,8 @@ module.exports = new CommandInterface({
 				winColumn = "win1";
 			else
 				winColumn = "win2";
-			winner = sender.id;
-			loser = p.msg.author.id;
+			winner = sender;
+			loser = p.msg.author;
 		}
 		outcome.text = msg;
 
@@ -137,10 +137,9 @@ module.exports = new CommandInterface({
 				p.errorMsg(", looks like someone doesn't have enough money!",3000);
 				return;
 			}
-			sql = `UPDATE cowoncy SET money = money + ${bet*2} WHERE id = ${winner}; ${winSql}`
+			sql = `UPDATE cowoncy SET money = money + ${bet*2} WHERE id = ${winner.id}; ${winSql}`
 			await p.query(sql);
-			p.logger.value('cowoncy',(bet),['command:battleWin','id:'+winner,'by:'+loser]);
-			p.logger.value('cowoncy',(bet*-1),['command:battleLost','id:'+loser,'to:'+winner]);
+			p.neo4j.battle(p.msg, winner, loser, bet)
 		}else
 			await p.query(winSql);
 

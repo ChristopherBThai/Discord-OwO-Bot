@@ -55,7 +55,7 @@ async function drop(p){
 		p.errorMsg(", you don't have enough cowoncy! >:c",3000);
 		return;
 	}
-	p.logger.value('cowoncy',(amount*-1),['command:drop','id:'+p.msg.author.id,'channel:'+p.msg.channel.id]);
+	p.neo4j.drop(p.msg, amount);
 	p.send("**💰 | "+p.msg.author.username+"** dropped **"+p.global.toFancyNum(amount)+"** cowoncy!\n**<:blank:427371936482328596> |** Use `owo pickup` to pick it up! ",8000);
 	p.quest("drop");
 }
@@ -80,10 +80,10 @@ async function pickup(p){
 		p.send("**🚫 | "+p.msg.author.username+"**, you can only pick up as much as you have!");
 		return;
 	}else if(result[0][0]&&amount <= result[0][0].amount&&amount<=result[1][0].money){
-		p.logger.value('cowoncy',amount,['command:drop','id:'+p.msg.author.id,'channel:'+p.msg.channel.id]);
+		p.neo4j.pickup(p.msg, amount);
 		p.send("**💰 | "+p.msg.author.username+"**, you picked up **"+amount+"** cowoncy from this channel!");
 	}else{
-		p.logger.value('cowoncy',(amount*-1),['command:drop','id:'+p.msg.author.id,'channel:'+p.msg.channel.id]);
+		p.neo4j.drop(p.msg, amount);
 		p.send("**💰 | "+p.msg.author.username+"**, there's not enough cowoncy on the floor!\n**<:blank:427371936482328596> |** You felt nice so you dropped **"+amount+"** cowoncy!",8000);
 	}
 }
