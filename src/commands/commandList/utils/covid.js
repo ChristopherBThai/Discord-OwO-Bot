@@ -67,14 +67,14 @@ function showStats(p, name) {
 	}
 
 	if (stat.country || name === "global") {
-		let percent = Math.round(stat.casesPerOneMillion/1000)/100;
+		let percent = Math.round(stat.casesPerOneMillion/1000)/1000;
 		if (!percent) percent = "<0.001";
 		embed.fields.push({
 			name: "Total Cases",
 			value: "**"+p.global.toFancyNum(stat.cases)+"** (+"+p.global.toFancyNum(stat.todayCases)+") ["+percent+"%]"
 		});
 
-		percent = Math.round(stat.deathsPerOneMillion/1000)/100;
+		percent = Math.round(stat.deathsPerOneMillion/1000)/1000;
 		if (!percent) percent = "<0.001";
 		embed.fields.push({
 			name: "Total Deaths",
