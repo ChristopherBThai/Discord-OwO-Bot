@@ -8,6 +8,8 @@ try {
 	console.error("'../tokens/owo-neo4j.json' not found. Skipping neo4j logging");
 }
 
+neo4j_auth = null;
+
 exports.give = function(msg, receiver, amount) {
 	if (!neo4j_auth) return;
 	const info = {

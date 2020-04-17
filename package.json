@@ -20,7 +20,7 @@
     "mysql": "^2.17.1",
     "node-dogstatsd": "0.0.7",
     "node-vibrant": "^3.1.4",
-    "novelcovid": "^1.1.4",
+    "novelcovid": "^1.2.4",
     "patreon": "^0.4.1",
     "random-number-csprng": "^1.0.2",
     "redis": "^2.8.0",
