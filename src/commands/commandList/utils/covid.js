@@ -146,13 +146,23 @@ async function fetchCases() {
 
 	let states = await track.states();
 	for (let i in states) {
-		let stateName = states[i].state;
-		cases[stateName.replace(/\s/gi,"").toLowerCase()] = states[i];
+		try {
+			let stateName = states[i].state;
+			cases[stateName.replace(/\s/gi,"").toLowerCase()] = states[i];
+		} catch (err) {
+			console.error("Failed to parse state");
+			console.error(states[i]);
+		}
 	}
 
 	let countries = await track.countries();
 	for (let i in countries) {
-		let countryName = countries[i].country;
-		cases[countryName.replace(/\s/gi,"").toLowerCase()] = countries[i];
+		try{
+			let countryName = countries[i].country;
+			cases[countryName.replace(/\s/gi,"").toLowerCase()] = countries[i];
+		} catch (err) {
+			console.error("Failed to parse country");
+			console.error(countries[i]);
+		}
 	}
 }
