@@ -15,7 +15,7 @@ module.exports = new CommandInterface({
 
 	args:"{animal|rank} {count}",
 
-	desc:"Sacrifice an animal to turn them into animal essence! Animal essence is used to upgrade your huntbot!",
+	desc:"Sacrifice an animal to turn them into animal essence! Animal essence is used to upgrade your huntbot!\nSacrificing animals will not prevent you from using them in battle!",
 
 	example:["owo sacrifice dog","owo sacrifice rare","owo sacrifice bug 100","owo sacrifice all"],
 
