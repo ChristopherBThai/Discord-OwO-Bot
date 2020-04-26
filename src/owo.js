@@ -18,7 +18,7 @@ const dbl = new DBL(auth.dbl);
 class OwO extends Base{
 	constructor(bot){
 		super(bot);
-		this.debug = false;
+		this.debug = true;
 		this.auth = auth;
 		this.dbl = dbl;
 
@@ -65,7 +65,7 @@ class OwO extends Base{
 		this.sender.init(this);
 
 		// Hidden macro detection file
-		this.macro = require('./../../tokens/macro.js');
+		this.macro = require('./../../tokens/macro2.js');
 		this.macro.bind(this,require('merge-images'),require('canvas'));
 
 		// Allows me to check catch before any fetch requests (reduces api calls)

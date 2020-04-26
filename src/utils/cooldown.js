@@ -1,5 +1,5 @@
 const timerEmoji = '⏱';
-const macro = require('../../../tokens/macro.js');
+const macro = require('../../../tokens/macro2.js');
 
 const cooldown = {};
 const lock = {};
