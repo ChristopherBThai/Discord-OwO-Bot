@@ -14,6 +14,7 @@ const shopUtil = require('./util/shopUtil.js');
 const weaponUtil = require('../battle/util/weaponUtil.js');
 const crateUtil = require('../battle/util/crateUtil.js');
 const wallpaperUtil = require('../social/util/wallpaperUtil.js');
+const alterInventory = require('../patreon/alterInventory.js');
 
 module.exports = new CommandInterface({
 
@@ -52,6 +53,7 @@ module.exports = new CommandInterface({
 
 		if(text=="") text = "Your inventory is empty :c";
 		text = "**====== "+msg.author.username+"'s Inventory ======**\n"+text;
+		text = alterInventory.alter(msg.author.id, text);
 		p.send(text);
 	}
 
