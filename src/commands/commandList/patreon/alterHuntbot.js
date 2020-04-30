@@ -406,13 +406,13 @@ function spotifybot2(text,type) {
 			text.fields[1].name = text.fields[1].name.replace("⏱",jump);
 			text.fields[1].value = text.fields[1].value.replace("\n","\n*Looks like Ross wants more friends!*\n");
 			text.fields[2].name = text.fields[2].name.replace("⏳",pat);
-			text.fields[1].value = text.fields[2].value.replace("\n","\n*Maybe he needs more time to catch them?!*\n");
+			text.fields[2].value = text.fields[2].value.replace("\n","\n*Maybe he needs more time to catch them?!*\n");
 			text.fields[3].name = text.fields[3].name.replace("<:cowoncy:416043450337853441>",roll);
-			text.fields[1].value = text.fields[3].value.replace("\n","\n*Oh my.. Does he need more money?*\n");
+			text.fields[3].value = text.fields[3].value.replace("\n","\n*Oh my.. Does he need more money?*\n");
 			text.fields[4].name = text.fields[4].name.replace("🔧",wave);
-			text.fields[1].value = text.fields[4].value.replace("\n","\n*Ross probably needs some help!*\n");
+			text.fields[4].value = text.fields[4].value.replace("\n","\n*Ross probably needs some help!*\n");
 			text.fields[5].name = text.fields[5].name.replace("⚔", bongo);
-			text.fields[1].value = text.fields[5].value.replace("\n","\n*How about some friend making training!*\n");
+			text.fields[5].value = text.fields[5].value.replace("\n","\n*How about some friend making training!*\n");
 			if(text.fields.length>=8){
 				text.fields[7].name = rainbow+"ROSS is currently making new friends!";
 				text.fields[7].value = text.fields[7].value.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","Awww.. ROSS isnt done getting new friends yet!\nNEW FRIENDS ADDED IN")
