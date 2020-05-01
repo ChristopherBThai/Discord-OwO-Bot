@@ -65,7 +65,7 @@ class OwO extends Base{
 		this.sender.init(this);
 
 		// Hidden macro detection file
-		this.macro = require('./../../tokens/macro2.js');
+		this.macro = require('./../../tokens/macro.js');
 		this.macro.bind(this,require('merge-images'),require('canvas'));
 
 		// Allows me to check catch before any fetch requests (reduces api calls)
