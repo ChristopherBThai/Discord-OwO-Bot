@@ -18,8 +18,12 @@ module.exports = new CommandInterface({
 	dm:true,
 
 	execute: async function(p){
-		let {text, buffer} = await captcha();
-		p.send(text,null,{file:buffer,name:"captcha.png"});
+		let {url, text, buffer} = await captcha({}, p.msg.author);
+		if (url) {
+			p.send(url);
+		} else {
+			p.send(text,null,{file:buffer,name:"captcha.png"});
+		}
 	}
 
 })
