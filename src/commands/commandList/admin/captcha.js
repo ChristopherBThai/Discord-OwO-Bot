@@ -7,7 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const captcha = require('../../../../../tokens/captcha2.js');
+const captcha = require('../../../../../tokens/captcha.js');
 
 module.exports = new CommandInterface({
 
