@@ -23,6 +23,8 @@ exports.alter = function(id,text,type) {
 			return rikudou(text,type);
 		case '283000589976338432':
 			return kuma(text,type);
+		case '325273108418396160':
+			return spotifybot2(text,type);
 		default:
 			return text;
 	}
@@ -380,6 +382,61 @@ function kuma(text,type) {
 				.replace("AND","and")
 				.replace("ESSENCE","essence")
 				.replace("EXPERIENCE","experience");
+			return text;
+		default:
+			return text;
+	}
+}
+
+function spotifybot2(text,type) {
+	const rainbow = "<a:rainbowbird:704924006545096824>"
+	const bongo = "<a:bongobird:704924005827608596>";
+	const woah = "<:birdwoah:704924006507085864>";
+	const wave = "<a:birdwave:704924007509655552>";
+	const roll = "<a:birdroll:704924006364741794>";
+	const pat = "<a:birdpat:704924006830309436>";
+	const jump = "<a:birdjump:704924007161397280>";
+	const angry = "<:birdangry:704924005546590268>";
+	switch(type){
+		case 'hb':
+			text.author.name = "OH NOO!! It looks like Ross has ran out of friend to play with!!"
+			text.author.icon_url = "https://cdn.discordapp.com/emojis/704924005546590268.png";
+			text.color = 16312092;
+			text.fields[0].name = rainbow+"`ROSS can make friends and bring them to your zoo!`";
+			text.fields[1].name = text.fields[1].name.replace("⏱",jump);
+			text.fields[1].value = text.fields[1].value.replace("\n","\n*Looks like Ross wants more friends!*\n");
+			text.fields[2].name = text.fields[2].name.replace("⏳",pat);
+			text.fields[2].value = text.fields[2].value.replace("\n","\n*Maybe he needs more time to catch them?!*\n");
+			text.fields[3].name = text.fields[3].name.replace("<:cowoncy:416043450337853441>",roll);
+			text.fields[3].value = text.fields[3].value.replace("\n","\n*Oh my.. Does he need more money?*\n");
+			text.fields[4].name = text.fields[4].name.replace("🔧",wave);
+			text.fields[4].value = text.fields[4].value.replace("\n","\n*Ross probably needs some help!*\n");
+			text.fields[5].name = text.fields[5].name.replace("⚔", bongo);
+			text.fields[5].value = text.fields[5].value.replace("\n","\n*How about some friend making training!*\n");
+			if(text.fields.length>=8){
+				text.fields[7].name = rainbow+"ROSS is currently making new friends!";
+				text.fields[7].value = text.fields[7].value.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","Awww.. ROSS isnt done getting new friends yet!\nNEW FRIENDS ADDED IN")
+					.replace("ANIMALS CAPTURED","FRIENDS ADDED") + ' ' + woah;
+			}
+			return text;
+		case 'progress':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,rainbow)
+				.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","Awww.. ROSS isn’t done getting new friends yet!`\n"+blank+" **|** `NEW FRIENDS ADDED IN")
+				.replace("ANIMALS CAPTURED","FRIENDS ADDED");
+			return text;
+		case 'password':
+			text = text.split("\n")[0].replace(/<:[a-z]bot:[0-9]+>/gi,rainbow);
+			return text
+		case 'spent':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,rainbow)
+				.replace("`BEEP BOOP. `","")
+				.replace("cowoncy","cowoncy and you’re ready to find friends!")
+				.replace("ANIMALS","FRIENDS")
+			return text;
+		case 'returned':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,rainbow)
+				.replace("BEEP BOOP. I AM BACK WITH","ROSS IS BACK WITH")
+				.replace("ANIMALS","FRIENDS")
 			return text;
 		default:
 			return text;
