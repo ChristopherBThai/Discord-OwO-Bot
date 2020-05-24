@@ -9,7 +9,7 @@ var animals = require('../../../../../tokens/owo-animals.json');
 /**
  * Picks a random animal from secret json file
  */
-exports.randAnimal = function(patreon,gem,lucky){
+exports.randAnimal = function(patreon,gem,lucky,huntbot){
 	var rand = Math.random();
 	var result = [];
 
