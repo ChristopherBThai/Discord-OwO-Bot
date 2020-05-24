@@ -93,7 +93,7 @@ async function claim(p,msg,con,query,bot){
 	let total = {};
 	let digits = 1;
 	for(let i=0;i<query.huntcount;i++){
-		let animal = animalUtil.randAnimal(patreon);
+		let animal = animalUtil.randAnimal(patreon, null, null, 0.5);
 		if(total[animal[1]]){
 			total[animal[1]].count++;
 			if(total[animal[1]].count>digits)
@@ -102,7 +102,7 @@ async function claim(p,msg,con,query,bot){
 			total[animal[1]] = {count:1,rank:animal[2]};
 		}
 	}
-	digits= Math.trunc(Math.log10(digits)+1);
+	digits = Math.trunc(Math.log10(digits)+1);
 	let text = "**"+bot+" |** `BEEP BOOP. I AM BACK WITH "+query.huntcount+" ANIMALS,`\n**<:blank:427371936482328596> |** `"+totalGain+" ESSENCE, AND "+totalExp+" EXPERIENCE`";
 	let tempText = [];
 	let count = 0;
