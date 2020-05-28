@@ -34,7 +34,6 @@ module.exports = new CommandInterface({
 	cooldown:600000,
 	half:15,
 	six:30,
-	bot:true,
 
 	execute: async function(p){
 		let message = p.args.join(" ");
