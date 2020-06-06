@@ -48,7 +48,7 @@ module.exports = new CommandInterface({
 
 async function claim(p,msg,con,query,bot){
 	let timer = parseInt(query.timer);
-	if(false&&timer<query.huntmin){
+	if(timer<query.huntmin){
 		let time = query.huntmin-timer;
 		let min = time%60;
 		let hour = Math.trunc(time/60);
