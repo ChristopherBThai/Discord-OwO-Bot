@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-var animals = require('../../../../../tokens/owo-animals2.json');
+var animals = require('../../../../../tokens/owo-animals.json');
 /**
  * Picks a random animal from secret json file
  */
