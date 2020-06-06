@@ -5,11 +5,12 @@
  * For more information, see README.md and LICENSE
   */
 
-var animals = require('../../../../../tokens/owo-animals.json');
+var animals = require('../../../../../tokens/owo-animals2.json');
 /**
  * Picks a random animal from secret json file
  */
 exports.randAnimal = function(patreon,gem,lucky,huntbot){
+	console.log(huntbot*100 + "%");
 	var rand = Math.random();
 	var result = [];
 
@@ -21,6 +22,8 @@ exports.randAnimal = function(patreon,gem,lucky,huntbot){
 	var gemPercent = animals.gem[0];
 	if(!gem) gemPercent = 0;
 	else if(lucky) gemPercent += gemPercent*lucky.amount;
+
+	console.log(huntbot);
 
 	if(patreonPercent&&rand<patreonPercent){
 		if(rand<animals.cpatreon[0]){
@@ -42,6 +45,12 @@ exports.randAnimal = function(patreon,gem,lucky,huntbot){
 		result.push(animals.special[rand]);
 		result.push("special");
 		result.push(250);
+	}else if(huntbot&&rand<huntbot+specialPercent+patreonPercent){
+		rand = Math.ceil(Math.random()*(animals.bot.length-1));
+		result.push("**bot** "+animals.ranks.bot);
+		result.push(animals.bot[rand]);
+		result.push("bot");
+		result.push(100000);
 	}else if(gemPercent&&rand<gemPercent+specialPercent+patreonPercent){
 		rand = Math.ceil(Math.random()*(animals.gem.length-1));
 		result.push("**gem** "+animals.ranks.gem);
@@ -119,6 +128,8 @@ exports.zooScore = function(zoo){
 		text += "F-"+zoo.fabled+", ";
 	if(zoo.cpatreon>0)
 		text += "CP-"+zoo.cpatreon+", ";
+	if(zoo.bot>0)
+		text += "B-"+zoo.bot+", ";
 	if(zoo.gem>0)
 		text += "G-"+zoo.gem+", ";
 	if(zoo.legendary>0)
