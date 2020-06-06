@@ -12,20 +12,23 @@ const autohuntUtil = require('./autohuntutil.js');
 const essence = "<a:essence:451638978299428875>";
 const traits = {};
 const efficiency = ["efficiency","timer","cd","cooldown"];
-for(var i=0;i<efficiency.length;i++)
+for(let i=0;i<efficiency.length;i++)
 	traits[efficiency[i]] = "efficiency";
 const cost = ["cost","price","cowoncy"];
-for(var i=0;i<cost.length;i++)
+for(let i=0;i<cost.length;i++)
 	traits[cost[i]] = "cost";
 const duration = ["duration","totaltime","time"];
-for(var i=0;i<duration.length;i++)
+for(let i=0;i<duration.length;i++)
 	traits[duration[i]] = "duration";
 const gain = ["gain","essence"];
-for(var i=0;i<gain.length;i++)
+for(let i=0;i<gain.length;i++)
 	traits[gain[i]] = "gain";
-const exp= ["exp","experience","pet"];
-for(var i=0;i<exp.length;i++)
+const exp = ["exp","experience","pet"];
+for(let i=0;i<exp.length;i++)
 	traits[exp[i]] = "exp";
+const radar = ["radar"];
+for(let i=0;i<radar.length;i++)
+	traits[radar[i]] = "radar";
 
 
 module.exports = new CommandInterface({
@@ -74,7 +77,7 @@ module.exports = new CommandInterface({
 
 		//Check if valid args
 		if(!trait){
-			p.send("**🚫 |** I could not find that autohunt trait!\n**<:blank:427371936482328596> |** You can choose from: `efficiency`, `duration`, `cost`, `gain`, or `exp`",5000);
+			p.send("**🚫 |** I could not find that autohunt trait!\n**<:blank:427371936482328596> |** You can choose from: `efficiency`, `duration`, `cost`, `gain`,`exp`, or `radar`",5000);
 			return;
 		}
 		if(!count||count<=0){
