@@ -12,24 +12,24 @@ const traits= {"efficiency":{"inc":10,"pow":1.748,"base":25,"upg":1,"max":215,"p
 		"cost":{"inc":1000,"pow":3.4,"base":10,"upg":-1,"max":5,"prefix":" cowoncy"},
 		"gain":{"inc":10,"pow":1.8,"base":0,"upg":25,"max":200,"prefix":" essence/H"},
 		"exp":{"inc":10,"pow":1.8,"base":0,"upg":35,"max":200,"prefix":" xp/H"},
-		"bot":{"inc":50,"pow":2.5,"base":0,"upg":0.0000001,"max":100,"prefix":" %"}};
+		"radar":{"inc":50,"pow":2.5,"base":0,"upg":0.0000001,"max":999,"prefix":" %"}};
 const bots = ["<:cbot:459996048379609098>","<:ubot:459996048660889600>","<:rbot:459996049361338379>","<:ebot:459996050174902272>","<:mbot:459996049784963073>","<a:lbot:459996050883608576>"];
 //test(traits.efficiency);
 //test(traits.duration);
 //test(traits.cost);
 //test(traits.exp);
 //test(traits.gain);
-test(traits.bot);
+//test(traits.radar);
 
-exports.getLvl = function(xp,gain,trait){
+exports.getLvl = function(xp,gain,traitName){
 	totalxp = 0;
-	var temp = {};
-	var hit = false;
-	var prevlvl = 0;
-	trait = traits[trait];
+	let temp = {};
+	let hit = false;
+	let prevlvl = 0;
+	const trait = traits[traitName];
 
 	for(var i=1;i<=trait.max+1;i++){
-		var lvlxp = Math.trunc(trait.inc*Math.pow(i,trait.pow));
+		let lvlxp = Math.trunc(trait.inc*Math.pow(i,trait.pow));
 		totalxp += lvlxp;
 		if(!hit&&totalxp>xp){
 			prevlvl = i-1;
@@ -47,7 +47,8 @@ exports.getLvl = function(xp,gain,trait){
 					temp.gain = trait.upg;
 				}
 				temp.stat = trait.base + (trait.upg*temp.lvl);
-				temp.stat = Math.trunc(temp.stat*10)/10;
+				if (traitName != 'radar') temp.stat = Math.trunc(temp.stat*10)/10;
+				else temp.stat = Math.round(temp.stat*10000000)/100000;
 				temp.prefix = trait.prefix;
 				return temp;
 			}
@@ -66,7 +67,7 @@ function test(trait){
 		var xp = Math.trunc(trait.inc*Math.pow(i,trait.pow));
 		total += xp;
 		result += trait.upg;
-		console.log("["+i+"] "+total +" | "+xp+"xp - "+result+trait.prefix);
+		console.log("["+i+"] "+total +" | "+xp+"xp - "+(Math.round(result*10000000)/10000000)+trait.prefix);
 	}
 }
 

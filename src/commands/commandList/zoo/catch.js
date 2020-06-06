@@ -146,6 +146,7 @@ function getAnimals(p,result,gems,uid){
 		for(var i=1;i<count;i++)
 			animal.push(animalUtil.randAnimal(patreon,true,gems["Lucky"]));
 	}
+	console.log(animal)
 
 	/* Construct sql statement for animal insertion */
 	var sql = "";
