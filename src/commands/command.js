@@ -239,6 +239,30 @@ function initParam(msg,command,args,main){
 			}
 		}
 	}
+	param.getRole = function(id){
+		id = id.match(/[0-9]+/);
+		if(!id) return;
+		id = id[0];
+		return param.msg.channel.guild.roles.get(id);
+	}
+	param.replaceMentions = function(text) {
+		if (!text) return;
+		let userMentions = text.match(/<@!?\d+>/g);
+		let roleMentions = text.match(/<@&\d+>/g);
+
+		for (let i in userMentions) {
+			let mention = userMentions[i];
+			let user = param.getMention(mention);
+			if (user) text = text.replace(mention, '@' + user.username);
+		}
+
+		for (let i in roleMentions) {
+			let mention = roleMentions[i];
+			let role = param.getRole(mention);
+			if (role) text = text.replace(mention, '@' + role.name);
+		}
+		return text;
+	}
 	return param;
 }
 
