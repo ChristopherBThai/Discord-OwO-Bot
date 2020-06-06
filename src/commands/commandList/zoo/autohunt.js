@@ -14,7 +14,7 @@ const global = require('../../../utils/global.js');
 const letters = "abcdefghijklmnopqrstuvwxyz";
 const botrank = "SELECT (COUNT(*)) AS rank, (SELECT COUNT(*) FROM autohunt) AS total FROM autohunt WHERE (essence+duration+efficiency+cost+gain+exp) >= COALESCE((SELECT (essence+duration+efficiency+cost+gain+exp) AS total FROM autohunt WHERE id = ";
 const logger = require('../../../utils/logger.js');
-const animals = require('../../../../../tokens/owo-animals2.json');
+const animals = require('../../../../../tokens/owo-animals.json');
 
 module.exports = new CommandInterface({
 

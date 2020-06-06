@@ -10,7 +10,6 @@ var animals = require('../../../../../tokens/owo-animals2.json');
  * Picks a random animal from secret json file
  */
 exports.randAnimal = function(patreon,gem,lucky,huntbot){
-	console.log(huntbot*100 + "%");
 	var rand = Math.random();
 	var result = [];
 
@@ -22,8 +21,6 @@ exports.randAnimal = function(patreon,gem,lucky,huntbot){
 	var gemPercent = animals.gem[0];
 	if(!gem) gemPercent = 0;
 	else if(lucky) gemPercent += gemPercent*lucky.amount;
-
-	console.log(huntbot);
 
 	if(patreonPercent&&rand<patreonPercent){
 		if(rand<animals.cpatreon[0]){
