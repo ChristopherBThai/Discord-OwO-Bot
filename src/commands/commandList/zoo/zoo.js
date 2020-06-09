@@ -88,7 +88,7 @@ module.exports = new CommandInterface({
 					cpatreonCount++;
 				}
 				else if(animals.bot.indexOf(row[i].name)>0){
-					if(additional7=="") additional7 = secret;
+					if(additional7=="") additional7 = secret6;
 					additional7 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 				}
 				else if(animals.gem.indexOf(row[i].name)>0){
