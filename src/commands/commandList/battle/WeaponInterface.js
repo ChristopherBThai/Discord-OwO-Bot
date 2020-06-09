@@ -243,9 +243,9 @@ module.exports = class WeaponInterface{
 	static inflictDamage(attacker,attackee,damage,type,tags={}){
 		let totalDamage = 0;
 		if(type==WeaponInterface.PHYSICAL)
-			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.pr));
+			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee, WeaponInterface.PHYSICAL));
 		else if(type==WeaponInterface.MAGICAL)
-			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee.stats.mr));
+			totalDamage = damage * (1-WeaponInterface.resToPercent(attackee, WeaponInterface.MAGICAL));
 		else if(type==WeaponInterface.TRUE)
 			totalDamage = damage;
 		else
@@ -517,15 +517,26 @@ module.exports = class WeaponInterface{
 	}
 
 	/* Convert resistance to percent */
-	static resToPercent(res){
+	static resToPercent(animal, resType){
+		let res = 0;
+		let resRate = 0;
+		if (WeaponInterface.PHYSICAL == resType) {
+			res = animal.stats.pr;
+			resRate = animal.animal.prr;
+		}
+		else {
+			res = animal.stats.mr;
+			resRate = animal.animal.mrr;
+		}
 		res = res[0]+res[1];
-		res = (res/(100+res))*.8;
+		res = (res/(200+res))*.7;
+		res = res + .3 * resRate / 15;
 		return res;
 	}
 
 	/* Convert resistance to pretty print percent */
-	static resToPrettyPercent(res){
-		res = WeaponInterface.resToPercent(res);
+	static resToPrettyPercent(animal, resType){
+		let res = WeaponInterface.resToPercent(animal, resType);
 		return Math.round(res*100)+"%";
 	}
 

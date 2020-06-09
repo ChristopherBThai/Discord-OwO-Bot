@@ -301,8 +301,8 @@ const createTeamEmbed = exports.createTeamEmbed = function (p, team, other={}) {
 			let wp = (''+Math.ceil(animal.stats.wp[1]+animal.stats.wp[3])).padStart(digits,"0");
 			let att = (''+Math.ceil(animal.stats.att[0]+animal.stats.att[1])).padStart(digits,"0");
 			let mag = (''+Math.ceil(animal.stats.mag[0]+animal.stats.mag[1])).padStart(digits,"0");
-			let pr = WeaponInterface.resToPrettyPercent(animal.stats.pr);
-			let mr = WeaponInterface.resToPrettyPercent(animal.stats.mr);
+			let pr = WeaponInterface.resToPrettyPercent(animal, WeaponInterface.PHYSICAL);
+			let mr = WeaponInterface.resToPrettyPercent(animal, WeaponInterface.MAGICAL);
 			title += `${(animal.animal.uni)?animal.animal.uni:animal.animal.value} **${(animal.nickname)?animal.nickname:animal.animal.name}** `;
 			body = `Lvl ${animal.stats.lvl} \`[${p.global.toFancyNum(animal.stats.xp[0])}/${p.global.toFancyNum(animal.stats.xp[1])}]\`\n<:hp:531620120410456064> \`${hp}\` <:wp:531620120976687114> \`${wp}\`\n<:att:531616155450998794> \`${att}\` <:mag:531616156231139338> \`${mag}\`\n<:pr:531616156222488606> \`${pr}\` <:mr:531616156226945024> \`${mr}\`\n`;
 			let weapon = animal.weapon;

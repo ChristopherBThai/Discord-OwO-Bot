@@ -25,10 +25,10 @@ exports.stats = function(animal,flags){
 	stats.wp[0] = stats.wp[1]+stats.wp[3];
 
 	/* add the mr/pr percentages */
-	stats.mrp = WeaponInterface.resToPrettyPercent(stats.mr[0]+stats.mr[1]);
-	stats.prp = WeaponInterface.resToPrettyPercent(stats.pr[0]+stats.pr[1]);
-
 	animal.stats = stats;
+
+	stats.prp = WeaponInterface.resToPrettyPercent(animal, WeaponInterface.PHYSICAL);
+	stats.mrp = WeaponInterface.resToPrettyPercent(animal, WeaponInterface.MAGICAL);
 }
 
 exports.weaponStats = function(stats,weapon){
@@ -47,9 +47,9 @@ exports.parseStats = function(animal,lvl){
 	stats.att = [baseAtt,0];
 	let baseMag = 100+lvl*animal.magr;
 	stats.mag = [baseMag,0];
-	let basePr = 25+lvl*animal.prr*2;
+	let basePr = 25+lvl*animal.prr;
 	stats.pr = [basePr,0];
-	let baseMr = 25+lvl*animal.mrr*2;
+	let baseMr = 25+lvl*animal.mrr;
 	stats.mr = [baseMr,0]
 	return stats;
 }

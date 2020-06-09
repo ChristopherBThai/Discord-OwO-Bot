@@ -1081,8 +1081,8 @@ function animalDisplayText(animal){
 	if(wp<0) wp = 0;
 	let att = Math.ceil(animal.stats.att[0]+animal.stats.att[1]);
 	let mag = Math.ceil(animal.stats.mag[0]+animal.stats.mag[1]);
-	let pr = WeaponInterface.resToPrettyPercent(animal.stats.pr);
-	let mr = WeaponInterface.resToPrettyPercent(animal.stats.mr);
+	let pr = WeaponInterface.resToPrettyPercent(animal, WeaponInterface.PHYSICAL);
+	let mr = WeaponInterface.resToPrettyPercent(animal, WeaponInterface.MAGICAL);
 	text += `\`${hp} HP\` <:att:531616155450998794> \`${att}\` <:pr:531616156222488606> \`${pr}\`\n`;
 	text += `\`${wp} WP\` <:mag:531616156231139338> \`${mag}\` <:mr:531616156226945024> \`${mr}\``;
 	if(animal.weapon){

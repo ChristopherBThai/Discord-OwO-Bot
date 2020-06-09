@@ -111,8 +111,8 @@ function generateAnimalJson(animal){
 		animal_wp:wp,
 		animal_att:Math.ceil(stat.att[0]+stat.att[1]),
 		animal_mag:Math.ceil(stat.mag[0]+stat.mag[1]),
-		animal_pr:WeaponInterface.resToPrettyPercent(stat.pr),
-		animal_mr:WeaponInterface.resToPrettyPercent(stat.mr),
+		animal_pr:WeaponInterface.resToPrettyPercent(animal, WeaponInterface.PHYSICAL),
+		animal_mr:WeaponInterface.resToPrettyPercent(animal, WeaponInterface.MAGICAL),
 		animal_buffs:buffs
 	}
 }
