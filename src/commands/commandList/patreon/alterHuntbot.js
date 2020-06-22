@@ -1,6 +1,6 @@
 /*
  * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Copyright (C) 2020 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
@@ -254,6 +254,7 @@ function dalu(text,type){
 			text.fields[3].name = text.fields[3].name.replace("<:cowoncy:416043450337853441> Cost","<a:foxcost:653394748446343168> Endurance");
 			text.fields[4].name = text.fields[4].name.replace("🔧 Gain","<a:foxgain:653394748836675594> Hunting Friends");
 			text.fields[5].name = text.fields[5].name.replace("⚔ Experience","<a:foxxp:653394749604233286> Combat exp");
+			text.fields[6].name = text.fields[6].name.replace("📡 Radar","<a:foxchance:724442785478082591> Rare Fox chance");
 			text.fields[7].name = text.fields[7].name.replace("<a:essence:451638978299428875> Animal Essence","<a:foxessence:653394748777824259> Fox Helpers");
 			if(text.fields.length>=9){
 				text.fields[8].name = foxbot+" KitsuneBot will be back soon!";

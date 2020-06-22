@@ -1,6 +1,6 @@
 /*
  * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Copyright (C) 2020 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
@@ -82,7 +82,7 @@ function garcom(text,type) {
 }
 
 function alradio(text,type) {
-	text.author.name = "Speech: ...then he'd broadcast his carnage all throughout Hell, just so everyone could witness his ability. Sinners started calling him, \"The Radio Demon.\"";
+	text.author.name = "...then he'd broadcast his carnage all throughout Hell, just so everyone could witness his ability. Sinners started calling him, \"The Radio Demon.\"";
 	text.thumbnail = {
 		url: "https://cdn.discordapp.com/attachments/626155987904102402/686473789080600586/image0.gif"
 	}

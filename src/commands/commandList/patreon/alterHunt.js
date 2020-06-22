@@ -1,6 +1,6 @@
 /*
  * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Copyright (C) 2020 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
@@ -352,12 +352,12 @@ function garcom(text, info){
 
 function alradio(text, info) {
 	if(info.gemText){
-		text = `${huntEmoji} **| ${info.author.username}** activated ${info.gemText}\n${blank} **|** and recruited ${info.animalEmojis}`;
+		text = `Now let's give these burning fools a place to dwell.\n**${info.author.username}** activated ${info.gemText}\nand recruited: ${info.animalEmojis}`;
 	}else{
-		text = `${huntEmoji} **| ${info.author.username}** donated 5 and recruited ${info.animalEmojis}`;
+		text = `**${info.author.username}** donated 5 and recruited ${info.animalEmojis}`;
 	}
 	if (info.petText) {
-		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
+		text += `\n${info.petText} gained **${info.animalXp}xp**!`;
 	}
 	text += info.lootboxText || '';
 	const embed = {
