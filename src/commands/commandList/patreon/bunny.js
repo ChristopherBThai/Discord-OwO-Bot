@@ -7,18 +7,18 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const emoji = "<:teddy:714218781022617710>";
-const owner = "625340848556474369";
-const data = "teddy";
-const plural = "teddy bears";
+const emoji = "<a:bunny:724439902409719933>";
+const owner = "370709798020448257";
+const data = "bunny";
+const plural = "bunnies";
 
 module.exports = new CommandInterface({
 
-	alias:["teddy"],
+	alias:["bunny"],
 
 	args:"{@user}",
 
-	desc:"Give a teddy bear to someone! You can only gain one if you receive it! This command was created by {ᗩTᒪ} StellaBear",
+	desc:"Give a bunny to someone! You can only gain one if you receive it! This command was created by ?370709798020448257?",
 
 	example:[],
 
@@ -78,5 +78,5 @@ async function give(p,user){
 	}
 
 	await p.redis.hincrby("data_"+user.id, data, 2);
-	p.send(`${emoji} **| ${user.username}**, ${p.msg.author.username} thinks you're bear-y special and sent  you 2 teddies! *hugs*`);
+	p.send(`${emoji} **| ${p.msg.author.username}** gave ${user.username} 2 bunnies from their garden! owo ${emoji}`);
 }
