@@ -23,8 +23,8 @@ exports.getItem = function(args){
 		return {name:"weapon",id:args[0]};
 	}
 
-	if(id==50)
-		return {name:"lootbox"};
+	if(id==50||id==49)
+		return {name:"lootbox",id};
 	if(id>50&&id<100)
 		return {name:"gem",id:id};
 	if(id==100)
