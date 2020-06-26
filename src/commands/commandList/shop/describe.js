@@ -44,7 +44,7 @@ module.exports = new CommandInterface({
 		if(!item){
 			p.errorMsg(", invalid id!",3000);
 		}else if(item.name=="lootbox"){
-			lootboxUtil.desc(p);
+			lootboxUtil.desc(p,item.id);
 		}else if(item.name=="gem"){
 			gemUtil.desc(p,item.id);
 		}else{
