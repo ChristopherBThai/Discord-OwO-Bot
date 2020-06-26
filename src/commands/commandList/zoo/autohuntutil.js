@@ -12,7 +12,7 @@ const traits= {"efficiency":{"inc":10,"pow":1.748,"base":25,"upg":1,"max":215,"p
 		"cost":{"inc":1000,"pow":3.4,"base":10,"upg":-1,"max":5,"prefix":" cowoncy"},
 		"gain":{"inc":10,"pow":1.8,"base":0,"upg":25,"max":200,"prefix":" essence/H"},
 		"exp":{"inc":10,"pow":1.8,"base":0,"upg":35,"max":200,"prefix":" xp/H"},
-		"radar":{"inc":50,"pow":2.5,"base":0,"upg":0.0000001,"max":999,"prefix":" %"}};
+		"radar":{"inc":50,"pow":2.5,"base":0,"upg":0.00000004,"max":999,"prefix":" %"}};
 const bots = ["<:cbot:459996048379609098>","<:ubot:459996048660889600>","<:rbot:459996049361338379>","<:ebot:459996050174902272>","<:mbot:459996049784963073>","<a:lbot:459996050883608576>"];
 //test(traits.efficiency);
 //test(traits.duration);
