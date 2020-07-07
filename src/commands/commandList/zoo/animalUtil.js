@@ -6,10 +6,16 @@
   */
 
 var animals = require('../../../../../tokens/owo-animals.json');
+let enableDistortedTier = true;
+setTimeout(() => {
+  // Disable distorted after 1.5 hours;
+  enableDistortedTier = false;
+},5400000);
+
 /**
  * Picks a random animal from secret json file
  */
-exports.randAnimal = function(patreon,gem,lucky,huntbot){
+exports.randAnimal = function( {patreon, gem, lucky, huntbot, manual} = {} ){
 	var rand = Math.random();
 	var result = [];
 
@@ -21,6 +27,12 @@ exports.randAnimal = function(patreon,gem,lucky,huntbot){
 	var gemPercent = animals.gem[0];
 	if(!gem) gemPercent = 0;
 	else if(lucky) gemPercent += gemPercent*lucky.amount;
+  let distortedPercent = enableDistortedTier && manual ? animals.distorted[0] : 0;
+  if (distortedPercent) {
+    distortedPercent += specialPercent + patreonPercent;
+    if (huntbot) distortedPercent += huntbot;
+    if (gemPercent) distortedPercent += gemPercent;
+  }
 
 	if(patreonPercent&&rand<patreonPercent){
 		if(rand<animals.cpatreon[0]){
@@ -54,6 +66,12 @@ exports.randAnimal = function(patreon,gem,lucky,huntbot){
 		result.push(animals.gem[rand]);
 		result.push("gem");
 		result.push(5000);
+  } else if (rand<distortedPercent) {
+		rand = Math.ceil(Math.random()*(animals.distorted.length-1));
+		result.push("**distorted** "+animals.ranks.distorted);
+		result.push(animals.distorted[rand]);
+		result.push("distorted");
+		result.push(100000);
 	}else if(rand<animals.common[0]){
 		rand = Math.ceil(Math.random()*(animals.common.length-1));
 		result.push("**common** "+animals.ranks.common);
@@ -125,6 +143,8 @@ exports.zooScore = function(zoo){
 		text += "F-"+zoo.fabled+", ";
 	if(zoo.cpatreon>0)
 		text += "CP-"+zoo.cpatreon+", ";
+	if(zoo.distorted>0)
+		text += "D-"+zoo.distorted+", ";
 	if(zoo.bot>0)
 		text += "B-"+zoo.bot+", ";
 	if(zoo.gem>0)
