@@ -1,5 +1,9 @@
 const redis = require('redis');
-const client = redis.createClient();
+const login = require('../../../tokens/owo-login.json');
+const client = redis.createClient({
+  host: login.redis_host,
+  password: login.redis_pass
+});
 
 exports.incr = function(key,value=1){
 	return new Promise(function(res,rej){
