@@ -8,9 +8,9 @@
 var animals = require('../../../../../tokens/owo-animals.json');
 let enableDistortedTier = true;
 setTimeout(() => {
-	// Disable distorted after 1.5 hours;
+	// Disable distorted after 6 hours;
 	enableDistortedTier = false;
-},5400000);
+},21600000);
 
 /**
  * Picks a random animal from secret json file
