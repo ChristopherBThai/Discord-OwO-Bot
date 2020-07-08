@@ -130,9 +130,9 @@ function getAnimals(p,result,gems,uid){
 	var gemLength = Object.keys(gems).length;
 	if(gemLength==0){
 		var animal = [animalUtil.randAnimal({
-      patreon: patreon,
-      manual: true
-    })];
+			patreon: patreon,
+			manual: true
+		})];
 
 	/* If gems... */
 	}else{
@@ -143,26 +143,26 @@ function getAnimals(p,result,gems,uid){
 
 		/* Grabs 1-2 animal to check for patreongem */
 		var animal = [animalUtil.randAnimal({
-      patreon: (patreon||patreonGem),
-      gem: true,
-      lucky: gems["Lucky"],
-      manual: true
-    })];
+			patreon: (patreon||patreonGem),
+			gem: true,
+			lucky: gems["Lucky"],
+			manual: true
+		})];
 		if(gems["Patreon"]) animal.push(animalUtil.randAnimal({
-      patreon: true,
-      gem: true,
-      lucky: gems["Lucky"],
-      manual: true
-    }));
+			patreon: true,
+			gem: true,
+			lucky: gems["Lucky"],
+			manual: true
+		}));
 
 		/* Get the rest of the animals */
 		for(var i=1;i<count;i++)
 			animal.push(animalUtil.randAnimal({
-        patreon: patreon,
-        gem: true,
-        lucky: gems["Lucky"],
-        manual: true
-      }));
+				patreon: patreon,
+				gem: true,
+				lucky: gems["Lucky"],
+				manual: true
+			}));
 	}
 
 	/* Construct sql statement for animal insertion */

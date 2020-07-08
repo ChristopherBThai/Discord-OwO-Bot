@@ -9,7 +9,7 @@ const mysql = require('mysql');
 const login = require('../../../tokens/owo-login.json');
 
 config = {
-	host: login.mysql_host
+	host: login.mysql_host,
 	user: login.mysql_user,
 	password: login.mysql_pass,
 	database: "owo",

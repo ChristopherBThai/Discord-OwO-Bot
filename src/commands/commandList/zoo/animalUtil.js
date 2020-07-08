@@ -3,13 +3,13 @@
  * Copyright (C) 2019 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
+	*/
 
 var animals = require('../../../../../tokens/owo-animals.json');
 let enableDistortedTier = true;
 setTimeout(() => {
-  // Disable distorted after 1.5 hours;
-  enableDistortedTier = false;
+	// Disable distorted after 1.5 hours;
+	enableDistortedTier = false;
 },5400000);
 
 /**
@@ -27,12 +27,12 @@ exports.randAnimal = function( {patreon, gem, lucky, huntbot, manual} = {} ){
 	var gemPercent = animals.gem[0];
 	if(!gem) gemPercent = 0;
 	else if(lucky) gemPercent += gemPercent*lucky.amount;
-  let distortedPercent = enableDistortedTier && manual ? animals.distorted[0] : 0;
-  if (distortedPercent) {
-    distortedPercent += specialPercent + patreonPercent;
-    if (huntbot) distortedPercent += huntbot;
-    if (gemPercent) distortedPercent += gemPercent;
-  }
+	let distortedPercent = enableDistortedTier && manual ? animals.distorted[0] : 0;
+	if (distortedPercent) {
+		distortedPercent += specialPercent + patreonPercent;
+		if (huntbot) distortedPercent += huntbot;
+		if (gemPercent) distortedPercent += gemPercent;
+	}
 
 	if(patreonPercent&&rand<patreonPercent){
 		if(rand<animals.cpatreon[0]){
@@ -66,7 +66,7 @@ exports.randAnimal = function( {patreon, gem, lucky, huntbot, manual} = {} ){
 		result.push(animals.gem[rand]);
 		result.push("gem");
 		result.push(5000);
-  } else if (rand<distortedPercent) {
+	} else if (rand<distortedPercent) {
 		rand = Math.ceil(Math.random()*(animals.distorted.length-1));
 		result.push("**distorted** "+animals.ranks.distorted);
 		result.push(animals.distorted[rand]);

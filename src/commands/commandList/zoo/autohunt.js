@@ -95,9 +95,9 @@ async function claim(p,msg,con,query,bot){
 	let radar = autohuntutil.getLvl(query.radar,0,"radar");
 	for(let i=0;i<query.huntcount;i++){
 		let animal = animalUtil.randAnimal({
-      patreon: patreon, 
-      huntbot: radar.stat/100
-    });
+			patreon: patreon, 
+			huntbot: radar.stat/100
+		});
 		if(total[animal[1]]){
 			total[animal[1]].count++;
 			if(total[animal[1]].count>digits)
