@@ -27,6 +27,8 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages"],
 
+	group:["fun"],
+
 	cooldown:5000,
 	half:100,
 	six:500,
@@ -39,7 +41,7 @@ module.exports = new CommandInterface({
 
 		let question = p.args.join(" ");
 		let reply = getAnswer();
-		p.replyMsg(eightballEmoji," **asked:** "+question+"\n"+p.config.emoji.blank+" **| Answer:** "+reply);
+		p.replyMsg(eightballEmoji,p.replaceMentions(" **asked:** "+question+"\n"+p.config.emoji.blank+" **| Answer:** "+reply));
 	}
 
 })

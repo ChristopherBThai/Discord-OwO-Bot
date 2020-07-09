@@ -26,10 +26,11 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages"],
 
+	group:["utility"],
+
 	cooldown:5000,
 	half:100,
 	six:500,
-	bot:true,
 
 	execute: function(p){
 		// quick and dirty fix for function calls and tags

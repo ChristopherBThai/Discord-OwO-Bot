@@ -24,6 +24,8 @@ if(require('cluster').isMaster){
 	const RamCheck = new (require('./utils/ramCheck.js'))(global);
 }
 
+const totalShards = 8;
+
 (async () => {
 	try{
 		//determine how many shards we will need for this manager
@@ -34,13 +36,14 @@ if(require('cluster').isMaster){
 			lastShardID = result["lastShardID"];
 		}
 		// How many clusters we will have
-		var clusters = Math.ceil(shards/5);
+		var clusters = Math.ceil(shards/totalShards);
 		if(debug){
 			shards = 4;
 			firstShardID = 0;
 			lastShardID = shards-1;
 			clusters = 2
 		}
+
 		console.log("Creating shards "+firstShardID+"~"+lastShardID+" out of "+shards+" total shards!");
 
 		// Start sharder

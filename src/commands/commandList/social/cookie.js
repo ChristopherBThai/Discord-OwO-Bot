@@ -8,6 +8,7 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const dateUtil = require('../../../utils/dateUtil.js');
+const alterCookie = require("../patreon/alterCookie.js");
 
 module.exports = new CommandInterface({
 
@@ -22,6 +23,8 @@ module.exports = new CommandInterface({
 	related:[],
 
 	permissions:["sendMessages"],
+
+	group:["social"],
 
 	cooldown:5000,
 	half:100,
@@ -71,7 +74,9 @@ async function give(p,con,msg,args,global,send){
 	sql += "INSERT INTO timers (uid,cookieTime) VALUES ((SELECT uid FROM user WHERE id = "+p.msg.author.id+"),"+afterMid.sql+") ON DUPLICATE KEY UPDATE cookieTime = "+afterMid.sql+";";
 
 	result = await p.query(sql);
-	send("**<a:cookieeat:423020737364885525> | "+user.username+"**! You got a cookie from **"+msg.author.username+"**! *nom nom nom c:<*");
+	let text = "**<a:cookieeat:423020737364885525> | "+user.username+"**! You got a cookie from **"+msg.author.username+"**! *nom nom nom c:<*";
+	text = alterCookie.alter(p.msg.author.id,text,{from:p.msg.author, to:user});
+	send(text);
 	p.quest("cookieBy",1,user);
 
 }
@@ -88,5 +93,7 @@ async function display(p){
 	if(afterMid&&!afterMid.after){
 		again = "You can send a cookie in **"+afterMid.hours+"H "+afterMid.minutes+"M "+afterMid.seconds+"S**! ";
 	}
-	p.send("**<a:cookieeat:423020737364885525> | "+p.msg.author.username+"**! You currently have **"+count+"** cookies! Yummy! c:<\n**<:blank:427371936482328596> |** "+again);
+	let text = "**<a:cookieeat:423020737364885525> | "+p.msg.author.username+"**! You currently have **"+count+"** cookies! Yummy! c:<\n**<:blank:427371936482328596> |** "+again;
+	text = alterCookie.alter(p.msg.author.id,text);
+	p.send(text);
 }

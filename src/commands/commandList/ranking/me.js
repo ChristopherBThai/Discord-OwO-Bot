@@ -27,6 +27,8 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages"],
 
+	group:["rankings"],
+
 	cooldown:5000,
 	half:100,
 	six:500,
@@ -279,14 +281,14 @@ function getPetRanking(globalRank,con,msg,p){
 function getHuntbotRanking(globalRank,con,msg,p){
 	let sql;
 	if(globalRank){
-		sql = "SELECT id,(essence+cost+efficiency+duration+gain+exp) as total FROM autohunt WHERE (essence+cost+efficiency+duration+gain+exp) > (SELECT (essence+cost+efficiency+duration+gain+exp) FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total ASC LIMIT 2;"
-		sql += "SELECT id,(essence+cost+efficiency+duration+gain+exp) as total FROM autohunt WHERE (essence+cost+efficiency+duration+gain+exp) < (SELECT (essence+cost+efficiency+duration+gain+exp) FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total DESC LIMIT 2;"
-		sql += "SELECT id,(essence+efficiency+duration+cost+gain+exp) as total, (SELECT COUNT(*)+1 FROM autohunt WHERE (essence+efficiency+duration+cost+gain+exp) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+";";
+		sql = "SELECT id,(essence+cost+efficiency+duration+gain+exp+radar) as total FROM autohunt WHERE (essence+cost+efficiency+duration+gain+exp+radar) > (SELECT (essence+cost+efficiency+duration+gain+exp+radar) FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total ASC LIMIT 2;"
+		sql += "SELECT id,(essence+cost+efficiency+duration+gain+exp+radar) as total FROM autohunt WHERE (essence+cost+efficiency+duration+gain+exp+radar) < (SELECT (essence+cost+efficiency+duration+gain+exp+radar) FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total DESC LIMIT 2;"
+		sql += "SELECT id,(essence+efficiency+duration+cost+gain+exp+radar) as total, (SELECT COUNT(*)+1 FROM autohunt WHERE (essence+efficiency+duration+cost+gain+exp+radar) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+";";
 	}else{
 		let users = global.getids(msg.channel.guild.members);
-		sql = "SELECT id,(essence+cost+efficiency+duration+gain+exp) as total FROM autohunt WHERE id IN ("+users+") AND (essence+cost+efficiency+duration+gain+exp) > (SELECT (essence+cost+efficiency+duration+gain+exp) FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total ASC LIMIT 2;"
-		sql += "SELECT id,(essence+cost+efficiency+duration+gain+exp) as total FROM autohunt WHERE id IN ("+users+") AND (essence+cost+efficiency+duration+gain+exp) < (SELECT (essence+cost+efficiency+duration+gain+exp) FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total DESC LIMIT 2;"
-		sql += "SELECT id,(essence+efficiency+duration+cost+gain+exp) as total, (SELECT COUNT(*)+1 FROM autohunt WHERE id IN ("+users+") AND (essence+efficiency+duration+cost+gain+exp) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+";";
+		sql = "SELECT id,(essence+cost+efficiency+duration+gain+exp+radar) as total FROM autohunt WHERE id IN ("+users+") AND (essence+cost+efficiency+duration+gain+exp+radar) > (SELECT (essence+cost+efficiency+duration+gain+exp+radar) FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total ASC LIMIT 2;"
+		sql += "SELECT id,(essence+cost+efficiency+duration+gain+exp+radar) as total FROM autohunt WHERE id IN ("+users+") AND (essence+cost+efficiency+duration+gain+exp+radar) < (SELECT (essence+cost+efficiency+duration+gain+exp+radar) FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total DESC LIMIT 2;"
+		sql += "SELECT id,(essence+efficiency+duration+cost+gain+exp+radar) as total, (SELECT COUNT(*)+1 FROM autohunt WHERE id IN ("+users+") AND (essence+efficiency+duration+cost+gain+exp+radar) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+";";
 	}
 
 	displayRanking(con,msg,sql,
@@ -550,6 +552,8 @@ const points = "(common*"+animals.points.common+"+"+
 		"cpatreon*"+animals.points.cpatreon+"+"+
 		"hidden*"+animals.points.hidden+"+"+
 		"gem*"+animals.points.gem+"+"+
+		"distorted*"+animals.points.distorted+"+"+
+		"bot*"+animals.points.bot+"+"+
 		"legendary*"+animals.points.legendary+"+"+
 		"fabled*"+animals.points.fabled+")";
 const apoints = "(a.common*"+animals.points.common+"+"+
@@ -562,6 +566,8 @@ const apoints = "(a.common*"+animals.points.common+"+"+
 		"a.cpatreon*"+animals.points.cpatreon+"+"+
 		"a.hidden*"+animals.points.hidden+"+"+
 		"a.gem*"+animals.points.gem+"+"+
+		"a.distorted*"+animals.points.distorted+"+"+
+		"a.bot*"+animals.points.bot+"+"+
 		"a.legendary*"+animals.points.legendary+"+"+
 		"a.fabled*"+animals.points.fabled+")";
 

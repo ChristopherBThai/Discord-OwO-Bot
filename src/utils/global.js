@@ -63,6 +63,7 @@ exports.isUser = function(id){
 }
 
 exports.parseID = function(id){
+	if(!id) return;
 	id = id.match(/[:@][0-9]+>/);
 	if(!id) return;
 	id = id[0];

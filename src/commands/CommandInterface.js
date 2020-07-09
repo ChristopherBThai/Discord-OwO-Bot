@@ -23,6 +23,8 @@ module.exports = class CommandInterface{
 		this.bot = args.bot;
 		this.mod = args.mod;
 		this.permissions = args.permissions;
+		this.group = args.group;
+		this.nsfw = args.nsfw;
 	}
 
 	async execute(params){
@@ -38,6 +40,12 @@ module.exports = class CommandInterface{
 					return;
 				}
 			}
+		}
+
+		// Check if command is for nsfw only
+		if (this.nsfw && !params.msg.channel.nsfw) {
+			params.errorMsg(", This command can only be used in **nsfw** channels!", 5000);
+			return;
 		}
 		await this.executeCommand(params);
 	}

@@ -21,7 +21,7 @@ module.exports = new CommandInterface({
 
 	args:"{msg}",
 
-	desc:"Send a message to an admin!",
+	desc:"Send a message to an admin for the bot!",
 
 	example:["owo feedback Thanks for the bot!"],
 
@@ -29,10 +29,11 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages","embedLinks","attachFiles","addReactions"],
 
+	group:["utility"],
+
 	cooldown:600000,
 	half:15,
 	six:30,
-	bot:true,
 
 	execute: async function(p){
 		let message = p.args.join(" ");
@@ -84,7 +85,7 @@ module.exports = new CommandInterface({
 				}
 			]
 		};
-		p.send("**📨 |** *OwO What's this?!*  "+p.msg.author.username+", Thanks for the "+p.command+"!");
+		p.send("**📨 |** *OwO What's this?!*  "+p.msg.author.username+", Thanks for the "+p.command+", it has been sent to bot staff!");
 		p.sender.msgChannel(reportChannel,{embed});
 	}
 

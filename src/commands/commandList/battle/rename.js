@@ -23,6 +23,8 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages"],
 
+	group:["animals"],
+
 	cooldown:3000,
 	half:200,
 	six:500,
@@ -59,7 +61,7 @@ module.exports = new CommandInterface({
 		if(result.affectedRows==0){
 			p.errorMsg(", you do no own this pet!",3000);
 		}else{
-			p.replyMsg("🌱",", you successfully named your pet to **"+((animal.uni)?animal.uni:animal.value)+" "+name+"**!");
+			p.replyMsg("🌱",", you successfully named your pet **"+((animal.uni)?animal.uni:animal.value)+"** to **"+name+"**!");
 		}
 	}
 

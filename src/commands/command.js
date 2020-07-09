@@ -16,6 +16,7 @@ const modCommands = {};
 
 const aliasToCommand = {};
 const mcommands = {};
+const commandGroups = {};
 
 class Command {
 
@@ -112,6 +113,20 @@ async function executeCommand(main,p){
  * Will sort them by type and aliases
  */
 function initCommands(){
+	let groupCommand = function(command, name) {
+		let groups = command.group;
+		if (groups && groups.length) {
+			for (let i in groups) {
+				let group = groups[i];
+				if (!commandGroups[group]) commandGroups[group] = [];
+				commandGroups[group].push(name);
+			}
+		} else {
+			if (!commandGroups['undefined']) commandGroups['undefined'] = [];
+			commandGroups['undefined'].push(name);
+		}
+	}
+
 	let addCommand = function(command){
 		let alias = command.alias;
 		let name = alias[0];
@@ -120,13 +135,29 @@ function initCommands(){
 				commands[alias[i]] = command;
 				if(command.distinctAlias){
 					aliasToCommand[alias[i]] = alias[i];
-					mcommands[alias[i]] = {botcheck:command.bot,cd:command.cooldown,ban:12,half:command.half,six:command.six};
+					groupCommand(command,alias[i]);
+					mcommands[alias[i]] = {
+						botcheck:command.bot,
+						cd:command.cooldown,
+						ban:12,
+						half:command.half,
+						six:command.six,
+						group:command.group
+					};
 				}else
 					aliasToCommand[alias[i]] = name;
 			}
 		}
 		if(!command.distinctAlias)
-			mcommands[name] = {botcheck:command.bot,cd:command.cooldown,ban:12,half:command.half,six:command.six};
+			groupCommand(command, name);
+			mcommands[name] = {
+				botcheck:command.bot,
+				cd:command.cooldown,
+				ban:12,
+				half:command.half,
+				six:command.six,
+				group:command.group
+			};
 	}
 
 	let addAdminCommand = function(command){
@@ -182,6 +213,7 @@ function initParam(msg,command,args,main){
 		"commandAlias":aliasToCommand[command],
 		"commands":commands,
 		"mcommands":mcommands,
+		"commandGroups":commandGroups,
 		"logger":main.logger,
 		"log":main.logger.log,
 		"config":main.config,
@@ -189,7 +221,9 @@ function initParam(msg,command,args,main){
 		"pubsub":main.pubsub,
 		"DataResolver":main.DataResolver,
 		"quest":function(questName,count,extra){main.questHandler.increment(msg,questName,count,extra).catch(console.error)},
-		"reactionCollector":main.reactionCollector
+		"reactionCollector":main.reactionCollector,
+		"dateUtil":main.dateUtil,
+		"neo4j":main.neo4j
 	};
 	param.setCooldown = function(cooldown){
 		main.cooldown.setCooldown(param,aliasToCommand[command],cooldown);
@@ -205,6 +239,30 @@ function initParam(msg,command,args,main){
 			}
 		}
 	}
+	param.getRole = function(id){
+		id = id.match(/[0-9]+/);
+		if(!id) return;
+		id = id[0];
+		return param.msg.channel.guild.roles.get(id);
+	}
+	param.replaceMentions = function(text) {
+		if (!text) return;
+		let userMentions = text.match(/<@!?\d+>/g);
+		let roleMentions = text.match(/<@&\d+>/g);
+
+		for (let i in userMentions) {
+			let mention = userMentions[i];
+			let user = param.getMention(mention);
+			if (user) text = text.replace(mention, '@' + user.username);
+		}
+
+		for (let i in roleMentions) {
+			let mention = roleMentions[i];
+			let role = param.getRole(mention);
+			if (role) text = text.replace(mention, '@' + role.name);
+		}
+		return text;
+	}
 	return param;
 }
 
@@ -213,6 +271,8 @@ async function checkPrefix(main, msg) {
 	if (content.startsWith(main.prefix)){
 		return msg.content.slice(main.prefix.length).trim().split(/ +/g);
 	}
+
+	if (!msg.channel.guild) return;
 
 	// If prefix isn't saved, fetch it
 	if (msg.channel.guild.prefix === undefined) {

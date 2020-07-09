@@ -33,6 +33,8 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages","embedLinks"],
 
+	group:["utility"],
+
 	related:[],
 
 	cooldown:1000,
@@ -64,7 +66,7 @@ module.exports = new CommandInterface({
 					await battleHelpUtil.help(p,6);
 					break;
 				default:
-					describe(p.send,p.args[0],p.commands[command]);
+					describe(p,p.send,p.args[0],p.commands[command]);
 			}
 		}
 	}
@@ -87,9 +89,9 @@ function display(p){
 			{"name":"🎲 Gambling",
 				"value":"`slots`  `coinflip`  `lottery`  `blackjack`  `drop`"},
 			{"name":"🎱 Fun",
-				"value":"`8b`  `define`  `gif`  `pic`  `translate`  `roll`  `choose`"},
+				"value":"`8b`  `define`  `gif`  `pic`  `translate`  `roll`  `choose`  `bell`"},
 			{"name":"🎭 Social",
-				"value":"`cookie` `ship`  `pray`  `curse`  `marry`  `emoji`  `profile`  `level`  `wallpaper`  `bell`  `owoify`"},
+				"value":"`cookie` `ship`  `pray`  `curse`  `marry`  `emoji`  `profile`  `level`  `wallpaper`  `owoify`  `avatar`"},
 			{"name":"😂 Meme Generation",
 				"value":"`spongebobchicken`  `slapcar`  `isthisa`  `drake`  `distractedbf`"},
 			{"name":"🙂 Emotes",
@@ -97,14 +99,14 @@ function display(p){
 			{"name":"🤗 Actions",
 				"value":uEmotes+"  `bully`"},
 			{"name":"🔧 Utility",
-				"value":"`ping`  `feedback`  `stats`  `link`  `guildlink`  `disable`  `censor`  `patreon`  `avatar`  `announcement`  `rules`  `suggest`  `shards`  `math`  `merch`  `color`  `prefix`"},
+				"value":"`ping`  `feedback`  `stats`  `link`  `guildlink`  `disable`  `censor`  `patreon`  `announcement`  `rules`  `suggest`  `shards`  `math`  `merch`  `color`  `prefix`"},
 		]
 	};
 
 	p.send({embed});
 }
 
-function describe(send,commandName,command){
+async function describe(p,send,commandName,command){
 	if(command == undefined){
 		send("**🚫 |** Could not find that command :c");
 		return;
@@ -137,6 +139,14 @@ function describe(send,commandName,command){
 			related += command.related[i]+" , ";
 		related = related.substr(0,related.length-3);
 	}
+
+	let ids = desc.match(/\?[0-9]+\?/g);
+	for(let i in ids){
+		descID = ids[i].match(/[0-9]+/)
+		tempUser = await p.fetch.getUser(descID[0]);
+		desc = desc.replace('?'+descID+'?',(tempUser)?tempUser.username:"A User");
+	}
+
 	let text = "```md\n"+title+"``````md"+alias+desc+example+related+"``````md\n> Remove brackets when typing commands\n> [] = optional arguments\n> {} = optional user input```";
 	send(text);
 }

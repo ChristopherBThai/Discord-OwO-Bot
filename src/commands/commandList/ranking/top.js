@@ -27,6 +27,8 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages"],
 
+	group:["rankings"],
+
 	cooldown:5000,
 	half:100,
 	six:500,
@@ -265,12 +267,12 @@ function getPetRanking(globalRank, con, msg, count,p){
 function getHuntbotRanking(globalRank, con, msg, count,p){
 	let sql;
 	if(globalRank){
-		sql = "SELECT id,(essence+efficiency+duration+cost+gain+exp) as total FROM autohunt ORDER BY total DESC LIMIT "+count+";";
-		sql +=  "SELECT id,(essence+efficiency+duration+cost+gain+exp) as total, (SELECT COUNT(*)+1 FROM autohunt WHERE (essence+efficiency+duration+cost+gain+exp) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+" ORDER BY total DESC LIMIT 1;";
+		sql = "SELECT id,(essence+efficiency+duration+cost+gain+exp+radar) as total FROM autohunt ORDER BY total DESC LIMIT "+count+";";
+		sql +=  "SELECT id,(essence+efficiency+duration+cost+gain+exp+radar) as total, (SELECT COUNT(*)+1 FROM autohunt WHERE (essence+efficiency+duration+cost+gain+exp+radar) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+" ORDER BY total DESC LIMIT 1;";
 	}else{
 		let users = global.getids(msg.channel.guild.members);
-		sql = "SELECT id,(essence+efficiency+duration+cost+gain+exp) as total FROM autohunt WHERE id IN ("+users+") ORDER BY total DESC LIMIT "+count+";";
-		sql +=  "SELECT id,(essence+efficiency+duration+cost+gain+exp) as total, (SELECT COUNT(*)+1 FROM autohunt WHERE id IN ("+users+") AND (essence+efficiency+duration+cost+gain+exp) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+" ORDER BY total DESC LIMIT 1;";
+		sql = "SELECT id,(essence+efficiency+duration+cost+gain+exp+radar) as total FROM autohunt WHERE id IN ("+users+") ORDER BY total DESC LIMIT "+count+";";
+		sql +=  "SELECT id,(essence+efficiency+duration+cost+gain+exp+radar) as total, (SELECT COUNT(*)+1 FROM autohunt WHERE id IN ("+users+") AND (essence+efficiency+duration+cost+gain+exp+radar) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+" ORDER BY total DESC LIMIT 1;";
 	}
 
 	displayRanking(con,msg,count,globalRank,sql,
@@ -502,6 +504,8 @@ const points = "(common*"+animals.points.common+"+"+
 		"cpatreon*"+animals.points.cpatreon+"+"+
 		"hidden*"+animals.points.hidden+"+"+
 		"gem*"+animals.points.gem+"+"+
+		"distorted*"+animals.points.distorted+"+"+
+		"bot*"+animals.points.bot+"+"+
 		"legendary*"+animals.points.legendary+"+"+
 		"fabled*"+animals.points.fabled+")";
 const apoints = "(a.common*"+animals.points.common+"+"+
@@ -514,5 +518,7 @@ const apoints = "(a.common*"+animals.points.common+"+"+
 		"a.cpatreon*"+animals.points.cpatreon+"+"+
 		"a.hidden*"+animals.points.hidden+"+"+
 		"a.gem*"+animals.points.gem+"+"+
+		"a.distorted*"+animals.points.distorted+"+"+
+		"a.bot*"+animals.points.bot+"+"+
 		"a.legendary*"+animals.points.legendary+"+"+
 		"a.fabled*"+animals.points.fabled+")";

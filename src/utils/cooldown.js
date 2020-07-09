@@ -25,15 +25,16 @@ exports.check = async function(p,command){
 
 		// Calculate time difference 
 		now = new Date();
-		diff = now - new Date(ccd.lasttime);
+		ccd.lasttime = new Date(ccd.lasttime);
+		diff = now - ccd.lasttime;
 
 		//	Still in cooldown
 		if(diff<mcommands[ccd.command].cd){
 			if(command == "points"){
-				/*
-				ccd.lasttime = now;
-				await redis.hmset(key,ccd);
-				*/
+				if ( diff > -600000) {
+					ccd.lasttime = new Date(ccd.lasttime.getTime() + 8000);
+					await redis.hmset(key,ccd);
+				}
 				now = false;
 			}else{
 				let {timerText, time} = parseTimer(mcommands[ccd.command].cd-diff);
@@ -61,7 +62,7 @@ exports.check = async function(p,command){
 	if(now){
 		let valid = !!await macro.check(p,command,{diff,now});
 		if(!valid && command=="points"){
-			await setCooldown(p,command,300);
+			await setCooldown(p,command,600);
 		}
 		return valid;
 	}

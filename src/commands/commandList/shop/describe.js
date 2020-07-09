@@ -27,6 +27,8 @@ module.exports = new CommandInterface({
 
 	permissions:["sendMessages","embedLinks","attachFiles"],
 
+	group:["animals"],
+
 	cooldown:5000,
 	half:80,
 	six:500,
@@ -42,7 +44,7 @@ module.exports = new CommandInterface({
 		if(!item){
 			p.errorMsg(", invalid id!",3000);
 		}else if(item.name=="lootbox"){
-			lootboxUtil.desc(p);
+			lootboxUtil.desc(p,item.id);
 		}else if(item.name=="gem"){
 			gemUtil.desc(p,item.id);
 		}else{

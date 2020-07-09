@@ -51,7 +51,11 @@ exports.check = async function(p,command){
 
 
 	//Check if the command is enabled
-	let sql = `SELECT * FROM disabled WHERE (command = '${command}' OR command = 'all') AND channel = ${channel};
+	let commandNames = `'all','${command}'`;
+	for (let i in p.commands[command].group) {
+		commandNames += ",'" + p.commands[command].group[i] + "'";
+	}
+	let sql = `SELECT * FROM disabled WHERE command IN (${commandNames}) AND channel = ${channel};
 				SELECT id FROM timeout WHERE id IN (${author},${guild}) AND TIMESTAMPDIFF(HOUR,time,NOW()) < penalty;
 				SELECT * FROM user_ban WHERE id = ${author} AND command = '${command}';`;
 	let result = await p.query(sql);

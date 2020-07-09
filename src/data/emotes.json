@@ -164,17 +164,6 @@
 				"I'll hug you ?... ;-;"
 			]
 		},
-		"insult":{
-			"name":"insult",
-			"msg":[
-				"? insults ?! Rude!!!",
-				"? insults ?! Deserves it.",
-				"? insults ?! Oh my."
-			],
-			"self":[
-				"Don't say that to yourself ?!"
-			]
-		},
 		"kiss":{
 			"name":"kiss",
 			"msg":[
@@ -353,8 +342,12 @@
 			],
 			"self":[
 				"You can do that privately..."
-			]
+			],
+			"mature":true
 		},
-		"sex":{"alt":"fuck"}
+		"sex":{
+			"alt":"fuck",
+			"mature":true
+		}
 	}
 }

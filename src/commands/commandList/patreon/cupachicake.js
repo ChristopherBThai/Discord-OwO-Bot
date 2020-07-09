@@ -17,13 +17,15 @@ module.exports = new CommandInterface({
 
 	args:"{@user}",
 
-	desc:"Give a cupachicake to someone! You can only gain one if you receive it! This command was created by Shadow Wolf",
+	desc:"Give a cupachicake to someone! You can only gain one if you receive it! This command was created by Beliwolfi",
 
 	example:[],
 
 	related:[],
 
 	permissions:["sendMessages"],
+
+	group:["patreon"],
 
 	cooldown:30000,
 	half:80,

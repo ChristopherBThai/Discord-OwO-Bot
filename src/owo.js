@@ -28,6 +28,10 @@ class OwO extends Base{
 		// Redis connection
 		this.redis = require('./utils/redis.js');
 
+
+		// Neo4j Logging
+		this.neo4j = require('./utils/neo4j.js');
+
 		// Redis pubsub to communicate with all the other shards/processes
 		this.pubsub = new (require('./utils/pubsub.js'))(this);
 
@@ -76,6 +80,9 @@ class OwO extends Base{
 		// Helper for patreon benefits
 		this.patreon = require('./utils/patreon.js');
 		this.patreon.init(this);
+
+		// Date utility
+		this.dateUtil = require('./utils/dateUtil.js');
 		
 		// Create commands
 		this.command = new (require('./commands/command.js'))(this);
