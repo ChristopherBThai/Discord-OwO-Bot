@@ -16,7 +16,7 @@ module.exports = class ResurrectionStaff extends WeaponInterface{
 		this.basicDesc = "";
 		this.emojis = ["<:crstaff:618001309265690654>","<:urstaff:618001309513023518>","<:rrstaff:618001309307633685>","<:erstaff:618001309085466665>","<:mrstaff:618001309362290691>","<:lrstaff:618001309756555275>","<:frstaff:618001309307633665>"]
 		this.defaultEmoji = "<:rstaff:618001309483925504>";
-		this.statDesc = "Revive a dead ally and heal them for **?%** of your "+WeaponInterface.magEmoji+"MAG - if there are no dead allies it instead attacks for 100% of your "+WeaponInterface.strEmoji+"STR and 50% of your "+WeaponInterface.magEmoji+"MAG as MIXED damage";
+		this.statDesc = "Revive a dead ally and heal them for **?%** of your "+WeaponInterface.magEmoji+"MAG and restoring 1/3 as much to WP";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
 		this.qualityList = [[80,120]];
@@ -34,20 +34,8 @@ module.exports = class ResurrectionStaff extends WeaponInterface{
 
 		/* Check for a dead friend */
 		let dead = WeaponInterface.getDead(team);
-		if(!dead) {
-			/* smack some fool */
-			let attacking = WeaponInterface.getAttacking(me,team,enemy);
-			if(!attacking) return;
-
-			/* Calculate damage */
-			let damage = WeaponInterface.getMixedDamage(me.stats.att,1.00,me.stats.mag,.50);
-
-			/* Deal damage */
-			damage = WeaponInterface.inflictDamage(me,attacking,damage,WeaponInterface.MIXED,{me,allies:team,enemies:enemy});
-	
-			logs.push(`[RSTAFF] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
-			return logs;
-		}
+		/* if no dead friend, smack some fool */
+		if(!dead) return this.attackPhysical(me,team,enemy);
 		/* res our friend */
 
 		/* Calculate heal */
@@ -61,7 +49,13 @@ module.exports = class ResurrectionStaff extends WeaponInterface{
 		/* revive ally */
 		dead.stats.hp[0] = 0;
 		heal = WeaponInterface.heal(dead,heal,me,{me,allies:team,enemies:enemy});
-		logs.push(`[RSTAFF] ${me.nickname} revived ${dead.nickname} with ${heal.amount} HP`, heal.logs);
+
+		/* Restore 1/3 as much WP as HP */
+		let replenish = WeaponInterface.getDamage(me.stats.mag,this.stats[0]/300);
+
+		/* replenish ally */
+		replenish = WeaponInterface.replenish(dead,replenish,me,{me,allies:team,enemies:enemy});
+		logs.push(`[RSTAFF] ${me.nickname} revived ${dead.nickname} with ${heal.amount} HP and ${replenish.amount} WP`, heal.logs);
 
 		logs.addSubLogs(manaLogs);
 
