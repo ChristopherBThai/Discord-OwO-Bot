@@ -44,7 +44,7 @@ module.exports = new CommandInterface({
 				return
 			}
 
-			let textArgs = {x:10,y:30,width:436,height:150,size:30,align:"left",color:'black',text:args,font:'Arial'};
+			let textArgs = {x:10,y:60,width:436,height:150,size:25,align:"left",color:'black',text:args,font:'Arial'};
 
 			canvasUtil.addText(textArgs,p,ctx,canvas,function(){
 						buf = canvas.toBuffer();
