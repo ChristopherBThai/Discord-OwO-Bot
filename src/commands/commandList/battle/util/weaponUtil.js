@@ -15,7 +15,7 @@ const ranks = [['cw','commonweapons','commonweapon'],['uw','uncommonweapons','un
       ['lw','legendaryweapons','legendaryweapon'],['fw','fabledweapons','fabledweapon','fableweapons','fableweapon']];
 
 const weaponEmoji = "🗡";
-const weaponPerPage = 10;
+const weaponPerPage = 15;
 const nextPageEmoji = '➡️';
 const prevPageEmoji = '⬅️';
 const rewindEmoji = '⏪';
@@ -325,21 +325,46 @@ var getDisplayPage = async function(p,user,page,sort,opt={}){
 
 	/* Parse actual weapon data for each weapon */
 	let desc = "Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nReroll: `owo w rr {weaponID} [passive|stat]`\nSell: `owo sell {weaponID|commonweapons,rareweapons...}`\nDismantle: `owo dismantle {weaponID|commonweapons,rareweapons...}`\n";
+	let fieldText;
+	let fields = []
 	for(var key in user_weapons){
 		let weapon = parseWeapon(user_weapons[key]);
 		if(weapon){
+			let row = '';
 			let emoji = `${weapon.rank.emoji}${weapon.emoji}`;
 			for(var i=0;i<weapon.passives.length;i++){
 				let passive = weapon.passives[i];
 				emoji += passive.emoji;
 			}
-			desc += `\n\`${user_weapons[key].uwid}\` ${emoji} **${weapon.name}** | Quality: ${weapon.avgQuality}%`;
+			row += `\n\`${user_weapons[key].uwid}\` ${emoji} **${weapon.name}** | Quality: ${weapon.avgQuality}%`;
 			if(user_weapons[key].animal.name){
 				let animal = p.global.validAnimal(user_weapons[key].animal.name);
-				desc += ` | ${(animal.uni)?animal.uni:animal.value} ${(user_weapons[key].animal.nickname)?user_weapons[key].animal.nickname:""}`;
+				row += ` | ${(animal.uni)?animal.uni:animal.value} ${(user_weapons[key].animal.nickname)?user_weapons[key].animal.nickname:""}`;
+			}
+			if (fieldText) {
+				if (fieldText.length + row.length >= 1024) {
+					fields.push({
+						name: p.config.emoji.blank,
+						value: fieldText
+					});
+					fieldText = row;
+				} else {
+					fieldText += row;
+				}
+			} else if (desc.length + row.length >= 2048) {
+				fieldText = row
+			} else {
+				desc += row;
 			}
 		}
 	}
+	if (fieldText) {
+		fields.push({
+			name: p.config.emoji.blank,
+			value: fieldText
+		});
+	}
+
 	/* Construct msg */
 	let title = user.username+"'s "+((wid)?weapons[wid].name:"weapons");
 	let embed = {
@@ -351,7 +376,8 @@ var getDisplayPage = async function(p,user,page,sort,opt={}){
 		"color": p.config.embed_color,
 		"footer":{
 			"text":"Page "+(page+1)+"/"+maxPage+" | "
-		}
+		},
+		fields
 	};
 
 	if(sort===0)
