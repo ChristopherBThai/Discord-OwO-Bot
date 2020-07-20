@@ -43,8 +43,8 @@ module.exports = new CommandInterface({
 				return;
 		}
 
-		let item = items[Math.floor(Math.random()*items.length)].replace(/[^ ]everyone/gi," everyone");
+		let item = items[Math.floor(Math.random()*items.length)];
 		let msg = ', '+msgs[Math.floor(Math.random()*msgs.length)].replace('?','**'+item+'**');
-		p.replyMsg(diceEmoji,msg);
+		p.replyMsg(diceEmoji,p.replaceMentions(msg));
 	}
 });
