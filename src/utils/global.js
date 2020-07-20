@@ -83,9 +83,12 @@ exports.client= function(tclient){
 	for(var key in animallist){
 		var alt = animallist[key].alt;
 		animals[animallist[key].value] = key;
+		animals[animallist[key].value.toLowerCase()] = key;
 		animals[key] = key;
+		animals[key.toLowerCase()] = key;
 		for(i in alt){
 			animals[alt[i]] = key;
+			animals[alt[i].toLowerCase()] = key;
 		}
 	}
 
