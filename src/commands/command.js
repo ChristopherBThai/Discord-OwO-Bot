@@ -261,6 +261,8 @@ function initParam(msg,command,args,main){
 			let role = param.getRole(mention);
 			if (role) text = text.replace(mention, '@' + role.name);
 		}
+		text = text.replace(/[^ ]everyone/gi," everyone");
+		text = text.replace(/[^ ]here/gi," here");
 		return text;
 	}
 	return param;
