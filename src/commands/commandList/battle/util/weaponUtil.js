@@ -339,7 +339,7 @@ var getDisplayPage = async function(p,user,page,sort,opt={}){
 			row += `\n\`${user_weapons[key].uwid}\` ${emoji} **${weapon.name}** | Quality: ${weapon.avgQuality}%`;
 			if(user_weapons[key].animal.name){
 				let animal = p.global.validAnimal(user_weapons[key].animal.name);
-				row += ` | ${(animal.uni)?animal.uni:animal.value} ${(user_weapons[key].animal.nickname)?user_weapons[key].animal.nickname:""}`;
+				row += p.replaceMentions(` | ${(animal.uni)?animal.uni:animal.value} ${(user_weapons[key].animal.nickname)?user_weapons[key].animal.nickname:""}`);
 			}
 			if (fieldText) {
 				if (fieldText.length + row.length >= 1024) {
@@ -519,7 +519,7 @@ exports.equip = async function(p,uwid,pet){
 		weapon = weapon[Object.keys(weapon)[0]];
 		weapon = this.parseWeapon(weapon);
 		if(weapon)
-			p.replyMsg(weaponEmoji,`, ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}** is now wielding ${weapon.emoji} **${weapon.name}**!`);
+			p.replyMsg(weaponEmoji,p.replaceMentions(`, ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}** is now wielding ${weapon.emoji} **${weapon.name}**!`));
 		else
 			p.errorMsg(`, Could not find a weapon with that id!`);
 
@@ -531,7 +531,7 @@ exports.equip = async function(p,uwid,pet){
 		weapon = weapon[Object.keys(weapon)[0]];
 		weapon = this.parseWeapon(weapon);
 		if(weapon)
-			p.replyMsg(weaponEmoji,`, ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}** is already wielding ${weapon.emoji} **${weapon.name}**!`);
+			p.replyMsg(weaponEmoji,p.replaceMentions(`, ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}** is already wielding ${weapon.emoji} **${weapon.name}**!`));
 		else
 			p.errorMsg(`, Could not find a weapon with that id!`);
 
@@ -560,7 +560,7 @@ exports.unequip = async function(p,uwid){
 		weapon = weapon[Object.keys(weapon)[0]];
 		weapon = this.parseWeapon(weapon);
 		if(weapon)
-			p.replyMsg(weaponEmoji,`, Unequipped ${weapon.emoji} **${weapon.name}** from ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}**`);
+			p.replyMsg(weaponEmoji,p.replaceMentions(`, Unequipped ${weapon.emoji} **${weapon.name}** from ${(animal.uni)?animal.uni:animal.value} **${(nickname)?nickname:animal.name}**`));
 		else
 			p.errorMsg(`, Could not find a weapon with that id!`);
 
