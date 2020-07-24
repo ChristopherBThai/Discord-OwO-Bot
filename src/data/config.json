@@ -22,7 +22,11 @@
 			"messageLimit":10,
 			"defaultImageFormat":"png",
 			"defaultImageSize":128,
-			"restMode":true
+			"restMode":true,
+			"allowedMentions": {
+				"everyone": false,
+				"roles": false
+			}
 		}
 	},
 
