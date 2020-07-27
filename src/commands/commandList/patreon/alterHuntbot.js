@@ -25,6 +25,8 @@ exports.alter = function(id,text,type) {
 			return kuma(text,type);
 		case '325273108418396160':
 			return spotifybot2(text,type);
+		case '408875125283225621':
+			return kirito(text,type);
 		default:
 			return text;
 	}
@@ -438,6 +440,72 @@ function spotifybot2(text,type) {
 			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,rainbow)
 				.replace("BEEP BOOP. I AM BACK WITH","ROSS IS BACK WITH")
 				.replace("ANIMALS","FRIENDS")
+			return text;
+		default:
+			return text;
+	}
+}
+
+function kirito(text,type) {
+	const bot = "<a:bot:737118875585478767>"
+	const efficiency = "<:eff:737118875757445180>";
+	const duration = "<:dur:737118875879211128>";
+	const cost = "<:cost:737118875530821652>";
+	const gain = "<:gain:737118875618902078>";
+	const exp = "<:exp:737118875623096373>";
+	const radar = "<:radar:737118875703050310>";
+	const essence = "<:ess:737118875400929374>";
+	switch(type){
+		case 'hb':
+			text.author.name = "Daaarling! I will hunt down Klaxosaurs for you with my Franxx!"
+			text.author.icon_url = "https://cdn.discordapp.com/emojis/580749862279184394.gif?v=1";
+			text.fields[0].name = "Oh no! There seems to be Klaxosaurs heading to attack Plantation 13, shall I take them down?";
+
+			text.fields[1].name = text.fields[1].name.replace("⏱ Efficiency",efficiency + " Klaxosaurs to Hunt");
+			text.fields[1].value = "*How many Klaxosaurs would you like me to hunt down?*\n"+text.fields[1].value;
+			text.fields[2].name = text.fields[2].name.replace("⏳ Duration",duration + " Klaxosaur Hunting Duration");
+			text.fields[2].value = "*How long would you like to send me out for?*\n"+text.fields[2].value;
+			text.fields[3].name = text.fields[3].name.replace("<:cowoncy:416043450337853441> Cost",cost + " Hunting Funds");
+			text.fields[3].value = "*How much will I be rewarded with for my hunting?*\n"+text.fields[3].value;
+			text.fields[4].name = text.fields[4].name.replace("🔧 Gain",gain + " Klaxosaur Points");
+			text.fields[4].value = "*How many Klaxosaur Points will I gather from hunting them down?*\n"+text.fields[4].value;
+			text.fields[5].name = text.fields[5].name.replace("⚔ Experience",exp+ " Franxx XP");
+			text.fields[5].value = "*How can I enhance my Franxx?*\n"+text.fields[5].value;
+			text.fields[6].name = text.fields[6].name.replace("📡 Radar",radar + " VIRM Elimination");
+			text.fields[6].value = "*Shall I eliminate VIRM today? They seem pretty tough..*\n"+text.fields[6].value;
+			text.fields[7].name = text.fields[7].name.replace("<a:essence:451638978299428875> Animal Essence",essence + " Franxx Points");
+			if(text.fields.length>=9){
+				text.fields[8].name = bot+"Zero Two is currently hunting!";
+				text.fields[8].value = text.fields[8].value.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","Daaarling! I am still hunting down Klaxosaurs. I will return in")
+					.replace("DONE", "done")
+					.replace("ANIMALS CAPTURED","Klaxosaurs Hunted");
+			}
+			return text;
+		case 'progress':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,bot)
+				.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","Daaarling! I am still hunting down Klaxosaurs. I will return in")
+				.replace("DONE", "done")
+				.replace("ANIMALS CAPTURED","Klaxosaurs Hunted");
+			return text;
+		case 'password':
+			text = text.split("\n")[0].replace(/<:[a-z]bot:[0-9]+>/gi,bot);
+			return text
+		case 'spent':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,bot)
+				.replace("BEEP BOOP.","Daaarling!")
+				.replace("YOU SPENT","You spent")
+				.replace("I WILL BE BACK IN", "I will return in")
+				.replace("WITH", "with")
+				.replace("ANIMALS", "Klaxosaurs")
+				.replace("ESSENCE, AND", "Franxx Points, and")
+				.replace("EXPERIENCE", "Franxx XP.")
+			return text;
+		case 'returned':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi,bot)
+				.replace("BEEP BOOP. I AM BACK WITH","Daaarling! I am back with")
+				.replace("ANIMALS","Klaxosaurs")
+				.replace("ESSENCE, AND","Franxx Points, and")
+				.replace("EXPERIENCE", "Franxx XP")
 			return text;
 		default:
 			return text;
