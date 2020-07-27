@@ -43,6 +43,10 @@ exports.alter = function(id,text,info){
 			return garcom(text,info);
 		case '229299825072537601':
 			return alradio(text,info);
+		case '408875125283225621':
+			return kirito(text,info);
+		case '549876586720133120':
+			return kitsune(text,info);
 		default:
 			return text;
 	}
@@ -365,6 +369,41 @@ function alradio(text, info) {
 		"color":1,
 		"thumbnail":{
 			"url":"https://cdn.discordapp.com/attachments/626155987904102402/686634765805289482/image0.gif"
+		}
+	};
+	return {embed};
+}
+
+function kirito(text, info) {
+	const emoji = "<a:bot:737118875585478767>"
+	if(info.gemText){
+		text = `${emoji} **| ${info.author.username}** empowers her hunts by ${info.gemText}\n${blank} **|** and caught: ${info.animalEmojis}`;
+	}else{
+		text = `${emoji} **| ${info.author.username}** goes out to hunt and caught ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
+	}
+	text += info.lootboxText || '';
+	return text;
+}
+
+function kitsune(text, info) {
+	const emoji = "<:kitsune:737160182655615097>"
+	if(info.gemText){
+		text = `${emoji} **| ${info.author.username}** plays a pledged game with OwO, the lord of games using: ${info.gemText.replace(/`/gi,'**')} **ASCHENTE**!\n${blank} **|** Victoriously returns with: ${info.animalEmojis}`;
+	}else{
+		text = `${emoji} **| ${info.author.username}** plays a pledged game with OwO, the lord of games. **ASCHENTE**!\n${blank} **|** Victoriously returns with ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
+	}
+	text += info.lootboxText || '';
+	const embed = {
+		"description":text,
+		"color":Math.random()>.5 ? 15399610 : 15523028,
+		"thumbnail":{
+			"url":"https://cdn.discordapp.com/attachments/704215180044927030/728074508694454302/image0.gif"
 		}
 	};
 	return {embed};
