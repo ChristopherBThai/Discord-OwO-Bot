@@ -377,9 +377,9 @@ function alradio(text, info) {
 function kirito(text, info) {
 	const emoji = "<a:bot:737118875585478767>"
 	if(info.gemText){
-		text = `${emoji} **| ${info.author.username}** empowers her hunts by ${info.gemText}\n${blank} **|** and caught: ${info.animalEmojis}`;
+		text = `${emoji} **| Zero Two** empowers her hunts by ${info.gemText}\n${blank} **| Zero Two** caught: ${info.animalEmojis}`;
 	}else{
-		text = `${emoji} **| ${info.author.username}** goes out to hunt and caught ${info.animalEmojis}`;
+		text = `${emoji} **| Zero Two** goes out to hunt and caught ${info.animalEmojis}`;
 	}
 	if (info.petText) {
 		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;

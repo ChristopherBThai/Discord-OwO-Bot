@@ -147,6 +147,7 @@ module.exports = new CommandInterface({
 					count.legendary*animals.points.legendary+
 					count.fabled*animals.points.fabled+
 					count.bot*animals.points.bot+
+					count.distorted*animals.points.distorted+
 					count.hidden*animals.points.hidden;
 				footer += "\n**Zoo Points: __"+(p.global.toFancyNum(total))+"__**\n\t**";
 				footer += animalUtil.zooScore(count)+"**";
