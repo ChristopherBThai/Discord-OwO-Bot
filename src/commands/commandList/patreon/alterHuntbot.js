@@ -460,7 +460,7 @@ function kirito(text,type) {
 			text.author.name = "Daaarling! I will hunt down Klaxosaurs for you with my Franxx!"
 			text.author.icon_url = "https://cdn.discordapp.com/emojis/580749862279184394.gif?v=1";
 			text.fields[0].name = "Oh no! There seems to be Klaxosaurs heading to attack Plantation 13, shall I take them down?";
-
+			text.color = 15450599;
 			text.fields[1].name = text.fields[1].name.replace("⏱ Efficiency",efficiency + " Klaxosaurs to Hunt");
 			text.fields[1].value = "*How many Klaxosaurs would you like me to hunt down?*\n"+text.fields[1].value;
 			text.fields[2].name = text.fields[2].name.replace("⏳ Duration",duration + " Klaxosaur Hunting Duration");
