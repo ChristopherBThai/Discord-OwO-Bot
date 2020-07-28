@@ -86,7 +86,7 @@ module.exports = new CommandInterface({
 					return;
 				}
 				title = ", here is the role color for **"+user.username+"**";
-				color = parseHex(color.replace('#','').toUpperCase());
+				color = parseHex(color.replace('#','').toUpperCase().padStart(6, '0'));
 
 			//randomHSL
 			}else if(p.args.join(" ").includes("%")){
@@ -103,6 +103,11 @@ module.exports = new CommandInterface({
 			//hex values
 			}else if(args2.length==6){
 				color = parseHex(args2);
+
+			// role mention
+			} else if (p.msg.roleMentions.length && (args.length==1 || (args.length==2 && ['r','role'].includes(args[0].toLowerCase())))) {
+				let role = p.msg.channel.guild.roles.get(p.msg.roleMentions[0]);
+				color = parseIntValue(role.color);
 			}
 		}
 
