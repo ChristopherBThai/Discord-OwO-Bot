@@ -104,11 +104,16 @@ exports.client= function(tclient){
 		var animalRank = [];
 		for(var i=1;i<animaljson[key].length;i++){
 			var name = animals[animaljson[key][i]];
-			animalRank.push(animaljson[key][i]);
-			animaljson.list[name].rank = key;
-			animaljson.list[name].price = animaljson.price[key];
-			animaljson.list[name].points = animaljson.points[key];
-			animaljson.list[name].essence= animaljson.essence[key];
+			try {
+				animalRank.push(animaljson[key][i]);
+				animaljson.list[name].rank = key;
+				animaljson.list[name].price = animaljson.price[key];
+				animaljson.list[name].points = animaljson.points[key];
+				animaljson.list[name].essence= animaljson.essence[key];
+			} catch (err) {
+				console.error(err);
+				console.error(animaljson[key][i]);
+			}
 		}
 		ranks[key].animals = animalRank;
 		ranks[key].price = animaljson.price[key];
