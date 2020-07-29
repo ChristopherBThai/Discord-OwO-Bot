@@ -188,7 +188,7 @@ function sellRanks(msg,con,ranks,send,global,p){
 		if(sold!=""){
 			sold = sold.slice(0,-1);
 			send("**🔪 | "+msg.author.username+"** sold **"+sold+"** for a total of **<:cowoncy:416043450337853441> "+(global.toFancyNum(total))+"**");
-			p.logger.value('cowoncy',(total),['command:sell','id:'+msg.author.id,'type:animal']);
+			p.logger.incr(`cowoncy.sell.${msg.author.id}`, total);
 			// TODO neo4j
 		}else
 			send("**🚫 | "+msg.author.username+"**, You don't have enough animals! >:c",3000);
