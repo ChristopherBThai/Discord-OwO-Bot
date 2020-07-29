@@ -7,5 +7,5 @@
 
 // When guild is available
 exports.handle = function(guild){
-	if(!this.debug) this.logger.increment("guildcount");
+	if(!this.debug) this.logger.incr("guildcount");
 }

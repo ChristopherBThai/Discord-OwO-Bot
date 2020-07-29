@@ -79,7 +79,7 @@ async function bet(con,msg,args,global,p){
 			"UPDATE cowoncy SET money = money - "+amount+" WHERE id = "+msg.author.id+";";
 		result = await p.query(sql);
 
-		p.logger.value('cowoncy',(amount*-1),['command:lottery','id:'+msg.author.id]);
+		p.logger.decr(`cowoncy.lottery.${msg.author.id}`, -1 * amount);
 
 		let sum = parseInt(result[1][0].sum);
 		let count = result[1][0].count;
