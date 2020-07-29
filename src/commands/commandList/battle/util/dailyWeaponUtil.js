@@ -172,7 +172,7 @@ async function useShards(p, count){
 	let sql = `UPDATE shards INNER JOIN user ON shards.uid = user.uid SET shards.count = shards.count - ${count} WHERE user.id = ${p.msg.author.id} AND shards.count >= ${count};`;
 	let result = await p.query(sql);
 	if(result.changedRows >= 1){
-		p.logger.decr('shards.shop.${p.msg.author.id}', -1 * count);
+		p.logger.decr(`shards.shop.${p.msg.author.id}`, -1 * count);
 		return true;
 	}
 	return false;

@@ -104,7 +104,7 @@ async function executeCommand(main,p){
 	await commands[p.command].execute(p);
 
 	// Log stats to statsd
-	logger.incr(p.commandAlias, 1, p.msg);
+	logger.incr(`command.${p.commandAlias}`, 1, p.msg);
 }
 
 /**
