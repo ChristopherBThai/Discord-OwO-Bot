@@ -668,7 +668,7 @@ exports.sell = async function(p,uwid){
 	result = await p.query(sql);
 
 	p.replyMsg(weaponEmoji,`, You sold a(n) **${weapon.rank.name} ${weapon.name}**  ${weapon.rank.emoji}${weapon.emoji} for **${price}** cowoncy!`);
-	p.logger.value('cowoncy',(price),['command:sell','id:'+p.msg.author.id,'type:weapon']);
+	p.logger.incr(`cowoncy.sell.${p.msg.author.id}`, price);
 }
 
 var sellRank = exports.sellRank = async function(p,rankLoc){
@@ -755,7 +755,7 @@ var sellRank = exports.sellRank = async function(p,rankLoc){
 	result = await p.query(sql);
 
 	p.replyMsg(weaponEmoji,`, You sold all your ${rank} weapons for **${price}** cowoncy!\n${p.config.emoji.blank} **| Sold:** ${weapons.join('')}`);
-	p.logger.value('cowoncy',(price),['command:sell','id:'+p.msg.author.id,'type:weapon']);
+	p.logger.incr(`cowoncy.sell.${p.msg.author.id}`, price);
 }
 
 /* Shorten a uwid to base36 */

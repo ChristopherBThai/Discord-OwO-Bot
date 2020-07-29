@@ -32,7 +32,8 @@ exports.buy = async function(p,id){
 		else console.error(e);
 	}
 
-	p.logger.value('cowoncy',-1*ring.price,['command:buy','id:'+p.msg.author.id,'type:ring']);
+	// TODO neo4j
+	p.logger.decr(`cowoncy.ring.${p.msg.author.id}`, -1 * ring.price);
 	p.replyMsg(cart,", you bought a"+(p.global.isVowel(ring.name)?"n":"")+" "+ring.emoji+" **"+ring.name+"** for **"+p.global.toFancyNum(ring.price)+"** "+p.config.emoji.cowoncy+"!");
 }
 
@@ -71,7 +72,8 @@ exports.sell = async function(p,id){
 	let price = Math.round(ring.price*0.75);
 	sql = `UPDATE cowoncy SET money = money + ${price} WHERE id = ${p.msg.author.id};`;
 	await p.query(sql);
-	p.logger.value('cowoncy',price,['command:sell','id:'+p.msg.author.id,'type:ring']);
+	// TODO neo4j
+	p.logger.incr(`cowoncy.ring.${p.msg.author.id}`, price);
 	p.replyMsg(sold,", you sold a"+(p.global.isVowel(ring.name)?"n":"")+" "+ring.emoji+" **"+ring.name+"** for **"+p.global.toFancyNum(price)+"** "+p.config.emoji.cowoncy);
 }
 
