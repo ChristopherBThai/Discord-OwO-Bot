@@ -166,7 +166,7 @@ module.exports = new CommandInterface({
 
 			text += "\n**⏱ |** Your next daily is in: "+afterMid.hours+"H "+afterMid.minutes+"M "+afterMid.seconds+"S";
 			rows = await p.query(sql);
-			p.logger.value('cowoncy',(gain+extra),['command:daily','id:'+msg.author.id]);
+			p.logger.incr(`cowoncy.daily.${p.msg.author.id}`, gaint + extra);
 			if(announcement&&rows[0][0]){
 				let url = rows[0][0].url;
 				let embed;

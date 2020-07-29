@@ -1,6 +1,6 @@
 /*
  * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Copyright (C) 2020 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
@@ -103,9 +103,8 @@ async function executeCommand(main,p){
 	// Execute command
 	await commands[p.command].execute(p);
 
-	// Log stats to datadog api
-	let dm = p.msg.channel.type==1;
-	logger.increment("command",['command:'+p.commandAlias,/*'id:'+p.msg.author.id,'guild:'+(dm?p.msg.channel.id:p.msg.channel.guild.id),'channel:'+p.msg.channel.id,*/'dm:'+dm]);
+	// Log stats to statsd
+	logger.incr(`command.${p.commandAlias}`, 1, p.msg);
 }
 
 /**

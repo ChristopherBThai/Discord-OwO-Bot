@@ -58,7 +58,8 @@ module.exports = new CommandInterface({
 						sql += box.sql;
 						con.query(sql,function(err,result){
 							if(err) {console.error(err);return;}
-							p.logger.value('cowoncy',(reward+patreonBonus+weekendBonus),['command:vote','id:'+id]);
+							p.logger.incr(`cowoncy.vote.${p.msg.author.id}`, reward + patreonBonus + weekendBonus);
+							// TODO neo4j
 							var text = "**☑ |** You have received **"+reward+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
 							if(weekend)
 								text += "**⛱ |** It's the weekend! You also earned a bonus of **"+weekendBonus+"** cowoncy!\n";
@@ -66,7 +67,7 @@ module.exports = new CommandInterface({
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
 							//console.log("\x1b[33m",id+" has voted for the first time!");
-							p.logger.increment("votecount");
+							p.logger.incr(`votecount.${p.msg.author.id}`);
 						});
 					}else if(result[0][0].time>=12){
 						let box = {};
@@ -87,7 +88,8 @@ module.exports = new CommandInterface({
 						sql += box.sql;
 						con.query(sql,function(err,result){
 							if(err) {console.error(err);return;}
-							p.logger.value('cowoncy',(bonus+patreonBonus+weekendBonus),['command:vote','id:'+id]);
+							p.logger.incr(`cowoncy.vote.${p.msg.author.id}`, bonus + patreonBonus + weekendBonus);
+							// TODO neo4j
 							var text = "**☑ |** You have received **"+bonus+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
 							if(weekend)
 								text += "**⛱ |** It's the weekend! You also earned a bonus of **"+weekendBonus+"** cowoncy!\n";
@@ -95,7 +97,7 @@ module.exports = new CommandInterface({
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
 							//console.log("\x1b[33m",id+" has voted and  received cowoncy!");
-							p.logger.increment("votecount");
+							p.logger.incr(`votecount.${p.msg.author.id}`);
 						});
 					}else{
 						var text = "**☑ |** Click the link to vote and gain 100+ cowoncy!\n";
