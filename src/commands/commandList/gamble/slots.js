@@ -123,8 +123,8 @@ module.exports = new CommandInterface({
 
 			sql = "UPDATE cowoncy SET money = money + "+(win-amount)+" WHERE id = "+msg.author.id+" AND money >= "+amount+";";
 			result = await p.query(sql);
-			p.logger.value('cowoncy',(win-amount),['command:slots','id:'+msg.author.id]);
-			p.logger.value('gamble',logging,['command:slots','id:'+msg.author.id]);
+			p.logger.incr(`cowoncy.slots.${p.msg.author.id}`, win - amount);
+			p.logger.incr(`gamble.slots.${p.msg.author.id}`, logging);
 
 			//Display slots
 			let machine = "**`___SLOTS___  `**\n"+moving+" "+moving+" "+moving+"   "+msg.author.username+" bet <:cowoncy:416043450337853441> "+(p.global.toFancyNum(amount))+"\n`|         |`\n`|         |`";

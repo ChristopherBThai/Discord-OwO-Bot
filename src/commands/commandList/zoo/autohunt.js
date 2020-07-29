@@ -132,10 +132,10 @@ async function claim(p,msg,con,query,bot){
 	p.send(text);
 	for(let animal in total){
 		let tempAnimal = global.validAnimal(animal);
-		logger.value('animal',total[animal].count,['animal:'+tempAnimal.name,'rank:'+tempAnimal.rank,'id:'+msg.author.id,'guild:'+msg.channel.guild.id]);
-		logger.value('animal.points',tempAnimal.points*total[animal].count,['animal:'+tempAnimal.name,'rank:'+tempAnimal.rank,'id:'+msg.author.id,'guild:'+msg.channel.guild.id]);
+		logger.incr(`animal.${tempAnimal.rank}.${tempAnimal.name}.${p.msg.author.id}`, total[animal].count);
+		logger.incr(`zoo.${p.msg.author.id}`, tempAnimal.points*total[animal].count);
 	}
-	logger.value('essence',totalGain,['id:'+msg.author.id,'guild:'+msg.channel.guild.id,'command:huntbot','animal:huntbot']);
+	logger.incr(`essence.huntbot.${p.msg.author.id}`, totalGain);
 }
 
 async function autohunt(p,msg,con,args,global,send){
@@ -246,7 +246,7 @@ async function autohunt(p,msg,con,args,global,send){
 	sql = "UPDATE cowoncy SET money = money - "+cowoncy+" WHERE id = "+msg.author.id+";";
 	sql += "INSERT INTO autohunt (id,start,huntcount,huntmin,password) VALUES ("+msg.author.id+",NOW(),"+huntcount+","+huntmin+",'') ON DUPLICATE KEY UPDATE start = NOW(), huntcount = "+huntcount+",huntmin = "+huntmin+",password = '';";
 	result = await p.query(sql);
-	logger.value('cowoncy',(cowoncy*-1),['command:autohunt','id:'+msg.author.id]);
+	logger.decr(`cowoncy.huntbot.${p.msg.author.id}`, -1 * cowoncy);
 	let min = huntmin%60;
 	let hour = Math.trunc(huntmin/60);
 	let timer = "";
