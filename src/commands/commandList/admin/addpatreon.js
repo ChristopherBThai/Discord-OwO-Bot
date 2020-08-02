@@ -43,7 +43,7 @@ async function addPatreons(p) {
 				failed += `\`failed for [${args.join(", ")}]\`\n`;
 			}
 		} catch (err) {
-			console.err(err);
+			console.error(err);
 			failed += `failed for [${args.join(", ")}]\n`
 		}
 	}
