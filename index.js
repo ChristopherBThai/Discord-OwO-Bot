@@ -6,7 +6,7 @@
   */
 	
 // Grab tokens and secret files
-const debug = false;
+const debug = true;
 if(!debug) var tracer = require('dd-trace').init()
 if(debug) var auth = require('../tokens/scuttester-auth.json');
 else var auth = require('../tokens/owo-auth.json');
@@ -38,10 +38,10 @@ const totalShards = 8;
 		// How many clusters we will have
 		var clusters = Math.ceil(shards/totalShards);
 		if(debug){
-			shards = 4;
+			shards = 1;
 			firstShardID = 0;
-			lastShardID = shards-1;
-			clusters = 2
+			lastShardID = 1;
+			clusters = 1
 		}
 
 		console.log("Creating shards "+firstShardID+"~"+lastShardID+" out of "+shards+" total shards!");

@@ -58,7 +58,7 @@ module.exports = new CommandInterface({
 						sql += box.sql;
 						con.query(sql,function(err,result){
 							if(err) {console.error(err);return;}
-							p.logger.incr(`cowoncy.vote.${p.msg.author.id}`, reward + patreonBonus + weekendBonus);
+							p.logger.incr(`cowoncy`, reward + patreonBonus + weekendBonus, {type:'vote'}, p.msg);
 							// TODO neo4j
 							var text = "**☑ |** You have received **"+reward+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
 							if(weekend)
@@ -67,7 +67,7 @@ module.exports = new CommandInterface({
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
 							//console.log("\x1b[33m",id+" has voted for the first time!");
-							p.logger.incr(`votecount.${p.msg.author.id}`);
+							p.logger.incr(`votecount`, 1, {}, p.msg);
 						});
 					}else if(result[0][0].time>=12){
 						let box = {};
@@ -88,7 +88,7 @@ module.exports = new CommandInterface({
 						sql += box.sql;
 						con.query(sql,function(err,result){
 							if(err) {console.error(err);return;}
-							p.logger.incr(`cowoncy.vote.${p.msg.author.id}`, bonus + patreonBonus + weekendBonus);
+							p.logger.incr(`cowoncy`, bonus + patreonBonus + weekendBonus, {type:'vote'}, p.msg);
 							// TODO neo4j
 							var text = "**☑ |** You have received **"+bonus+"** cowoncy for voting!"+patreonMsg(patreonBonus)+"\n";
 							if(weekend)
@@ -97,7 +97,7 @@ module.exports = new CommandInterface({
 							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
 							p.send(text);
 							//console.log("\x1b[33m",id+" has voted and  received cowoncy!");
-							p.logger.incr(`votecount.${p.msg.author.id}`);
+							p.logger.incr(`votecount`, 1, {}, p.msg);
 						});
 					}else{
 						var text = "**☑ |** Click the link to vote and gain 100+ cowoncy!\n";
