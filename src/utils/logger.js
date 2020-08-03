@@ -51,40 +51,31 @@ const sdc = new SDC({
 	host: 'localhost',
 	port: 9125,
 	prefix: 'owo',
-	socketTImeout: 5000,
-	stats: {
-		"server": 1
-	}
+	socketTimeout: 5000
 });
 
-const incr = exports.incr = function (name, amount=1, msg) {
+const incr = exports.incr = function (name, amount=1, tags={}, msg) {
 	if (amount < 0) {
-		decr(name, amount, msg);
+		decr(name, amount, tags, msg);
 		return;
 	}
 	if (msg) {
-		if (msg.channel.type==1) {
-			sdc.increment(`${name}.dm.${msg.channel.id}.${msg.author.id}`, amount);
-		} else {
-			sdc.increment(`${name}.${msg.channel.guild.id}.${msg.channel.id}.${msg.author.id}`, amount);
-		}
-	} else {
-		sdc.increment(`${name}`, amount);
+		tags.user = msg.author.id;
+		tags.channel = msg.channel.id;
+		tags.guild = msg.channel.type==1 ? 'dm' : msg.channel.guild.id;
 	}
+	sdc.increment(`${name}`, amount, tags);
 }
 
-const decr = exports.decr = function (name, amount=-1, msg) {
+const decr = exports.decr = function (name, amount=-1, tags={}, msg) {
 	if (amount > 0) {
-		incr(name, amount, msg);
+		incr(name, amount, tags, msg);
 		return;
 	}
 	if (msg) {
-		if (msg.channel.type==1) {
-			sdc.decrement(`${name}.dm.${msg.channel.id}.${msg.author.id}`, amount);
-		} else {
-			sdc.decrement(`${name}.${msg.channel.guild.id}.${msg.channel.id}.${msg.author.id}`, amount);
-		}
-	} else {
-		sdc.decrement(`${name}`, amount);
+		tags.user = msg.author.id;
+		tags.channel = msg.channel.id;
+		tags.guild = msg.channel.type==1 ? 'dm' : msg.channel.guild.id;
 	}
+	sdc.decrement(`${name}`, amount, tags);
 }

@@ -103,9 +103,9 @@ module.exports = new CommandInterface({
 		p.send(text);
 		if(user&&quest) p.quest(quest,1,user);
 		if(opponentPoints&&user)
-			p.logger.incr(`pray.${p.msg.author.id}.${user.id}`);
+			p.logger.incr(`pray`, 1, {from:p.msg.author.id, to:user.id});
 		else
-			p.logger.incr(`pray.${p.msg.author.id}.self`);
+			p.logger.incr(`pray`, 1, {from:p.msg.author.id, to:self});
 	}
 
 })

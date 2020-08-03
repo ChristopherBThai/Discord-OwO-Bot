@@ -107,11 +107,11 @@ module.exports = new CommandInterface({
 			//text += "\n⚠ **|** `battle` and `hunt` cooldowns have increased to prevent rateLimits issues.\n<:blank:427371936482328596> **|** They will revert back to `15s` in the future.";
 
 			let result2 = await p.query(sql);
-			p.logger.decr(`cowoncy.hunt.${p.msg.author.id}`, -5);
+			p.logger.incr(`cowoncy`, -5, {type:'hunt'}, p.msg);
 			for(let i in animal.animal){
 				let tempAnimal = p.global.validAnimal(animal.animal[i][1]);
-				p.logger.incr(`animal.${tempAnimal.rank}.${tempAnimal.name}.${p.msg.author.id}`, 1);
-				p.logger.incr(`zoo.${p.msg.author.id}`,tempAnimal.points);
+				p.logger.incr(`animal`, 1, {rank:tempAnimal.rank, name:tempAnimal.name}, p.msg);
+				p.logger.incr(`zoo`, tempAnimal.points, {}, p.msg);
 			}
 			p.quest("hunt");
 			p.quest("find",1,animal.typeCount);
