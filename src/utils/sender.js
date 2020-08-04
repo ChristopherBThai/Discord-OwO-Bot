@@ -8,7 +8,7 @@
 var client,pubsub;
 var auth = require('../../../tokens/owo-auth.json');
 var admin;
-var logChannel = "469352773314412555";
+var logChannel = "739393782805692476";
 var modLogChannel = "471579186059018241";
 
 /**
