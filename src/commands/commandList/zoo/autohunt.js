@@ -132,10 +132,10 @@ async function claim(p,msg,con,query,bot){
 	p.send(text);
 	for(let animal in total){
 		let tempAnimal = global.validAnimal(animal);
-		logger.incr(`animal.${tempAnimal.rank}.${tempAnimal.name}.${p.msg.author.id}`, total[animal].count);
-		logger.incr(`zoo.${p.msg.author.id}`, tempAnimal.points*total[animal].count);
+		logger.incr(`animal`, total[animal].count, {rank:tempAnimal.rank, name:tempAnimal.name}, p.msg);
+		logger.incr(`zoo`, tempAnimal.points*total[animal].count, {}, p.msg);
 	}
-	logger.incr(`essence.huntbot.${p.msg.author.id}`, totalGain);
+	logger.incr(`essence`, totalGain, {type:'huntbot'}, p.msg);
 }
 
 async function autohunt(p,msg,con,args,global,send){
@@ -246,7 +246,7 @@ async function autohunt(p,msg,con,args,global,send){
 	sql = "UPDATE cowoncy SET money = money - "+cowoncy+" WHERE id = "+msg.author.id+";";
 	sql += "INSERT INTO autohunt (id,start,huntcount,huntmin,password) VALUES ("+msg.author.id+",NOW(),"+huntcount+","+huntmin+",'') ON DUPLICATE KEY UPDATE start = NOW(), huntcount = "+huntcount+",huntmin = "+huntmin+",password = '';";
 	result = await p.query(sql);
-	logger.decr(`cowoncy.huntbot.${p.msg.author.id}`, -1 * cowoncy);
+	logger.decr(`cowoncy`, -1 * cowoncy, {type:'huntbot'}, p.msg);
 	let min = huntmin%60;
 	let hour = Math.trunc(huntmin/60);
 	let timer = "";
