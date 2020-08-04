@@ -74,8 +74,8 @@ module.exports = new CommandInterface({
 			}else{
 				p.send("**💳 | "+msg.author.username+"** sent **"+(p.global.toFancyNum(amount))+" cowoncy** to **"+user.username+"**!");
 				p.neo4j.give(p.msg,user,amount);
-				p.logger.incr(`cowoncy.given.${user.id}`, amount);
-				p.logger.decr(`cowoncy.give.${msg.author.id}`, -1 * amount);
+				p.logger.incr(`cowoncy`, amount, {type:'given'}, p.msg);
+				p.logger.decr(`cowoncy`, -1 * amount, {type:'give'}, p.msg);
 			}
 		});
 	}

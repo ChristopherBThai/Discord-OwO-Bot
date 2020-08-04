@@ -33,7 +33,7 @@ exports.buy = async function(p,id){
 	}
 
 	// TODO neo4j
-	p.logger.decr(`cowoncy.ring.${p.msg.author.id}`, -1 * ring.price);
+	p.logger.decr(`cowoncy`, -1 * ring.price, {type:'ring'}, p.msg);
 	p.replyMsg(cart,", you bought a"+(p.global.isVowel(ring.name)?"n":"")+" "+ring.emoji+" **"+ring.name+"** for **"+p.global.toFancyNum(ring.price)+"** "+p.config.emoji.cowoncy+"!");
 }
 
@@ -73,7 +73,7 @@ exports.sell = async function(p,id){
 	sql = `UPDATE cowoncy SET money = money + ${price} WHERE id = ${p.msg.author.id};`;
 	await p.query(sql);
 	// TODO neo4j
-	p.logger.incr(`cowoncy.ring.${p.msg.author.id}`, price);
+	p.logger.incr(`cowoncy`, price, {type:'ring'}, p.msg);
 	p.replyMsg(sold,", you sold a"+(p.global.isVowel(ring.name)?"n":"")+" "+ring.emoji+" **"+ring.name+"** for **"+p.global.toFancyNum(price)+"** "+p.config.emoji.cowoncy);
 }
 
