@@ -57,6 +57,10 @@ module.exports = new CommandInterface({
 
 		/* Parse user's date info */
 		let afterMid = dateUtil.afterMidnight((rows[0][0])?rows[0][0].daily:undefined);
+		
+		if (!rows[0][0]) {
+			await p.query(`INSERT IGNORE INTO user (id, count) VALUES (${p.msg.author.id}, 0); INSERT IGNORE INTO cowoncy (id, money) (${p.msg.author.id}, 0);`);
+		}
 
 		/* If it's not past midnight */
 		if(afterMid&&!afterMid.after){
@@ -117,7 +121,7 @@ module.exports = new CommandInterface({
 				text += "\n**<:blank:427371936482328596> |** You got an extra **"+extra+" Cowoncy** for being a <:patreon:449705754522419222> Patreon!";
 			text += box.text;
 
-			sql += "INSERT INTO cowoncy (id,money) VALUES ("+msg.author.id+","+(gain+extra)+") ON DUPLICATE KEY UPDATE daily_streak = "+streak+", money = money + "+(gain+extra)+",daily = "+afterMid.sql+";";
+			const cowoncySql = `UPDATE cowoncy SET money = money + ${gain+extra}, daily_streak = ${streak}, daily = ${afterMid.sql} WHERE id = ${p.msg.author.id} ${!!rows[0][0] ? ` AND daily_streak = ${rows[0][0].daily_streak}` : ''} ;`;
 			sql += box.sql;
 
 
@@ -165,6 +169,12 @@ module.exports = new CommandInterface({
 			}
 
 			text += "\n**⏱ |** Your next daily is in: "+afterMid.hours+"H "+afterMid.minutes+"M "+afterMid.seconds+"S";
+
+			rows = await p.query(cowoncySql);
+			if (!rows.changedRows) {
+				p.errorMsg(", you already claimed your daily!");
+				return;
+			}
 			rows = await p.query(sql);
 			p.logger.incr(`cowoncy`, gain + extra, {type:'daily'}, p.msg);
 			if(announcement&&rows[0][0]){
