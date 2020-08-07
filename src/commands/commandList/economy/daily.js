@@ -59,7 +59,7 @@ module.exports = new CommandInterface({
 		let afterMid = dateUtil.afterMidnight((rows[0][0])?rows[0][0].daily:undefined);
 		
 		if (!rows[0][0]) {
-			await p.query(`INSERT IGNORE INTO user (id, count) VALUES (${p.msg.author.id}, 0); INSERT IGNORE INTO cowoncy (id, money) (${p.msg.author.id}, 0);`);
+			await p.query(`INSERT IGNORE INTO user (id, count) VALUES (${p.msg.author.id}, 0); INSERT IGNORE INTO cowoncy (id, money) VALUES (${p.msg.author.id}, 0);`);
 		}
 
 		/* If it's not past midnight */
