@@ -50,11 +50,22 @@ module.exports = new CommandInterface({
 				shard.start = p.client.uptime;
 			}
 
-			let id = '['+shard.shard+']';
-			let cluster = ''+shard.cluster;
-			let ping = Math.round(shard.ping)+'';
-			let uptime = toTime(shard.start);
-			let shardStatus = shard.status;
+			let id, cluster, ping, uptime, shardStatus, offline;
+
+			if (shard) {
+				id = '['+shard.shard+']';
+				cluster = ''+shard.cluster;
+				ping = Math.round(shard.ping)+'';
+				uptime = toTime(shard.start);
+				shardStatus = shard.status;
+			} else {
+				id = i;
+				cluster = '?';
+				ping = '?';
+				uptime = '?';
+				shardStatus = 'OFFLINE';
+				offline = true;
+			}
 
 			uptime += ' '.repeat((13-uptime.length<0)?0:13-uptime.length);
 			ping += ' '.repeat((4-ping.length<0)?0:4-ping.length);
@@ -63,8 +74,8 @@ module.exports = new CommandInterface({
 			let text = `${id} ${cluster} ${ping} ${uptime} ${shardStatus}`;
 			if(i==shardID) text = text.replace(/\s/gi,'-');
 			else{
-				let diff = (new Date()) - (new Date(shard.updatedOn));
-				if(diff>maxDiff) text = `${id} ${cluster} OFFLINE OR LAGGING`;
+				let diff = (new Date()) - (new Date(shard?.updatedOn));
+				if(diff>maxDiff || offline) text = `${id} ${cluster} OFFLINE OR LAGGING`;
 			}
 			shards.push(text);
 		}

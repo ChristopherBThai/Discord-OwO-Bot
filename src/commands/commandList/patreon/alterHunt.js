@@ -379,7 +379,7 @@ function kirito(text, info) {
 	if(info.gemText){
 		text = `${emoji} **| Zero Two** empowers her hunts by ${info.gemText}\n${blank} **| Zero Two** caught: ${info.animalEmojis}`;
 	}else{
-		text = `${emoji} **| Zero Two** goes out to hunt and caught ${info.animalEmojis}`;
+		text = `${emoji} **| Zero Two** goes out to hunt and catches a(n) ${info.animal[0][0]} ${info.animalEmojis}`;
 	}
 	if (info.petText) {
 		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
@@ -393,7 +393,7 @@ function kitsune(text, info) {
 	if(info.gemText){
 		text = `${emoji} **| ${info.author.username}** plays a pledged game with OwO, the lord of games using: ${info.gemText.replace(/`/gi,'**')} **ASCHENTE**!\n${blank} **|** Victoriously returns with: ${info.animalEmojis}`;
 	}else{
-		text = `${emoji} **| ${info.author.username}** plays a pledged game with OwO, the lord of games. **ASCHENTE**!\n${blank} **|** Victoriously returns with ${info.animalEmojis}`;
+		text = `${emoji} **| ${info.author.username}** plays a pledged game with OwO, the lord of games. **ASCHENTE**!\n${blank} **|** Victoriously returns with a(n) ${info.animal[0][0]} ${info.animalEmojis}`;
 	}
 	if (info.petText) {
 		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
