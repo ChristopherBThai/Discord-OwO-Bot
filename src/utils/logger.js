@@ -55,6 +55,7 @@ const sdc = new SDC({
 });
 
 const incr = exports.incr = function (name, amount=1, tags={}, msg) {
+	return;
 	if (amount < 0) {
 		decr(name, amount, tags, msg);
 		return;
@@ -68,6 +69,7 @@ const incr = exports.incr = function (name, amount=1, tags={}, msg) {
 }
 
 const decr = exports.decr = function (name, amount=-1, tags={}, msg) {
+	return;
 	if (amount > 0) {
 		incr(name, amount, tags, msg);
 		return;
