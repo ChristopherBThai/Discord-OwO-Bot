@@ -53,6 +53,7 @@ const sdc = new SDC({
 	prefix: 'owo',
 	socketTimeout: 5000
 });
+const influxdb = require('../../../tokens/influxdb.json');
 
 const incr = exports.incr = function (name, amount=1, tags={}, msg) {
 	return;
@@ -80,4 +81,27 @@ const decr = exports.decr = function (name, amount=-1, tags={}, msg) {
 		tags.guild = msg.channel.type==1 ? 'dm' : msg.channel.guild.id;
 	}
 	sdc.decrement(`${name}`, amount, tags);
+}
+
+const request = require('request');
+exports.command = function(command, msg) {
+	return;
+	const body = {
+		password: influxdb.password,
+		command: command,
+		user: msg.author.id
+	}
+
+	request({
+		method:'POST',
+		uri:`${influxdb.url}/command`,
+		json:true,
+		body: body,
+	},function(err,res,body){
+		if(err) {
+			console.error(err);
+			throw err;
+		}
+	});
+
 }
