@@ -27,6 +27,8 @@ exports.alter = function(id,text,type) {
 			return spotifybot2(text,type);
 		case '408875125283225621':
 			return kirito(text,type);
+		case '575555630312456193':
+			return xmelanie(text,type);
 		default:
 			return text;
 	}
@@ -506,6 +508,24 @@ function kirito(text,type) {
 				.replace("ANIMALS","Klaxosaurs")
 				.replace("ESSENCE, AND","Franxx Points, and")
 				.replace("EXPERIENCE", "Franxx XP")
+			return text;
+		default:
+			return text;
+	}
+}
+
+function xmelanie(text, type) {
+	switch(type){
+		case 'hb':
+			text.color = 4584447;
+			text.fields[0].name = "<:mickey:747723512768102453> Day of Disney <a:castle:747723513758220339>"
+			text.fields[1].name = text.fields[1].name.replace("⏱ Efficiency","<a:bb8:747725839222964294> Fastpass <a:groot:747725839340273674>");
+			text.fields[2].name = text.fields[2].name.replace("⏳ Duration","<a:castle:747723513758220339> Park hours <:thumbsup:747725838459338833>");
+			text.fields[3].name = text.fields[3].name.replace("<:cowoncy:416043450337853441> Cost","<:disneydollars:747725838417526807> Disney Dollars <:disneydollars:747725838417526807>");
+			text.fields[4].name = text.fields[4].name.replace("🔧 Gain","<:elpdrum:747725838924906576> Memories <a:once_upon_a_dream:747725839021506670>");
+			text.fields[5].name = text.fields[5].name.replace("⚔ Experience","<a:blancheneige:747725839025700884> Where dreams come true <a:d_marie:747725839403188234>");
+			text.fields[6].name = text.fields[6].name.replace("📡 Radar","<a:cute_sparks:747725838077788328> Pixy Dust <a:cute_sparks:747725838077788328>");
+			text.fields[7].name = text.fields[7].name.replace("<a:essence:451638978299428875> Animal Essence","<a:fairy_god_mother:747725839440805888> Magic of Disney <a:bippity_boppity_boo:747725838564458516>");
 			return text;
 		default:
 			return text;

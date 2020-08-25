@@ -85,7 +85,6 @@ const decr = exports.decr = function (name, amount=-1, tags={}, msg) {
 
 const request = require('request');
 exports.command = function(command, msg) {
-	return;
 	const body = {
 		password: influxdb.password,
 		command: command,
