@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "@zuzak/owo": "^1.9.0",
+    "bad-words": "^3.0.3",
     "bufferutil": "^4.0.1",
     "canvas": "^2.6.1",
     "dbl-api": "^1.2.1",
