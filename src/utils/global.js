@@ -11,6 +11,7 @@
 
 const numbers = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
 const request = require('request');
+const filter = new (require('bad-words'))({placeHolder: "OwO", replaceRegex: /\w+/g});
 const secret = require('../../../tokens/wsserver.json');
 const badwords = require('../../../tokens/badwords.json');
 var animaljson = require('../../../tokens/owo-animals.json');
@@ -256,4 +257,14 @@ exports.filteredName = function (name) {
 		.replace(/\|\|/g,'│');
 
 	return { name, offensive }
+}
+
+/* checks if string has bad words */
+exports.isProfane = function (string) {
+	return filter.isProfane(string);
+}
+
+/* replaces bad words */
+exports.cleanString = function (string) {
+	return filter.clean(string);
 }
