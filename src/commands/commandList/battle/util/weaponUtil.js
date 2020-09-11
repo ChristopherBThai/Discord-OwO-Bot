@@ -33,7 +33,7 @@ setTimeout(() => {
 	}
 },0);
 
-const getRandomWeapon = exports.getRandomWeapon = function(){
+const getRandomWeapon = exports.getRandomWeapon = function(opts){
 	/* Grab a random weapon */
 	let keys = Object.keys(availableWeapons);
 	let random = keys[Math.floor(Math.random()*keys.length)];
@@ -41,7 +41,7 @@ const getRandomWeapon = exports.getRandomWeapon = function(){
 	let weapon = availableWeapons[random];
 
 	/* Initialize random stats */
-	weapon = new weapon();
+	weapon = new weapon(null, null, null, opts);
 
 	return weapon;
 }

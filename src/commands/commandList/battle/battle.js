@@ -9,6 +9,7 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const battleUtil = require('./util/battleUtil.js');
 const battleFriendUtil = require('./util/battleFriendUtil.js');
+const bossUtil = require('./util/bossUtil.js');
 const battleEmoji = '⚔';
 const battleSettings = require('./battleSetting.js');
 
@@ -78,6 +79,8 @@ module.exports = new CommandInterface({
 			let msg = await p.send(embed);
 			await battleUtil.reactionCollector(p,msg,battle,setting.auto,(setting.auto?"www":undefined),setting);
 		}
+
+		bossUtil.check(p);
 	}
 
 })

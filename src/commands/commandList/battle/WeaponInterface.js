@@ -13,9 +13,10 @@ const ranks = [[0.20,"Common","<:common:416520037713838081>"],[0.20,"Uncommon","
 module.exports = class WeaponInterface{
 
 	/* Constructor */
-	constructor(cpassives,qualities,noCreate){
+	constructor(cpassives,qualities,noCreate,opts={}){
 
 		this.init();
+		if (opts.extraPassive) this.passiveCount += opts.extraPassive;
 		if(this.availablePassives==="all"){
 			this.availablePassives=[];
 			for(let i in passives){
