@@ -7,8 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const { NovelCovid } = require ('novelcovid');
-const track = new NovelCovid();
+const track = require ('novelcovid');
 const cases = {};
 fetchCases();
 
