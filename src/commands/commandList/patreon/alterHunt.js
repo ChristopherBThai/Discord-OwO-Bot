@@ -47,6 +47,8 @@ exports.alter = function(id,text,info){
 			return kirito(text,info);
 		case '549876586720133120':
 			return kitsune(text,info);
+		case '343094664414363658':
+			return tiggy(text, info);
 		default:
 			return text;
 	}
@@ -407,4 +409,18 @@ function kitsune(text, info) {
 		}
 	};
 	return {embed};
+}
+
+function tiggy(text, info) {
+	const emoji = "🔥"
+	if(info.gemText){
+		text = `${emoji} **| ${info.author.username}**, your flamethrower is fueled by ${info.gemText}\n${blank} **|** You destroyed the local habitats of: ${info.animalEmojis}`;
+	}else{
+		text = `${emoji} **| ${info.author.username}**, your flamethrower spurts out nothing...\n ${blank} **|** you managed to catch: ${info.animal[0][0]} ${info.animalEmojis} with your bare hands`;
+	}
+	if (info.petText) {
+		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
+	}
+	text += info.lootboxText || '';
+	return text;
 }
