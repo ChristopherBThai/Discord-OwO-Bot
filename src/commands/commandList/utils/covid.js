@@ -7,9 +7,11 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const track = require ('novelcovid');
-const cases = {};
+const request = require('request');
+const secret = require('../../../../../tokens/wsserver.json');
+let cases = {};
 fetchCases();
+setInterval(fetchCases,1800000);
 
 module.exports = new CommandInterface({
 
@@ -137,31 +139,16 @@ function showStats(p, name) {
 	p.send({embed});
 }
 
-setInterval(fetchCases,1800000);
 
 async function fetchCases() {
-	let global = await track.all();
-	cases.global = global;
-
-	let states = await track.states();
-	for (let i in states) {
-		try {
-			let stateName = states[i].state;
-			cases[stateName.replace(/\s/gi,"").toLowerCase()] = states[i];
-		} catch (err) {
-			console.error("Failed to parse state");
-			console.error(states[i]);
+	request({
+		method:'GET',
+		uri:secret.url+"/covid",
+	},(error,res,body)=>{
+		if(error){
+			console.error(error);
+			return;
 		}
-	}
-
-	let countries = await track.countries();
-	for (let i in countries) {
-		try{
-			let countryName = countries[i].country;
-			cases[countryName.replace(/\s/gi,"").toLowerCase()] = countries[i];
-		} catch (err) {
-			console.error("Failed to parse country");
-			console.error(countries[i]);
-		}
-	}
+		cases = JSON.parse(body);
+	});
 }
