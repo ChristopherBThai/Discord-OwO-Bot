@@ -23,6 +23,7 @@ const ranks = {
 }
 
 exports.alter = function(id,text){
+			return xmelanie(text);
 	switch(id){
 		case '250383887312748545':
 			return elsa(text);
