@@ -42,19 +42,17 @@ module.exports = new CommandInterface({
 })
 
 async function give(p,con,msg,args,global,send){
-	let id = "";
-	if(args.length==1&&global.isUser(args[0]))
-		id = args[0].match(/[0-9]+/)[0];
-	else{
-		p.errorMsg(", Wrong arguments! >:c",3000);
-		return;
+	let user = undefined;
+	user = p.getMention(p.args[0]);
+	if(!user){
+		user = await p.fetch.getMember(p.msg.channel.guild,p.args[0]);
+		if(!user){
+			p.errorMsg(", I could not find that user!",3000);
+			p.setCooldown(5);
+			return;
+		}
 	}
-
-	let user = p.getMention(id);
-	if(user==undefined){
-		p.errorMsg(", I could not find that user!",3000);
-		return;
-	}else if(msg.author.id==user.id){
+	if(msg.author.id==user.id){
 		p.errorMsg(", you can't give yourself a cookie, silly!",3000);
 		return;
 	}
