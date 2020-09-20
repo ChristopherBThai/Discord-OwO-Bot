@@ -36,6 +36,7 @@ module.exports = new CommandInterface({
 		user = p.getMention(p.args[0]);
 		if (!user) {
 			p.errorMsg(", you must tag a user!", 5000);
+			p.setCooldown(5);
 			return;
 		}
 
