@@ -228,6 +228,7 @@ function initParam(msg,command,args,main){
 		main.cooldown.setCooldown(param,aliasToCommand[command],cooldown);
 	}
 	param.getMention = function(id){
+		if(!id) return;
 		id = id.match(/[0-9]+/);
 		if(!id) return;
 		id = id[0];
