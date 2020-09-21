@@ -1,4 +1,3 @@
-const { system } = require('systeminformation');
 /*
  * OwO Bot for Discord
  * Copyright (C) 2019 Christopher Thai
@@ -106,7 +105,7 @@ async function handleWarning(p) {
 			"name":"⚠️ Hold on there, "+p.msg.author.username+"!",
 			"icon_url":p.msg.author.avatarURL
 		},
-		"description":"If there's less on the floor than you're trying to pick up, you'll drop it instead!\nReact with 👍 to confirm you understand!",
+		"description":"If you try to pickup more than what's on the floor, you'll drop it instead!\nReact with 👍 to confirm you understand!",
 		"color": p.config.embed_color,
 	};
 	let msg = await p.send({embed});
