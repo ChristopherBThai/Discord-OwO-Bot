@@ -7,6 +7,9 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
+const acceptEmoji = '👍';
+const key = "pickup";
+
 module.exports = new CommandInterface({
 
 	alias:["drop","pickup"],
@@ -62,6 +65,11 @@ async function drop(p){
 }
 
 async function pickup(p){
+	let agreed = await p.redis.hget("data_"+p.msg.author.id, key);
+	if (!agreed) {
+		handleWarning(p);
+		return;
+	}
 	let amount;
 	if(p.global.isInt(p.args[0])) amount = parseInt(p.args[0]);
 	if(!amount){
@@ -89,4 +97,37 @@ async function pickup(p){
 		p.neo4j.drop(p.msg, amount);
 		p.logger.decr(`cowoncy`, -1 * amount, {type:'drop'}, p.msg);
 	}
+}
+
+async function handleWarning(p) {
+	let embed = {
+		"author":{
+			"name":"⚠️ Hold on there, "+p.msg.author.username+"!",
+			"icon_url":p.msg.author.avatarURL
+		},
+		"description":"If you try to pickup more than what's on the floor, you'll drop it instead!\nReact with 👍 to confirm you understand!",
+		"color": p.config.embed_color,
+	};
+	let msg = await p.send({embed});
+
+	await msg.addReaction(acceptEmoji);
+
+	let filter = (emoji, userID) => (emoji.name === acceptEmoji) && p.msg.author.id === userID;
+	let collector = p.reactionCollector.create(msg,filter,{time:60000});
+	collector.on('collect',async emoji => {
+		collector.stop("done");
+		p.redis.hincrby("data_"+p.msg.author.id, key, 1);
+		embed.color = 65280;
+		embed.author.name = "✅ You're all set, "+p.msg.author.username+"!";
+		embed.description = "**"+acceptEmoji+" |** The **pickup** command is now enabled for you! Good luck!";
+		msg.edit({embed});
+		p.setCooldown(5);
+	});
+
+	collector.on('end',async function(reason){
+		if(reason!="done"){
+			embed.color = 6381923;
+			await msg.edit({content:"This message is now inactive",embed});
+		}
+	});
 }
