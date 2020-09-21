@@ -37,6 +37,11 @@ class Command {
 			return;
 		}
 
+		if (!(await acceptedRules(this.main, msg))) {
+			executeCommand(this.main,initParam(msg,"rule",[],this.main));
+			return;
+		}
+
 		//Get command name
 		let command = args.shift().toLowerCase();
 
@@ -285,6 +290,15 @@ async function checkPrefix(main, msg) {
 	if (msg.channel.guild.prefix && content.startsWith(msg.channel.guild.prefix)) {
 		return msg.content.slice(msg.channel.guild.prefix.length).trim().split(/ +/g);
 	}
+}
+
+async function acceptedRules(main, msg) {
+	if (msg.author.acceptedRules === undefined) {
+		let sql = `SELECT rules.* FROM rules INNER JOIN user ON user.uid = rules.uid WHERE id = ${msg.author.id};`;
+		let result = await main.mysqlhandler.query(sql);
+		msg.author.acceptedRules = !!result[0];
+	}
+	return msg.author.acceptedRules;
 }
 
 module.exports = Command;
