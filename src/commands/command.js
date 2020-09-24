@@ -294,7 +294,7 @@ async function checkPrefix(main, msg) {
 }
 
 async function acceptedRules(main, msg) {
-	if (msg.author.acceptedRules === undefined) {
+	if (!msg.author.acceptedRules) {
 		let sql = `SELECT rules.* FROM rules INNER JOIN user ON user.uid = rules.uid WHERE id = ${msg.author.id};`;
 		let result = await main.mysqlhandler.query(sql);
 		msg.author.acceptedRules = !!result[0];
