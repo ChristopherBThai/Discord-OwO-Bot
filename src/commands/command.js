@@ -37,17 +37,18 @@ class Command {
 			return;
 		}
 
-		if (!(await acceptedRules(this.main, msg))) {
-			executeCommand(this.main,initParam(msg,"rule",[],this.main));
-			return;
-		}
-
 		//Get command name
 		let command = args.shift().toLowerCase();
 
 		//  Check if that command exists
 		if(!commands[command]) {
 			executeCommand(this.main,initParam(msg,"points",[],this.main));
+			return;
+		}
+
+		// Make sure user accepts rules first
+		if (!(await acceptedRules(this.main, msg))) {
+			executeCommand(this.main,initParam(msg,"rule",[],this.main));
 			return;
 		}
 
