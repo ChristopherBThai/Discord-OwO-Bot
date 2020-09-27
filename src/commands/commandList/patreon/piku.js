@@ -57,7 +57,11 @@ module.exports = new CommandInterface({
 			p.send(`${p.config.emoji.invalid} **|** Your garden is out of carrots!\n${p.config.emoji.blank} **|** You harvested ${max} carrots today!\n${p.config.emoji.blank} **|** You can harvest ${max+1} tomorrow!\n${p.config.emoji.blank} **|** You have ${total} carrots in total!`);
 		} else if (current == 1) {
 			let spoil = (prevMax + 1) - max;
-			p.send(`${carrotEmoji} **|** You picked one PikPik carrot!\n${p.config.emoji.blank} **|** Yesterday you let ${spoil} carrots spoil...\n${p.config.emoji.blank} **|** You can still harvest ${max} today.\n${p.config.emoji.blank} **|** You have ${total} carrots in total!`);
+			if (prevMax == 0) {
+				p.send(`${carrotEmoji} **|** You picked one PikPik carrot!\n${p.config.emoji.blank} **|** You have ${total} carrots in total!`);
+			} else {
+				p.send(`${carrotEmoji} **|** You picked one PikPik carrot!\n${p.config.emoji.blank} **|** Yesterday you let ${spoil} carrots spoil...\n${p.config.emoji.blank} **|** You can still harvest ${max} today.\n${p.config.emoji.blank} **|** You have ${total} carrots in total!`);
+			}
 		} else {
 			p.send(`${carrotEmoji} **|** You picked one PikPik carrot!\n${p.config.emoji.blank} **|** You harvested ${current}/${max} today!\n${p.config.emoji.blank} **|** You have ${total} carrots in total!`);
 		}
