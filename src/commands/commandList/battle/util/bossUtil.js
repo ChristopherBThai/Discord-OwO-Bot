@@ -12,6 +12,7 @@ const zooAnimalUtil = require('../../zoo/animalUtil.js');
 const battleAnimalUtil = require('./animalUtil.js');
 const imagegenAuth = require('../../../../../../tokens/imagegen.json');
 const weaponUtil = require('./weaponUtil.js');
+
 const bossLength = 1;// 3600000;
 const guildSizes = [5, 25, 100, 500, 1000]
 const rates = [
@@ -19,11 +20,14 @@ const rates = [
 	{ c:0.2,  u:0.5,  r:0.2,  e:0.1,  m:0,    l:0,    f:0 },
 	{ c:0.1,  u:0.2,  r:0.4,  e:0.2,  m:0.1,  l:0,    f:0 },
 	{ c:0.04, u:0.1,  r:0.25, e:0.35, m:0.25, l:0.01, f:0 },
-	{ c:0,    u:0.05, r:0.11, e:0.4,  m:0.4,  l:0.03, f:0.01 },
-	{ c:0,    u:0.01,  r:0.1,  e:0.35, m:0.47, l:0.05, f:0.02 }
+	{ c:0,    u:0.04, r:0.11, e:0.4,  m:0.4,  l:0.03, f:0.02 },
+	{ c:0,    u:0,  r:0.1,  e:0.35, m:0.47, l:0.05, f:0.03 }
 ]
 const lvls = { c:[30,39], u:[40,49], r:[50,59], e:[60,69], m:[70,79], l:[80,89], f:[90,100]}
 const appearRate = 1;
+
+const animalRankPoints = parseRankPoints();
+const weaponRankPoints = parseWeaponPoints();
 
 exports.check = async function (p) {
 	if (Math.random() > appearRate) return;
@@ -40,9 +44,34 @@ exports.check = async function (p) {
 		return;
 	}
 	
+	const bossInfo = await createBossInfo(p.msg.channel.guild.memberCount);
+	
+	// save to db
+	sql = `INSERT INTO guild_boss (gid, active, created, boss_animal, boss_lvl, boss_hp, boss_wp) VALUES
+  				(${guildId}, 1, NOW(), '${bossInfo.animal.value}', ${bossInfo.lvl}, ${bossInfo.stats.hp[0]}, ${bossInfo.stats.wp[0]})
+				ON DUPLICATE KEY UPDATE
+					active = 1, created = NOW(), boss_animal = VALUES(boss_animal), boss_lvl = VALUES(boss_lvl), boss_hp = VALUES(boss_hp), boss_wp = VALUES(boss_wp);`;
+	// delete existing data
+	sql += `DELETE FROM boss_weapon_passive WHERE gid = ${guildId}; DELETE FROM boss_weapon WHERE gid = ${guildId}; DELETE FROM user_boss WHERE gid = ${guildId};`;
+	// insert weapon and passives
+	sql += `INSERT INTO boss_weapon (gid, wid, stat, avg) VALUES (${guildId}, ${bossInfo.weapon.id}, '${bossInfo.weapon.sqlStat}', ${bossInfo.weapon.avgQuality});`;
+	const passiveSql = [];
+	for (let i in bossInfo.weapon.passives) {
+		const passive = bossInfo.weapon.passives[i];
+		passiveSql.push(`(${guildId}, ${passive.id}, ${i}, '${passive.sqlStat}')`);
+	}
+	if (passiveSql.length) {
+		sql += `INSERT INTO boss_weapon_passive (gid, wpid, pcount, stat) VALUES ${passiveSql.join(", ")};`;
+	}
+	result = await p.query(sql);
+	
+	// display
+	p.send(await createEmbed(p, bossInfo));
+}
+
+async function createBossInfo (memberCount) {
 	// pick boss rank
 	let guildSize = guildSizes.length;
-	const memberCount = p.msg.channel.guild.memberCount;
 	for (let i in guildSizes) {
 		if (memberCount < guildSizes[i]) {
 			guildSize = i;
@@ -68,32 +97,33 @@ exports.check = async function (p) {
 	
 	// generate weapon
 	const weapon = weaponUtil.getRandomWeapon({extraPassive: 1});
-	
-	// save to db
-	sql = `INSERT INTO guild_boss (gid, active, created, boss_animal, boss_lvl, boss_hp, boss_wp) VALUES
-  				(${guildId}, 1, NOW(), '${animal.value}', ${lvl}, ${stats.hp[0]}, ${stats.wp[0]})
-				ON DUPLICATE KEY UPDATE
-					active = 1, created = NOW(), boss_animal = VALUES(boss_animal), boss_lvl = VALUES(boss_lvl), boss_hp = VALUES(boss_hp), boss_wp = VALUES(boss_wp);`;
-	// delete existing data
-	sql += `DELETE FROM boss_weapon_passive WHERE gid = ${guildId}; DELETE FROM boss_weapon WHERE gid = ${guildId}; DELETE FROM user_boss WHERE gid = ${guildId};`;
-	// insert weapon and passives
-	sql += `INSERT INTO boss_weapon (gid, wid, stat, avg) VALUES (${guildId}, ${weapon.id}, '${weapon.sqlStat}', ${weapon.avgQuality});`;
-	const passiveSql = [];
-	for (let i in weapon.passives) {
-		const passive = weapon.passives[i];
-		passiveSql.push(`(${guildId}, ${passive.id}, ${i}, '${passive.sqlStat}')`);
-	}
-	if (passiveSql.length) {
-		sql += `INSERT INTO boss_weapon_passive (gid, wpid, pcount, stat) VALUES ${passiveSql.join(", ")};`;
-	}
-	result = await p.query(sql);
-	
-	// display
-	p.send(createEmbed(p, {lvl, animal, weapon, stats, time: new Date()}));
-	
+
+	const bossInfo = {lvl, animal, weapon, stats, time: new Date()}
+	bossInfo.rank = calculateRank(bossInfo);
+
+	return bossInfo;
 }
 
-function createEmbed (p, { lvl, animal, weapon, stats, time }) {
+/*
+setTimeout(async () => {
+	let memberCounts = [1, 24, 99, 499, 999, 1001];
+	for (let i in memberCounts) {
+		let memberCount = memberCounts[i];
+		console.log(`\nmember count: ${memberCount}`);
+		let total = {'common':0, 'uncommon':0, 'rare':0, 'epic':0, 'mythical':0, 'legendary':0, 'fabled':0};
+		let count = 100000;
+		for (let i = 0; i < count; i++) {
+			const rank = (await createBossInfo(memberCount)).rank;
+			total[rank]++;
+		}
+		for (let rank in total) {
+			console.log(`${rank}: ${100 * (total[rank]/count)}`);
+		}
+	}
+},100)
+*/
+
+async function createEmbed (p, { lvl, animal, weapon, stats, time, rank }) {
 	const embed = {
 		title: "A boss appears!",
 		description: "Fight the boss with `owo boss fight`!",
@@ -109,7 +139,6 @@ function createEmbed (p, { lvl, animal, weapon, stats, time }) {
 	embed.description += `\n**\`\`Lvl ${lvl}\`\`** R ${animal.value}   ${weapon.emoji}`;
 	const passiveEmojis = weapon.passives.map(passive => passive.emoji);
 	if (passiveEmojis) embed.description += ` ${passiveEmojis.join(' ')}`;
-	console.log(stats);
 	const hp = stats.hp[1]+stats.hp[3];
 	const att = stats.att[0]+stats.att[1];
 	const pr = WeaponInterface.resToPrettyPercent(stats.pr);
@@ -119,21 +148,16 @@ function createEmbed (p, { lvl, animal, weapon, stats, time }) {
 	embed.description += `\n<:hp:531620120410456064> \`${hp}\` <:att:531616155450998794> \`${att}\` <:pr:531616156222488606> \`${pr}\` `;
 	embed.description += `\n<:wp:531620120976687114> \`${wp}\` <:mag:531616156231139338> \`${mag}\` <:mr:531616156226945024> \`${mr}\` `;
 
-	/*
-	const image = await fetchBossImage({lvl, animal, weapon, stats});
-	if(!image||image=="") {
+	const uuid = await fetchBossImage({lvl, animal, weapon, stats, rank});
+	if(uuid&&uuid!="") {
 		embed.image = {
-			url: `${imagegenAuth.imageGenUrl}/image/${image}`
+			url: `${imagegenAuth.imageGenUrl}/img/${uuid}.png`
 		}
-	}
-	*/
-	embed.image = {
-		url: "https://cdn.discordapp.com/attachments/420713232265641985/755287689275768882/bossframes.png"
 	}
 	return {embed};
 }
 
-function fetchBossImage ({lvl, animal, weapon, stats }) {
+function fetchBossImage ({lvl, animal, weapon, stats, rank }) {
 	/* Parse animal info */
 	let animalID = animal.value.match(/:[0-9]+>/g);
 	if(animalID) animalID = animalID[0].match(/[0-9]+/g)[0];
@@ -166,6 +190,7 @@ function fetchBossImage ({lvl, animal, weapon, stats }) {
 
 	/* Construct json for POST request */
 	const info = {
+		rank,
 		animal_name:nickname,
 		animal_image:animalID,
 		weapon_image:weaponID,
@@ -184,7 +209,7 @@ function fetchBossImage ({lvl, animal, weapon, stats }) {
 		return new Promise( (resolve, reject) => {
 			let req = request({
 				method:'POST',
-				uri:`${imagegenAuth.imageApiUri}/bossgen`,
+				uri:`${imagegenAuth.imageApiUri_t}/bossgen`,
 				json:true,
 				body: info,
 			},(error,res,body)=>{
@@ -212,3 +237,49 @@ const parseStats = exports.parseStats = function (animal, lvl) {
 	const stats = battleAnimalUtil.parseStats(animal, lvl);
 	return stats;
 }
+
+// Calcualte overall rank from animal rarity, weapon rarity, and level
+function calculateRank (bossInfo) {
+	totalPoints = 0;
+	totalPoints += animalRankPoints[bossInfo.animal.rank];
+	totalPoints += weaponRankPoints[bossInfo.weapon.rank.name];
+	totalPoints += bossInfo.lvl * 3;
+	totalPoints /= 5;
+	if (totalPoints < 30)
+		return 'common';
+	else if (totalPoints < 35)
+		return 'uncommon'
+	else if (totalPoints < 45)
+		return 'rare'
+	else if (totalPoints < 55)
+		return 'epic'
+	else if (totalPoints < 65)
+		return 'mythical'
+	else if (totalPoints < 75)
+		return 'legendary'
+	else 
+		return 'fabled'
+}
+
+function parseRankPoints () {
+	const points = JSON.parse(JSON.stringify(require('../../../../../../tokens/owo-animals.json').points));
+	const order = [];
+	for (let rank in points) {
+		order.push(rank);
+	}
+	order.sort((a, b) => points[a] - points[b]);
+	const fabledPosition = order.findIndex(rank => rank === 'fabled');
+	for (let i in order) {
+		points[order[i]] = Math.min(100, i * (100 / fabledPosition));
+	}
+	return points;
+}
+
+function parseWeaponPoints () {
+	const points = {};
+	for (let i in WeaponInterface.ranks) {
+		points[WeaponInterface.ranks[i][1]] = i * (100 / (WeaponInterface.ranks.length - 1))
+	}
+	return points;
+}
+
