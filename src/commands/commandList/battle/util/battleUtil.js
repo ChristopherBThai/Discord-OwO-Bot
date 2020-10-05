@@ -951,24 +951,31 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 	}
 
 
+	const opt = {turns: logs.length};
 	if(!setting||!setting.noMsg){
 		/* Send result message */
 		let embed = await display(p,battle,logs,setting);
 		embed.embed.color = color;
 		text += ` Your team gained ${pXP.xp} xp`;
 		if(pXP){
-			if(pXP.resetStreak)
+			opt.xp = pXP.xp;
+			if(pXP.resetStreak) {
 				text+= `! You lost your streak of ${battle.player.streak} wins...`;
-			else if(pXP.addStreak){
-				if(pXP.bonus)
+				opt.streak = battle.player.streak;
+			} else if(pXP.addStreak){
+				if(pXP.bonus){
 					text+= ` + ${pXP.bonus} bonus xp! Streak: ${battle.player.streak+1}`;
-				else
+					opt.xp += ` + ${pXP.bonus}`;
+				}else
 					text+=`! Streak: ${battle.player.streak+1}`;
-			}else
+				opt.streak = battle.player.streak+1;
+			} else {
 				text+=`! Streak: ${battle.player.streak}`;
+				opt.streak = battle.player.streak;
+			}
 		}else text += '!';
 		embed.embed.footer = {text};
-		embed.embed = alterBattle.alter(p.msg.author.id,embed.embed);
+		embed.embed = alterBattle.alter(p.msg.author.id,embed.embed, opt);
 		if(msg) await msg.edit(embed);
 		else p.send(embed);
 	}
