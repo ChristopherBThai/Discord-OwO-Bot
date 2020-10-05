@@ -64,6 +64,43 @@ module.exports = new CommandInterface({
 
 		/* If it's not past midnight */
 		if(afterMid&&!afterMid.after){
+			/* double check marriage */
+			if(rows[2][0]&&rows[2][0].daily1&&rows[2][0].daily2){
+				afterMid = dateUtil.afterMidnight(rows[2][0].claimDate);
+				if(afterMid.after){
+					const u1Date = dateUtil.afterMidnight(rows[2][0].daily1);
+					const u2Date = dateUtil.afterMidnight(rows[2][0].daily2);
+					if (!u1Date.after && !u2Date.after) {
+						let totalStreak = rows[2][0].streak1 + rows[2][0].streak2;
+						let totalGain = Math.round(100 + Math.floor(Math.random()*100)+totalStreak*12.5);
+						if(totalGain>1000) totalGain = 1000;
+						sql = `UPDATE marriage SET claimDate = ${afterMid.sql}, dailies = dailies + 1 WHERE uid1 = ${rows[2][0].uid1} AND uid2 = ${rows[2][0].uid2} AND dailies = ${rows[2][0].dailies};`;
+						let result = await p.query(sql);
+						if (result.changedRows) {
+							let so;
+							if(p.msg.author.id == rows[2][0].id1){
+								so = await p.fetch.getUser(rows[2][0].id2);
+							} else {
+								so = await p.fetch.getUser(rows[2][0].id1);
+							}
+							const ring = rings[rows[2][0].rid];
+							let text = ring.emoji+"** |** You and "+(so?so.username:"your partner")+" received <:cowoncy:416043450337853441> **"+totalGain+" Cowoncy** and a ";
+
+							sql = `UPDATE cowoncy SET money = money + ${totalGain} WHERE id IN (${rows[2][0].id1},${rows[2][0].id2});`;
+							if(Math.random()<.5){
+								sql += "INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES ("+rows[2][0].id2+",1,0,'2017-01-01'),("+rows[2][0].id2+",1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
+								text += "<:box:427352600476647425> **lootbox**!";
+							}else{
+								sql += "INSERT INTO crate(uid,cratetype,boxcount,claimcount,claim) VALUES ((SELECT uid FROM user WHERE id = "+rows[2][0].id1+"),0,1,0,'2017-01-01'),((SELECT uid FROM user WHERE id = "+rows[2][0].id2+"),0,1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
+								text += "<:crate:523771259302182922> **weapon crate**!";
+							}
+							await p.query(sql);
+							p.send(text);
+							return;
+						}
+					}
+				}
+			}
 			p.send("**⏱ |** Nu! **"+msg.author.username+"**! You need to wait **"+afterMid.hours+"H "+afterMid.minutes+"M "+afterMid.seconds+"S**");
 
 		/* Past midnight */
@@ -151,7 +188,7 @@ module.exports = new CommandInterface({
 						let totalGain = Math.round(100 + Math.floor(Math.random()*100)+totalStreak*12.5);
 						if(totalGain>1000) totalGain = 1000;
 						sql += `UPDATE cowoncy SET money = money + ${totalGain} WHERE id IN (${soID},${p.msg.author.id});`;
-						sql += `UPDATE marriage SET dailies = dailies + 1 WHERE uid1 = ${rows[2][0].uid1} AND uid2 = ${rows[2][0].uid2};`;
+						sql += `UPDATE marriage SET claimDate = ${afterMid.sql}, dailies = dailies + 1 WHERE uid1 = ${rows[2][0].uid1} AND uid2 = ${rows[2][0].uid2};`;
 
 						let so = await p.fetch.getUser(soID);
 						let ring = rings[rows[2][0].rid];

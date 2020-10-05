@@ -49,6 +49,8 @@ exports.alter = function(id,text,info){
 			return kitsune(text,info);
 		case '343094664414363658':
 			return tiggy(text, info);
+		case '166619476479967232':
+			return valentine(text, info);
 		default:
 			return text;
 	}
@@ -423,4 +425,31 @@ function tiggy(text, info) {
 	}
 	text += info.lootboxText || '';
 	return text;
+}
+
+function valentine(text, info) {
+	const moon = "<a:moon:759722114201812993>";
+	const cat = "<a:cat:759722302786764852>";
+	const butterfly = "<:butterfly:759722177766621224>";
+	const wand = "<a:wand:759724096954564630>";
+
+	if(info.gemText){
+		text = `${moon} **| ${info.author.username}**  arrives at 火星, blessed by ${info.gemText}\n${butterfly} **|** you returned with: ${info.animalEmojis}`;
+	}else{
+		text = `${moon} **| ${info.author.username}**  arrives at 火星 ${wand}\n${butterfly} **|** you returned with: ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${butterfly} **|** ${info.petText} gained **${info.animalXp}xp** ${cat}!`;
+	}
+	text += info.lootboxText || '';
+	text.replace(blank, butterfly);
+	const embed = {
+		description: text,
+		color: 1,
+		thumbnail: {
+			url: "https://i.imgur.com/19cjldb.gif"
+		}
+	}
+
+	return {embed};
 }

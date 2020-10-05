@@ -46,6 +46,12 @@ class Command {
 			return;
 		}
 
+		// Make sure user accepts rules first
+		if (!(await acceptedRules(this.main, msg))) {
+			executeCommand(this.main,initParam(msg,"rule",[],this.main));
+			return;
+		}
+
 		//Init params to pass into command
 		let param = initParam(msg,command,args,this.main);
 
@@ -228,6 +234,7 @@ function initParam(msg,command,args,main){
 		main.cooldown.setCooldown(param,aliasToCommand[command],cooldown);
 	}
 	param.getMention = function(id){
+		if(!id) return;
 		id = id.match(/[0-9]+/);
 		if(!id) return;
 		id = id[0];
@@ -284,6 +291,15 @@ async function checkPrefix(main, msg) {
 	if (msg.channel.guild.prefix && content.startsWith(msg.channel.guild.prefix)) {
 		return msg.content.slice(msg.channel.guild.prefix.length).trim().split(/ +/g);
 	}
+}
+
+async function acceptedRules(main, msg) {
+	if (!msg.author.acceptedRules) {
+		let sql = `SELECT rules.* FROM rules INNER JOIN user ON user.uid = rules.uid WHERE id = ${msg.author.id};`;
+		let result = await main.mysqlhandler.query(sql);
+		msg.author.acceptedRules = !!result[0];
+	}
+	return msg.author.acceptedRules;
 }
 
 module.exports = Command;

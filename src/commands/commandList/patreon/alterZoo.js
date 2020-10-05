@@ -128,7 +128,22 @@ function heysay(text){
 }
 
 function xmelanie(text) {
-	text = text.split("\n");
+	let newRanks = {
+		c:"<a:xmelanie_c:755346243798040587>",
+		u:"<a:xmelanie_u:755346244036984833>",
+		r:"<a:xmelanie_r:755346244280385536>",
+		e:"<a:xmelanie_e:755346244217602078>",
+		m:"<a:xmelanie_m:755346244255088670>",
+		cp:"<a:xmelanie_p:755346244255088710>",
+		p:"<a:xmelanie_p:755346244255088710>",
+		l:"<a:xmelanie_l:758969896385904690>",
+		g:"<a:xmelanie_g:755346244246962186>",
+		f:"<a:xmelanie_f:755346244183916554>",
+		s:"<a:xmelanie_s:755346243949166603>",
+		b:"<a:xmelanie_b:755346243957424128>"
+	}
+	text = replaceRanks(text,newRanks)
+		.split("\n");
 	text[0] = "<:mickey:747723512768102453> <a:stitch:747723512982274060> <a:olaf:747723512755650591> **Mel's Animal Kingdom** <a:dory:747723513242058786> <a:baby_yoda:747723513367887914> <a:castle:747723513758220339>";
 	return text.join("\n");
 }
