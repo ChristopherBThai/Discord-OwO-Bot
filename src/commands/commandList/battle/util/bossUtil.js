@@ -183,24 +183,30 @@ function fetchBossImage ({lvl, animal, weapon, stats, rank }) {
 
 	/* Parse weapon info */
 	let weaponID;
+	let passiveIDs = [];
 	if(weapon){
 		weaponID = weapon.emoji.match(/:[0-9]+>/g);
 		if(weaponID) weaponID = weaponID[0].match(/[0-9]+/g)[0];
+		weapon.passives?.forEach(passive => {
+			passiveID = passive.emoji.match(/:[0-9]+>/g);
+			if(passiveID) passiveIDs.push(passiveID[0].match(/[0-9]+/g)[0]);
+		})
 	}
 
 	/* Construct json for POST request */
 	const info = {
 		rank,
-		animal_name:nickname,
-		animal_image:animalID,
-		weapon_image:weaponID,
-		animal_level:lvl,
-		animal_hp:hp,
-		animal_wp:wp,
-		animal_att:Math.ceil(stats.att[0]+stats.att[1]),
-		animal_mag:Math.ceil(stats.mag[0]+stats.mag[1]),
-		animal_pr:WeaponInterface.resToPrettyPercent(stats.pr),
-		animal_mr:WeaponInterface.resToPrettyPercent(stats.mr)
+		animal_name: nickname,
+		animal_image: animalID,
+		weapon_image: weaponID,
+		weapon_passives: passiveIDs,
+		animal_level: lvl,
+		animal_hp: hp,
+		animal_wp: wp,
+		animal_att: Math.ceil(stats.att[0]+stats.att[1]),
+		animal_mag: Math.ceil(stats.mag[0]+stats.mag[1]),
+		animal_pr: WeaponInterface.resToPrettyPercent(stats.pr),
+		animal_mr: WeaponInterface.resToPrettyPercent(stats.mr)
 	};
 	info.password = imagegenAuth.password;
 
