@@ -951,7 +951,7 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 	}
 
 
-	const opt = {turns: logs ? 0 : logs.length};
+	const opt = {turns: logs ? logs.length : 0};
 	if(!setting||!setting.noMsg){
 		/* Send result message */
 		let embed = await display(p,battle,logs,setting);
