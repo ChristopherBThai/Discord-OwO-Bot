@@ -22,9 +22,9 @@ module.exports = class Poison extends BuffInterface{
 
 	// Override
 	bind(animal,duration,tags){
-		for(let i in animal.buffs){
-			if(animal.buffs[i].id == this.id && animal.buffs[i].from.pid==this.from.pid){
-				animal.buffs[i].duration += duration;
+		for(let i in animal.debuffs){
+			if(animal.debuffs[i].id == this.id && animal.debuffs[i].from.pid==this.from.pid){
+				animal.debuffs[i].duration += duration;
 				return;
 			}
 		}
@@ -52,6 +52,8 @@ module.exports = class Poison extends BuffInterface{
 		let damage = WeaponInterface.getDamage(this.from.stats.mag,this.stats[0]/100);
 		damage = WeaponInterface.inflictDamage(this.from,animal,damage,WeaponInterface.MAGICAL,{me:this.from,allies:enemy,enemies:ally});
 		logs.push(`[POIS] ${this.from.nickname} damaged ${animal.nickname} for ${damage.amount} HP`, damage.logs);
+		
+		console.log("poison damage");
 
 		super.postTurn(animal,ally,enemy,action);
 

@@ -102,6 +102,12 @@ function generateAnimalJson(animal){
 		if(buff) buffs.push(buff[0].match(/[0-9]+/g)[0]);
 	}
 
+	for(let i in animal.debuffs){
+		let debuff = animal.debuffs[i];
+		debuff = debuff.emoji.match(/:[0-9]+>/g);
+		if(debuff) buffs.push(debuff[0].match(/[0-9]+/g)[0]);
+	}
+
 	return {
 		animal_name:nickname,
 		animal_image:animalID,

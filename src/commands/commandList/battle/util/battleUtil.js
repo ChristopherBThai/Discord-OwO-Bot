@@ -119,7 +119,7 @@ var getBattle = exports.getBattle = async function(p,setting){
 /* Creates a brand new battle */
 exports.initBattle = async function(p,setting){
 	/* Find random opponent */
-	let sql = `SELECT COUNT(pgid) AS count FROM pet_team_animal;SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id}`;
+	let sql = `SELECT COUNT(distinct pgid) AS count FROM pet_team_animal;SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id}`;
 	let count = await p.query(sql);
 	let pgid = count[1][0];
 	if(!pgid){
@@ -739,6 +739,12 @@ function initSqlSaveBuffs(team){
 				`(${pgid},${pid},${buff.id},${buff.duration},'${buff.sqlStat}',${buff.from.pid})`
 			);
 		}
+		for(let j in animal.debuffs){
+			let debuff = animal.debuffs[j];
+			result.push(
+				`(${pgid},${pid},${debuff.id},${debuff.duration},'${debuff.sqlStat}',${debuff.from.pid})`
+			);
+		}
 	}
 	for(let i in team.enemy.team){
 		let animal = team.enemy.team[i];
@@ -747,6 +753,12 @@ function initSqlSaveBuffs(team){
 			let buff = animal.buffs[j];
 			result.push(
 				`(${pgid},${pid},${buff.id},${buff.duration},'${buff.sqlStat}',${buff.from.pid})`
+			);
+		}
+		for(let j in animal.debuffs){
+			let debuff = animal.debuffs[j];
+			result.push(
+				`(${pgid},${pid},${dbuff.id},${debuff.duration},'${debuff.sqlStat}',${debuff.from.pid})`
 			);
 		}
 	}
@@ -788,7 +800,12 @@ function parseSqlBuffs(team,buffs,otherTeam){
 					}
 					if(owner){
 						buff = new buff(owner,qualities,buffs[j].duration);
-						animal.buffs.push(buff);
+						if (buff.debuff) {
+							animal.debuffs.push(buff);
+						}
+						else {
+							animal.buffs.push(buff);
+						}
 					}
 				}
 			}
@@ -804,12 +821,12 @@ function preTurn(team,enemy,action){
 		let animal= team[i];
 		check = WeaponInterface.canAttack(animal,team,enemy,action);
 		animal.disabled = check;
-		for(let j in animal.buffs){
-			let log = animal.buffs[j].preTurn(animal,team,enemy,action[i]);
-			if(log) logs = logs.concat(log.logs);
-		}
 		for(let j in animal.debuffs){
 			let log = animal.debuffs[j].preTurn(animal,team,enemy,action[i]);
+			if(log) logs = logs.concat(log.logs);
+		}
+		for(let j in animal.buffs){
+			let log = animal.buffs[j].preTurn(animal,team,enemy,action[i]);
 			if(log) logs = logs.concat(log.logs);
 		}
 		if(animal.weapon){
@@ -885,14 +902,14 @@ function postTurn(team,enemy,action){
 	for(let i in team){
 		let animal= team[i];
 		// Start from the top down to avoid splice errors
-		let j = animal.buffs.length;
-		while(j--){
-			let log = animal.buffs[j].postTurn(animal,team,enemy,action[i]);
-			if(log) logs = logs.concat(log.logs);
-		}
-		j = animal.debuffs.length;
+		let j = animal.debuffs.length;
 		while(j--){
 			let log = animal.debuffs[j].postTurn(animal,team,enemy,action[i]);
+			if(log) logs = logs.concat(log.logs);
+		}
+		j = animal.buffs.length;
+		while(j--){
+			let log = animal.buffs[j].postTurn(animal,team,enemy,action[i]);
 			if(log) logs = logs.concat(log.logs);
 		}
 		if(animal.weapon){
@@ -1081,6 +1098,11 @@ function animalDisplayText(animal){
 		for(let i in animal.buffs)
 			text += animal.buffs[i].emoji;
 	}
+	if(animal.debuffs.length>0){
+		text += " ";
+		for(let i in animal.debuffs)
+			text += animal.debuffs[i].emoji;
+	}
 	text += "\n`"+animalUtil.bar(animal.stats)+"`\n";
 	let hp = Math.ceil(animal.stats.hp[0]);
 	if(hp<0) hp = 0;
@@ -1112,6 +1134,11 @@ function animalCompactDisplayText(animal){
 		text += " ";
 		for(let i in animal.buffs)
 			text += animal.buffs[i].emoji;
+	}
+	if(animal.debuffs.length>0){
+		text += " ";
+		for(let i in animal.debuffs)
+			text += animal.debuffs[i].emoji;
 	}
 	let hp = Math.ceil(animal.stats.hp[0]);
 	if(hp<0) hp = 0;

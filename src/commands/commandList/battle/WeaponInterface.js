@@ -510,6 +510,8 @@ module.exports = class WeaponInterface{
 		let subLogs = new Logs();
 		for(let i in animal.buffs)
 			subLogs.push(animal.buffs[i].canAttack(animal,ally,enemy,action,result));
+		for(let i in animal.debuffs)
+			subLogs.push(animal.debuffs[i].canAttack(animal,ally,enemy,action,result));
 		if(animal.weapon)
 			for(let i in animal.weapon.passives)
 				subLogs.push(animal.weapon.passives[i].canAttack(animal,ally,enemy,action,result));

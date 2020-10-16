@@ -22,9 +22,9 @@ module.exports = class Mortality extends BuffInterface{
 
 	// Override
 	bind(animal,duration,tags){
-		for(let i in animal.buffs){
-			if(animal.buffs[i].id == this.id){
-				animal.buffs[i].duration += duration;
+		for(let i in animal.debuffs){
+			if(animal.debuffs[i].id == this.id){
+				animal.debuffs[i].duration += duration;
 				return;
 			}
 		}

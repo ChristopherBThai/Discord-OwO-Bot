@@ -67,7 +67,12 @@ module.exports = class BuffInterface{
 	/* Bind this buff to an animal */
 	bind(animal,duration,tags={}){
 		if(duration) this.duration = duration;
-		animal.buffs.push(this);
+		if (this.debuff) {
+			animal.debuffs.push(this);
+		}
+		else {
+			animal.buffs.push(this);
+		}
 		this.justCreated = true;
 	}
 
@@ -109,6 +114,12 @@ module.exports = class BuffInterface{
 			for(let i=0;i<animal.buffs.length;i++){
 				if(animal.buffs[i].id == this.id && animal.buffs[i].from.pid==this.from.pid){
 					animal.buffs.splice(i,1);
+					i--;
+				}
+			}
+			for(let i=0;i<animal.debuffs.length;i++){
+				if(animal.debuffs[i].id == this.id && animal.debuffs[i].from.pid==this.from.pid){
+					animal.debuffs.splice(i,1);
 					i--;
 				}
 			}
