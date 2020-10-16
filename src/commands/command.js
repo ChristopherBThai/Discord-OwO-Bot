@@ -1,6 +1,6 @@
 /*
  * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Copyright (C) 2020 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
@@ -43,6 +43,12 @@ class Command {
 		//  Check if that command exists
 		if(!commands[command]) {
 			executeCommand(this.main,initParam(msg,"points",[],this.main));
+			return;
+		}
+
+		// Make sure user accepts rules first
+		if (!(await acceptedRules(this.main, msg))) {
+			executeCommand(this.main,initParam(msg,"rule",[],this.main));
 			return;
 		}
 
@@ -103,9 +109,8 @@ async function executeCommand(main,p){
 	// Execute command
 	await commands[p.command].execute(p);
 
-	// Log stats to datadog api
-	let dm = p.msg.channel.type==1;
-	logger.increment("command",['command:'+p.commandAlias,/*'id:'+p.msg.author.id,'guild:'+(dm?p.msg.channel.id:p.msg.channel.guild.id),'channel:'+p.msg.channel.id,*/'dm:'+dm]);
+	// Log stats to statsd
+	logger.command(p.commandAlias, p.msg);
 }
 
 /**
@@ -229,6 +234,7 @@ function initParam(msg,command,args,main){
 		main.cooldown.setCooldown(param,aliasToCommand[command],cooldown);
 	}
 	param.getMention = function(id){
+		if(!id) return;
 		id = id.match(/[0-9]+/);
 		if(!id) return;
 		id = id[0];
@@ -285,6 +291,15 @@ async function checkPrefix(main, msg) {
 	if (msg.channel.guild.prefix && content.startsWith(msg.channel.guild.prefix)) {
 		return msg.content.slice(msg.channel.guild.prefix.length).trim().split(/ +/g);
 	}
+}
+
+async function acceptedRules(main, msg) {
+	if (!msg.author.acceptedRules) {
+		let sql = `SELECT rules.* FROM rules INNER JOIN user ON user.uid = rules.uid WHERE id = ${msg.author.id};`;
+		let result = await main.mysqlhandler.query(sql);
+		msg.author.acceptedRules = !!result[0];
+	}
+	return msg.author.acceptedRules;
 }
 
 module.exports = Command;

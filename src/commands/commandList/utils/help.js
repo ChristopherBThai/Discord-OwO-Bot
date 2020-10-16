@@ -93,7 +93,7 @@ function display(p){
 			{"name":"🎭 Social",
 				"value":"`cookie` `ship`  `pray`  `curse`  `marry`  `emoji`  `profile`  `level`  `wallpaper`  `owoify`  `avatar`"},
 			{"name":"😂 Meme Generation",
-				"value":"`spongebobchicken`  `slapcar`  `isthisa`  `drake`  `distractedbf`"},
+				"value":"`spongebobchicken`  `slapcar`  `isthisa`  `drake`  `distractedbf`  `communismcat` `eject`"},
 			{"name":"🙂 Emotes",
 				"value":sEmotes},
 			{"name":"🤗 Actions",

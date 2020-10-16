@@ -129,11 +129,11 @@ async function sellAnimal(p,msg,con,animal,count,send,global){
 		}else{
 			count = result[0][0].count;
 			send("**🔪 | "+msg.author.username+"** sacrificed **"+global.unicodeAnimal(animal.value)+"x"+count+"** for **"+essence+" "+(global.toFancyNum(count*animal.essence))+"**");
-			p.logger.value('essence',count*animal.essence,['id:'+p.msg.author.id,'guild:'+p.msg.channel.guild.id,'animal:'+animal.value,'count:'+count,'command:sacrifice']);
+			p.logger.incr(`essence`, count * animal.essence, {type:'sacrifice'}, p.msg);
 		}
 	}else if(result[1]&&result[1].affectedRows>0){
 		send("**🔪 | "+msg.author.username+"** sacrificed **"+global.unicodeAnimal(animal.value)+"x"+count+"** for **"+essence+" "+(global.toFancyNum(count*animal.essence))+"**");
-		p.logger.value('essence',count*animal.essence,['id:'+p.msg.author.id,'guild:'+p.msg.channel.guild.id,'animal:'+animal.value,'count:'+count,'rank:'+animal.rank,'command:sacrifice']);
+		p.logger.incr(`essence`, count * animal.essence, {type:'sacrifice'}, p.msg);
 	}else{
 		send("**🚫 | "+msg.author.username+"**, You can't sacrifice more than you have silly! >:c",3000);
 	}
@@ -161,7 +161,7 @@ async function sellRank(p,msg,con,rank,send,global){
 
 		for(let i in result[0]){
 			let tempAnimal = p.global.validAnimal(result[0][i].name);
-			p.logger.value('essence',result[0][i].count*rank.essence,['id:'+p.msg.author.id,'guild:'+p.msg.channel.guild.id,'animal:'+tempAnimal.name,'count:'+result[0][i].count,'rank:'+rank.rank,'command:sacrifice']);
+			p.logger.incr(`essence`, count * rank.essence, {type:'sacrifice'}, p.msg);
 		}
 	}
 }
@@ -206,7 +206,7 @@ async function sellRanks(p,msg,con,ranks,send,global,p){
 			for(let j in result[count*2]){
 				let temp = result[count*2][j];
 				let tempAnimal = p.global.validAnimal(temp.name);
-				p.logger.value('essence',temp.count*rank.essence,['id:'+p.msg.author.id,'guild:'+p.msg.channel.guild.id,'animal:'+tempAnimal.name,'count:'+temp.count,'rank:'+rank.rank,'command:sacrifice']);
+				p.logger.incr(`essence`, temp.count * rank.essence, {type:'sacrifice'}, p.msg);
 			}
 			count++;
 		}

@@ -9,8 +9,8 @@ const dailyWeaponUtil = require('../../commands/commandList/battle/util/dailyWea
 
 exports.handle = async function(main, message){
 	if(main.debug) return;
-	let {clusterID} = JSON.parse(message);
-	if(clusterID!=main.clusterID) return;
+	let {shardID} = JSON.parse(message);
+	if (!main.bot.shards.has(shardID)) return;
 	await dailyWeaponUtil.resetDailyWeapons();
 }
 	

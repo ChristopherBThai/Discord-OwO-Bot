@@ -34,7 +34,8 @@ module.exports = new CommandInterface({
 		sql += "INSERT INTO cowoncy (id,money) VALUES ("+p.msg.author.id+",2) ON DUPLICATE KEY UPDATE money = money + 2;";
 
 		await p.query(sql);
-		p.logger.value('cowoncy',2,['command:points','id:'+p.msg.author.id]);
+		p.logger.incr(`cowoncy`, 2, {type:'points'}, p.msg);
+		p.logger.incr(`points`, 1, {}, p.msg);
 	}
 
 })

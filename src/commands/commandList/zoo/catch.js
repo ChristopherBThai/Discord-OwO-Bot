@@ -103,15 +103,15 @@ module.exports = new CommandInterface({
 			}
 
 			//Alter text for legendary tier patreons
-			text = alterHunt.alter(p.msg.author.id,text,{author:p.msg.author, lootboxText: (lootbox ? lootbox.text : ''), petText, animalXp, gemText: animal.gemText, animalText:animal.text, animalEmojis:animal.animalText});
+			text = alterHunt.alter(p.msg.author.id,text,{author:p.msg.author, lootboxText: (lootbox ? lootbox.text : ''), petText, animalXp, gemText: animal.gemText, animalText:animal.text, animalEmojis:animal.animalText, animal: animal.animal});
 			//text += "\n⚠ **|** `battle` and `hunt` cooldowns have increased to prevent rateLimits issues.\n<:blank:427371936482328596> **|** They will revert back to `15s` in the future.";
 
 			let result2 = await p.query(sql);
-			p.logger.value('cowoncy',-5,['command:hunt','id:'+msg.author.id]);
+			p.logger.decr(`cowoncy`, -5, {type:'hunt'}, p.msg);
 			for(let i in animal.animal){
 				let tempAnimal = p.global.validAnimal(animal.animal[i][1]);
-				p.logger.value('animal',1,['animal:'+tempAnimal.name,'rank:'+tempAnimal.rank,'id:'+p.msg.author.id,'guild:'+p.msg.channel.guild.id]);
-				p.logger.value('animal.points',tempAnimal.points,['animal:'+tempAnimal.name,'rank:'+tempAnimal.rank,'id:'+p.msg.author.id,'guild:'+p.msg.channel.guild.id]);
+				p.logger.incr(`animal`, 1, {rank:tempAnimal.rank, name:tempAnimal.name}, p.msg);
+				p.logger.incr(`zoo`, tempAnimal.points, {}, p.msg);
 			}
 			p.quest("hunt");
 			p.quest("find",1,animal.typeCount);
