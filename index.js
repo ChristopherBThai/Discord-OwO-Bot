@@ -39,10 +39,10 @@ const totalShards = 10;
 		// How many clusters we will have
 		var clusters = Math.ceil(shards/totalShards);
 		if(debug){
-			shards = 1;
+			shards = 10;
 			firstShardID = 0;
-			lastShardID = 1;
-			clusters = 1
+			lastShardID = 9;
+			clusters = 2
 		}
 
 		console.log("Creating shards "+firstShardID+"~"+lastShardID+" out of "+shards+" total shards!");

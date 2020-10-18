@@ -193,6 +193,10 @@ function fetchBossImage ({lvl, animal, weapon, stats, rank }) {
 		})
 	}
 
+	/* Fetch rewards */
+	const rewards = getRewards(rank, lvl);
+	console.log(rewards);
+
 	/* Construct json for POST request */
 	const info = {
 		rank,
@@ -206,7 +210,8 @@ function fetchBossImage ({lvl, animal, weapon, stats, rank }) {
 		animal_att: Math.ceil(stats.att[0]+stats.att[1]),
 		animal_mag: Math.ceil(stats.mag[0]+stats.mag[1]),
 		animal_pr: WeaponInterface.resToPrettyPercent(stats.pr),
-		animal_mr: WeaponInterface.resToPrettyPercent(stats.mr)
+		animal_mr: WeaponInterface.resToPrettyPercent(stats.mr),
+		rewards
 	};
 	info.password = imagegenAuth.password;
 
@@ -287,5 +292,67 @@ function parseWeaponPoints () {
 		points[WeaponInterface.ranks[i][1]] = i * (100 / (WeaponInterface.ranks.length - 1))
 	}
 	return points;
+}
+
+function getRewards(rank, lvl) {
+	let lvlPercent;
+	for (let i in lvls) {
+		if (lvls[i][0] <= lvl && lvl <= lvls[i][1]) {
+			lvlPercent = (lvl - lvls[i][0]) / (lvls[i][1] - lvls[i][0]);
+		}
+	}
+	switch (rank) {
+		case 'common':
+			return [
+				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'fcrate',   text: global.toFancyNum(1 + Math.round(1 * lvlPercent)) },
+			]
+		case 'uncommon':
+			return [
+				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'fcrate',   text: global.toFancyNum(1 + Math.round(1 * lvlPercent)) },
+			]
+		case 'rare':
+			return [
+				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'fcrate',   text: global.toFancyNum(1 + Math.round(1 * lvlPercent)) },
+			]
+		case 'epic':
+			return [
+				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'fcrate',   text: global.toFancyNum(1 + Math.round(1 * lvlPercent)) },
+			]
+		case 'mythical':
+			return [
+				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'fcrate',   text: global.toFancyNum(1 + Math.round(1 * lvlPercent)) },
+			]
+		case 'legendary':
+			return [
+				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'fcrate',   text: global.toFancyNum(1 + Math.round(1 * lvlPercent)) },
+			]
+		case 'fabled':
+			return [
+				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'fcrate',   text: global.toFancyNum(1 + Math.round(1 * lvlPercent)) },
+			]
+		default:
+			throw "No rank for: " + rank;
+	}
 }
 
