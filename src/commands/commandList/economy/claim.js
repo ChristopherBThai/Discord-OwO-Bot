@@ -54,53 +54,58 @@ module.exports = new CommandInterface({
 		}
 
 		// parse rewards
-		sql = ' INSERT INTO user_compensation (uid, cid) VALUES ';
-		let sqlValues = [];
-		let weaponCrate = 0;
-		let cowoncy = 0;
-		let lootbox = 0;
-		result[0].forEach(row => {
-			const rewards = row.reward.split(',');
-			sqlValues.push(`(${uid},${row.id})`);
-			rewards.forEach(reward => {
-				const type = reward.charAt(0);
-				const count = parseInt(reward.substring(1));
-				switch (type) {
-					case 'c':
-						cowoncy += count;
-						break;
-					case 'l':
-						lootbox += count;
-						break;
-					case 'w':
-						weaponCrate += count;
-						break;
-					default:
-						p.errorMsg(", Failed to claim rewards", 5000);
-						throw "Invalid reward type"
-				}
-			});
-		});
-		sql += sqlValues.join(',') + ';';
+		let totalRewards = 0;
+		let totalCowoncy = 0;
+		let totalLootbox = 0;
+		let totalWeaponCrate = 0;
+		for (let i in result[0]) {
+			let row = result[0][i]
+			sql = `INSERT IGNORE INTO user_compensation (uid, cid) VALUES (${uid}, ${row.id});`;
+			let result2 = await p.query(sql);
 
-		let txt = `, You claimed ${result[0].length} reward(s)! 🎉\n`
+			if (result2.affectedRows) {
+				sql = '';
+				totalRewards++;
+				const rewards = row.reward.split(',');
+				rewards.forEach(reward => {
+					const type = reward.charAt(0);
+					const count = parseInt(reward.substring(1));
+					switch (type) {
+						case 'c':
+							sql += `INSERT INTO cowoncy (id, money) VALUES (${p.msg.author.id}, ${count}) ON DUPLICATE KEY UPDATE money = money + ${count};`;
+							totalCowoncy += count;
+							break;
+						case 'l':
+							sql += `INSERT INTO crate (uid,cratetype,boxcount,claimcount,claim) VALUES (${uid},0,${count},0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
+							totalLootbox += count;
+							break;
+						case 'w':
+							sql += `INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES (${p.msg.author.id},${count},0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
+							totalWeaponCrate += count;
+							break;
+					}
+				});
+				await p.query(sql);
+			}
+		}
+
+		if (!totalRewards) {
+			p.errorMsg(", Failed to claim rewards", 5000);
+			return;
+		}
+		let txt = `, You claimed ${totalRewards} reward(s)! 🎉\n`
 		txt += `${p.config.emoji.blank} **|** `;
 		rewardTxt = [];
-		if (cowoncy) {
-			sql += `INSERT INTO cowoncy (id, money) VALUES (${p.msg.author.id}, ${cowoncy}) ON DUPLICATE KEY UPDATE money = money + ${cowoncy};`;
-			rewardTxt.push(`+${cowoncy} ${p.config.emoji.cowoncy}`);
+		if (totalCowoncy) {
+			rewardTxt.push(`+${totalCowoncy} ${p.config.emoji.cowoncy}`);
 		}
-		if (weaponCrate) {
-			sql += `INSERT INTO crate (uid,cratetype,boxcount,claimcount,claim) VALUES (${uid},0,${weaponCrate},0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${weaponCrate};`;
-			rewardTxt.push(`+${weaponCrate} ${p.config.emoji.crate}`);
+		if (totalWeaponCrate) {
+			rewardTxt.push(`+${totalWeaponCrate} ${p.config.emoji.crate}`);
 		}
-		if (lootbox) {
-			sql += `INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES (${p.msg.author.id},${lootbox},0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${lootbox};`;
-			rewardTxt.push(`+${lootbox} ${p.config.emoji.lootbox}`);
+		if (totalLootbox) {
+			rewardTxt.push(`+${totalLootbox} ${p.config.emoji.lootbox}`);
 		}
 		txt += rewardTxt.join(',');
-
-		await p.query(sql);
 		await p.replyMsg(giftEmoji, txt);
 	}
 
