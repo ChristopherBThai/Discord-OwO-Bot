@@ -35,6 +35,16 @@ INSERT INTO `weapon` VALUES (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),(
 UNLOCK TABLES;
 
 --
+-- Dumping data for table 'animals'
+--
+
+LOCK TABLES `animals` WRITE;
+/*!40000 ALTER TABLE `animals` DISABLE KEYS */;
+INSERT INTO `animals` VALUES (':bee:'),(':bug:'),(':snail:'),(':beetle:'),(':butterfly:'),(':baby_chick:'),(':mouse2:'),(':rooster:'),(':rabbit2:'),(':chipmunk:'),(':sheep:'),(':pig2:'),(':cow2:'),(':dog2:'),(':cat2:'),(':crocodile:'),(':tiger2:'),(':penguin:'),(':elephant:'),(':whale:'),(':dragon:'),(':unicorn:'),(':snowman2:'),(':ghost:'),(':dove:'),(':gsquid:'),(':gowl:'),(':glion:'),(':gfox:'),(':gdeer:');
+/*!40000 ALTER TABLE `animals` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Dumping data for table `weapon_passive`
 --
 
