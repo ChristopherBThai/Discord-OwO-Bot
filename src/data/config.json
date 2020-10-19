@@ -19,7 +19,7 @@
 				"RELATIONSHIP_REMOVE":true
 			},
 			"disableEveryone":true,
-			"messageLimit":10,
+			"messageLimit":1,
 			"defaultImageFormat":"png",
 			"defaultImageSize":128,
 			"restMode":true,
