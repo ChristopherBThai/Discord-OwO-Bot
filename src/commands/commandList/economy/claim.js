@@ -50,6 +50,7 @@ module.exports = new CommandInterface({
 		const uid = result[1][0].uid;
 		if (!uid) {
 			p.errorMsg(", Failed to claim rewards", 5000);
+			return;
 		}
 
 		// parse rewards
