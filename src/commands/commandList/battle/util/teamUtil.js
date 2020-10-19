@@ -216,7 +216,7 @@ exports.renameTeam = async function(p,teamName){
 		)`;
 	const result = await p.query(sql,name);
 	if(result.affectedRows>0){
-		p.replyMsg(battleEmoji,`, You successfully changed your team name to: **${name}**`);
+		p.replyMsg(battleEmoji,p.replaceMentions(`, You successfully changed your team name to: **${name}**`));
 	}else{
 		p.errorMsg(", You don't have a team! Please set one with `owo team add {animal}`",5000);
 	}
@@ -303,7 +303,7 @@ const createTeamEmbed = exports.createTeamEmbed = function (p, team, other={}) {
 			let mag = (''+Math.ceil(animal.stats.mag[0]+animal.stats.mag[1])).padStart(digits,"0");
 			let pr = WeaponInterface.resToPrettyPercent(animal.stats.pr);
 			let mr = WeaponInterface.resToPrettyPercent(animal.stats.mr);
-			title += `${(animal.animal.uni)?animal.animal.uni:animal.animal.value} **${(animal.nickname)?animal.nickname:animal.animal.name}** `;
+			title += p.replaceMentions(`${(animal.animal.uni)?animal.animal.uni:animal.animal.value} **${(animal.nickname)?animal.nickname:animal.animal.name}** `);
 			body = `Lvl ${animal.stats.lvl} \`[${p.global.toFancyNum(animal.stats.xp[0])}/${p.global.toFancyNum(animal.stats.xp[1])}]\`\n<:hp:531620120410456064> \`${hp}\` <:wp:531620120976687114> \`${wp}\`\n<:att:531616155450998794> \`${att}\` <:mag:531616156231139338> \`${mag}\`\n<:pr:531616156222488606> \`${pr}\` <:mr:531616156226945024> \`${mr}\`\n`;
 			let weapon = animal.weapon;
 			if(weapon){
@@ -320,7 +320,7 @@ const createTeamEmbed = exports.createTeamEmbed = function (p, team, other={}) {
 	/* Construct msg */
 	return embed = {
 		"author":{
-			"name":p.msg.author.username+"'s "+other.tname,
+			"name":p.msg.author.username+"'s "+p.replaceMentions(other.tname),
 			"icon_url":p.msg.author.avatarURL
 		},
 		"description":"`owo team add {animal} {pos}` Add an animal to your team\n`owo team remove {pos}` Removes an animal from your team\n`owo team rename {name}` Renames your team\n`owo rename {animal} {name}` Rename an animal\n`owo setteam {teamNum}` to set multiple teams",

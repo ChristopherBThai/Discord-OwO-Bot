@@ -17,9 +17,11 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 		let time;
-		if(p.global.isInt(p.args[1])){
+		let hasTime = false;
+		if(p.args[1] && p.global.isInt(p.args[1])){
 			time = parseInt(p.args[1]);
-		}else{
+			hasTime = true
+		}else if(p.args[1]){
 			p.errorMsg(", Wrong time format");
 			return;
 		}
@@ -28,13 +30,13 @@ module.exports = new CommandInterface({
 			p.errorMsg(", Invalid user id");
 			return;
 		}
-		let sql = "UPDATE IGNORE timeout SET penalty = "+time+" WHERE id = "+p.args[0]+";";
+		let sql = "UPDATE IGNORE timeout SET penalty = 0"+(hasTime ? ", prev_penalty = "+time : "")+" WHERE id = "+p.args[0]+";";
 		let result = await p.query(sql);
 
 		if(user = await p.sender.msgUser(p.args[0],"**🙇 |** Your penalty has been lifted by an admin! Sorry for the inconvenience!"))
-			p.send("Penalty has been set to "+time+" for "+user.username);
+			p.send("Penalty has been set to 0 for "+user.username);
 		else if(guild = await p.fetch.getGuild(p.args[0]))
-			p.send("Penalty has been set to "+time+" for guild: "+guild.name);
+			p.send("Penalty has been set to 0 for guild: "+guild.name);
 		else
 			p.send("Failed to set penalty for that user");
 	}

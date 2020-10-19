@@ -11,6 +11,7 @@ const config = require('./src/data/config.json');
 // Grab tokens and secret files
 const debug = config.debug;
 if(!debug) var tracer = require('dd-trace').init();
+
 if(debug) var auth = require('../tokens/scuttester-auth.json');
 else var auth = require('../tokens/owo-auth.json');
 
@@ -25,25 +26,27 @@ if(require('cluster').isMaster){
 	const RamCheck = new (require('./utils/ramCheck.js'))(global);
 }
 
-const totalShards = 8;
+const totalShards = 10;
 
 (async () => {
 	try{
 		//determine how many shards we will need for this manager
 		if (!debug&&require('cluster').isMaster){
 			result = await request.fetchInit();
-			shards = result["shards"];
-			firstShardID = result["firstShardID"];
-			lastShardID = result["lastShardID"];
+			console.log(result);
+			shards = parseInt(result["shards"]);
+			firstShardID = parseInt(result["firstShardID"]);
+			lastShardID = parseInt(result["lastShardID"]);
 		}
 		// How many clusters we will have
 		var clusters = Math.ceil(shards/totalShards);
 		if(debug){
-			shards = 2;
+			shards = 1;
 			firstShardID = 0;
-			lastShardID = shards-1;
-			clusters = 1;
+			lastShardID = 1;
+			clusters = 1
 		}
+
 		console.log("Creating shards "+firstShardID+"~"+lastShardID+" out of "+shards+" total shards!");
 
 		// Start sharder

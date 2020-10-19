@@ -28,8 +28,8 @@ module.exports = new CommandInterface({
 	group:["social"],
 
 	cooldown:300000,
-	half:100,
-	six:500,
+	half:22,
+	six:200,
 	bot:true,
 
 	execute: async function(p){
@@ -103,9 +103,9 @@ module.exports = new CommandInterface({
 		p.send(text);
 		if(user&&quest) p.quest(quest,1,user);
 		if(opponentPoints&&user)
-			p.logger.value(p.command,1,['guild:'+p.msg.channel.guild.id,'channel:'+p.msg.channel.id,'to:'+user.id,'from:'+p.msg.author.id]);
+			p.logger.incr(`pray`, 1, {from:p.msg.author.id, to:user.id});
 		else
-			p.logger.value(p.command,1,['guild:'+p.msg.channel.guild.id,'channel:'+p.msg.channel.id,'to:'+p.msg.author.id,'from:'+p.msg.author.id]);
+			p.logger.incr(`pray`, 1, {from:p.msg.author.id, to:'self'});
 	}
 
 })

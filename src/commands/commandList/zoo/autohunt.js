@@ -92,8 +92,12 @@ async function claim(p,msg,con,query,bot){
 	//Get all animal
 	let total = {};
 	let digits = 1;
+	let radar = autohuntutil.getLvl(query.radar,0,"radar");
 	for(let i=0;i<query.huntcount;i++){
-		let animal = animalUtil.randAnimal(patreon);
+		let animal = animalUtil.randAnimal({
+			patreon: patreon, 
+			huntbot: radar.stat/100
+		});
 		if(total[animal[1]]){
 			total[animal[1]].count++;
 			if(total[animal[1]].count>digits)
@@ -102,7 +106,7 @@ async function claim(p,msg,con,query,bot){
 			total[animal[1]] = {count:1,rank:animal[2]};
 		}
 	}
-	digits= Math.trunc(Math.log10(digits)+1);
+	digits = Math.trunc(Math.log10(digits)+1);
 	let text = "**"+bot+" |** `BEEP BOOP. I AM BACK WITH "+query.huntcount+" ANIMALS,`\n**<:blank:427371936482328596> |** `"+totalGain+" ESSENCE, AND "+totalExp+" EXPERIENCE`";
 	let tempText = [];
 	let count = 0;
@@ -128,10 +132,10 @@ async function claim(p,msg,con,query,bot){
 	p.send(text);
 	for(let animal in total){
 		let tempAnimal = global.validAnimal(animal);
-		logger.value('animal',total[animal].count,['animal:'+tempAnimal.name,'rank:'+tempAnimal.rank,'id:'+msg.author.id,'guild:'+msg.channel.guild.id]);
-		logger.value('animal.points',tempAnimal.points*total[animal].count,['animal:'+tempAnimal.name,'rank:'+tempAnimal.rank,'id:'+msg.author.id,'guild:'+msg.channel.guild.id]);
+		logger.incr(`animal`, total[animal].count, {rank:tempAnimal.rank, name:tempAnimal.name}, p.msg);
+		logger.incr(`zoo`, tempAnimal.points*total[animal].count, {}, p.msg);
 	}
-	logger.value('essence',totalGain,['id:'+msg.author.id,'guild:'+msg.channel.guild.id,'command:huntbot','animal:huntbot']);
+	logger.incr(`essence`, totalGain, {type:'huntbot'}, p.msg);
 }
 
 async function autohunt(p,msg,con,args,global,send){
@@ -211,17 +215,17 @@ async function autohunt(p,msg,con,args,global,send){
 	let duration,efficiency,cost,essence,maxhunt,gain,exp;
 	if(result[0][0]){
 		duration = autohuntutil.getLvl(result[0][0].duration,0,"duration");
-		efficiency= autohuntutil.getLvl(result[0][0].efficiency,0,"efficiency");
-		cost= autohuntutil.getLvl(result[0][0].cost,0,"cost");
-		gain= autohuntutil.getLvl(result[0][0].gain,0,"gain");
-		exp= autohuntutil.getLvl(result[0][0].exp,0,"exp");
+		efficiency = autohuntutil.getLvl(result[0][0].efficiency,0,"efficiency");
+		cost = autohuntutil.getLvl(result[0][0].cost,0,"cost");
+		gain = autohuntutil.getLvl(result[0][0].gain,0,"gain");
+		exp = autohuntutil.getLvl(result[0][0].exp,0,"exp");
 		essence = result[0][0].essence;
 	}else{
 		duration = autohuntutil.getLvl(0,0,"duration");
-		efficiency= autohuntutil.getLvl(0,0,"efficiency");
-		cost= autohuntutil.getLvl(0,0,"cost");
-		gain= autohuntutil.getLvl(0,0,"gain");
-		exp= autohuntutil.getLvl(0,0,"exp");
+		efficiency = autohuntutil.getLvl(0,0,"efficiency");
+		cost = autohuntutil.getLvl(0,0,"cost");
+		gain = autohuntutil.getLvl(0,0,"gain");
+		exp = autohuntutil.getLvl(0,0,"exp");
 		essence = 0;
 	}
 	maxhunt = Math.floor(duration.stat*efficiency.stat);
@@ -242,7 +246,7 @@ async function autohunt(p,msg,con,args,global,send){
 	sql = "UPDATE cowoncy SET money = money - "+cowoncy+" WHERE id = "+msg.author.id+";";
 	sql += "INSERT INTO autohunt (id,start,huntcount,huntmin,password) VALUES ("+msg.author.id+",NOW(),"+huntcount+","+huntmin+",'') ON DUPLICATE KEY UPDATE start = NOW(), huntcount = "+huntcount+",huntmin = "+huntmin+",password = '';";
 	result = await p.query(sql);
-	logger.value('cowoncy',(cowoncy*-1),['command:autohunt','id:'+msg.author.id]);
+	logger.decr(`cowoncy`, -1 * cowoncy, {type:'huntbot'}, p.msg);
 	let min = huntmin%60;
 	let hour = Math.trunc(huntmin/60);
 	let timer = "";
@@ -270,21 +274,23 @@ async function display(p,msg,con,send){
 	let duration,efficiency,cost,essence,maxhunt,gain,exp;
 	if(result[0][0]){
 		duration = autohuntutil.getLvl(result[0][0].duration,0,"duration");
-		efficiency= autohuntutil.getLvl(result[0][0].efficiency,0,"efficiency");
-		cost= autohuntutil.getLvl(result[0][0].cost,0,"cost");
-		gain= autohuntutil.getLvl(result[0][0].gain,0,"gain");
-		exp= autohuntutil.getLvl(result[0][0].exp,0,"exp");
+		efficiency = autohuntutil.getLvl(result[0][0].efficiency,0,"efficiency");
+		cost = autohuntutil.getLvl(result[0][0].cost,0,"cost");
+		gain = autohuntutil.getLvl(result[0][0].gain,0,"gain");
+		exp = autohuntutil.getLvl(result[0][0].exp,0,"exp");
+		radar = autohuntutil.getLvl(result[0][0].radar,0,"radar");
 		essence = result[0][0].essence;
 	}else{
 		duration = autohuntutil.getLvl(0,0,"duration");
-		efficiency= autohuntutil.getLvl(0,0,"efficiency");
-		cost= autohuntutil.getLvl(0,0,"cost");
-		gain= autohuntutil.getLvl(0,0,"gain");
-		exp= autohuntutil.getLvl(0,0,"exp");
+		efficiency = autohuntutil.getLvl(0,0,"efficiency");
+		cost = autohuntutil.getLvl(0,0,"cost");
+		gain = autohuntutil.getLvl(0,0,"gain");
+		exp = autohuntutil.getLvl(0,0,"exp");
+		radar = autohuntutil.getLvl(0,0,"radar");
 		essence = 0;
 	}
 
-	let traits = [duration,efficiency,cost,gain,exp];
+	let traits = [duration,efficiency,cost,gain,exp,radar];
 	for(let i=0;i<traits.length;i++){
 		traits[i].percent = generatePercent(traits[i].currentxp,traits[i].maxxp).bar;
 		if(traits[i].max) traits[i].value = "`Lvl "+traits[i].lvl+" [MAX]`\n"+generatePercent(1,1).bar;
@@ -326,6 +332,11 @@ async function display(p,msg,con,send){
 			{
 				"name": "⚔ Experience - `"+exp.stat+exp.prefix+"`",
 				"value": exp.value,
+				"inline": true
+			},
+			{
+				"name": "📡 Radar - `"+radar.stat+radar.prefix+"`",
+				"value": radar.value,
 				"inline": true
 			},
 			{

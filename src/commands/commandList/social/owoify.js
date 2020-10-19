@@ -47,7 +47,7 @@ module.exports = new CommandInterface({
 		}
 
 		// OwOify
-		text = owo(text);
+		text = p.replaceMentions(owo(text));
 		// If its from a previous msg
 		if(author) text = "**"+author.username+":** "+text;
 		await p.send(text);

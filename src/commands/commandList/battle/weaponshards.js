@@ -143,7 +143,7 @@ async function dismantleRank(p,rankLoc){
 	result = await p.query(sql);
 
 	p.replyMsg(dismantleEmoji,`, You dismantled all of your ${rank} weapons for **${price}** ${shardEmoji} WeaponShards!\n${p.config.emoji.blank} **| Dismantled:** ${weapons.join('')}`);
-	p.logger.value('weaponshards',(price),['id:'+p.msg.author.id]);
+	p.logger.incr(`shards`, price, {type:'dismantle'}, p.msg);
 }
 
 async function dismantleId(p,uwid){
@@ -225,6 +225,6 @@ async function dismantleId(p,uwid){
 	result = await p.query(sql);
 
 	p.replyMsg(dismantleEmoji,`, You dismantled a(n) **${weapon.rank.name} ${weapon.name}**  ${weapon.rank.emoji}${weapon.emoji} for **${p.global.toFancyNum(price)}** ${shardEmoji} Weapon Shard${price==1?'':'s'}!`);
-	p.logger.value('weaponshards',(price),['id:'+p.msg.author.id]);
+	p.logger.incr(`shards`, price, {type:'dismantle'}, p.msg);
 
 }

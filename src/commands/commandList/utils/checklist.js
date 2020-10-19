@@ -70,7 +70,7 @@ module.exports = new CommandInterface({
 		}else if(!reward){
 			description += "\n"+box+" "+tada+" Complete your checklist to get a reward!";
 		}else{
-			description += "\n"+check+" "+tada+" You earned 1,000 "+p.config.emoji.cowoncy+", 1 "+p.config.emoji.lootbox+", and 1 "+p.config.emoji.crate+"!";
+			description += "\n"+check+" "+tada+" You earned 1,000 "+p.config.emoji.cowoncy+", 1 "+p.config.emoji.lootbox+", 1 "+p.config.emoji.crate+", and 1 "+p.config.emoji.cookie+"!";
 		}
 
 		if(reward){
@@ -78,8 +78,10 @@ module.exports = new CommandInterface({
 			sql = `UPDATE timers SET checklist = ${afterMid.sql} WHERE uid = ${uid};
 					UPDATE lootbox SET boxcount = boxcount + 1 WHERE id = ${p.msg.author.id};
 					UPDATE crate SET boxcount = boxcount + 1 WHERE uid = ${uid};
-					UPDATE cowoncy SET money = money + 1000 WHERE id = ${p.msg.author.id};`;
+					UPDATE cowoncy SET money = money + 1000 WHERE id = ${p.msg.author.id};
+					UPDATE rep SET count = count + 1 WHERE id = ${p.msg.author.id};`;
 			result = await p.query(sql);
+			p.quest("cookieBy",1,p.msg.author);
 		}
 
 		let embed = {
@@ -142,27 +144,11 @@ function quests(p){
 		sql:`SELECT questrrTime,questTime FROM user INNER JOIN timers ON user.uid = timers.uid WHERE id = ${p.msg.author.id};`,
 		parse:function(result){
 			let afterMid = dateUtil.afterMidnight((result[0])?result[0].questTime:undefined);
+			let rrText = dateUtil.afterMidnight((result[0])?result[0].questrrTime:undefined).after ? " (+rr)" : "";
 			if(afterMid&&!afterMid.after){
-				afterMid = dateUtil.afterMidnight((result[0])?result[0].questrrTime:undefined);
-				if(afterMid&&!afterMid.after)
-					return {done:true,desc:"You already claimed today's quest!",emoji:'📜'}
-				else
-					return {done:true,desc:"You already claimed today's quest! (+rr)",emoji:'📜'}
+				return {done:true,desc:"You already claimed today's quest!"+rrText,emoji:'📜'}
 			}else
-				return {done:false,desc:"You can still claim a quest! (+rr)",emoji:'📜'}
-		}
-	}
-}
-
-function questrr(p){
-	return {
-		sql:`SELECT questrrTime FROM user INNER JOIN timers ON user.uid = timers.uid WHERE id = ${p.msg.author.id};`,
-		parse:function(result){
-			let afterMid = dateUtil.afterMidnight((result[0])?result[0].questrrTime:undefined);
-			if(afterMid&&!afterMid.after)
-				return {done:true,desc:"You already rerolled a quest today!",emoji:'🔄'}
-			else
-				return {done:false,desc:"You can still reroll a quest!",emoji:'🔄'}
+				return {done:false,desc:"You can still claim a quest!"+rrText,emoji:'📜'}
 		}
 	}
 }
