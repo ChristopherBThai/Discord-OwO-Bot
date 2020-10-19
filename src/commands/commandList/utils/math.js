@@ -18,7 +18,7 @@ module.exports = new CommandInterface({
 
 	args:"{equation}",
 
-	desc:"Let me do your math homework! Add an equation for me to solve! More in-depth syntax can be found here: https://mathjs.org/docs/expressions/syntax.html",
+	desc:"Let me do your math homework! Add an expression for me to solve! More in-depth syntax can be found here: https://mathjs.org/docs/expressions/syntax.html",
 
 	example:["owo math 2 + 2"],
 
@@ -57,9 +57,9 @@ module.exports = new CommandInterface({
 					p.replyMsg(mathEmoji,p.replaceMentions(", the answer is: **"+result+"**"));
 			}).catch(function(err){
 				if(err.message=='Promise timed out after 1000 ms')
-					p.errorMsg(", that equation is too difficult for me... :c",3000);
+					p.errorMsg(", that expression is too difficult for me... :c",3000);
 				else
-					p.errorMsg("... I don't think that's an equation silly head",3000);
+					p.errorMsg("... I don't think that's an expression silly head",3000);
 			}).then(function(){
 				pool.terminate();
 			});
