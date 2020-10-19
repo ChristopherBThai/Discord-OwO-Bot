@@ -7,10 +7,11 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const { NovelCovid } = require ('novelcovid');
-const track = new NovelCovid();
-const cases = {};
+const request = require('request');
+const secret = require('../../../../../tokens/wsserver.json');
+let cases = {};
 fetchCases();
+setInterval(fetchCases,1800000);
 
 module.exports = new CommandInterface({
 
@@ -67,14 +68,14 @@ function showStats(p, name) {
 	}
 
 	if (stat.country || name === "global") {
-		let percent = Math.round(stat.casesPerOneMillion/1000)/100;
+		let percent = Math.round(stat.casesPerOneMillion/1000)/1000;
 		if (!percent) percent = "<0.001";
 		embed.fields.push({
 			name: "Total Cases",
 			value: "**"+p.global.toFancyNum(stat.cases)+"** (+"+p.global.toFancyNum(stat.todayCases)+") ["+percent+"%]"
 		});
 
-		percent = Math.round(stat.deathsPerOneMillion/1000)/100;
+		percent = Math.round(stat.deathsPerOneMillion/1000)/1000;
 		if (!percent) percent = "<0.001";
 		embed.fields.push({
 			name: "Total Deaths",
@@ -138,21 +139,16 @@ function showStats(p, name) {
 	p.send({embed});
 }
 
-setInterval(fetchCases,1800000);
 
 async function fetchCases() {
-	let global = await track.all();
-	cases.global = global;
-
-	let states = await track.states();
-	for (let i in states) {
-		let stateName = states[i].state;
-		cases[stateName.replace(/\s/gi,"").toLowerCase()] = states[i];
-	}
-
-	let countries = await track.countries();
-	for (let i in countries) {
-		let countryName = countries[i].country;
-		cases[countryName.replace(/\s/gi,"").toLowerCase()] = countries[i];
-	}
+	request({
+		method:'GET',
+		uri:secret.url+"/covid",
+	},(error,res,body)=>{
+		if(error){
+			console.error(error);
+			return;
+		}
+		cases = JSON.parse(body);
+	});
 }

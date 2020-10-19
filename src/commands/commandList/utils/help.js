@@ -66,7 +66,7 @@ module.exports = new CommandInterface({
 					await battleHelpUtil.help(p,6);
 					break;
 				default:
-					describe(p.send,p.args[0],p.commands[command]);
+					describe(p,p.send,p.args[0],p.commands[command]);
 			}
 		}
 	}
@@ -93,7 +93,7 @@ function display(p){
 			{"name":"🎭 Social",
 				"value":"`cookie` `ship`  `pray`  `curse`  `marry`  `emoji`  `profile`  `level`  `wallpaper`  `owoify`  `avatar`"},
 			{"name":"😂 Meme Generation",
-				"value":"`spongebobchicken`  `slapcar`  `isthisa`  `drake`  `distractedbf`"},
+				"value":"`spongebobchicken`  `slapcar`  `isthisa`  `drake`  `distractedbf`  `communismcat`  `eject`  `emergencymeeting`"},
 			{"name":"🙂 Emotes",
 				"value":sEmotes},
 			{"name":"🤗 Actions",
@@ -106,7 +106,7 @@ function display(p){
 	p.send({embed});
 }
 
-function describe(send,commandName,command){
+async function describe(p,send,commandName,command){
 	if(command == undefined){
 		send("**🚫 |** Could not find that command :c");
 		return;
@@ -139,6 +139,14 @@ function describe(send,commandName,command){
 			related += command.related[i]+" , ";
 		related = related.substr(0,related.length-3);
 	}
+
+	let ids = desc.match(/\?[0-9]+\?/g);
+	for(let i in ids){
+		descID = ids[i].match(/[0-9]+/)
+		tempUser = await p.fetch.getUser(descID[0]);
+		desc = desc.replace('?'+descID+'?',(tempUser)?tempUser.username:"A User");
+	}
+
 	let text = "```md\n"+title+"``````md"+alias+desc+example+related+"``````md\n> Remove brackets when typing commands\n> [] = optional arguments\n> {} = optional user input```";
 	send(text);
 }

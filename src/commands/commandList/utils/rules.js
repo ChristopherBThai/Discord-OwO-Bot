@@ -10,6 +10,7 @@ const CommandInterface = require('../../CommandInterface.js');
 const description = "•  Any actions performed to gain an unfair advantage over other users are explicitly against the rules. This includes but not limited to:\n├> Using macros/scripts for any commands\n└> Using multiple accounts for any reason\n\n•  Do **not** use any exploits and report any found in the bot\n\n•  You can **not** sell/trade cowoncy or any bot goods for anything outside of the bot\n\n•  If you have any questions come ask us in our [server](https://discord.gg/VKesv7J)!";
 const agreeEmoji = '👍';
 const disagreeEmoji = '👎';
+const warningEmoji = '⚠️';
 
 module.exports = new CommandInterface({
 
@@ -33,7 +34,7 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 		/* Query for agree/disagree votes */
-		let sql = "SELECT * FROM rules WHERE uid = (SELECT uid FROM user WHERE id = ?);";
+		let sql = "SELECT rules.* FROM rules INNER JOIN user ON user.uid = rules.uid WHERE id = ?;";
 		sql += "SELECT COUNT(*) as agree FROM rules WHERE opinion = 1;";
 		sql += "SELECT COUNT(*) as disagree FROM rules WHERE opinion = -1;";
 		let result = await p.query(sql,[BigInt(p.msg.author.id)]).catch(console.error);
@@ -65,14 +66,18 @@ module.exports = new CommandInterface({
 		};
 
 		/* Send message and add reactions if necessary */
-		let message = await p.send({embed});
+		let content;
+		if (!voted) {
+			content = `${warningEmoji} **You must accept these rules to use the bot!**`
+		}
+		let message = await p.send({content, embed});
 		if(voted) return;
 		
 		await message.addReaction(agreeEmoji)
 
 		/* Reaction collector */
 		let filter = (emoji, userID) => emoji.name === agreeEmoji && userID === p.msg.author.id;
-		let collector = p.reactionCollector.create(message,filter,{time:60000});
+		let collector = p.reactionCollector.create(message,filter,{time:30000});
 
 		collector.on('collect',async r => {
 			collector.stop("done");
@@ -86,6 +91,7 @@ module.exports = new CommandInterface({
 			/* Query and edit existing message */
 			result = await p.query(sql,[BigInt(p.msg.author.id),BigInt(p.msg.author.id)])
 			await message.edit({embed});
+			p.msg.author.acceptedRules = true; 
 		});
 
 	}

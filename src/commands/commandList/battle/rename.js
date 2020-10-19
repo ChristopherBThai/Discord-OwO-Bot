@@ -59,9 +59,9 @@ module.exports = new CommandInterface({
 		let result = await p.query(sql,[name]);
 
 		if(result.affectedRows==0){
-			p.errorMsg(", you do no own this pet!",3000);
+			p.errorMsg(", you do not own this pet!",3000);
 		}else{
-			p.replyMsg("🌱",", you successfully named your pet to **"+((animal.uni)?animal.uni:animal.value)+" "+name+"**!");
+			p.replyMsg("🌱",p.replaceMentions(", you successfully named your pet **"+((animal.uni)?animal.uni:animal.value)+"** to **"+name+"**!"));
 		}
 	}
 

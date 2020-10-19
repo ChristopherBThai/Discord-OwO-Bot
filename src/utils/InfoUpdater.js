@@ -30,7 +30,7 @@ class InfoUpdater{
 
 		request({
 			method:'POST',
-			uri:secret.url+"/update-bot/"+this.main.clusterID,
+			uri:`${secret.url}/update-bot/${secret.server}-${this.main.clusterID}`,
 			json:true,
 			body: info,
 		},(err,res,body) => {

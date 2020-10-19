@@ -11,6 +11,7 @@
 
 const numbers = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
 const request = require('request');
+const filter = new (require('bad-words'))({placeHolder: "OwO", replaceRegex: /\w+/g});
 const secret = require('../../../tokens/wsserver.json');
 const badwords = require('../../../tokens/badwords.json');
 var animaljson = require('../../../tokens/owo-animals.json');
@@ -83,9 +84,12 @@ exports.client= function(tclient){
 	for(var key in animallist){
 		var alt = animallist[key].alt;
 		animals[animallist[key].value] = key;
+		animals[animallist[key].value.toLowerCase()] = key;
 		animals[key] = key;
+		animals[key.toLowerCase()] = key;
 		for(i in alt){
 			animals[alt[i]] = key;
+			animals[alt[i].toLowerCase()] = key;
 		}
 	}
 
@@ -101,11 +105,16 @@ exports.client= function(tclient){
 		var animalRank = [];
 		for(var i=1;i<animaljson[key].length;i++){
 			var name = animals[animaljson[key][i]];
-			animalRank.push(animaljson[key][i]);
-			animaljson.list[name].rank = key;
-			animaljson.list[name].price = animaljson.price[key];
-			animaljson.list[name].points = animaljson.points[key];
-			animaljson.list[name].essence= animaljson.essence[key];
+			try {
+				animalRank.push(animaljson[key][i]);
+				animaljson.list[name].rank = key;
+				animaljson.list[name].price = animaljson.price[key];
+				animaljson.list[name].points = animaljson.points[key];
+				animaljson.list[name].essence= animaljson.essence[key];
+			} catch (err) {
+				console.error(err);
+				console.error(animaljson[key][i]);
+			}
 		}
 		ranks[key].animals = animalRank;
 		ranks[key].price = animaljson.price[key];
@@ -248,4 +257,14 @@ exports.filteredName = function (name) {
 		.replace(/\|\|/g,'│');
 
 	return { name, offensive }
+}
+
+/* checks if string has bad words */
+exports.isProfane = function (string) {
+	return filter.isProfane(string);
+}
+
+/* replaces bad words */
+exports.cleanString = function (string) {
+	return filter.clean(string);
 }

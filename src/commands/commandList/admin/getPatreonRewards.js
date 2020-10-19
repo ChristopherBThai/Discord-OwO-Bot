@@ -29,8 +29,11 @@ module.exports = new CommandInterface({
 
 async function getPatreons(p){
 	let patreons = await patreon.request();
-	let sql = `SELECT id FROM user INNER JOIN patreons ON user.uid = patreons.uid WHERE TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths;`;
-	let result = await p.query(sql);
+	let result = [];
+	if (p.args[0] != "ignoresql") {
+		let sql = `SELECT id FROM user INNER JOIN patreons ON user.uid = patreons.uid WHERE TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths;`;
+		let result = await p.query(sql);
+	}
 
 	let text = "";
 
@@ -83,7 +86,7 @@ async function getPatreons(p){
 		
 	}
 
-	await p.send(text,null,{split:true});
+	await p.send(text,null,null,{split:true});
 	await p.send("Type `owo distributecowoncy {amount}` to send monthly cowoncy to "+cowoncy.length+" users");
 	await p.send('```'+csv+'```',null,null,{split:{prepend:'```',append:'```'}})
 }
@@ -94,7 +97,7 @@ async function distributeCowoncy(p){
 		return;
 	}
 	let amount = parseInt(p.args[0]);
-	let sql = `INSERT INTO cowoncy (id,money) VALUES (${cowoncy.join(","+amount+"),(")},${amount}) ON DUPLICATE KEY UPDATE money = money + ${amount};`;
+	let sql = `INSERT IGNORE INTO cowoncy (id,money) VALUES (${cowoncy.join(","+amount+"),(")},${amount}) ON DUPLICATE KEY UPDATE money = money + ${amount};`;
 	let result = await p.query(sql);
 	let text = "Distributed "+amount+" cowoncy to "+cowoncy.length+" users\n```json\n"+JSON.stringify(result, null, 2)+"```";
 	p.send(text);

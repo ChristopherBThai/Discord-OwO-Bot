@@ -1,6 +1,6 @@
 /*
  * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Copyright (C) 2020 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
@@ -43,6 +43,12 @@ class Command {
 		//  Check if that command exists
 		if(!commands[command]) {
 			executeCommand(this.main,initParam(msg,"points",[],this.main));
+			return;
+		}
+
+		// Make sure user accepts rules first
+		if (!(await acceptedRules(this.main, msg))) {
+			executeCommand(this.main,initParam(msg,"rule",[],this.main));
 			return;
 		}
 
@@ -103,9 +109,8 @@ async function executeCommand(main,p){
 	// Execute command
 	await commands[p.command].execute(p);
 
-	// Log stats to datadog api
-	let dm = p.msg.channel.type==1;
-	logger.increment("command",['command:'+p.commandAlias,/*'id:'+p.msg.author.id,'guild:'+(dm?p.msg.channel.id:p.msg.channel.guild.id),'channel:'+p.msg.channel.id,*/'dm:'+dm]);
+	// Log stats to statsd
+	logger.command(p.commandAlias, p.msg);
 }
 
 /**
@@ -222,12 +227,14 @@ function initParam(msg,command,args,main){
 		"DataResolver":main.DataResolver,
 		"quest":function(questName,count,extra){main.questHandler.increment(msg,questName,count,extra).catch(console.error)},
 		"reactionCollector":main.reactionCollector,
+		"dateUtil":main.dateUtil,
 		"neo4j":main.neo4j
 	};
 	param.setCooldown = function(cooldown){
 		main.cooldown.setCooldown(param,aliasToCommand[command],cooldown);
 	}
 	param.getMention = function(id){
+		if(!id) return;
 		id = id.match(/[0-9]+/);
 		if(!id) return;
 		id = id[0];
@@ -237,6 +244,30 @@ function initParam(msg,command,args,main){
 				return tempUser;
 			}
 		}
+	}
+	param.getRole = function(id){
+		id = id.match(/[0-9]+/);
+		if(!id) return;
+		id = id[0];
+		return param.msg.channel.guild.roles.get(id);
+	}
+	param.replaceMentions = function(text) {
+		if (!text) return;
+		let userMentions = text.match(/<@!?\d+>/g);
+		let roleMentions = text.match(/<@&\d+>/g);
+
+		for (let i in userMentions) {
+			let mention = userMentions[i];
+			let user = param.getMention(mention);
+			if (user) text = text.replace(mention, '@' + user.username);
+		}
+
+		for (let i in roleMentions) {
+			let mention = roleMentions[i];
+			let role = param.getRole(mention);
+			if (role) text = text.replace(mention, '@' + role.name);
+		}
+		return text;
 	}
 	return param;
 }
@@ -260,6 +291,15 @@ async function checkPrefix(main, msg) {
 	if (msg.channel.guild.prefix && content.startsWith(msg.channel.guild.prefix)) {
 		return msg.content.slice(msg.channel.guild.prefix.length).trim().split(/ +/g);
 	}
+}
+
+async function acceptedRules(main, msg) {
+	if (!msg.author.acceptedRules) {
+		let sql = `SELECT rules.* FROM rules INNER JOIN user ON user.uid = rules.uid WHERE id = ${msg.author.id};`;
+		let result = await main.mysqlhandler.query(sql);
+		msg.author.acceptedRules = !!result[0];
+	}
+	return msg.author.acceptedRules;
 }
 
 module.exports = Command;

@@ -1,6 +1,6 @@
 /*
  * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Copyright (C) 2020 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
@@ -22,6 +22,10 @@ exports.alter = function(id,text,type){
 			return garcom(text);
 		case '229299825072537601':
 			return alradio(text,type);
+		case '166619476479967232':
+			return valentine(text,type);
+		case '403989717483257877':
+			return u_1s1k(text,type);
 		default:
 			return text;
 	}
@@ -82,7 +86,7 @@ function garcom(text,type) {
 }
 
 function alradio(text,type) {
-	text.author.name = "Speech: ...then he'd broadcast his carnage all throughout Hell, just so everyone could witness his ability. Sinners started calling him, \"The Radio Demon.\"";
+	text.author.name = "...then he'd broadcast his carnage all throughout Hell, just so everyone could witness his ability. Sinners started calling him, \"The Radio Demon.\"";
 	text.thumbnail = {
 		url: "https://cdn.discordapp.com/attachments/626155987904102402/686473789080600586/image0.gif"
 	}
@@ -93,6 +97,54 @@ function alradio(text,type) {
 		case 65280:
 			text.color = 16777214;
 			break;
+	}
+	return text;
+}
+
+function valentine(text,opt) {
+	const star = "<a:star:759725222042927124>";
+	const sadcat = "<a:sadcat:759725223423115266>";
+	text.author.name = text.author.name.replace(" goes into battle!","'s Sailors arrive to defend Planet Earth!");
+	switch (text.color) {
+		case 16711680:
+			text.color = 1;
+			if (opt) {
+				text.footer.text = `ダーク・キングダム took over in ${opt.turns}. You lost your streak of ${opt.streak} and gained ${opt.xp} xp.`;
+			}
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/533065456311861248/761460204407226398/tenor.gif"
+			}
+			break;
+		case 65280:
+			text.color = 13767684;
+			if (opt) {
+				text.footer.text = `You defended in ${opt.turns}! Your Sailors gained ${opt.xp} xp! Streak: ${opt.streak}`;
+			}
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/533065456311861248/761168912795828234/battle.gif"
+			}
+			break;
+	}
+	return text;
+}
+
+function u_1s1k(text,opt) {
+	text.author.name = text.author.name.replace(" goes into battle!"," goes Pew Pew Pew! Come At Me Bro!");
+	switch (text.color) {
+		case 16711680:
+			if (opt) {
+				text.footer.text = `You lost in ${opt.turns}! Your Sailors gained ${opt.xp} xp! You lost your streak of ${opt.streak}`;
+			}
+			break;
+		case 65280:
+			text.color = 11393254;
+			if (opt) {
+				text.footer.text = `SUGOI! 1S1K won in ${opt.turns} turns! Team Zeno gained ${opt.xp} xp! Streak: ${opt.streak}`;
+			}
+			break;
+	}
+	text.thumbnail = {
+		url: "https://cdn.discordapp.com/attachments/628936051490160661/758015069379493888/image0.gif"
 	}
 	return text;
 }

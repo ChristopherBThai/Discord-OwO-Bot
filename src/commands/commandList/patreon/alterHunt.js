@@ -1,6 +1,6 @@
 /*
  * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Copyright (C) 2020 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
@@ -43,6 +43,14 @@ exports.alter = function(id,text,info){
 			return garcom(text,info);
 		case '229299825072537601':
 			return alradio(text,info);
+		case '408875125283225621':
+			return kirito(text,info);
+		case '549876586720133120':
+			return kitsune(text,info);
+		case '343094664414363658':
+			return tiggy(text, info);
+		case '166619476479967232':
+			return valentine(text, info);
 		default:
 			return text;
 	}
@@ -352,12 +360,12 @@ function garcom(text, info){
 
 function alradio(text, info) {
 	if(info.gemText){
-		text = `${huntEmoji} **| ${info.author.username}** activated ${info.gemText}\n${blank} **|** and recruited ${info.animalEmojis}`;
+		text = `Now let's give these burning fools a place to dwell.\n**${info.author.username}** activated ${info.gemText}\nand recruited: ${info.animalEmojis}`;
 	}else{
-		text = `${huntEmoji} **| ${info.author.username}** donated 5 and recruited ${info.animalEmojis}`;
+		text = `**${info.author.username}** donated 5 and recruited ${info.animalEmojis}`;
 	}
 	if (info.petText) {
-		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
+		text += `\n${info.petText} gained **${info.animalXp}xp**!`;
 	}
 	text += info.lootboxText || '';
 	const embed = {
@@ -367,5 +375,81 @@ function alradio(text, info) {
 			"url":"https://cdn.discordapp.com/attachments/626155987904102402/686634765805289482/image0.gif"
 		}
 	};
+	return {embed};
+}
+
+function kirito(text, info) {
+	const emoji = "<a:bot:737118875585478767>"
+	if(info.gemText){
+		text = `${emoji} **| Zero Two** empowers her hunts by ${info.gemText}\n${blank} **| Zero Two** caught: ${info.animalEmojis}`;
+	}else{
+		text = `${emoji} **| Zero Two** goes out to hunt and catches a(n) ${info.animal[0][0]} ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
+	}
+	text += info.lootboxText || '';
+	return text;
+}
+
+function kitsune(text, info) {
+	const emoji = "<:kitsune:737160182655615097>"
+	if(info.gemText){
+		text = `${emoji} **| ${info.author.username}** plays a pledged game with OwO, the lord of games using: ${info.gemText.replace(/`/gi,'**')} **ASCHENTE**!\n${blank} **|** Victoriously returns with: ${info.animalEmojis}`;
+	}else{
+		text = `${emoji} **| ${info.author.username}** plays a pledged game with OwO, the lord of games. **ASCHENTE**!\n${blank} **|** Victoriously returns with a(n) ${info.animal[0][0]} ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
+	}
+	text += info.lootboxText || '';
+	const embed = {
+		"description":text,
+		"color":Math.random()>.5 ? 15399610 : 15523028,
+		"thumbnail":{
+			"url":"https://cdn.discordapp.com/attachments/704215180044927030/728074508694454302/image0.gif"
+		}
+	};
+	return {embed};
+}
+
+function tiggy(text, info) {
+	const emoji = "🔥"
+	if(info.gemText){
+		text = `${emoji} **| ${info.author.username}**, your flamethrower is fueled by ${info.gemText}\n${blank} **|** You destroyed the local habitats of: ${info.animalEmojis}`;
+	}else{
+		text = `${emoji} **| ${info.author.username}**, your flamethrower spurts out nothing...\n ${blank} **|** you managed to catch: ${info.animal[0][0]} ${info.animalEmojis} with your bare hands`;
+	}
+	if (info.petText) {
+		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
+	}
+	text += info.lootboxText || '';
+	return text;
+}
+
+function valentine(text, info) {
+	const moon = "<a:moon:759722114201812993>";
+	const cat = "<a:cat:759722302786764852>";
+	const butterfly = "<:butterfly:759722177766621224>";
+	const wand = "<a:wand:759724096954564630>";
+
+	if(info.gemText){
+		text = `${moon} **| ${info.author.username}**  arrives at 火星, blessed by ${info.gemText}\n${butterfly} **|** you returned with: ${info.animalEmojis}`;
+	}else{
+		text = `${moon} **| ${info.author.username}**  arrives at 火星 ${wand}\n${butterfly} **|** you returned with: ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${butterfly} **|** ${info.petText} gained **${info.animalXp}xp** ${cat}!`;
+	}
+	text += info.lootboxText || '';
+	text.replace(blank, butterfly);
+	const embed = {
+		description: text,
+		color: 1,
+		thumbnail: {
+			url: "https://i.imgur.com/19cjldb.gif"
+		}
+	}
+
 	return {embed};
 }

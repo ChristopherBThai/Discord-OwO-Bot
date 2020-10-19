@@ -103,8 +103,13 @@ module.exports = new CommandInterface({
 
 			sql = "UPDATE cowoncy SET money = money "+((win)?"+":"-")+" "+bet+" WHERE id = "+msg.author.id+";";
 			result = await p.query(sql);
-			p.logger.value('cowoncy',(bet*((win)?(1):(-1))),['command:coinflip','id:'+msg.author.id]);
-			p.logger.value('gamble',((win)?(1):(-1)),['command:coinflip','id:'+msg.author.id]);
+			if (win) {
+				p.logger.incr(`cowoncy`, bet, {type:'coinflip'}, p.msg);
+				p.logger.incr(`gamble`, 1, {type:'coinflip'}, p.msg);
+			} else {
+				p.logger.decr(`cowoncy`, bet * -1, {type:'coinflip'}, p.msg);
+				p.logger.decr(`gamble`, -1, {type:'coinflip'}, p.msg);
+			}
 			let text = "**"+msg.author.username+"** spent **"+cowoncy+" "+(p.global.toFancyNum(bet))+"** and chose "+((choice=='h')?"**heads**":"**tails**");
 			let text2 = text;
 			text2 += "\nThe coin spins... "+((win)?((choice=='h')?heads:tails):((choice=='h')?tails:heads))+" and you ";

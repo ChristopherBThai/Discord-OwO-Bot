@@ -7,9 +7,9 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
+const ud = require('urban-dictionary');
 const nextPageEmoji = '➡️';
 const prevPageEmoji = '⬅️';
-const ud = require('urban-dictionary');
 var count = 0;
 
 module.exports = new CommandInterface({
@@ -51,6 +51,9 @@ module.exports = new CommandInterface({
 						let url = entries[i].permalink;
 						let example = "\n*``"+entries[i].example+" ``*";
 						let result = def+example;
+						if(!p.msg.channel.nsfw && p.global.isProfane(result)) {
+							result = "⚠️ **A few words may have been censored! To view an uncensored version, use this command in a NSFW channel.** ⚠️\n\n" + p.global.cleanString(result);
+						}
 						let run = true;
 						do{
 							let print = "";

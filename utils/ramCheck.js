@@ -27,7 +27,7 @@ class RamCheck{
 		console.log("CURRENT RAM: "+(ram/(1024*1024*1024))+"G");
 		if(ram<=resetbyte){
 			console.log("NOT ENOUGH RAM. RESETTING SHARDS");
-			global.resetBot();
+			//global.resetBot();
 		}
 	}
 

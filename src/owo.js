@@ -80,6 +80,9 @@ class OwO extends Base{
 		// Helper for patreon benefits
 		this.patreon = require('./utils/patreon.js');
 		this.patreon.init(this);
+
+		// Date utility
+		this.dateUtil = require('./utils/dateUtil.js');
 		
 		// Create commands
 		this.command = new (require('./commands/command.js'))(this);
