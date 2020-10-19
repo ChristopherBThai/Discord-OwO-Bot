@@ -62,15 +62,15 @@ async function display(p,con, msg, args){
 	let count = 5;
 
 	for(let i=0;i<args.length;i++){
-		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet&&!huntbot&&!luck&&!curse&&!daily&&!battle&&!level){
+		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet&&!huntbot&&!luck&&!curse&&!daily&&!battle&&!level&&!shard){
 			if(args[i]=== "points"||args[i]==="point"||args[i]==="p") points = true;
 			else if(args[i]==="guild"||args[i]==="server"||args[i]==="s"||args[i]==="g") guild = true;
 			else if(args[i]=== "zoo"||args[i]==="z") zoo = true;
-			else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="m"||args[i]==="c") money = true;
+			else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="m"||args[i]==="c"||args[i]==="cash") money = true;
 			else if(args[i]==="cookies"||args[i]==="cookie"||args[i]==="rep"||args[i]==="r") rep = true;
 			else if(args[i]==="pets"||args[i]==="pet") pet = true;
 			else if(args[i]==="huntbot"||args[i]==="hb") huntbot = true;
-			else if(args[i]==="luck") luck = true;
+			else if(args[i]==="luck"||args[i]==="pray") luck = true;
 			else if(args[i]==="curse") curse = true;
 			else if(args[i]==="battle"||args[i]==="streak") battle = true;
 			else if(args[i]==="daily") daily = true;

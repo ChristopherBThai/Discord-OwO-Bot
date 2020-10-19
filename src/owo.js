@@ -18,7 +18,6 @@ const dbl = new DBL(auth.dbl);
 class OwO extends Base{
 	constructor(bot){
 		super(bot);
-		this.debug = false;
 		this.auth = auth;
 		this.dbl = dbl;
 
@@ -40,6 +39,7 @@ class OwO extends Base{
 
 		// Bot config file
 		this.config = require('./data/config.json');
+		this.debug = this.config.debug;
 		this.prefix = this.config.prefix;
 
 		// Ban check 
