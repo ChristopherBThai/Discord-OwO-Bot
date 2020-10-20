@@ -8,12 +8,17 @@
 /**
  * Global Variables and Methods
  */
-
 const numbers = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
 const request = require('request');
 const filter = new (require('bad-words'))({placeHolder: "OwO", replaceRegex: /\w+/g});
 const secret = require('../../../tokens/wsserver.json');
 const badwords = require('../../../tokens/badwords.json');
+const { Profanity, ProfanityOptions } = require("@2toad/profanity")
+const options = new ProfanityOptions();
+options.wholeWord = false;
+options.grawlix = 'OwO';
+const filter2 = new Profanity(options);
+const namor = require("namor");
 var animaljson = require('../../../tokens/owo-animals.json');
 var animalunicode = {};
 var commands = {};
@@ -241,11 +246,10 @@ exports.getTotalShardCount = function(){
 
 /* Converts name to more kid-friendly */
 exports.filteredName = function (name) {
-	let offensive = false;
-	let shortnick = name.replace(/\s/g,"").toLowerCase();
-	for(let i=0;i<badwords.length;i++){
-		if(shortnick.includes(badwords[i]))
-			offensive: true;
+	let shortnick = name.replace(/\W/g,'');
+	if (filter2.exists(shortnick)) {
+		name = namor.generate({ words: 3, saltLength: 0, separator:' ' });
+		return { name, offensive:false }
 	}
 	name = name.replace(/https:/gi,"https;")
 		.replace(/http:/gi,"http;")
@@ -256,7 +260,7 @@ exports.filteredName = function (name) {
 		.replace(/\n/g,"")
 		.replace(/\|\|/g,'│');
 
-	return { name, offensive }
+	return { name, offensive:false }
 }
 
 /* checks if string has bad words */
