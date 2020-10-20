@@ -4,6 +4,7 @@
   "description": "a discord bot!",
   "main": "index.js",
   "dependencies": {
+    "@2toad/profanity": "^1.1.0",
     "@zuzak/owo": "^1.9.0",
     "bad-words": "^3.0.3",
     "bufferutil": "^4.0.1",
@@ -20,6 +21,7 @@
     "mathjs": "^6.6.5",
     "merge-images": "^1.2.0",
     "mysql": "^2.18.1",
+    "namor": "^2.0.2",
     "node-dogstatsd": "0.0.7",
     "node-vibrant": "^3.1.5",
     "novelcovid": "^3.0.0",
