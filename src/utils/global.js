@@ -18,6 +18,8 @@ const options = new ProfanityOptions();
 options.wholeWord = false;
 options.grawlix = 'OwO';
 const filter2 = new Profanity(options);
+const goodwords = require('../../../tokens/goodwords.json');
+filter2.removeWords(goodwords);
 const namor = require("namor");
 var animaljson = require('../../../tokens/owo-animals.json');
 var animalunicode = {};
