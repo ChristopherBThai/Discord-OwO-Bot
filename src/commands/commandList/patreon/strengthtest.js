@@ -68,7 +68,7 @@ module.exports = new CommandInterface({
 
 		collector.on('collect', async function(emoji){
 			collector.stop();
-			let rand = Math.random();
+			let rand = Math.floor(Math.random() * 101) / 100;
 			if(geist==p.msg.author.id){
 				rand = (80+rand*21)/100;
 			}
