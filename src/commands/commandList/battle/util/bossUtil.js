@@ -40,7 +40,7 @@ exports.check = async function (p) {
 	if (!result || !result[0]) {
 		sql = `INSERT IGNORE INTO guild (id, count) VALUES (${guildId}, 0);`;
 		await p.query(sql);
-	} else if (result[0].active && (new Date() - new Date(result[0].created) < bossLength)) {
+	} else if (!bossExpired(result[0])) {
 		return;
 	}
 	
@@ -304,55 +304,83 @@ function getRewards(rank, lvl) {
 	switch (rank) {
 		case 'common':
 			return [
-				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
-				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
-				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
 				{ img: 'fcrate',   text: global.toFancyNum(1 + Math.round(1 * lvlPercent)) },
+				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
 			]
 		case 'uncommon':
 			return [
-				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
-				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
-				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
 				{ img: 'fcrate',   text: global.toFancyNum(1 + Math.round(1 * lvlPercent)) },
+				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
 			]
 		case 'rare':
 			return [
-				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
-				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
-				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
 				{ img: 'fcrate',   text: global.toFancyNum(1 + Math.round(1 * lvlPercent)) },
+				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'cowoncy',  text: global.toFancyNum(100000 + Math.round(500 * lvlPercent)) },
+				{ img: 'xp',       text: global.toFancyNum(100000 + Math.round(500 * lvlPercent)) },
 			]
 		case 'epic':
 			return [
-				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
-				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
-				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
 				{ img: 'fcrate',   text: global.toFancyNum(1 + Math.round(1 * lvlPercent)) },
+				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
 			]
 		case 'mythical':
 			return [
-				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
-				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
-				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
 				{ img: 'fcrate',   text: global.toFancyNum(1 + Math.round(1 * lvlPercent)) },
+				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
 			]
 		case 'legendary':
 			return [
-				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
-				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
-				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
 				{ img: 'fcrate',   text: global.toFancyNum(1 + Math.round(1 * lvlPercent)) },
+				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
 			]
 		case 'fabled':
 			return [
-				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
-				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
-				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
 				{ img: 'fcrate',   text: global.toFancyNum(1 + Math.round(1 * lvlPercent)) },
+				{ img: 'shards',   text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'cowoncy',  text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
+				{ img: 'xp',       text: global.toFancyNum(1000 + Math.round(500 * lvlPercent)) },
 			]
 		default:
 			throw "No rank for: " + rank;
 	}
 }
 
+function bossExpired(row) {
+	return !row || !row.active || (new Date() - new Date(row.created) < bossLength)
+}
+
+exports.fetchBoss = async function (p) {
+	let sql = `SELECT
+			gb.active, gb.created, gb.boss_animal, gb.boss_lvl, gb.boss_hp, gb.boss_wp,
+			bw.wid, bw.stat, bw.avg,
+			bwp.pcount, bwp.wpid, bwp.stat as pstat
+		FROM guild_boss gb
+			INNER JOIN boss_weapon bw ON gb.gid = bw.gid
+			INNER JOIN boss_weapon_passive bwp ON bw.gid = bwp.gid
+		WHERE gb.gid = ${p.msg.channel.guild.id};`;
+	let result = await p.query(sql);
+	if (bossExpired(result[0])) return null;
+
+	const animal = global.validAnimal(result[0].boss_animal);
+	const stats = parseStats(animal, result[0].boss_lvl);
+}
+
+exports.fetchUsers = async function (p) {
+	let sql = `SELECT u.id, ub.total_dmg
+		FROM	user_boss ub
+			INNER JOIN user u ON ub.uid = u.uid
+		WHERE ub.gid = ${p.msg.channel.guild.id};`;
+	let result = await p.query(sql);
+	return [];
+}

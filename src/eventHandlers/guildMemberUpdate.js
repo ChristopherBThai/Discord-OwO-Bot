@@ -7,5 +7,5 @@
 
 // When guild member is updated
 exports.handle = function(guild,member,oldMember){
-	this.patreon.update(guild,oldMember,member);
+	if(!this.debug) this.patreon.update(guild,oldMember,member);
 }
