@@ -8,7 +8,6 @@
 const blank = '<:blank:427371936482328596>';
 const huntEmoji = "🌱";
 exports.alter = function(id,text,info){
-			return ashley(text,info);
 	switch(id){
 		case '220934553861226498':
 			return geist(text);
