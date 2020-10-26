@@ -224,7 +224,7 @@ exports.renameTeam = async function(p,teamName){
 
 const getTeam = exports.getTeam = async function (p) {
 	/* Query info */
-	let sql = `SELECT tname,pos,name,nickname,a.pid,xp,pt.streak,highest_streak
+	let sql = `SELECT pt.pgid,tname,pos,name,nickname,a.pid,xp,pt.streak,highest_streak
 		FROM user u
 			INNER JOIN pet_team pt
 				ON u.uid = pt.uid

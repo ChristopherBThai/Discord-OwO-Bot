@@ -8,6 +8,7 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const bossUtil = require('./util/bossUtil.js');
+const battleUtil = require('./util/battleUtil.js');
 
 module.exports = new CommandInterface({
 
@@ -31,12 +32,21 @@ module.exports = new CommandInterface({
 	bot:true,
 
 	execute: async function(p){
-		const boss = bossUtil.fetchBoss(p);
+		const boss = await bossUtil.fetchBoss(p);
 		if (!boss) {
 			p.errorMsg(", there is no boss available!", 5000);
 			return;
 		}
-		const users = bossUtil.fetchUsers(p);
+		const users = await bossUtil.fetchUsers(p);
+		const player = await bossUtil.fetchPlayer(p);
+
+		const battle = {
+			player,
+			enemy: boss
+		}
+
+		let logs = await battleUtil.calculateAll(p,battle);
+		//console.log(logs[logs.length-2].enemy[0]);
 	}
 
 })

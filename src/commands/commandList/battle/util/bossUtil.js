@@ -12,8 +12,10 @@ const zooAnimalUtil = require('../../zoo/animalUtil.js');
 const battleAnimalUtil = require('./animalUtil.js');
 const imagegenAuth = require('../../../../../../tokens/imagegen.json');
 const weaponUtil = require('./weaponUtil.js');
+const teamUtil = require('./teamUtil.js');
+const animalUtil = require('./animalUtil.js');
 
-const bossLength = 1;// 3600000;
+const bossLength = 3600000;
 const guildSizes = [5, 25, 100, 500, 1000]
 const rates = [
 	{ c:0.6,  u:0.3,  r:0.1,  e:0,    m:0,    l:0,    f:0 },
@@ -195,7 +197,6 @@ function fetchBossImage ({lvl, animal, weapon, stats, rank }) {
 
 	/* Fetch rewards */
 	const rewards = getRewards(rank, lvl);
-	console.log(rewards);
 
 	/* Construct json for POST request */
 	const info = {
@@ -245,6 +246,7 @@ function getLvl (rank) {
 }
 
 const parseStats = exports.parseStats = function (animal, lvl) {
+	lvl = 200;
 	const stats = battleAnimalUtil.parseStats(animal, lvl);
 	return stats;
 }
@@ -357,7 +359,7 @@ function getRewards(rank, lvl) {
 }
 
 function bossExpired(row) {
-	return !row || !row.active || (new Date() - new Date(row.created) < bossLength)
+	return !(row && row.active && (new Date() - new Date(row.created) < bossLength))
 }
 
 exports.fetchBoss = async function (p) {
@@ -372,8 +374,40 @@ exports.fetchBoss = async function (p) {
 	let result = await p.query(sql);
 	if (bossExpired(result[0])) return null;
 
-	const animal = global.validAnimal(result[0].boss_animal);
-	const stats = parseStats(animal, result[0].boss_lvl);
+	result[0].name = result[0].boss_animal;
+	for (let i in result) {
+		result[i].pid = 1;
+		result[i].uwid = 1;
+	}
+
+	let team = teamUtil.parseTeam(p,result,result);
+	team[0].stats = parseStats(team[0].animal, result[0].boss_lvl);
+	team[0].stats.hp[0] = result[0].boss_hp;
+	team[0].stats.wp[0] = result[0].boss_wp;
+
+	// set current health
+	
+	return {
+		name: 'Boss team name',
+		team
+	}
+}
+
+exports.fetchPlayer = async function (p) {
+	let sqlTeam = await teamUtil.getTeam(p);
+	let pgid = sqlTeam[0][0]?sqlTeam[0][0].pgid:undefined;
+	if(!pgid) return undefined;
+
+	let team = teamUtil.parseTeam(p,sqlTeam[0],sqlTeam[1]);
+	for(let i in team) animalUtil.stats(team[i]);
+
+	return {
+		pgid: pgid,
+		name: sqlTeam[0].tname,
+		streak: sqlTeam[0].streak,
+		highestStreak: sqlTeam[0].highest_streak,
+		team: team
+	};
 }
 
 exports.fetchUsers = async function (p) {
@@ -383,4 +417,15 @@ exports.fetchUsers = async function (p) {
 		WHERE ub.gid = ${p.msg.channel.guild.id};`;
 	let result = await p.query(sql);
 	return [];
+}
+
+function teamFilter (userId) {
+	return `SELECT pt2.pgid FROM user u2
+		INNER JOIN pet_team pt2
+			ON pt2.uid = u2.uid
+		LEFT JOIN pet_team_active pt_act
+			ON pt2.pgid = pt_act.pgid
+	WHERE u2.id = ${userId}
+	ORDER BY pt_act.pgid DESC, pt2.pgid ASC
+	LIMIT 1`;
 }
