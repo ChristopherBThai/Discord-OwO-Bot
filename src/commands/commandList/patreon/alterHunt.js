@@ -8,6 +8,7 @@
 const blank = '<:blank:427371936482328596>';
 const huntEmoji = "🌱";
 exports.alter = function(id,text,info){
+			return ashley(text,info);
 	switch(id){
 		case '220934553861226498':
 			return geist(text);
@@ -51,6 +52,10 @@ exports.alter = function(id,text,info){
 			return tiggy(text, info);
 		case '166619476479967232':
 			return valentine(text, info);
+		case '403989717483257877':
+			return u_1s1k(text,info);
+		case '541103499992367115':
+			return ashley(text,info);
 		default:
 			return text;
 	}
@@ -436,7 +441,7 @@ function valentine(text, info) {
 	if(info.gemText){
 		text = `${moon} **| ${info.author.username}**  arrives at 火星, blessed by ${info.gemText}\n${butterfly} **|** you returned with: ${info.animalEmojis}`;
 	}else{
-		text = `${moon} **| ${info.author.username}**  arrives at 火星 ${wand}\n${butterfly} **|** you returned with: ${info.animalEmojis}`;
+		text = `${moon} **| ${info.author.username}**  arrives at 火星 ${wand}\n${butterfly} **|** you returned with a ${info.animalEmojis}`;
 	}
 	if (info.petText) {
 		text += `\n${butterfly} **|** ${info.petText} gained **${info.animalXp}xp** ${cat}!`;
@@ -452,4 +457,46 @@ function valentine(text, info) {
 	}
 
 	return {embed};
+}
+
+function u_1s1k(text,info) {
+	const zen =  '<:zen:770081925490016257>';
+	const zen2 = '<:zen2:770081925401673760>';
+	const crystal = '<a:crystal:770081927012155413>';
+	const money = '<a:money:770081926236340235>';
+
+	if(info.gemText){
+		text = `${zen} **| ${info.author.username}**, ${crystal} Zeno ${crystal} has searched the universe far and wide with ${info.gemText}\n${zen2} **|** and came back with: ${info.animalEmojis}`;
+	}else{
+		text = `${zen} **| ${info.author.username}**, ${crystal} Zeno ${crystal} has searched the universe for and wide.\n${zen2} **|** and came back with a(n) ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${crystal} **|** ${info.petText} gained **${info.animalXp}xp**! ${crystal} SUPREME ${crystal}`;
+	}
+	text += info.lootboxText || '';
+	const embed = {
+		description: text,
+		color: 11393254,
+		thumbnail: {
+			url: "https://cdn.discordapp.com/attachments/628936051490160661/765164586654629888/image0.gif"
+		}
+	}
+
+	return {embed};
+}
+
+function ashley(text,info) {
+	const catpunch = '<a:catpunch:770114194774425630>';
+
+	if(info.gemText){
+		text = `${catpunch} **| ${info.author.username}**, wants to wrek it!!! Harnessing power from ${info.gemText}\n${blank} **|** You helped these animals to safety first! ${info.animalEmojis}`;
+	}else{
+		text = `${catpunch} **| ${info.author.username}**, wants to wrek it!!!\n${blank} **|** You helped this animal to safety first! ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
+	}
+	text += info.lootboxText || '';
+
+	return text;
 }
