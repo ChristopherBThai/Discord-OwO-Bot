@@ -169,7 +169,7 @@ function lanre(text,opt) {
 			text.color = 5249624;
 			if (opt) {
 				text.footer.text = `You defended in ${opt.turns}! Your Sailors gained ${opt.xp} xp! Streak: ${opt.streak}`;
-				if (opt.xp.includes('+')) {
+				if ((''+opt.xp).includes('+')) {
 					text.footer.text = `Victory! Kanna has brought you ${opt.xp} bonus chocolates, which she will eat for herself. Streak: ${opt.streak}`;
 					text.thumbnail = {
 						url: "https://media.discordapp.net/attachments/696512326114869289/767334256543924244/kannafire.gif"
