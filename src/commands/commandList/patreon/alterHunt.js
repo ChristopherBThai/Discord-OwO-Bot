@@ -488,9 +488,9 @@ function ashley(text,info) {
 	const catpunch = '<a:catpunch:770114194774425630>';
 
 	if(info.gemText){
-		text = `${catpunch} **| ${info.author.username}**, wants to wrek it!!! Harnessing power from ${info.gemText}\n${blank} **|** You helped these animals to safety first! ${info.animalEmojis}`;
+		text = `${catpunch} **| ${info.author.username}**, wants to wreck it!!! Harnessing power from ${info.gemText}\n${blank} **|** You helped these animals to safety first! ${info.animalEmojis}`;
 	}else{
-		text = `${catpunch} **| ${info.author.username}**, wants to wrek it!!!\n${blank} **|** You helped this animal to safety first! ${info.animalEmojis}`;
+		text = `${catpunch} **| ${info.author.username}**, wants to wreck it!!!\n${blank} **|** You helped this animal to safety first! ${info.animalEmojis}`;
 	}
 	if (info.petText) {
 		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
