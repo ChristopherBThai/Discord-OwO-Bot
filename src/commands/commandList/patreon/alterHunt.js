@@ -440,7 +440,7 @@ function valentine(text, info) {
 	if(info.gemText){
 		text = `${moon} **| ${info.author.username}**  arrives at 火星, blessed by ${info.gemText}\n${butterfly} **|** you returned with: ${info.animalEmojis}`;
 	}else{
-		text = `${moon} **| ${info.author.username}**  arrives at 火星 ${wand}\n${butterfly} **|** you returned with a ${info.animalEmojis}`;
+		text = `${moon} **| ${info.author.username}**  arrives at 火星 ${wand}\n${butterfly} **|** you returned with a(n) ${info.animal[0][0]} ${info.animalEmojis}`;
 	}
 	if (info.petText) {
 		text += `\n${butterfly} **|** ${info.petText} gained **${info.animalXp}xp** ${cat}!`;
