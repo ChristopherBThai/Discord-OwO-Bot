@@ -40,7 +40,7 @@ module.exports = new CommandInterface({
 	}
 });
 
-async function harvest(p) {
+async function harvest(p, msg) {
 	const reset = await p.redis.hget("data_"+p.msg.author.id, "carrot_reset");
 	const afterMid = p.dateUtil.afterMidnight(reset);
 	const prevMax = parseInt(await p.redis.hget("data_"+p.msg.author.id, "carrot_max")) || 0;
@@ -66,16 +66,24 @@ async function harvest(p) {
 	if (current > max) {
 		await p.redis.hincrby("data_"+p.msg.author.id, "carrot_current", -1);
 		total = await p.redis.hincrby("data_"+p.msg.author.id, "carrot_total", -1);
-		p.send(`${p.config.emoji.invalid} **|** Your garden is out of carrots!\n${p.config.emoji.blank} **|** You harvested ${max} carrots today!\n${p.config.emoji.blank} **|** You can harvest ${max+1} tomorrow!\n${p.config.emoji.blank} **|** You have ${total} carrots in total!`);
+		let text = `${p.config.emoji.invalid} **|** Your garden is out of carrots!\n${p.config.emoji.blank} **|** You harvested ${max} carrots today!\n${p.config.emoji.blank} **|** You can harvest ${max+1} tomorrow!\n${p.config.emoji.blank} **|** You have ${total} carrots in total!`;
+		if (msg) msg.edit(text)
+		else p.send(text);
 	} else if (current == 1) {
 		let spoil = (prevMax + 1) - max;
 		if (prevMax == 0) {
-			p.send(`${carrotEmoji} **|** You picked one PikPik carrot!\n${p.config.emoji.blank} **|** You have ${total} carrots in total!`);
+			let text = `${carrotEmoji} **|** You picked one PikPik carrot!\n${p.config.emoji.blank} **|** You have ${total} carrots in total!`;
+			if (msg) msg.edit(text)
+			else p.send(text);
 		} else {
-			p.send(`${carrotEmoji} **|** You picked one PikPik carrot!\n${p.config.emoji.blank} **|** Yesterday you let ${spoil} carrots spoil...\n${p.config.emoji.blank} **|** You can still harvest ${max} today.\n${p.config.emoji.blank} **|** You have ${total} carrots in total!`);
+			let text = `${carrotEmoji} **|** You picked one PikPik carrot!\n${p.config.emoji.blank} **|** Yesterday you let ${spoil} carrots spoil...\n${p.config.emoji.blank} **|** You can still harvest ${max} today.\n${p.config.emoji.blank} **|** You have ${total} carrots in total!`;
+			if (msg) msg.edit(text)
+			else p.send(text);
 		}
 	} else {
-		p.send(`${carrotEmoji} **|** You picked one PikPik carrot!\n${p.config.emoji.blank} **|** You harvested ${current}/${max} today!\n${p.config.emoji.blank} **|** You have ${total} carrots in total!`);
+		let text = `${carrotEmoji} **|** You picked one PikPik carrot!\n${p.config.emoji.blank} **|** You harvested ${current}/${max} today!\n${p.config.emoji.blank} **|** You have ${total} carrots in total!`;
+		if (msg) msg.edit(text)
+		else p.send(text);
 	}
 }
 
@@ -120,6 +128,8 @@ async function farmer(p) {
 				await p.redis.hset("data_"+p.msg.author.id, "carrot_farmer", afterMid.now);
 				msg.edit(`${windEmoji} **|** I'll be back in 10 minutes!`);
 			}
+		} else {
+			harvest(p, msg)
 		}
 	});
 }
@@ -127,7 +137,7 @@ async function farmer(p) {
 async function checkFarmer(p) {
 	const farmer = await p.redis.hget("data_"+p.msg.author.id, "carrot_farmer");
 	if (!farmer || farmer == 'false') return;
-	if (new Date() - new Date(farmer) >= 10/*600000*/) {
+	if (new Date() - new Date(farmer) >= 600000) {
 		await p.redis.hset("data_"+p.msg.author.id, "carrot_farmer", false);
 		const total = await p.redis.hincrby("data_"+p.msg.author.id, "carrot_total", 5);
 		p.send(`${rabbitEmoji} **|** I'm back with 5 carrots!\n${p.config.emoji.blank} **|** You have ${total} carrots in total!`);
