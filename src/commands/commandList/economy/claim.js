@@ -57,6 +57,7 @@ module.exports = new CommandInterface({
 		let totalRewards = 0;
 		let totalCowoncy = 0;
 		let totalLootbox = 0;
+		let totalFabledLootbox = 0;
 		let totalWeaponCrate = 0;
 		for (let i in result[0]) {
 			let row = result[0][i]
@@ -76,12 +77,16 @@ module.exports = new CommandInterface({
 							totalCowoncy += count;
 							break;
 						case 'l':
-							sql += `INSERT INTO crate (uid,cratetype,boxcount,claimcount,claim) VALUES (${uid},0,${count},0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
+							sql += `INSERT INTO lootbox (id,boxcount,claimcount,claim) VALUES (${p.msg.author.id},${count},0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
 							totalLootbox += count;
 							break;
 						case 'w':
-							sql += `INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES (${p.msg.author.id},${count},0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
+							sql += `INSERT INTO crate (uid,cratetype,boxcount,claimcount,claim) VALUES (${uid},0,${count},0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
 							totalWeaponCrate += count;
+							break;
+						case 'f':
+							sql += `INSERT INTO lootbox (id,fbox,claimcount,claim) VALUES (${p.msg.author.id},${count},0,'2017-01-01') ON DUPLICATE KEY UPDATE fbox = fbox + ${count};`;
+							totalFabledLootbox += count;
 							break;
 					}
 				});
@@ -104,6 +109,9 @@ module.exports = new CommandInterface({
 		}
 		if (totalLootbox) {
 			rewardTxt.push(`+${totalLootbox} ${p.config.emoji.lootbox}`);
+		}
+		if (totalFabledLootbox) {
+			rewardTxt.push(`+${totalFabledLootbox} ${p.config.emoji.fabledLootbox}`);
 		}
 		txt += rewardTxt.join(',');
 		await p.replyMsg(giftEmoji, txt);
