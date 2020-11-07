@@ -12,7 +12,7 @@
     "dbl-api": "^1.2.1",
     "dblapi.js": "^2.4.0",
     "dd-trace": "^0.14.1",
-    "eris": "^0.13.3",
+    "eris": "^0.13.4",
     "eris-sharder": "^1.10.0",
     "erlpack": "github:abalabahaha/erlpack",
     "eventemitter3": "^4.0.4",
