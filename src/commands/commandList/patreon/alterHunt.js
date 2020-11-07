@@ -440,7 +440,7 @@ function valentine(text, info) {
 	if(info.gemText){
 		text = `${moon} **| ${info.author.username}**  arrives at 火星, blessed by ${info.gemText}\n${butterfly} **|** you returned with: ${info.animalEmojis}`;
 	}else{
-		text = `${moon} **| ${info.author.username}**  arrives at 火星 ${wand}\n${butterfly} **|** you returned with a(n) ${info.animal[0][0]} ${info.animalEmojis}`;
+		text = `${moon} **| ${info.author.username}**  arrives at 火星 ${wand}\n${butterfly} **|** you returned with a ${info.animal[0][0]} ${info.animalEmojis}`;
 	}
 	if (info.petText) {
 		text += `\n${butterfly} **|** ${info.petText} gained **${info.animalXp}xp** ${cat}!`;
@@ -467,7 +467,7 @@ function u_1s1k(text,info) {
 	if(info.gemText){
 		text = `${zen} **| ${info.author.username}**, ${crystal} Zeno ${crystal} has searched the universe far and wide with ${info.gemText}\n${zen2} **|** and came back with: ${info.animalEmojis}`;
 	}else{
-		text = `${zen} **| ${info.author.username}**, ${crystal} Zeno ${crystal} has searched the universe for and wide.\n${zen2} **|** and came back with a(n) ${info.animalEmojis}`;
+		text = `${zen} **| ${info.author.username}**, ${crystal} Zeno ${crystal} has searched the universe far and wide.\n${zen2} **|** and came back with a(n) ${info.animalEmojis}`;
 	}
 	if (info.petText) {
 		text += `\n${crystal} **|** ${info.petText} gained **${info.animalXp}xp**! ${crystal} SUPREME ${crystal}`;
@@ -486,16 +486,25 @@ function u_1s1k(text,info) {
 
 function ashley(text,info) {
 	const catpunch = '<a:catpunch:770114194774425630>';
+	const qbert = '<:qbert:774557756376088586>';
 
 	if(info.gemText){
-		text = `${catpunch} **| ${info.author.username}**, wants to wreck it!!! Harnessing power from ${info.gemText}\n${blank} **|** You helped these animals to safety first! ${info.animalEmojis}`;
+		text = `${catpunch} **| ${info.author.username}**, wants to wreck it!!! Harnessing power from ${info.gemText} ${qbert}\n${blank} **|** You helped these animals to safety first! ${info.animalEmojis}`;
 	}else{
-		text = `${catpunch} **| ${info.author.username}**, wants to wreck it!!!\n${blank} **|** You helped this animal to safety first! ${info.animalEmojis}`;
+		text = `${catpunch} **| ${info.author.username}**, wants to wreck it!!! You spent 5 cowoncy to empower yourself!${qbert}\n${blank} **|** You helped this animal to safety first! ${info.animalEmojis}`;
 	}
 	if (info.petText) {
 		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
 	}
 	text += info.lootboxText || '';
 
-	return text;
+	const embed = {
+		description: text,
+		color: 9502720,
+		thumbnail: {
+			url: "https://cdn.discordapp.com/attachments/661043173992169482/760890231942938705/ralph_main.gif"
+		}
+	}
+
+	return {embed};
 }
