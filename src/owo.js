@@ -77,6 +77,9 @@ class OwO extends Base{
 		// Fetches images and converts them to buffers
 		this.DataResolver = require('./utils/dataResolver.js');
 
+		// Ability to add emojis to guilds
+		this.EmojiAdder = require('./utils/EmojiAdder.js');
+
 		// Helper for patreon benefits
 		this.patreon = require('./utils/patreon.js');
 		this.patreon.init(this);
