@@ -39,7 +39,10 @@
 		"crate":"<:crate:523771259302182922>",
 		"lootbox":"<:box:427352600476647425>",
 		"cookie":"<a:cookieeat:423020737364885525>",
-		"fabledLootbox":"<a:flootbox:725570544065445919>"
+		"fabledLootbox":"<a:flootbox:725570544065445919>",
+		"previous":"⬅️",
+		"next":"➡️",
+		"steal":"🕵️"
 	},
 	"guildlink":"https://discord.gg/VKesv7J",
 	"invitelink":"https://discordapp.com/oauth2/authorize?client_id=408785106942164992&permissions=1074120776&scope=bot",

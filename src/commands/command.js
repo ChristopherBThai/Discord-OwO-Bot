@@ -225,6 +225,7 @@ function initParam(msg,command,args,main){
 		"fetch":main.fetch,
 		"pubsub":main.pubsub,
 		"DataResolver":main.DataResolver,
+		"EmojiAdder":main.EmojiAdder,
 		"quest":function(questName,count,extra){main.questHandler.increment(msg,questName,count,extra).catch(console.error)},
 		"reactionCollector":main.reactionCollector,
 		"dateUtil":main.dateUtil,
