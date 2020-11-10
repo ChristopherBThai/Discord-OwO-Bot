@@ -37,8 +37,14 @@ module.exports = new CommandInterface({
 		let sql = "INSERT INTO timeout (id,time,count,penalty) VALUES ("+args[0]+",NOW(),1,"+time+") ON DUPLICATE KEY UPDATE time = NOW(),count=count+1,penalty = "+time+";";
 		let rows = await p.query(sql);
 
-		if(user = await p.sender.msgUser(args[0],"**☠ |** You have been banned for "+time+" hours!"+reason))
-			p.send("**☠ |** Penalty has been set to "+time+" for "+user.username+reason);
+		if(user = await p.sender.msgUser(args[0],"**☠ |** You have been banned for "+time+" hours!"+reason)){
+			if (user.dmError) {
+				p.send("**☠ |** Penalty has been set to "+time+" for "+user.username+reason+" - I couldn't DM them.");
+			}
+			else {
+				p.send("**☠ |** Penalty has been set to "+time+" for "+user.username+reason);
+			}
+		}
 		else if(guild = await p.fetch.getGuild(args[0]))
 			p.send("**☠ |** Penalty has been set to "+time+" for guild: "+guild.name);
 		else
