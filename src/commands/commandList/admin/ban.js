@@ -39,7 +39,7 @@ module.exports = new CommandInterface({
 
 		if(user = await p.sender.msgUser(args[0],"**☠ |** You have been banned for "+time+" hours!"+reason)){
 			if (user.dmError) {
-				p.send("**☠ |** Penalty has been set to "+time+" for "+user.username+reason+" - I couldn't DM them.");
+				p.send("**⚠ |** Penalty has been set to "+time+" for "+user.username+reason+" - I couldn't DM them.");
 			}
 			else {
 				p.send("**☠ |** Penalty has been set to "+time+" for "+user.username+reason);
