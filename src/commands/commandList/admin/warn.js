@@ -29,7 +29,7 @@ module.exports = new CommandInterface({
 		let warn = p.args.slice(1).join(" ");
 		let user = await p.sender.msgUser(p.args[0],"**⚠ |** You received a warning from a moderator: **"+warn+"**");
 
-		if(user){
+		if(user && !user.dmError){
 			p.send(`📨 **|** Sent a warning to **${user.username}#${user.discriminator}**`);
 		}else{
 			p.send(`⚠ **|** Failed to send a warning for that user`);

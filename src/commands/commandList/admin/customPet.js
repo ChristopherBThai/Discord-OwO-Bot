@@ -78,7 +78,7 @@ async function msgUser(p, id) {
 	let user;
 	user = await p.sender.msgUser(id, embed);
 
-	if(user)
+	if(user && !user.dmError)
 		return { user }
 	else
 		await p.errorMsg(', Failed to message user for '+id,3000);
