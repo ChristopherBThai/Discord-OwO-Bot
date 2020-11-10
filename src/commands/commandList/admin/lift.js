@@ -35,7 +35,7 @@ module.exports = new CommandInterface({
 
 		if(user = await p.sender.msgUser(p.args[0],"**🙇 |** Your penalty has been lifted by an admin! Sorry for the inconvenience!")){
 			if (user.dmError) {
-				p.send("Penalty has been set to 0 for "+user.username+", I couldn't DM them.");
+				p.send("⚠ **|** Penalty has been set to 0 for "+user.username+", I couldn't DM them.");
 			}
 			else {
 				p.send("Penalty has been set to 0 for "+user.username);

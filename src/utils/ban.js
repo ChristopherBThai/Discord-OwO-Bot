@@ -88,7 +88,7 @@ exports.banCommand = async function(p,user,command,reason){
 		await (await user.getDMChannel()).createMessage(noEmoji+" **|** You have been banned from using the command: `"+command+"`\n"+p.config.emoji.blank+" **| Reason:** "+reason);
 	}
 	catch (err) {
-		await p.sender.msgModLogChannel(skullEmoji+" **| "+user.username+"#"+user.discriminator+"** is banned from using `"+command+"` forever.\n"+p.config.emoji.blank+" **| ID:** "+user.id+"\n"+p.config.emoji.blank+" **| Reason:** "+reason+"\n"+p.config.emoji.blank+" **| I couldn't DM them.**");
+		await p.sender.msgModLogChannel(skullEmoji+" **⚠ | "+user.username+"#"+user.discriminator+"** is banned from using `"+command+"` forever.\n"+p.config.emoji.blank+" **| ID:** "+user.id+"\n"+p.config.emoji.blank+" **| Reason:** "+reason+"\n"+p.config.emoji.blank+" **| I couldn't DM them.**");
 		return;
 	}
 	await p.sender.msgModLogChannel(skullEmoji+" **| "+user.username+"#"+user.discriminator+"** is banned from using `"+command+"` forever.\n"+p.config.emoji.blank+" **| ID:** "+user.id+"\n"+p.config.emoji.blank+" **| Reason:** "+reason);
@@ -103,7 +103,7 @@ exports.liftCommand = async function(p,user,command){
 			await (await user.getDMChannel()).createMessage(liftEmoji+" **|** An admin has lifted your ban from the `"+command+"` command!");
 		}
 		catch (err) {
-			await p.send(liftEmoji+" **| "+user.username+"#"+user.discriminator+"**'s ban on `"+command+"` has been lifted!\n"+p.config.emoji.blank+" **| ID:** "+user.id+"\n"+p.config.emoji.blank+" **| I couldn't DM them.**");
+			await p.send(liftEmoji+" **⚠ | "+user.username+"#"+user.discriminator+"**'s ban on `"+command+"` has been lifted!\n"+p.config.emoji.blank+" **| ID:** "+user.id+"\n"+p.config.emoji.blank+" **| I couldn't DM them.**");
 			return;
 		}
 		await p.send(liftEmoji+" **| "+user.username+"#"+user.discriminator+"**'s ban on `"+command+"` has been lifted!\n"+p.config.emoji.blank+" **| ID:** "+user.id);
