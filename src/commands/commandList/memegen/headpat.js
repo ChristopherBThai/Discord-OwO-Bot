@@ -14,11 +14,11 @@ module.exports = new CommandInterface({
 
 	alias:["headpat"],
 
-	args:"@user",
+	args:"@user|emoji",
 
 	desc:"Create a headpat emoji! You can add it to server if you have used `owo emoji set`",
 
-	example:[],
+	example:["owo headpat @user", "owo headpat :emoji:"],
 
 	related:["owo emoji"],
 
