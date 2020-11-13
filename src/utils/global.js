@@ -274,3 +274,7 @@ exports.isProfane = function (string) {
 exports.cleanString = function (string) {
 	return filter.clean(string);
 }
+
+exports.isEmoji = function (string) {
+	return (/^<a?:[\w]+:[0-9]+>$/gi).test(string.trim())
+}
