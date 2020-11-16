@@ -74,7 +74,7 @@ async function displayBouquet(p){
 	if(!count) count = 0;
 	count = Math.floor(count/5)
 
-	p.replyMsg(bouquet, `, you currently have ${count} bouquett${count>1?'s':''}!`);
+	p.replyMsg(bouquet, `, you currently have ${count} bouquet${count>1?'s':''}!`);
 }
 
 async function give(p,user){
