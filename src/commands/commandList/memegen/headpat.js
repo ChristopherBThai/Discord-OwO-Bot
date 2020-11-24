@@ -48,6 +48,7 @@ module.exports = new CommandInterface({
 			name = name.slice(1, name.length-1)
 		} else {
 			p.errorMsg(", invalid arguments! Please tag a user or add an emoji!", 3000);
+			p.setCooldown(5);
 			return;
 		}
 
