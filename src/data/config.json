@@ -9,7 +9,7 @@
 			"autoreconnect":true,
 			"compress":false,
 			"disableEvents":{
-				"TYPEING_START":true,
+				"TYPING_START":true,
 				"VOICE_SERVER_UPDATE":true,
 				"VOICE_STATE_UPDATE":true,
 				"USER_NOTE_UPDATE":true,
