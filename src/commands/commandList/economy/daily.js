@@ -51,7 +51,8 @@ module.exports = new CommandInterface({
 						LEFT JOIN cowoncy AS c1 ON c1.id = u1.id
 					LEFT JOIN user AS u2 ON marriage.uid2 = u2.uid 
 						LEFT JOIN cowoncy AS c2 ON c2.id = u2.id
-				WHERE u1.id = ${p.msg.author.id} OR u2.id = ${p.msg.author.id};`;
+					LEFT JOIN user AS temp ON marriage.uid1 = temp.uid OR marriage.uid2 = temp.uid
+				WHERE temp.id = ${p.msg.author.id};`;
 
 		let rows = await p.query(sql);
 
