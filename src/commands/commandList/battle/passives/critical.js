@@ -17,7 +17,7 @@ module.exports = class Critical extends PassiveInterface{
 		this.basicDesc= "";
 		this.emojis = ["<:ccritical:572285184251002912>","<:ucritical:572285186322989057>","<:rcritical:572285186293628939>","<:ecritical:572285186209742848>","<:mcritical:572285186398617600>","<:lcritical:572285186407137290>","<:fcritical:572285186226782211>"];
 		this.statDesc = "Every attack has a **?%** chance to deal **?%** more damage. This can apply to heals.";
-		this.qualityList = [[10,30],[25,50]];
+		this.qualityList = [[15,35],[25,50]];
 	}
 
 	attack(animal,attackee,damage,type,tags){

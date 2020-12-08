@@ -17,14 +17,14 @@ module.exports = class Mortality extends BuffInterface{
 		this.debuff = true;
 		this.emoji = "<:mortality:619458869730476042>";
 		this.statDesc = "Decreases all healing for this animal by **?%**";
-		this.qualityList = [[30,60]];
+		this.qualityList = [[20,50]];
 	}
 
 	// Override
 	bind(animal,duration,tags){
-		for(let i in animal.buffs){
-			if(animal.buffs[i].id == this.id){
-				animal.buffs[i].duration += duration;
+		for(let i in animal.debuffs){
+			if(animal.debuffs[i].id == this.id){
+				animal.debuffs[i].duration += duration;
 				return;
 			}
 		}

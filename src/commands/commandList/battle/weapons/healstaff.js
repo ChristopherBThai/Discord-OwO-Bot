@@ -20,7 +20,7 @@ module.exports = class HealStaff extends WeaponInterface{
 		this.availablePassives = "all";
 		this.passiveCount = 1;
 		this.qualityList = [[100,150]];
-		this.manaRange = [200,125];
+		this.manaRange = [200,115];
 	}
 
 	attackWeapon(me,team,enemy){

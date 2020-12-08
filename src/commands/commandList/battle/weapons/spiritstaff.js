@@ -19,7 +19,7 @@ module.exports = class SpiritStaff extends WeaponInterface{
 		this.statDesc = "Heal all allies for **?%** of your "+WeaponInterface.magEmoji+"MAG and applies **Defense Up** for 2 turns";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
-		this.qualityList = [[30,50]];
+		this.qualityList = [[20,40]];
 		this.manaRange = [225,125];
 		this.buffList = [4];
 	}

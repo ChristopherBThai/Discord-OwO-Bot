@@ -17,7 +17,7 @@ module.exports = class Energize extends PassiveInterface{
 		this.basicDesc= "";
 		this.emojis = ["<:cwgen:621558018357854208>","<:uwgen:621558018177368075>","<:rwgen:621558018529689600>","<:ewgen:621558018365980712>","<:mwgen:621558018500329482>","<:lwgen:621558018017853441>","<:fwgen:621558018424700948>"];
 		this.statDesc = "Replenish **?** "+WeaponInterface.wpEmoji+"WP after every turn";
-		this.qualityList = [[20,40]];
+		this.qualityList = [[10,25]];
 	}
 
 	postTurn(animal,ally,enemy,action){

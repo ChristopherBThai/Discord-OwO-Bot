@@ -19,8 +19,8 @@ module.exports = class EnergyStaff extends WeaponInterface{
 		this.statDesc = "Sends a wave of energy and deals **?%** of your "+WeaponInterface.magEmoji+"MAG to all opponents";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
-		this.qualityList = [[35,65]];
-		this.manaRange = [200,100];
+		this.qualityList = [[40,60]];
+		this.manaRange = [200,125];
 	}
 
 	attackWeapon(me,team,enemy){

@@ -16,11 +16,11 @@ module.exports = class VampStaff extends WeaponInterface{
 		this.basicDesc = "";
 		this.emojis = ["<:cvampstaff:562175259797880839>","<:uvampstaff:562175261374677002>","<:rvampstaff:562175261500506122>","<:evampstaff:562175261215293440>","<:mvampstaff:562175261509156864>","<:lvampstaff:562175261496442880>","<:fvampstaff:562175261173612555>"]
 		this.defaultEmoji = "<:vampstaff:562175262075387904>";
-		this.statDesc = "Deal **?%** of your "+WeaponInterface.magEmoji+"MAG to ALL enemies and heal ALL allies by the damage dealt";
+		this.statDesc = "Deal **?%** of your "+WeaponInterface.magEmoji+"MAG to ALL enemies and heal ALL allies by half the damage dealt";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
 		this.qualityList = [[25,45]];
-		this.manaRange = [200,100];
+		this.manaRange = [200,125];
 	}
 
 	attackWeapon(me,team,enemy){
@@ -56,9 +56,7 @@ module.exports = class VampStaff extends WeaponInterface{
 		logs.push(logText,subLogs);
 
 		/* Heal all allies */
-		let alive = WeaponInterface.getAlive(team);
-		alive = alive.length>1?alive.length:1;
-		let heal = dealt/alive;
+		let heal = dealt/2;
 		logText = `[VSTAFF] ${me.nickname} healed `;
 		subLogs = new Logs();
 		for(let i=0;i<team.length;i++){
