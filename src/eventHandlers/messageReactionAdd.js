@@ -6,5 +6,5 @@
   */
 
 exports.handle = function(msg,emoji,userID){
-	this.reactionCollector.react(msg,emoji,userID,"add");
+	this.reactionCollector.react(msg,emoji,userID.id || userID,"add");
 }
