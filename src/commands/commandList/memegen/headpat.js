@@ -14,11 +14,11 @@ module.exports = new CommandInterface({
 
 	alias:["headpat"],
 
-	args:"@user",
+	args:"@user|emoji",
 
 	desc:"Create a headpat emoji! You can add it to server if you have used `owo emoji set`",
 
-	example:[],
+	example:["owo headpat @user", "owo headpat :emoji:"],
 
 	related:["owo emoji"],
 
@@ -32,20 +32,32 @@ module.exports = new CommandInterface({
 	bot:true,
 
 	execute: async function(p){
-		user = p.getMention(p.args[0]);
-		if (!user && p.args.length > 0) {
-			p.errorMsg(", you must tag a user!", 5000);
+		let user = p.getMention(p.args[0]);
+		let link;
+		let name;
+		if (user) {
+			link = user.dynamicAvatarURL("png", 128)
+			name = user.username;
+		} else if (!user && !p.args.length) {
+			link = p.msg.author.dynamicAvatarURL("png", 128)
+			name = p.msg.author.username;
+		} else if (!user && p.global.isEmoji(p.args[0])) {
+			link = p.args[0].match(/:[0-9]+>/gi)[0];
+			link = `https://cdn.discordapp.com/emojis/${link.slice(1,link.length-1)}.png`;
+			name = p.args[0].match(/:[\w]+:/gi)[0];
+			name = name.slice(1, name.length-1)
+		} else {
+			p.errorMsg(", invalid arguments! Please tag a user or add an emoji!", 3000);
 			p.setCooldown(5);
 			return;
-		} else if (!user) {
-			user = p.msg.author
 		}
 
 		try {
-			const uuid = await fetchImage(p, user);
+			const uuid = await fetchImage(p, link);
 			const url = `${imagegenAuth.imageGenUrl}/img/${uuid}.gif`
-			await display(p, url, user);
+			await display(p, url, name);
 		} catch (err) {
+			console.log(err);
 			p.errorMsg(", Failed to generate gif. Try again later.", 3000);
 			p.setCooldown(5);
 		}
@@ -53,9 +65,9 @@ module.exports = new CommandInterface({
 
 })
 
-async function display (p, url, user) {
-	const emojiName = `${user.username.replace(/[^\w]/gi,'')}_pat`
-	let embed = createEmbed(p, url, user, emojiName);
+async function display (p, url, name) {
+	const emojiName = `${name.replace(/[^\w]/gi,'')}_pat`
+	let embed = createEmbed(p, url, name, emojiName);
 	let msg = await p.send({embed});
 
 	// Check if user set stealing
@@ -74,26 +86,26 @@ async function display (p, url, user) {
 	collector.on('collect', async function (emoji, userId) {
 		try {
 			if (await emojiAdder.addEmoji(userId)) {
-				await msg.edit({embed: createEmbed(p, url, user, emojiName, emojiAdder)});
+				await msg.edit({embed: createEmbed(p, url, name, emojiName, emojiAdder)});
 			}
 		} catch (err) {
 			if (!emojiAdder.successCount) {
-				await msg.edit({embed: createEmbed(p, url, user, emojiName, emojiAdder)});
+				await msg.edit({embed: createEmbed(p, url, name, emojiName, emojiAdder)});
 			}
 		}
 	});
 
 	collector.on('end',async function(collected){
-		const embed = createEmbed(p, url, user, emojiName, emojiAdder);
+		const embed = createEmbed(p, url, name, emojiName, emojiAdder);
 		embed.color = 6381923;
 		await msg.edit({content:"This message is now inactive",embed});
 	});
 }
 
-function createEmbed (p, url, user, emojiName, emojiAdder) {
+function createEmbed (p, url, name, emojiName, emojiAdder) {
 	const embed = {
 		"author":{
-			"name": `${p.msg.author.username} pats ${user.username}!`,
+			"name": `${p.msg.author.username} pats ${name}!`,
 			"url": url,
 			"icon_url": p.msg.author.avatarURL
 		},
@@ -119,9 +131,9 @@ function createEmbed (p, url, user, emojiName, emojiAdder) {
 	return embed
 }
 
-async function fetchImage (p, user) {
+async function fetchImage (p, link) {
 	const info = {
-		avatarLink: user.dynamicAvatarURL("png", 128),
+		avatarLink: link,
 		password: imagegenAuth.password
 	}
 
