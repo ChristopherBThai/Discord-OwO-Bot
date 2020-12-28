@@ -23,7 +23,6 @@ const ranks = {
 }
 
 exports.alter = function(id,text){
-			return heysay(text);
 	switch(id){
 		case '250383887312748545':
 			return elsa(text);
