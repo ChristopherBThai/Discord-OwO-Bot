@@ -19,7 +19,7 @@ module.exports = new CommandInterface({
 
 	args:"{@user}",
 
-	desc:"Give a rose to someone! You can only gain one if you receive it! 5 roses will become a boquet. This command was created by ?370709798020448257?",
+	desc:"Give a rose to someone! You can only gain one if you receive it! 5 roses will become a bouquet. This command was created by ?370709798020448257?",
 
 	example:[],
 
@@ -74,7 +74,7 @@ async function displayBouquet(p){
 	if(!count) count = 0;
 	count = Math.floor(count/5)
 
-	p.replyMsg(bouquet, `, you currently have ${count} bouquett${count>1?'s':''}!`);
+	p.replyMsg(bouquet, `, you currently have ${count} bouquet${count>1?'s':''}!`);
 }
 
 async function give(p,user){
