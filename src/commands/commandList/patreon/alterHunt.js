@@ -55,6 +55,8 @@ exports.alter = function(id,text,info){
 			return u_1s1k(text,info);
 		case '541103499992367115':
 			return ashley(text,info);
+		case '216710431572492289':
+			return arichy(text, info);
 		default:
 			return text;
 	}
@@ -503,6 +505,33 @@ function ashley(text,info) {
 		color: 9502720,
 		thumbnail: {
 			url: "https://cdn.discordapp.com/attachments/661043173992169482/760890231942938705/ralph_main.gif"
+		}
+	}
+
+	return {embed};
+}
+
+function arichy (text,info) {
+	const wizard = '🧙‍♀️';
+
+	if(info.gemText){
+		text = `${wizard} **| ${info.author.username}**, your Mage has returned from her adventure in an alternate universe learned new spells.\n`;
+		text += `${blank} **|** Her magic powers were enhanced by: ${info.gemText}\n`;
+		text += `${blank} **|** On the journey, she found... ${info.animalEmojis}`;
+	}else{
+		text = `${wizard} **| ${info.author.username}**, your Mage has returned from her adventure in an alternate universe learned new spells.\n`;
+		text += `${blank} **|** On the journey, she found... ${info.animal[0][0]} ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**! It's time to visit the Dungeon 🔥`;
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: 4886754,
+		thumbnail: {
+			url: "https://i.imgur.com/vvpFulp.gif"
 		}
 	}
 
