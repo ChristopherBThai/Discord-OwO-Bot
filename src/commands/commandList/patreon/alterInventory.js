@@ -18,7 +18,6 @@ for (let i in gems) {
 }
 
 exports.alter = function(id,text) {
-			return grace(text);
 	switch(id){
 		case '658299153042112512':
 			return grace(text);
