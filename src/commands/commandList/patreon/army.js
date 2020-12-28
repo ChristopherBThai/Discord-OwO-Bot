@@ -74,7 +74,7 @@ async function use(p) {
 
 	let text;
 	if (rand <= .1) {
-		text = `${bEmoji} **|** Scanvenging through the messages, you found the really old relic of the past! Shattered Army Emblem!! So old it turned to dust as you picked it up. :(`;
+		text = `${bEmoji} **|** Scavenging through the messages, you found the really old relic of the past! Shattered Army Emblem!! So old it turned to dust as you picked it up. :(`;
 	} else if (rand <= .6) {
 		text = `${rEmoji} **|** Scavenging through the messages, you found the rusty ol' Rusty Army Emblem!`;
 		await p.redis.hincrby("data_"+p.msg.channel.guild.id, 'r_emblem', 1);

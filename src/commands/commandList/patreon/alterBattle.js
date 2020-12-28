@@ -30,6 +30,12 @@ exports.alter = function(id,text,type){
 			return lanre(text,type);
 		case '541103499992367115':
 			return ashley(text,type);
+		case '216710431572492289':
+			return arichy(text, type);
+		case '408875125283225621':
+			return kirito(text, type);
+		case '707939636835516457':
+			return direwolf(text, type);
 		default:
 			return text;
 	}
@@ -212,6 +218,114 @@ function ashley(text,opt) {
 			}
 			text.thumbnail = {
 				url: "https://cdn.discordapp.com/attachments/661043173992169482/760890400734052462/ralph_win.gif"
+			}
+			break;
+	}
+	return text;
+}
+
+function arichy (text,opt) {
+	text.author.name = text.author.name.replace(" goes into battle!",", your Mage goes into the dungeon with her animal friends. They met a strong enemy :O");
+	switch (text.color) {
+		case 16711680:
+			if (opt) {
+				text.footer.text = `Oh no! The enemy was too strong! You lost in ${opt.turns} turns! Your team gained 50xp and lost their streak of ${opt.streak}... Try again!`;
+			}
+			break;
+		case 65280:
+			if (opt) {
+				text.footer.text = `Dungeon Complete! You won in ${opt.turns} turns! Your team gained ${opt.xp} xp. Streak ${opt.streak}`;
+			}
+			break;
+		case 6381923:
+			if (opt) {
+				text.footer.text = `Oh, what a fight! You tried your best and both got exhausted. It's a tie! Your team gained ${opt.xp} xp! GG!`;
+			}
+			break;
+	}
+	text.thumbnail = {
+		url: "https://i.imgur.com/vvpFulp.gif"
+	}
+	return text;
+}
+
+function kirito (text,opt) {
+	text.author.name = 'Zero Two pilots Strelizia into battle with her darling! Slaughtering the klaxosaurs in their way. *rawr*';
+	switch (text.color) {
+		case 16711680:
+			text.color = 2500198 
+			if (opt) {
+				text.footer.text = `Ouch. The klaxosaurs managed to invade Cerasus within ${opt.turns} turns, losing your streak of ${opt.streak} wins. But don't fret, darling is here to lift your spirits!`;
+			}
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/731399149307691008/786994818118057984/shecry.jpg"
+			}
+			break;
+		case 65280:
+			text.color = 15450599;
+			if (opt) {
+				if (!(''+opt.xp).includes('+')) {
+					text.footer.text = `Zero Two managed to clear the battlefield out of klaxosaurs in ${opt.turns} turns! Gaining ${opt.xp} klaxosaur xp to empower her franxx with! You also reward her with a day to the beach. Streak: ${opt.streak}`;
+					text.thumbnail = {
+						url: "https://cdn.discordapp.com/attachments/731399149307691008/786993695936872489/beachcutie.gif"
+					}
+				} else {
+					if (Math.random() < .5) {
+						text.footer.text = `Zero Two managed to clear the battlefield out of klaxosaurs in ${opt.turns} turns! Bringing back ${opt.xp} honey bread and ham to snack on with her darling. Streak: ${opt.streak}`;
+						text.thumbnail = {
+							url: "https://cdn.discordapp.com/attachments/731399149307691008/786992280014684160/honey.gif"
+						}
+					} else {
+						text.footer.text = `Zero Two managed to clear the battlefield out of klaxosaurs in ${opt.turns} turns! Gaining ${opt.xp} klaxosaur xp to empower her franxx with! You also set her to shower after shedding lots of sweat. Streak: ${opt.streak}`;
+						text.thumbnail = {
+							url: "https://cdn.discordapp.com/attachments/731399149307691008/787737189454315520/wateruwuwuwu.gif"
+						}
+					}
+
+				}
+			}
+			break;
+		case 6381923:
+			text.color = 5560773
+			if (opt) {
+				text.footer.text = `Sheesh, close one. Zero Two will kill them next time! Here's 100 pats for now. Streak: ${opt.streak}`;
+			}
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/731399149307691008/786993997633159219/headpattie.png"
+			}
+			break;
+	}
+	return text;
+}
+
+function direwolf (text,opt) {
+	text.author.name = 'Lucy and Yukino go into battle and open the 12 Zodiac Gates!';
+	switch (text.color) {
+		case 16711680:
+			text.color = 16023551; 
+			if (opt) {
+				text.footer.text = `The Celestial Spirits vanish! RIP ${opt.streak}! You lost in ${opt.turns}!`;
+			}
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/771398927912009738/784165154798567444/image0.jpg"
+			}
+			break;
+		case 65280:
+			text.color = 1709784;
+			if (opt) {
+				text.footer.text = `Lucy x Yukino are victorious! You won in ${opt.turns} and your team gained ${opt.xp}! Vanquished: ${opt.streak}!`;
+			}
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/771398927912009738/784164939421581342/image0.gif"
+			}
+			break;
+		case 6381923:
+			text.color = 11796735;
+			if (opt) {
+				text.footer.text = `What magical presence! The enemy remains at large! Lucy x Yukino gain ${opt.xp}! Streak: ${opt.streak}!`;
+			}
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/771398927912009738/784164939987157013/image1.gif"
 			}
 			break;
 	}

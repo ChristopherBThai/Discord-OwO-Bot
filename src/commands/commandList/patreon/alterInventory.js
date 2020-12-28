@@ -10,13 +10,15 @@ const gems = require('../../../data/gems.json').gems;
 const emojis = {
 	box: '<:box:427352600476647425>',
 	crate: '<:crate:523771259302182922>',
-	wallpaper: '🖼️'
+	wallpaper: '🖼️',
+	photo: '🖼'
 }
 for (let i in gems) {
 	emojis[i] = gems[i].emoji;
 }
 
 exports.alter = function(id,text) {
+			return grace(text);
 	switch(id){
 		case '658299153042112512':
 			return grace(text);
@@ -53,7 +55,8 @@ function grace(text) {
 
 		box: '<:Lootbox:691662873574768711>',
 		crate: '<:WeaponCrate:691662214070796328>',
-		wallpaper: '<:Background:686845466582974470>'
+		wallpaper: '<:Background:686845466582974470>',
+		photo: '<:photo:792918613194440724>'
 	}
 	for (let i in newEmojis) {
 		text = text.replace(emojis[i], newEmojis[i]);
