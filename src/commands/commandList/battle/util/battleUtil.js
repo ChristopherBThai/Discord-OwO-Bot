@@ -131,7 +131,7 @@ exports.initBattle = async function(p,setting){
 
 	if(!count[0]) throw "battleUtil sql is broken";
 
-	count = Math.floor(Math.random()*(count[0].count * .98));
+	count = Math.floor(Math.random() * (count[0].count - 1));
 
 	/* Query random team */
 	sql = `SELECT pet_team.censor as ptcensor, pet_team.pgid, animal.offensive as acensor, tname, pos, animal.name, animal.nickname, animal.pid, animal.xp, user_weapon.uwid, user_weapon.wid, user_weapon.stat, user_weapon_passive.pcount, user_weapon_passive.wpid, user_weapon_passive.stat as pstat
@@ -140,7 +140,9 @@ exports.initBattle = async function(p,setting){
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
 			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
-		WHERE pet_team.pgid = ${count}
+		WHERE pet_team.pgid = (
+			SELECT temp1.pgid FROM pet_team temp1 INNER JOIN pet_team_animal temp2 ON temp1.pgid = temp2.pgid WHERE temp1.pgid > ${count} limit 1
+		)
 		ORDER BY pos ASC;`;
 	/* And our team */
 	sql += `SELECT pet_team.censor as ptcensor, streak, highest_streak, animal.offensive as acensor,pet_team.pgid, tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
