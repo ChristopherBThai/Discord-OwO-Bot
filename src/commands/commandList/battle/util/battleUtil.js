@@ -119,7 +119,7 @@ var getBattle = exports.getBattle = async function(p,setting){
 /* Creates a brand new battle */
 exports.initBattle = async function(p,setting){
 	/* Find random opponent */
-	let sql = `SELECT COUNT(pgid) AS count FROM pet_team_animal;SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id}`;
+	let sql = `SELECT pgid AS count FROM pet_team ORDER BY pgid DESC LIMIT 1;SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id}`;
 	let count = await p.query(sql);
 	let pgid = count[1][0];
 	if(!pgid){
@@ -131,7 +131,7 @@ exports.initBattle = async function(p,setting){
 
 	if(!count[0]) throw "battleUtil sql is broken";
 
-	count = Math.floor(Math.random()*(count[0].count-1));
+	count = Math.floor(Math.random()*(count[0].count * .98));
 
 	/* Query random team */
 	sql = `SELECT pet_team.censor as ptcensor, pet_team.pgid, animal.offensive as acensor, tname, pos, animal.name, animal.nickname, animal.pid, animal.xp, user_weapon.uwid, user_weapon.wid, user_weapon.stat, user_weapon_passive.pcount, user_weapon_passive.wpid, user_weapon_passive.stat as pstat
@@ -140,7 +140,7 @@ exports.initBattle = async function(p,setting){
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
 			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
-		WHERE pet_team.pgid = (SELECT pgid FROM pet_team_animal WHERE pgid != ${pgid} LIMIT 1 OFFSET ${count})
+		WHERE pet_team.pgid = ${count}
 		ORDER BY pos ASC;`;
 	/* And our team */
 	sql += `SELECT pet_team.censor as ptcensor, streak, highest_streak, animal.offensive as acensor,pet_team.pgid, tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
