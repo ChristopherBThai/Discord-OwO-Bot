@@ -7,6 +7,7 @@
 
 const dateUtil = require('../../../../utils/dateUtil.js');
 const global = require('../../../../utils/global.js');
+const mysql = require('../../../../utils/mysql.js');
 const teamUtil = require('./teamUtil.js');
 const weaponUtil = require('./weaponUtil.js');
 const animalUtil = require('./animalUtil.js');
@@ -36,6 +37,11 @@ function teamFilter (userId) {
 	LIMIT 1`;
 }
 
+let minPgid = 0;
+mysql.con.query(`SELECT pgid FROM pet_team ORDER BY pgid ASC LIMIT 1`, (err, result) => {
+	if (err) throw err;
+	minPgid = result[0]?.pgid || 0;
+});
 
 /* ==================================== Grabs battle from sql ====================================  */
 /* Grabs existing battle */
@@ -131,7 +137,7 @@ exports.initBattle = async function(p,setting){
 
 	if(!count[0]) throw "battleUtil sql is broken";
 
-	count = Math.floor(Math.random() * (count[0].count - 1));
+	count = minPgid + Math.floor(Math.random() * (count[0].count - minPgid));
 
 	/* Query random team */
 	sql = `SELECT pet_team.censor as ptcensor, pet_team.pgid, animal.offensive as acensor, tname, pos, animal.name, animal.nickname, animal.pid, animal.xp, user_weapon.uwid, user_weapon.wid, user_weapon.stat, user_weapon_passive.pcount, user_weapon_passive.wpid, user_weapon_passive.stat as pstat
