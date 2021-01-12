@@ -299,12 +299,12 @@ function kirito (text,opt) {
 }
 
 function direwolf (text,opt) {
-	text.author.name = 'Lucy and Yukino go into battle and open the 12 Zodiac Gates!';
+	text.author.name = 'Lucy and Yukino go into battle and open the TWELVE ZODIAC GATES!';
 	switch (text.color) {
 		case 16711680:
 			text.color = 16023551; 
 			if (opt) {
-				text.footer.text = `The Celestial Spirits vanish! RIP ${opt.streak}! You lost in ${opt.turns}!`;
+				text.footer.text = `The Celestial Spirits vanish! Lucy cries out for Natsu's help! You lost in ${opt.turns}! RIP ${opt.streak} KILLING SPREE!`;
 			}
 			text.thumbnail = {
 				url: "https://cdn.discordapp.com/attachments/771398927912009738/784165154798567444/image0.jpg"
@@ -313,7 +313,7 @@ function direwolf (text,opt) {
 		case 65280:
 			text.color = 1709784;
 			if (opt) {
-				text.footer.text = `Lucy x Yukino are victorious! You won in ${opt.turns} and your team gained ${opt.xp}! Vanquished: ${opt.streak}!`;
+				text.footer.text = `Lucy x Yukino are VICTORIOUS! You won in ${opt.turns} turns and your team gained ${opt.xp}! Vanquished: ${opt.streak}!`;
 			}
 			text.thumbnail = {
 				url: "https://cdn.discordapp.com/attachments/771398927912009738/784164939421581342/image0.gif"
@@ -322,7 +322,7 @@ function direwolf (text,opt) {
 		case 6381923:
 			text.color = 11796735;
 			if (opt) {
-				text.footer.text = `What magical presence! The enemy remains at large! Lucy x Yukino gain ${opt.xp}! Streak: ${opt.streak}!`;
+				text.footer.text = `What magical presence! The enemy remains at large! Natsu arrives on the scene enraged! Lucy x Yukino gain ${opt.xp}! Streak: ${opt.streak}!`;
 			}
 			text.thumbnail = {
 				url: "https://cdn.discordapp.com/attachments/771398927912009738/784164939987157013/image1.gif"
