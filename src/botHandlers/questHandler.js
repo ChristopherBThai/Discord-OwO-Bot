@@ -88,6 +88,10 @@ async function check(msg,id,username,questName,result,count,extra){
 			text += "<:crate:523771259302182922>".repeat(reward);
 			rewardSql = "INSERT INTO crate (uid,boxcount,claim) VALUES ((SELECT uid FROM user WHERE id = ?),?,'2017-01-01 10:10:10') ON DUPLICATE KEY UPDATE boxcount = boxcount + ?;";
 			var rewardVar = [id,reward,reward];
+		}else if(rewardType=="shards"){
+			text += "<:weaponshard:655902978712272917>".repeat(reward);
+			rewardSql = `INSERT INTO shards (uid,count) VALUES ((SELECT uid FROM user WHERE id = ?),?) ON DUPLICATE KEY UPDATE count = count + ?;`;
+			var rewardVar = [id,reward,reward];
 		}else{
 			text += global.toFancyNum(reward)+" <:cowoncy:416043450337853441>";
 			rewardSql = "INSERT INTO cowoncy (id,money) VALUES (?,?) ON DUPLICATE KEY UPDATE money = money + ?";
