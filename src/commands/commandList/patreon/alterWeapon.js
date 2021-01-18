@@ -7,7 +7,7 @@
 
 exports.alter = function(id, text, opt){
 	switch (id) {
-		case 408371860246364183:
+		case '408371860246364183':
 			return lanre(text, opt);
 		default:
 			return text
