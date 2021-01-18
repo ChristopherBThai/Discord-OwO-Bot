@@ -26,7 +26,7 @@ exports.alter = function(id,text,info){
 		case '289411794672418819':
 			return louis(text);
 		case '348828692539113490':
-			return michelle(text);
+			return michelle(text, info);
 		case '250383887312748545':
 			return elsa(text);
 		case '181264821713371136':
@@ -226,20 +226,20 @@ function louis(text){
 	return text;
 }
 
-function michelle(text){
+function michelle(text, info){
 	let meowth = '<a:meowth:605676882788089867>';
 	let persian = '<a:persian:605676882599477249>';
-	if(text.indexOf("empowered by")>=0){
-		text = text.replace(huntEmoji,meowth)
-			.replace(/[\s\[\]a-zA-z0-9!?]+\*\*,\shunt/gi," Meowth**")
-			.replace("You found","It returned with")
-			.replace("\n<:blank","\n"+blank+" **|** and evolved into a Persian "+persian+"\n<:blank");
+
+	if(info.gemText){
+		text = `${meowth} **| Meowth** is empowered by ${info.gemText}!\n${blank} **|** It returned with: ${info.animalEmojis}\n${blank} **|** and evolved into a **Persian** ${persian}`;
 	}else{
-		text = text.replace(huntEmoji,meowth)
-			.replace(/[\s\[\]a-zA-z0-9!?]+\*\*\sspent/gi," Meowth** went out andspent")
-			.replace("spent 5 <:cowoncy:416043450337853441> and","")
-			.replace("!\n<:blank","!\n"+blank+" **|** It returned and evolved into a Persian "+persian+"\n<:blank")
+		text = `${meowth} **| Meowth** went out and caught an ${info.animal[0][0]} ${info.animalEmojis}\n${blank} **|** and evolved into a **Persian** ${persian}`;
 	}
+	if (info.petText) {
+		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
+	}
+	text += info.lootboxText || '';
+
 	return text;
 }
 
