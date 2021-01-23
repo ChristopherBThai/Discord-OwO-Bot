@@ -6,7 +6,6 @@
   */
 	
 /***** Datadog *****/
-/*
 var StatsD = require('node-dogstatsd').StatsD;
 var log = new StatsD();
 
@@ -24,7 +23,6 @@ exports.value = function(name,amount,tags){
 	else if(amount<0)
 		log.decrementBy('owo.'+name,Math.abs(amount),tags);
 }
-*/
 
 /***** winston *****/
 /*
