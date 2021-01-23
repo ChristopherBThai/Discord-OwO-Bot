@@ -163,8 +163,9 @@ function getQuest(id,qid,afterMidSQL){
 	/* Grab prize type */
 	var prize = "cowoncy";
 	rand = Math.random();
-	if(rand > .6) prize = "crate";
-	else if(rand > .3) prize = "lootbox";
+	if(rand > .75) prize = "crate";
+	else if(rand > .5) prize = "lootbox";
+	else if(rand > .25) prize = "shards";
 
 	/* Construct insert sql */
 	var sql = `INSERT IGNORE INTO quest (uid,qid,qname,level,prize,count) values (
@@ -222,6 +223,8 @@ function parseQuest(questInfo){
 		var reward = "<:box:427352600476647425>".repeat(quest.lootbox[questInfo.level]);
 	}else if(questInfo.prize=="crate"){
 		var reward = "<:crate:523771259302182922>".repeat(quest.crate[questInfo.level]);
+	}else if (questInfo.prize=="shards"){
+		var reward = global.toFancyNum(quest.shards[questInfo.level]) + " <:weaponshard:655902978712272917>";
 	}
 	var count = quest.count[questInfo.level];
 	if(global.isInt(count))
