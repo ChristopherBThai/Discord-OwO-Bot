@@ -89,7 +89,7 @@ async function check(msg,id,username,questName,result,count,extra){
 			rewardSql = "INSERT INTO crate (uid,boxcount,claim) VALUES ((SELECT uid FROM user WHERE id = ?),?,'2017-01-01 10:10:10') ON DUPLICATE KEY UPDATE boxcount = boxcount + ?;";
 			var rewardVar = [id,reward,reward];
 		}else if(rewardType=="shards"){
-			text += "<:weaponshard:655902978712272917>".repeat(reward);
+			text += "<:weaponshard:655902978712272917>**x" + reward + "**";
 			rewardSql = `INSERT INTO shards (uid,count) VALUES ((SELECT uid FROM user WHERE id = ?),?) ON DUPLICATE KEY UPDATE count = count + ?;`;
 			var rewardVar = [id,reward,reward];
 		}else{
