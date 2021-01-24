@@ -139,7 +139,12 @@ exports.msgUser = async function(id,msg){
 	try{
 		if(channel) await channel.createMessage(msg);
 	}catch(err){
-		user.dmError = true;
+		// just enough to error log
+		return {
+			dmError: true,
+			username: user.username,
+			discriminator: user.discriminator
+		}
 	}
 	
 	return user;
