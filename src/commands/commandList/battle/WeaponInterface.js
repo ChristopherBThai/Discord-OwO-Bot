@@ -530,7 +530,7 @@ module.exports = class WeaponInterface{
 		}
 		res = res[0]+res[1];
 		res = (res/(200+res))*.7;
-		res = res + .3 * resRate / 15;
+		res = res + .3 * (resRate / 15);
 		return res;
 	}
 
