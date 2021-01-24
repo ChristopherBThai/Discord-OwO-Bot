@@ -26,7 +26,7 @@ exports.alter = function(id,text,info){
 		case '289411794672418819':
 			return louis(text);
 		case '348828692539113490':
-			return michelle(text);
+			return michelle(text, info);
 		case '250383887312748545':
 			return elsa(text);
 		case '181264821713371136':
@@ -55,6 +55,8 @@ exports.alter = function(id,text,info){
 			return u_1s1k(text,info);
 		case '541103499992367115':
 			return ashley(text,info);
+		case '216710431572492289':
+			return arichy(text, info);
 		default:
 			return text;
 	}
@@ -224,20 +226,20 @@ function louis(text){
 	return text;
 }
 
-function michelle(text){
+function michelle(text, info){
 	let meowth = '<a:meowth:605676882788089867>';
 	let persian = '<a:persian:605676882599477249>';
-	if(text.indexOf("empowered by")>=0){
-		text = text.replace(huntEmoji,meowth)
-			.replace(/[\s\[\]a-zA-z0-9!?]+\*\*,\shunt/gi," Meowth**")
-			.replace("You found","It returned with")
-			.replace("\n<:blank","\n"+blank+" **|** and evolved into a Persian "+persian+"\n<:blank");
+
+	if(info.gemText){
+		text = `${meowth} **| Meowth** is empowered by ${info.gemText}!\n${blank} **|** It returned with: ${info.animalEmojis}\n${blank} **|** and evolved into a **Persian** ${persian}`;
 	}else{
-		text = text.replace(huntEmoji,meowth)
-			.replace(/[\s\[\]a-zA-z0-9!?]+\*\*\sspent/gi," Meowth** went out andspent")
-			.replace("spent 5 <:cowoncy:416043450337853441> and","")
-			.replace("!\n<:blank","!\n"+blank+" **|** It returned and evolved into a Persian "+persian+"\n<:blank")
+		text = `${meowth} **| Meowth** went out and caught an ${info.animal[0][0]} ${info.animalEmojis}\n${blank} **|** and evolved into a **Persian** ${persian}`;
 	}
+	if (info.petText) {
+		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
+	}
+	text += info.lootboxText || '';
+
 	return text;
 }
 
@@ -503,6 +505,33 @@ function ashley(text,info) {
 		color: 9502720,
 		thumbnail: {
 			url: "https://cdn.discordapp.com/attachments/661043173992169482/760890231942938705/ralph_main.gif"
+		}
+	}
+
+	return {embed};
+}
+
+function arichy (text,info) {
+	const wizard = '🧙‍♀️';
+
+	if(info.gemText){
+		text = `${wizard} **| ${info.author.username}**, your Mage has returned from her adventure in an alternate universe learned new spells.\n`;
+		text += `${blank} **|** Her magic powers were enhanced by: ${info.gemText}\n`;
+		text += `${blank} **|** On the journey, she found... ${info.animalEmojis}`;
+	}else{
+		text = `${wizard} **| ${info.author.username}**, your Mage has returned from her adventure in an alternate universe learned new spells.\n`;
+		text += `${blank} **|** On the journey, she found... ${info.animal[0][0]} ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**! It's time to visit the Dungeon 🔥`;
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: 4886754,
+		thumbnail: {
+			url: "https://i.imgur.com/vvpFulp.gif"
 		}
 	}
 

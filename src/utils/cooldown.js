@@ -63,6 +63,9 @@ exports.check = async function(p,command){
 		let valid = !!await macro.check(p,command,{diff,now});
 		if(!valid && command=="points"){
 			await setCooldown(p,command,600);
+			await setCooldown(p,command,600);
+		} else if (!valid) {
+			await setCooldown(p,command,10);
 		}
 		return valid;
 	}

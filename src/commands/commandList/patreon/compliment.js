@@ -7,19 +7,18 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const emoji = "<a:rose:737182921076768780>";
-const owner = "370709798020448257";
-const data = "rose";
-const plural = "roses";
-const bouquet = "<a:bouquet:737182922263625758>"
+const emoji = "<a:compliment:798404718765801492>";
+const owner = "103409793972043776";
+const data = "compliment";
+const plural = "compliments";
 
 module.exports = new CommandInterface({
 
-	alias:["rose", "bouquet"],
+	alias:["compliment","bnice"],
 
 	args:"{@user}",
 
-	desc:"Give a rose to someone! You can only gain one if you receive it! 5 roses will become a bouquet. This command was created by ?370709798020448257?",
+	desc:"Give a compliment to someone! You can only gain one if you receive it! This command was created by ?103409793972043776?",
 
 	example:[],
 
@@ -29,17 +28,14 @@ module.exports = new CommandInterface({
 
 	group:["patreon"],
 
-	cooldown:3000,
+	cooldown:30000,
 	half:80,
 	six:400,
 	bot:true,
 
 	execute: async function(p){
-		if (p.command.toLowerCase() == "bouquet") {
-			displayBouquet(p);
-			p.setCooldown(5);
-		} else if(p.args.length==0){
-			displayRose(p);
+		if(p.args.length==0){
+			display(p);
 			p.setCooldown(5);
 		}else{
 			let user = p.getMention(p.args[0]);
@@ -61,20 +57,11 @@ module.exports = new CommandInterface({
 	}
 });
 
-async function displayRose(p){
+async function display(p){
 	let count = await p.redis.hget("data_"+p.msg.author.id, data);
 	if(!count) count = 0;
-	count = count%5
 
 	p.replyMsg(emoji, ", you currently have "+count+" "+plural+"!");
-}
-
-async function displayBouquet(p){
-	let count = await p.redis.hget("data_"+p.msg.author.id, data);
-	if(!count) count = 0;
-	count = Math.floor(count/5)
-
-	p.replyMsg(bouquet, `, you currently have ${count} bouquet${count>1?'s':''}!`);
 }
 
 async function give(p,user){
@@ -82,19 +69,14 @@ async function give(p,user){
 		let result = await p.redis.hincrby("data_"+p.msg.author.id, data, -1);
 
 		// Error checking
-		const refund = +result<0||((+result+1)%5)<=0;
-		if(result==null||refund){
-			if(refund) p.redis.hincrby("data_"+p.msg.author.id, data, 1);
+		if(result==null||result<0){
+			if(result<0) p.redis.hincrby("data_"+p.msg.author.id, data, 1);
 			p.errorMsg(", you do not have any "+plural+" to give! >:c",3000);
 			p.setCooldown(5);
 			return;
 		}
 	}
 
-	let result = await p.redis.hincrby("data_"+user.id, data, 2);
-	let text = `${emoji} **| ${user.username}** has received a rose from ${p.msg.author.username}. How cute!`;
-	if ( (result%5) - 2 < 0 ) {
-		text += "\n"+p.config.emoji.blank+" **|** your five roses combined and turned into a bouquet! "+bouquet;
-	}
-	p.send(text);
+	await p.redis.hincrby("data_"+user.id, data, 2);
+	p.send(`${emoji} **| ${user.username}**, you received 2 compliments from **${p.msg.author.username}**. You feel a surge of serotonin to help you through the day!`);
 }

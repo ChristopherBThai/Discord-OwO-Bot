@@ -5,6 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
-exports.handle = function(msg,emoji,userID){
-	this.reactionCollector.react(msg,emoji,userID.id || userID,"add");
+exports.handle = function(msg, emoji, user){
+	const userID = user.id || user;
+	this.reactionCollector.react(msg, emoji, userID, "add");
 }
