@@ -932,7 +932,7 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 		/* Decide if user receives a crate */
 		let crateQuery = (setting&&setting.instant)?result[0][0]:result[1][0];
 		crate = dateUtil.afterMidnight((crateQuery)?crateQuery.claim:undefined);
-		if((!crateQuery||crateQuery.claimcount<3||crate.after)){
+		if(!crateQuery||crateQuery.claimcount<3||crate.after){
 			crate = crateUtil.crateFromBattle(p,crateQuery,crate);
 			if(crate.sql) await p.query(crate.sql);
 		}
