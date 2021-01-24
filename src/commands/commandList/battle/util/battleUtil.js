@@ -7,6 +7,7 @@
 
 const dateUtil = require('../../../../utils/dateUtil.js');
 const global = require('../../../../utils/global.js');
+const mysql = require('../../../../utils/mysql.js');
 const teamUtil = require('./teamUtil.js');
 const weaponUtil = require('./weaponUtil.js');
 const animalUtil = require('./animalUtil.js');
@@ -36,6 +37,11 @@ function teamFilter (userId) {
 	LIMIT 1`;
 }
 
+let minPgid = 0;
+mysql.con.query(`SELECT pgid FROM pet_team ORDER BY pgid ASC LIMIT 1`, (err, result) => {
+	if (err) throw err;
+	minPgid = result[0]?.pgid || 0;
+});
 
 /* ==================================== Grabs battle from sql ====================================  */
 /* Grabs existing battle */
@@ -119,7 +125,7 @@ var getBattle = exports.getBattle = async function(p,setting){
 /* Creates a brand new battle */
 exports.initBattle = async function(p,setting){
 	/* Find random opponent */
-	let sql = `SELECT COUNT(pgid) AS count FROM pet_team_animal;SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id}`;
+	let sql = `SELECT pgid AS count FROM pet_team ORDER BY pgid DESC LIMIT 1;SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id}`;
 	let count = await p.query(sql);
 	let pgid = count[1][0];
 	if(!pgid){
@@ -131,7 +137,7 @@ exports.initBattle = async function(p,setting){
 
 	if(!count[0]) throw "battleUtil sql is broken";
 
-	count = Math.floor(Math.random()*(count[0].count-1));
+	count = minPgid + Math.floor(Math.random() * (count[0].count - minPgid));
 
 	/* Query random team */
 	sql = `SELECT pet_team.censor as ptcensor, pet_team.pgid, animal.offensive as acensor, tname, pos, animal.name, animal.nickname, animal.pid, animal.xp, user_weapon.uwid, user_weapon.wid, user_weapon.stat, user_weapon_passive.pcount, user_weapon_passive.wpid, user_weapon_passive.stat as pstat
@@ -140,7 +146,9 @@ exports.initBattle = async function(p,setting){
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
 			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
-		WHERE pet_team.pgid = (SELECT pgid FROM pet_team_animal WHERE pgid != ${pgid} LIMIT 1 OFFSET ${count})
+		WHERE pet_team.pgid = (
+			SELECT temp1.pgid FROM pet_team temp1 INNER JOIN pet_team_animal temp2 ON temp1.pgid = temp2.pgid WHERE temp1.pgid > ${count} limit 1
+		)
 		ORDER BY pos ASC;`;
 	/* And our team */
 	sql += `SELECT pet_team.censor as ptcensor, streak, highest_streak, animal.offensive as acensor,pet_team.pgid, tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
@@ -518,6 +526,8 @@ async function executeBattle(p,msg,action,setting){
 	/* Post turn */
 	postTurn(battle.player.team,battle.enemy.team,action);
 	postTurn(battle.enemy.team,battle.player.team,eaction);
+	/* Remove marked buffs */
+	removeBuffs(battle.player.team,battle.enemy.team);
 
 	/* check if the battle is finished */
 	let enemyWin = teamUtil.isDead(battle.player.team);
@@ -616,6 +626,8 @@ var calculateAll = exports.calculateAll = function(p,battle,logs = []){
 	/* Post turn */
 	battleLogs = battleLogs.concat(postTurn(battle.player.team,battle.enemy.team,[weapon,weapon,weapon]));
 	battleLogs = battleLogs.concat(postTurn(battle.enemy.team,battle.player.team,eaction));
+	/* Remove marked buffs */
+	removeBuffs(battle.player.team,battle.enemy.team);
 
 	/* Save only the HP and WP states (will need to save buff status later) */
 	let state = saveStates(battle);
@@ -884,7 +896,6 @@ function postTurn(team,enemy,action){
 	let logs = [];
 	for(let i in team){
 		let animal= team[i];
-		// Start from the top down to avoid splice errors
 		let j = animal.buffs.length;
 		while(j--){
 			let log = animal.buffs[j].postTurn(animal,team,enemy,action[i]);
@@ -906,6 +917,40 @@ function postTurn(team,enemy,action){
 	}
 
 	return logs;
+}
+
+/* strip buffs after turn fully processed */
+function removeBuffs(team, enemy) {
+	for(let i in team){
+		let animal= team[i];
+		let j = animal.buffs.length;
+		while(j--){
+			if (animal.buffs[j].markedForDeath) {
+				animal.buffs.splice(j,1);
+			}
+		}
+		j = animal.debuffs.length;
+		while(j--){
+			if (animal.debuffs[j].markedForDeath) {
+				animal.debuffs.splice(j,1);
+			}
+		}
+	}
+	for(let i in enemy){
+		let animal= enemy[i];
+		let j = animal.buffs.length;
+		while(j--){
+			if (animal.buffs[j].markedForDeath) {
+				animal.buffs.splice(j,1);
+			}
+		}
+		j = animal.debuffs.length;
+		while(j--){
+			if (animal.debuffs[j].markedForDeath) {
+				animal.debuffs.splice(j,1);
+			}
+		}
+	}
 }
 
 /* finish battle */
@@ -951,24 +996,31 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 	}
 
 
+	const opt = {turns: logs ? logs.length : 0};
 	if(!setting||!setting.noMsg){
 		/* Send result message */
 		let embed = await display(p,battle,logs,setting);
 		embed.embed.color = color;
 		text += ` Your team gained ${pXP.xp} xp`;
 		if(pXP){
-			if(pXP.resetStreak)
+			opt.xp = pXP.xp;
+			if(pXP.resetStreak) {
 				text+= `! You lost your streak of ${battle.player.streak} wins...`;
-			else if(pXP.addStreak){
-				if(pXP.bonus)
+				opt.streak = battle.player.streak;
+			} else if(pXP.addStreak){
+				if(pXP.bonus){
 					text+= ` + ${pXP.bonus} bonus xp! Streak: ${battle.player.streak+1}`;
-				else
+					opt.xp += ` + ${pXP.bonus}`;
+				}else
 					text+=`! Streak: ${battle.player.streak+1}`;
-			}else
+				opt.streak = battle.player.streak+1;
+			} else {
 				text+=`! Streak: ${battle.player.streak}`;
+				opt.streak = battle.player.streak;
+			}
 		}else text += '!';
 		embed.embed.footer = {text};
-		embed.embed = alterBattle.alter(p.msg.author.id,embed.embed);
+		embed.embed = alterBattle.alter(p.msg.author.id,embed.embed, opt);
 		if(msg) await msg.edit(embed);
 		else p.send(embed);
 	}

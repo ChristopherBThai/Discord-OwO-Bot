@@ -95,7 +95,7 @@ module.exports = new CommandInterface({
 		let stat = autohuntUtil.getLvl(result[0][0][trait],count,trait);
 		/* Refund overflowing mana */
 		if(stat.max){
-			sql += "UPDATE autohunt SET essence = essence + "+stat.currentxp+","+trait+"="+trait+"-"+stat.currentxp+" WHERE id = "+msg.author.id+";";
+			sql = "UPDATE autohunt SET essence = essence + "+stat.currentxp+","+trait+"="+trait+"-"+stat.currentxp+" WHERE id = "+msg.author.id+";";
 			await p.query(sql);
 		}
 		let text = "**🛠 | "+msg.author.username+"**, You successfully upgraded `"+trait+"` with  **"+(p.global.toFancyNum(count))+" Animal Essence** "+essence+"!";

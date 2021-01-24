@@ -233,11 +233,13 @@ async function stop(p,player,dealer,msg,bet,fromHit){
 			p.con.query(sql2,function(err,result){
 				if(err){console.error(err);msg.edit("Something went wrong...");return;}
 				if(winner=='w'){
-					p.logger.value('cowoncy',(bet),['command:blackjack','id:'+p.msg.author.id]);
-					p.logger.value('gamble',1,['command:blackjack','id:'+p.msg.author.id]);
+					// TODO neo4j
+					p.logger.incr(`gamble.blackjack.${p.msg.author.id}`);
+					p.logger.incr(`cowoncy.blackjack.${p.msg.author.id}`, bet);
 				}else if(winner=='l'){
-					p.logger.value('cowoncy',(bet*-1),['command:blackjack','id:'+p.msg.author.id]);
-					p.logger.value('gamble',-1,['command:blackjack','id:'+p.msg.author.id]);
+					// TODO neo4j
+					p.logger.decr(`gamble.blackjack.${p.msg.author.id}`);
+					p.logger.decr(`cowoncy.blackjack.${p.msg.author.id}`, -1 * bet);
 				}
 				let embed = bjUtil.generateEmbed(p.msg.author,dealer,player,bet,winner,bet);
 				msg.edit({embed})

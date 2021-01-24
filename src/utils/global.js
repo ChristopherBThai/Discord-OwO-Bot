@@ -8,11 +8,19 @@
 /**
  * Global Variables and Methods
  */
-
 const numbers = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
 const request = require('request');
+const filter = new (require('bad-words'))({placeHolder: "OwO", replaceRegex: /\w+/g});
 const secret = require('../../../tokens/wsserver.json');
 const badwords = require('../../../tokens/badwords.json');
+const { Profanity, ProfanityOptions } = require("@2toad/profanity")
+const options = new ProfanityOptions();
+options.wholeWord = false;
+options.grawlix = 'OwO';
+const filter2 = new Profanity(options);
+const goodwords = require('../../../tokens/goodwords.json');
+filter2.removeWords(goodwords);
+const namor = require("namor");
 var animaljson = require('../../../tokens/owo-animals.json');
 var animalunicode = {};
 var commands = {};
@@ -83,9 +91,12 @@ exports.client= function(tclient){
 	for(var key in animallist){
 		var alt = animallist[key].alt;
 		animals[animallist[key].value] = key;
+		animals[animallist[key].value.toLowerCase()] = key;
 		animals[key] = key;
+		animals[key.toLowerCase()] = key;
 		for(i in alt){
 			animals[alt[i]] = key;
+			animals[alt[i].toLowerCase()] = key;
 		}
 	}
 
@@ -101,11 +112,16 @@ exports.client= function(tclient){
 		var animalRank = [];
 		for(var i=1;i<animaljson[key].length;i++){
 			var name = animals[animaljson[key][i]];
-			animalRank.push(animaljson[key][i]);
-			animaljson.list[name].rank = key;
-			animaljson.list[name].price = animaljson.price[key];
-			animaljson.list[name].points = animaljson.points[key];
-			animaljson.list[name].essence= animaljson.essence[key];
+			try {
+				animalRank.push(animaljson[key][i]);
+				animaljson.list[name].rank = key;
+				animaljson.list[name].price = animaljson.price[key];
+				animaljson.list[name].points = animaljson.points[key];
+				animaljson.list[name].essence= animaljson.essence[key];
+			} catch (err) {
+				console.error(err);
+				console.error(animaljson[key][i]);
+			}
 		}
 		ranks[key].animals = animalRank;
 		ranks[key].price = animaljson.price[key];
@@ -232,11 +248,10 @@ exports.getTotalShardCount = function(){
 
 /* Converts name to more kid-friendly */
 exports.filteredName = function (name) {
-	let offensive = false;
-	let shortnick = name.replace(/\s/g,"").toLowerCase();
-	for(let i=0;i<badwords.length;i++){
-		if(shortnick.includes(badwords[i]))
-			offensive: true;
+	let shortnick = name.replace(/\W/g,'');
+	if (filter2.exists(shortnick)) {
+		name = namor.generate({ words: 3, saltLength: 0, separator:' ' });
+		return { name, offensive:false }
 	}
 	name = name.replace(/https:/gi,"https;")
 		.replace(/http:/gi,"http;")
@@ -247,5 +262,40 @@ exports.filteredName = function (name) {
 		.replace(/\n/g,"")
 		.replace(/\|\|/g,'│');
 
-	return { name, offensive }
+	return { name, offensive:false }
+}
+
+/* checks if string has bad words */
+exports.isProfane = function (string) {
+	return filter.isProfane(string);
+}
+
+/* replaces bad words */
+exports.cleanString = function (string) {
+	return filter.clean(string);
+}
+
+exports.isEmoji = function (string) {
+	return (/^<a?:[\w]+:[0-9]+>$/gi).test(string.trim())
+}
+
+exports.parseTime = function (diff) {
+	let hours, minutes, seconds, text;
+	if (diff > 1000 * 60 * 60) {
+		hours = Math.floor(diff / (1000 * 60 * 60));
+		diff %= 1000 * 60 * 60;
+		minutes = Math.floor(diff / (1000 * 60));
+		diff %= 1000 * 60;
+		seconds = Math.ceil(diff / 1000);
+		text = `**${hours}h ${minutes}m ${seconds}s**`;
+	} else if (diff > 1000 * 60) {
+		minutes = Math.floor(diff / (1000 * 60));
+		diff %= 1000 * 60;
+		seconds = Math.ceil(diff / 1000);
+		text = `**${minutes}m ${seconds}s**`;
+	} else {
+		seconds = Math.ceil(diff / 1000);
+		text = `**${seconds}s**`;
+	}
+	return { hours, minutes, seconds, text }
 }

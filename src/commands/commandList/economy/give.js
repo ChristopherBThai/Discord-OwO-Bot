@@ -69,13 +69,13 @@ module.exports = new CommandInterface({
 			CALL CowoncyTransfer(${msg.author.id},${id},${amount})`;
 		con.query(sql,function(err,rows,fields){
 			if(err){console.error(err);return;}
-			if(rows[0][0]&&rows[0][0].money)
-				p.logger.value('total_cowoncy',rows[0][0].money,['id:'+msg.author.id]);
 			if(rows[0][0]==undefined||rows[0][0].money<amount){
 				p.send("**🚫 |** Silly **"+msg.author.username+"**, you don't have enough cowoncy!",3000);
 			}else{
 				p.send("**💳 | "+msg.author.username+"** sent **"+(p.global.toFancyNum(amount))+" cowoncy** to **"+user.username+"**!");
 				p.neo4j.give(p.msg,user,amount);
+				p.logger.incr(`cowoncy`, amount, {type:'given'}, p.msg);
+				p.logger.decr(`cowoncy`, -1 * amount, {type:'give'}, p.msg);
 			}
 		});
 	}

@@ -97,7 +97,7 @@ async function distributeCowoncy(p){
 		return;
 	}
 	let amount = parseInt(p.args[0]);
-	let sql = `INSERT INTO cowoncy (id,money) VALUES (${cowoncy.join(","+amount+"),(")},${amount}) ON DUPLICATE KEY UPDATE money = money + ${amount};`;
+	let sql = `INSERT IGNORE INTO cowoncy (id,money) VALUES (${cowoncy.join(","+amount+"),(")},${amount}) ON DUPLICATE KEY UPDATE money = money + ${amount};`;
 	let result = await p.query(sql);
 	let text = "Distributed "+amount+" cowoncy to "+cowoncy.length+" users\n```json\n"+JSON.stringify(result, null, 2)+"```";
 	p.send(text);

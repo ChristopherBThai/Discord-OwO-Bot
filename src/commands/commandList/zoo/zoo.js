@@ -20,6 +20,7 @@ var secret3 = "";
 var secret4 = "";
 var secret5 = "";
 var secret6 = "";
+var secret7 = "";
 var display = "";
 initDisplay();
 
@@ -49,9 +50,9 @@ module.exports = new CommandInterface({
 		let sql = "SELECT count,name FROM animal WHERE id = "+msg.author.id+";";
 		if(p.args[0]&&p.args[0].toLowerCase()=="display"){
 			sql = "SELECT (totalcount) as count,name FROM animal WHERE id = "+msg.author.id+";";
-			sql += "SELECT common,uncommon,rare,epic,mythical,gem,legendary,fabled,patreon,cpatreon,hidden,special,bot,MAX(totalcount) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
+			sql += "SELECT common,uncommon,rare,epic,mythical,gem,legendary,fabled,patreon,cpatreon,hidden,special,bot,distorted,MAX(totalcount) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
 		}else{
-			sql += "SELECT common,uncommon,rare,epic,mythical,gem,legendary,fabled,patreon,cpatreon,hidden,special,bot,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
+			sql += "SELECT common,uncommon,rare,epic,mythical,gem,legendary,fabled,patreon,cpatreon,hidden,special,bot,distorted,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
 		}
 		con.query(sql,function(err,result){
 			if(err){console.error(err);return;}
@@ -65,6 +66,7 @@ module.exports = new CommandInterface({
 			var additional5 = "";
 			var additional6 = "";
 			let additional7 = "";
+			let additional8 = "";
 			var row = result[0];
 			var count = result[1][0];
 			var cpatreonCount = 0;
@@ -88,8 +90,12 @@ module.exports = new CommandInterface({
 					cpatreonCount++;
 				}
 				else if(animals.bot.indexOf(row[i].name)>0){
-					if(additional7=="") additional7 = secret;
+					if(additional7=="") additional7 = secret6;
 					additional7 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
+				}
+				else if(animals.distorted.indexOf(row[i].name)>0){
+					if(additional8=="") additional8 = secret7;
+					additional8 += row[i].name+toSmallNum(row[i].count,digits)+"  ";
 				}
 				else if(animals.gem.indexOf(row[i].name)>0){
 					if(additional6=="") additional6 = secret5;
@@ -123,6 +129,7 @@ module.exports = new CommandInterface({
 			text += additional;
 			text += additional6;
 			text += additional7;
+			text += additional8;
 			text += additional2;
 			text += additional3;
 			text += additional5;
@@ -140,6 +147,7 @@ module.exports = new CommandInterface({
 					count.legendary*animals.points.legendary+
 					count.fabled*animals.points.fabled+
 					count.bot*animals.points.bot+
+					count.distorted*animals.points.distorted+
 					count.hidden*animals.points.hidden;
 				footer += "\n**Zoo Points: __"+(p.global.toFancyNum(total))+"__**\n\t**";
 				footer += animalUtil.zooScore(count)+"**";
@@ -263,4 +271,5 @@ function initDisplay(){
 	secret4 = "\n"+animals.ranks.hidden+"    ";
 	secret5 = "\n"+animals.ranks.gem+"    ";
 	secret6 = "\n"+animals.ranks.bot+"    ";
+	secret7 = "\n"+animals.ranks.distorted+"    ";
 }

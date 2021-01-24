@@ -18,7 +18,6 @@ const dbl = new DBL(auth.dbl);
 class OwO extends Base{
 	constructor(bot){
 		super(bot);
-		this.debug = true;
 		this.auth = auth;
 		this.dbl = dbl;
 
@@ -40,6 +39,7 @@ class OwO extends Base{
 
 		// Bot config file
 		this.config = require('./data/config.json');
+		this.debug = this.config.debug;
 		this.prefix = this.config.prefix;
 
 		// Ban check 
@@ -76,6 +76,9 @@ class OwO extends Base{
 
 		// Fetches images and converts them to buffers
 		this.DataResolver = require('./utils/dataResolver.js');
+
+		// Ability to add emojis to guilds
+		this.EmojiAdder = require('./utils/EmojiAdder.js');
 
 		// Helper for patreon benefits
 		this.patreon = require('./utils/patreon.js');

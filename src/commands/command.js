@@ -1,6 +1,6 @@
 /*
  * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Copyright (C) 2020 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
@@ -20,13 +20,13 @@ const commandGroups = {};
 
 class Command {
 
-	constructor(main){
+	constructor (main) {
 		this.main = main;
 		this.prefix = main.prefix;
 		initCommands();
 	}
 
-	async execute(msg){
+	async execute (msg, raw) {
 		// Parse content info
 		let args = await checkPrefix(this.main, msg);
 		if (!args) {
@@ -46,19 +46,28 @@ class Command {
 			return;
 		}
 
-		//Init params to pass into command
+		// Make sure user accepts rules first
+		if (!(await acceptedRules(this.main, msg))) {
+			executeCommand(this.main,initParam(msg,"rule",[],this.main));
+			return;
+		}
+
+		// Init params to pass into command
 		let param = initParam(msg,command,args,this.main);
 
-		//Execute the command
+		// Parse user raw data, so our cache is up to date
+		this.checkRaw(raw);
+
+		// Execute the command
 		await executeCommand(this.main,param);
 	}
 
-	async executeAdmin(msg){
+	async executeAdmin (msg, raw){
 		let args;
 		if(msg.content.toLowerCase().indexOf(this.prefix) === 0)
 			args = msg.content.slice(this.prefix.length).trim().split(/ +/g);
 		else {
-			this.execute(msg);
+			this.execute(msg, raw);
 			return;
 		}
 
@@ -73,11 +82,11 @@ class Command {
 			if(adminCommands[command]&&!adminCommands[command].dm)
 				adminCommands[command].execute(param);
 			else
-				this.execute(msg);
+				this.execute(msg, raw);
 		}
 	}
 
-	async executeMod(msg){
+	async executeMod (msg){
 		let args;
 		if(msg.content.toLowerCase().indexOf(this.prefix) === 0)
 			args = msg.content.slice(this.prefix.length).trim().split(/ +/g);
@@ -88,6 +97,24 @@ class Command {
 
 		if(modCommands[command]) modCommands[command].execute(param);
 
+	}
+
+	checkRaw (raw) {
+		if (raw?.author) {
+			this.updateUser(raw.author);
+		}
+		raw?.mentions?.forEach(user => this.updateUser(user));
+	}
+
+	updateUser (rawUser) {
+		const user = this.main.bot.users.get(rawUser.id);
+		let update = false;
+		if (user && (user.username !== rawUser.username || user.avatar !== rawUser.avatar || user.discriminator !== rawUser.discriminator)) {
+			update = true;
+		}
+		if (!user || update) {
+			this.main.bot.users.update(rawUser, this.main.bot);
+		}
 	}
 }
 
@@ -103,9 +130,8 @@ async function executeCommand(main,p){
 	// Execute command
 	await commands[p.command].execute(p);
 
-	// Log stats to datadog api
-	let dm = p.msg.channel.type==1;
-	logger.increment("command",['command:'+p.commandAlias,/*'id:'+p.msg.author.id,'guild:'+(dm?p.msg.channel.id:p.msg.channel.guild.id),'channel:'+p.msg.channel.id,*/'dm:'+dm]);
+	// Log stats to statsd
+	logger.command(p.commandAlias, p.msg);
 }
 
 /**
@@ -220,6 +246,7 @@ function initParam(msg,command,args,main){
 		"fetch":main.fetch,
 		"pubsub":main.pubsub,
 		"DataResolver":main.DataResolver,
+		"EmojiAdder":main.EmojiAdder,
 		"quest":function(questName,count,extra){main.questHandler.increment(msg,questName,count,extra).catch(console.error)},
 		"reactionCollector":main.reactionCollector,
 		"dateUtil":main.dateUtil,
@@ -229,6 +256,7 @@ function initParam(msg,command,args,main){
 		main.cooldown.setCooldown(param,aliasToCommand[command],cooldown);
 	}
 	param.getMention = function(id){
+		if(!id) return;
 		id = id.match(/[0-9]+/);
 		if(!id) return;
 		id = id[0];
@@ -285,6 +313,15 @@ async function checkPrefix(main, msg) {
 	if (msg.channel.guild.prefix && content.startsWith(msg.channel.guild.prefix)) {
 		return msg.content.slice(msg.channel.guild.prefix.length).trim().split(/ +/g);
 	}
+}
+
+async function acceptedRules(main, msg) {
+	if (!msg.author.acceptedRules) {
+		let sql = `SELECT rules.* FROM rules INNER JOIN user ON user.uid = rules.uid WHERE id = ${msg.author.id};`;
+		let result = await main.mysqlhandler.query(sql);
+		msg.author.acceptedRules = !!result[0];
+	}
+	return msg.author.acceptedRules;
 }
 
 module.exports = Command;

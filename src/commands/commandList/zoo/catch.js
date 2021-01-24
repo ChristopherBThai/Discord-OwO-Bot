@@ -103,15 +103,15 @@ module.exports = new CommandInterface({
 			}
 
 			//Alter text for legendary tier patreons
-			text = alterHunt.alter(p.msg.author.id,text,{author:p.msg.author, lootboxText: (lootbox ? lootbox.text : ''), petText, animalXp, gemText: animal.gemText, animalText:animal.text, animalEmojis:animal.animalText});
+			text = alterHunt.alter(p.msg.author.id,text,{author:p.msg.author, lootboxText: (lootbox ? lootbox.text : ''), petText, animalXp, gemText: animal.gemText, animalText:animal.text, animalEmojis:animal.animalText, animal: animal.animal});
 			//text += "\n⚠ **|** `battle` and `hunt` cooldowns have increased to prevent rateLimits issues.\n<:blank:427371936482328596> **|** They will revert back to `15s` in the future.";
 
 			let result2 = await p.query(sql);
-			p.logger.value('cowoncy',-5,['command:hunt','id:'+msg.author.id]);
+			p.logger.decr(`cowoncy`, -5, {type:'hunt'}, p.msg);
 			for(let i in animal.animal){
 				let tempAnimal = p.global.validAnimal(animal.animal[i][1]);
-				p.logger.value('animal',1,['animal:'+tempAnimal.name,'rank:'+tempAnimal.rank,'id:'+p.msg.author.id,'guild:'+p.msg.channel.guild.id]);
-				p.logger.value('animal.points',tempAnimal.points,['animal:'+tempAnimal.name,'rank:'+tempAnimal.rank,'id:'+p.msg.author.id,'guild:'+p.msg.channel.guild.id]);
+				p.logger.incr(`animal`, 1, {rank:tempAnimal.rank, name:tempAnimal.name}, p.msg);
+				p.logger.incr(`zoo`, tempAnimal.points, {}, p.msg);
 			}
 			p.quest("hunt");
 			p.quest("find",1,animal.typeCount);
@@ -129,7 +129,10 @@ function getAnimals(p,result,gems,uid){
 	/* If no gems */
 	var gemLength = Object.keys(gems).length;
 	if(gemLength==0){
-		var animal = [animalUtil.randAnimal(patreon)];
+		var animal = [animalUtil.randAnimal({
+			patreon: patreon,
+			manual: true
+		})];
 
 	/* If gems... */
 	}else{
@@ -139,12 +142,27 @@ function getAnimals(p,result,gems,uid){
 		if(gems["Empowering"]) count *= 2
 
 		/* Grabs 1-2 animal to check for patreongem */
-		var animal = [animalUtil.randAnimal((patreon||patreonGem),true,gems["Lucky"])];
-		if(gems["Patreon"]) animal.push(animalUtil.randAnimal(true,true,gems["Lucky"]));
+		var animal = [animalUtil.randAnimal({
+			patreon: (patreon||patreonGem),
+			gem: true,
+			lucky: gems["Lucky"],
+			manual: true
+		})];
+		if(gems["Patreon"]) animal.push(animalUtil.randAnimal({
+			patreon: true,
+			gem: true,
+			lucky: gems["Lucky"],
+			manual: true
+		}));
 
 		/* Get the rest of the animals */
 		for(var i=1;i<count;i++)
-			animal.push(animalUtil.randAnimal(patreon,true,gems["Lucky"]));
+			animal.push(animalUtil.randAnimal({
+				patreon: patreon,
+				gem: true,
+				lucky: gems["Lucky"],
+				manual: true
+			}));
 	}
 
 	/* Construct sql statement for animal insertion */

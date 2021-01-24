@@ -12,7 +12,7 @@ const autohuntutil = require('./autohuntutil.js');
 const animalUtil = require('./animalUtil.js');
 const global = require('../../../utils/global.js');
 const letters = "abcdefghijklmnopqrstuvwxyz";
-const botrank = "SELECT (COUNT(*)) AS rank, (SELECT COUNT(*) FROM autohunt) AS total FROM autohunt WHERE (essence+duration+efficiency+cost+gain+exp) >= COALESCE((SELECT (essence+duration+efficiency+cost+gain+exp) AS total FROM autohunt WHERE id = ";
+const botrank = "SELECT (COUNT(*)) AS rank, (SELECT COUNT(*) FROM autohunt) AS total FROM autohunt WHERE autohunt.total >= (SELECT autohunt.total FROM autohunt WHERE id = ";
 const logger = require('../../../utils/logger.js');
 const animals = require('../../../../../tokens/owo-animals.json');
 
@@ -61,7 +61,7 @@ async function claim(p,msg,con,query,bot){
 	let totalGain = Math.floor(autohuntutil.getLvl(query.gain,0,"gain").stat*duration);
 
 	let sql = "SELECT IF(patreonAnimal = 1 OR (TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths),1,0) as patreon FROM user LEFT JOIN patreons ON user.uid = patreons.uid WHERE user.id = "+msg.author.id+";";
-	sql += "UPDATE autohunt SET huntmin = 0,huntcount=0,essence = essence +"+totalGain+" WHERE id = "+msg.author.id+" AND huntmin > 0;";
+	sql += "UPDATE autohunt SET huntmin = 0,huntcount=0,essence = essence +"+totalGain+",total = total + "+totalGain+" WHERE id = "+msg.author.id+" AND huntmin > 0;";
 	let result = await p.query(sql);
 
 	if(result[1].changedRows<=0){
@@ -94,7 +94,10 @@ async function claim(p,msg,con,query,bot){
 	let digits = 1;
 	let radar = autohuntutil.getLvl(query.radar,0,"radar");
 	for(let i=0;i<query.huntcount;i++){
-		let animal = animalUtil.randAnimal(patreon, null, null, radar.stat/100);
+		let animal = animalUtil.randAnimal({
+			patreon: patreon, 
+			huntbot: radar.stat/100
+		});
 		if(total[animal[1]]){
 			total[animal[1]].count++;
 			if(total[animal[1]].count>digits)
@@ -129,10 +132,10 @@ async function claim(p,msg,con,query,bot){
 	p.send(text);
 	for(let animal in total){
 		let tempAnimal = global.validAnimal(animal);
-		logger.value('animal',total[animal].count,['animal:'+tempAnimal.name,'rank:'+tempAnimal.rank,'id:'+msg.author.id,'guild:'+msg.channel.guild.id]);
-		logger.value('animal.points',tempAnimal.points*total[animal].count,['animal:'+tempAnimal.name,'rank:'+tempAnimal.rank,'id:'+msg.author.id,'guild:'+msg.channel.guild.id]);
+		logger.incr(`animal`, total[animal].count, {rank:tempAnimal.rank, name:tempAnimal.name}, p.msg);
+		logger.incr(`zoo`, tempAnimal.points*total[animal].count, {}, p.msg);
 	}
-	logger.value('essence',totalGain,['id:'+msg.author.id,'guild:'+msg.channel.guild.id,'command:huntbot','animal:huntbot']);
+	logger.incr(`essence`, totalGain, {type:'huntbot'}, p.msg);
 }
 
 async function autohunt(p,msg,con,args,global,send){
@@ -161,7 +164,7 @@ async function autohunt(p,msg,con,args,global,send){
 
 	let sql = "SELECT *,TIMESTAMPDIFF(MINUTE,start,NOW()) AS timer,TIMESTAMPDIFF(MINUTE,passwordtime,NOW()) AS pwtime FROM autohunt WHERE id = "+msg.author.id+";";
 	sql += "SELECT * FROM cowoncy WHERE id = "+msg.author.id+";";
-	sql += botrank + msg.author.id+"),0);";
+	sql += botrank + msg.author.id+");";
 	let result = await p.query(sql);
 
 	//Get emoji
@@ -243,7 +246,7 @@ async function autohunt(p,msg,con,args,global,send){
 	sql = "UPDATE cowoncy SET money = money - "+cowoncy+" WHERE id = "+msg.author.id+";";
 	sql += "INSERT INTO autohunt (id,start,huntcount,huntmin,password) VALUES ("+msg.author.id+",NOW(),"+huntcount+","+huntmin+",'') ON DUPLICATE KEY UPDATE start = NOW(), huntcount = "+huntcount+",huntmin = "+huntmin+",password = '';";
 	result = await p.query(sql);
-	logger.value('cowoncy',(cowoncy*-1),['command:autohunt','id:'+msg.author.id]);
+	logger.decr(`cowoncy`, -1 * cowoncy, {type:'huntbot'}, p.msg);
 	let min = huntmin%60;
 	let hour = Math.trunc(huntmin/60);
 	let timer = "";
@@ -256,7 +259,7 @@ async function autohunt(p,msg,con,args,global,send){
 
 async function display(p,msg,con,send){
 	let sql = "SELECT *,TIMESTAMPDIFF(MINUTE,start,NOW()) AS timer FROM autohunt WHERE id = "+msg.author.id+";";
-	sql += botrank + msg.author.id+"),0);";
+	sql += botrank + msg.author.id+");";
 	let result = await p.query(sql);
 
 	//Get emoji

@@ -116,10 +116,10 @@ async function sellAnimal(p,msg,con,animal,count,send,global){
 
 	sql = "SELECT count FROM animal WHERE id = "+msg.author.id+" AND name = '"+animal.value+"';";
 	if(count=="all"){
-		sql += `UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id INNER JOIN (SELECT count FROM animal WHERE id = ${msg.author.id} AND name = '${animal.value}') AS sum SET essence = essence + (sum.count*${animal.essence}), saccount = saccount + animal.count, animal.count = 0 WHERE animal.id = ${msg.author.id} AND name = '${animal.value}' AND animal.count > 0;`
+		sql += `UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id INNER JOIN (SELECT count FROM animal WHERE id = ${msg.author.id} AND name = '${animal.value}') AS sum SET essence = essence + (sum.count*${animal.essence}), autohunt.total = autohunt.total + ((sum.count*${animal.essence}), saccount = saccount + animal.count, animal.count = 0 WHERE animal.id = ${msg.author.id} AND name = '${animal.value}' AND animal.count > 0;`
 	}else{
 
-		sql += `UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id SET essence = essence + (${count}*${animal.essence}), saccount = saccount + ${count}, count = count - ${count}  WHERE animal.id = ${msg.author.id} AND name = '${animal.value}' AND count >= ${count};`
+		sql += `UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id SET essence = essence + (${count * animal.essence}), autohunt.total = autohunt.total + (${count * animal.essence}), saccount = saccount + ${count}, count = count - ${count}  WHERE animal.id = ${msg.author.id} AND name = '${animal.value}' AND count >= ${count};`
 	}
 	result = await p.query(sql);
 
@@ -129,11 +129,11 @@ async function sellAnimal(p,msg,con,animal,count,send,global){
 		}else{
 			count = result[0][0].count;
 			send("**🔪 | "+msg.author.username+"** sacrificed **"+global.unicodeAnimal(animal.value)+"x"+count+"** for **"+essence+" "+(global.toFancyNum(count*animal.essence))+"**");
-			p.logger.value('essence',count*animal.essence,['id:'+p.msg.author.id,'guild:'+p.msg.channel.guild.id,'animal:'+animal.value,'count:'+count,'command:sacrifice']);
+			p.logger.incr(`essence`, count * animal.essence, {type:'sacrifice'}, p.msg);
 		}
 	}else if(result[1]&&result[1].affectedRows>0){
 		send("**🔪 | "+msg.author.username+"** sacrificed **"+global.unicodeAnimal(animal.value)+"x"+count+"** for **"+essence+" "+(global.toFancyNum(count*animal.essence))+"**");
-		p.logger.value('essence',count*animal.essence,['id:'+p.msg.author.id,'guild:'+p.msg.channel.guild.id,'animal:'+animal.value,'count:'+count,'rank:'+animal.rank,'command:sacrifice']);
+		p.logger.incr(`essence`, count * animal.essence, {type:'sacrifice'}, p.msg);
 	}else{
 		send("**🚫 | "+msg.author.username+"**, You can't sacrifice more than you have silly! >:c",3000);
 	}
@@ -148,7 +148,7 @@ async function sellRank(p,msg,con,rank,send,global){
 	let points = "(SELECT COALESCE(SUM(count),0) AS sum FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+")";
 	//sql = "SELECT COALESCE(SUM(count),0) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
 	sql = "SELECT name,count FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
-	sql += "UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id INNER JOIN "+points+" s SET essence = essence + (s.sum*"+rank.essence+"), saccount = saccount + count, count = 0 WHERE animal.id = "+msg.author.id+" AND name IN "+animals+" AND count > 0;";
+	sql += "UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id INNER JOIN "+points+" s SET essence = essence + (s.sum*"+rank.essence+"), autohunt.total = autohunt.total + (s.sum*"+rank.essence+"), saccount = saccount + count, count = 0 WHERE animal.id = "+msg.author.id+" AND name IN "+animals+" AND count > 0;";
 
 	result = await p.query(sql);
 	if(result[1].affectedRows<=0){
@@ -161,7 +161,7 @@ async function sellRank(p,msg,con,rank,send,global){
 
 		for(let i in result[0]){
 			let tempAnimal = p.global.validAnimal(result[0][i].name);
-			p.logger.value('essence',result[0][i].count*rank.essence,['id:'+p.msg.author.id,'guild:'+p.msg.channel.guild.id,'animal:'+tempAnimal.name,'count:'+result[0][i].count,'rank:'+rank.rank,'command:sacrifice']);
+			p.logger.incr(`essence`, count * rank.essence, {type:'sacrifice'}, p.msg);
 		}
 	}
 }
@@ -178,7 +178,7 @@ async function sellRanks(p,msg,con,ranks,send,global,p){
 		let points = "(SELECT COALESCE(SUM(count),0) AS sum FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+")";
 		//sql += "SELECT COALESCE(SUM(count),0) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
 		sql += "SELECT name,count FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
-		sql += "UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id INNER JOIN "+points+" s SET essence = essence + (s.sum*"+rank.essence+"), saccount = saccount + count, count = 0 WHERE animal.id = "+msg.author.id+" AND name IN "+animals+" AND count > 0;";
+		sql += "UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id INNER JOIN "+points+" s SET essence = essence + (s.sum*"+rank.essence+"), autohunt.total = autohunt.total + (s.sum*"+rank.essence+"), saccount = saccount + count, count = 0 WHERE animal.id = "+msg.author.id+" AND name IN "+animals+" AND count > 0;";
 	}
 	result = await p.query(sql);
 
@@ -206,7 +206,7 @@ async function sellRanks(p,msg,con,ranks,send,global,p){
 			for(let j in result[count*2]){
 				let temp = result[count*2][j];
 				let tempAnimal = p.global.validAnimal(temp.name);
-				p.logger.value('essence',temp.count*rank.essence,['id:'+p.msg.author.id,'guild:'+p.msg.channel.guild.id,'animal:'+tempAnimal.name,'count:'+temp.count,'rank:'+rank.rank,'command:sacrifice']);
+				p.logger.incr(`essence`, temp.count * rank.essence, {type:'sacrifice'}, p.msg);
 			}
 			count++;
 		}

@@ -8,7 +8,7 @@
 var client,pubsub;
 var auth = require('../../../tokens/owo-auth.json');
 var admin;
-var logChannel = "469352773314412555";
+var logChannel = "739393782805692476";
 var modLogChannel = "471579186059018241";
 
 /**
@@ -17,7 +17,7 @@ var modLogChannel = "471579186059018241";
 exports.send = function(msg){
 	return function(content,del,file,opt){
 		let maxLength = 2000;
-		let maxSends = 11;
+		let maxSends = 15;
 		let sendCount = 0;
 		if(typeof content === "string"&&content.length>=maxLength){
 			let prepend = '';

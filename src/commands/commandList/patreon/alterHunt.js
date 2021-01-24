@@ -1,6 +1,6 @@
 /*
  * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Copyright (C) 2020 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
@@ -26,7 +26,7 @@ exports.alter = function(id,text,info){
 		case '289411794672418819':
 			return louis(text);
 		case '348828692539113490':
-			return michelle(text);
+			return michelle(text, info);
 		case '250383887312748545':
 			return elsa(text);
 		case '181264821713371136':
@@ -43,6 +43,20 @@ exports.alter = function(id,text,info){
 			return garcom(text,info);
 		case '229299825072537601':
 			return alradio(text,info);
+		case '408875125283225621':
+			return kirito(text,info);
+		case '549876586720133120':
+			return kitsune(text,info);
+		case '343094664414363658':
+			return tiggy(text, info);
+		case '166619476479967232':
+			return valentine(text, info);
+		case '403989717483257877':
+			return u_1s1k(text,info);
+		case '541103499992367115':
+			return ashley(text,info);
+		case '216710431572492289':
+			return arichy(text, info);
 		default:
 			return text;
 	}
@@ -212,20 +226,20 @@ function louis(text){
 	return text;
 }
 
-function michelle(text){
+function michelle(text, info){
 	let meowth = '<a:meowth:605676882788089867>';
 	let persian = '<a:persian:605676882599477249>';
-	if(text.indexOf("empowered by")>=0){
-		text = text.replace(huntEmoji,meowth)
-			.replace(/[\s\[\]a-zA-z0-9!?]+\*\*,\shunt/gi," Meowth**")
-			.replace("You found","It returned with")
-			.replace("\n<:blank","\n"+blank+" **|** and evolved into a Persian "+persian+"\n<:blank");
+
+	if(info.gemText){
+		text = `${meowth} **| Meowth** is empowered by ${info.gemText}!\n${blank} **|** It returned with: ${info.animalEmojis}\n${blank} **|** and evolved into a **Persian** ${persian}`;
 	}else{
-		text = text.replace(huntEmoji,meowth)
-			.replace(/[\s\[\]a-zA-z0-9!?]+\*\*\sspent/gi," Meowth** went out andspent")
-			.replace("spent 5 <:cowoncy:416043450337853441> and","")
-			.replace("!\n<:blank","!\n"+blank+" **|** It returned and evolved into a Persian "+persian+"\n<:blank")
+		text = `${meowth} **| Meowth** went out and caught an ${info.animal[0][0]} ${info.animalEmojis}\n${blank} **|** and evolved into a **Persian** ${persian}`;
 	}
+	if (info.petText) {
+		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
+	}
+	text += info.lootboxText || '';
+
 	return text;
 }
 
@@ -352,12 +366,12 @@ function garcom(text, info){
 
 function alradio(text, info) {
 	if(info.gemText){
-		text = `${huntEmoji} **| ${info.author.username}** activated ${info.gemText}\n${blank} **|** and recruited ${info.animalEmojis}`;
+		text = `Now let's give these burning fools a place to dwell.\n**${info.author.username}** activated ${info.gemText}\nand recruited: ${info.animalEmojis}`;
 	}else{
-		text = `${huntEmoji} **| ${info.author.username}** donated 5 and recruited ${info.animalEmojis}`;
+		text = `**${info.author.username}** donated 5 and recruited ${info.animalEmojis}`;
 	}
 	if (info.petText) {
-		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
+		text += `\n${info.petText} gained **${info.animalXp}xp**!`;
 	}
 	text += info.lootboxText || '';
 	const embed = {
@@ -367,5 +381,159 @@ function alradio(text, info) {
 			"url":"https://cdn.discordapp.com/attachments/626155987904102402/686634765805289482/image0.gif"
 		}
 	};
+	return {embed};
+}
+
+function kirito(text, info) {
+	const emoji = "<a:bot:737118875585478767>"
+	if(info.gemText){
+		text = `${emoji} **| Zero Two** empowers her hunts by ${info.gemText}\n${blank} **| Zero Two** caught: ${info.animalEmojis}`;
+	}else{
+		text = `${emoji} **| Zero Two** goes out to hunt and catches a(n) ${info.animal[0][0]} ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
+	}
+	text += info.lootboxText || '';
+	return text;
+}
+
+function kitsune(text, info) {
+	const emoji = "<:kitsune:737160182655615097>"
+	if(info.gemText){
+		text = `${emoji} **| ${info.author.username}** plays a pledged game with OwO, the lord of games using: ${info.gemText.replace(/`/gi,'**')} **ASCHENTE**!\n${blank} **|** Victoriously returns with: ${info.animalEmojis}`;
+	}else{
+		text = `${emoji} **| ${info.author.username}** plays a pledged game with OwO, the lord of games. **ASCHENTE**!\n${blank} **|** Victoriously returns with a(n) ${info.animal[0][0]} ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
+	}
+	text += info.lootboxText || '';
+	const embed = {
+		"description":text,
+		"color":Math.random()>.5 ? 15399610 : 15523028,
+		"thumbnail":{
+			"url":"https://cdn.discordapp.com/attachments/704215180044927030/728074508694454302/image0.gif"
+		}
+	};
+	return {embed};
+}
+
+function tiggy(text, info) {
+	const emoji = "🔥"
+	if(info.gemText){
+		text = `${emoji} **| ${info.author.username}**, your flamethrower is fueled by ${info.gemText}\n${blank} **|** You destroyed the local habitats of: ${info.animalEmojis}`;
+	}else{
+		text = `${emoji} **| ${info.author.username}**, your flamethrower spurts out nothing...\n ${blank} **|** you managed to catch: ${info.animal[0][0]} ${info.animalEmojis} with your bare hands`;
+	}
+	if (info.petText) {
+		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
+	}
+	text += info.lootboxText || '';
+	return text;
+}
+
+function valentine(text, info) {
+	const moon = "<a:moon:759722114201812993>";
+	const cat = "<a:cat:759722302786764852>";
+	const butterfly = "<:butterfly:759722177766621224>";
+	const wand = "<a:wand:759724096954564630>";
+
+	if(info.gemText){
+		text = `${moon} **| ${info.author.username}**  arrives at 火星, blessed by ${info.gemText}\n${butterfly} **|** you returned with: ${info.animalEmojis}`;
+	}else{
+		text = `${moon} **| ${info.author.username}**  arrives at 火星 ${wand}\n${butterfly} **|** you returned with a ${info.animal[0][0]} ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${butterfly} **|** ${info.petText} gained **${info.animalXp}xp** ${cat}!`;
+	}
+	text += info.lootboxText || '';
+	text.replace(blank, butterfly);
+	const embed = {
+		description: text,
+		color: 1,
+		thumbnail: {
+			url: "https://i.imgur.com/19cjldb.gif"
+		}
+	}
+
+	return {embed};
+}
+
+function u_1s1k(text,info) {
+	const zen =  '<:zen:770081925490016257>';
+	const zen2 = '<:zen2:770081925401673760>';
+	const crystal = '<a:crystal:770081927012155413>';
+	const money = '<a:money:770081926236340235>';
+
+	if(info.gemText){
+		text = `${zen} **| ${info.author.username}**, ${crystal} Zeno ${crystal} has searched the universe far and wide with ${info.gemText}\n${zen2} **|** and came back with: ${info.animalEmojis}`;
+	}else{
+		text = `${zen} **| ${info.author.username}**, ${crystal} Zeno ${crystal} has searched the universe far and wide.\n${zen2} **|** and came back with a(n) ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${crystal} **|** ${info.petText} gained **${info.animalXp}xp**! ${crystal} SUPREME ${crystal}`;
+	}
+	text += info.lootboxText || '';
+	const embed = {
+		description: text,
+		color: 11393254,
+		thumbnail: {
+			url: "https://cdn.discordapp.com/attachments/628936051490160661/765164586654629888/image0.gif"
+		}
+	}
+
+	return {embed};
+}
+
+function ashley(text,info) {
+	const catpunch = '<a:catpunch:770114194774425630>';
+	const qbert = '<:qbert:774557756376088586>';
+
+	if(info.gemText){
+		text = `${catpunch} **| ${info.author.username}**, wants to wreck it!!! Harnessing power from ${info.gemText} ${qbert}\n${blank} **|** You helped these animals to safety first! ${info.animalEmojis}`;
+	}else{
+		text = `${catpunch} **| ${info.author.username}**, wants to wreck it!!! You spent 5 cowoncy to empower yourself!${qbert}\n${blank} **|** You helped this animal to safety first! ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: 9502720,
+		thumbnail: {
+			url: "https://cdn.discordapp.com/attachments/661043173992169482/760890231942938705/ralph_main.gif"
+		}
+	}
+
+	return {embed};
+}
+
+function arichy (text,info) {
+	const wizard = '🧙‍♀️';
+
+	if(info.gemText){
+		text = `${wizard} **| ${info.author.username}**, your Mage has returned from her adventure in an alternate universe learned new spells.\n`;
+		text += `${blank} **|** Her magic powers were enhanced by: ${info.gemText}\n`;
+		text += `${blank} **|** On the journey, she found... ${info.animalEmojis}`;
+	}else{
+		text = `${wizard} **| ${info.author.username}**, your Mage has returned from her adventure in an alternate universe learned new spells.\n`;
+		text += `${blank} **|** On the journey, she found... ${info.animal[0][0]} ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**! It's time to visit the Dungeon 🔥`;
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: 4886754,
+		thumbnail: {
+			url: "https://i.imgur.com/vvpFulp.gif"
+		}
+	}
+
 	return {embed};
 }
