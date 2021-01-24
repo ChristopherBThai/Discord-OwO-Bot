@@ -526,6 +526,8 @@ async function executeBattle(p,msg,action,setting){
 	/* Post turn */
 	postTurn(battle.player.team,battle.enemy.team,action);
 	postTurn(battle.enemy.team,battle.player.team,eaction);
+	/* Remove marked buffs */
+	removeBuffs(battle.player.team,battle.enemy.team);
 
 	/* check if the battle is finished */
 	let enemyWin = teamUtil.isDead(battle.player.team);
@@ -624,6 +626,8 @@ var calculateAll = exports.calculateAll = function(p,battle,logs = []){
 	/* Post turn */
 	battleLogs = battleLogs.concat(postTurn(battle.player.team,battle.enemy.team,[weapon,weapon,weapon]));
 	battleLogs = battleLogs.concat(postTurn(battle.enemy.team,battle.player.team,eaction));
+	/* Remove marked buffs */
+	removeBuffs(battle.player.team,battle.enemy.team);
 
 	/* Save only the HP and WP states (will need to save buff status later) */
 	let state = saveStates(battle);
@@ -892,7 +896,6 @@ function postTurn(team,enemy,action){
 	let logs = [];
 	for(let i in team){
 		let animal= team[i];
-		// Start from the top down to avoid splice errors
 		let j = animal.buffs.length;
 		while(j--){
 			let log = animal.buffs[j].postTurn(animal,team,enemy,action[i]);
@@ -914,6 +917,40 @@ function postTurn(team,enemy,action){
 	}
 
 	return logs;
+}
+
+/* strip buffs after turn fully processed */
+function removeBuffs(team, enemy) {
+	for(let i in team){
+		let animal= team[i];
+		let j = animal.buffs.length;
+		while(j--){
+			if (animal.buffs[j].markedForDeath) {
+				animal.buffs.splice(j,1);
+			}
+		}
+		j = animal.debuffs.length;
+		while(j--){
+			if (animal.debuffs[j].markedForDeath) {
+				animal.debuffs.splice(j,1);
+			}
+		}
+	}
+	for(let i in enemy){
+		let animal= enemy[i];
+		let j = animal.buffs.length;
+		while(j--){
+			if (animal.buffs[j].markedForDeath) {
+				animal.buffs.splice(j,1);
+			}
+		}
+		j = animal.debuffs.length;
+		while(j--){
+			if (animal.debuffs[j].markedForDeath) {
+				animal.debuffs.splice(j,1);
+			}
+		}
+	}
 }
 
 /* finish battle */
