@@ -33,10 +33,10 @@ module.exports = new CommandInterface({
 
 		let warn = p.args.slice(1).join(" ");
 		let user = await p.sender.msgUser(p.args[0],"**⚠ |** Your cowoncy has been reset due to: **"+warn+"**");
-		if(user&&cowoncy){
+		if(user && !user.dmError && cowoncy){
 			p.send(`📨 **|** Successfully reset cowoncy for **${user.username+"#"+user.discriminator}**\n${p.config.emoji.blank} **|** Previously had: ${cowoncy} cowoncy`);
 		}else if(cowoncy){
-			p.send(`⚠ **|** Failed to send msg for that user\n${p.config.emoji.blank} **|** Previously had: ${cowoncy} cowoncy`);
+			p.send(`⚠ **|** Successfully reset cowoncy for **${user.username+"#"+user.discriminator}**\n${p.config.emoji.blank} **|** Previously had: ${cowoncy} cowoncy**\n${p.config.emoji.blank} **|** I couldn't DM them.`);
 		}else{
 			p.send(`⚠ **|** Failed to reset cowoncy`);
 		}

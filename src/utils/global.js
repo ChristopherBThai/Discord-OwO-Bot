@@ -17,6 +17,8 @@ const { Profanity, ProfanityOptions } = require("@2toad/profanity")
 const options = new ProfanityOptions();
 options.wholeWord = false;
 options.grawlix = 'OwO';
+const emojis = require('../data/emojis.json');
+const emojiRegex = new RegExp(Object.keys(emojis).join("|"), "gi");
 const filter2 = new Profanity(options);
 const goodwords = require('../../../tokens/goodwords.json');
 filter2.removeWords(goodwords);
@@ -248,18 +250,24 @@ exports.getTotalShardCount = function(){
 
 /* Converts name to more kid-friendly */
 exports.filteredName = function (name) {
-	let shortnick = name.replace(/\W/g,'');
+
+	// swap out emojis and other non-word characters before filtering
+	let shortnick = name.replace(emojiRegex, function(matched) {
+		return emojis[matched];
+	}).replace(/\W/g,'');
+
 	if (filter2.exists(shortnick)) {
 		name = namor.generate({ words: 3, saltLength: 0, separator:' ' });
 		return { name, offensive:false }
 	}
-	name = name.replace(/https:/gi,"https;")
+	name = name.replace(/\n/g,"")
+		.replace(/\r/g,"")
+		.replace(/https:/gi,"https;")
 		.replace(/http:/gi,"http;")
 		.replace(/discord.gg/gi,"discord,gg")
 		.replace(/@everyone/gi,"everyone")
 		.replace(/<@!?[0-9]+>/gi,"User")
 		.replace(/[*`]+/gi,"'")
-		.replace(/\n/g,"")
 		.replace(/\|\|/g,'│');
 
 	return { name, offensive:false }
