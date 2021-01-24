@@ -108,8 +108,7 @@ module.exports = class BuffInterface{
 		if(this.duration<=0){
 			for(let i=0;i<animal.buffs.length;i++){
 				if(animal.buffs[i].id == this.id && animal.buffs[i].from.pid==this.from.pid){
-					animal.buffs.splice(i,1);
-					i--;
+					animal.buffs[i].markedForDeath = true;
 				}
 			}
 		}

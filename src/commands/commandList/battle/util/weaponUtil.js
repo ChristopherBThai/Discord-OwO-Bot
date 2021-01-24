@@ -7,6 +7,7 @@
 
 const requireDir = require('require-dir');
 const WeaponInterface = require('../WeaponInterface.js');
+const alterWeapon = require('../../patreon/alterWeapon.js');
 
 const prices = {"Common":100,"Uncommon":250,"Rare":400,"Epic":600,"Mythical":5000,"Legendary":15000,"Fabled":50000};
 exports.shardPrices = {"Common":1,"Uncommon":3,"Rare":5,"Epic":25,"Mythical":300,"Legendary":1000,"Fabled":5000};
@@ -213,7 +214,7 @@ const declineEmoji = '👎';
 const acceptEmoji = '👍';
 
 /* Ask a user to display their weapon */
-exports.askDisplay = async function(p, id){
+exports.askDisplay = async function(p, id, opt={}){
 	if(id==p.msg.author.id){
 		display(p);
 		return;
@@ -256,7 +257,7 @@ exports.askDisplay = async function(p, id){
 			msg.edit({embed});
 		}else{
 			try{await msg.removeReactions();}catch(e){}
-			display(p,0,0,{users:[p.msg.author.id],msg,user:user});
+			display(p,0,0,{users:[p.msg.author.id],msg,user:user,wid:opt.wid});
 		}
 
 	});
@@ -324,7 +325,8 @@ var getDisplayPage = async function(p,user,page,sort,opt={}){
 	let user_weapons = parseWeaponQuery(result[0]);
 
 	/* Parse actual weapon data for each weapon */
-	let desc = "Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nReroll: `owo w rr {weaponID} [passive|stat]`\nSell: `owo sell {weaponID|commonweapons,rareweapons...}`\nDismantle: `owo dismantle {weaponID|commonweapons,rareweapons...}`\n";
+	let descHelp = "Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nReroll: `owo w rr {weaponID} [passive|stat]`\nSell: `owo sell {weaponID|commonweapons,rareweapons...}`\nDismantle: `owo dismantle {weaponID|commonweapons,rareweapons...}`\n";
+	let desc = '';
 	let fieldText;
 	let fields = []
 	for(var key in user_weapons){
@@ -351,7 +353,7 @@ var getDisplayPage = async function(p,user,page,sort,opt={}){
 				} else {
 					fieldText += row;
 				}
-			} else if (desc.length + row.length >= 2048) {
+			} else if (descHelp.length + desc.length + row.length >= 2048) {
 				fieldText = row
 			} else {
 				desc += row;
@@ -372,7 +374,7 @@ var getDisplayPage = async function(p,user,page,sort,opt={}){
 			"name":title,
 			"icon_url":user.avatarURL
 		},
-		"description":desc,
+		"description": descHelp + desc,
 		"color": p.config.embed_color,
 		"footer":{
 			"text":"Page "+(page+1)+"/"+maxPage+" | "
@@ -388,6 +390,13 @@ var getDisplayPage = async function(p,user,page,sort,opt={}){
 		embed.footer.text += "Sorting by type";
 	else if(sort===3)
 		embed.footer.text += "Sorting by equipped";
+
+	embed = alterWeapon.alter(user.id, embed, {
+		page: page+1,
+		descHelp: descHelp,
+		desc: desc
+
+	});
 
 	return {sql,embed,totalCount,nextPage,prevPage,maxPage}
 }

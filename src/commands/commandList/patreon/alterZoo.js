@@ -116,7 +116,7 @@ function heysay(text){
 		g: "<:9_:688486456288739402>",
 		f: "<:10:688486468263346206>",
 		s: "<:11:688486516170817604>",
-		h: "<:12:688486536081178731>"
+		h: "<:12:792917067547541514>"
 	}
 	text = replaceRanks(text,newRanks)
 		.split("\n");
@@ -143,7 +143,7 @@ function xmelanie(text) {
 	}
 	text = replaceRanks(text,newRanks)
 		.split("\n");
-	text[0] = "<:mickey:747723512768102453> <a:stitch:747723512982274060> <a:olaf:747723512755650591> **Mel's Animal Kingdom** <a:dory:747723513242058786> <a:baby_yoda:747723513367887914> <a:castle:747723513758220339>";
+	text[0] = "<:mickey:747723512768102453> <a:stitch:747723512982274060> <a:olaf:747723512755650591> **Mels Animal Kingdom** <a:dory:747723513242058786> <a:baby_yoda:747723513367887914> <a:castle:747723513758220339>";
 	return text.join("\n");
 }
 

@@ -286,3 +286,24 @@ exports.cleanString = function (string) {
 exports.isEmoji = function (string) {
 	return (/^<a?:[\w]+:[0-9]+>$/gi).test(string.trim())
 }
+
+exports.parseTime = function (diff) {
+	let hours, minutes, seconds, text;
+	if (diff > 1000 * 60 * 60) {
+		hours = Math.floor(diff / (1000 * 60 * 60));
+		diff %= 1000 * 60 * 60;
+		minutes = Math.floor(diff / (1000 * 60));
+		diff %= 1000 * 60;
+		seconds = Math.ceil(diff / 1000);
+		text = `**${hours}h ${minutes}m ${seconds}s**`;
+	} else if (diff > 1000 * 60) {
+		minutes = Math.floor(diff / (1000 * 60));
+		diff %= 1000 * 60;
+		seconds = Math.ceil(diff / 1000);
+		text = `**${minutes}m ${seconds}s**`;
+	} else {
+		seconds = Math.ceil(diff / 1000);
+		text = `**${seconds}s**`;
+	}
+	return { hours, minutes, seconds, text }
+}

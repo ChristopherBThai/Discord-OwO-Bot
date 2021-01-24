@@ -70,7 +70,7 @@ module.exports = new CommandInterface({
 		}else if(!reward){
 			description += "\n"+box+" "+tada+" Complete your checklist to get a reward!";
 		}else{
-			description += "\n"+check+" "+tada+" You earned 1,000 "+p.config.emoji.cowoncy+", 1 "+p.config.emoji.lootbox+", 1 "+p.config.emoji.crate+", and 1 "+p.config.emoji.cookie+"!";
+			description += "\n"+check+" "+tada+" You earned 1,000 "+p.config.emoji.cowoncy+", 1 "+p.config.emoji.lootbox+", 1 "+p.config.emoji.crate+", 100 "+p.config.emoji.shards+", and 1 "+p.config.emoji.cookie+"!";
 		}
 
 		if(reward){
@@ -79,7 +79,8 @@ module.exports = new CommandInterface({
 					UPDATE lootbox SET boxcount = boxcount + 1 WHERE id = ${p.msg.author.id};
 					UPDATE crate SET boxcount = boxcount + 1 WHERE uid = ${uid};
 					UPDATE cowoncy SET money = money + 1000 WHERE id = ${p.msg.author.id};
-					UPDATE rep SET count = count + 1 WHERE id = ${p.msg.author.id};`;
+					INSERT INTO rep (id,count) VALUES (${p.msg.author.id},1) ON DUPLICATE KEY UPDATE count = count + 1;
+					INSERT INTO shards (uid,count) VALUES (${uid},100) ON DUPLICATE KEY UPDATE count = count + 100`;
 			result = await p.query(sql);
 			p.quest("cookieBy",1,p.msg.author);
 		}
