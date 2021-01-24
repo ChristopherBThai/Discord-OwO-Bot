@@ -214,7 +214,7 @@ const declineEmoji = '👎';
 const acceptEmoji = '👍';
 
 /* Ask a user to display their weapon */
-exports.askDisplay = async function(p, id){
+exports.askDisplay = async function(p, id, opt={}){
 	if(id==p.msg.author.id){
 		display(p);
 		return;
@@ -257,7 +257,7 @@ exports.askDisplay = async function(p, id){
 			msg.edit({embed});
 		}else{
 			try{await msg.removeReactions();}catch(e){}
-			display(p,0,0,{users:[p.msg.author.id],msg,user:user});
+			display(p,0,0,{users:[p.msg.author.id],msg,user:user,wid:opt.wid});
 		}
 
 	});
