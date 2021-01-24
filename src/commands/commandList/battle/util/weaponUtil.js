@@ -213,8 +213,7 @@ const declineEmoji = '👎';
 const acceptEmoji = '👍';
 
 /* Ask a user to display their weapon */
-exports.askDisplay = async function(p, id, opt){
-	if(!opt) opt = {};
+exports.askDisplay = async function(p, id, opt={}){
 	if(id==p.msg.author.id){
 		display(p);
 		return;
