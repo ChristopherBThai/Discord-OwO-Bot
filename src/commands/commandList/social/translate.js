@@ -11,7 +11,7 @@ const gtranslate = require('translate-google');
 
 module.exports = new CommandInterface({
 
-	alias:["translate","listlang", "t"],
+	alias:["translate","listlang", "tl"],
 
 	args:"{msg} -{language}",
 
