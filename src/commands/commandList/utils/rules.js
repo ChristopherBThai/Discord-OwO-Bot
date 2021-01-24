@@ -77,7 +77,7 @@ module.exports = new CommandInterface({
 
 		/* Reaction collector */
 		let filter = (emoji, userID) => emoji.name === agreeEmoji && userID === p.msg.author.id;
-		let collector = p.reactionCollector.create(message,filter,{time:30000});
+		let collector = p.reactionCollector.create(message,filter,{time:900000,idle:120000});
 
 		collector.on('collect',async r => {
 			collector.stop("done");
@@ -89,9 +89,17 @@ module.exports = new CommandInterface({
 			sql = "INSERT IGNORE INTO user (id,count) VALUES (?,0);"+sql;
 
 			/* Query and edit existing message */
-			result = await p.query(sql,[BigInt(p.msg.author.id),BigInt(p.msg.author.id)])
+			result = await p.query(sql,[BigInt(p.msg.author.id),BigInt(p.msg.author.id)]);
+			embed.color = 65280;
 			await message.edit({embed});
 			p.msg.author.acceptedRules = true; 
+		});
+		collector.on('end',async function(reason){
+			if (reason != 'done') {
+				embed.color = 6381923;
+				await message.edit({content:`${warningEmoji} **You must accept these rules to use the bot!**\nThis message is now inactive.`,embed:embed});
+				await message.removeReaction(agreeEmoji);
+			}
 		});
 
 	}

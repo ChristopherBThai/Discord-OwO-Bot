@@ -162,11 +162,11 @@ function lootboxes(p){
 			let claimed = result[0]?result[0].claimcount:0;
 			if(afterMid&&!afterMid.after){
 				if(claimed<3)
-					return {done:false,desc:(3-claimed)+" lootbox"+(claimed==2?" is still ":"es are still ")+"available!",emoji:'💎'}
+					return {done:false,desc:(3-claimed)+" lootbox"+(claimed==2?" ":"es ")+"can be found from hunting!",emoji:'💎'}
 				else
 					return {done:true,desc:"You have found all lootboxes!",emoji:'💎'}
 			}else
-				return {done:false,desc:"3 lootboxes are still available!",emoji:'💎'}
+				return {done:false,desc:"3 lootboxes can be found from hunting!",emoji:'💎'}
 		}
 	}
 }
@@ -179,11 +179,11 @@ function crates(p){
 			let claimed = result[0]?result[0].claimcount:0;
 			if(afterMid&&!afterMid.after){
 				if(claimed<3)
-					return {done:false,desc:(3-claimed)+" weapon crate"+(claimed==2?" is still ":"s are still ")+"available!",emoji:'⚔'}
+					return {done:false,desc:(3-claimed)+" weapon crate"+(claimed==2?" ":"s ")+"can be found from battling!",emoji:'⚔'}
 				else
 					return {done:true,desc:"You have found all weapon crates!",emoji:'⚔'}
 			}else
-				return {done:false,desc:"3 weapon crates are still available!",emoji:'⚔'}
+				return {done:false,desc:"3 weapon crates can be found from battling!",emoji:'⚔'}
 		}
 	}
 }
