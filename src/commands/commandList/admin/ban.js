@@ -50,11 +50,16 @@ module.exports = new CommandInterface({
 
 		const success = [];
 		const successGuild = [];
+		const dmFailed = [];
 		const failed = [];
 		for (let user of users) {
 			try {
 				if (userObj = await p.sender.msgUser(user, "**☠ |** You have been banned for "+time+" hours!"+reason))
-					success.push(userObj)
+					if (userObj.dmError) {
+						dmFailed.push(userObj);
+					} else {
+						success.push(userObj)
+					}
 				else if (guildObj = await p.fetch.getGuild(user))
 					successGuild.push(guildObj);
 				else
@@ -74,12 +79,15 @@ module.exports = new CommandInterface({
 				text += `[${guild.id}] ${guild.name}\n`;
 			});
 		}
-		if (failed.length) {
+		if (failed.length || dmFailed.length) {
 			text += `\n${banEmoji} **|** I could not DM these users:\n`
-			text += failed.join(', ');
+			text += failed.join('\n') + '\n';
+			dmFailed.forEach(user => {
+				text += `[${user.id}] ${user.username}#${user.discriminator}\n`;
+			});
 		}
 		if (reason) {
-			text += '\n' + reason
+			text += reason
 		}
 		p.send(text);
 	}

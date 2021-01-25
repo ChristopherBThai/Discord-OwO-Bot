@@ -136,7 +136,18 @@ exports.msgUser = async function(id,msg){
 		return;
 	}
 	let user = await channel.recipient;
-	if(channel) await channel.createMessage(msg);
+	try{
+		if(channel) await channel.createMessage(msg);
+	}catch(err){
+		// just enough to error log
+		return {
+			dmError: true,
+			id: user.id,
+			username: user.username,
+			discriminator: user.discriminator
+		}
+	}
+	
 	return user;
 }
 

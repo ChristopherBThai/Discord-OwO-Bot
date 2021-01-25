@@ -112,7 +112,7 @@ async function addPatreon(p, id, addMonths = 1, type = 1) {
 		user = await p.sender.msgUser(id,`${tada} **|** Your patreon has been extended by ${addMonths} month(s)!\n${p.config.emoji.blank} **|** Expires on: **${date}**`);
 	else
 		user = await p.sender.msgUser(id,`${gear} **|** Your patreon perks have been changed!\n${p.config.emoji.blank} **|** Expires on: **${date}**`);
-	if(user)
+	if(user && !user.dmError)
 		return { user, date }
 	else
 		await p.errorMsg(', Failed to message user for '+id,3000);
