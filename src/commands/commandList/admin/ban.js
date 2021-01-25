@@ -7,6 +7,8 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
+const banEmoji = '<:ban:444365501708107786>';
+
 module.exports = new CommandInterface({
 
 	alias:["ban"],
@@ -15,34 +17,71 @@ module.exports = new CommandInterface({
 	mod:true,
 	dm:true,
 
-	execute: async function(p){
-		let global=p.global,con=p.con,args=p.args,msg=p.msg;
-		let time;
-		if(global.isInt(args[1])){
-			time = parseInt(args[1]);
-		}else{
-			p.errorMsg(", wrong time format");
+	execute: async function(p) {
+		let users = [], reason = [];
+		let checkUser = true;
+		for (let i in p.args) {
+			const arg = p.args[i];
+			if (checkUser && p.global.isInt(arg)) {
+				users.push(arg);
+			} else {
+				checkUser = false;
+				reason.push(arg);
+			}
+		}
+		const time = parseInt(users.pop());
+
+		if (!time || time > 1000000) {
+			p.errorMsg(", ban time must be under 1,000,000");
 			return;
 		}
 
-		if(!global.isUser("<@"+args[0]+">")){
-			p.errorMsg(", invalid user id");
-			return;
-		}
-
-		let reason = args.slice(2).join(" ");
-		if(reason&&reason!="")
+		reason = reason.join(" ");
+		if (reason && reason!="") {
 			reason = "\n**<:blank:427371936482328596> | Reason:** "+reason;
+		}
 
-		let sql = "INSERT INTO timeout (id,time,count,penalty) VALUES ("+args[0]+",NOW(),1,"+time+") ON DUPLICATE KEY UPDATE time = NOW(),count=count+1,penalty = "+time+";";
-		let rows = await p.query(sql);
+		const sqlUsers = [];
+		users.forEach(user => {
+			sqlUsers.push(`(${user}, NOW(), 1, ${time})`);
+		});
+		const sql = `INSERT INTO timeout (id,time,count,penalty) VALUES ${sqlUsers.join(',')} ON DUPLICATE KEY UPDATE time = NOW(), count=count+1, penalty = ${time};`;
+		const rows = await p.query(sql);
 
-		if(user = await p.sender.msgUser(args[0],"**☠ |** You have been banned for "+time+" hours!"+reason))
-			p.send("**☠ |** Penalty has been set to "+time+" for "+user.username+reason);
-		else if(guild = await p.fetch.getGuild(args[0]))
-			p.send("**☠ |** Penalty has been set to "+time+" for guild: "+guild.name);
-		else
-			p.send("Failed to send a message to user|guild");
+		const success = [];
+		const successGuild = [];
+		const failed = [];
+		for (let user of users) {
+			try {
+				if (userObj = await p.sender.msgUser(user, "**☠ |** You have been banned for "+time+" hours!"+reason))
+					success.push(userObj)
+				else if (guildObj = await p.fetch.getGuild(user))
+					successGuild.push(guildObj);
+				else
+					failed.push(user);
+			} catch (e) {
+				failed.push(user);
+			}
+		}
+
+		let text = `${banEmoji} **|** I have banned ${success.length} users:\n`;
+		success.forEach(user => {
+			text += `[${user.id}] ${user.username}#${user.discriminator}\n`;
+		});
+		if (successGuild.length) {
+			text += `\n${banEmoji} **|** I have banned ${successGuild.length} guilds:\n`;
+			successGuild.forEach(guild=> {
+				text += `[${guild.id}] ${guild.name}\n`;
+			});
+		}
+		if (failed.length) {
+			text += `\n${banEmoji} **|** I could not DM these users:\n`
+			text += failed.join(', ');
+		}
+		if (reason) {
+			text += '\n' + reason
+		}
+		p.send(text);
 	}
 
 })

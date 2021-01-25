@@ -78,6 +78,7 @@ module.exports = new CommandInterface({
 		/* view someone's weapons by category */
 		} else if(p.args.length==2&&(p.global.isUser(p.args[0])&&(p.global.isInt(p.args[1])&&weaponUtil.getWID(parseInt(p.args[1])-100)))){
 			await weaponUtil.askDisplay(p,p.args[0].match(/[0-9]+/)[0],{wid:parseInt(p.args[1])-100});
+
 		/* Equip weapon */
 		}else if(p.args.length==2){
 			/* No changing while in battle */
