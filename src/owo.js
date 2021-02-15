@@ -64,9 +64,13 @@ class OwO extends Base{
 		this.sender = require('./utils/sender.js');
 		this.sender.init(this);
 
+		// Date utility
+		this.dateUtil = require('./utils/dateUtil.js');
+
 		// Hidden macro detection file
-		this.macro = require('./../../tokens/macro.js');
+		this.macro = require('./../../tokens/macro2.js');
 		this.macro.bind(this,require('merge-images'),require('canvas'));
+		this.cooldown.setMacro(this.macro);
 
 		// Allows me to check catch before any fetch requests (reduces api calls)
 		this.fetch = new (require('./utils/fetch.js'))(this);
@@ -84,9 +88,6 @@ class OwO extends Base{
 		this.patreon = require('./utils/patreon.js');
 		this.patreon.init(this);
 
-		// Date utility
-		this.dateUtil = require('./utils/dateUtil.js');
-		
 		// Create commands
 		this.command = new (require('./commands/command.js'))(this);
 	}
