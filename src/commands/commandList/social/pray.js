@@ -27,7 +27,7 @@ module.exports = new CommandInterface({
 
 	group:["social"],
 
-	cooldown:300000,
+	cooldown:00000,
 	half:22,
 	six:200,
 	bot:true,
@@ -102,9 +102,10 @@ module.exports = new CommandInterface({
 		text = alterPray.alter(p.msg.author.id,text,{command:p.command, author:p.msg.author, user, luck:result[1][0].lcount});
 		p.send(text);
 		if(user&&quest) p.quest(quest,1,user);
-		if(opponentPoints&&user)
+		if(opponentPoints&&user) {
 			p.logger.incr(`pray`, 1, {from:p.msg.author.id, to:user.id});
-		else
+			p.macro.checkToCommands(p, user.id);
+		} else
 			p.logger.incr(`pray`, 1, {from:p.msg.author.id, to:'self'});
 	}
 

@@ -37,9 +37,9 @@ async function getPatreons(p){
 
 	let text = "";
 
-	if(patreons["One wish"].length){
-		text += "**One Wish**\n";
-		let list = patreons["One wish"];
+	if(patreons["Customized Command"].length){
+		text += "**Customized Command**\n";
+		let list = patreons["Customized Command"];
 		for(let i in list){
 			text += "<@"+list[i].discordID+"> | **"+list[i].name+"** | "+list[i].discordID+"\n";
 		}
@@ -48,14 +48,6 @@ async function getPatreons(p){
 	if(patreons["Custom Command"].length){
 		text += "\n**Custom Command**\n";
 		let list = patreons["Custom Command"];
-		for(let i in list){
-			text += "<@"+list[i].discordID+"> | **"+list[i].name+"** | "+list[i].discordID+"\n";
-		}
-	}
-
-	if(patreons["Custom Discord rank"].length){
-		text += "\n**Custom Rank**\n";
-		let list = patreons["Custom Discord rank"];
 		for(let i in list){
 			text += "<@"+list[i].discordID+"> | **"+list[i].name+"** | "+list[i].discordID+"\n";
 		}
