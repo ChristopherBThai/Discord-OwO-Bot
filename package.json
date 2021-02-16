@@ -16,6 +16,7 @@
     "erlpack": "github:abalabahaha/erlpack",
     "eventemitter3": "^4.0.4",
     "express": "^4.17.1",
+    "ioredis": "^4.22.0",
     "libsodium-wrappers": "^0.7.6",
     "mathjs": "^6.6.5",
     "merge-images": "^1.2.0",

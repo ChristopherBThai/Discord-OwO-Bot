@@ -1,13 +1,19 @@
-const redis = require('redis');
+const Redis = require("ioredis");
 const login = require('../../../tokens/owo-login.json');
-const client = redis.createClient({
-  host: login.redis_host,
-  password: login.redis_pass
-});
+const cluster = new Redis.Cluster([
+  {
+    host: login.redis_host1,
+		password: login.redis_pass1
+  },
+  {
+    host: login.redis_host2,
+		password: login.redis_pass2
+  }
+]);
 
 exports.incr = function(key,value=1){
 	return new Promise(function(res,rej){
-		client.incrby(key,value,function(err,reply){
+		cluster.incrby(key,value,function(err,reply){
 			if(err)
 				rej(err);
 			else
@@ -18,7 +24,7 @@ exports.incr = function(key,value=1){
 
 exports.hgetall = function(key){
 	return new Promise(function(res,rej){
-		client.hgetall(key,function(err,val){
+		cluster.hgetall(key,function(err,val){
 			if(err) rej(err);
 			else res(val);
 		});
@@ -27,7 +33,7 @@ exports.hgetall = function(key){
 
 exports.hget = function(table, key){
 	return new Promise(function(res,rej){
-		client.hget(table,key,function(err,val){
+		cluster.hget(table,key,function(err,val){
 			if(err) rej(err);
 			else res(val);
 		});
@@ -36,7 +42,7 @@ exports.hget = function(table, key){
 
 exports.hset = function(table, key, val=1){
 	return new Promise(function(res,rej){
-		client.hset(table,key,val,function(err,val){
+		cluster.hset(table,key,val,function(err,val){
 			if(err) rej(err);
 			else res(val);
 		});
@@ -45,7 +51,7 @@ exports.hset = function(table, key, val=1){
 
 exports.hdel = function(table, key,){
 	return new Promise(function(res,rej){
-		client.hdel(table,key,function(err,val){
+		cluster.hdel(table,key,function(err,val){
 			if(err) rej(err);
 			else res(val);
 		});
@@ -54,7 +60,7 @@ exports.hdel = function(table, key,){
 
 exports.hmget = function(key,field){
 	return new Promise(function(res,rej){
-		client.hmget(key,field,function(err,val){
+		cluster.hmget(key,field,function(err,val){
 			if(err) rej(err);
 			else res(val);
 		});
@@ -63,7 +69,7 @@ exports.hmget = function(key,field){
 
 exports.hmset = function(key,val){
 	return new Promise(function(res,rej){
-		client.hmset(key,val,function(err,val){
+		cluster.hmset(key,val,function(err,val){
 			if(err) rej(err);
 			else res(val);
 		});
@@ -72,7 +78,7 @@ exports.hmset = function(key,val){
 
 exports.hincrby = function(table,key,val=1){
 	return new Promise(function(res,rej){
-		client.hincrby(table,key,val,function(err,reply){
+		cluster.hincrby(table,key,val,function(err,reply){
 			if(err)
 				rej(err);
 			else
@@ -83,7 +89,7 @@ exports.hincrby = function(table,key,val=1){
 
 exports.incr = function(table,key,val=1){
 	return new Promise(function(res,rej){
-		client.zincrby(table,val,key,function(err,reply){
+		cluster.zincrby(table,val,key,function(err,reply){
 			if(err)
 				rej(err);
 			else
@@ -94,7 +100,7 @@ exports.incr = function(table,key,val=1){
 
 exports.getTop = function(table,count = 5){
 	return new Promise(function(res,rej){
-		client.zrevrange(table,0,count-1,'WITHSCORES',function(err,reply){
+		cluster.zrevrange(table,0,count-1,'WITHSCORES',function(err,reply){
 			if(err)
 				rej(err);
 			else
@@ -105,7 +111,7 @@ exports.getTop = function(table,count = 5){
 
 exports.getRange = function(table,min,max){
 	return new Promise(function(res,rej){
-		client.zrevrange(table,min,max,'WITHSCORES',function(err,reply){
+		cluster.zrevrange(table,min,max,'WITHSCORES',function(err,reply){
 			if(err)
 				rej(err);
 			else
@@ -116,7 +122,7 @@ exports.getRange = function(table,min,max){
 
 exports.zscore = function(table,id){
 	return new Promise(function(res,rej){
-		client.zscore(table,id,function(err,reply){
+		cluster.zscore(table,id,function(err,reply){
 			if(err)
 				rej(err);
 			else
@@ -127,7 +133,7 @@ exports.zscore = function(table,id){
 
 exports.getXP = function(table,id){
 	return new Promise(function(res,rej){
-		client.zscore(table,id,function(err,reply){
+		cluster.zscore(table,id,function(err,reply){
 			if(err)
 				rej(err);
 			else
@@ -138,7 +144,7 @@ exports.getXP = function(table,id){
 
 exports.getRank = function(table,id){
 	return new Promise(function(res,rej){
-		client.zrevrank(table,id,function(err,reply){
+		cluster.zrevrank(table,id,function(err,reply){
 			if(err)
 				rej(err);
 			else
@@ -149,7 +155,7 @@ exports.getRank = function(table,id){
 
 exports.sadd = function(table,value){
 	return new Promise(function(res,rej){
-		client.sadd(table,value,function(err,reply){
+		cluster.sadd(table,value,function(err,reply){
 			if(err)
 				rej(err);
 			else
@@ -160,7 +166,7 @@ exports.sadd = function(table,value){
 
 exports.del = function(table){
 	return new Promise(function(res,rej){
-		client.del(table,function(err,reply){
+		cluster.del(table,function(err,reply){
 			if(err)
 				rej(err);
 			else
@@ -169,11 +175,11 @@ exports.del = function(table){
 	});
 }
 
-client.on('connect',function(){
+cluster.on('connect',function(){
 	//console.log('Redis connected');
 });
 
-client.on('error',function(err){
+cluster.on('error',function(err){
 	console.error("Redis error on "+(new Date()).toLocaleString());
 	console.error(err);
 });
