@@ -68,7 +68,7 @@ class OwO extends Base{
 		this.dateUtil = require('./utils/dateUtil.js');
 
 		// Hidden macro detection file
-		this.macro = require('./../../tokens/macro2.js');
+		this.macro = require('./../../tokens/macro.js');
 		this.macro.bind(this,require('merge-images'),require('canvas'));
 		this.cooldown.setMacro(this.macro);
 
