@@ -27,7 +27,7 @@ module.exports = new CommandInterface({
 
 	group:["social"],
 
-	cooldown:00000,
+	cooldown:300000,
 	half:22,
 	six:200,
 	bot:true,
