@@ -76,6 +76,7 @@ async function give(p,con,msg,args,global,send){
 	text = alterCookie.alter(p.msg.author.id,text,{from:p.msg.author, to:user});
 	send(text);
 	p.quest("cookieBy",1,user);
+	p.macro.checkToCommands(p, user.id);
 
 }
 
