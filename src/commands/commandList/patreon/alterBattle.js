@@ -7,7 +7,6 @@
 
 const blank = '<:blank:427371936482328596>';
 exports.alter = function(id,text,type){
-			return jiraya(text, type);
 	switch(id){
 		case '176046069954641921':
 			return crown(text,type);
