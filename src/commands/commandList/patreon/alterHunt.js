@@ -57,9 +57,22 @@ exports.alter = function(id,text,info){
 			return ashley(text,info);
 		case '216710431572492289':
 			return arichy(text, info);
+		case '103409793972043776':
+			return potsun(text, info);
+		case '417350932662059009':
+			return sky(text, info);
+		case '707939636835516457':
+			return direwolf(text, info);
 		default:
 			return text;
 	}
+}
+
+function getA(text) {
+	text = text.replace(/\*/gi,'');
+	return ['a', 'e', 'i', 'o', 'u'].includes(text[0]) 
+		? 'an'
+		: 'a'
 }
 
 function geist(text){
@@ -233,7 +246,8 @@ function michelle(text, info){
 	if(info.gemText){
 		text = `${meowth} **| Meowth** is empowered by ${info.gemText}!\n${blank} **|** It returned with: ${info.animalEmojis}\n${blank} **|** and evolved into a **Persian** ${persian}`;
 	}else{
-		text = `${meowth} **| Meowth** went out and caught an ${info.animal[0][0]} ${info.animalEmojis}\n${blank} **|** and evolved into a **Persian** ${persian}`;
+		const a = getA(info.animal[0][0]);
+		text = `${meowth} **| Meowth** went out and caught ${a} ${info.animal[0][0]} ${info.animalEmojis}\n${blank} **|** and evolved into a **Persian** ${persian}`;
 	}
 	if (info.petText) {
 		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
@@ -532,6 +546,107 @@ function arichy (text,info) {
 		color: 4886754,
 		thumbnail: {
 			url: "https://i.imgur.com/vvpFulp.gif"
+		}
+	}
+
+	return {embed};
+}
+
+function potsun (text, info) {
+	const vollyball = '<a:vollyball:811866936857722890>';
+
+	if(info.gemText){
+		text = `${vollyball} **| ${info.author.username}**, drop it like it's **hot hot** ${info.gemText}\n`;
+		text += `${vollyball} **|** that's a **lot lot!**: ${info.animalEmojis}`;
+	}else{
+		text = `${vollyball} **| ${info.author.username}**, drop it like it's **hot hot**\n`;
+		text += `${vollyball} **|** that's a **lot lot!**: ${info.animal[0][0]} ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${vollyball} **|** ${info.petText} **got got ${info.animalXp}xp**`;
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: 1,
+		thumbnail: {
+			url: "https://cdn.discordapp.com/attachments/773753455004614708/799473320138506250/SmartSelect_20210114-190030_Discord.gif"
+		}
+	}
+
+	return {embed};
+}
+
+function sky(text, info) {
+	const moon = '<a:moon:812206696930869248>';
+	const butterfly = '<:butterfly:812206696587329557>';
+	const sparkle = '<a:sparkle:812206697182920734>';
+	const rose = '<a:rose:812206697166012426>';
+	let thumbnail;
+
+	if(info.gemText){
+		text = `${moon} **|** Stumbling into the enchanting forest,\n`;
+		text += `${blank} **|** ${info.gemText} allowed **${info.author.username}** to cast a powerful spell!\n`;
+		text += `${rose} **|** capturing: ${info.animalEmojis}`;
+		thumbnail = 'https://cdn.discordapp.com/attachments/771398927912009738/806678445680885770/image0.gif';
+	}else{
+		const a = getA(info.animal[0][0]);
+		text = `${moon} **|** Searching the vast lands, wielding a guild artifact,\n`;
+		text += `${butterfly} **| ${info.author.username}** and her party caught ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
+		thumbnail = 'https://cdn.discordapp.com/attachments/771398927912009738/806678362226688050/image0.png';
+	}
+	if (info.petText) {
+		text += `\n${sparkle} **|** ${info.petText} gained **${info.animalXp}xp**`;
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: 15525304,
+		thumbnail: {
+			url: thumbnail
+		}
+	}
+
+	return {embed};
+}
+
+function direwolf(text, info) {
+	const bluefire1 = '<a:bluefire1:812938075167916032>';
+	const bluefire2 = '<a:bluefire2:812938075209859102>';
+	const yellowfire = '<a:yellowfire:812938075281948693>';
+	const redfire = '<a:redfire:812938075361378315>';
+	const rainbowfire = '<a:rainbowfire:812938075696136232>';
+	const sparkle = '<a:sparkle:812938075255603210>';
+	let thumbnail, color;
+
+	if(info.gemText){
+		text = `${redfire} **|** Natsu consumes the power of the gems!\n`;
+		text += `${yellowfire} **|** ${info.gemText} Natsu slowly builds up and releases a dragon breath attack!\n`;
+		text += `${bluefire1} **|** Caught in Natsu's breath attack are: ${info.animalEmojis}`;
+		thumbnail = 'https://cdn.discordapp.com/attachments/771398927912009738/807425550947582023/image0.gif';
+		color = 16518144;
+		if (info.petText) {
+			text += `\n${rainbowfire} **|** ${info.petText} gained **${info.animalXp}xp**`;
+		}
+	}else{
+		const a = getA(info.animal[0][0]);
+		text = `${bluefire1} **|** The Twin Dragons enter their Dragon Force state and begin to focus their power on a single point!\n`;
+		text += `${bluefire2} **|** They unlease a Unison Raid! Caught in it is ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
+		thumbnail = 'https://cdn.discordapp.com/attachments/771398927912009738/807425397830451220/image0.gif';
+		color = 1303277;
+		if (info.petText) {
+			text += `\n${sparkle} **|** ${info.petText} gained **${info.animalXp}xp**`;
+		}
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color,
+		thumbnail: {
+			url: thumbnail
 		}
 	}
 

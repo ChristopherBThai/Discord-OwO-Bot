@@ -7,6 +7,7 @@
 
 const blank = '<:blank:427371936482328596>';
 exports.alter = function(id,text,type){
+			return jiraya(text, type);
 	switch(id){
 		case '176046069954641921':
 			return crown(text,type);
@@ -36,6 +37,8 @@ exports.alter = function(id,text,type){
 			return kirito(text, type);
 		case '707939636835516457':
 			return direwolf(text, type);
+		case '468873774960476177':
+			return jiraya(text, type);
 		default:
 			return text;
 	}
@@ -326,6 +329,45 @@ function direwolf (text,opt) {
 			}
 			text.thumbnail = {
 				url: "https://cdn.discordapp.com/attachments/771398927912009738/784164939987157013/image1.gif"
+			}
+			break;
+	}
+	return text;
+}
+
+function jiraya (text,opt) {
+	text.author.name = 'Gojo Satoru and Itadori Yuji goes into battle against curses!';
+	switch (text.color) {
+		// lost
+		case 16711680:
+			text.color = 10027008; 
+			if (opt) {
+				text.footer.text = `Oh no! Sukuna takes over Yuji and lays his Domain over Gojo's Domain. Gojo's Domain has shattered. Your streak of ${opt.streak} is broken! You lost in ${opt.turns}!`;
+			}
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/771398927912009738/811783217031413801/image2.gif"
+			}
+			break;
+
+		// win
+		case 65280:
+			text.color = 2364785;
+			if (opt) {
+				text.footer.text = `Gojo used his domain expansion, Infinite Void and killed all the curses! You won in ${opt.turns} and your team gained ${opt.xp}! You've defeated a total of: ${opt.streak} curses!`;
+			}
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/771398927912009738/811783212548227072/image0.gif"
+			}
+			break;
+
+		//tie
+		case 6381923:
+			text.color = 16753920;
+			if (opt) {
+				text.footer.text = `Sukuna takes over Yuji, but Yuji fights him and doesn't let him win. Gojo and Yuji gain ${opt.xp}! Streak: ${opt.streak}!`;
+			}
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/771398927912009738/811783213965770822/image1.gif"
 			}
 			break;
 	}
