@@ -44,7 +44,11 @@
 		"previous":"⬅️",
 		"next":"➡️",
 		"steal":"🕵️",
-		"distorted":"<a:distorted:728812986147274835>"
+		"distorted":"<a:distorted:728812986147274835>",
+		"blank_box":"<:blank_box:808212600533942322>",
+		"check_box":"<:check_box:808212600277958667>",
+		"cross_box":"<:cross_box:808212600331829259>",
+		"warning":"⚠️"
 	},
 	"guildlink":"https://discord.com/invite/owobot",
 	"invitelink":"https://discordapp.com/oauth2/authorize?client_id=408785106942164992&permissions=1074120776&scope=bot",

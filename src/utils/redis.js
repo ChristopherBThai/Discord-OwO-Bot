@@ -43,7 +43,7 @@ exports.hset = function(table, key, val=1){
 	});
 }
 
-exports.hdel = function(table, key,){
+exports.hdel = function(table, key){
 	return new Promise(function(res,rej){
 		client.hdel(table,key,function(err,val){
 			if(err) rej(err);
