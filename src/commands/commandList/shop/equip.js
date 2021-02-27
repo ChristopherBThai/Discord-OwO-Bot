@@ -34,7 +34,13 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: function(p){
-		let con=p.con,msg=p.msg,args=p.args;
+		let msg=p.msg,args=p.args;
+
+		if (!p.global.isInt(args[0]) || args[0] > 130) { // arbitrary number higher than inventory ids
+			// pass over to weapon to handle with all args intact
+			weapon.execute(p);
+			return;
+		}
 		let itemList = [];
 		for (let i = 0; i < args.length; i++) {
 			let item = shopUtil.getItem([args[i]]);
@@ -51,23 +57,27 @@ module.exports = new CommandInterface({
 			}
 			itemList.push(item);
 		}
+		if (itemList.length === 0) {
+			p.errorMsg(", please provide an id of an item to use!",3000);
+			return;
+		}
 
-		if (itemList.length > 1) {
+		if (itemList[0].name=="gem" && itemList.length > 1) {
 			gemUtil.use(p, itemList.map(gem => gem.id));
 			return;
 		}
+		// first item not a gem, fall back to original logic (ignore other ids provided)
 		let item = itemList[0];
 
 		if(item.name=="lootbox"){
 			p.args = [];
 			if(item.id == 49) p.args.push('f')
 			lootbox.execute(p);
-		}else if(item.name=="gem"){
-			gemUtil.use(p,[item.id]);
 		}else if(item.name=="crate"){
 			p.args = [];
 			crate.execute(p);
 		}else if(item.name=="weapon"){
+			p.args = [p.args[0]]; // cut off any other junk
 			weapon.execute(p);
 		}else{
 			p.errorMsg(", Could not find that item",3000);
