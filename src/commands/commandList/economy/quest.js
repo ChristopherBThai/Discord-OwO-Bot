@@ -52,7 +52,7 @@ async function rrQuest(p){
 
 	/* Query timer info */
 	let sql = "SELECT questrrTime FROM timers WHERE uid = (SELECT uid FROM user WHERE id = "+p.msg.author.id+");";
-	sql += "SELECT qid FROM user INNER JOIN quest ON user.uid = quest.uid WHERE id = "+p.msg.author.id+" ORDER BY qid ASC;";
+	sql += "SELECT qid, locked FROM user INNER JOIN quest ON user.uid = quest.uid WHERE id = "+p.msg.author.id+" ORDER BY qid ASC;";
 	let result = await p.query(sql);
 
 	/* Parse dates */
@@ -66,10 +66,12 @@ async function rrQuest(p){
 
 	/* Is there even a quest to reroll? */
 	let valid = false;
+	let locked = false;
 	for(let i in result[1])
 		if(!valid&&i==qnum){
 			valid = true;
 			qnum = result[1][i].qid;
+			locked = result[1][i].locked;
 		}
 	if(!valid){
 		p.errorMsg(", Could not locate the quest.",3000);
@@ -77,7 +79,7 @@ async function rrQuest(p){
 	}
 
 	/* alright, we can now find a new quest! */
-	let quest = getQuest(p.msg.author.id,{qnum});
+	let quest = getQuest(p.msg.author.id,{qnum},undefined,locked);
 
 	/* Replace the quest in query */
 	sql = "DELETE FROM quest WHERE uid = (SELECT uid FROM user WHERE id = "+p.msg.author.id+") AND qid = "+qnum+";";
@@ -187,7 +189,7 @@ function constructEmbed(p,afterMid,quests){
 	};
 }
 
-function getQuest(id,qid,afterMidSQL){
+function getQuest(id,qid,afterMidSQL,locked){
 	/* Grab a random quest catagory */
 	var key = Object.keys(questJson);
 	key = key[Math.floor(Math.random()*key.length)];
@@ -212,13 +214,14 @@ function getQuest(id,qid,afterMidSQL){
 	else if(rand > .25) prize = "shards";
 
 	/* Construct insert sql */
-	var sql = `INSERT IGNORE INTO quest (uid,qid,qname,level,prize,count) values (
+	var sql = `INSERT IGNORE INTO quest (uid,qid,qname,level,prize,count,locked) values (
 			(SELECT uid FROM user WHERE id = ${id}),
 			${qid?qid.qnum:3},
 			'${key}',
 			${loc},
 			'${prize}',
-			0
+			0,
+			'${locked?locked:"N"}'
 		);`
 	/* Reset timer if its from daily quest */
 	if(!qid)
