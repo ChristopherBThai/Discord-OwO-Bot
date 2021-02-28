@@ -49,7 +49,9 @@ exports.isInt = function(value){
 exports.getids = function(members){
 	let result = "";
 	members.forEach(function(ele,key,map){
-		result += key+",";
+		if (!map.get(key).bot) {
+			result += key+",";
+		}
 	});
 	return result.slice(0,-1);
 }
