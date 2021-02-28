@@ -24,7 +24,7 @@ module.exports = new CommandInterface({
 
 	desc:"Grab a quest everyday! Complete them to earn rewards! You also have one quest reroll per day! You can earn a new quest after 12am PST",
 
-	example:['owo quest','owo quest rr 1'],
+	example:['owo quest','owo quest rr 1', 'owo quest lock 1', 'owo quest unlock 1'],
 
 	permissions:["sendMessages","embedLinks"],
 
@@ -39,6 +39,8 @@ module.exports = new CommandInterface({
 	execute: async function(p){
 		if(p.args.length==2&&(p.args[0]=='rr'||p.args[0]=='reroll')&&p.global.isInt(p.args[1]))
 			await rrQuest(p);
+		else if(p.args.length==2&&(p.args[0]=='lock'||p.args[0]=='unlock')&&p.global.isInt(p.args[1]))
+			await lockUnlockQuest(p);
 		else await addQuest(p);
 	}
 
@@ -89,6 +91,48 @@ async function rrQuest(p){
 	let embed = constructEmbed(p,afterMid,quests);
 
 	p.send({embed});
+}
+
+async function lockUnlockQuest(p) {
+	/* Parse which quest to alter */
+	let qnum = parseInt(p.args[1])-1;
+
+	let sql = `SELECT qid FROM user INNER JOIN quest ON user.uid = quest.uid WHERE id = ${p.msg.author.id} ORDER BY qid ASC;`;
+	let result = await p.query(sql);
+	
+	/* Is there even a quest to lock? */
+	let valid = false;
+	for(let i in result) {
+		if(!valid&&i==qnum){
+			valid = true;
+			qnum = result[i].qid;
+		}
+	}
+	if(!valid){
+		p.errorMsg(", Could not locate the quest.",3000);
+		return;
+	}
+	let lock = "N"
+	if (p.args[0].toLowerCase() == "lock") {
+		lock = "Y";
+	}
+
+	sql = `UPDATE quest SET locked = '${lock}' WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND qid = ${qnum};`;
+	sql += `SELECT * FROM quest WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) ORDER BY qid asc;`;
+	sql += `SELECT questTime FROM timers WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
+
+	result = await p.query(sql);
+
+	/* Parse dates */
+	var afterMid = dateUtil.afterMidnight((result[2][0])?result[2][0].questTime:undefined);
+
+	let quests = parseQuests(p.msg.author.id,result[1],afterMid);
+
+	/*Create embed */
+	let embed = constructEmbed(p,afterMid,quests);
+
+	p.send({embed});
+
 }
 
 async function addQuest(p){
@@ -207,6 +251,7 @@ function parseQuests(id,result,afterMid,quest){
 		text += "**"+(i+1)+". "+texts.text+"**";
 		text += "\n<:blank:427371936482328596>`‣ Reward:` "+texts.reward;
 		text += "\n<:blank:427371936482328596>`‣ Progress: ["+texts.progress+"]`\n";
+		if(texts.locked) {text += "<:blank:427371936482328596>`‣ Locked: 🔒`\n";}
 	}
 
 	if(text=="") text = "UwU You finished all of your quests! Come back tomorrow! <3";
@@ -231,6 +276,10 @@ function parseQuest(questInfo){
 		var progress = questInfo.count+"/"+count;
 	else
 		var progress = questInfo.count+"/3";
+	var locked = false;
+	if(questInfo.locked == "Y") {
+		locked = true;
+	}
 
 	switch(questInfo.qname){
 		case "hunt":
@@ -274,5 +323,5 @@ function parseQuest(questInfo){
 			break;
 	}
 
-	return {text:text,reward:reward,progress:progress};
+	return {text:text,reward:reward,progress:progress,locked:locked};
 }
