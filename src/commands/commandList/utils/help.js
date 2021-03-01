@@ -76,7 +76,7 @@ module.exports = new CommandInterface({
 function display(p){
 	let embed = {
 	"description": "Here is the list of commands!\nFor more info on a specific command, use `owo help {command}`\nNeed more help? Come join our [guild]("+p.config.guildlink+")",
-		"color": 4886754,
+		"color": p.config.embed_color,
 		"author": {"name": "Command List",
 			"icon_url": p.msg.author.avatarURL},
 		"fields": [

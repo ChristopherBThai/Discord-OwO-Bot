@@ -16,6 +16,7 @@ const cardsf = ["<:cardback:457084762230751254>",
 	"<a:ahf:467565462063022110>","<a:2hf:467565456463495169>","<a:3hf:467565459756154890>","<a:4hf:467565462335782932>","<a:5hf:467565460422918145>","<a:6hf:467565460590690315>","<a:7hf:467565460938948608>","<a:8hf:467565461517762560>","<a:9hf:467565461895118877>","<a:10hf:467565463317250049>","<a:jhf:467565461702443008>","<a:qhf:467565462902013972>","<a:khf:467565462192914433>",
 	"<a:adf:467565463992401920>","<a:2df:467565459756285962>","<a:3df:467565462071410708>","<a:4df:467565462180593665>","<a:5df:467565463195484180>","<a:6df:467565463556325376>","<a:7df:467565463170187264>","<a:8df:467565464017436672>","<a:9df:467565463518314497>","<a:10df:467565463979687947>","<a:jdf:467565463631691784>","<a:qdf:467565463665115138>","<a:kdf:467565463891607573>"];
 const global = require('../../../utils/global.js');
+const config = require('../../../data/config.json');
 const random = require('random-number-csprng');
 //back = b, flip = f, card = c
 
@@ -50,7 +51,7 @@ function initDeck(deck,player,dealer){
 
 exports.generateEmbed = generateEmbed;
 function generateEmbed(author,dealer,player,bet,end,winnings){
-	var color = 4886754;
+	var color = config.embed_color;
 	var footer = "🎲 ~ game in progress"
 	var dealerValue = cardValue(dealer);
 	var playerValue = cardValue(player);

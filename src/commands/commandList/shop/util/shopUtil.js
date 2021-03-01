@@ -94,7 +94,7 @@ async function getWallpaperPage(p,currentPage,totalPages){
 			"name":"OwO Shop: Wallpapers",
 			"icon_url":p.msg.author.avatarURL
 		},
-		"color": 4886754,
+		"color": p.config.embed_color,
 		"footer":{
 			"text":"Page "+currentPage+"/"+totalPages
 		}
