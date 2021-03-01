@@ -1,5 +1,4 @@
-const mysqlHandler = require('../botHandlers/mysqlHandler.js');
-const mysql = new mysqlHandler();
+const mysql = require('../botHandlers/mysqlHandler.js');
 const imagegenAuth = require('../../../tokens/imagegen.json');
 const request = require('request');
 const levels = require('./levels.js');
