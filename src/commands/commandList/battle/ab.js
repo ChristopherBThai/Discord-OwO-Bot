@@ -150,7 +150,7 @@ module.exports = new CommandInterface({
 			speed:flags.log?"instant":"short",
 			instant:flags.log?true:false,
 			title:p.msg.author.username+" vs "+sender.username,
-			showLogs:flags.log?true:false
+			showLogs:flags.link?"link":flags.log?true:false
 		}
 
 		if(sender&&sender.id!=p.msg.author.id){
@@ -224,7 +224,10 @@ function parseFlags(flags){
 	let result = {};
 	for(let i in flags){
 		let flag = flags[i];
-		if(flag=="log"){
+		if (flag=="link"){
+			result.link = true;
+			result.log = true; // lazy force instant
+		}else if(flag=="log"){
 			result.log = true;
 		}else if(flag=="compact"||flag=="image"||flag=="text"){
 			result.display = flag;
