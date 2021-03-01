@@ -89,7 +89,7 @@ async function getPage(p,pages){
 		"author":{
 			"icon_url":p.msg.author.avatarURL
 		},
-		"color": 4886754,
+		"color": p.config.embed_color,
 		"footer":{
 			"text": "Page "+pages.currentPage+"/"+pages.totalPages
 		}

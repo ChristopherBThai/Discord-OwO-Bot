@@ -299,7 +299,7 @@ async function display(p,msg,con,send){
 
 	maxhunt = Math.floor(duration.stat*efficiency.stat);
 	let embed = {
-		"color": 4886754,
+		"color": p.config.embed_color,
 		"author": {
 			"name": msg.author.username+"'s HuntBot",
 			"icon_url": msg.author.avatarURL

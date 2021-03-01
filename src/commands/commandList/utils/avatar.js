@@ -46,7 +46,7 @@ module.exports = new CommandInterface({
 					"name":user.username+"#"+user.discriminator+((user.bot)?" <:bot:489278383646048286>":""),
 					"value":"`ID: "+user.id+"`"
 			}],
-			"color": 4886754,
+			"color": p.config.embed_color,
 			"image":{"url":user.dynamicAvatarURL(null,1024)},
 		}
 

@@ -85,7 +85,7 @@ async function createPage(p,page,totalPages){
 			"name":p.msg.author.username+"'s wallpapers",
 			"icon_url":p.msg.author.avatarURL
 		},
-		"color": 4886754,
+		"color": p.config.embed_color,
 		"footer":{
 			"text":"Page "+page+"/"+totalPages
 		}
