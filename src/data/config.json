@@ -1,7 +1,7 @@
 {
 	"sharder":{
-		"path":"/src/owo.js",
-		"name":"OwO Bot"
+		"path": "/src/owo.js",
+		"name": "OwO Bot"
 	},
 	
 	"eris":{
@@ -20,7 +20,7 @@
 			},
 			"disableEveryone":true,
 			"messageLimit":1,
-			"defaultImageFormat":"png",
+			"defaultImageFormat": "png",
 			"defaultImageSize":128,
 			"restMode":true,
 			"allowedMentions": {
@@ -30,28 +30,31 @@
 		}
 	},
 
-	"prefix":"owo",
+	"prefix": "owo",
 	"embed_color":4886754,
 	"emoji":{
-		"cowoncy":"<:cowoncy:416043450337853441>",
-		"blank":"<:blank:427371936482328596>",
-		"invalid":"🚫",
-		"crate":"<:crate:523771259302182922>",
-		"lootbox":"<:box:427352600476647425>",
-		"cookie":"<a:cookieeat:423020737364885525>",
-		"fabledLootbox":"<a:flootbox:725570544065445919>",
+		"cowoncy": "<:cowoncy:416043450337853441>",
+		"blank": "<:blank:427371936482328596>",
+		"invalid": "🚫",
+		"crate": "<:crate:523771259302182922>",
+		"lootbox": "<:box:427352600476647425>",
+		"cookie": "<a:cookieeat:423020737364885525>",
+		"fabledLootbox": "<a:flootbox:725570544065445919>",
 		"shards": "<:weaponshard:655902978712272917>",
-		"previous":"⬅️",
-		"next":"➡️",
-		"steal":"🕵️",
-		"distorted":"<a:distorted:728812986147274835>",
-		"blank_box":"<:blank_box:808212600533942322>",
-		"check_box":"<:check_box:808212600277958667>",
-		"cross_box":"<:cross_box:808212600331829259>",
-		"warning":"⚠️"
+		"previous": "⬅️",
+		"next": "➡️",
+		"steal": "🕵️",
+		"distorted": "<a:distorted:728812986147274835>",
+		"blank_box": "<:blank_box:808212600533942322>",
+		"check_box": "<:check_box:808212600277958667>",
+		"cross_box": "<:cross_box:808212600331829259>",
+		"warning": "⚠️",
+		"perkTicket": {
+			"common": "<:cticket:815767124680114206>"
+		}
 	},
-	"guildlink":"https://discord.com/invite/owobot",
-	"invitelink":"https://discordapp.com/oauth2/authorize?client_id=408785106942164992&permissions=1074120776&scope=bot",
+	"guildlink": "https://discord.com/invite/owobot",
+	"invitelink": "https://discordapp.com/oauth2/authorize?client_id=408785106942164992&permissions=1074120776&scope=bot",
 	"blacklist": {
 	},
 	"debug": true
