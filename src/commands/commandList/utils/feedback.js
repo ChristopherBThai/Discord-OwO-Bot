@@ -53,6 +53,7 @@ module.exports = new CommandInterface({
 		} else if (message.length < 25) {
 			p.errorMsg(', the message is too short!', 3000);
 			p.setCooldown(5);
+			return;
 		}
 		if(p.command == "suggest"){
 			await suggest(p,message);
