@@ -124,7 +124,6 @@ async function displayRanking(con,msg,sql,title,subText,p){
 		if(id!==""&&id!==null&&!isNaN(id)){
 			let user = await p.fetch.getUser(id,true);
 			let name = "";
-			if(user.bot) continue;
 			if(user === undefined || user.username === undefined)
 				name = "User Left Discord";
 			else
@@ -151,7 +150,6 @@ async function displayRanking(con,msg,sql,title,subText,p){
 		var id = String(ele.id);
 		if(id!==""&&id!==null&&!isNaN(id)){
 			var user = await p.fetch.getUser(id,true);
-			if(user.bot) continue;
 			var name = "";
 			if(user === undefined || user.username === undefined)
 				name = "User Left Discord";

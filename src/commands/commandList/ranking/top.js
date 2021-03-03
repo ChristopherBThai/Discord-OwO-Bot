@@ -119,7 +119,7 @@ function displayRanking(con,msg,count,globalRank,sql,title,subText,p){
 		for(let ele of rows[0]){
 			let id = String(ele.id);
 			let name = "";
-			if(user.bot) continue;
+
 			let user = await p.fetch.getUser(id,true);
 			if(!user)
 				name = "User Left Bot";
