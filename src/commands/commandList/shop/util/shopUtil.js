@@ -12,17 +12,21 @@ const nextPageEmoji = '➡️';
 const prevPageEmoji = '⬅️';
 
 exports.getItem = function(args){
-	var id = 0;
-	if(args.length!=1){
-		return "Invalid arguments!";
-	}
+	let id = 0;
 
-	if(global.isInt(args[0])){
+	if (global.isInt(args[0])) {
 		id = parseInt(args[0]);
-	}else{
+	} else {
+		if(args.length!=1)
+			return "Invalid arguments!";
 		return {name:"weapon",id:args[0]};
 	}
 
+	if (id>=10||id<49) 
+		return {name:"item",id};
+
+	if(args.length!=1)
+		return "Invalid arguments!";
 	if(id==50||id==49)
 		return {name:"lootbox",id};
 	if(id>50&&id<100)
