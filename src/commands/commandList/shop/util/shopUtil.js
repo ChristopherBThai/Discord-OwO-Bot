@@ -22,9 +22,8 @@ exports.getItem = function(args){
 		return {name:"weapon",id:args[0]};
 	}
 
-	if (id>=10||id<49) 
+	if (id>=10&&id<49) 
 		return {name:"item",id};
-
 	if(args.length!=1)
 		return "Invalid arguments!";
 	if(id==50||id==49)
