@@ -10,7 +10,6 @@ const CommandInterface = require('../../CommandInterface.js');
 const emoji = "<a:sunflower2:818742418663931904>";
 const owner = "541103499992367115";
 const data = "sunflower";
-const plural = "sunflower(s)";
 
 module.exports = new CommandInterface({
 
@@ -48,7 +47,7 @@ module.exports = new CommandInterface({
 				}
 			}
 			if(user.id==p.msg.author.id){
-				p.errorMsg(", You cannot give it yourself!!",3000);
+				p.errorMsg(", You cannot give yourself a sunflower! You’re already a ray of sunshine! :)",3000);
 				p.setCooldown(5);
 				return;
 			}
@@ -61,7 +60,7 @@ async function display(p){
 	let count = await p.redis.hget("data_"+p.msg.author.id, data);
 	if(!count) count = 0;
 
-	p.replyMsg(emoji, ", you currently have "+count+" "+plural+".");
+	p.replyMsg(emoji, `, you currently have ${count} ${data}${count!=1?"s":""}.`);
 }
 
 async function give(p,user){
@@ -71,12 +70,12 @@ async function give(p,user){
 		// Error checking
 		if(result==null||result<0){
 			if(result<0) p.redis.hincrby("data_"+p.msg.author.id, data, 1);
-			p.errorMsg(", you do not have any "+plural+" to give! >:c",3000);
+			p.errorMsg(`, you do not have any ${data}s to give! >:c`,3000);
 			p.setCooldown(5);
 			return;
 		}
 	}
 
 	const total = await p.redis.hincrby("data_"+user.id, data, 2);
-	p.send(`${emoji} **| ${user.username}**, you have recieved two beautiful sunflowers from **${p.msg.author.username}**. I hope it brightens your day! <a:sunflower1:818742418290507796>\n`);
+	p.send(`${emoji} **| ${user.username}**, you have received two beautiful sunflowers from **${p.msg.author.username}**. I hope it brightens your day! <a:sunflower1:818742418290507796>\n`);
 }
