@@ -38,6 +38,10 @@ exports.alter = function(id,text,type){
 			return direwolf(text, type);
 		case '468873774960476177':
 			return jiraya(text, type);
+		case '554617574646874113':
+			return notJames(text, type);
+		case '362964690248269824':
+			return theGoldenPatrik1(text, type);
 		default:
 			return text;
 	}
@@ -266,7 +270,7 @@ function kirito (text,opt) {
 		case 65280:
 			text.color = 15450599;
 			if (opt) {
-				if (!(''+opt.xp).includes('+')) {
+				if ((''+opt.xp).includes('+')) {
 					text.footer.text = `Zero Two managed to clear the battlefield out of klaxosaurs in ${opt.turns} turns! Gaining ${opt.xp} klaxosaur xp to empower her franxx with! You also reward her with a day to the beach. Streak: ${opt.streak}`;
 					text.thumbnail = {
 						url: "https://cdn.discordapp.com/attachments/731399149307691008/786993695936872489/beachcutie.gif"
@@ -367,6 +371,99 @@ function jiraya (text,opt) {
 			}
 			text.thumbnail = {
 				url: "https://cdn.discordapp.com/attachments/771398927912009738/811783213965770822/image1.gif"
+			}
+			break;
+	}
+	return text;
+}
+
+function notJames(text,opt) {
+	switch (text.color) {
+		// lost
+		case 16711680:
+			if (opt) {
+				text.author.name = 'chem went in battle to protect the Fallen Stars from bad guys..';
+				text.footer.text = `Wait...what?! I lost in ${opt.turns} turns and collected 50 star fragements T_T! Streak: ${opt.streak}`;
+			}
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/769619375296610304/809631784752644106/cry.png"
+			}
+			break;
+
+		// win
+		case 65280:
+			if (opt) {
+				const fragment = (''+opt.xp).includes('+') ? 'bonus star fragments' : 'star fragments'
+				text.author.name = 'chem has arrived to protect the Fallen Stars from bad guys..';
+				if (opt.streak % 10000 == 0) {
+					text.footer.text = `Muahahaha! The enemy team is beaten after ${opt.turns} turns and chem collected ${opt.xp} bonus star shards! ${opt.streak} consecutive battles are won!!`;
+				} else if (opt.streak % 1000 == 0) {
+					text.footer.text = `Glorius victory! You beat the enemy in ${opt.turns} turns and collected ${opt.xp} bonus star shards! ${opt.streak} battles are won, Master!`;
+				} else if (opt.streak % 100 == 0) {
+					text.footer.text = `Victory! You beat the enemy in ${opt.turns} turns and collected ${opt.xp} bonus star fragments! UwU! Streak:${opt.streak}`;
+				} else if (opt.streak % 10 == 0) {
+					text.footer.text = `Victory! You beat the enemy in ${opt.turns} turns and collected ${opt.xp} bonus star fragments! Yayyy! Streak: ${opt.streak}`;
+				} else {
+					text.footer.text = `Victory! You beat the enemy in ${opt.turns} turns and collected ${opt.xp} ${fragment}! Streak: ${opt.streak}`;
+				}
+			}
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/769619375296610304/809631713624981564/official_cheer.gif"
+			}
+			break;
+
+		//tie
+		case 6381923:
+			if (opt) {
+				text.author.name = 'chem went in battle to protect the Fallen Stars from bad guys..';
+				text.footer.text = `Ahhh!! Close call, but I still managed to collect ${opt.xp} star fragments! Need some rest now. Streak: ${opt.streak}`;
+			}
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/769619375296610304/816891271004028968/0b004b50f2700762eb850e27e8a9b504.png"
+			}
+			break;
+	}
+	text.color = 38;
+	return text;
+}
+
+function theGoldenPatrik1(text,opt) {
+	text.author.name = 'The Balrog has entered Khazad-dûm!';
+	switch (text.color) {
+		// lost
+		case 16711680:
+			if (opt) {
+				text.footer.text = `The Wizard was too strong today and you shall have to return to the Shadow for a time. You lost your streak of ${opt.streak} wins in ${opt.turns} turns`;
+			}
+			text.color = 16777215;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/809113796756111370/809114509872463962/Loss.gif"
+			}
+			break;
+
+		// win
+		case 65280:
+			if (opt) {
+				if ((''+opt.xp).includes('+')) {
+					text.footer.text = `What a spectacular triumph! You conquered in ${opt.turns} turns and gained ${opt.xp} xp. Streak: ${opt.streak}.`;
+				} else {
+					text.footer.text = `Yet another victory! You conquered in ${opt.turns} turns and gained ${opt.xp} xp. Streak: ${opt.streak}.`;
+				}
+			}
+			text.color = 16747520;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/809113796756111370/809114336831209482/Win.gif"
+			}
+			break;
+
+		//tie
+		case 6381923:
+			if (opt) {
+				text.footer.text = `Wow, that Wizard is stronger than he looks! You stalemated but still gained ${opt.xp} xp. Streak: ${opt.streak}.`;
+			}
+			text.color = 8421504;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/809113796756111370/809114422630940733/Tie.gif"
 			}
 			break;
 	}
