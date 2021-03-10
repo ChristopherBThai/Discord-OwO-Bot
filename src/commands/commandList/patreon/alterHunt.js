@@ -63,6 +63,8 @@ exports.alter = function(id,text,info){
 			return sky(text, info);
 		case '707939636835516457':
 			return direwolf(text, info);
+		case '554617574646874113':
+			return notJames(text, info);
 		default:
 			return text;
 	}
@@ -586,7 +588,7 @@ function sky(text, info) {
 	let thumbnail;
 
 	if(info.gemText){
-		text = `${moon} **|** Stumbling into the enchanting forest,\n`;
+		text = `${moon} **|** Deep in the enchanted forest, the activation of:\n`;
 		text += `${blank} **|** ${info.gemText} allowed **${info.author.username}** to cast a powerful spell!\n`;
 		text += `${rose} **|** capturing: ${info.animalEmojis}`;
 		thumbnail = 'https://cdn.discordapp.com/attachments/771398927912009738/806678445680885770/image0.gif';
@@ -594,7 +596,7 @@ function sky(text, info) {
 		const a = getA(info.animal[0][0]);
 		text = `${moon} **|** Searching the vast lands, wielding a guild artifact,\n`;
 		text += `${butterfly} **| ${info.author.username}** and her party caught ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
-		thumbnail = 'https://cdn.discordapp.com/attachments/771398927912009738/806678362226688050/image0.png';
+		thumbnail = 'https://cdn.discordapp.com/attachments/733364738372665434/809928381743235112/VmSHDpYneoQ2HHn6ri03-vvR0srhK8OUUbSsn0Yp60iqPQXOB_xTuPrggC4Yo1jDPiHkNWGtTcNgB_TOkxeOUto5sHm4gf6Mptt-.png';
 	}
 	if (info.petText) {
 		text += `\n${sparkle} **|** ${info.petText} gained **${info.animalXp}xp**`;
@@ -647,6 +649,37 @@ function direwolf(text, info) {
 		color,
 		thumbnail: {
 			url: thumbnail
+		}
+	}
+
+	return {embed};
+}
+
+function notJames(text, info) {
+	const moon = '<a:moon:819081050520813568>';
+	const peach = '<:peach:819081050369949736>';
+
+	if(info.gemText){
+		text = `${moon} **| chem** broke into a peach farm, charmed by ${info.gemText}\n`;
+		text += `${peach} **|** you ran away with ${info.animalEmojis}`;
+		if (info.petText) {
+			text += `\n${peach} **|** ${info.petText} gained **${info.animalXp} peaches**!`;
+		}
+	}else{
+		const a = getA(info.animal[0][0]);
+		text = `${moon} **| chem** broke into a peach farm with bare hands\n`;
+		text += `${peach} **|** you ran away with ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
+		if (info.petText) {
+			text += `\n${peach} **|** ${info.petText} gained **${info.animalXp} peaches**`;
+		}
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: 1,
+		thumbnail: {
+			url: "https://cdn.discordapp.com/attachments/769619375296610304/817702733254885376/image0.gif" 
 		}
 	}
 
