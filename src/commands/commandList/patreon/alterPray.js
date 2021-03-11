@@ -1,16 +1,18 @@
 /*
  * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Copyright (C) 2020 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
 
 const blank = '<:blank:427371936482328596>';
 
-exports.alter = function(id,text,info){
+exports.alter = function (id,text,info) {
 	switch (id) {
 		case '192692796841263104':
-			return dalu(text,info);
+			return dalu(text, info);
+		case '456598711590715403':
+			return lexx(text, info);
 		default:
 			return text;
 	}
@@ -54,3 +56,49 @@ function dalu (text, info) {
 		}
 	}
 }
+
+
+function lexx (text, info) {
+	const prayEmoji = "🙏";
+	const curseEmoji = "👻";
+	if (info.command == "pray") {
+		if (info.user) {
+			text = `${prayEmoji} **| ${info.author.username}** prays to **${info.user.username}**\n`;
+			text += `${blank} **|** you have **${info.luck}**\n`;
+			text += `${blank} **|** luck Points so far!`;
+		} else {
+			text = `${prayEmoji} **| ${info.author.username}** prays and in return, you\n`;
+			text += `${blank} **|** have accumulated **${info.luck}**\n`;
+			text += `${blank} **|** luck Points so far!`;
+		}
+		return {
+			embed: {
+				"description": text,
+				"color": 8240363,
+				"thumbnail": {
+					"url": "https://cdn.discordapp.com/attachments/696878982758531152/808528841529098260/BenderPray.gif"
+				}
+			}
+		}
+	} else {
+		if (info.user) {
+			text = `${curseEmoji} **| ${info.author.username}** curses **${info.user.username}**\n`;
+			text += `${blank} **|** you have accumulated **${info.luck}**\n`;
+			text += `${blank} **|** luck Points so far!`;
+		} else {
+			text = `${curseEmoji} **| ${info.author.username}** being forever Cursed, you\n`;
+			text += `${blank} **|** have accumulated **${info.luck}**\n`;
+			text += `${blank} **|** luck Points so far!`;
+		}
+		return {
+			embed: {
+				"description": text,
+				"color": 8240363,
+				"thumbnail": {
+					"url": "https://cdn.discordapp.com/attachments/696878982758531152/808638583644356618/Cursed.gif"
+				}
+			}
+		}
+	}
+}
+

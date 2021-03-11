@@ -65,6 +65,10 @@ exports.alter = function(id,text,info){
 			return direwolf(text, info);
 		case '554617574646874113':
 			return notJames(text, info);
+		case '456598711590715403':
+			return lexx(text, info);
+		case '490709773495435285':
+			return koala(text, info);
 		default:
 			return text;
 	}
@@ -680,6 +684,77 @@ function notJames(text, info) {
 		color: 1,
 		thumbnail: {
 			url: "https://cdn.discordapp.com/attachments/769619375296610304/817702733254885376/image0.gif" 
+		}
+	}
+
+	return {embed};
+}
+
+function lexx(text, info) {
+	const lexx = '<a:pepegold:819452921144934400>';
+	const clover = '☘️';
+
+	if(info.gemText){
+		text = `${lexx} **| ${info.author.username}** with all his hard work, was able to grind\n`;
+		text += `${blank} **|** and find ${info.gemText}\n`;
+		text += `${clover} **|** and caught: ${info.animalEmojis}`;
+		if (info.petText) {
+			text += `\n${blank} **|** ${info.petText} gained **${info.animalXp} xp**!`;
+		}
+	}else{
+		const a = getA(info.animal[0][0]);
+		text = `${lexx} **| ${info.author.username}** with all his hard work, was able to grind\n`;
+		text += `${clover} **|** and find ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
+		if (info.petText) {
+			text += `\n${blank} **|** ${info.petText} gained **${info.animalXp} xp**`;
+		}
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: 8240363,
+		thumbnail: {
+			url: "https://cdn.discordapp.com/attachments/696878982758531152/811499801782386757/Zoidberg.png" 
+		}
+	}
+
+	return {embed};
+}
+
+function koala(text, info) {
+	const emoji = '🐨';
+	const sapling = '🌱';
+
+	if(info.gemText){
+		text = `${emoji} **| ${info.author.username}** goes into hunt!\n`;
+		text += `${blank} **|** ${info.gemText}\n`;
+		text += `${blank} **|** ${info.animalEmojis}`;
+		if (info.petText) {
+			text += `\n${sapling} **|** **${info.animalXp}xp**!`;
+		}
+	}else{
+		console.log(info.animal[0]);
+		text = `${emoji} **| ${info.author.username}** goes into hunt!\n`;
+		text += `${blank} **|** ${info.animal[0][0]}\n`;
+		text += `${blank} **|** ${info.animalEmojis}`;
+		if (info.petText) {
+			text += `\n${sapling} **|** **${info.animalXp}xp**!`;
+		}
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: 65280,
+		thumbnail: {
+			url: "https://cdn.discordapp.com/attachments/541197084146270208/817734024936030208/Koalabatbuom_to.gif" 
+		}
+	}
+
+	if (info.lootboxText) {
+		embed.image = {
+			url: "https://cdn.discordapp.com/attachments/541197084146270208/817733999287205908/boxopen.gif"
 		}
 	}
 

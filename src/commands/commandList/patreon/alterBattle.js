@@ -42,6 +42,8 @@ exports.alter = function(id,text,type){
 			return notJames(text, type);
 		case '362964690248269824':
 			return theGoldenPatrik1(text, type);
+		case '456598711590715403':
+			return lexx(text, type);
 		default:
 			return text;
 	}
@@ -345,7 +347,7 @@ function jiraya (text,opt) {
 		case 16711680:
 			text.color = 10027008; 
 			if (opt) {
-				text.footer.text = `Oh no! Sukuna takes over Yuji and lays his Domain over Gojo's Domain. Gojo's Domain has shattered. Your streak of ${opt.streak} is broken! You lost in ${opt.turns}!`;
+				text.footer.text = `Oh no! Sukuna takes over Yuji and lays his Domain over Gojo's Domain. Gojo's Domain has shattered. Your streak of ${opt.streak} is broken! You lost in ${opt.turns} turns!`;
 			}
 			text.thumbnail = {
 				url: "https://cdn.discordapp.com/attachments/771398927912009738/811783217031413801/image2.gif"
@@ -356,7 +358,7 @@ function jiraya (text,opt) {
 		case 65280:
 			text.color = 2364785;
 			if (opt) {
-				text.footer.text = `Gojo used his domain expansion, Infinite Void and killed all the curses! You won in ${opt.turns} and your team gained ${opt.xp}! You've defeated a total of: ${opt.streak} curses!`;
+				text.footer.text = `Gojo used his domain expansion, Infinite Void and killed all the curses! You won in ${opt.turns} turns and your team gained ${opt.xp} xp! You've defeated a total of: ${opt.streak} curses!`;
 			}
 			text.thumbnail = {
 				url: "https://cdn.discordapp.com/attachments/771398927912009738/811783212548227072/image0.gif"
@@ -367,7 +369,7 @@ function jiraya (text,opt) {
 		case 6381923:
 			text.color = 16753920;
 			if (opt) {
-				text.footer.text = `Sukuna takes over Yuji, but Yuji fights him and doesn't let him win. Gojo and Yuji gain ${opt.xp}! Streak: ${opt.streak}!`;
+				text.footer.text = `Sukuna takes over Yuji, but Yuji fights him and doesn't let him win. Gojo and Yuji gain ${opt.xp} xp! Streak: ${opt.streak}!`;
 			}
 			text.thumbnail = {
 				url: "https://cdn.discordapp.com/attachments/771398927912009738/811783213965770822/image1.gif"
@@ -466,6 +468,14 @@ function theGoldenPatrik1(text,opt) {
 				url: "https://cdn.discordapp.com/attachments/809113796756111370/809114422630940733/Tie.gif"
 			}
 			break;
+	}
+	return text;
+}
+
+function lexx (text,opt) {
+	text.author.name = 'lexx takes one look and says: "Lets do this"';
+	text.thumbnail = {
+		url: "https://cdn.discordapp.com/attachments/696878982758531152/811497913573572608/Bender.png"
 	}
 	return text;
 }
