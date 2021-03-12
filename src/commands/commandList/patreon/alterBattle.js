@@ -44,6 +44,10 @@ exports.alter = function(id,text,type){
 			return theGoldenPatrik1(text, type);
 		case '456598711590715403':
 			return lexx(text, type);
+		case '617681365567275029':
+			return mercureid(text, type);
+		case '477168699112161281':
+			return leshoop(text, type);
 		default:
 			return text;
 	}
@@ -476,6 +480,78 @@ function lexx (text,opt) {
 	text.author.name = 'lexx takes one look and says: "Lets do this"';
 	text.thumbnail = {
 		url: "https://cdn.discordapp.com/attachments/696878982758531152/811497913573572608/Bender.png"
+	}
+	return text;
+}
+
+function mercureid (text,opt) {
+	text.author.name = 'Mario and Luigi embark on a journey to rescue Princess Peach!';
+	switch (text.color) {
+		// lost
+		case 16711680:
+			if (opt) {
+				text.footer.text = `Mamma mia... You lost in ${opt.turns} turns and failed to rescue Princess Peach from the gnarly, fire-breathing Bowser :( . You receive ${opt.xp} mushrooms. Goombas destroyed: ${opt.streak}`;
+			}
+			text.color = 9722954;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/815743547449016400/816246705417617448/053c39f4c14d99d4bc143c05dc3ca219.gif"
+			}
+			break;
+
+		// win
+		case 65280:
+			if (opt) {
+				text.footer.text = `Yahoo! In ${opt.turns} turns, you managed to jump through gaps and obstacles and save the Mushroom Kingdom! You receive ${opt.xp} mushrooms from Toad. Goombas destroyed: ${opt.streak}`;
+			}
+			text.color = 14381560;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/815743547449016400/816246705770725386/source.gif"
+			}
+			break;
+
+		//tie
+		case 6381923:
+			if (opt) {
+				text.footer.text = `Oh no! Bowser's minions were too strong :( . Luckily, you still have a spare 1-up mushroom to use. You receive ${opt.xp} mushrooms. Goombas destroyed: ${opt.streak}`;
+			}
+			text.color = 65475;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/815743547449016400/816246706051219456/giphy_1.gif"
+			}
+			break;
+	}
+	return text;
+}
+
+function leshoop (text,opt) {
+	text.author.name = 'Shoopie\'s cuties go into battle!';
+	switch (text.color) {
+		// lost
+		case 16711680:
+			if (opt) {
+				text.footer.text = `An astounding battle, but alas, your team was defeated in ${opt.turns} turns to gain a mere ${opt.xp} xp. You lost your streak of ${opt.streak} wins. ~ Until we meet again...`;
+			}
+			text.color = 16711680;
+			break;
+
+		// win
+		case 65280:
+			if (opt) {
+				text.footer.text = `Gel pisi pisi ~ Together we fight, and in ${opt.turns} turns achieve victory! Your team gained ${opt.xp} xp! Streak: ${opt.streak}`;
+			}
+			text.color = 10904029;
+			break;
+
+		//tie
+		case 6381923:
+			if (opt) {
+				text.footer.text = `There is no instance of a nation benefitting from prolonged warfare ~ After 20 turns, we agree upon peace. Your team gained ${opt.xp} xp! Streak: ${opt.streak}`;
+			}
+			text.color = 12895184;
+			break;
+	}
+	text.thumbnail = {
+		url: "https://cdn.discordapp.com/attachments/784137961221521429/818297090127560704/ezgif-4-f09211e5809e.gif"
 	}
 	return text;
 }
