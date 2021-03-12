@@ -727,22 +727,30 @@ function koala(text, info) {
 	const sapling = '🌱';
 
 	if(info.gemText){
+		const gemText = info.gemText
 		text = `${emoji} **| ${info.author.username}** goes into hunt!\n`;
-		text += `${blank} **|** ${info.gemText}\n`;
-		text += `${blank} **|** ${info.animalEmojis}`;
+		text += `${blank} **|** ${info.gemText.replace(/\/\d+|`+/gi,'')}`;
+		const animals = info.animalEmojis.split(' ');
+		for (let i in animals) {
+			if (i % 10 == 0) {
+				text += `\n${blank} **|**`
+			}
+			text += ' ' + animals[i];
+		}
 		if (info.petText) {
 			text += `\n${sapling} **|** **${info.animalXp}xp**!`;
 		}
 	}else{
-		console.log(info.animal[0]);
 		text = `${emoji} **| ${info.author.username}** goes into hunt!\n`;
-		text += `${blank} **|** ${info.animal[0][0]}\n`;
+		text += `${blank} **|** ${info.animal[0][0].replace(/\*{2}\w+\*{2}\s/gi,'')}\n`;
 		text += `${blank} **|** ${info.animalEmojis}`;
 		if (info.petText) {
 			text += `\n${sapling} **|** **${info.animalXp}xp**!`;
 		}
 	}
-	text += info.lootboxText || '';
+	if (info.lootboxText) {
+		text += `\n<:box:427352600476647425> **| Lootbox**!!! [**${info.lootboxText.match(/\[\d+\//gi)[0].match(/\d+/gi)[0]}**]`;
+	}
 
 	const embed = {
 		description: text,
