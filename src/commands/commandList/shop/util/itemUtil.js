@@ -6,6 +6,8 @@
   */
 
 const config = require('../../../../data/config.json');
+const thumbsup = '👍';
+const thumbsdown = '👎';
 const items = {
 	common_tickets: {
 		id: 10,
@@ -73,53 +75,86 @@ async function useCommonTicket (ticket, p) {
 		return;
 	}
 
-	if (count < 0) {
+	if (count <= 0) {
 		p.errorMsg(", bad! You must use at least one ticket", 3000);
 		return;
 	}
 
-	const con = await p.startTransaction();
-	let date;
-	try {
-		// remove tickets
-		let sql = `UPDATE items INNER JOIN user ON items.uid = user.uid SET ${ticket.column} = ${ticket.column} - ${count}  WHERE user.id = ${p.msg.author.id} AND ${ticket.column} >= ${count};`
-		let result = await con.query(sql);
-		if (!result.changedRows) {
-			await con.commit();
-			try { await p.errorMsg(", you do not have enough tickets silly!", 3000); } catch (err) {}
+	const embed = {
+		description: `${p.msg.author.username}, are you sure you want to redeem **${count}** ${ticket.emoji} **${ticket.name}${count > 1 ? 's' : ''}**?`,
+		color: p.config.embed_color,
+	}
+	const msg = await p.send({ embed });
+	const filter = (emoji, userId) => (emoji.name===thumbsup || emoji.name===thumbsdown) && userId == p.msg.author.id;
+	const collector = p.reactionCollector.create(msg, filter, { time:60000 });
+
+	await msg.addReaction(thumbsup);
+	await msg.addReaction(thumbsdown);
+
+	collector.on('collect', async (emoji, userId) => {
+		if (emoji.name === thumbsdown) {
+			collector.stop('cancel');
 			return;
 		}
+		collector.stop('redeem');
 
-		// add months
-		sql = `SELECT user.uid, patreonMonths, patreonTimer, TIMESTAMPDIFF(MONTH,patreonTimer,NOW()) AS monthsPassed, patreonType FROM user LEFT JOIN patreons ON user.uid = patreons.uid WHERE id = ${p.msg.author.id}`;
-		result = await p.query(sql);
-		let uid = result[0].uid;
-		let months = result[0]?.patreonMonths || 0;
-		let monthsPassed = result[0]?.monthsPassed || months;
-		const type = 1
+		const con = await p.startTransaction();
+		let date;
+		try {
+			// remove tickets
+			let sql = `UPDATE items INNER JOIN user ON items.uid = user.uid SET ${ticket.column} = ${ticket.column} - ${count}  WHERE user.id = ${p.msg.author.id} AND ${ticket.column} >= ${count};`
+			let result = await con.query(sql);
+			if (!result.changedRows) {
+				await con.commit();
+				try {
+					embed.description = `${p.config.emoji.error} **| ${p.msg.author.username}**, you do not have enough tickets silly!`;
+					msg.edit({ embed });
+				} catch (err) {}
+				return;
+			}
 
-		// reset timer or continue with current timer
-		if (months <= monthsPassed) {
-			sql = `INSERT INTO patreons (uid,patreonMonths,patreonType) VALUES (${uid},${count},${type}) ON DUPLICATE KEY UPDATE patreonType = ${type}, patreonMonths = ${count},patreonTimer = NOW();`;
-			date = new Date();
-			date.setMonth(date.getMonth()+count);
-		} else {
-			sql = `UPDATE patreons SET patreonType = ${type}, patreonMonths = patreonMonths + ${count} WHERE uid = ${uid};`;
-			date = new Date(result[0].patreonTimer);
-			date.setMonth(date.getMonth()+count+months);
+			// add months
+			sql = `SELECT user.uid, patreonMonths, patreonTimer, TIMESTAMPDIFF(MONTH,patreonTimer,NOW()) AS monthsPassed, patreonType FROM user LEFT JOIN patreons ON user.uid = patreons.uid WHERE id = ${p.msg.author.id}`;
+			result = await p.query(sql);
+			let uid = result[0].uid;
+			let months = result[0]?.patreonMonths || 0;
+			let monthsPassed = result[0]?.monthsPassed || months;
+			const type = 1
+
+			// reset timer or continue with current timer
+			if (months <= monthsPassed) {
+				sql = `INSERT INTO patreons (uid,patreonMonths,patreonType) VALUES (${uid},${count},${type}) ON DUPLICATE KEY UPDATE patreonType = ${type}, patreonMonths = ${count},patreonTimer = NOW();`;
+				date = new Date();
+				date.setMonth(date.getMonth()+count);
+			} else {
+				sql = `UPDATE patreons SET patreonType = ${type}, patreonMonths = patreonMonths + ${count} WHERE uid = ${uid};`;
+				date = new Date(result[0].patreonTimer);
+				date.setMonth(date.getMonth()+count+months);
+			}
+			date = date.toString();
+			result = await p.query(sql);
+
+			con.commit();
+		} catch (err) {
+			console.error(err);
+			p.errorMsg(", there was an error using your ticket! Please try again later.", 3000);
+			con.rollback();
+			return;
 		}
-		date = date.toString();
-		result = await p.query(sql);
+		embed.description = `${ticket.emoji} **| ${p.msg.author.username}**, your patreon has been extended by ${count} month${count > 1 ? 's' : ''}!\n${p.config.emoji.blank} **|** Expires on: **${date}**`;
+		await msg.edit({embed});
+	});
 
-		con.commit();
-	} catch (err) {
-		console.error(err);
-		p.errorMsg(", there was an error using your ticket! Please try again later.", 3000);
-		con.rollback();
-		return;
-	}
+	collector.on('end',async function (reason) {
+		if (reason == 'cancel') {
+			embed.color = 6381923;
+			await msg.edit({content:"This has canceled.", embed});
+		} else if (reason != "redeem") {
+			embed.color = 6381923;
+			await msg.edit({content:"This message is now inactive", embed});
+		}
+	});
 
-	await p.replyMsg(ticket.emoji, `, your patreon has been extended by ${count} month${count > 1 ? 's' : ''}!\n${p.config.emoji.blank} **|** Expires on: **${date}**`);
 }
 
 exports.desc = async function (p, id) {
