@@ -9,6 +9,7 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const itemUtil = require('./util/itemUtil.js');
 const thumbsup = '👍';
+const thumbsdown = '👎';
 const tada = '🎉';
 const spacer = '                                                               ';
 
@@ -31,13 +32,13 @@ module.exports = new CommandInterface({
 	cooldown:5000,
 
 	execute: async function(p){
-		const info = validate(p);
+		const info = await validate(p);
 		if (info.error) return;
 		awaitReaction(p, info);
 	}
 });
 
-function validate (p) {
+async function validate (p) {
 	let [ itemId, user, price, count = 1 ] = p.args
 	if (!itemId) {
 		p.errorMsg(", please include what item you want to trade!", 3000);
@@ -73,6 +74,10 @@ function validate (p) {
 		p.errorMsg(", the price must be greater than 0!", 3000);
 		return { error: true };
 	}
+	if (price > 10000000) {
+		p.errorMsg(", the price per ticket is too high!", 3000);
+		return { error: true };
+	}
 
 	if (!p.global.isInt(count)) {
 		p.errorMsg(", the number of items is invalid!", 3000);
@@ -84,12 +89,19 @@ function validate (p) {
 		return { error: true };
 	}
 
+	let sql = `SELECT ${item.column} FROM items INNER JOIN user ON items.uid = user.uid WHERE user.id = ${p.msg.author.id}`;
+	let result = await p.query(sql);
+	if (!result[0] || result[0][item.column] < count) {
+		p.errorMsg(`, you do not have enough ${item.name}s!`, 3000);
+		return { error: true };
+	}
+
 	return { item, user, price, count };
 }
 
 async function sendMessage (p, { item, user, price, count }) {
 	const embed = {
-		description: `Both users must hit the ${thumbsup} reaction to trade.`,
+		description: `Both users must hit the ${thumbsup} reaction to trade.\nEither user can hit the ${thumbsdown} reaction to stop the trade.`,
 		color: p.config.embed_color,
 		timestamp: new Date(),
 		thumbnail: {
@@ -102,12 +114,12 @@ async function sendMessage (p, { item, user, price, count }) {
 		fields: [
 			{
 				name: `${p.msg.author.username}#${p.msg.author.discriminator} will give:`,
-				value: `\`\`\`diff\n- ${count} ${item.name}${count > 1 ? 's' : ''}${spacer}\n\`\`\``,
+				value: `\`\`\`fix\n${count} ${item.name}${count > 1 ? 's' : ''}${spacer}\n\`\`\``,
 				inline: true
 			},
 			{
 				name: `${user.username}#${user.discriminator} will give:`,
-				value: `\`\`\`diff\n- ${count * price} cowoncy${spacer}\n\`\`\``,
+				value: `\`\`\`fix\n${count * price} cowoncy${spacer}\n\`\`\``,
 				inline: true
 			}
 		]
@@ -123,12 +135,17 @@ async function awaitReaction (p, info) {
 	let user1Reaction = false;
 	const user2 = info.user.id;
 	let user2Reaction = false;
-	let filter = (emoji, userId) => emoji.name===thumbsup && (userId===user2 || userId===user1);
+	let filter = (emoji, userId) => (emoji.name===thumbsup || emoji.name===thumbsdown) && (userId===user2 || userId===user1);
 	let collector = p.reactionCollector.create(msg, filter, {time:300000, idle:300000});
 
 	await msg.addReaction(thumbsup);
+	await msg.addReaction(thumbsdown);
 
 	collector.on('collect', async (emoji, userId) => {
+		if (emoji.name === thumbsdown) {
+			collector.stop('cancel');
+			return;
+		}
 		if (userId == user1) {
 			if (user1Reaction) return;
 			user1Reaction = true;
@@ -144,7 +161,10 @@ async function awaitReaction (p, info) {
 	});
 
 	collector.on('end',async function (reason) {
-		if (reason != "done") {
+		if (reason == 'cancel') {
+			embed.color = 6381923;
+			await msg.edit({content:"The trade was canceled.", embed});
+		} else if (reason != "done") {
 			embed.color = 6381923;
 			await msg.edit({content:"This message is now inactive", embed});
 		}
