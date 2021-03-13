@@ -9,9 +9,10 @@ const config = require('../../../../data/config.json');
 const items = {
 	common_tickets: {
 		id: 10,
-		name: "Common Tickets",
+		name: "Common Ticket",
 		emoji: config.emoji.perkTicket.common,
-		column: "common_tickets"
+		column: "common_tickets",
+		desc: "You can use this item to redeem 1 month of common tier perks!\n\nYou can trade this item with other users with `owo trade 10 {@user} ${pricePerTicket} ${numberOfTickets}`. An example would be `owo trade 10 @Scuttler 100000 2`. This will trade 2 tickets for a total price of 200000 cowoncy.\n\nYou can also use this item by typing in `owo use 10`."
 	}
 };
 
@@ -52,6 +53,7 @@ exports.use = async function (id, p) {
 function getById (id) {
 	return Object.values(items).find(item => item.id == id)
 }
+exports.getById = getById;
 
 async function useCommonTicket (ticket, p) {
 	let count = p.args[1];
@@ -118,4 +120,30 @@ async function useCommonTicket (ticket, p) {
 	}
 
 	await p.replyMsg(ticket.emoji, `, your patreon has been extended by ${count} month${count > 1 ? 's' : ''}!\n${p.config.emoji.blank} **|** Expires on: **${date}**`);
+}
+
+exports.desc = async function (p, id) {
+	let item = getById(id);
+	if (!item) {
+		p.errorMsg(", that item does not exist!");
+		return;
+	}
+
+	let sql = `SELECT ${item.column} FROM items INNER JOIN user ON items.uid = user.uid WHERE user.id = ${p.msg.author.id};`;
+	let result = await p.query(sql);
+	if (!result || !result[0][item.column]) {
+		p.errorMsg(", you do not have this item");
+	}
+
+	let embed = {
+		color: p.config.embed_color,
+		fields: [
+			{
+				name: item.emoji+" "+item.name,
+				value: `**ID:** ${item.id}\n${item.desc}`
+			}
+		]
+	};
+	await p.send({ embed });
+
 }

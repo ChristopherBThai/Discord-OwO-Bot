@@ -1,6 +1,6 @@
 /*
  * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Copyright (C) 2020 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
@@ -12,6 +12,7 @@ const cowoncy = "<:cowoncy:416043450337853441>";
 const lootboxUtil = require('../zoo/lootboxUtil.js');
 const weaponUtil = require('../battle/util/weaponUtil.js');
 const gemUtil = require('../zoo/gemUtil.js');
+const itemUtil = require('./util/itemUtil.js');
 
 module.exports = new CommandInterface({
 
@@ -36,18 +37,20 @@ module.exports = new CommandInterface({
 	execute: function(p){
 		let item = shopUtil.getItem(p.args);
 
-		if(typeof item === 'string' || item instanceof String){
-			p.send("**🚫 | "+p.msg.author.username+"**, "+item,3000);
+		if (typeof item === 'string' || item instanceof String) {
+			p.errorMsg(", "+item, 3000);
 			return;
 		}
 
-		if(!item){
+		if (!item) {
 			p.errorMsg(", invalid id!",3000);
-		}else if(item.name=="lootbox"){
-			lootboxUtil.desc(p,item.id);
-		}else if(item.name=="gem"){
-			gemUtil.desc(p,item.id);
-		}else{
+		} else if (item.name == "item") {
+			itemUtil.desc(p, item.id);
+		} else if (item.name == "lootbox") {
+			lootboxUtil.desc(p, item.id);
+		} else if (item.name == "gem") {
+			gemUtil.desc(p, item.id);
+		} else {
 			weaponUtil.describe(p,item.id);
 		}
 	}
