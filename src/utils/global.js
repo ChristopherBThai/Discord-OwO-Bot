@@ -8,12 +8,22 @@
 /**
  * Global Variables and Methods
  */
-
 const numbers = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
 const request = require('request');
 const filter = new (require('bad-words'))({placeHolder: "OwO", replaceRegex: /\w+/g});
 const secret = require('../../../tokens/wsserver.json');
 const badwords = require('../../../tokens/badwords.json');
+const { Profanity, ProfanityOptions } = require("@2toad/profanity")
+const options = new ProfanityOptions();
+options.wholeWord = false;
+options.grawlix = 'OwO';
+const emojis = require('../data/emojis.json');
+const emojiRegex = new RegExp(Object.keys(emojis).join("|"), "gi");
+const filter2 = new Profanity(options);
+const goodwords = require('../../../tokens/goodwords.json');
+filter2.removeWords(goodwords);
+const namor = require("namor");
+const mysql = require('./../botHandlers/mysqlHandler.js');
 var animaljson = require('../../../tokens/owo-animals.json');
 var animalunicode = {};
 var commands = {};
@@ -241,22 +251,27 @@ exports.getTotalShardCount = function(){
 
 /* Converts name to more kid-friendly */
 exports.filteredName = function (name) {
-	let offensive = false;
-	let shortnick = name.replace(/\s/g,"").toLowerCase();
-	for(let i=0;i<badwords.length;i++){
-		if(shortnick.includes(badwords[i]))
-			offensive: true;
+
+	// swap out emojis and other non-word characters before filtering
+	let shortnick = name.replace(emojiRegex, function(matched) {
+		return emojis[matched];
+	}).replace(/\W/g,'');
+
+	if (filter2.exists(shortnick)) {
+		name = namor.generate({ words: 3, saltLength: 0, separator:' ' });
+		return { name, offensive:false }
 	}
-	name = name.replace(/https:/gi,"https;")
+	name = name.replace(/\n/g,"")
+		.replace(/\r/g,"")
+		.replace(/https:/gi,"https;")
 		.replace(/http:/gi,"http;")
 		.replace(/discord.gg/gi,"discord,gg")
 		.replace(/@everyone/gi,"everyone")
 		.replace(/<@!?[0-9]+>/gi,"User")
 		.replace(/[*`]+/gi,"'")
-		.replace(/\n/g,"")
 		.replace(/\|\|/g,'│');
 
-	return { name, offensive }
+	return { name, offensive:false }
 }
 
 /* checks if string has bad words */
@@ -267,4 +282,51 @@ exports.isProfane = function (string) {
 /* replaces bad words */
 exports.cleanString = function (string) {
 	return filter.clean(string);
+}
+
+exports.isEmoji = function (string) {
+	return (/^<a?:[\w]+:[0-9]+>$/gi).test(string.trim())
+}
+
+exports.parseTime = function (diff) {
+	let hours, minutes, seconds, text;
+	if (diff > 1000 * 60 * 60) {
+		hours = Math.floor(diff / (1000 * 60 * 60));
+		diff %= 1000 * 60 * 60;
+		minutes = Math.floor(diff / (1000 * 60));
+		diff %= 1000 * 60;
+		seconds = Math.ceil(diff / 1000);
+		text = `**${hours}h ${minutes}m ${seconds}s**`;
+	} else if (diff > 1000 * 60) {
+		minutes = Math.floor(diff / (1000 * 60));
+		diff %= 1000 * 60;
+		seconds = Math.ceil(diff / 1000);
+		text = `**${minutes}m ${seconds}s**`;
+	} else {
+		seconds = Math.ceil(diff / 1000);
+		text = `**${seconds}s**`;
+	}
+	return { hours, minutes, seconds, text }
+}
+
+/* gets uid from discord id */
+exports.getUid = async function (id) {
+	id = BigInt(id);
+	let sql = `SELECT uid FROM user where id = ?;`;
+	let result = await mysql.query(sql, id);
+
+	if (result[0]?.uid) return result[0].uid;
+
+	sql = `INSERT INTO user (id, count) VALUES (?, 0);`
+	result = await mysql.query(sql, id);
+	return result.insertId;
+}
+
+exports.getEmojiURL = function (emoji) {
+	let id = emoji.match(/:[0-9]+>$/gi);
+	if (!id || !id[0]) return;
+	id = id[0].match(/[0-9]+/gi)[0];
+	const isGif = (/^<a:/gi).test(emoji);
+	const format = isGif ? 'gif' : 'png';
+	return `https://cdn.discordapp.com/emojis/${id}.${format}`;
 }

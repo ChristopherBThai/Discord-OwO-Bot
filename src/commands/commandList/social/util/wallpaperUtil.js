@@ -53,7 +53,7 @@ exports.buy = async function(p,id){
 			"name":p.msg.author.username+", you have successfully purchased \""+result[0][0].bname+"\"!",
 			"icon_url":p.msg.author.avatarURL
 		},
-		"color": 4886754,
+		"color": p.config.embed_color,
 		"image":{
 			"url":imagegen.assetUrl+"/background/"+bid+".png"
 		}

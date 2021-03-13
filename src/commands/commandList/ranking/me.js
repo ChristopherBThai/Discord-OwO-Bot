@@ -64,15 +64,15 @@ async function display(p,con, msg, args){
 	let huntbot,luck,curse,daily,battle,level,shard;
 
 	for(var i=0;i<args.length;i++){
-		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet&&!huntbot&&!luck&&!curse&&!team&&!daily&&!battle&&!level){
+		if(!points&&!guild&&!money&&!zoo&&!rep&&!pet&&!huntbot&&!luck&&!curse&&!team&&!daily&&!battle&&!level&&!shard){
 			if(args[i]=== "points"||args[i]==="point"||args[i]==="p") points = true;
 			else if(args[i]==="guild"||args[i]==="server"||args[i]==="g"||args[i]==="s") guild = true;
 			else if(args[i]=== "zoo"||args[i]==="z") zoo = true;
-			else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="c"||args[i]==="m") money = true;
+			else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="c"||args[i]==="m"||args[i]==="cash") money = true;
 			else if(args[i]==="cookies"||args[i]==="cookie"||args[i]=== "rep"||args[i]==="r") rep = true;
 			else if(args[i]==="pets"||args[i]==="pet") pet = true;
 			else if(args[i]==="huntbot"||args[i]==="hb"||args[i]==="autohunt") huntbot= true;
-			else if(args[i]==="luck") luck = true;
+			else if(args[i]==="luck"||args[i]==="pray") luck = true;
 			else if(args[i]==="curse") curse = true;
 			else if(args[i]==="battle"||args[i]==="streak") battle = true;
 			else if(args[i]==="level"||args[i]==="lvl"||args[i]==="xp") level= true;
@@ -281,14 +281,14 @@ function getPetRanking(globalRank,con,msg,p){
 function getHuntbotRanking(globalRank,con,msg,p){
 	let sql;
 	if(globalRank){
-		sql = "SELECT id,(essence+cost+efficiency+duration+gain+exp+radar) as total FROM autohunt WHERE (essence+cost+efficiency+duration+gain+exp+radar) > (SELECT (essence+cost+efficiency+duration+gain+exp+radar) FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total ASC LIMIT 2;"
-		sql += "SELECT id,(essence+cost+efficiency+duration+gain+exp+radar) as total FROM autohunt WHERE (essence+cost+efficiency+duration+gain+exp+radar) < (SELECT (essence+cost+efficiency+duration+gain+exp+radar) FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total DESC LIMIT 2;"
-		sql += "SELECT id,(essence+efficiency+duration+cost+gain+exp+radar) as total, (SELECT COUNT(*)+1 FROM autohunt WHERE (essence+efficiency+duration+cost+gain+exp+radar) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+";";
+		sql = "SELECT id,total FROM autohunt WHERE total > (SELECT total FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total ASC LIMIT 2;"
+		sql += "SELECT id,total FROM autohunt WHERE total < (SELECT total FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total DESC LIMIT 2;"
+		sql += "SELECT id,total, (SELECT COUNT(*)+1 FROM autohunt WHERE autohunt.total > c.total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+";";
 	}else{
 		let users = global.getids(msg.channel.guild.members);
-		sql = "SELECT id,(essence+cost+efficiency+duration+gain+exp+radar) as total FROM autohunt WHERE id IN ("+users+") AND (essence+cost+efficiency+duration+gain+exp+radar) > (SELECT (essence+cost+efficiency+duration+gain+exp+radar) FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total ASC LIMIT 2;"
-		sql += "SELECT id,(essence+cost+efficiency+duration+gain+exp+radar) as total FROM autohunt WHERE id IN ("+users+") AND (essence+cost+efficiency+duration+gain+exp+radar) < (SELECT (essence+cost+efficiency+duration+gain+exp+radar) FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total DESC LIMIT 2;"
-		sql += "SELECT id,(essence+efficiency+duration+cost+gain+exp+radar) as total, (SELECT COUNT(*)+1 FROM autohunt WHERE id IN ("+users+") AND (essence+efficiency+duration+cost+gain+exp+radar) > total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+";";
+		sql = "SELECT id,total FROM autohunt WHERE id IN ("+users+") AND total > (SELECT total FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total ASC LIMIT 2;"
+		sql += "SELECT id,total FROM autohunt WHERE id IN ("+users+") AND total < (SELECT total FROM autohunt WHERE id = "+msg.author.id+") ORDER BY total DESC LIMIT 2;"
+		sql += "SELECT id,total, (SELECT COUNT(*)+1 FROM autohunt WHERE id IN ("+users+") AND autohunt.total > c.total) AS rank FROM autohunt c WHERE c.id = "+msg.author.id+";";
 	}
 
 	displayRanking(con,msg,sql,

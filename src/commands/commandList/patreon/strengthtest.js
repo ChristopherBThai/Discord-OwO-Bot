@@ -57,7 +57,7 @@ module.exports = new CommandInterface({
 				"icon_url":p.msg.author.avatarURL,
 				"name":p.msg.author.username+" wants to test their strength!"
 			},
-			"color": 4886754,
+			"color": p.config.embed_color,
 			"description":poll
 		};
 

@@ -68,7 +68,10 @@ async function banList(p){
 		if(user){
 			try{
 				await (await user.getDMChannel()).createMessage("Your accounts has been banned for abusing pray/curse");
-			}catch(e){}
+			}catch(e){
+				p.replyMsg(banEmoji,", **"+username+"** and "+(count-1)+" users have been banned, I couldn't DM them.");
+				return;
+			}
 		}
 
 		p.replyMsg(banEmoji,", **"+username+"** and "+(count-1)+" users have been banned");

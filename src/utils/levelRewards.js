@@ -1,5 +1,4 @@
-const mysqlHandler = require('../botHandlers/mysqlHandler.js');
-const mysql = new mysqlHandler();
+const mysql = require('../botHandlers/mysqlHandler.js');
 const imagegenAuth = require('../../../tokens/imagegen.json');
 const request = require('request');
 const levels = require('./levels.js');
@@ -7,6 +6,35 @@ const global = require('./global.js');
 const DataResolver = require('./dataResolver.js');
 const levelupEmoji = '🎉';
 const infoEmoji = 'ℹ';
+
+/*
+setTimeout(async () => {
+	let offset = 0;
+	while (true) {
+		console.log(offset);
+		let sql = `SELECT user.id, user.uid,rewardLvl FROM user INNER JOIN user_level_rewards ON user.uid = user_level_rewards.uid LIMIT 100000 OFFSET ${offset};`;
+		let result = await mysql.query(sql);
+		if (!result.length) {
+			console.log("done");
+			return;
+		}
+		offset += 100000;
+
+		for (let i in result) {
+			const userId = result[i].id;
+			const rlevel = (await levels.getUserLevel(userId)).level;
+			const mlevel = result[i].rewardLvl;
+
+			if (mlevel > rlevel) {
+				console.log(`[${offset+i}] ${userId} ${mlevel} ${rlevel}`);
+				// set level = rlevel
+				sql = `UPDATE user_level_rewards SET rewardLvl = ${rlevel} WHERE uid = ${result[i].uid}`;
+				mysql.query(sql);
+			}
+		}
+	}
+}, 1000);
+*/
 
 exports.distributeRewards = async function(msg){
 	// If bot does not have permission to send a message, ignore.

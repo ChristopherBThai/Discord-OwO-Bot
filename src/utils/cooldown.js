@@ -1,8 +1,7 @@
 const timerEmoji = '⏱';
-const macro = require('../../../tokens/macro.js');
-
 const cooldown = {};
 const lock = {};
+let macro
 
 exports.check = async function(p,command){
 	let key = "cd_"+command+"_"+p.msg.author.id;
@@ -63,6 +62,8 @@ exports.check = async function(p,command){
 		let valid = !!await macro.check(p,command,{diff,now});
 		if(!valid && command=="points"){
 			await setCooldown(p,command,600);
+		} else if (!valid) {
+			await setCooldown(p,command,10);
 		}
 		return valid;
 	}
@@ -89,3 +90,6 @@ const setCooldown = exports.setCooldown = async function(p,command,cooldown=0){
 	await p.redis.hmset(key,{lasttime:past});
 }
 
+exports.setMacro = function(m) {
+	macro = m
+}

@@ -20,13 +20,13 @@ const commandGroups = {};
 
 class Command {
 
-	constructor(main){
+	constructor (main) {
 		this.main = main;
 		this.prefix = main.prefix;
 		initCommands();
 	}
 
-	async execute(msg){
+	async execute (msg, raw) {
 		// Parse content info
 		let args = await checkPrefix(this.main, msg);
 		if (!args) {
@@ -52,19 +52,22 @@ class Command {
 			return;
 		}
 
-		//Init params to pass into command
+		// Init params to pass into command
 		let param = initParam(msg,command,args,this.main);
 
-		//Execute the command
+		// Parse user raw data, so our cache is up to date
+		this.checkRaw(raw);
+
+		// Execute the command
 		await executeCommand(this.main,param);
 	}
 
-	async executeAdmin(msg){
+	async executeAdmin (msg, raw){
 		let args;
 		if(msg.content.toLowerCase().indexOf(this.prefix) === 0)
 			args = msg.content.slice(this.prefix.length).trim().split(/ +/g);
 		else {
-			this.execute(msg);
+			this.execute(msg, raw);
 			return;
 		}
 
@@ -79,11 +82,11 @@ class Command {
 			if(adminCommands[command]&&!adminCommands[command].dm)
 				adminCommands[command].execute(param);
 			else
-				this.execute(msg);
+				this.execute(msg, raw);
 		}
 	}
 
-	async executeMod(msg){
+	async executeMod (msg){
 		let args;
 		if(msg.content.toLowerCase().indexOf(this.prefix) === 0)
 			args = msg.content.slice(this.prefix.length).trim().split(/ +/g);
@@ -94,6 +97,24 @@ class Command {
 
 		if(modCommands[command]) modCommands[command].execute(param);
 
+	}
+
+	checkRaw (raw) {
+		if (raw?.author) {
+			this.updateUser(raw.author);
+		}
+		raw?.mentions?.forEach(user => this.updateUser(user));
+	}
+
+	updateUser (rawUser) {
+		const user = this.main.bot.users.get(rawUser.id);
+		let update = false;
+		if (user && (user.username !== rawUser.username || user.avatar !== rawUser.avatar || user.discriminator !== rawUser.discriminator)) {
+			update = true;
+		}
+		if (!user || update) {
+			this.main.bot.users.update(rawUser, this.main.bot);
+		}
 	}
 }
 
@@ -206,6 +227,7 @@ function initParam(msg,command,args,main){
 		"dbl":main.dbl,
 		"mysql":main.mysql,
 		"con":main.mysql.con,
+		"startTransaction": main.mysqlhandler.startTransaction,
 		"redis":main.redis,
 		"query":main.query,
 		"send":main.sender.send(msg),
@@ -225,6 +247,7 @@ function initParam(msg,command,args,main){
 		"fetch":main.fetch,
 		"pubsub":main.pubsub,
 		"DataResolver":main.DataResolver,
+		"EmojiAdder":main.EmojiAdder,
 		"quest":function(questName,count,extra){main.questHandler.increment(msg,questName,count,extra).catch(console.error)},
 		"reactionCollector":main.reactionCollector,
 		"dateUtil":main.dateUtil,

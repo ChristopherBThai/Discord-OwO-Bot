@@ -13,9 +13,6 @@ const nextPageEmoji = '➡️';
 const prevPageEmoji = '⬅️';
 const stealEmoji = '🕵️';
 const errorEmoji = '';
-const successMsg = "Successfully stolen"
-const failureMsg = "Failed to steal"
-const progressMsg = "progress";
 
 module.exports = new CommandInterface({
 
@@ -93,103 +90,64 @@ function parseIDs(text){
 	return emojis;
 }
 
-async function display(p,emojis){
+async function display(p, emojis){
 	let loc = 0;
-	let embed = createEmbed(p,loc,emojis);
+	let embed = createEmbed(p, loc, emojis);
 	let msg = await p.send({embed});
 
 	// Check if user set stealing
 	let sql = `SELECT emoji_steal.guild FROM emoji_steal INNER JOIN user ON emoji_steal.uid = user.uid WHERE id = ${p.msg.author.id};`;
 	let result = await p.query(sql);
-	let canSteal;
-	if(result[0]){
-		canSteal = result[0].guild;
-	}
+	let canSteal = (await p.query(sql))[0]?.guild;
 
-	let buffers = {};
-	let saved = {};
-	let save = function(loc,id,message){
-		if(!saved[loc]) saved[loc] = {progress:{},success:[],failure:[]};
-		if(message==progressMsg){
-			saved[loc].progress[id] = true;
-			return;
-		}else if(message==successMsg){
-			saved[loc].success.push(id);
-		}else if(!saved[loc].failure.includes(id)){
-			saved[loc].failure.push(id);
-		}
-		embed = createEmbed(p,loc,emojis,saved);
-		msg.edit({embed});
-	}
-
-	/* Add a reaction collector to update the pages */
+	// Add reactions
 	await msg.addReaction(prevPageEmoji);
 	await msg.addReaction(nextPageEmoji);
 	if(canSteal) await msg.addReaction(stealEmoji);
 
-	let filter = (emoji,userID) => {
-		if(emoji.name==stealEmoji&&userID!=p.client.user.id){
+	// Create reaction collector
+	let filter = (emoji, userId) => {
+		if(emoji.name == stealEmoji && userId != p.client.user.id){
 			return true;
-		}else return ([nextPageEmoji,prevPageEmoji].includes(emoji.name)&&userID==p.msg.author.id);
+		}else return ([nextPageEmoji,prevPageEmoji].includes(emoji.name) && userId == p.msg.author.id);
 	}
+	let collector = p.reactionCollector.create(msg, filter, {idle:120000});
 
-	let collector = p.reactionCollector.create(msg,filter,{idle:120000});
-
-	/* Flip the page if reaction is pressed */
-	collector.on('collect', async function(emoji,userID){
+	// Logic to respond to reactions
+	const emojiAdders = [];
+	collector.on('collect', async function(emoji,userId){
 		if(emoji.name===nextPageEmoji&&loc+1<emojis.length) {
 			loc++;
-			embed = createEmbed(p,loc,emojis,saved);
-			await msg.edit({embed});
+			await msg.edit({embed: createEmbed(p, loc, emojis, emojiAdders)});
 		}else if(emoji.name===prevPageEmoji&&loc>0){
 			loc--;
-			embed = createEmbed(p,loc,emojis,saved);
-			await msg.edit({embed});
+			await msg.edit({embed: createEmbed(p, loc, emojis, emojiAdders)});
 		}else if(emoji.name===stealEmoji){
-			// if user has already stolen the emoji, ignore
-			if(saved[loc]&&saved[loc].success.includes(userID)) return;
-			// If it is currently stealing... ignore (we don't want duplicates)
-			if(saved[loc]&&saved[loc].progress[userID]) return;
-			save(loc,userID,progressMsg);
-
-			let sql = `SELECT emoji_steal.guild FROM emoji_steal INNER JOIN user ON emoji_steal.uid = user.uid WHERE id = ${userID};`;
-			p.query(sql).then(async function(result){
-				if(result[0]){
-					// Parse steal server id
-					let guild = result[0].guild;
-
-					//Save the emoji
-					let name = emojis[loc].name;
-					let url = emojis[loc].url;
-					
-					try{
-						let result = await addEmoji(p,guild,name,url,loc,buffers[loc]);
-						if(result.buffer) buffers[result.loc] = result.buffer;
-						save(loc,userID,successMsg);
-					}catch(err){
-						save(loc,userID,failureMsg);
-					}
+			if (!emojiAdders[loc]) emojiAdders[loc] = new p.EmojiAdder(p, emojis[loc].name, emojis[loc].url);
+			try {
+				if (await emojiAdders[loc].addEmoji(userId)) {
+					await msg.edit({embed: createEmbed(p, loc, emojis, emojiAdders)});
 				}
-				delete saved[loc].progress[userID];
-
-			});
-
+			} catch (err) {
+				if (!emojiAdders[loc].successCount) {
+					await msg.edit({embed: createEmbed(p, loc, emojis, emojiAdders)});
+				}
+			}
 		}
 	});
 
 	collector.on('end',async function(collected){
-		embed = createEmbed(p,loc,emojis,saved);
+		const embed = createEmbed(p, loc, emojis, emojiAdders)
 		embed.color = 6381923;
 		await msg.edit({content:"This message is now inactive",embed});
 	});
 
 }
 
-function createEmbed(p,loc,emojis,saved={}){
-	let emoji = emojis[loc];
-	if(!emoji) emoji = p.client.user.avatarURL;
+function createEmbed(p, loc, emojis, emojiAdders){
+	const emoji = emojis[loc];
 
-	let embed = {
+	const embed = {
 		"author":{
 			"name":"Enlarged Emojis!",
 			"url":emoji.url,
@@ -206,13 +164,13 @@ function createEmbed(p,loc,emojis,saved={}){
 		}
 	}
 
-	let message = saved[loc];
-	if(message){
-		if(message.success.length){
-			embed.footer.text += " - "+successMsg+(message.success.length>1?' x'+message.success.length:'');
+	const emojiAdder = emojiAdders?.[loc];
+	if (emojiAdder) {
+		if (emojiAdder.successCount) {
+			embed.footer.text += " - Successfully stolen"+(emojiAdder.successCount>1 ? ' x'+emojiAdder.successCount : '');
 			embed.color = 65280;
-		}else{
-			embed.footer.text += " - "+failureMsg+(message.failure.length>1?' x'+message.failure.length:'');
+		} else {
+			embed.footer.text += " - Failed to steal"+(emojiAdder.failureCount>1 ? ' x'+emojiAdder.failureCount : '');
 			embed.color = 16711680;
 		}
 	}
@@ -251,10 +209,4 @@ async function unsetServer(p){
 	let sql = `DELETE FROM emoji_steal WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
 	await p.query(sql);
 	p.replyMsg(stealEmoji,", your server has been unset for stealing!");
-}
-
-async function addEmoji(p,guild,name,url,loc,buffer){
-	if(!buffer) buffer = await p.DataResolver.urlToBufferString(url);
-	await p.client.createGuildEmoji(guild,{name,image:buffer},"Requested by "+p.msg.author.id);
-	return {buffer,loc};
 }

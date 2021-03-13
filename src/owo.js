@@ -18,7 +18,6 @@ const dbl = new DBL(auth.dbl);
 class OwO extends Base{
 	constructor(bot){
 		super(bot);
-		this.debug = true;
 		this.auth = auth;
 		this.dbl = dbl;
 
@@ -40,6 +39,7 @@ class OwO extends Base{
 
 		// Bot config file
 		this.config = require('./data/config.json');
+		this.debug = this.config.debug;
 		this.prefix = this.config.prefix;
 
 		// Ban check 
@@ -52,7 +52,7 @@ class OwO extends Base{
 		this.questHandler = new (require("./botHandlers/questHandler.js"))();
 
 		// Mysql Query Handler
-		this.mysqlhandler = new (require("./botHandlers/mysqlHandler.js"))(this.con);
+		this.mysqlhandler = require("./botHandlers/mysqlHandler.js")
 		this.query = this.mysqlhandler.query;
 
 		// Global helper methods
@@ -64,9 +64,13 @@ class OwO extends Base{
 		this.sender = require('./utils/sender.js');
 		this.sender.init(this);
 
+		// Date utility
+		this.dateUtil = require('./utils/dateUtil.js');
+
 		// Hidden macro detection file
 		this.macro = require('./../../tokens/macro.js');
 		this.macro.bind(this,require('merge-images'),require('canvas'));
+		this.cooldown.setMacro(this.macro);
 
 		// Allows me to check catch before any fetch requests (reduces api calls)
 		this.fetch = new (require('./utils/fetch.js'))(this);
@@ -77,13 +81,13 @@ class OwO extends Base{
 		// Fetches images and converts them to buffers
 		this.DataResolver = require('./utils/dataResolver.js');
 
+		// Ability to add emojis to guilds
+		this.EmojiAdder = require('./utils/EmojiAdder.js');
+
 		// Helper for patreon benefits
 		this.patreon = require('./utils/patreon.js');
 		this.patreon.init(this);
 
-		// Date utility
-		this.dateUtil = require('./utils/dateUtil.js');
-		
 		// Create commands
 		this.command = new (require('./commands/command.js'))(this);
 	}

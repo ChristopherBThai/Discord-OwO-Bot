@@ -46,8 +46,12 @@ module.exports = new CommandInterface({
 			p.send("**🚫 |** Sorry, "+p.msg.author.username+"! Messages must be under 250 character!!!",3000);
 			p.setCooldown(5);
 			return;
-		}else if(message.length > 1500){
+		} else if(message.length > 1500){
 			p.send("**🚫 |** Sorry, "+p.msg.author.username+"! Suggestions must be under 1500 character!!!",3000);
+			p.setCooldown(5);
+			return;
+		} else if (message.length < 25) {
+			p.errorMsg(', the message is too short!', 3000);
 			p.setCooldown(5);
 			return;
 		}

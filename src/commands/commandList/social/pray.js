@@ -1,6 +1,6 @@
 /*
  * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Copyright (C) 2020 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
@@ -102,9 +102,10 @@ module.exports = new CommandInterface({
 		text = alterPray.alter(p.msg.author.id,text,{command:p.command, author:p.msg.author, user, luck:result[1][0].lcount});
 		p.send(text);
 		if(user&&quest) p.quest(quest,1,user);
-		if(opponentPoints&&user)
+		if(opponentPoints&&user) {
 			p.logger.incr(`pray`, 1, {from:p.msg.author.id, to:user.id});
-		else
+			p.macro.checkToCommands(p, user.id);
+		} else
 			p.logger.incr(`pray`, 1, {from:p.msg.author.id, to:'self'});
 	}
 

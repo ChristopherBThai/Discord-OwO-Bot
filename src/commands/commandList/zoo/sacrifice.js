@@ -116,10 +116,10 @@ async function sellAnimal(p,msg,con,animal,count,send,global){
 
 	sql = "SELECT count FROM animal WHERE id = "+msg.author.id+" AND name = '"+animal.value+"';";
 	if(count=="all"){
-		sql += `UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id INNER JOIN (SELECT count FROM animal WHERE id = ${msg.author.id} AND name = '${animal.value}') AS sum SET essence = essence + (sum.count*${animal.essence}), saccount = saccount + animal.count, animal.count = 0 WHERE animal.id = ${msg.author.id} AND name = '${animal.value}' AND animal.count > 0;`
+		sql += `UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id INNER JOIN (SELECT count FROM animal WHERE id = ${msg.author.id} AND name = '${animal.value}') AS sum SET essence = essence + (sum.count*${animal.essence}), autohunt.total = autohunt.total + (sum.count*${animal.essence}), saccount = saccount + animal.count, animal.count = 0 WHERE animal.id = ${msg.author.id} AND name = '${animal.value}' AND animal.count > 0;`
 	}else{
 
-		sql += `UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id SET essence = essence + (${count}*${animal.essence}), saccount = saccount + ${count}, count = count - ${count}  WHERE animal.id = ${msg.author.id} AND name = '${animal.value}' AND count >= ${count};`
+		sql += `UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id SET essence = essence + (${count * animal.essence}), autohunt.total = autohunt.total + (${count * animal.essence}), saccount = saccount + ${count}, count = count - ${count}  WHERE animal.id = ${msg.author.id} AND name = '${animal.value}' AND count >= ${count};`
 	}
 	result = await p.query(sql);
 
@@ -148,7 +148,7 @@ async function sellRank(p,msg,con,rank,send,global){
 	let points = "(SELECT COALESCE(SUM(count),0) AS sum FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+")";
 	//sql = "SELECT COALESCE(SUM(count),0) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
 	sql = "SELECT name,count FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
-	sql += "UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id INNER JOIN "+points+" s SET essence = essence + (s.sum*"+rank.essence+"), saccount = saccount + count, count = 0 WHERE animal.id = "+msg.author.id+" AND name IN "+animals+" AND count > 0;";
+	sql += "UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id INNER JOIN "+points+" s SET essence = essence + (s.sum*"+rank.essence+"), autohunt.total = autohunt.total + (s.sum*"+rank.essence+"), saccount = saccount + count, count = 0 WHERE animal.id = "+msg.author.id+" AND name IN "+animals+" AND count > 0;";
 
 	result = await p.query(sql);
 	if(result[1].affectedRows<=0){
@@ -178,7 +178,7 @@ async function sellRanks(p,msg,con,ranks,send,global,p){
 		let points = "(SELECT COALESCE(SUM(count),0) AS sum FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+")";
 		//sql += "SELECT COALESCE(SUM(count),0) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
 		sql += "SELECT name,count FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
-		sql += "UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id INNER JOIN "+points+" s SET essence = essence + (s.sum*"+rank.essence+"), saccount = saccount + count, count = 0 WHERE animal.id = "+msg.author.id+" AND name IN "+animals+" AND count > 0;";
+		sql += "UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id INNER JOIN "+points+" s SET essence = essence + (s.sum*"+rank.essence+"), autohunt.total = autohunt.total + (s.sum*"+rank.essence+"), saccount = saccount + count, count = 0 WHERE animal.id = "+msg.author.id+" AND name IN "+animals+" AND count > 0;";
 	}
 	result = await p.query(sql);
 

@@ -98,7 +98,7 @@ exports.desc = function(p,id){
 		else if(gem.type=="Lucky")
 			text += "A(n) "+ranks[gem.key[0]]+" Lucky Gem!\nWhen activated, this gem will increase your chance of finding gem pets by "+gem.amount+"x for the next "+gem.length+" animals!\nCannot stack with other Lucky gems.";
 		var embed = {
-		"color": 4886754,
+		"color": p.config.embed_color,
 		"fields":[{
 			"name":gem.emoji+" "+gem.key,
 			"value":text

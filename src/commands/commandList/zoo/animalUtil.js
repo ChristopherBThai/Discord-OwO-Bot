@@ -12,6 +12,14 @@ setTimeout(() => {
 	enableDistortedTier = false;
 },21600000);
 
+const specialRates = animals.specialRates;
+var specialPercent = 0;
+if (specialRates && specialRates.length) {
+	for (let i in specialRates) {
+		specialPercent += specialRates[i].rate
+	}
+}
+
 /**
  * Picks a random animal from secret json file
  */
@@ -22,8 +30,6 @@ exports.randAnimal = function( {patreon, gem, lucky, huntbot, manual} = {} ){
 	/* Calculate percentage */
 	var patreonPercent = animals.cpatreon[0]+animals.patreon[0];
 	if(!patreon) patreonPercent = 0;
-	var specialPercent = animals.special[0];
-	if(animals.special[0]=="0") specialPercent = 0;
 	var gemPercent = animals.gem[0];
 	if(!gem) gemPercent = 0;
 	else if(lucky) gemPercent += gemPercent*lucky.amount;
@@ -49,11 +55,18 @@ exports.randAnimal = function( {patreon, gem, lucky, huntbot, manual} = {} ){
 			result.push(400);
 		}
 	}else if(specialPercent&&rand<specialPercent+patreonPercent){
-		rand = 1;
-		result.push("**special** "+animals.ranks.special);
-		result.push(animals.special[rand]);
-		result.push("special");
-		result.push(250);
+		let tempRate = patreonPercent;
+		let found = false;
+		for (let i in specialRates) {
+			tempRate += specialRates[i].rate;
+			if (!found && rand<=tempRate){
+				found = true;
+				result.push("**special** "+animals.ranks.special);
+				result.push(specialRates[i].animal);
+				result.push("special");
+				result.push(500);
+			}
+		}
 	}else if(huntbot&&rand<huntbot+specialPercent+patreonPercent){
 		rand = Math.ceil(Math.random()*(animals.bot.length-1));
 		result.push("**bot** "+animals.ranks.bot);
