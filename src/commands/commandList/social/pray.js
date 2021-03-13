@@ -1,6 +1,6 @@
 /*
  * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Copyright (C) 2020 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
@@ -27,7 +27,7 @@ module.exports = new CommandInterface({
 
 	group:["social"],
 
-	cooldown:300000,
+	cooldown:00000,
 	half:22,
 	six:200,
 	bot:true,

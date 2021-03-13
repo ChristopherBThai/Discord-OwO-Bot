@@ -69,6 +69,7 @@ function translate(p){
 		};
 		p.send({embed});
 	}).catch(err => {
+		console.log(err)
 		p.errorMsg(", Could not find that language! Use `owo listlang` to see available languages")
 	})
 }

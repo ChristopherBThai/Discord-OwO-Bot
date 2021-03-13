@@ -321,3 +321,12 @@ exports.getUid = async function (id) {
 	result = await mysql.query(sql, id);
 	return result.insertId;
 }
+
+exports.getEmojiURL = function (emoji) {
+	let id = emoji.match(/:[0-9]+>$/gi);
+	if (!id || !id[0]) return;
+	id = id[0].match(/[0-9]+/gi)[0];
+	const isGif = (/^<a:/gi).test(emoji);
+	const format = isGif ? 'gif' : 'png';
+	return `https://cdn.discordapp.com/emojis/${id}.${format}`;
+}

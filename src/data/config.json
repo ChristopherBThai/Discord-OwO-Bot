@@ -32,10 +32,13 @@
 
 	"prefix": "owo",
 	"embed_color": 8240363,
+	"success_color": 65280,
+	"fail_color": 16711680,
 	"emoji":{
 		"cowoncy": "<:cowoncy:416043450337853441>",
 		"blank": "<:blank:427371936482328596>",
 		"invalid": "🚫",
+		"error":"🚫",
 		"crate": "<:crate:523771259302182922>",
 		"lootbox": "<:box:427352600476647425>",
 		"cookie": "<a:cookieeat:423020737364885525>",
