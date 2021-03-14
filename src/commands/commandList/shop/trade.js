@@ -60,6 +60,10 @@ async function validate (p) {
 		p.errorMsg(", please tag a user you want to trade with!", 3000);
 		return { error: true };
 	}
+	if (user.id == p.msg.author.id) {
+		p.errorMsg(", you cannot trade with yourself!", 3000);
+		return { error: true };
+	}
 
 	if (!price) {
 		p.errorMsg(", please specify what price you want to sell the item for!", 3000);
@@ -74,7 +78,7 @@ async function validate (p) {
 		p.errorMsg(", the price must be greater than 0!", 3000);
 		return { error: true };
 	}
-	if (price > 10000000) {
+	if (price > 2000000) {
 		p.errorMsg(", the price per ticket is too high!", 3000);
 		return { error: true };
 	}
@@ -179,7 +183,8 @@ async function executeTransaction(p, msg, embed, { item, user, price, count }) {
 		let sql = `UPDATE cowoncy SET money = money - ${totalPrice} WHERE id = ${user.id} AND money >= ${totalPrice};`;
 		sql += `UPDATE cowoncy SET money = money + ${totalPrice} WHERE id = ${p.msg.author.id};`;
 		sql += `UPDATE items INNER JOIN user ON items.uid = user.uid SET ${item.column} = ${item.column} - ${count} WHERE user.id = ${p.msg.author.id} AND ${item.column} >= ${count};`;
-		sql += `INSERT INTO items (uid, ${item.column}) VALUES ((SELECT uid FROM user WHERE user.id = ${user.id}), ${count}) ON DUPLICATE KEY UPDATE ${item.column} = ${item.column} + ${count}`;
+		sql += `INSERT INTO items (uid, ${item.column}) VALUES ((SELECT uid FROM user WHERE user.id = ${user.id}), ${count}) ON DUPLICATE KEY UPDATE ${item.column} = ${item.column} + ${count};`;
+		sql += `INSERT INTO transaction (sender, reciever, amount) VALUES (${user.id}, ${p.msg.author.id}, ${totalPrice});`;
 		let result = await con.query(sql);
 		if (!result[0].changedRows) {
 			embed.color = p.config.fail_color;
