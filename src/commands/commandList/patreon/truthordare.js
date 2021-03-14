@@ -26,7 +26,7 @@ module.exports = new CommandInterface({
 
 	group:["patreon"],
 
-	cooldown:50000,
+	cooldown:10000,
 
 	execute: async function(p){
 		const user = p.getMention(p.args[1]);
