@@ -26,7 +26,8 @@ module.exports = new CommandInterface({
 
 	group:["animals"],
 
-	cooldown:15000,
+	// TODO add cooldown
+	cooldown:000,
 	half:25,
 	six:200,
 	bot:true,
@@ -35,8 +36,12 @@ module.exports = new CommandInterface({
 		const boss = await bossUtil.fetchBoss(p);
 		if (!boss) {
 			p.errorMsg(", there is no boss available!", 5000);
+			p.setCooldown(5);
 			return;
 		}
+
+		// TODO consume tickets
+		
 		const users = await bossUtil.fetchUsers(p);
 		const player = await bossUtil.fetchPlayer(p);
 
@@ -45,8 +50,17 @@ module.exports = new CommandInterface({
 			enemy: boss
 		}
 
+		const prevHp = boss.team[0].stats.hp[0];
+		const prevWp = boss.team[0].stats.wp[0];
+
 		let logs = await battleUtil.calculateAll(p,battle);
-		//console.log(logs[logs.length-2].enemy[0]);
+
+		const currentHp = logs[logs.length-2].enemy[0].hp[0];
+		const currentWp = logs[logs.length-2].enemy[0].wp[0];
+		const hpChange = prevHp - currentHp;
+		const wpChange = prevWp - currentWp;
+
+		bossUtil.updateBoss(p, {boss: boss.team[0], hpChange, wpChange });
 	}
 
 })

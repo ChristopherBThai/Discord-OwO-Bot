@@ -15,6 +15,7 @@ const weaponUtil = require('./weaponUtil.js');
 const teamUtil = require('./teamUtil.js');
 const animalUtil = require('./animalUtil.js');
 
+// TODO revert back to one hour
 const bossLength = 3600000;
 const guildSizes = [5, 25, 100, 500, 1000]
 const rates = [
@@ -125,9 +126,9 @@ setTimeout(async () => {
 },100)
 */
 
-async function createEmbed (p, { lvl, animal, weapon, stats, time, rank }) {
+async function createEmbed (p, { lvl, animal, weapon, stats, time, rank }, title) {
 	const embed = {
-		title: "A boss appears!",
+		title: title || "A boss appears!",
 		description: "Fight the boss with `owo boss fight`!",
 		color: p.config.embed_color,
 		timestamp: time,
@@ -221,7 +222,7 @@ function fetchBossImage ({lvl, animal, weapon, stats, rank }) {
 		return new Promise( (resolve, reject) => {
 			let req = request({
 				method:'POST',
-				uri:`${imagegenAuth.imageApiUri_t}/bossgen`,
+				uri:`${imagegenAuth.imageApiUri}/bossgen`,
 				json:true,
 				body: info,
 			},(error,res,body)=>{
@@ -236,6 +237,7 @@ function fetchBossImage ({lvl, animal, weapon, stats, rank }) {
 			});
 		});
 	}catch (err){
+		console.error(err);
 		return;
 	}
 }
@@ -246,8 +248,10 @@ function getLvl (rank) {
 }
 
 const parseStats = exports.parseStats = function (animal, lvl) {
-	lvl = 200;
 	const stats = battleAnimalUtil.parseStats(animal, lvl);
+	stats.hp[0] = stats.hp[0] * lvl * .8;
+	stats.hp[1] = stats.hp[1] * lvl * .8;
+	stats.hp[2] = stats.hp[2] * lvl * .8;
 	return stats;
 }
 
@@ -381,12 +385,15 @@ exports.fetchBoss = async function (p) {
 	}
 
 	let team = teamUtil.parseTeam(p,result,result);
-	team[0].stats = parseStats(team[0].animal, result[0].boss_lvl);
-	team[0].stats.hp[0] = result[0].boss_hp;
-	team[0].stats.wp[0] = result[0].boss_wp;
 
-	// set current health
-	
+	const bossAnimal = team[0];
+	bossAnimal.stats = parseStats(bossAnimal.animal, result[0].boss_lvl);
+	bossAnimal.stats.hp[0] = result[0].boss_hp;
+	bossAnimal.stats.wp[0] = result[0].boss_wp;
+	bossAnimal.lvl = result[0].boss_lvl;
+	bossAnimal.time = new Date(result[0].created);
+	bossAnimal.rank = calculateRank(bossAnimal);
+
 	return {
 		name: 'Boss team name',
 		team
@@ -428,4 +435,47 @@ function teamFilter (userId) {
 	WHERE u2.id = ${userId}
 	ORDER BY pt_act.pgid DESC, pt2.pgid ASC
 	LIMIT 1`;
+}
+
+exports.updateBoss = async function (p, {boss, hpChange, wpChange }) {
+	const guildId = p.msg.channel.guild.id;
+	// TODO validate hp/wp changes
+	hpChange = Math.round(hpChange);
+	wpChange = Math.round(wpChange);
+
+	const con = await p.startTransaction();
+	try {
+		let sql = `UPDATE guild_boss
+			SET
+				boss_hp = GREATEST(0, boss_hp - ${hpChange}),
+				boss_wp = GREATEST(0, boss_wp - ${wpChange})
+			WHERE gid = ${guildId} AND boss_hp > 0;`;
+		sql += `SELECT boss_hp FROM guild_boss WHERE gid = ${guildId};`;
+		let result = await con.query(sql);
+
+		if (!result[0].changedRows) {
+			con.rollback();
+			p.errorMsg(", the boss is no longer available!", 3000);
+			return;
+		}
+
+		if (result[1][0].boss_hp <= 0) {
+			//TODO boss is dead. do a check and distribute rewards
+			await con.query(`UPDATE guild_boss SET active = 0 WHERE gid = ${guildId}`);
+			console.log("boss died");
+			con.commit();
+			return;
+		}
+
+		con.commit();
+	} catch (err) {
+		console.error(err);
+		con.rollback();
+		p.errorMsg(", the boss is no longer available!", 3000);
+		return;
+	}
+
+	let text = `${p.msg.author.username} deals ${hpChange} damage to the boss!`;
+	const embed = await createEmbed(p, boss, text)
+	p.send(embed);
 }
