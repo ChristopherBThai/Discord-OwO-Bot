@@ -388,9 +388,10 @@ function notJames(text,opt) {
 		// lost
 		case 16711680:
 			if (opt) {
-				text.author.name = 'chem went in battle to protect the Fallen Stars from bad guys..';
-				text.footer.text = `Wait...what?! I lost in ${opt.turns} turns and collected 50 star fragements T_T! Streak: ${opt.streak}`;
+				text.author.name = 'chem has arrived to protect the Fallen Stars from outerspace invaders!';
+				text.footer.text = `Wait...what?! The battle ended after ${opt.turns} turns. You sadly collected 50 star fragments and lost your streak of ${opt.streak} victories...`;
 			}
+			text.color = 8900346;
 			text.thumbnail = {
 				url: "https://cdn.discordapp.com/attachments/769619375296610304/809631784752644106/cry.png"
 			}
@@ -400,19 +401,20 @@ function notJames(text,opt) {
 		case 65280:
 			if (opt) {
 				const fragment = (''+opt.xp).includes('+') ? 'bonus star fragments' : 'star fragments'
-				text.author.name = 'chem has arrived to protect the Fallen Stars from bad guys..';
+				text.author.name = 'chem has arrived to protect the Fallen Stars from outerspace invaders!';
 				if (opt.streak % 10000 == 0) {
-					text.footer.text = `Muahahaha! The enemy team is beaten after ${opt.turns} turns and chem collected ${opt.xp} bonus star shards! ${opt.streak} consecutive battles are won!!`;
+					text.footer.text = `Glorius victory! You defeated the bad guys and cleared the Starlight Pathway. You happily returned home with ${opt.xp} bonus star shards! Win streak: ${opt.streak} `;
 				} else if (opt.streak % 1000 == 0) {
-					text.footer.text = `Glorius victory! You beat the enemy in ${opt.turns} turns and collected ${opt.xp} bonus star shards! ${opt.streak} battles are won, Master!`;
+					text.footer.text = `Muahahaha! The evil force has been defeated! You collected ${opt.xp} bonus star shards and unlocked a new Star Constellation! Streak: ${opt.streak}!`;
 				} else if (opt.streak % 100 == 0) {
-					text.footer.text = `Victory! You beat the enemy in ${opt.turns} turns and collected ${opt.xp} bonus star fragments! UwU! Streak:${opt.streak}`;
+					text.footer.text = `Yayyy.. a Victory! You collected ${opt.xp} bonus star fragments and sent the enemy back to Space! UwU! Streak: ${opt.streak}`;
 				} else if (opt.streak % 10 == 0) {
-					text.footer.text = `Victory! You beat the enemy in ${opt.turns} turns and collected ${opt.xp} bonus star fragments! Yayyy! Streak: ${opt.streak}`;
+					text.footer.text = `Victory! You collected ${opt.xp} bonus star fragments and kicked the enemy out of the planet! Streak: ${opt.streak}`;
 				} else {
-					text.footer.text = `Victory! You beat the enemy in ${opt.turns} turns and collected ${opt.xp} ${fragment}! Streak: ${opt.streak}`;
+					text.footer.text = `Victory! You collected ${opt.xp} ${fragment} and punched the enemy out of the plant! Streak: ${opt.streak}`;
 				}
 			}
+			text.color = 1190467;
 			text.thumbnail = {
 				url: "https://cdn.discordapp.com/attachments/769619375296610304/809631713624981564/official_cheer.gif"
 			}
@@ -421,15 +423,15 @@ function notJames(text,opt) {
 		//tie
 		case 6381923:
 			if (opt) {
-				text.author.name = 'chem went in battle to protect the Fallen Stars from bad guys..';
-				text.footer.text = `Ahhh!! Close call, but I still managed to collect ${opt.xp} star fragments! Need some rest now. Streak: ${opt.streak}`;
+				text.author.name = 'chem has arrived to protect the Fallen Stars from outerspace invaders!';
+				text.footer.text = `Ahhh!! Close call, but you still managed to collect ${opt.xp} star fragments! Need some rest now.. Streak: ${opt.streak}`;
 			}
+			text.color = 4539717;
 			text.thumbnail = {
 				url: "https://cdn.discordapp.com/attachments/769619375296610304/816891271004028968/0b004b50f2700762eb850e27e8a9b504.png"
 			}
 			break;
 	}
-	text.color = 38;
 	return text;
 }
 
