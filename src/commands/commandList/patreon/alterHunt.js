@@ -664,14 +664,14 @@ function notJames(text, info) {
 	const peach = '<:peach:819081050369949736>';
 
 	if(info.gemText){
-		text = `${moon} **| $(info.author.username)** broke into a peach farm, charmed by ${info.gemText}\n`;
+		text = `${moon} **| ${info.author.username}** broke into a peach farm, charmed by ${info.gemText}\n`;
 		text += `${peach} **|** and ran away with ${info.animalEmojis}`;
 		if (info.petText) {
 			text += `\n${peach} **|** ${info.petText} gained **${info.animalXp} peaches**!`;
 		}
 	}else{
 		const a = getA(info.animal[0][0]);
-		text = `${moon} **| $(info.author.username)** broke into a peach farm with bare hands\n`;
+		text = `${moon} **| ${info.author.username}** broke into a peach farm with bare hands\n`;
 		text += `${peach} **|** and ran away with ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
 		if (info.petText) {
 			text += `\n${peach} **|** ${info.petText} gained **${info.animalXp} peaches**`;
