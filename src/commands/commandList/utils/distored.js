@@ -19,7 +19,7 @@ const text = [
 
 module.exports = new CommandInterface({
 
-	alias:["distorted"],
+	alias:["distorted","dt"],
 
 	args:"",
 
