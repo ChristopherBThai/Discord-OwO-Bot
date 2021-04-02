@@ -407,11 +407,11 @@ function notJames(text,opt) {
 				} else if (opt.streak % 1000 == 0) {
 					text.footer.text = `Muahahaha! The evil force has been defeated! You collected ${opt.xp} bonus star shards and unlocked a new Star Constellation! Streak: ${opt.streak}!`;
 				} else if (opt.streak % 100 == 0) {
-					text.footer.text = `Yayyy.. a Victory! You collected ${opt.xp} bonus star fragments and sent the enemy back to Space! UwU! Streak: ${opt.streak}`;
+					text.footer.text = `UwU.. a Victory! You sent the enemy back to Space and brought home ${opt.xp} bonus star fragments! Streak: ${opt.streak}`;
 				} else if (opt.streak % 10 == 0) {
 					text.footer.text = `Victory! You collected ${opt.xp} bonus star fragments and kicked the enemy out of the planet! Streak: ${opt.streak}`;
 				} else {
-					text.footer.text = `Victory! You collected ${opt.xp} ${fragment} and punched the enemy out of the plant! Streak: ${opt.streak}`;
+					text.footer.text = `Victory! You collected ${opt.xp} ${fragment} and punched the enemy out of the planet! Streak: ${opt.streak}`;
 				}
 			}
 			text.color = 1190467;
