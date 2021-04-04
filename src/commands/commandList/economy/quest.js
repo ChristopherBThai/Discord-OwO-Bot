@@ -136,7 +136,7 @@ function constructEmbed(p,afterMid,quests){
 			"text": "Next quest in: "+afterMid.hours+" H "+afterMid.minutes+" M "+afterMid.seconds+" S"
 		},
 		"author": {
-			"name": p.msg.author.username+"'s Quest Log",
+			"name": `${p.msg.author.username}#${p.msg.author.discriminator}'s Quest Log`,
 			"icon_url":p.msg.author.avatarURL
 		},
 		"description":quests.text
