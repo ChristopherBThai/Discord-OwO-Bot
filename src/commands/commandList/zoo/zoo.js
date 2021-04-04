@@ -27,7 +27,7 @@ initDisplay();
 
 module.exports = new CommandInterface({
 
-	alias:["zoo"],
+	alias:["zoo","z"],
 
 	args:"{display}",
 
