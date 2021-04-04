@@ -18,7 +18,7 @@ const questJson = require('../../../data/quests.json');
 
 module.exports = new CommandInterface({
 
-	alias:["quest"],
+	alias:["quest","q"],
 
 	args:"{rr} {num}",
 
