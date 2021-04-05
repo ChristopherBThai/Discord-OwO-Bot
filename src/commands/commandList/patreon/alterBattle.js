@@ -48,6 +48,8 @@ exports.alter = function(id,text,type){
 			return mercureid(text, type);
 		case '477168699112161281':
 			return leshoop(text, type);
+		case '612158581113880576':
+			return blade(text, type);
 		default:
 			return text;
 	}
@@ -551,7 +553,47 @@ function leshoop (text,opt) {
 			break;
 	}
 	text.thumbnail = {
-		url: "https://cdn.discordapp.com/attachments/784137961221521429/818297090127560704/ezgif-4-f09211e5809e.gif"
+		url: "https://cdn.discordapp.com/attachments/722052818428624928/822130529016610896/20210318_113218.gif"
 	}
 	return text;
 }
+
+function blade (text,opt) {
+	text.author.name = 'BLaDe goes into brutal fight against deadly sins!';
+	switch (text.color) {
+		// win
+		case 65280:
+			if (opt) {
+				text.footer.text = `BLaDe uses his Telepathic abilities and gains control over enemy's mind.! You won in ${opt.turns} hits and gained ${opt.xp} xp! You've defeated a total of ${opt.streak} sins!`;
+			}
+			text.color = 65511;
+			text.thumbnail = {
+				url: "https://i.imgur.com/QCUu8Jl.gif"
+			}
+			break;
+
+		// lost
+		case 16711680:
+			if (opt) {
+				text.footer.text = `Oops! BLaDe lost his Telepathic abilities while facing strong sins and got killed. He'll now be reborn! Your streak of killing ${opt.streak} sins is smashed! You lost after ${opt.turns} hits!`;
+			}
+			text.color = 16734464;
+			text.thumbnail = {
+				url: "https://i.imgur.com/7rbtiBX.gif"
+			}
+			break;
+
+		//tie
+		case 6381923:
+			if (opt) {
+				text.footer.text = `BLaDe uses Telepathy, but the sins were strong enough to withstand it for ${opt.turns}! You gain ${opt.xp} xp and killed a total of ${opt.streak} sins!`;
+			}
+			text.color = 7708416;
+			text.thumbnail = {
+				url: "https://i.imgur.com/lG1bJJu.gif"
+			}
+			break;
+	}
+	return text;
+}
+

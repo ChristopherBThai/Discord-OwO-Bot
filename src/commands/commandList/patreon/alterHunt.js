@@ -732,7 +732,7 @@ function koala(text, info) {
 		text += `${blank} **|** ${info.gemText.replace(/\/\d+|`+/gi,'')}`;
 		const animals = info.animalEmojis.split(' ');
 		for (let i in animals) {
-			if (i % 10 == 0) {
+			if (i % Math.ceil(animals.length/2) == 0) {
 				text += `\n${blank} **|**`
 			}
 			text += ' ' + animals[i];
