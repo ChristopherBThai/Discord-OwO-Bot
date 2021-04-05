@@ -71,7 +71,7 @@ async function display(p,con, msg, args){
 			else if(args[i]=== "cowoncy"||args[i]==="money"||args[i]==="c"||args[i]==="m"||args[i]==="cash") money = true;
 			else if(args[i]==="cookies"||args[i]==="cookie"||args[i]=== "rep"||args[i]==="r") rep = true;
 			else if(args[i]==="pets"||args[i]==="pet") pet = true;
-			else if(args[i]==="huntbot"||args[i]==="hb"||args[i]==="autohunt") huntbot= true;
+			else if(args[i]==="huntbot"||args[i]==="hb"||args[i]==="autohunt"||args[i]==="ah") huntbot= true;
 			else if(args[i]==="luck"||args[i]==="pray") luck = true;
 			else if(args[i]==="curse") curse = true;
 			else if(args[i]==="battle"||args[i]==="streak") battle = true;
