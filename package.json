@@ -24,7 +24,7 @@
     "node-vibrant": "^3.1.5",
     "novelcovid": "^3.0.0",
     "npm": "^7.8.0",
-    "patreon": "^0.0.1",
+    "patreon": "^0.4.1",
     "random-number-csprng": "^1.0.2",
     "redis": "^2.8.0",
     "request": "^2.88.2",
