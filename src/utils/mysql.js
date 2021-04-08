@@ -14,7 +14,6 @@ config = {
 	password: login.mysql_pass,
 	database: "owo",
 	supportBigNumbers: true,
-	bigNumberStrings: true,
 	multipleStatements: true,
 	charset: "utf8mb4",
 	connectionLimit: 10
