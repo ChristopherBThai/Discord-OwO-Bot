@@ -10,7 +10,7 @@
     "bufferutil": "^4.0.1",
     "canvas": "^2.6.1",
     "dblapi.js": "^2.4.0",
-    "dd-trace": "^0.14.1",
+    "dd-trace": "^0.31.4",
     "eris-sharder": "github:ChristopherBThai/eris-sharder#0c96aa9",
     "erlpack": "github:abalabahaha/erlpack",
     "eventemitter3": "^4.0.4",
