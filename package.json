@@ -11,7 +11,7 @@
     "canvas": "^2.6.1",
     "dblapi.js": "^2.4.0",
     "dd-trace": "^0.31.4",
-    "eris-sharder": "github:ChristopherBThai/eris-sharder#0c96aa9",
+    "eris-sharder": "github:ChristopherBThai/eris-sharder#fc653f8",
     "erlpack": "github:abalabahaha/erlpack",
     "eventemitter3": "^4.0.4",
     "express": "^4.17.1",
