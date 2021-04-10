@@ -43,7 +43,7 @@ module.exports = new CommandInterface({
 		}
 
 		// Must have manage channels perm
-		if(!p.msg.member.permission.has('manageChannels')){
+		if(!p.msg.member.permissions.has('manageChannels')){
 			p.errorMsg(", you're not an admin! >:c",3000);
 			return;
 		}

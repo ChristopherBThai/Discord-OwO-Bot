@@ -116,9 +116,10 @@ async function useCommonTicket (ticket, p) {
 			// add months
 			sql = `SELECT user.uid, patreonMonths, patreonTimer, TIMESTAMPDIFF(MONTH,patreonTimer,NOW()) AS monthsPassed, patreonType FROM user LEFT JOIN patreons ON user.uid = patreons.uid WHERE id = ${p.msg.author.id}`;
 			result = await p.query(sql);
+			console.log(result);
 			let uid = result[0].uid;
 			let months = result[0]?.patreonMonths || 0;
-			let monthsPassed = result[0]?.monthsPassed || months;
+			let monthsPassed = p.global.isInt(result[0]?.monthsPassed) ? result[0].monthsPassed : months;
 			const type = 1
 
 			// reset timer or continue with current timer
