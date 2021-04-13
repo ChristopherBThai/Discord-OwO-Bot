@@ -270,7 +270,12 @@ module.exports = class WeaponInterface{
 			for(let i in attacker.weapon.passives)
 				subLogs.push(attacker.weapon.passives[i].attack(attacker,attackee,totalDamage,type,tags));
 
-		/* After bonus damage calculation */
+		/* Apply damage to attackee */
+		totalDamage = totalDamage.reduce((a,b)=>a+b,0);
+		if(totalDamage<0) totalDamage = 0;
+		attackee.stats.hp[0] -= totalDamage;
+
+		/* After damage has been applied */
 		/* Event for attackee */
 		for(let i in attackee.buffs)
 			subLogs.push(attackee.buffs[i].postAttacked(attackee,attacker,totalDamage,type,tags));
@@ -284,9 +289,6 @@ module.exports = class WeaponInterface{
 			for(let i in attacker.weapon.passives)
 				subLogs.push(attacker.weapon.passives[i].postAttack(attacker,attackee,totalDamage,type,tags));
 
-		totalDamage = totalDamage.reduce((a,b)=>a+b,0);
-		if(totalDamage<0) totalDamage = 0;
-		attackee.stats.hp[0] -= totalDamage;
 		return {amount:Math.round(totalDamage),logs:subLogs};
 	}
 
