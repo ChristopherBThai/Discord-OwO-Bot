@@ -242,8 +242,8 @@ function parseQuest(questInfo){
 		case "gamble":
 			var text = "Gamble "+count+" times!";
 			break;
-		case "drop":
-			var text = "Drop cowoncy "+count+" times!";
+		case "owo":
+			var text = "Say 'owo' "+count+" times!";
 			break;
 		case "emoteTo":
 			var text = "Use an action command on someone "+count+" times!";
