@@ -13,6 +13,8 @@ exports.alter = function (id,text,info) {
 			return dalu(text, info);
 		case '456598711590715403':
 			return lexx(text, info);
+		case '417350932662059009':
+			return sky(text, info);
 		default:
 			return text;
 	}
@@ -100,5 +102,34 @@ function lexx (text, info) {
 			}
 		}
 	}
+}
+
+function sky (text, info) {
+	const flower1 = "<:flower1:832180800543260683>";
+	const flower2 = "<:flower2:832180800330006560>";
+	const sunflower1 = "<:sunflower1:832180800363167775>";
+	const sunflower2 = "<:sunflower2:832180800161316927>";
+	const star = "<a:star:832180800442728539>";
+	const spirit = "<a:spirit:832180799938756629>";
+	const butterfly = "<a:butterfly:832180799989612565>";
+	const potion = "<a:potion:832180800404717608>";
+	if (info.command == "pray") {
+		if (info.user) {
+			text = `${butterfly} **|** ${flower1} Feeling awfully kind, **${info.author.username}** prays for **${info.user.username}**!\n`;
+			text += `${blank} **|** you have **${info.luck}** luck points! ${sunflower2}`;
+		} else {
+			text = `${star} **|** ${sunflower1} **${info.author.username}** prays to her lucky stars..\n`;
+			text += `${blank} **|** You have **${info.luck}** luck points! ${flower2}`;
+		}
+	} else {
+		if (info.user) {
+			text = `${potion} **|** ${flower1} **${info.author.username}** gleefully puts a curse on **${info.user.username}**!\n`;
+			text += `${blank} **|** You have **${info.luck}** luck points! ${sunflower2}`;
+		} else {
+			text = `${spirit} **|** ${sunflower1} Whoopsies! **${info.author.username}** has accidently cursed herself!\n`;
+			text += `${blank} **|** You have **${info.luck}** luck points! ${flower2}`;
+		}
+	}
+	return text;
 }
 
