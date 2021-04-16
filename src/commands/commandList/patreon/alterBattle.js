@@ -50,6 +50,10 @@ exports.alter = function(id,text,type){
 			return leshoop(text, type);
 		case '612158581113880576':
 			return blade(text, type);
+		case '643225088123994118':
+			return becca(text, type);
+		case '691867503730622526':
+			return wibi(text, type);
 		default:
 			return text;
 	}
@@ -598,4 +602,83 @@ function blade (text,opt) {
 	}
 	return text;
 }
+
+function becca (text,opt) {
+	text.author.name = 'Becca is here! kenapa, tidak suka? Maju lo sini Jingan!';
+	switch (text.color) {
+		// win
+		case 65280:
+			if (opt) {
+				text.footer.text = `Anjass! Selow, benerin dulu tim Lu bagusin dulu weapon Lu baru ngajak gelud ngOokey!! Canda bahh, Becca bagi-bagi ${opt.xp} Boba Mwahh! streak : ${opt.streak}`;
+			}
+			text.color = 16774400;
+			text.thumbnail = {
+				url: "https://media.discordapp.net/attachments/818819441281728543/822653290146824192/image0-3.gif"
+			}
+			break;
+
+		// lost
+		case 16711680:
+			if (opt) {
+				text.footer.text = `Owo jingan! ngebug! Tidak ada Boba lagi anying!`;
+			}
+			text.color = 16712965;
+			text.thumbnail = {
+				url: "https://media.discordapp.net/attachments/818819441281728543/822653289770254386/image3-1.gif"
+			}
+			break;
+
+		//tie
+		case 6381923:
+			if (opt) {
+				text.footer.text = `Waduh boleh juga Lu! Jangan cepat puas ini masih TIE bukan LOSE!! Canda wehhh, Becca bagi-bagi ${opt.xp} Boba Mwahh! streak : ${opt.streak}`;
+			}
+			text.color = 10878897;
+			text.thumbnail = {
+				url: "https://media.discordapp.net/attachments/818819441281728543/822666934570188820/image3.gif"
+			}
+			break;
+	}
+	return text;
+}
+
+function wibi (text,opt) {
+	text.author.name = 'Hela resurrected her army of Berserkers and Fenris by using a handful of the Eternal Flame!';
+	switch (text.color) {
+		// win
+		case 65280:
+			if (opt) {
+				text.footer.text = `Hela used her Necroswords to slaughter all of the Valkyries in ${opt.turns} turns! when a Valkyrie is killed she gains ${opt.xp} Powers of Darkness! Kneel... before your Queen! Streak ${opt.streak}`;
+			}
+			text.color = 16711900;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/822630852613242891/823895147359764540/20210323_191545.gif"
+			}
+			break;
+
+		// lost
+		case 16711680:
+			if (opt) {
+				text.footer.text = `Hela was then defenseless as she witnessed Surtur lift up his Twilight Sword high above his head and prepared to fulfill his destiny once and for all. Streak: ${opt.streak}`;
+			}
+			text.color = 16216430;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/822630852613242891/823895470950449172/main-qimg-aced64c8262f98155571b0f61432da56.gif"
+			}
+			break;
+
+		//tie
+		case 6381923:
+			if (opt) {
+				text.footer.text = `Now, Hela turned out to be too powerful, and as Odin’s true heir, she was tied to Asgard. Thor realized he was not going to be able to defeat her! Streak: ${opt.streak}`;
+			}
+			text.color = 14549247;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/822630852613242891/823895279350186014/20210323_192109.gif"
+			}
+			break;
+	}
+	return text;
+}
+
 

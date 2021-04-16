@@ -69,6 +69,10 @@ exports.alter = function(id,text,info){
 			return lexx(text, info);
 		case '490709773495435285':
 			return koala(text, info);
+		case '468873774960476177':
+			return gojo(text, info);
+		case '183696273382178816':
+			return vanor(text, info);
 		default:
 			return text;
 	}
@@ -763,6 +767,76 @@ function koala(text, info) {
 	if (info.lootboxText) {
 		embed.image = {
 			url: "https://cdn.discordapp.com/attachments/541197084146270208/817733999287205908/boxopen.gif"
+		}
+	}
+
+	return {embed};
+}
+
+function gojo (text, info) {
+	let url, color;
+
+	const flamePurple = '<a:flamePurple:832525958732447804>';
+	const flameBlue = '<a:flameBlue:832525958731923526>';
+	const flameRed = '<a:flameRed:832525958837043210>';
+	const flameBlack = '<a:flameBlack:832525958635454484>';
+	const sparkle1 = '<a:sparkle1:832525958749093889>';
+	const sparkle2 = '<a:sparkle2:832525958748831804>';
+
+	if(info.gemText){
+		text = `${flameBlue} **|** Gojo Satoru goes to hunt curses and uses Cursed Amplification Technique: Blue and Cursed Reversal Technique: Red\n`;
+		text += `${flameRed} **|** ${info.gemText} Gojo combines them and forms Hollow Purple\n`;
+		text += `${flamePurple} **|** Caught in Hollow Purple are: ${info.animalEmojis}`;
+		if (info.petText) {
+			text += `\n${sparkle1} **|** ${info.petText} gained **${info.animalXp} XP!**`;
+		}
+		url = "https://cdn.discordapp.com/attachments/793146733701234718/822707168410861568/ezgif-2-e3da357a121a.gif";
+		color = 11796735;
+	}else{
+		const a = getA(info.animal[0][0]);
+		text = `${flameBlack} **|** Itadori Yuji goes to hunt curses in Jujutsu Tech\n`;
+		text += `${flameRed} **|** Itadori Yuji finds a curse and uses Black Flash. He catches ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
+		if (info.petText) {
+			text += `\n${sparkle2} **|** ${info.petText} gained **${info.animalXp} XP!**`;
+		}
+		url = "https://cdn.discordapp.com/attachments/793146733701234718/822706902471147560/1616218993296.gif";
+		color = 10027008;
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: color,
+		thumbnail: {
+			url: url
+		}
+	}
+
+	return {embed};
+}
+
+function vanor (text, info) {
+	let url, color;
+
+	const emoji = '<a:harleyquinn:832531027900628992>';
+
+	if(info.gemText){
+		text =  `${emoji} **| Hey Puddin'!** Look what I got gotcha! ${info.gemText}\n`;
+		text += `${emoji} **|** I looked **everywhere!** ${info.animalEmojis}`;
+	}else{
+		text =  `${emoji} **| Hey Puddin'!** Look what I got gotcha!\n`;
+		text += `${emoji} **|** I looked **everywhere!** ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${emoji} **|** ${info.petText} gained **${info.animalXp} xp**`;
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: 16761035,
+		thumbnail: {
+			url: "https://cdn.discordapp.com/attachments/803270612906410014/823821538616803348/ezgif.com-crop.gif"
 		}
 	}
 
