@@ -51,7 +51,7 @@ module.exports = new CommandInterface({
 
 		let embed = {
 		"description": "Here's a little bit of information! If you need help with commands, type `owo help`.",
-			"color": 4886754,
+			"color": p.config.embed_color,
 			"timestamp": new Date(),
 			"author": {"name": "OwO Bot Information",
 				"url": "https://discordapp.com/api/oauth2/authorize?client_id=408785106942164992&permissions=444480&scope=bot",

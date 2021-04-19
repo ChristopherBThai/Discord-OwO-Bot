@@ -106,7 +106,7 @@ exports.desc = function(p, id){
   if (id==49) {
     const text = "**ID:** 49\nOpens a Fabled lootbox! All gems are fabled tier! Check how many you have in 'owo inv'!\nYou currently cannot get these lootboxes in the game.\nUse `owo inv` to check your inventory\nUse 'owo use {id}` to use the item!";
     embed = {
-    "color": 4886754,
+    "color": p.config.embed_color,
     "fields":[{
       "name":fbox+" Fabled Lootbox",
       "value":text
@@ -115,7 +115,7 @@ exports.desc = function(p, id){
   } else {
     const text = "**ID:** 50\nOpens a lootbox! Check how many you have in 'owo inv'!\nYou can get some more by hunting for animals. You can get a maximum of 3 lootboxes per day.\nUse `owo inv` to check your inventory\nUse 'owo use {id}` to use the item!";
     embed = {
-    "color": 4886754,
+    "color": p.config.embed_color,
     "fields":[{
       "name":box+" Lootbox",
       "value":text

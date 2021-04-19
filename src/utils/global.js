@@ -23,6 +23,7 @@ const filter2 = new Profanity(options);
 const goodwords = require('../../../tokens/goodwords.json');
 filter2.removeWords(goodwords);
 const namor = require("namor");
+const mysql = require('./../botHandlers/mysqlHandler.js');
 var animaljson = require('../../../tokens/owo-animals.json');
 var animalunicode = {};
 var commands = {};
@@ -306,4 +307,26 @@ exports.parseTime = function (diff) {
 		text = `**${seconds}s**`;
 	}
 	return { hours, minutes, seconds, text }
+}
+
+/* gets uid from discord id */
+exports.getUid = async function (id) {
+	id = BigInt(id);
+	let sql = `SELECT uid FROM user where id = ?;`;
+	let result = await mysql.query(sql, id);
+
+	if (result[0]?.uid) return result[0].uid;
+
+	sql = `INSERT INTO user (id, count) VALUES (?, 0);`
+	result = await mysql.query(sql, id);
+	return result.insertId;
+}
+
+exports.getEmojiURL = function (emoji) {
+	let id = emoji.match(/:[0-9]+>$/gi);
+	if (!id || !id[0]) return;
+	id = id[0].match(/[0-9]+/gi)[0];
+	const isGif = (/^<a:/gi).test(emoji);
+	const format = isGif ? 'gif' : 'png';
+	return `https://cdn.discordapp.com/emojis/${id}.${format}`;
 }

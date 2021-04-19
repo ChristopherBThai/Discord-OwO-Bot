@@ -34,7 +34,7 @@ module.exports = new CommandInterface({
 		let embed = {
 			"title":"OwO! Click me to invite me to your server!",
 			"url":link,
-			"color": 4886754,
+			"color": p.config.embed_color,
 			"thumbnail":{"url":"https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png"},
 		};
 		p.send({embed});

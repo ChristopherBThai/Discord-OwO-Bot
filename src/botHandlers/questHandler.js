@@ -10,7 +10,7 @@
  */
 
 const quests = require('../data/quests.json');
-const mysql = new (require('./mysqlHandler.js'))();
+const mysql = require('./mysqlHandler.js');
 const global = require('../utils/global.js');
 const findQuest = {"rare":["common","uncommon"],
 	"epic":["common","uncommon","rare"],

@@ -15,7 +15,7 @@ const battleFriendUtil = require('./util/battleFriendUtil.js');
 
 module.exports = new CommandInterface({
 
-	alias:["team","squad"],
+	alias:["team","squad", "tm"],
 
 	args:"{add|remove|rename}",
 

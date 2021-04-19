@@ -14,6 +14,7 @@ const shopUtil = require('./util/shopUtil.js');
 const weaponUtil = require('../battle/util/weaponUtil.js');
 const crateUtil = require('../battle/util/crateUtil.js');
 const wallpaperUtil = require('../social/util/wallpaperUtil.js');
+const itemUtil = require('./util/itemUtil.js');
 const alterInventory = require('../patreon/alterInventory.js');
 
 module.exports = new CommandInterface({
@@ -46,7 +47,8 @@ module.exports = new CommandInterface({
 			gemUtil.getItems(p),
 			weaponUtil.getItems(p),
 			crateUtil.getItems(p),
-			wallpaperUtil.getItems(p)
+			wallpaperUtil.getItems(p),
+			itemUtil.getItems(p),
 		]);
 		let text = addToString(promises);
 

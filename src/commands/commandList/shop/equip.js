@@ -8,6 +8,7 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const shopUtil = require('./util/shopUtil.js');
+const itemUtil = require('./util/itemUtil.js');
 const lootbox = require('../zoo/lootbox.js');
 const gemUtil = require('../zoo/gemUtil.js');
 const weapon = require('../battle/weapon.js');
@@ -69,7 +70,9 @@ module.exports = new CommandInterface({
 		// first item not a gem, fall back to original logic (ignore other ids provided)
 		let item = itemList[0];
 
-		if(item.name=="lootbox"){
+		if (item.name == "item") {
+			itemUtil.use(item.id, p);
+		} else if(item.name=="lootbox"){
 			p.args = [];
 			if(item.id == 49) p.args.push('f')
 			lootbox.execute(p);

@@ -18,7 +18,7 @@ const questJson = require('../../../data/quests.json');
 
 module.exports = new CommandInterface({
 
-	alias:["quest"],
+	alias:["quest","q"],
 
 	args:"{rr} {num}",
 
@@ -182,7 +182,7 @@ function constructEmbed(p,afterMid,quests){
 			"text": "Next quest in: "+afterMid.hours+" H "+afterMid.minutes+" M "+afterMid.seconds+" S"
 		},
 		"author": {
-			"name": p.msg.author.username+"'s Quest Log",
+			"name": `${p.msg.author.username}#${p.msg.author.discriminator}'s Quest Log`,
 			"icon_url":p.msg.author.avatarURL
 		},
 		"description":quests.text
@@ -294,8 +294,8 @@ function parseQuest(questInfo){
 		case "gamble":
 			var text = "Gamble "+count+" times!";
 			break;
-		case "drop":
-			var text = "Drop cowoncy "+count+" times!";
+		case "owo":
+			var text = "Say 'owo' "+count+" times!";
 			break;
 		case "emoteTo":
 			var text = "Use an action command on someone "+count+" times!";

@@ -89,8 +89,13 @@ module.exports = new CommandInterface({
 		}else{
 			if(bet=="all") bet = result[0].money;
 
-			if(maxBet&&bet>maxBet)
+			if (maxBet && bet > maxBet) {
 				bet = maxBet;
+			} else if (bet <= 0) {
+				p.errorMsg(", you don't have any cowoncy silly!",3000);
+				p.setCooldown(5);
+				return;
+			}
 
 			let rand = await random(0,1);
 			let win = false;
