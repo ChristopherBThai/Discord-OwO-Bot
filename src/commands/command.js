@@ -227,6 +227,7 @@ function initParam(msg,command,args,main){
 		"dbl":main.dbl,
 		"mysql":main.mysql,
 		"con":main.mysql.con,
+		"startTransaction": main.mysqlhandler.startTransaction,
 		"redis":main.redis,
 		"query":main.query,
 		"send":main.sender.send(msg),

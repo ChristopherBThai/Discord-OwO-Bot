@@ -31,7 +31,7 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 		/* Checks if the user has permission */
-		if(!p.msg.member.permission.has('manageChannels')){
+		if(!p.msg.member.permissions.has('manageChannels')){
 			p.errorMsg(", You are not an admin!",3000);
 			return;
 		}

@@ -95,7 +95,7 @@ module.exports = new CommandInterface({
 
 		let embed = {
 			"title": ((animal.uni)?animal.uni:animal.value)+" "+animal.name,
-			"color": 4886754,
+			"color": p.config.embed_color,
 			"thumbnail": {
 				"url": (emoji)?emoji:p.client.user.displayAvatarURL
 			},

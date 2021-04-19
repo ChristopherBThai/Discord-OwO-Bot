@@ -52,7 +52,7 @@ class OwO extends Base{
 		this.questHandler = new (require("./botHandlers/questHandler.js"))();
 
 		// Mysql Query Handler
-		this.mysqlhandler = new (require("./botHandlers/mysqlHandler.js"))(this.con);
+		this.mysqlhandler = require("./botHandlers/mysqlHandler.js")
 		this.query = this.mysqlhandler.query;
 
 		// Global helper methods

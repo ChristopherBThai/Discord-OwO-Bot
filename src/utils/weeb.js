@@ -27,7 +27,7 @@ exports.grab = function(p,ptype,ftype,text,notsfw,retry){
 			return;
 		}
 		let embed = {
-			"color": 4886754,
+			"color": p.config.embed_color,
 			"image": {
 				"url": array.url
 			},

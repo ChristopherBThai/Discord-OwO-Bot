@@ -62,7 +62,7 @@ async function requestRec(url){
 				if(benefits[j].users.includes(obj.id)){
 					res[benefits[j].title].push({
 						name:obj.attributes.full_name,
-						discordID:(obj.attributes.social_connections.discord?obj.attributes.social_connections.discord.user_id:null)
+						discordID:(obj.attributes.social_connections?.discord?obj.attributes.social_connections.discord.user_id:null)
 					});
 				}
 			}

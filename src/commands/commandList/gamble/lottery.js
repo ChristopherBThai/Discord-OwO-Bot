@@ -90,7 +90,7 @@ async function bet(con,msg,args,global,p){
 
 		let embed = {
 				"description": "Lottery ends once a day! The maximum lottery submission is 100K cowoncy!",
-				"color": 4886754,
+				"color": p.config.embed_color,
 				"timestamp": new Date(),
 				"footer": {
 						"icon_url": "https://cdn.discordapp.com/app-icons/408785106942164992/00d934dce5e41c9e956aca2fd3461212.png",

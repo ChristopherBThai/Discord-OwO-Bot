@@ -38,6 +38,22 @@ exports.alter = function(id,text,type){
 			return direwolf(text, type);
 		case '468873774960476177':
 			return jiraya(text, type);
+		case '554617574646874113':
+			return notJames(text, type);
+		case '362964690248269824':
+			return theGoldenPatrik1(text, type);
+		case '456598711590715403':
+			return lexx(text, type);
+		case '617681365567275029':
+			return mercureid(text, type);
+		case '477168699112161281':
+			return leshoop(text, type);
+		case '612158581113880576':
+			return blade(text, type);
+		case '643225088123994118':
+			return becca(text, type);
+		case '691867503730622526':
+			return wibi(text, type);
 		default:
 			return text;
 	}
@@ -266,7 +282,7 @@ function kirito (text,opt) {
 		case 65280:
 			text.color = 15450599;
 			if (opt) {
-				if (!(''+opt.xp).includes('+')) {
+				if ((''+opt.xp).includes('+')) {
 					text.footer.text = `Zero Two managed to clear the battlefield out of klaxosaurs in ${opt.turns} turns! Gaining ${opt.xp} klaxosaur xp to empower her franxx with! You also reward her with a day to the beach. Streak: ${opt.streak}`;
 					text.thumbnail = {
 						url: "https://cdn.discordapp.com/attachments/731399149307691008/786993695936872489/beachcutie.gif"
@@ -341,7 +357,7 @@ function jiraya (text,opt) {
 		case 16711680:
 			text.color = 10027008; 
 			if (opt) {
-				text.footer.text = `Oh no! Sukuna takes over Yuji and lays his Domain over Gojo's Domain. Gojo's Domain has shattered. Your streak of ${opt.streak} is broken! You lost in ${opt.turns}!`;
+				text.footer.text = `Oh no! Sukuna takes over Yuji and lays his Domain over Gojo's Domain. Gojo's Domain has shattered. Your streak of ${opt.streak} is broken! You lost in ${opt.turns} turns!`;
 			}
 			text.thumbnail = {
 				url: "https://cdn.discordapp.com/attachments/771398927912009738/811783217031413801/image2.gif"
@@ -352,7 +368,7 @@ function jiraya (text,opt) {
 		case 65280:
 			text.color = 2364785;
 			if (opt) {
-				text.footer.text = `Gojo used his domain expansion, Infinite Void and killed all the curses! You won in ${opt.turns} and your team gained ${opt.xp}! You've defeated a total of: ${opt.streak} curses!`;
+				text.footer.text = `Gojo used his domain expansion, Infinite Void and killed all the curses! You won in ${opt.turns} turns and your team gained ${opt.xp} xp! You've defeated a total of: ${opt.streak} curses!`;
 			}
 			text.thumbnail = {
 				url: "https://cdn.discordapp.com/attachments/771398927912009738/811783212548227072/image0.gif"
@@ -363,7 +379,7 @@ function jiraya (text,opt) {
 		case 6381923:
 			text.color = 16753920;
 			if (opt) {
-				text.footer.text = `Sukuna takes over Yuji, but Yuji fights him and doesn't let him win. Gojo and Yuji gain ${opt.xp}! Streak: ${opt.streak}!`;
+				text.footer.text = `Sukuna takes over Yuji, but Yuji fights him and doesn't let him win. Gojo and Yuji gain ${opt.xp} xp! Streak: ${opt.streak}!`;
 			}
 			text.thumbnail = {
 				url: "https://cdn.discordapp.com/attachments/771398927912009738/811783213965770822/image1.gif"
@@ -372,3 +388,297 @@ function jiraya (text,opt) {
 	}
 	return text;
 }
+
+function notJames(text,opt) {
+	switch (text.color) {
+		// lost
+		case 16711680:
+			if (opt) {
+				text.author.name = 'chem has arrived to protect the Fallen Stars from outerspace invaders!';
+				text.footer.text = `Wait...what?! The battle ended after ${opt.turns} turns. You sadly collected 50 star fragments and lost your streak of ${opt.streak} victories...`;
+			}
+			text.color = 8900346;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/769619375296610304/809631784752644106/cry.png"
+			}
+			break;
+
+		// win
+		case 65280:
+			if (opt) {
+				const fragment = (''+opt.xp).includes('+') ? 'bonus star fragments' : 'star fragments'
+				text.author.name = 'chem has arrived to protect the Fallen Stars from outerspace invaders!';
+				if (opt.streak % 10000 == 0) {
+					text.footer.text = `Glorius victory! You defeated the bad guys and cleared the Starlight Pathway. You happily returned home with ${opt.xp} bonus star shards! Win streak: ${opt.streak} `;
+				} else if (opt.streak % 1000 == 0) {
+					text.footer.text = `Muahahaha! The evil force has been defeated! You collected ${opt.xp} bonus star shards and unlocked a new Star Constellation! Streak: ${opt.streak}!`;
+				} else if (opt.streak % 100 == 0) {
+					text.footer.text = `UwU.. a Victory! You sent the enemy back to Space and brought home ${opt.xp} bonus star fragments! Streak: ${opt.streak}`;
+				} else if (opt.streak % 10 == 0) {
+					text.footer.text = `Victory! You collected ${opt.xp} bonus star fragments and kicked the enemy out of the planet! Streak: ${opt.streak}`;
+				} else {
+					text.footer.text = `Victory! You collected ${opt.xp} ${fragment} and punched the enemy out of the planet! Streak: ${opt.streak}`;
+				}
+			}
+			text.color = 1190467;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/769619375296610304/809631713624981564/official_cheer.gif"
+			}
+			break;
+
+		//tie
+		case 6381923:
+			if (opt) {
+				text.author.name = 'chem has arrived to protect the Fallen Stars from outerspace invaders!';
+				text.footer.text = `Ahhh!! Close call, but you still managed to collect ${opt.xp} star fragments! Need some rest now.. Streak: ${opt.streak}`;
+			}
+			text.color = 4539717;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/769619375296610304/816891271004028968/0b004b50f2700762eb850e27e8a9b504.png"
+			}
+			break;
+	}
+	return text;
+}
+
+function theGoldenPatrik1(text,opt) {
+	text.author.name = 'The Balrog has entered Khazad-dûm!';
+	switch (text.color) {
+		// lost
+		case 16711680:
+			if (opt) {
+				text.footer.text = `The Wizard was too strong today and you shall have to return to the Shadow for a time. You lost your streak of ${opt.streak} wins in ${opt.turns} turns`;
+			}
+			text.color = 16777215;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/809113796756111370/809114509872463962/Loss.gif"
+			}
+			break;
+
+		// win
+		case 65280:
+			if (opt) {
+				if ((''+opt.xp).includes('+')) {
+					text.footer.text = `What a spectacular triumph! You conquered in ${opt.turns} turns and gained ${opt.xp} xp. Streak: ${opt.streak}.`;
+				} else {
+					text.footer.text = `Yet another victory! You conquered in ${opt.turns} turns and gained ${opt.xp} xp. Streak: ${opt.streak}.`;
+				}
+			}
+			text.color = 16747520;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/809113796756111370/809114336831209482/Win.gif"
+			}
+			break;
+
+		//tie
+		case 6381923:
+			if (opt) {
+				text.footer.text = `Wow, that Wizard is stronger than he looks! You stalemated but still gained ${opt.xp} xp. Streak: ${opt.streak}.`;
+			}
+			text.color = 8421504;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/809113796756111370/809114422630940733/Tie.gif"
+			}
+			break;
+	}
+	return text;
+}
+
+function lexx (text,opt) {
+	text.author.name = 'lexx takes one look and says: "Lets do this"';
+	text.thumbnail = {
+		url: "https://cdn.discordapp.com/attachments/696878982758531152/811497913573572608/Bender.png"
+	}
+	return text;
+}
+
+function mercureid (text,opt) {
+	text.author.name = 'Mario and Luigi embark on a journey to rescue Princess Peach!';
+	switch (text.color) {
+		// lost
+		case 16711680:
+			if (opt) {
+				text.footer.text = `Mamma mia... You lost in ${opt.turns} turns and failed to rescue Princess Peach from the gnarly, fire-breathing Bowser :( . You receive ${opt.xp} mushrooms. Goombas destroyed: ${opt.streak}`;
+			}
+			text.color = 9722954;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/815743547449016400/816246705417617448/053c39f4c14d99d4bc143c05dc3ca219.gif"
+			}
+			break;
+
+		// win
+		case 65280:
+			if (opt) {
+				text.footer.text = `Yahoo! In ${opt.turns} turns, you managed to jump through gaps and obstacles and save the Mushroom Kingdom! You receive ${opt.xp} mushrooms from Toad. Goombas destroyed: ${opt.streak}`;
+			}
+			text.color = 14381560;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/815743547449016400/816246705770725386/source.gif"
+			}
+			break;
+
+		//tie
+		case 6381923:
+			if (opt) {
+				text.footer.text = `Oh no! Bowser's minions were too strong :( . Luckily, you still have a spare 1-up mushroom to use. You receive ${opt.xp} mushrooms. Goombas destroyed: ${opt.streak}`;
+			}
+			text.color = 65475;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/815743547449016400/816246706051219456/giphy_1.gif"
+			}
+			break;
+	}
+	return text;
+}
+
+function leshoop (text,opt) {
+	text.author.name = 'Shoopie\'s cuties go into battle!';
+	switch (text.color) {
+		// lost
+		case 16711680:
+			if (opt) {
+				text.footer.text = `An astounding battle, but alas, your team was defeated in ${opt.turns} turns to gain a mere ${opt.xp} xp. You lost your streak of ${opt.streak} wins. ~ Until we meet again...`;
+			}
+			text.color = 16711680;
+			break;
+
+		// win
+		case 65280:
+			if (opt) {
+				text.footer.text = `Gel pisi pisi ~ Together we fight, and in ${opt.turns} turns achieve victory! Your team gained ${opt.xp} xp! Streak: ${opt.streak}`;
+			}
+			text.color = 10904029;
+			break;
+
+		//tie
+		case 6381923:
+			if (opt) {
+				text.footer.text = `There is no instance of a nation benefitting from prolonged warfare ~ After 20 turns, we agree upon peace. Your team gained ${opt.xp} xp! Streak: ${opt.streak}`;
+			}
+			text.color = 12895184;
+			break;
+	}
+	text.thumbnail = {
+		url: "https://cdn.discordapp.com/attachments/722052818428624928/822130529016610896/20210318_113218.gif"
+	}
+	return text;
+}
+
+function blade (text,opt) {
+	text.author.name = 'BLaDe goes into brutal fight against deadly sins!';
+	switch (text.color) {
+		// win
+		case 65280:
+			if (opt) {
+				text.footer.text = `BLaDe uses his Telepathic abilities and gains control over enemy's mind.! You won in ${opt.turns} hits and gained ${opt.xp} xp! You've defeated a total of ${opt.streak} sins!`;
+			}
+			text.color = 65511;
+			text.thumbnail = {
+				url: "https://i.imgur.com/QCUu8Jl.gif"
+			}
+			break;
+
+		// lost
+		case 16711680:
+			if (opt) {
+				text.footer.text = `Oops! BLaDe lost his Telepathic abilities while facing strong sins and got killed. He'll now be reborn! Your streak of killing ${opt.streak} sins is smashed! You lost after ${opt.turns} hits!`;
+			}
+			text.color = 16734464;
+			text.thumbnail = {
+				url: "https://i.imgur.com/7rbtiBX.gif"
+			}
+			break;
+
+		//tie
+		case 6381923:
+			if (opt) {
+				text.footer.text = `BLaDe uses Telepathy, but the sins were strong enough to withstand it for ${opt.turns}! You gain ${opt.xp} xp and killed a total of ${opt.streak} sins!`;
+			}
+			text.color = 7708416;
+			text.thumbnail = {
+				url: "https://i.imgur.com/lG1bJJu.gif"
+			}
+			break;
+	}
+	return text;
+}
+
+function becca (text,opt) {
+	text.author.name = 'Becca is here! kenapa, tidak suka? Maju lo sini Jingan!';
+	switch (text.color) {
+		// win
+		case 65280:
+			if (opt) {
+				text.footer.text = `Anjass! Selow, benerin dulu tim Lu bagusin dulu weapon Lu baru ngajak gelud ngOokey!! Canda bahh, Becca bagi-bagi ${opt.xp} Boba Mwahh! streak : ${opt.streak}`;
+			}
+			text.color = 16774400;
+			text.thumbnail = {
+				url: "https://media.discordapp.net/attachments/818819441281728543/822653290146824192/image0-3.gif"
+			}
+			break;
+
+		// lost
+		case 16711680:
+			if (opt) {
+				text.footer.text = `Owo jingan! ngebug! Tidak ada Boba lagi anying!`;
+			}
+			text.color = 16712965;
+			text.thumbnail = {
+				url: "https://media.discordapp.net/attachments/818819441281728543/822653289770254386/image3-1.gif"
+			}
+			break;
+
+		//tie
+		case 6381923:
+			if (opt) {
+				text.footer.text = `Waduh boleh juga Lu! Jangan cepat puas ini masih TIE bukan LOSE!! Canda wehhh, Becca bagi-bagi ${opt.xp} Boba Mwahh! streak : ${opt.streak}`;
+			}
+			text.color = 10878897;
+			text.thumbnail = {
+				url: "https://media.discordapp.net/attachments/818819441281728543/822666934570188820/image3.gif"
+			}
+			break;
+	}
+	return text;
+}
+
+function wibi (text,opt) {
+	text.author.name = 'Hela resurrected her army of Berserkers and Fenris by using a handful of the Eternal Flame!';
+	switch (text.color) {
+		// win
+		case 65280:
+			if (opt) {
+				text.footer.text = `Hela used her Necroswords to slaughter all of the Valkyries in ${opt.turns} turns! when a Valkyrie is killed she gains ${opt.xp} Powers of Darkness! Kneel... before your Queen! Streak ${opt.streak}`;
+			}
+			text.color = 16711900;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/822630852613242891/823895147359764540/20210323_191545.gif"
+			}
+			break;
+
+		// lost
+		case 16711680:
+			if (opt) {
+				text.footer.text = `Hela was then defenseless as she witnessed Surtur lift up his Twilight Sword high above his head and prepared to fulfill his destiny once and for all. Streak: ${opt.streak}`;
+			}
+			text.color = 16216430;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/822630852613242891/823895470950449172/main-qimg-aced64c8262f98155571b0f61432da56.gif"
+			}
+			break;
+
+		//tie
+		case 6381923:
+			if (opt) {
+				text.footer.text = `Now, Hela turned out to be too powerful, and as Odin’s true heir, she was tied to Asgard. Thor realized he was not going to be able to defeat her! Streak: ${opt.streak}`;
+			}
+			text.color = 14549247;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/822630852613242891/823895279350186014/20210323_192109.gif"
+			}
+			break;
+	}
+	return text;
+}
+
+
