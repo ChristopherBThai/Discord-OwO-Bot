@@ -8,7 +8,7 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const emoji = "🐺";
-const owner = "184587051943985152";
+const owner = "384202884553768961";
 const data = "wolf";
 const plural = "wolves";
 
