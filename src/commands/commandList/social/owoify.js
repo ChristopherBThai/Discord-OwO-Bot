@@ -8,6 +8,7 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const owo = require('@zuzak/owo');
+const alterOwo = require('../patreon/alterOwo.js');
 
 module.exports = new CommandInterface({
 
@@ -47,9 +48,11 @@ module.exports = new CommandInterface({
 		}
 
 		// OwOify
-		text = p.replaceMentions(owo(text));
+		const owofied = p.replaceMentions(owo(text));
+		text = owofied
 		// If its from a previous msg
 		if(author) text = "**"+author.username+":** "+text;
+		text = alterOwo.alter(p.msg.author.id, text, { user: p.msg.author, author: author || p.msg.author, text: owofied });
 		await p.send(text);
 
 	}

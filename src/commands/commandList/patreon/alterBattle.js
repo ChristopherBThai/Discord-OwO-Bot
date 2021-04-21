@@ -54,6 +54,8 @@ exports.alter = function(id,text,type){
 			return becca(text, type);
 		case '691867503730622526':
 			return wibi(text, type);
+		case '663719460108107786':
+			return jekyll(text, type);
 		default:
 			return text;
 	}
@@ -675,6 +677,46 @@ function wibi (text,opt) {
 			text.color = 14549247;
 			text.thumbnail = {
 				url: "https://cdn.discordapp.com/attachments/822630852613242891/823895279350186014/20210323_192109.gif"
+			}
+			break;
+	}
+	return text;
+}
+
+
+function jekyll (text,opt) {
+	text.author.name = 'You and Levi Ackerman goes into the Ragako village to fight the titans!';
+	switch (text.color) {
+		// win
+		case 65280:
+			if (opt) {
+				text.footer.text = `Uwaa!! You're skillfully kill the titan to save your team from being eaten by it in just ${opt.turns} turns. You receive ${opt.xp} energies from the battle. Streak : ${opt.streak}`;
+			}
+			text.color = 9002290;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/779341346812592131/825282484014940170/7UZ2.gif"
+			}
+			break;
+
+		// lost
+		case 16711680:
+			if (opt) {
+				text.footer.text = `Sigh... You face such a powerful titan. You failed to save your team from being eaten by a titan in ${opt.turns} turns only. You receive ${opt.xp} energies from the battle. Streak : ${opt.streak}`;
+			}
+			text.color = 16777211;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/779341346812592131/829027535076458557/48378.gif"
+			}
+			break;
+
+		//tie
+		case 6381923:
+			if (opt) {
+				text.footer.text = `Wew! Your team has survived from a long battle.  Let's retreat until we become stronger to defeat the titans. You receive ${opt.xp} energies from the battle. Streak : ${opt.streak}`;
+			}
+			text.color = 1907739;
+			text.thumbnail = {
+				url: "https://cdn.discordapp.com/attachments/779341346812592131/829027577301041173/original.gif"
 			}
 			break;
 	}
