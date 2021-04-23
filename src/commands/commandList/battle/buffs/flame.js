@@ -40,6 +40,7 @@ module.exports = class Flame extends BuffInterface{
 	postTurn(animal,ally,enemy,action){
 		if(!this.from) return;
 		if(animal.stats.hp[0]<=0) return;
+		if (this.markedForDeath) return;
 
 		let logs = new Logs();
 
