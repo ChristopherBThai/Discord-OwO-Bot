@@ -32,10 +32,13 @@ module.exports = new CommandInterface({
 	bot:true,
 
 	execute: async function(p){
-		if(p.command=="drop")
-			drop(p);
-		else if(p.command=="pickup")
-			pickup(p);
+		if(p.command=="drop") {
+			await p.errorMsg(", This command is now deprecated.", 3000);
+			// drop(p);
+		} else if(p.command=="pickup") {
+			await pickup2(p);
+			// pickup(p);
+		}
 	}
 
 })
@@ -130,4 +133,45 @@ async function handleWarning(p) {
 			await msg.edit({content:"This message is now inactive",embed});
 		}
 	});
+}
+async function pickup2 (p){
+	let amount;
+	if(p.global.isInt(p.args[0])) amount = parseInt(p.args[0]);
+	if(!amount){
+		p.errorMsg(", Please specify the pickup amount!",3000);
+		return;
+	}
+	if(amount<=0){
+		p.errorMsg(", Invalid arguments!",3000);
+		return;
+	}
+
+	const con = await p.startTransaction();
+	let date;
+	try {
+		let sql = `UPDATE cowoncydrop SET amount = amount - ${amount} WHERE amount >= ${amount} AND channel = ${p.msg.channel.id};`;
+		let result = await con.query(sql);
+		if (!result.changedRows) {
+			throw { errorMsg: ", there isn't enough cowoncy on the floor!" };
+		}
+
+		sql = `UPDATE cowoncy SET money = money + ${amount} WHERE id = ${p.msg.author.id};`;
+		result = await con.query(sql);
+		if (!result.changedRows) {
+			throw { errorMsg: ", failed to give you the cowoncy, please try again later." };
+		}
+
+		await con.commit();
+	} catch (err) {
+		await con.rollback();
+		if (err.errorMsg) {
+			await p.errorMsg(err.errorMsg, 3000);
+		} else {
+			console.error(err);
+			await p.errorMsg(", there was an picking up cowoncy! Please try again later.", 3000);
+		}
+		return;
+	}
+
+	await p.replyMsg(p.config.emoji.cowoncy, `, you picked up **${amount} cowoncy**!`);
 }

@@ -7,10 +7,11 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
+const config = require('./../../../data/config.json')
 const embed = {
 	content: "This is an automated message. All responses should go to <@184587051943985152>.",
 	embed: {
-		color: 4886754,
+		color: config.embed_color,
 		timestamp: new Date(),
 		author: {
 			name: "Thank you for the Patreon donation!",

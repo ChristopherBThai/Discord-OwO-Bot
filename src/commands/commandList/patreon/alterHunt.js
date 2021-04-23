@@ -57,9 +57,32 @@ exports.alter = function(id,text,info){
 			return ashley(text,info);
 		case '216710431572492289':
 			return arichy(text, info);
+		case '103409793972043776':
+			return potsun(text, info);
+		case '417350932662059009':
+			return sky(text, info);
+		case '707939636835516457':
+			return direwolf(text, info);
+		case '554617574646874113':
+			return notJames(text, info);
+		case '456598711590715403':
+			return lexx(text, info);
+		case '490709773495435285':
+			return koala(text, info);
+		case '468873774960476177':
+			return gojo(text, info);
+		case '183696273382178816':
+			return vanor(text, info);
 		default:
 			return text;
 	}
+}
+
+function getA(text) {
+	text = text.replace(/\*/gi,'');
+	return ['a', 'e', 'i', 'o', 'u'].includes(text[0]) 
+		? 'an'
+		: 'a'
 }
 
 function geist(text){
@@ -233,7 +256,8 @@ function michelle(text, info){
 	if(info.gemText){
 		text = `${meowth} **| Meowth** is empowered by ${info.gemText}!\n${blank} **|** It returned with: ${info.animalEmojis}\n${blank} **|** and evolved into a **Persian** ${persian}`;
 	}else{
-		text = `${meowth} **| Meowth** went out and caught an ${info.animal[0][0]} ${info.animalEmojis}\n${blank} **|** and evolved into a **Persian** ${persian}`;
+		const a = getA(info.animal[0][0]);
+		text = `${meowth} **| Meowth** went out and caught ${a} ${info.animal[0][0]} ${info.animalEmojis}\n${blank} **|** and evolved into a **Persian** ${persian}`;
 	}
 	if (info.petText) {
 		text += `\n${blank} **|** ${info.petText} gained **${info.animalXp}xp**!`;
@@ -532,6 +556,287 @@ function arichy (text,info) {
 		color: 4886754,
 		thumbnail: {
 			url: "https://i.imgur.com/vvpFulp.gif"
+		}
+	}
+
+	return {embed};
+}
+
+function potsun (text, info) {
+	const vollyball = '<a:vollyball:811866936857722890>';
+
+	if(info.gemText){
+		text = `${vollyball} **| ${info.author.username}**, drop it like it's **hot hot** ${info.gemText}\n`;
+		text += `${vollyball} **|** that's a **lot lot!**: ${info.animalEmojis}`;
+	}else{
+		text = `${vollyball} **| ${info.author.username}**, drop it like it's **hot hot**\n`;
+		text += `${vollyball} **|** that's a **lot lot!**: ${info.animal[0][0]} ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${vollyball} **|** ${info.petText} **got got ${info.animalXp}xp**`;
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: 1,
+		thumbnail: {
+			url: "https://cdn.discordapp.com/attachments/773753455004614708/799473320138506250/SmartSelect_20210114-190030_Discord.gif"
+		}
+	}
+
+	return {embed};
+}
+
+function sky(text, info) {
+	const moon = '<a:moon:812206696930869248>';
+	const butterfly = '<:butterfly:812206696587329557>';
+	const sparkle = '<a:sparkle:812206697182920734>';
+	const rose = '<a:rose:812206697166012426>';
+	let thumbnail;
+
+	if(info.gemText){
+		text = `${moon} **|** Deep in the enchanted forest, the activation of:\n`;
+		text += `${blank} **|** ${info.gemText} allowed **${info.author.username}** to cast a powerful spell!\n`;
+		text += `${rose} **|** capturing: ${info.animalEmojis}`;
+		thumbnail = 'https://cdn.discordapp.com/attachments/771398927912009738/806678445680885770/image0.gif';
+	}else{
+		const a = getA(info.animal[0][0]);
+		text = `${moon} **|** Searching the vast lands, wielding a guild artifact,\n`;
+		text += `${butterfly} **| ${info.author.username}** and her party caught ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
+		thumbnail = 'https://cdn.discordapp.com/attachments/733364738372665434/809928381743235112/VmSHDpYneoQ2HHn6ri03-vvR0srhK8OUUbSsn0Yp60iqPQXOB_xTuPrggC4Yo1jDPiHkNWGtTcNgB_TOkxeOUto5sHm4gf6Mptt-.png';
+	}
+	if (info.petText) {
+		text += `\n${sparkle} **|** ${info.petText} gained **${info.animalXp}xp**`;
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: 15525304,
+		thumbnail: {
+			url: thumbnail
+		}
+	}
+
+	return {embed};
+}
+
+function direwolf(text, info) {
+	const bluefire1 = '<a:bluefire1:812938075167916032>';
+	const bluefire2 = '<a:bluefire2:812938075209859102>';
+	const yellowfire = '<a:yellowfire:812938075281948693>';
+	const redfire = '<a:redfire:812938075361378315>';
+	const rainbowfire = '<a:rainbowfire:812938075696136232>';
+	const sparkle = '<a:sparkle:812938075255603210>';
+	let thumbnail, color;
+
+	if(info.gemText){
+		text = `${redfire} **|** Natsu consumes the power of the gems!\n`;
+		text += `${yellowfire} **|** ${info.gemText} Natsu slowly builds up and releases a dragon breath attack!\n`;
+		text += `${bluefire1} **|** Caught in Natsu's breath attack are: ${info.animalEmojis}`;
+		thumbnail = 'https://cdn.discordapp.com/attachments/771398927912009738/807425550947582023/image0.gif';
+		color = 16518144;
+		if (info.petText) {
+			text += `\n${rainbowfire} **|** ${info.petText} gained **${info.animalXp}xp**`;
+		}
+	}else{
+		const a = getA(info.animal[0][0]);
+		text = `${bluefire1} **|** The Twin Dragons enter their Dragon Force state and begin to focus their power on a single point!\n`;
+		text += `${bluefire2} **|** They unlease a Unison Raid! Caught in it is ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
+		thumbnail = 'https://cdn.discordapp.com/attachments/771398927912009738/807425397830451220/image0.gif';
+		color = 1303277;
+		if (info.petText) {
+			text += `\n${sparkle} **|** ${info.petText} gained **${info.animalXp}xp**`;
+		}
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color,
+		thumbnail: {
+			url: thumbnail
+		}
+	}
+
+	return {embed};
+}
+
+function notJames(text, info) {
+	const moon = '<a:moon:819081050520813568>';
+	const peach = '<:peach:819081050369949736>';
+
+	if(info.gemText){
+		text = `${moon} **| ${info.author.username}** broke into a peach farm, charmed by ${info.gemText}\n`;
+		text += `${peach} **|** and ran away with ${info.animalEmojis}`;
+		if (info.petText) {
+			text += `\n${peach} **|** ${info.petText} gained **${info.animalXp} peaches**!`;
+		}
+	}else{
+		const a = getA(info.animal[0][0]);
+		text = `${moon} **| ${info.author.username}** broke into a peach farm with bare hands\n`;
+		text += `${peach} **|** and ran away with ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
+		if (info.petText) {
+			text += `\n${peach} **|** ${info.petText} gained **${info.animalXp} peaches**`;
+		}
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: 1,
+		thumbnail: {
+			url: "https://cdn.discordapp.com/attachments/769619375296610304/817702733254885376/image0.gif" 
+		}
+	}
+
+	return {embed};
+}
+
+function lexx(text, info) {
+	const lexx = '<a:pepegold:819452921144934400>';
+	const clover = '☘️';
+
+	if(info.gemText){
+		text = `${lexx} **| ${info.author.username}** with all his hard work, was able to grind\n`;
+		text += `${blank} **|** and find ${info.gemText}\n`;
+		text += `${clover} **|** and caught: ${info.animalEmojis}`;
+		if (info.petText) {
+			text += `\n${blank} **|** ${info.petText} gained **${info.animalXp} xp**!`;
+		}
+	}else{
+		const a = getA(info.animal[0][0]);
+		text = `${lexx} **| ${info.author.username}** with all his hard work, was able to grind\n`;
+		text += `${clover} **|** and find ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
+		if (info.petText) {
+			text += `\n${blank} **|** ${info.petText} gained **${info.animalXp} xp**`;
+		}
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: 8240363,
+		thumbnail: {
+			url: "https://cdn.discordapp.com/attachments/696878982758531152/811499801782386757/Zoidberg.png" 
+		}
+	}
+
+	return {embed};
+}
+
+function koala(text, info) {
+	const emoji = '🐨';
+	const sapling = '🌱';
+
+	if(info.gemText){
+		const gemText = info.gemText
+		text = `${emoji} **| ${info.author.username}** goes into hunt!\n`;
+		text += `${blank} **|** ${info.gemText.replace(/\/\d+|`+/gi,'')}`;
+		const animals = info.animalEmojis.split(' ');
+		for (let i in animals) {
+			if (i % Math.ceil(animals.length/2) == 0) {
+				text += `\n${blank} **|**`
+			}
+			text += ' ' + animals[i];
+		}
+		if (info.petText) {
+			text += `\n${sapling} **|** **${info.animalXp}xp**!`;
+		}
+	}else{
+		text = `${emoji} **| ${info.author.username}** goes into hunt!\n`;
+		text += `${blank} **|** ${info.animal[0][0].replace(/\*{2}\w+\*{2}\s/gi,'')}\n`;
+		text += `${blank} **|** ${info.animalEmojis}`;
+		if (info.petText) {
+			text += `\n${sapling} **|** **${info.animalXp}xp**!`;
+		}
+	}
+	if (info.lootboxText) {
+		text += `\n<:box:427352600476647425> **| Lootbox**!!! [**${info.lootboxText.match(/\[\d+\//gi)[0].match(/\d+/gi)[0]}**]`;
+	}
+
+	const embed = {
+		description: text,
+		color: 65280,
+		thumbnail: {
+			url: "https://cdn.discordapp.com/attachments/541197084146270208/817734024936030208/Koalabatbuom_to.gif" 
+		}
+	}
+
+	if (info.lootboxText) {
+		embed.image = {
+			url: "https://cdn.discordapp.com/attachments/541197084146270208/817733999287205908/boxopen.gif"
+		}
+	}
+
+	return {embed};
+}
+
+function gojo (text, info) {
+	let url, color;
+
+	const flamePurple = '<a:flamePurple:832525958732447804>';
+	const flameBlue = '<a:flameBlue:832525958731923526>';
+	const flameRed = '<a:flameRed:832525958837043210>';
+	const flameBlack = '<a:flameBlack:832525958635454484>';
+	const sparkle1 = '<a:sparkle1:832525958749093889>';
+	const sparkle2 = '<a:sparkle2:832525958748831804>';
+
+	if(info.gemText){
+		text = `${flameBlue} **|** Gojo Satoru goes to hunt curses and uses Cursed Amplification Technique: Blue and Cursed Reversal Technique: Red\n`;
+		text += `${flameRed} **|** ${info.gemText} Gojo combines them and forms Hollow Purple\n`;
+		text += `${flamePurple} **|** Caught in Hollow Purple are: ${info.animalEmojis}`;
+		if (info.petText) {
+			text += `\n${sparkle1} **|** ${info.petText} gained **${info.animalXp} XP!**`;
+		}
+		url = "https://cdn.discordapp.com/attachments/793146733701234718/822707168410861568/ezgif-2-e3da357a121a.gif";
+		color = 11796735;
+	}else{
+		const a = getA(info.animal[0][0]);
+		text = `${flameBlack} **|** Itadori Yuji goes to hunt curses in Jujutsu Tech\n`;
+		text += `${flameRed} **|** Itadori Yuji finds a curse and uses Black Flash. He catches ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
+		if (info.petText) {
+			text += `\n${sparkle2} **|** ${info.petText} gained **${info.animalXp} XP!**`;
+		}
+		url = "https://cdn.discordapp.com/attachments/793146733701234718/822706902471147560/1616218993296.gif";
+		color = 10027008;
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: color,
+		thumbnail: {
+			url: url
+		}
+	}
+
+	return {embed};
+}
+
+function vanor (text, info) {
+	let url, color;
+
+	const emoji = '<a:harleyquinn:832531027900628992>';
+
+	if(info.gemText){
+		text =  `${emoji} **| Hey Puddin'!** Look what I got gotcha! ${info.gemText}\n`;
+		text += `${emoji} **|** I looked **everywhere!** ${info.animalEmojis}`;
+	}else{
+		text =  `${emoji} **| Hey Puddin'!** Look what I got gotcha!\n`;
+		text += `${emoji} **|** I looked **everywhere!** ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${emoji} **|** ${info.petText} gained **${info.animalXp} xp**`;
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: 16761035,
+		thumbnail: {
+			url: "https://cdn.discordapp.com/attachments/803270612906410014/823821538616803348/ezgif.com-crop.gif"
 		}
 	}
 

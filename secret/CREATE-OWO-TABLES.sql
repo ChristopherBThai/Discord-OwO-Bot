@@ -1,13 +1,13 @@
--- MySQL dump 10.15  Distrib 10.0.38-MariaDB, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.33, for Linux (x86_64)
 --
 -- Host: localhost    Database: owo
 -- ------------------------------------------------------
--- Server version	10.0.38-MariaDB-0ubuntu0.16.04.1
+-- Server version	5.7.33-0ubuntu0.18.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!40101 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -41,7 +41,7 @@ CREATE TABLE `animal` (
   KEY `name` (`name`),
   CONSTRAINT `FK_animal_cowoncy` FOREIGN KEY (`id`) REFERENCES `cowoncy` (`id`),
   CONSTRAINT `animal_ibfk_1` FOREIGN KEY (`name`) REFERENCES `animals` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=227780120 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=242009442 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,6 +65,8 @@ CREATE TABLE `animal_count` (
   `cpatreon` int(5) NOT NULL DEFAULT '0',
   `hidden` int(5) NOT NULL DEFAULT '0',
   `gem` int(5) NOT NULL DEFAULT '0',
+  `bot` int(5) NOT NULL DEFAULT '0',
+  `distorted` int(5) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_animal_count_user` FOREIGN KEY (`id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -95,7 +97,7 @@ CREATE TABLE `announcement` (
   `url` varchar(75) NOT NULL,
   `adate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`aid`)
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -113,11 +115,13 @@ CREATE TABLE `autohunt` (
   `cost` int(11) NOT NULL DEFAULT '0',
   `gain` int(11) NOT NULL DEFAULT '0',
   `exp` int(11) NOT NULL DEFAULT '0',
+  `radar` int(11) NOT NULL DEFAULT '0',
   `start` timestamp NOT NULL DEFAULT '2001-01-01 08:00:00',
   `huntcount` int(11) DEFAULT '0',
   `huntmin` int(11) DEFAULT '0',
   `password` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `passwordtime` timestamp NOT NULL DEFAULT '2001-01-01 08:00:00',
+  `total` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_autohunt_user` FOREIGN KEY (`id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -189,7 +193,7 @@ CREATE TABLE `blackjack` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `bjid` (`bjid`),
   CONSTRAINT `fk_blackjack_user` FOREIGN KEY (`id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2156324 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2668706 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -223,6 +227,44 @@ CREATE TABLE `blacklist` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `boss_weapon`
+--
+
+DROP TABLE IF EXISTS `boss_weapon`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `boss_weapon` (
+  `gid` bigint(20) unsigned NOT NULL,
+  `wid` int(10) unsigned NOT NULL,
+  `stat` varchar(20) NOT NULL,
+  `avg` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`gid`),
+  KEY `wid` (`wid`),
+  CONSTRAINT `boss_weapon_ibfk_1` FOREIGN KEY (`gid`) REFERENCES `guild_boss` (`gid`),
+  CONSTRAINT `boss_weapon_ibfk_2` FOREIGN KEY (`wid`) REFERENCES `weapon` (`wid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `boss_weapon_passive`
+--
+
+DROP TABLE IF EXISTS `boss_weapon_passive`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `boss_weapon_passive` (
+  `gid` bigint(20) unsigned NOT NULL,
+  `pcount` tinyint(3) unsigned NOT NULL,
+  `wpid` int(10) unsigned NOT NULL,
+  `stat` varchar(20) NOT NULL,
+  PRIMARY KEY (`gid`,`pcount`),
+  KEY `wpid` (`wpid`),
+  CONSTRAINT `boss_weapon_passive_ibfk_1` FOREIGN KEY (`gid`) REFERENCES `guild_boss` (`gid`),
+  CONSTRAINT `boss_weapon_passive_ibfk_2` FOREIGN KEY (`wpid`) REFERENCES `weapon_passive` (`wpid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `buff`
 --
 
@@ -233,6 +275,22 @@ CREATE TABLE `buff` (
   `bfid` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`bfid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `compensation`
+--
+
+DROP TABLE IF EXISTS `compensation`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `compensation` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `reward` char(50) NOT NULL,
+  `end_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `end_date` (`end_date`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -328,7 +386,7 @@ CREATE TABLE `feedback` (
   `message` varchar(255) NOT NULL,
   `sender` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11605 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=73492 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -357,6 +415,27 @@ CREATE TABLE `guild` (
   `count` int(10) unsigned NOT NULL,
   `young` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `guild_boss`
+--
+
+DROP TABLE IF EXISTS `guild_boss`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `guild_boss` (
+  `gid` bigint(20) unsigned NOT NULL,
+  `active` tinyint(4) DEFAULT '0',
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `boss_animal` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `boss_lvl` int(10) unsigned NOT NULL,
+  `boss_hp` int(10) unsigned NOT NULL,
+  `boss_wp` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`gid`),
+  KEY `boss_animal` (`boss_animal`),
+  CONSTRAINT `guild_boss_ibfk_1` FOREIGN KEY (`boss_animal`) REFERENCES `animals` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -390,6 +469,21 @@ CREATE TABLE `icecream` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `items`
+--
+
+DROP TABLE IF EXISTS `items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `items` (
+  `uid` int(11) NOT NULL,
+  `common_tickets` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`uid`),
+  CONSTRAINT `items_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `lootbox`
 --
 
@@ -401,6 +495,7 @@ CREATE TABLE `lootbox` (
   `boxcount` int(11) NOT NULL DEFAULT '0',
   `claimcount` int(11) NOT NULL DEFAULT '0',
   `claim` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `fbox` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_lootbox_user` FOREIGN KEY (`id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -451,6 +546,7 @@ CREATE TABLE `marriage` (
   `marriedDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `dailies` int(11) NOT NULL DEFAULT '0',
   `rid` tinyint(4) NOT NULL,
+  `claimDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`uid1`,`uid2`),
   KEY `uid2` (`uid2`),
   KEY `rid` (`rid`),
@@ -496,7 +592,7 @@ CREATE TABLE `pet_team` (
   PRIMARY KEY (`pgid`,`uid`),
   KEY `uid` (`uid`),
   CONSTRAINT `pet_team_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=146868 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=715514 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -760,9 +856,10 @@ DROP TABLE IF EXISTS `timeout`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `timeout` (
   `id` bigint(20) unsigned NOT NULL,
-  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `count` int(4) NOT NULL DEFAULT '1',
   `penalty` int(4) NOT NULL DEFAULT '1',
+  `prev_penalty` int(4) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -818,7 +915,7 @@ CREATE TABLE `transaction` (
   PRIMARY KEY (`sender`,`reciever`,`time`),
   UNIQUE KEY `tid` (`tid`),
   CONSTRAINT `transaction_ibfk_1` FOREIGN KEY (`sender`) REFERENCES `cowoncy` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2058929 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=18063706 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -837,7 +934,7 @@ CREATE TABLE `user` (
   `started` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uid` (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=23561036 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=30494763 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -915,6 +1012,41 @@ CREATE TABLE `user_battle` (
   CONSTRAINT `user_battle_ibfk_2` FOREIGN KEY (`user2`) REFERENCES `user` (`uid`),
   CONSTRAINT `user_battle_ibfk_3` FOREIGN KEY (`sender`) REFERENCES `user` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `user_boss`
+--
+
+DROP TABLE IF EXISTS `user_boss`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_boss` (
+  `gid` bigint(20) unsigned NOT NULL,
+  `uid` int(11) NOT NULL,
+  `total_dmg` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`gid`,`uid`),
+  KEY `uid` (`uid`),
+  CONSTRAINT `user_boss_ibfk_1` FOREIGN KEY (`gid`) REFERENCES `guild_boss` (`gid`),
+  CONSTRAINT `user_boss_ibfk_2` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `user_compensation`
+--
+
+DROP TABLE IF EXISTS `user_compensation`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_compensation` (
+  `uid` int(11) NOT NULL,
+  `cid` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`uid`,`cid`),
+  KEY `cid` (`cid`),
+  CONSTRAINT `user_compensation_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`),
+  CONSTRAINT `user_compensation_ibfk_2` FOREIGN KEY (`cid`) REFERENCES `compensation` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1030,7 +1162,7 @@ CREATE TABLE `user_weapon` (
   KEY `wid` (`wid`),
   CONSTRAINT `user_weapon_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`),
   CONSTRAINT `user_weapon_ibfk_2` FOREIGN KEY (`wid`) REFERENCES `weapon` (`wid`)
-) ENGINE=InnoDB AUTO_INCREMENT=15582845 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=124717144 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1105,7 +1237,7 @@ CREATE TABLE `weapon_passive` (
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `CowoncyDrop`(
 IN tid BIGINT UNSIGNED,
@@ -1146,7 +1278,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `CowoncyPickup`(
 IN tid BIGINT UNSIGNED,
@@ -1190,7 +1322,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `CowoncyTransfer`(
 IN send BIGINT UNSIGNED,
@@ -1233,4 +1365,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-24 15:18:33
+-- Dump completed on 2021-03-13 16:49:25

@@ -16,7 +16,7 @@ exports.alter = function(id, text, opt){
 
 function lanre (text, opt){
 	text.description = opt.desc;
-	text.author.name = "PandaDasKissen's weapons to Senko's Stronghold";
+	text.author.name = "Senko's Stronghold";
 	text.image = {
 		url: "https://cdn.discordapp.com/attachments/757362062421655603/788818074706247690/image0.gif"
 	}

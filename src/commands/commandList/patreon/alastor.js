@@ -20,7 +20,7 @@ module.exports = new CommandInterface({
 
 	args:"[feed]",
 
-	desc:"Feed Alastor! This command was created by ALradio",
+	desc:"OwO Alastor to show your Alastor! Feed Alastor every day to increase your streak! When Alastor gets upset, offer him a crown to appease him and continue your streak! This command was created by ?229299825072537601?",
 
 	example:[],
 
