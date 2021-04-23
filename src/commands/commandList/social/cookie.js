@@ -88,11 +88,17 @@ async function display(p){
 	let count = 0;
 	if(result[0]&&result[0].count) count = result[0].count;
 	let again = "You have one cookie to send!";
+	const opt = { count, from:p.msg.author };
 
 	if(afterMid&&!afterMid.after){
-		again = "You can send a cookie in **"+afterMid.hours+"H "+afterMid.minutes+"M "+afterMid.seconds+"S**! ";
+		const timer = `${afterMid.hours}H ${afterMid.minutes}M ${afterMid.seconds}S`;
+		opt.timer = timer;
+		again = "You can send a cookie in **${timer}**! ";
+	} else {
+		opt.ready = true;
 	}
+
 	let text = "**<a:cookieeat:423020737364885525> | "+p.msg.author.username+"**! You currently have **"+count+"** cookies! Yummy! c:<\n**<:blank:427371936482328596> |** "+again;
-	text = alterCookie.alter(p.msg.author.id,text);
+	text = alterCookie.alter(p.msg.author.id, text, opt);
 	p.send(text);
 }
