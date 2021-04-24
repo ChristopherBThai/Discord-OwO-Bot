@@ -48,7 +48,7 @@ module.exports = new CommandInterface({
 			return;
 		}
 
-		if(amount>1000000) amount = 1000000;
+		if(amount>10000000) amount = 10000000;
 
 
 		//Check if valid user
