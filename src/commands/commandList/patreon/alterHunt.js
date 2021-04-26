@@ -7,7 +7,9 @@
 
 const blank = '<:blank:427371936482328596>';
 const huntEmoji = "🌱";
-exports.alter = function(id,text,info){
+exports.alter = async function(p, id, text, info){
+	const result = await checkDb(p, id, text, info);
+	if (result) return result;
 	switch(id){
 		case '220934553861226498':
 			return geist(text);
@@ -83,6 +85,39 @@ function getA(text) {
 	return ['a', 'e', 'i', 'o', 'u'].includes(text[0]) 
 		? 'an'
 		: 'a'
+}
+
+async function checkDb (p, id, text, info) {
+	const type =  info.gemText ? 'gems' : 'nogems';
+	const replacers = {
+		username: p.msg.author.username,
+		discriminator: p.msg.author.discriminator,
+		blank: p.config.emoji.blank,
+		gems: info.gemText,
+		animals: info.animalEmojis,
+		pets: info.petText,
+		xp: info.animalXp
+	}
+	const sql = `SELECT alterhunt.* from alterhunt INNER JOIN user ON alterhunt.uid = user.uid WHERE user.id = ${p.msg.author.id} AND alterhunt.type = '${type}'`;
+	const result = (await p.query(sql))[0];
+	if (!result || !result.text) return
+
+	if (!result.isEmbed) {
+		return p.global.replacer(result.text, replacers);
+	}
+
+	return { embed: {
+		description: p.global.replacer(result.text, replacers),
+		title: result.title,
+		color: result.color || 1,
+		footer: { text: result.footer },
+		thumbnail: { url: result.sideImg },
+		image: { url: result.bottomImg },
+		author: {
+			name: result.author,
+			icon_url: result.showAvatar ? p.msg.author.avatarURL : null
+		}
+	}}
 }
 
 function geist(text){
