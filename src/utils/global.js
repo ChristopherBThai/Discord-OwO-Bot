@@ -330,3 +330,10 @@ exports.getEmojiURL = function (emoji) {
 	const format = isGif ? 'gif' : 'png';
 	return `https://cdn.discordapp.com/emojis/${id}.${format}`;
 }
+
+exports.replacer = function (text, replacer) {
+	for (let key in replacer) {
+		text = text.replace(new RegExp(`{\s*${key}\s*}`, 'gi'), replacer[key]);
+	}
+	return text;
+}
