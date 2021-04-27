@@ -88,26 +88,45 @@ function getA(text) {
 }
 
 async function checkDb (p, id, text, info) {
-	const type =  info.gemText ? 'gems' : 'nogems';
-	const replacers = {
-		username: p.msg.author.username,
-		discriminator: p.msg.author.discriminator,
-		blank: p.config.emoji.blank,
-		gems: info.gemText,
-		animals: info.animalEmojis,
-		pets: info.petText,
-		xp: info.animalXp
+	let type, replacer;
+
+	if (info.gemText) {
+		type = 'gems';
+		replacers = {
+			username: p.msg.author.username,
+			discriminator: p.msg.author.discriminator,
+			blank: p.config.emoji.blank,
+			gems: info.gemText,
+			animals: info.animalEmojis,
+			pets: info.petText || '',
+			xp: info.animalXp || ''
+		}
+	} else {
+		type = 'nogems';
+		replacers = {
+			username: p.msg.author.username,
+			discriminator: p.msg.author.discriminator,
+			blank: p.config.emoji.blank,
+			pets: info.petText || '',
+			xp: info.animalXp || '',
+			a: getA(info.animal[0][2]),
+			animalRank: info.animal[0][2],
+			animalRankEmoji: info.animal[0][0].match(/<a?:\w*:\d*>/i)[0],
+			animal: info.animalEmojis
+		}
 	}
 	const sql = `SELECT alterhunt.* from alterhunt INNER JOIN user ON alterhunt.uid = user.uid WHERE user.id = ${p.msg.author.id} AND alterhunt.type = '${type}'`;
 	const result = (await p.query(sql))[0];
 	if (!result || !result.text) return
 
+	result.text += info.lootboxText || '';
+	result.text = p.global.replacer(result.text,replacers);
 	if (!result.isEmbed) {
-		return p.global.replacer(result.text, replacers);
+		return result.text
 	}
 
 	return { embed: {
-		description: p.global.replacer(result.text, replacers),
+		description: result.text,
 		title: result.title,
 		color: result.color || 1,
 		footer: { text: result.footer },
