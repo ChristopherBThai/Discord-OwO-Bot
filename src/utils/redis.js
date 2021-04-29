@@ -169,6 +169,17 @@ exports.del = function(table){
 	});
 }
 
+exports.expire = function(key, timer = 259200) { // 3 days
+	return new Promise(function(res,rej){
+		client.expire(key, timer, function(err,reply){
+			if(err)
+				rej(err);
+			else
+				res(reply);
+		});
+	});
+}
+
 client.on('connect',function(){
 	//console.log('Redis connected');
 });
