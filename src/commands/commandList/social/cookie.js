@@ -93,7 +93,7 @@ async function display(p){
 	if(afterMid&&!afterMid.after){
 		const timer = `${afterMid.hours}H ${afterMid.minutes}M ${afterMid.seconds}S`;
 		opt.timer = timer;
-		again = "You can send a cookie in **${timer}**! ";
+		again = `You can send a cookie in **${timer}**!`;
 	} else {
 		opt.ready = true;
 	}
