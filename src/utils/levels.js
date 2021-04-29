@@ -53,7 +53,8 @@ exports.giveXP = async function(msg){
 
 	// Distribute xp
 	if(!limitHit||!guildLimitHit){
-		redis.hmset("xplimit_"+msg.author.id,limit);
+		redis.hmset("xplimit_"+msg.author.id,limit)
+			.then(() => redis.expire("xplimit_"+msg.author.id));
 	}
 	let xp;
 	if(!limitHit){
