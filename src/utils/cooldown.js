@@ -33,6 +33,7 @@ exports.check = async function(p,command){
 				if ( diff > -600000) {
 					ccd.lasttime = new Date(ccd.lasttime.getTime() + 8000);
 					await redis.hmset(key,ccd);
+					await redis.expire(key);
 				}
 				now = false;
 			}else{
@@ -47,6 +48,7 @@ exports.check = async function(p,command){
 		}else{
 			ccd.lasttime = now;
 			await redis.hmset(key,ccd);
+			await redis.expire(key);
 		}
 	}catch(e){
 		console.error("cooldown.js check command");
@@ -88,6 +90,7 @@ const setCooldown = exports.setCooldown = async function(p,command,cooldown=0){
 
 	let past = new Date(Date.now() + (cooldown*1000) - commandCooldown);
 	await p.redis.hmset(key,{lasttime:past});
+	await redis.expire(key);
 }
 
 exports.setMacro = function(m) {
