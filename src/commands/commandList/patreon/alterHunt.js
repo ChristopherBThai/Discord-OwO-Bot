@@ -88,7 +88,7 @@ function getA(text) {
 }
 
 async function checkDb (p, id, text, info) {
-	let type, replacer;
+	let type, replacers;
 
 	if (info.gemText) {
 		type = 'gems';
