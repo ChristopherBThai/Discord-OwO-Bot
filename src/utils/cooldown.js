@@ -90,7 +90,7 @@ const setCooldown = exports.setCooldown = async function(p,command,cooldown=0){
 
 	let past = new Date(Date.now() + (cooldown*1000) - commandCooldown);
 	await p.redis.hmset(key,{lasttime:past});
-	await redis.expire(key);
+	await p.redis.expire(key);
 }
 
 exports.setMacro = function(m) {
