@@ -332,6 +332,7 @@ exports.getEmojiURL = function (emoji) {
 }
 
 exports.replacer = function (text, replacer) {
+	if (!text) return text;
 	for (let key in replacer) {
 		text = text.replace(new RegExp(`{\s*${key}\s*}`, 'gi'), replacer[key]);
 	}

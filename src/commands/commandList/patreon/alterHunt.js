@@ -127,13 +127,13 @@ async function checkDb (p, id, text, info) {
 
 	return { embed: {
 		description: result.text,
-		title: result.title,
+		title: p.global.replacer(result.title, replacers),
 		color: result.color || 1,
-		footer: { text: result.footer },
+		footer: { text: p.global.replacer(result.footer, replacers) },
 		thumbnail: { url: result.sideImg },
 		image: { url: result.bottomImg },
 		author: {
-			name: result.author,
+			name: p.global.replacer(result.author, replacers), 
 			icon_url: result.showAvatar ? p.msg.author.avatarURL : null
 		}
 	}}
