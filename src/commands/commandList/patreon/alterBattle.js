@@ -489,7 +489,7 @@ function theGoldenPatrik1(text,opt) {
 function lexx (text,opt) {
 	text.author.name = 'lexx takes one look and says: "Lets do this"';
 	text.thumbnail = {
-		url: "https://cdn.discordapp.com/attachments/696878982758531152/811497913573572608/Bender.png"
+		url: "https://cdn.discordapp.com/attachments/696878982758531152/838655892932395028/Roberto.png"
 	}
 	return text;
 }
@@ -587,18 +587,18 @@ function blade (text,opt) {
 			}
 			text.color = 16734464;
 			text.thumbnail = {
-				url: "https://i.imgur.com/7rbtiBX.gif"
+				url: "https://i.imgur.com/lG1bJJu.gif"
 			}
 			break;
 
 		//tie
 		case 6381923:
 			if (opt) {
-				text.footer.text = `BLaDe uses Telepathy, but the sins were strong enough to withstand it for ${opt.turns}! You gain ${opt.xp} xp and killed a total of ${opt.streak} sins!`;
+				text.footer.text = `BLaDe uses Telepathy, but the sins were strong enough to withstand it for ${opt.turns} hits! You gain ${opt.xp} xp and killed a total of ${opt.streak} sins!`;
 			}
 			text.color = 7708416;
 			text.thumbnail = {
-				url: "https://i.imgur.com/lG1bJJu.gif"
+				url: "https://i.imgur.com/7rbtiBX.gif"
 			}
 			break;
 	}
@@ -650,7 +650,7 @@ function wibi (text,opt) {
 		// win
 		case 65280:
 			if (opt) {
-				text.footer.text = `Hela used her Necroswords to slaughter all of the Valkyries in ${opt.turns} turns! when a Valkyrie is killed she gains ${opt.xp} Powers of Darkness! Kneel... before your Queen! Streak ${opt.streak}`;
+				text.footer.text = `Hela used her Necroswords to slaughter all of the Valkyries in ${opt.turns} turns! when a Valkyrie is killed she gains ${opt.xp} Powers of Darkness! Kneel... before your Queen! 🌹 Streak: ${opt.streak}`;
 			}
 			text.color = 16711900;
 			text.thumbnail = {
