@@ -560,9 +560,6 @@ function arichy(text,type) {
 			text.thumbnail = {
 				url: "https://i.imgur.com/bWhw90x.gif"
 			}
-			text.image = {
-				url: "https://i.imgur.com/O9lYqen.png"
-			}
 			return text;
 		case 'progress':
 			text = text.replace(/<:[a-z]bot:[0-9]+>/gi, "<a:11_:839770046867439669>")

@@ -8,8 +8,7 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const emoji = "<:sammy:840483679771820032>";
-// const owner = "384202884553768961";
-const owner = "184587051943985152";
+const owner = "384202884553768961";
 const data = "sammy";
 
 module.exports = new CommandInterface({
