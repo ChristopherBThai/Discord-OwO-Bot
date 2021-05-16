@@ -75,7 +75,7 @@ function lexx (p, info) {
 		image: {
 			url: "https://cdn.discordapp.com/attachments/696878982758531152/840432649336127488/AmyWong.png"
 		},
-		description: `**${info.user.username} lexx's inv of Rings, Tickets, Gems & Weapons**\n${info.inv}`
+		description: `**${info.user.username}'s inv of Rings, Tickets, Gems & Weapons**\n${info.inv}`
 	}
 	return { embed }
 }
