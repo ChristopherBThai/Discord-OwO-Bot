@@ -17,9 +17,9 @@ module.exports = new CommandInterface({
 
 	alias:["frogegg"],
 
-	args:"{@user}",
+	args:"{@user | trade}",
 
-	desc:"Give a frog egg to someone! You can only gain one if you receive it! This command was created by ?"+owner+"?",
+	desc:"Give a frog egg to someone! Once you collect 6, they will be changed into a silver ball. This command was created by ?"+owner+"?",
 
 	example:[],
 
@@ -39,21 +39,25 @@ module.exports = new CommandInterface({
 			display(p);
 			p.setCooldown(5);
 		}else{
-			let user = p.getMention(p.args[0]);
-			if(!user){
-				user = await p.fetch.getMember(p.msg.channel.guild,p.args[0]);
+			if (p.args[0] == 'trade') {
+				await trade(p);
+			} else {
+				let user = p.getMention(p.args[0]);
 				if(!user){
-					p.errorMsg(", Invalid syntax! Please tag a user!",3000);
+					user = await p.fetch.getMember(p.msg.channel.guild,p.args[0]);
+					if(!user){
+						p.errorMsg(", Invalid syntax! Please tag a user!",3000);
+						p.setCooldown(5);
+						return;
+					}
+				}
+				if(user.id==p.msg.author.id){
+					p.errorMsg(", You cannot give it yourself!!",3000);
 					p.setCooldown(5);
 					return;
 				}
+				give(p,user);
 			}
-			if(user.id==p.msg.author.id){
-				p.errorMsg(", You cannot give it yourself!!",3000);
-				p.setCooldown(5);
-				return;
-			}
-			give(p,user);
 		}
 	}
 });
@@ -82,12 +86,18 @@ async function give(p,user){
 		}
 	}
 
-	const newCount = await p.redis.hincrby("data_"+user.id, data, 3);
-	if (newCount >= 6) {
-		await p.redis.hincrby("data_"+user.id, data, -5);
-		await p.redis.hincrby("data_"+user.id, data2, 1);
-		await p.send(`${emoji} **| ${p.msg.author.username}** sent ${user.username} 3 frog eggs to you!\n${p.config.emoji.blank} **|** 5 of your frog eggs turned into a ball!`);
+	const newCount = await p.redis.hincrby("data_"+user.id, data, 2);
+	await p.send(`${emoji} **| ${user.username}**, **${p.msg.author.username}** gave you 2 frogeggs! Save 6 to trade for a silverball!`);
+}
+
+async function trade (p) {
+	const count = await p.redis.hget("data_"+p.msg.author.id, data) || 0;
+
+	if (count >= 6) {
+		await p.redis.hincrby("data_"+p.msg.author.id, data, -5);
+		await p.redis.hincrby("data_"+p.msg.author.id, data2, 1);
+		await p.replyMsg(emoji, `, you received a shiny silver ball! Save that ball to gift to baby yoda!`);
 	} else {
-		await p.send(`${emoji} **| ${p.msg.author.username}** sent ${user.username} 3 frog eggs to you!`);
+		await p.errorMsg(`, you need at least 6 frog eggs to convert them into silver balls!`);
 	}
 }

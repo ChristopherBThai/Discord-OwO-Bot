@@ -720,29 +720,35 @@ function direwolf(text, info) {
 function notJames(text, info) {
 	const moon = '<a:moon:819081050520813568>';
 	const peach = '<:peach:819081050369949736>';
+	const spark3 = '<a:spark3:843740415449890868>';
+	const spark6 = '<a:spark6:843740442662404096>';
+	const star8 = '<a:star8:843740415341625385>';
+	const star7 = '<a:star7:843740442394099754>';
 
 	if(info.gemText){
-		text = `${moon} **| ${info.author.username}** broke into a peach farm, charmed by ${info.gemText}\n`;
-		text += `${peach} **|** and ran away with ${info.animalEmojis}`;
+		text = `${moon} **| ${info.author.username}** broke into a peach farm\n`
+			+ `${spark3} **|**charmed by ${info.gemText}\n`
+			+ `${spark6} **|** and ran away with ${info.animalEmojis}`;
 		if (info.petText) {
-			text += `\n${peach} **|** ${info.petText} gained **${info.animalXp} peaches**!`;
+			text += `\n${star8} **|** ${info.petText} gained **${info.animalXp}** ${peach}!`;
 		}
 	}else{
 		const a = getA(info.animal[0][0]);
 		text = `${moon} **| ${info.author.username}** broke into a peach farm with bare hands\n`;
-		text += `${peach} **|** and ran away with ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
+		text += `${spark6} **|** and ran away with ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
 		if (info.petText) {
-			text += `\n${peach} **|** ${info.petText} gained **${info.animalXp} peaches**`;
+			text += `\n${star7} **|** ${info.petText} gained **${info.animalXp}** ${peach}`;
 		}
 	}
 	text += info.lootboxText || '';
 
+	const url = Math.random() > .5 ? 'https://cdn.discordapp.com/attachments/815195361379090442/817327541010038784/J_1.gif'
+		: 'https://cdn.discordapp.com/attachments/815195361379090442/835389547713003520/Test-4.gif';
+
 	const embed = {
 		description: text,
-		color: 1,
-		thumbnail: {
-			url: "https://cdn.discordapp.com/attachments/769619375296610304/817702733254885376/image0.gif" 
-		}
+		color: 14537138,
+		thumbnail: { url }
 	}
 
 	return {embed};
