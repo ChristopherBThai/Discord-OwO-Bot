@@ -726,21 +726,23 @@ function notJames(text, info) {
 	const star7 = '<a:star7:843740442394099754>';
 
 	if(info.gemText){
-		text = `${moon} **| ${info.author.username}** broke into a peach farm\n`
-			+ `${spark3} **|**charmed by ${info.gemText}\n`
-			+ `${spark6} **|** and ran away with ${info.animalEmojis}`;
+		text = `${moon} **| ${info.author.username}** storms into a peach farm\n`
+			+ `${spark3} **|** charmed by ${info.gemText}\n`
+			+ `${spark6} **|** and runs away with ${info.animalEmojis}`;
 		if (info.petText) {
-			text += `\n${star8} **|** ${info.petText} gained **${info.animalXp}** ${peach}!`;
+			text += `\n${star8} **|** ${info.petText} gain **${info.animalXp}** ${peach}`;
 		}
 	}else{
 		const a = getA(info.animal[0][0]);
-		text = `${moon} **| ${info.author.username}** broke into a peach farm with bare hands\n`;
-		text += `${spark6} **|** and ran away with ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
+		text = `${moon} **| ${info.author.username}** breaks into a peach farm with bare hands\n`;
+		text += `${spark6} **|** and runs away with ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
 		if (info.petText) {
-			text += `\n${star7} **|** ${info.petText} gained **${info.animalXp}** ${peach}`;
+			text += `\n${star7} **|** ${info.petText} gain **${info.animalXp}** ${peach}`;
 		}
 	}
-	text += info.lootboxText || '';
+	if (info.lootboxText) {
+		text += `**Lootbox** [**${info.lootboxText.match(/\[\d+\//gi)[0].match(/\d+/gi)[0]}**] is found!`;
+	}
 
 	const url = Math.random() > .5 ? 'https://cdn.discordapp.com/attachments/815195361379090442/817327541010038784/J_1.gif'
 		: 'https://cdn.discordapp.com/attachments/815195361379090442/835389547713003520/Test-4.gif';
