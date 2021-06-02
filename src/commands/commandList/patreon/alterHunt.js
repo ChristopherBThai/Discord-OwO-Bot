@@ -881,11 +881,11 @@ function vanor (text, info) {
 	const emoji = '<a:harleyquinn:832531027900628992>';
 
 	if(info.gemText){
-		text =  `${emoji} **| Hey Puddin'!** Look what I got gotcha! ${info.gemText}\n`;
-		text += `${emoji} **|** I looked **everywhere!** ${info.animalEmojis}`;
+		text =  `${emoji} **|** Here Ya Go **Puddin'!** ${info.gemText}\n`;
+		text += `${emoji} **| What Do** You Think? ${info.animalEmojis}`;
 	}else{
-		text =  `${emoji} **| Hey Puddin'!** Look what I got gotcha!\n`;
-		text += `${emoji} **|** I looked **everywhere!** ${info.animalEmojis}`;
+		text =  `${emoji} **|** Here Ya Go **Puddin'!**\n`;
+		text += `${emoji} **| What Do** You Think? ${info.animalEmojis}`;
 	}
 	if (info.petText) {
 		text += `\n${emoji} **|** ${info.petText} gained **${info.animalXp} xp**`;
