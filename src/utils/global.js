@@ -257,7 +257,7 @@ exports.filteredName = function (name) {
 		return emojis[matched];
 	}).replace(/\W/g,'');
 
-	if (filter2.exists(shortnick)) {
+	if (filter2.exists(shortnick + ' ')) {
 		name = namor.generate({ words: 3, saltLength: 0, separator:' ' });
 		return { name, offensive:false }
 	}
