@@ -399,7 +399,7 @@ function notJames(text,opt) {
 				text.author.name = 'chem has arrived to protect the Fallen Stars from outerspace invaders!';
 				text.footer.text = `Wait...what?! The battle ended after ${opt.turns} turns. You sadly collected 50 star fragments and lost your streak of ${opt.streak} victories...`;
 			}
-			text.color = 8900346;
+			text.color = 1262169;
 			text.thumbnail = {
 				url: "https://cdn.discordapp.com/attachments/769619375296610304/809631784752644106/cry.png"
 			}
@@ -408,18 +408,18 @@ function notJames(text,opt) {
 		// win
 		case 65280:
 			if (opt) {
-				const fragment = (''+opt.xp).includes('+') ? 'bonus star fragments' : 'star fragments'
+				const stardust = (''+opt.xp).includes('+') ? 'bonus stardust' : 'stardust'
 				text.author.name = 'chem has arrived to protect the Fallen Stars from outerspace invaders!';
 				if (opt.streak % 10000 == 0) {
 					text.footer.text = `Glorius victory! You defeated the bad guys and cleared the Starlight Pathway. You happily returned home with ${opt.xp} bonus star shards! Win streak: ${opt.streak} `;
 				} else if (opt.streak % 1000 == 0) {
 					text.footer.text = `Muahahaha! The evil force has been defeated! You collected ${opt.xp} bonus star shards and unlocked a new Star Constellation! Streak: ${opt.streak}!`;
 				} else if (opt.streak % 100 == 0) {
-					text.footer.text = `UwU.. a Victory! You sent the enemy back to Space and brought home ${opt.xp} bonus star fragments! Streak: ${opt.streak}`;
+					text.footer.text = `UwU.. a Victory! You sent the enemy back to Space and brought home ${opt.xp} bonus stardust! Streak: ${opt.streak}`;
 				} else if (opt.streak % 10 == 0) {
-					text.footer.text = `Victory! You collected ${opt.xp} bonus star fragments and kicked the enemy out of the planet! Streak: ${opt.streak}`;
+					text.footer.text = `Victory! You collected ${opt.xp} bonus stardust and kicked the enemy out of the planet! Streak: ${opt.streak}`;
 				} else {
-					text.footer.text = `Victory! You collected ${opt.xp} ${fragment} and punched the enemy out of the planet! Streak: ${opt.streak}`;
+					text.footer.text = `Victory! You collected ${opt.xp} ${stardust} and punched the enemy out of the planet! Streak: ${opt.streak}`;
 				}
 			}
 			text.color = 1190467;
@@ -436,7 +436,7 @@ function notJames(text,opt) {
 			}
 			text.color = 4539717;
 			text.thumbnail = {
-				url: "https://cdn.discordapp.com/attachments/769619375296610304/816891271004028968/0b004b50f2700762eb850e27e8a9b504.png"
+				url: "https://media.discordapp.net/attachments/759231534238269460/851260748192940052/0b004b50f2700762eb850e27e8a9b504.gif"
 			}
 			break;
 	}
