@@ -87,7 +87,7 @@ function display(p){
 			{"name":"🌱 Animals",
 				"value":"`zoo`  `hunt`  `sell`  `battle`  `inv`  `equip`  `autohunt`  `owodex`  `lootbox`  `crate`  `battlesetting`  `team`  `weapon`  `rename` `dismantle`"},
 			{"name":"🎲 Gambling",
-				"value":"`slots`  `coinflip`  `lottery`  `blackjack`  `drop`"},
+				"value":"`slots`  `coinflip`  `lottery`  `blackjack`"},
 			{"name":"🎱 Fun",
 				"value":"`8b`  `define`  `gif`  `pic`  `translate`  `roll`  `choose`  `bell`"},
 			{"name":"🎭 Social",
