@@ -56,6 +56,8 @@ exports.alter = function(id,text,type){
 			return wibi(text, type);
 		case '663719460108107786':
 			return jekyll(text, type);
+		case '486067285333639169':
+			return life(text, type);
 		default:
 			return text;
 	}
@@ -723,4 +725,30 @@ function jekyll (text,opt) {
 	return text;
 }
 
+function life (text, opt) {
+	text.author.name = 'Kira goes into battle alongside Ryuk with his Deathnote';
+	switch (text.color) {
+		// win
+		case 65280:
+			if (opt) {
+				text.footer.text = `=> Kira opens his Deathnote and writes the name of his enemy, enemy is dead, they won in ${opt.turns} turns!, They gained ${opt.xp}! Streak: ${opt.streak}`;
+			}
+			break;
+
+		// lost
+		case 16711680:
+			if (opt) {
+				text.footer.text = `=> Kira loses in ${opt.turns}!, Ryuk writes Kira's name on his Deathnote as promised Kira gained ${opt.xp}! Streak: ${opt.streak}`;
+			}
+			break;
+
+		//tie
+		case 6381923:
+			if (opt) {
+				text.footer.text = `=> Kira opens his Deathnote and writes the name his of enemy, enemy came up with fake name , they tied in ${opt.turns} turns!, They gained ${opt.xp}! Streak: ${opt.streak}`;
+			}
+			break;
+	}
+	return text;
+}
 
