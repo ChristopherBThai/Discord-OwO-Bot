@@ -35,9 +35,9 @@ function lanre (text, opt) {
 
 function eliza (text, opt) {
 	text.description = opt.desc;
-	text.author.name = "Guarded by Ameodssbxiw, Danny and Roshi";
+	text.author.name = "Guarded by ameodssbxiw, Danny and Roshi";
 	text.image = {
-		url: "https://cdn.discordapp.com/attachments/833776274139775056/843574051635986492/IMG_20201011_161113.jpg"
+		url: "https://cdn.discordapp.com/attachments/833776274139775056/844240371731136533/IMG_20201019_175851_027.jpg"
 	}
 	text.footer.text += ' | Where a few successes brought us';
 	text.color = 65280;
@@ -47,7 +47,7 @@ function eliza (text, opt) {
 
 function ameodssbxiw (text, opt) {
 	text.description = opt.desc;
-	text.author.name = "Stronghold held by Ameodssbxiw, Eliza and Nala";
+	text.author.name = "Stronghold held by ameodssbxiw, Eliza and Nala";
 	text.image = {
 		url: "https://cdn.discordapp.com/attachments/833776274139775056/843574384873570394/IMG_20201013_182144.jpg"
 	}

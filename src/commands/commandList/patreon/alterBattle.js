@@ -6,8 +6,8 @@
   */
 
 const blank = '<:blank:427371936482328596>';
-exports.alter = function(id,text,type){
-	switch(id){
+exports.alter = function(user,text,type){
+	switch(user.id){
 		case '176046069954641921':
 			return crown(text,type);
 		case '250383887312748545':
@@ -47,7 +47,7 @@ exports.alter = function(id,text,type){
 		case '617681365567275029':
 			return mercureid(text, type);
 		case '477168699112161281':
-			return leshoop(text, type);
+			return leshoop(text, user, type);
 		case '612158581113880576':
 			return blade(text, type);
 		case '643225088123994118':
@@ -56,6 +56,12 @@ exports.alter = function(id,text,type){
 			return wibi(text, type);
 		case '663719460108107786':
 			return jekyll(text, type);
+		case '486067285333639169':
+			return life(text, type);
+		case '387975555233873920':
+			return scox(text, type);
+		case '460987842961866762':
+			return estee(text, type);
 		default:
 			return text;
 	}
@@ -399,7 +405,7 @@ function notJames(text,opt) {
 				text.author.name = 'chem has arrived to protect the Fallen Stars from outerspace invaders!';
 				text.footer.text = `Wait...what?! The battle ended after ${opt.turns} turns. You sadly collected 50 star fragments and lost your streak of ${opt.streak} victories...`;
 			}
-			text.color = 8900346;
+			text.color = 1262169;
 			text.thumbnail = {
 				url: "https://cdn.discordapp.com/attachments/769619375296610304/809631784752644106/cry.png"
 			}
@@ -408,18 +414,18 @@ function notJames(text,opt) {
 		// win
 		case 65280:
 			if (opt) {
-				const fragment = (''+opt.xp).includes('+') ? 'bonus star fragments' : 'star fragments'
+				const stardust = (''+opt.xp).includes('+') ? 'bonus stardust' : 'stardust'
 				text.author.name = 'chem has arrived to protect the Fallen Stars from outerspace invaders!';
 				if (opt.streak % 10000 == 0) {
 					text.footer.text = `Glorius victory! You defeated the bad guys and cleared the Starlight Pathway. You happily returned home with ${opt.xp} bonus star shards! Win streak: ${opt.streak} `;
 				} else if (opt.streak % 1000 == 0) {
 					text.footer.text = `Muahahaha! The evil force has been defeated! You collected ${opt.xp} bonus star shards and unlocked a new Star Constellation! Streak: ${opt.streak}!`;
 				} else if (opt.streak % 100 == 0) {
-					text.footer.text = `UwU.. a Victory! You sent the enemy back to Space and brought home ${opt.xp} bonus star fragments! Streak: ${opt.streak}`;
+					text.footer.text = `UwU.. a Victory! You sent the enemy back to Space and brought home ${opt.xp} bonus stardust! Streak: ${opt.streak}`;
 				} else if (opt.streak % 10 == 0) {
-					text.footer.text = `Victory! You collected ${opt.xp} bonus star fragments and kicked the enemy out of the planet! Streak: ${opt.streak}`;
+					text.footer.text = `Victory! You collected ${opt.xp} bonus stardust and kicked the enemy out of the planet! Streak: ${opt.streak}`;
 				} else {
-					text.footer.text = `Victory! You collected ${opt.xp} ${fragment} and punched the enemy out of the planet! Streak: ${opt.streak}`;
+					text.footer.text = `Victory! You collected ${opt.xp} ${stardust} and punched the enemy out of the planet! Streak: ${opt.streak}`;
 				}
 			}
 			text.color = 1190467;
@@ -436,7 +442,7 @@ function notJames(text,opt) {
 			}
 			text.color = 4539717;
 			text.thumbnail = {
-				url: "https://cdn.discordapp.com/attachments/769619375296610304/816891271004028968/0b004b50f2700762eb850e27e8a9b504.png"
+				url: "https://media.discordapp.net/attachments/759231534238269460/851260748192940052/0b004b50f2700762eb850e27e8a9b504.gif"
 			}
 			break;
 	}
@@ -533,8 +539,8 @@ function mercureid (text,opt) {
 	return text;
 }
 
-function leshoop (text,opt) {
-	text.author.name = 'Shoopie\'s cuties go into battle!';
+function leshoop (text, user, opt) {
+	text.author.name = `${user.username} goes into battle!`;
 	switch (text.color) {
 		// lost
 		case 16711680:
@@ -547,7 +553,7 @@ function leshoop (text,opt) {
 		// win
 		case 65280:
 			if (opt) {
-				text.footer.text = `Gel pisi pisi ~ Together we fight, and in ${opt.turns} turns achieve victory! Your team gained ${opt.xp} xp! Streak: ${opt.streak}`;
+				text.footer.text = `Together we fight, and in ${opt.turns} turns achieve victory! Your team gained ${opt.xp} xp! Streak: ${opt.streak}`;
 			}
 			text.color = 10904029;
 			break;
@@ -561,7 +567,7 @@ function leshoop (text,opt) {
 			break;
 	}
 	text.thumbnail = {
-		url: "https://cdn.discordapp.com/attachments/722052818428624928/822130529016610896/20210318_113218.gif"
+		url: "https://media1.tenor.com/images/93f5876e82ae575a6c4b4613d57f6e29/tenor.gif"
 	}
 	return text;
 }
@@ -611,9 +617,9 @@ function becca (text,opt) {
 		// win
 		case 65280:
 			if (opt) {
-				text.footer.text = `Anjass! Selow, benerin dulu tim Lu bagusin dulu weapon Lu baru ngajak gelud ngOokey!! Canda bahh, Becca bagi-bagi ${opt.xp} Boba Mwahh! streak : ${opt.streak}`;
+				text.footer.text = `Anjass! Selow, benerin dulu tim Lu bagusin dulu weapon Lu baru ngajak gelud ngOokey!! Canda bahh, Becca bagi-bagi ${opt.xp} Boba Mwahh! 🌻 streak : ${opt.streak}`;
 			}
-			text.color = 16774400;
+			text.color = 16739566;
 			text.thumbnail = {
 				url: "https://media.discordapp.net/attachments/818819441281728543/822653290146824192/image0-3.gif"
 			}
@@ -622,9 +628,9 @@ function becca (text,opt) {
 		// lost
 		case 16711680:
 			if (opt) {
-				text.footer.text = `Owo jingan! ngebug! Tidak ada Boba lagi anying!`;
+				text.footer.text = `Owo jingan! ngebug! Tidak ada Boba lagi anying! streak: ${opt.streak}`;
 			}
-			text.color = 16712965;
+			text.color = 11158527;
 			text.thumbnail = {
 				url: "https://media.discordapp.net/attachments/818819441281728543/822653289770254386/image3-1.gif"
 			}
@@ -723,4 +729,97 @@ function jekyll (text,opt) {
 	return text;
 }
 
+function life (text, opt) {
+	text.author.name = 'Kira goes into battle alongside Ryuk with his Deathnote';
+	switch (text.color) {
+		// win
+		case 65280:
+			if (opt) {
+				text.footer.text = `=> Kira opens his Deathnote and writes the name of his enemy, enemy is dead, they won in ${opt.turns} turns!, They gained ${opt.xp}! Streak: ${opt.streak}`;
+			}
+			break;
+
+		// lost
+		case 16711680:
+			if (opt) {
+				text.footer.text = `=> Kira loses in ${opt.turns}!, Ryuk writes Kira's name on his Deathnote as promised Kira gained ${opt.xp}! Streak: ${opt.streak}`;
+			}
+			break;
+
+		//tie
+		case 6381923:
+			if (opt) {
+				text.footer.text = `=> Kira opens his Deathnote and writes the name his of enemy, enemy came up with fake name , they tied in ${opt.turns} turns!, They gained ${opt.xp}! Streak: ${opt.streak}`;
+			}
+			break;
+	}
+	return text;
+}
+
+function scox (text,opt) {
+	text.author.name = 'Entering battlefield using all of soul reaper power';
+	switch (text.color) {
+		// win
+		case 65280:
+			if (opt) {
+				text.footer.text = `With final getsuga tenshou easily defeating all enemies in front off his eyes in ${opt.turns} turns ended up in gaining ${opt.xp} soul reaper powers,top easy for him! streak ${opt.streak}`;
+			}
+			text.color = 2722246;
+			text.thumbnail = {
+				url: "https://media.discordapp.net/attachments/836296917385871390/843240718822408222/image0.gif"
+			}
+			break;
+
+		// lost
+		case 16711680:
+			if (opt) {
+				text.footer.text = `But, using final getsuga tenshou with wrong technique make the battle too long, need to think a better strategy! streak ${opt.streak}`;
+			}
+			text.color = 9807270;
+			text.thumbnail = {
+				url: "https://media.discordapp.net/attachments/836296917385871390/843240856575016990/image0.gif"
+			}
+			break;
+
+		//tie
+		case 6381923:
+			if (opt) {
+				text.footer.text = `Somehow, with final getsuga tenshou makes him lost a lot of soul reaper power, he end up by losing all his power! streak ${opt.streak}`;
+			}
+			text.color = 16187392;
+			text.thumbnail = {
+				url: "https://media.discordapp.net/attachments/836296917385871390/843241504880984095/image0.gif"
+			}
+			break;
+	}
+	return text;
+}
+
+function estee (text,opt) {
+	text.author.name = 'Estee, Slayed the seven realms and battled with the gods. Finally met a strong opponent. ';
+	text.thumbnail = {
+		url: "https://cdn.discordapp.com/attachments/810961856977174539/849221395417530398/ezgif.com-gif-maker_5.gif"
+	}
+	switch (text.color) {
+		// win
+		case 65280:
+			if (opt) {
+				text.footer.text = `Death match ended, you won in ${opt.turns} turns, gained ${opt.xp}xp, streak ${opt.streak}`;
+			}
+			break;
+
+		// lost
+		case 16711680:
+			if (opt) {
+				text.footer.text = `Death match ended, you lost in ${opt.turns} turns, gained ${opt.xp}xp, streak ${opt.streak}`;
+			}
+			break;
+		case 6381923:
+			if (opt) {
+				text.footer.text = `Death match ended, you tied in ${opt.turns} turns, gained ${opt.xp}xp, streak ${opt.streak}`;
+			}
+			break;
+	}
+	return text;
+}
 
