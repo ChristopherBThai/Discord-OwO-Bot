@@ -6,7 +6,9 @@
   */
 
 const blank = '<:blank:427371936482328596>';
-exports.alter = function(user,text,type){
+exports.alter = async function(p, user, text, type){
+	const result = await checkDb(p, user.id, text, type);
+	if (result) return result;
 	switch(user.id){
 		case '176046069954641921':
 			return crown(text,type);
@@ -67,6 +69,50 @@ exports.alter = function(user,text,type){
 	}
 }
 
+async function checkDb (p, id, text, info) {
+	if (!info) return;
+
+	let type;
+	switch (text.color) {
+		case 65280:
+			type = 'win';
+			break;
+		case 16711680:
+			type = 'lose';
+			break;
+		case 6381923:
+			type = 'tie';
+			break;
+	}
+	const replacers = {
+		username: p.msg.author.username,
+		discriminator: p.msg.author.discriminator,
+		blank: p.config.emoji.blank,
+		streak: info.streak,
+		turns: info.turns,
+		xp: info.xp,
+		allyTeam: text.fields[0].name,
+		enemyTeam: text.fields[1].name
+	}
+
+	const sql = `SELECT alterbattle.* from alterbattle INNER JOIN user ON alterbattle.uid = user.uid WHERE user.id = ${p.msg.author.id} AND alterbattle.type = '${type}'`;
+	const result = (await p.query(sql))[0];
+	if (!result) return
+
+	return { 
+		description: text.description,
+		fields: text.fields,
+		image: text.image,
+		title: p.global.replacer(result.title, replacers),
+		color: result.color || 1,
+		footer: { text: p.global.replacer(result.footer, replacers) },
+		thumbnail: { url: result.sideImg },
+		author: {
+			name: p.global.replacer(result.author, replacers), 
+			icon_url: result.showAvatar ? p.msg.author.avatarURL : null
+		}
+	}
+}
 
 function crown(text,type){
 	text.thumbnail = {
@@ -762,7 +808,7 @@ function scox (text,opt) {
 		// win
 		case 65280:
 			if (opt) {
-				text.footer.text = `With final getsuga tenshou easily defeating all enemies in front off his eyes in ${opt.turns} turns ended up in gaining ${opt.xp} soul reaper powers,top easy for him! streak ${opt.streak}`;
+				text.footer.text = `With final getsuga tenshou easily defeating all enemies in front off his eyes in ${opt.turns} turns ended up in gaining ${opt.xp} soul reaper powers, too easy for him! streak ${opt.streak}`;
 			}
 			text.color = 2722246;
 			text.thumbnail = {
@@ -773,7 +819,7 @@ function scox (text,opt) {
 		// lost
 		case 16711680:
 			if (opt) {
-				text.footer.text = `But, using final getsuga tenshou with wrong technique make the battle too long, need to think a better strategy! streak ${opt.streak}`;
+				text.footer.text = `Somehow, with final getsuga tenshou makes him lost a lot of soul reaper power, he end up by losing all his power! streak ${opt.streak}`;
 			}
 			text.color = 9807270;
 			text.thumbnail = {
@@ -784,7 +830,7 @@ function scox (text,opt) {
 		//tie
 		case 6381923:
 			if (opt) {
-				text.footer.text = `Somehow, with final getsuga tenshou makes him lost a lot of soul reaper power, he end up by losing all his power! streak ${opt.streak}`;
+				text.footer.text = `But, using final getsuga tenshou with wrong technique make the battle too long, need to think a better strategy! streak ${opt.streak}`;
 			}
 			text.color = 16187392;
 			text.thumbnail = {
