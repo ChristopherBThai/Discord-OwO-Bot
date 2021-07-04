@@ -29,7 +29,7 @@ module.exports = new CommandInterface({
 
 	group:["patreon"],
 
-	cooldown:300,
+	cooldown:30000,
 	half:80,
 	six:400,
 	bot:true,
