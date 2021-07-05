@@ -86,15 +86,10 @@ module.exports = new CommandInterface({
 			for(let i in ids){
 				descID = ids[i].match(/[0-9]+/)
 				tempUser = await p.fetch.getUser(descID[0]);
-			console.log(desc);
 				desc = desc.replace(' ?'+descID+'? \n',(tempUser)?"* ***"+tempUser.username+"*** \n*":"* ***A User*** \n*");
-			console.log(desc);
 				desc = desc.replace(' ?'+descID+'?\n',(tempUser)?"* ***"+tempUser.username+"*** \n*":"* ***A User*** \n*");
-			console.log(desc);
 				desc = desc.replace(' ?'+descID+'? ',(tempUser)?"* ***"+tempUser.username+"*** *":"* ***A User*** *");
-			console.log(desc);
 				desc = desc.replace(' ?'+descID+'?*',(tempUser)?"* ***"+tempUser.username+"***":"* ***A User***");
-			console.log(desc);
 			}
 			ids = desc.match(/\?[0-9]+\!/g);
 			for(let i in ids){
