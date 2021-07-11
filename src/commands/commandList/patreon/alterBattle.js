@@ -97,7 +97,7 @@ async function checkDb (p, id, text, info) {
 
 	const sql = `SELECT alterbattle.* from alterbattle INNER JOIN user ON alterbattle.uid = user.uid WHERE user.id = ${p.msg.author.id} AND alterbattle.type = '${type}'`;
 	const result = (await p.query(sql))[0];
-	if (!result) return
+	if (!result || !result.updated_at) return
 
 	return { 
 		description: text.description,
