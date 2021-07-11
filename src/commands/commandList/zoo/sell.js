@@ -36,6 +36,9 @@ module.exports = new CommandInterface({
 	execute: async function(p){
 		let global=p.global,con=p.con,msg=p.msg,args=p.args;
 
+		/* replaces occurrences of last in args with last found weapon */
+		await weaponUtil.replaceLastWithID(p);
+
 		let name = undefined;
 		let count = 1;
 		let ranks;
