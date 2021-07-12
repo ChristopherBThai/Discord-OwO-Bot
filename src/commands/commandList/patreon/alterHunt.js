@@ -718,39 +718,36 @@ function direwolf(text, info) {
 }
 
 function notJames(text, info) {
-	const moon = '<a:moon:819081050520813568>';
-	const peach = '<:peach:819081050369949736>';
-	const spark3 = '<a:spark3:843740415449890868>';
-	const spark6 = '<a:spark6:843740442662404096>';
-	const star8 = '<a:star8:843740415341625385>';
-	const star7 = '<a:star7:843740442394099754>';
-
+	const purpplanet = '<:purpplanet:861744047654830120>';
+	const purpstar = '<a:purp:858750759465385994>';
+	const blobghost = '<:blobghost:861749021932519474>';
+	const purpiestar = '<:__:813631869408378911>';
+	
 	if(info.gemText){
-		text = `${moon} **| ${info.author.username}** storms into a peach farm\n`
-			+ `${spark3} **|** with by ${info.gemText.replace(/\/\d+|`+/gi,'')}\n`
-			+ `${spark6} **|** and runs away with ${info.animalEmojis}`;
+		text = `${purpplanet} **| ${info.author.username}** glides through the vast emptiness of space\n`
+			+ `${blank} **|** with ${info.gemText.replace(/\/\d+|`+/gi,'')}\n`
+			+ `${purpstar} **|** and captures ${info.animalEmojis}`;
 		if (info.petText) {
-			text += `\n${star8} **|** ${info.petText} gain **${info.animalXp}** ${peach}`;
+			text += `\n${purpiestar} **|** ${info.petText} gain **${info.animalXp}xp**!`;
 		}
 	}else{
 		const a = getA(info.animal[0][0]);
-		text = `${moon} **| ${info.author.username}** breaks into a peach farm with bare hands\n`;
-		text += `${spark6} **|** and runs away with ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
+		text = `${purpplanet} **| ${info.author.username}** dashes through the vast emptiness of space\n`;
+		text += `${purpstar} **|** and captures ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
 		if (info.petText) {
-			text += `\n${star7} **|** ${info.petText} gain **${info.animalXp}** ${peach}`;
+			text += `\n${purpplanet} **|** ${info.petText} gain **${info.animalXp}xp**! ${blobghost} `;
 		}
 	}
 	if (info.lootboxText) {
-		text += `\n**Lootbox** [**${info.lootboxText.match(/\[\d+\//gi)[0].match(/\d+/gi)[0]}**] is found!`;
+		text += `\n**${blank} | Lootbox** [**${info.lootboxText.match(/\[\d+\//gi)[0].match(/\d+/gi)[0]}**] is found!`;
 	}
-
-	const url = Math.random() > .5 ? 'https://cdn.discordapp.com/attachments/815195361379090442/817327541010038784/J_1.gif'
-		: 'https://cdn.discordapp.com/attachments/815195361379090442/835389547713003520/Test-4.gif';
 
 	const embed = {
 		description: text,
-		color: 16776664,
-		thumbnail: { url }
+		color: 2367286,
+		thumbnail: { 
+			url: "https://cdn.discordapp.com/attachments/861739146497753138/861756915112476722/chem_hunt3.gif"
+		}
 	}
 
 	return {embed};
