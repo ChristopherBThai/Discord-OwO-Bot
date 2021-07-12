@@ -24,9 +24,9 @@ module.exports = class Kamikaze extends PassiveInterface{
 
 	postAttacked(animal,attacker,damage,type,tags){
 		if(tags.kamikaze) return;
-		//Ignore if this doesnt kill the animal
-		let totalDamage = damage.reduce((a,b)=>a+b,0);
-		if(totalDamage<animal.stats.hp[0]) return;
+
+		//Ignore if the animal is still alive
+		if(animal.stats.hp[0]>0) return;
 
 		let logs = new Log();
 

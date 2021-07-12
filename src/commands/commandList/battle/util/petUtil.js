@@ -94,3 +94,101 @@ exports.getDisplay = function(p,animals){
 
 	return {embed};
 }
+
+exports.giveXp = async function(p,team,xp) {
+	let sql = '';
+	let xpMapping = {};
+	if (team) {
+		// battle - oppposing team
+
+		// get highest level
+		let highestLvl = 1;
+		for (let i in team.team) {
+			if(team.team[i].stats.lvl > highestLvl) highestLvl = team.team[i].stats.lvl;
+		}
+
+		//full xp with bonus xp (will be level diff only, already calculated)
+		let xpGain = xp.base + xp.bonus;
+
+		// calculate xp per pet on team
+		for (let i in team.team) {
+			// catch up multiplier gets applied
+			let lvl = team.team[i].stats.lvl;
+
+			let multiplier = lvl < highestLvl ? 2 + ((highestLvl-lvl)/10) : 1;
+			// hard cap at 10
+			if (multiplier > 10) multiplier = 10;
+
+			xpMapping[team.team[i].pid] = Math.round(multiplier * xpGain);
+		}
+
+	}
+	else {
+		// something done by the user (battling, hunting, huntbot), give exp to all pets on teams
+
+		// find and map all the user's pets on teams and whether team is active or not
+		sql = `SELECT ANIMAL.pid, ANIMAL.xp, PET_TEAM.pgid, CASE WHEN PET_TEAM_ACTIVE.PGID IS NOT NULL THEN 1 ELSE 0 END AS active FROM USER INNER JOIN PET_TEAM TEAM ON USER.UID = TEAM.UID INNER JOIN PET_TEAM_ANIMAL PET_TEAM ON TEAM.PGID = PET_TEAM.PGID INNER JOIN ANIMAL ON PET_TEAM.PID = ANIMAL.PID LEFT JOIN pet_team_active PET_TEAM_ACTIVE ON PET_TEAM.PGID = PET_TEAM_ACTIVE.PGID WHERE USER.ID = ${p.msg.author.id} ORDER BY ACTIVE DESC`;
+		let results = await p.query(sql);
+		let teams = {};
+		results.forEach(animal => {
+			if (teams[animal.pgid]) {
+				teams[animal.pgid].animals.push({
+					id: animal.pid,
+					lvl: animalUtil.toLvl(animal.xp).lvl
+				});
+			}
+			else {
+				teams[animal.pgid] = {
+					active: animal.active,
+					animals: [{
+						id: animal.pid,
+						lvl: animalUtil.toLvl(animal.xp).lvl
+					}]
+				};
+			}
+		});
+
+		// assign exp per team
+		for (let id in teams) {
+			let team = teams[id];
+			
+			// get highest level
+			let highestLvl = 1;
+			for (let i in team.animals) {
+				if(team.animals[i].lvl > highestLvl) highestLvl = team.animals[i].lvl;
+			}
+
+			// assign xp
+			team.animals.forEach(animal => {
+				if (xpMapping[animal.id]) return; // skip, already mapped
+
+				let xpGain = xp.base;
+				if (xp.inactiveHalf) {
+					// hunting, inactive team gets half (no bonus xp)
+					if (!team.active) xpGain = xpGain / 2;
+				}
+				else {
+					// battling, active team gets bonus xp
+					if (team.active) xpGain = xpGain + xp.bonus;
+
+					// all teams get catch up multiplier applied
+					let multiplier = animal.lvl < highestLvl ? 2 + ((highestLvl-animal.lvl)/10) : 1;
+					// hard cap at 10
+					if (multiplier > 10) multiplier = 10;
+
+					xpGain = xpGain * multiplier;
+				}
+				xpMapping[animal.id] = Math.round(xpGain);
+			});
+		}
+	}
+	
+	// build out query
+	let cases = '';
+	for (let id in xpMapping) {
+		cases += ` WHEN animal.pid = ${id} THEN ${xpMapping[id]}`;
+	}
+	sql = `UPDATE IGNORE animal SET xp = xp + (CASE ${cases} ELSE 0 END) WHERE pid IN (${Object.keys(xpMapping)})`;
+	
+	return await p.query(sql);
+}

@@ -386,48 +386,12 @@ exports.isDead = function(team){
 	return totalhp<=0;
 }
 
-/* Distributes xp to team */
-exports.giveXP = async function(p,team,xp){
-	let isInt = p.global.isInt(xp);
-	let total = (isInt)?xp:xp.total;
-	let addStreak = (isInt)?false:xp.addStreak;
-	let resetStreak = (isInt)?false:xp.resetStreak;
-
-	let highestLvl = 1;
-	for(let i in team.team){
-		let lvl = team.team[i].stats.lvl;
-		if(lvl >highestLvl)
-			highestLvl = lvl;
-	}
-		
-	let cases = '';
-	for(let i in team.team){
-		let mult = 1;
-		let lvl = team.team[i].stats.lvl;
-		if(lvl < highestLvl)
-			mult = 2 + ((highestLvl-lvl)/10)
-		if(mult>10) mult = 10;
-		cases += ` WHEN animal.pid = ${team.team[i].pid} THEN ${Math.round(total*mult)}`;
-	}
-
+/* updates streak for team */
+exports.updateStreak = async function(p, team, addStreak, resetStreak) {
 	let sql = '';
-	if (isInt) {
-		sql = `UPDATE IGNORE pet_team
-			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
-			INNER JOIN animal ON pet_team_animal.pid = animal.pid
-		SET animal.xp = animal.xp + (CASE ${cases} ELSE ${Math.round(total/2)} END)
-		WHERE pet_team.pgid = ${team.pgid};`;
-	} else {
-		sql = `UPDATE IGNORE user 
-			INNER JOIN pet_team ON user.uid = pet_team.uid
-			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
-			INNER JOIN animal ON pet_team_animal.pid = animal.pid
-		SET animal.xp = animal.xp + (CASE ${cases} ELSE ${Math.round(xp.xp/2)} END)
-		WHERE user.id = ${p.msg.author.id};`;
-	}
 
 	if(addStreak) sql += `UPDATE pet_team SET highest_streak = IF(streak+1>highest_streak,streak+1,highest_streak), streak = streak + 1 WHERE pgid = ${team.pgid};`;
 	if(resetStreak) sql += `UPDATE pet_team SET streak = 0 WHERE pgid = ${team.pgid};`;
-
+	
 	return await p.query(sql);
 }

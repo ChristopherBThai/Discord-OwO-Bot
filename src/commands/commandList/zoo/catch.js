@@ -13,6 +13,7 @@ const dateUtil = require('../../../utils/dateUtil.js');
 const gemUtil = require('./gemUtil.js');
 const animalUtil = require('./animalUtil.js');
 const alterHunt = require('./../patreon/alterHunt.js');
+const petUtil = require('../battle/util/petUtil.js');
 const lootboxChance = 0.05;
 
 module.exports = new CommandInterface({
@@ -40,17 +41,12 @@ module.exports = new CommandInterface({
 		let msg=p.msg,con=p.con;
 
 		let sql = "SELECT money,IF(patreonAnimal = 1 OR (TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths),1,0) as patreon FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id LEFT JOIN patreons ON user.uid = patreons.uid WHERE cowoncy.id = "+msg.author.id+";";
-		sql += `SELECT name,nickname,animal.pid,MAX(tmp.pgid) AS active
+		sql += `SELECT name,nickname,animal.pid
 			FROM user u
 				INNER JOIN pet_team ON u.uid = pet_team.uid
 				INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
 				INNER JOIN animal ON pet_team_animal.pid = animal.pid
-				LEFT JOIN (SELECT pt2.pgid FROM user u2
-						INNER JOIN pet_team pt2 ON pt2.uid = u2.uid
-						LEFT JOIN pet_team_active pt_act ON pt2.pgid = pt_act.pgid
-					WHERE u2.id = ${p.msg.author.id}
-					ORDER BY pt_act.pgid DESC, pt2.pgid ASC LIMIT 1) tmp
-					ON tmp.pgid = pet_team.pgid
+				INNER JOIN pet_team_active ON pet_team.pgid = pet_team_active.pgid
 				WHERE u.id = ${p.msg.author.id}
 				GROUP BY animal.pid
 				ORDER BY pet_team_animal.pos ASC;`;
@@ -83,13 +79,11 @@ module.exports = new CommandInterface({
 				text += `\n${p.config.emoji.blank} **|** `;
 				petText = '';
 				for(let i in result[1]){
-					sql += `UPDATE animal SET xp = xp + ${result[1][i].active?animal.xp:Math.round(animal.xp/2)} WHERE pid = ${result[1][i].pid};`;
-					if (result[1][i].active) {
-						let pet =  p.global.validAnimal(result[1][i].name);
-						petText += (pet.uni?pet.uni:pet.value)+" ";
-					}
+					let pet =  p.global.validAnimal(result[1][i].name);
+					petText += (pet.uni?pet.uni:pet.value)+" ";
 				}
 				animalXp = animal.xp;
+				petUtil.giveXp(p, null, {base: animalXp, inactiveHalf: true});
 				text += `${petText}gained **${animalXp}xp**!`;
 			}
 
