@@ -68,7 +68,7 @@ module.exports = new CommandInterface({
 		/* Send message and add reactions if necessary */
 		let content;
 		if (!voted) {
-			content = `${warningEmoji} **You must accept these rules to use the bot!**`
+			content = `**Haiiii! owo ${warningEmoji} You must accept these wuwes to use da bot! (◠‿◠✿)**`
 		}
 		let message = await p.send({content, embed});
 		if(voted) return;
