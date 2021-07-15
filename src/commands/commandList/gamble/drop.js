@@ -16,7 +16,7 @@ module.exports = new CommandInterface({
 
 	args:"{amount}",
 
-	desc:"Drop some cowoncy in a channel with 'owo drop {amount}'! Users can pick it up with 'owo pickup {amount}' If you try to pick up more than what's on the floor, you'll lose that amount! Be careful!",
+	desc:"This command is now deprecated. ~~Drop some cowoncy in a channel with 'owo drop {amount}'! Users can pick it up with 'owo pickup {amount}' If you try to pick up more than what's on the floor, you'll lose that amount! Be careful!~~",
 
 	example:["owo drop 3000"],
 
