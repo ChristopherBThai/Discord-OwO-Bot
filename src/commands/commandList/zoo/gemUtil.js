@@ -37,40 +37,64 @@ exports.getGem = function(key){
 	return {...gems.gems[key]};
 }
 
-exports.use = function(p,id){
-	var gem = getGemByID(id);
-	if(!gem){
-		p.send("**🚫 | "+p.msg.author.username+"**, There is no such item!",3000);
+exports.use = function(p,ids){
+	if (ids.length > 4) { // all current gem types
+		p.errorMsg(", you can only use up to four gems at one time!",3000);
 		return;
 	}
-	var sql = `UPDATE IGNORE user NATURAL JOIN user_gem ug NATURAL JOIN gem g SET
+
+	var sql = "";
+	let invalidIds = [];
+	let gems = [];
+	for (let i = 0; i < ids.length; i++) {
+		let id = ids[i];
+		let gem = getGemByID(id);
+		if(!gem){
+			invalidIds.push(id);
+		}
+		else {
+			gems.push(gem);
+			sql += `UPDATE IGNORE user NATURAL JOIN user_gem ug NATURAL JOIN gem g SET
 			gcount = gcount - 1,
 			activecount = ${gem.length}
-		WHERE
+			WHERE
 			gname = '${gem.key}' AND
 			gcount > 0 AND
 			id = ${p.msg.author.id} AND
 			(SELECT sum FROM
-			 	(SELECT SUM(activecount) as sum,type FROM user NATURAL JOIN user_gem NATURAL JOIN gem WHERE id = ${p.msg.author.id} GROUP BY type) as tmptable
+				 (SELECT SUM(activecount) as sum,type FROM user NATURAL JOIN user_gem NATURAL JOIN gem WHERE id = ${p.msg.author.id} GROUP BY type) as tmptable
 			WHERE type = g.type) <= 0;`;
-	p.con.query(sql,function(err,result){
-		if(err){return;}
-		if(!result||result.changedRows==0){
-			p.send("**🚫 | "+p.msg.author.username+"**, you already have an active "+gem.type+" gem or you do not own this gem!",3000);
-			return;
 		}
-		var text = "**"+gem.emoji+" | "+p.msg.author.username+"**, you activated a(n) **"+ranks[gem.key[0]]+" "+gem.type+" Gem!**\n";
-		text += "**<:blank:427371936482328596> |** Your next "+gem.length+" ";
-		if(gem.type=="Hunting")
-			text += "manual hunts will be increased by "+gem.amount;
-		else if(gem.type=="Patreon")
-			text += "manual hunts will catch an extra animal and have a chance to contain Patreon exclusive animals!";
-		else if(gem.type=="Empowering")
-			text += "animals will be doubled! It can stack with Hunting gems!";
-		else if(gem.type=="Lucky")
-			text += "animals will have a +"+gem.amount+"x higher chance of finding gem tiers!";
-		else
-			text += "ERROR!";
+	}
+	if (invalidIds.length > 0) {
+		p.errorMsg(`, one or more ids are not valid gems: ${invalidIds.toString()}`,3000);
+	}
+
+	let text = `**✨ | ${p.msg.author.username}**, you activated the following gems:`;
+	p.con.query(sql,function(err,results){
+		if(err){p.errorMsg(", oops, something went wrong! Please try again.",3000);}
+		for (let i = 0; i < results.length; i++) {
+			let result = results[i];
+			text += "\r\n";
+			
+			if(!result||result.changedRows==0){
+				text += `**🚫 |** you already have an active ${gems[i].type} gem or you do not own this gem!`;
+			}
+			else {
+				text += `**${gems[i].emoji} |** A(n) **${ranks[gems[i].key[0]]} ${gems[i].type} Gem!**\r\n`;
+				text += `**<:blank:427371936482328596> |** Your next ${gems[i].length} `;
+				if(gems[i].type=="Hunting")
+					text += `manual hunts will be increased by ${gems[i].amount}`;
+				else if(gems[i].type=="Patreon")
+					text += "manual hunts will catch an extra animal and have a chance to contain Patreon exclusive animals!";
+				else if(gems[i].type=="Empowering")
+					text += "animals will be doubled! It can stack with Hunting gems!";
+				else if(gems[i].type=="Lucky")
+					text += `animals will have a +${gems[i].amount}x higher chance of finding gem tiers!`;
+				else
+					text += "ERROR!";
+			}
+		}
 		p.send(text);
 	});
 }

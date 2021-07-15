@@ -39,7 +39,7 @@ module.exports = class Quest{
 
 		/* Check if user has this quest */
 		var result = await mysql.query(
-			"SELECT * FROM quest WHERE qname = ? AND uid = (SELECT uid FROM user WHERE id = ?);",
+			"SELECT * FROM quest WHERE qname = ? AND locked = 'N' AND uid = (SELECT uid FROM user WHERE id = ?);",
 			[questName,id]
 		);
 
