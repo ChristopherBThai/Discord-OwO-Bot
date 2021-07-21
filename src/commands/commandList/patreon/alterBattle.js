@@ -50,7 +50,7 @@ exports.alter = async function(p, user, text, type){
 			return mercureid(text, type);
 		case '477168699112161281':
 			return leshoop(text, user, type);
-		case '612158581113880576':
+		case '484722088423325753':
 			return blade(text, type);
 		case '643225088123994118':
 			return becca(text, type);
