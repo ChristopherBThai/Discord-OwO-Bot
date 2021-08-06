@@ -44,7 +44,7 @@ const totalShards = 10;
 			shards = 2;
 			firstShardID = 0;
 			lastShardID = 1;
-			clusters = 1
+			clusters = 2
 		}
 
 		console.log("Creating shards "+firstShardID+"~"+lastShardID+" out of "+shards+" total shards!");
