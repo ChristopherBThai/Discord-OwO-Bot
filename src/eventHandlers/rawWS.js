@@ -1,6 +1,6 @@
 /*
  * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Copyright (C) 2021 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
@@ -16,6 +16,8 @@ exports.handle = function(packet, id){
 				break;
 			case 3:
 				this.interactionCollector.interact(packet.d);
+				this.interactionHandlers.emit(packet.d.data.custom_id, packet.d);
+				break;
 		}
 	}
 }
