@@ -6,14 +6,13 @@
   */
 
 const redis = require('redis');
-const login = require('../../../tokens/owo-login.json');
 const sub = redis.createClient({
-  host: login.redis_host,
-  password: login.redis_pass
+  host: process.env.REDIS_HOST,
+  password: process.env.REDIS_PASS
 });
 const pub = redis.createClient({
-  host: login.redis_host,
-  password: login.redis_pass
+  host: process.env.REDIS_HOST,
+  password: process.env.REDIS_PASS
 });
 
 const requireDir = require('require-dir');

@@ -1,8 +1,7 @@
 const redis = require('redis');
-const login = require('../../../tokens/owo-login.json');
 const client = redis.createClient({
-  host: login.redis_host,
-  password: login.redis_pass
+  host: process.env.REDIS_HOST,
+  password: process.env.REDIS_PASS
 });
 
 exports.incr = function(key,value=1){

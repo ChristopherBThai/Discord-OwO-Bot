@@ -68,7 +68,6 @@ class Command {
 
 		// Make sure user accepts rules first
 		if (!(await acceptedRules(this.main, interaction))) {
-			// TODO check if this works
 			executeCommand(this.main, initParam(interaction, "rule", [], this.main));
 			return;
 		}

@@ -20,3 +20,5 @@ node_modules/
 
 # log files
 .log
+
+.env

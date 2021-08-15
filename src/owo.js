@@ -33,6 +33,10 @@ class OwO extends Base{
 		// Redis pubsub to communicate with all the other shards/processes
 		this.pubsub = new (require('./utils/pubsub.js'))(this);
 
+		// Handles discord interaction events
+		this.interactionHandlers = new (require('./interactionHandlers'))(this);
+
+		// Websocket connection to our emulator server
 		this.socketio = new (require('./utils/socketio.js'))(this);
 
 		// Logger
