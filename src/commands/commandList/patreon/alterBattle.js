@@ -102,7 +102,7 @@ async function checkDb (p, id, text, info) {
 	return { 
 		description: text.description,
 		fields: text.fields,
-		image: text.image,
+		image: { url: result.bottomImg || text.image?.url },
 		title: p.global.replacer(result.title, replacers),
 		color: result.color || 1,
 		footer: { text: p.global.replacer(result.footer, replacers) },
