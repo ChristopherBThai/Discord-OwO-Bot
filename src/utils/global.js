@@ -257,7 +257,7 @@ exports.filteredName = function (name) {
 		return emojis[matched];
 	}).replace(/\W/g,'');
 
-	if (filter2.exists(shortnick)) {
+	if (filter2.exists(shortnick + ' ')) {
 		name = namor.generate({ words: 3, saltLength: 0, separator:' ' });
 		return { name, offensive:false }
 	}
@@ -329,4 +329,12 @@ exports.getEmojiURL = function (emoji) {
 	const isGif = (/^<a:/gi).test(emoji);
 	const format = isGif ? 'gif' : 'png';
 	return `https://cdn.discordapp.com/emojis/${id}.${format}`;
+}
+
+exports.replacer = function (text, replacer) {
+	if (!text) return text;
+	for (let key in replacer) {
+		text = text.replace(new RegExp(`{\s*${key}\s*}`, 'gi'), replacer[key]);
+	}
+	return text;
 }

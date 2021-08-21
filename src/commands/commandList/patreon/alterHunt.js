@@ -7,7 +7,9 @@
 
 const blank = '<:blank:427371936482328596>';
 const huntEmoji = "🌱";
-exports.alter = function(id,text,info){
+exports.alter = async function(p, id, text, info){
+	const result = await checkDb(p, id, text, info);
+	if (result) return result;
 	switch(id){
 		case '220934553861226498':
 			return geist(text);
@@ -69,6 +71,10 @@ exports.alter = function(id,text,info){
 			return lexx(text, info);
 		case '490709773495435285':
 			return koala(text, info);
+		case '468873774960476177':
+			return gojo(text, info);
+		case '183696273382178816':
+			return vanor(text, info);
 		default:
 			return text;
 	}
@@ -79,6 +85,58 @@ function getA(text) {
 	return ['a', 'e', 'i', 'o', 'u'].includes(text[0]) 
 		? 'an'
 		: 'a'
+}
+
+async function checkDb (p, id, text, info) {
+	let type, replacers;
+
+	if (info.gemText) {
+		type = 'gems';
+		replacers = {
+			username: p.msg.author.username,
+			discriminator: p.msg.author.discriminator,
+			blank: p.config.emoji.blank,
+			gems: info.gemText,
+			animals: info.animalEmojis,
+			pets: info.petText || '',
+			xp: info.animalXp || ''
+		}
+	} else {
+		type = 'nogems';
+		replacers = {
+			username: p.msg.author.username,
+			discriminator: p.msg.author.discriminator,
+			blank: p.config.emoji.blank,
+			pets: info.petText || '',
+			xp: info.animalXp || '',
+			a: getA(info.animal[0][2]),
+			animalRank: info.animal[0][2],
+			animalRankEmoji: info.animal[0][0].match(/<a?:\w*:\d*>/i)[0],
+			animal: info.animalEmojis
+		}
+	}
+	const sql = `SELECT alterhunt.* from alterhunt INNER JOIN user ON alterhunt.uid = user.uid WHERE user.id = ${p.msg.author.id} AND alterhunt.type = '${type}'`;
+	const result = (await p.query(sql))[0];
+	if (!result || !result.text) return
+
+	result.text += info.lootboxText || '';
+	result.text = p.global.replacer(result.text,replacers);
+	if (!result.isEmbed) {
+		return result.text
+	}
+
+	return { embed: {
+		description: result.text,
+		title: p.global.replacer(result.title, replacers),
+		color: result.color || 1,
+		footer: { text: p.global.replacer(result.footer, replacers) },
+		thumbnail: { url: result.sideImg },
+		image: { url: result.bottomImg },
+		author: {
+			name: p.global.replacer(result.author, replacers), 
+			icon_url: result.showAvatar ? p.msg.author.avatarURL : null
+		}
+	}}
 }
 
 function geist(text){
@@ -662,29 +720,37 @@ function direwolf(text, info) {
 function notJames(text, info) {
 	const moon = '<a:moon:819081050520813568>';
 	const peach = '<:peach:819081050369949736>';
+	const spark3 = '<a:spark3:843740415449890868>';
+	const spark6 = '<a:spark6:843740442662404096>';
+	const star8 = '<a:star8:843740415341625385>';
+	const star7 = '<a:star7:843740442394099754>';
 
 	if(info.gemText){
-		text = `${moon} **| chem** broke into a peach farm, charmed by ${info.gemText}\n`;
-		text += `${peach} **|** you ran away with ${info.animalEmojis}`;
+		text = `${moon} **| ${info.author.username}** storms into a peach farm\n`
+			+ `${spark3} **|** with by ${info.gemText.replace(/\/\d+|`+/gi,'')}\n`
+			+ `${spark6} **|** and runs away with ${info.animalEmojis}`;
 		if (info.petText) {
-			text += `\n${peach} **|** ${info.petText} gained **${info.animalXp} peaches**!`;
+			text += `\n${star8} **|** ${info.petText} gain **${info.animalXp}** ${peach}`;
 		}
 	}else{
 		const a = getA(info.animal[0][0]);
-		text = `${moon} **| chem** broke into a peach farm with bare hands\n`;
-		text += `${peach} **|** you ran away with ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
+		text = `${moon} **| ${info.author.username}** breaks into a peach farm with bare hands\n`;
+		text += `${spark6} **|** and runs away with ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
 		if (info.petText) {
-			text += `\n${peach} **|** ${info.petText} gained **${info.animalXp} peaches**`;
+			text += `\n${star7} **|** ${info.petText} gain **${info.animalXp}** ${peach}`;
 		}
 	}
-	text += info.lootboxText || '';
+	if (info.lootboxText) {
+		text += `\n**Lootbox** [**${info.lootboxText.match(/\[\d+\//gi)[0].match(/\d+/gi)[0]}**] is found!`;
+	}
+
+	const url = Math.random() > .5 ? 'https://cdn.discordapp.com/attachments/815195361379090442/817327541010038784/J_1.gif'
+		: 'https://cdn.discordapp.com/attachments/815195361379090442/835389547713003520/Test-4.gif';
 
 	const embed = {
 		description: text,
-		color: 1,
-		thumbnail: {
-			url: "https://cdn.discordapp.com/attachments/769619375296610304/817702733254885376/image0.gif" 
-		}
+		color: 16776664,
+		thumbnail: { url }
 	}
 
 	return {embed};
@@ -732,7 +798,7 @@ function koala(text, info) {
 		text += `${blank} **|** ${info.gemText.replace(/\/\d+|`+/gi,'')}`;
 		const animals = info.animalEmojis.split(' ');
 		for (let i in animals) {
-			if (i % 10 == 0) {
+			if (i % Math.ceil(animals.length/2) == 0) {
 				text += `\n${blank} **|**`
 			}
 			text += ' ' + animals[i];
@@ -763,6 +829,76 @@ function koala(text, info) {
 	if (info.lootboxText) {
 		embed.image = {
 			url: "https://cdn.discordapp.com/attachments/541197084146270208/817733999287205908/boxopen.gif"
+		}
+	}
+
+	return {embed};
+}
+
+function gojo (text, info) {
+	let url, color;
+
+	const flamePurple = '<a:flamePurple:832525958732447804>';
+	const flameBlue = '<a:flameBlue:832525958731923526>';
+	const flameRed = '<a:flameRed:832525958837043210>';
+	const flameBlack = '<a:flameBlack:832525958635454484>';
+	const sparkle1 = '<a:sparkle1:832525958749093889>';
+	const sparkle2 = '<a:sparkle2:832525958748831804>';
+
+	if(info.gemText){
+		text = `${flameBlue} **|** Gojo Satoru goes to hunt curses and uses Cursed Amplification Technique: Blue and Cursed Reversal Technique: Red\n`;
+		text += `${flameRed} **|** ${info.gemText} Gojo combines them and forms Hollow Purple\n`;
+		text += `${flamePurple} **|** Caught in Hollow Purple are: ${info.animalEmojis}`;
+		if (info.petText) {
+			text += `\n${sparkle1} **|** ${info.petText} gained **${info.animalXp} XP!**`;
+		}
+		url = "https://cdn.discordapp.com/attachments/793146733701234718/822707168410861568/ezgif-2-e3da357a121a.gif";
+		color = 11796735;
+	}else{
+		const a = getA(info.animal[0][0]);
+		text = `${flameBlack} **|** Itadori Yuji goes to hunt curses in Jujutsu Tech\n`;
+		text += `${flameRed} **|** Itadori Yuji finds a curse and uses Black Flash. He catches ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
+		if (info.petText) {
+			text += `\n${sparkle2} **|** ${info.petText} gained **${info.animalXp} XP!**`;
+		}
+		url = "https://cdn.discordapp.com/attachments/793146733701234718/822706902471147560/1616218993296.gif";
+		color = 10027008;
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: color,
+		thumbnail: {
+			url: url
+		}
+	}
+
+	return {embed};
+}
+
+function vanor (text, info) {
+	let url, color;
+
+	const emoji = '<a:harleyquinn:832531027900628992>';
+
+	if(info.gemText){
+		text =  `${emoji} **|** Here Ya Go **Puddin'!** ${info.gemText}\n`;
+		text += `${emoji} **| What Do** You Think? ${info.animalEmojis}`;
+	}else{
+		text =  `${emoji} **|** Here Ya Go **Puddin'!**\n`;
+		text += `${emoji} **| What Do** You Think? ${info.animalEmojis}`;
+	}
+	if (info.petText) {
+		text += `\n${emoji} **|** ${info.petText} gained **${info.animalXp} xp**`;
+	}
+	text += info.lootboxText || '';
+
+	const embed = {
+		description: text,
+		color: 16761035,
+		thumbnail: {
+			url: "https://cdn.discordapp.com/attachments/803270612906410014/823821538616803348/ezgif.com-crop.gif"
 		}
 	}
 

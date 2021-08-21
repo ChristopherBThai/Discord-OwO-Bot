@@ -75,7 +75,7 @@ async function addPatreon(p, id, addMonths = 1, type = 1) {
 	let result = await p.query(sql);
 	let uid;
 	let months = result[0]&&result[0].patreonMonths?result[0].patreonMonths:0;
-	let monthsPassed = result[0]&&result[0].monthsPassed?result[0].monthsPassed:months;
+	let monthsPassed = p.global.isInt(result[0]?.monthsPassed) ? result[0].monthsPassed : months;
 	if(!type){
 		if(result[0]&&result[0].patreonType)
 			type = result[0].patreonType;

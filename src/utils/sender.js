@@ -5,11 +5,10 @@
  * For more information, see README.md and LICENSE
   */
 	
-var client,pubsub;
-var auth = require('../../../tokens/owo-auth.json');
-var admin;
-var logChannel = "739393782805692476";
-var modLogChannel = "471579186059018241";
+let client, pubsub, admin;
+const auth = require('../../../tokens/owo-auth.json');
+const logChannel = "739393782805692476";
+const modLogChannel = "471579186059018241";
 
 /**
  * Sends a msg to channel
@@ -33,9 +32,9 @@ exports.send = function(msg){
 					// Do not send more than 10 messages
 				}else if(total.length+fragments[i].length+append.length>=maxLength){
 					if(total===""){
-						return msg.channel.createMessage("ERROR: The message is too long to send");
+						return createMessage(msg, "ERROR: The message is too long to send");
 					}else{
-						msg.channel.createMessage(total.endsWith(append) ? total : total + append);
+						createMessage(msg, total.endsWith(append) ? total : total + append);
 						total = prepend + fragments[i];
 						sendCount++;
 					}
@@ -44,15 +43,35 @@ exports.send = function(msg){
 				}
 			}
 			if(total!==""){
-				return msg.channel.createMessage(total);
+				return createMessage(msg, total);
 			}
 		}else if(del)
-			return msg.channel.createMessage(content,file)
-				.then(message => setTimeout(function(){
-					try{message.delete();}catch(e){}
-				},del))
+			return createMessage(msg, content, file, del)
 		else
-			return msg.channel.createMessage(content,file)
+			return createMessage(msg, content,file)
+	}
+}
+
+async function createMessage (msg, content, file, del) {
+	if (msg.interaction) {
+		if (typeof content === "string") {
+			content = { content }
+		}
+		if (content.embed) {
+			content.embeds = [ content.embed ];
+			delete content.embed;
+		}
+		return msg.createMessage(content, file, del);
+	} else {
+		if (del) {
+			const sentMsg = await msg.channel.createMessage(content, file);
+			setTimeout(() => {
+				sentMsg.delete();
+			}, del);
+			return sentMsg;
+		} else {
+			return msg.channel.createMessage(content, file);
+		}
 	}
 }
 
@@ -77,9 +96,9 @@ exports.reply = function(msg){
 			for(let i in split){
 				if(total.length+split[i].length>=2000){
 					if(total===""){
-						return msg.channel.createMessage("ERROR: The message is too long to send");
+						return createMessage(msg, "ERROR: The message is too long to send");
 					}else{
-						msg.channel.createMessage(total);
+						createMessage(msg, total);
 						total = split[i];
 					}
 				}else{
@@ -87,15 +106,12 @@ exports.reply = function(msg){
 				}
 			}
 			if(total!==""){
-				return msg.channel.createMessage(total);
+				return createMessage(msg, total);
 			}
 		}else if(del)
-			return msg.channel.createMessage(tempContent,file)
-				.then(message => setTimeout(function(){
-					try{message.delete();}catch(e){}
-				},del))
+			return createMessage(msg, tempContent, file, del)
 		else
-			return msg.channel.createMessage(tempContent,file)
+			return createMessage(msg, tempContent, file)
 	}
 }
 
@@ -115,12 +131,9 @@ exports.error = function(errorEmoji,msg){
 		}
 
 		if(del)
-			return msg.channel.createMessage(tempContent,file)
-				.then(message => setTimeout(function(){
-					try{message.delete();}catch(e){}
-				},del))
+			return createMessage(msg, tempContent, file, del)
 		else
-			return msg.channel.createMessage(tempContent,file)
+			return createMessage(msg, tempContent, file)
 	}
 }
 

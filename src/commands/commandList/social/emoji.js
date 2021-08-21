@@ -180,13 +180,13 @@ function createEmbed(p, loc, emojis, emojiAdders){
 
 async function setServer(p){
 	// Check if the user has emoji permissions
-	if(!p.msg.member.permission.has('manageEmojis')){
+	if(!p.msg.member.permissions.has('manageEmojis')){
 		p.errorMsg(", you do not have permissions to edit emojis on this server!",3000);
 		return;
 	}
 
 	// Check if the bot has permissions
-	if(!p.msg.channel.guild.members.get(p.client.user.id).permission.has("manageEmojis")){
+	if(!p.msg.channel.guild.members.get(p.client.user.id).permissions.has("manageEmojis")){
 		p.errorMsg(", I don't have permissions to add emojis! Please give me permission or reinvite me!\n"+p.config.invitelink);
 		return;
 	}

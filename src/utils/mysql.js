@@ -6,15 +6,13 @@
   */
 	
 const mysql = require('mysql');
-const login = require('../../../tokens/owo-login.json');
 
 config = {
-	host: login.mysql_host,
-	user: login.mysql_user,
-	password: login.mysql_pass,
+	host: process.env.MYSQL_HOST,
+	user: process.env.MYSQL_USER,
+	password: process.env.MYSQL_PASS,
 	database: "owo",
 	supportBigNumbers: true,
-	bigNumberStrings: true,
 	multipleStatements: true,
 	charset: "utf8mb4",
 	connectionLimit: 10

@@ -7,6 +7,8 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
+const alterGive = require('../patreon/alterGive.js');
+
 module.exports = new CommandInterface({
 
 	alias:["give","send"],
@@ -72,7 +74,13 @@ module.exports = new CommandInterface({
 			if(rows[0][0]==undefined||rows[0][0].money<amount){
 				p.send("**🚫 |** Silly **"+msg.author.username+"**, you don't have enough cowoncy!",3000);
 			}else{
-				p.send("**💳 | "+msg.author.username+"** sent **"+(p.global.toFancyNum(amount))+" cowoncy** to **"+user.username+"**!");
+				let text = "**💳 | "+msg.author.username+"** sent **"+(p.global.toFancyNum(amount))+" cowoncy** to **"+user.username+"**!";
+				text = alterGive.alter(p, p.msg.author.id, text, {
+					from: p.msg.author,
+					to: user,
+					amount: p.global.toFancyNum(amount)
+				});
+				p.send(text);
 				p.neo4j.give(p.msg,user,amount);
 				p.logger.incr(`cowoncy`, amount, {type:'given'}, p.msg);
 				p.logger.decr(`cowoncy`, -1 * amount, {type:'give'}, p.msg);

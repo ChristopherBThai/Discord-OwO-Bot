@@ -46,6 +46,7 @@ exports.distributeRewards = async function(msg){
 	sql += `SELECT levelup FROM guild_setting WHERE id = ${msg.channel.guild.id};`;
 	let result = await mysql.query(sql);
 	let uid,plevel = 0;
+	let hasLevel = false;
 
 	// level up is disabled in the guild
 	if(result[1][0]&&result[1][0].levelup==1) return;
@@ -59,8 +60,10 @@ exports.distributeRewards = async function(msg){
 		uid = result[0][0].uid;
 	}
 	
-	if(result[0][0]&&result[0][0].rewardLvl)
+	if(result[0][0]&&result[0][0].rewardLvl != undefined) {
 		plevel = result[0][0].rewardLvl;
+		hasLevel = true;
+	}
 
 	// If user already got the reward, ignore.
 	if(plevel >= level) return;
@@ -88,7 +91,7 @@ exports.distributeRewards = async function(msg){
 	}
 
 	// Update database reward level
-	if(plevel){
+	if(hasLevel){
 		sql = `UPDATE user_level_rewards SET rewardLvl = ${level} WHERE uid = ${uid} AND rewardLvl = ${plevel};`;
 		result = await mysql.query(sql);
 		if(!result.changedRows) return;

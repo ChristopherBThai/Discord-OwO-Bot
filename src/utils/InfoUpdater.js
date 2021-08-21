@@ -40,7 +40,12 @@ class InfoUpdater{
 			}
 			let guilds = res.body.guilds;
 			guilds = this.main.global.toFancyNum(guilds);
-			this.main.bot.editStatus(null,{name:guilds+" servers!",type:3});
+			// this.main.bot.editStatus(null,{name:guilds+" servers!",type:3});
+			this.main.bot.editStatus(null, {
+				name: ` with ${guilds} servers!`,
+				type: 1,
+				url: "https://www.twitch.tv/owobotplays"
+			});
 		});
 	}
 

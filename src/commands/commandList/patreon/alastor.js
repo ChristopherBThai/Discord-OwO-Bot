@@ -20,7 +20,7 @@ module.exports = new CommandInterface({
 
 	args:"[feed]",
 
-	desc:"Feed Alastor! This command was created by ALradio",
+	desc:"OwO Alastor to show your Alastor! Feed Alastor every day to increase your streak! When Alastor gets upset, offer him a crown to appease him and continue your streak! This command was created by ?229299825072537601?",
 
 	example:[],
 
@@ -37,9 +37,10 @@ module.exports = new CommandInterface({
 	execute: async function(p){
 		if (p.args[0] === "feed") {
 			const lastCrown = await p.redis.hget("cd_"+p.msg.author.id,table+"_crown");
-			if (!lastCrown) 
+			if (!lastCrown)  {
 				await p.redis.hset("cd_"+p.msg.author.id,table+"_crown",new Date());
-			else if (new Date() - new Date(lastCrown) > 345600000) {
+				await p.redis.expire("cd_"+p.msg.author.id);
+			} else if (new Date() - new Date(lastCrown) > 345600000) {
 				displayCrown(p);
 				return;
 			}
@@ -69,6 +70,7 @@ async function giveCrown(p) {
 	}
 
 	await p.redis.hset("cd_"+p.msg.author.id,table+"_crown",new Date());
+	await p.redis.expire("cd_"+p.msg.author.id);
 	display(p, "That seems to have done the trick, he seems content. He will allow you to claim the daily streak.. maybe.", gif4);
 }
 
@@ -84,6 +86,7 @@ async function feed(p) {
 	let title = p.msg.author.username+"'s Alastor";
 	if (afterMid.after) {
 		await p.redis.hset("cd_"+p.msg.author.id,table,afterMid.now);
+		await p.redis.expire("cd_"+p.msg.author.id);
 		if (afterMid.withinDay || !lasttime) {
 			streak = await p.redis.hincrby(p.msg.author.id,table);
 			title = p.msg.author.username+" fed Alastor!";

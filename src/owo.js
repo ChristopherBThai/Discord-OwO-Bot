@@ -27,12 +27,17 @@ class OwO extends Base{
 		// Redis connection
 		this.redis = require('./utils/redis.js');
 
-
 		// Neo4j Logging
 		this.neo4j = require('./utils/neo4j.js');
 
 		// Redis pubsub to communicate with all the other shards/processes
 		this.pubsub = new (require('./utils/pubsub.js'))(this);
+
+		// Handles discord interaction events
+		this.interactionHandlers = new (require('./interactionHandlers'))(this);
+
+		// Websocket connection to our emulator server
+		this.socketio = new (require('./utils/socketio.js'))(this);
 
 		// Logger
 		this.logger = require('./utils/logger.js');
@@ -77,6 +82,9 @@ class OwO extends Base{
 
 		// Creates a reaction collector for a message (works for uncached messages too)
 		this.reactionCollector = new (require('./utils/reactionCollector.js'))(this);
+
+		// Creates a reaction collector for a message (works for uncached messages too)
+		this.interactionCollector = new (require('./utils/interactionCollector.js'))(this);
 
 		// Fetches images and converts them to buffers
 		this.DataResolver = require('./utils/dataResolver.js');

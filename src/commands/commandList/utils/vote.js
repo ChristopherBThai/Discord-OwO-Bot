@@ -64,7 +64,7 @@ module.exports = new CommandInterface({
 							if(weekend)
 								text += "**⛱ |** It's the weekend! You also earned a bonus of **"+weekendBonus+"** cowoncy!\n";
 							text += box.text;
-							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
+							text += "**<:blank:427371936482328596> |** https://top.gg/bot/408785106942164992/vote";
 							p.send(text);
 							//console.log("\x1b[33m",id+" has voted for the first time!");
 							p.logger.incr(`votecount`, 1, {}, p.msg);
@@ -94,7 +94,7 @@ module.exports = new CommandInterface({
 							if(weekend)
 								text += "**⛱ |** It's the weekend! You also earned a bonus of **"+weekendBonus+"** cowoncy!\n";
 							text += box.text;
-							text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
+							text += "**<:blank:427371936482328596> |** https://top.gg/bot/408785106942164992/vote";
 							p.send(text);
 							//console.log("\x1b[33m",id+" has voted and  received cowoncy!");
 							p.logger.incr(`votecount`, 1, {}, p.msg);
@@ -104,7 +104,7 @@ module.exports = new CommandInterface({
 						text += "**<:blank:427371936482328596> |** You can vote every 12 hours!\n";
 						text += "**<:blank:427371936482328596> |** Your daily vote is available in **"+(12-result[0][0].time)+" H**\n";
 						//text += "**<:blank:427371936482328596> |** Please retype `owo vote` 1-10min after you vote!\n";
-						text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
+						text += "**<:blank:427371936482328596> |** https://top.gg/bot/408785106942164992/vote";
 						p.send(text);
 						//console.log("\x1b[33m",id+" tried to vote again");
 					}
@@ -115,7 +115,7 @@ module.exports = new CommandInterface({
 				text += "**<:blank:427371936482328596> |** You can vote every 12 hours!\n";
 				//text += "**⚠ |** Automatic votes are currently broken!\n";
 				//text += "**<:blank:427371936482328596> |** Please retype `owo vote` 1-10min after you vote!\n";
-				text += "**<:blank:427371936482328596> |** https://discordbots.org/bot/408785106942164992/vote";
+				text += "**<:blank:427371936482328596> |** https://top.gg/bot/408785106942164992/vote";
 				p.send(text);
 			}
 		});

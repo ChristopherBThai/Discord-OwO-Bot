@@ -18,7 +18,7 @@ const animals = require('../../../../../tokens/owo-animals.json');
 
 module.exports = new CommandInterface({
 
-	alias:["autohunt","huntbot","hb"],
+	alias:["autohunt","huntbot","hb","ah"],
 
 	args:"{cowoncy}",
 

@@ -62,6 +62,24 @@ class Command {
 		await executeCommand(this.main,param);
 	}
 
+	async executeInteraction (interaction) {
+		//Get command name
+		let command = interaction.command.toLowerCase();
+
+		// Make sure user accepts rules first
+		if (!(await acceptedRules(this.main, interaction))) {
+			executeCommand(this.main, initParam(interaction, "rule", [], this.main));
+			return;
+		}
+
+		// Init params to pass into command
+		// TODO args
+		let param = initParam(interaction, command, [], this.main);
+
+		// Execute the command
+		await executeCommand(this.main, param);
+	}
+
 	async executeAdmin (msg, raw){
 		let args;
 		if(msg.content.toLowerCase().indexOf(this.prefix) === 0)
@@ -250,6 +268,7 @@ function initParam(msg,command,args,main){
 		"EmojiAdder":main.EmojiAdder,
 		"quest":function(questName,count,extra){main.questHandler.increment(msg,questName,count,extra).catch(console.error)},
 		"reactionCollector":main.reactionCollector,
+		"interactionCollector":main.interactionCollector,
 		"dateUtil":main.dateUtil,
 		"neo4j":main.neo4j
 	};

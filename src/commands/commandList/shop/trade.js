@@ -41,58 +41,67 @@ module.exports = new CommandInterface({
 async function validate (p) {
 	let [ itemId, user, price, count = 1 ] = p.args
 	if (!itemId) {
-		p.errorMsg(", please include what item you want to trade!", 3000);
+		await p.errorMsg(", please include what item you want to trade!", 3000);
 		return { error: true };
 	}
 	if (!p.global.isInt(itemId)) {
-		p.errorMsg(", invalid item id! Item id must be a number!", 3000);
+		await p.errorMsg(", invalid item id! Item id must be a number!", 3000);
 		return { error: true };
 	}
 	itemId = parseInt(itemId);
 	const item = itemUtil.getById(itemId);
 	if (!item) {
-		p.errorMsg(", an item with that id does not exist or you cannot trade that item.", 3000);
+		await p.errorMsg(", an item with that id does not exist or you cannot trade that item.", 3000);
 		return { error: true };
 	}
 
 	user = p.getMention(user);
 	if (!user) {
-		p.errorMsg(", please tag a user you want to trade with!", 3000);
+		await p.errorMsg(", please tag a user you want to trade with!", 3000);
+		return { error: true };
+	}
+	if (user.id == p.msg.author.id) {
+		await p.errorMsg(", you cannot trade with yourself!", 3000);
 		return { error: true };
 	}
 
 	if (!price) {
-		p.errorMsg(", please specify what price you want to sell the item for!", 3000);
+		await p.errorMsg(", please specify what price you want to sell the item for!", 3000);
 		return { error: true };
 	}
 	if (!p.global.isInt(price)) {
-		p.errorMsg(", price must be a number!", 3000);
+		await p.errorMsg(", price must be a number!", 3000);
 		return { error: true };
 	}
 	price = parseInt(price);
 	if (price < 1) {
-		p.errorMsg(", the price must be greater than 0!", 3000);
+		await p.errorMsg(", the price must be greater than 0!", 3000);
 		return { error: true };
 	}
-	if (price > 10000000) {
-		p.errorMsg(", the price per ticket is too high!", 3000);
+	if (price > 2000000) {
+		await p.errorMsg(", the price per ticket is too high!", 3000);
 		return { error: true };
 	}
 
 	if (!p.global.isInt(count)) {
-		p.errorMsg(", the number of items is invalid!", 3000);
+		await p.errorMsg(", the number of items is invalid!", 3000);
 		return { error: true };
 	}
 	count = parseInt(count);
 	if (count < 1) {
-		p.errorMsg(", the number of items must be greater than one!", 3000);
+		await p.errorMsg(", the number of items must be greater than one!", 3000);
 		return { error: true };
 	}
 
-	let sql = `SELECT ${item.column} FROM items INNER JOIN user ON items.uid = user.uid WHERE user.id = ${p.msg.author.id}`;
+	let sql = `SELECT ${item.column} FROM items INNER JOIN user ON items.uid = user.uid WHERE user.id = ${p.msg.author.id};`;
+	sql += `SELECT id FROM timeout WHERE id = ${user.id} AND TIMESTAMPDIFF(HOUR,time,NOW()) < penalty;`;
 	let result = await p.query(sql);
-	if (!result[0] || result[0][item.column] < count) {
-		p.errorMsg(`, you do not have enough ${item.name}s!`, 3000);
+	if (!result[0][0] || result[0][0][item.column] < count) {
+		await p.errorMsg(`, you do not have enough ${item.name}s!`, 3000);
+		return { error: true };
+	}
+	if (result[1][0]?.id) {
+		await p.errorMsg(`, you cannot trade with this user!`, 3000);
 		return { error: true };
 	}
 
@@ -179,7 +188,8 @@ async function executeTransaction(p, msg, embed, { item, user, price, count }) {
 		let sql = `UPDATE cowoncy SET money = money - ${totalPrice} WHERE id = ${user.id} AND money >= ${totalPrice};`;
 		sql += `UPDATE cowoncy SET money = money + ${totalPrice} WHERE id = ${p.msg.author.id};`;
 		sql += `UPDATE items INNER JOIN user ON items.uid = user.uid SET ${item.column} = ${item.column} - ${count} WHERE user.id = ${p.msg.author.id} AND ${item.column} >= ${count};`;
-		sql += `INSERT INTO items (uid, ${item.column}) VALUES ((SELECT uid FROM user WHERE user.id = ${user.id}), ${count}) ON DUPLICATE KEY UPDATE ${item.column} = ${item.column} + ${count}`;
+		sql += `INSERT INTO items (uid, ${item.column}) VALUES ((SELECT uid FROM user WHERE user.id = ${user.id}), ${count}) ON DUPLICATE KEY UPDATE ${item.column} = ${item.column} + ${count};`;
+		sql += `INSERT INTO transaction (sender, reciever, amount) VALUES (${user.id}, ${p.msg.author.id}, ${totalPrice});`;
 		let result = await con.query(sql);
 		if (!result[0].changedRows) {
 			embed.color = p.config.fail_color;

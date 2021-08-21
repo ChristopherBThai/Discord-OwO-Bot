@@ -105,7 +105,7 @@ async function useCommonTicket (ticket, p) {
 			let sql = `UPDATE items INNER JOIN user ON items.uid = user.uid SET ${ticket.column} = ${ticket.column} - ${count}  WHERE user.id = ${p.msg.author.id} AND ${ticket.column} >= ${count};`
 			let result = await con.query(sql);
 			if (!result.changedRows) {
-				await con.commit();
+				await con.rollback();
 				try {
 					embed.description = `${p.config.emoji.error} **| ${p.msg.author.username}**, you do not have enough tickets silly!`;
 					msg.edit({ embed });
@@ -118,7 +118,7 @@ async function useCommonTicket (ticket, p) {
 			result = await p.query(sql);
 			let uid = result[0].uid;
 			let months = result[0]?.patreonMonths || 0;
-			let monthsPassed = result[0]?.monthsPassed || months;
+			let monthsPassed = p.global.isInt(result[0]?.monthsPassed) ? result[0].monthsPassed : months;
 			const type = 1
 
 			// reset timer or continue with current timer
