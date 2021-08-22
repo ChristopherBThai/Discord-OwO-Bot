@@ -24,6 +24,7 @@ class Command {
 		this.main = main;
 		this.prefix = main.prefix;
 		initCommands();
+		this.commands = commands;
 	}
 
 	async execute (msg, raw) {
@@ -73,8 +74,7 @@ class Command {
 		}
 
 		// Init params to pass into command
-		// TODO args
-		let param = initParam(interaction, command, [], this.main);
+		let param = initParam(interaction, command, interaction.args, this.main);
 
 		// Execute the command
 		await executeCommand(this.main, param);

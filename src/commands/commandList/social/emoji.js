@@ -45,6 +45,7 @@ module.exports = new CommandInterface({
 			let emojis = "";
 			for(let i in msgs){
 				emojis += msgs[i].content;
+				emojis += JSON.stringify(msgs[i].embeds);
 			}
 
 			emojis = parseIDs(emojis);
