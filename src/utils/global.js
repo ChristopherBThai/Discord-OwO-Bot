@@ -338,3 +338,8 @@ exports.replacer = function (text, replacer) {
 	}
 	return text;
 }
+
+exports.createUser = async function (p) {
+	const result = await p.query(`INSERT INTO user (id, count) VALUES (${p.msg.author.id}, 0);`);
+	return result.insertId;
+}

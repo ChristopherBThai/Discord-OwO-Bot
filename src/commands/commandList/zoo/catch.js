@@ -54,7 +54,7 @@ module.exports = new CommandInterface({
 				WHERE u.id = ${p.msg.author.id}
 				GROUP BY animal.pid
 				ORDER BY pet_team_animal.pos ASC;`;
-		sql += "SELECT *,TIMESTAMPDIFF(HOUR,claim,NOW()) as time FROM lootbox WHERE id = "+msg.author.id+";";
+		sql += "SELECT * FROM lootbox WHERE id = "+msg.author.id+";";
 		sql += "SELECT uid,activecount,gname,type FROM user NATURAL JOIN user_gem NATURAL JOIN gem WHERE id = "+msg.author.id+" AND activecount > 0;";
 		let result = await p.query(sql);
 		if(result[0][0]==undefined||result[0][0].money<animals.rollprice){

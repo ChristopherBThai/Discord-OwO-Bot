@@ -66,10 +66,24 @@ exports.check = async function (p) {
 	if (passiveSql.length) {
 		sql += `INSERT INTO boss_weapon_passive (gid, wpid, pcount, stat) VALUES ${passiveSql.join(", ")};`;
 	}
-	result = await p.query(sql);
+
+	const con = await p.startTransaction();
+	try {
+		result = await con.query(sql);
+		con.commit();
+	} catch (err) {
+		console.error(err);
+		con.rollback();
+		return;
+	}
 	
 	// display
 	p.send(await createEmbed(p, bossInfo));
+}
+
+exports.display = async function (p, { boss }) {
+	const embed = await createEmbed(p, boss)
+	p.send(embed);
 }
 
 async function createBossInfo (memberCount) {
@@ -445,6 +459,7 @@ exports.updateBoss = async function (p, {boss, hpChange, wpChange }) {
 
 	const con = await p.startTransaction();
 	try {
+		// TODO add total dmg dealt
 		let sql = `UPDATE guild_boss
 			SET
 				boss_hp = GREATEST(0, boss_hp - ${hpChange}),
