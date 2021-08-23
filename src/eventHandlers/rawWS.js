@@ -88,7 +88,7 @@ class Interaction {
 	}
 
 	async createMessage (content, file, del) {
-		await axios.post(this.url, {
+		const msg = await axios.post(this.url, {
 			type: 4,
 			data: content
 		});

@@ -269,6 +269,7 @@ function initParam(msg,command,args,main){
 		"quest":function(questName,count,extra){main.questHandler.increment(msg,questName,count,extra).catch(console.error)},
 		"reactionCollector":main.reactionCollector,
 		"interactionCollector":main.interactionCollector,
+		"PagedMessage":main.PagedMessage,
 		"dateUtil":main.dateUtil,
 		"neo4j":main.neo4j
 	};
