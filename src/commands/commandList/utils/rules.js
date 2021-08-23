@@ -49,7 +49,7 @@ module.exports = new CommandInterface({
 
 		/* Construct embed message */
 		let descriptionExtra = ""
-		if(!voted) descriptionExtra = "\n\n*Reacting with the emoji means you will follow the rules and acknowlege the consequences*";
+		if(!voted) descriptionExtra = "\n\n*Pressing the button below means you will follow the rules and acknowlege the consequences*";
 		else if(result[0][0].opinion == 1) descriptionExtra = "\n\nOwO what's this? You already agreed to these rules! <3";
 		else descriptionExtra = "\n\nUwU you disagreed! You still have to follow these rules though! c:<";
 		let embed = {
