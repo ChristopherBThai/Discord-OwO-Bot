@@ -152,9 +152,13 @@ async function getStealButton (p) {
 		return [
 			{
 				type: 2,
-				label: "Steal",
+				label: "Steal Emoji",
 				style: 1,
-				custom_id: "steal"
+				custom_id: "steal",
+				emoji: {
+					id: null,
+					name: stealEmoji
+				}
 			}
 		];
 	}
