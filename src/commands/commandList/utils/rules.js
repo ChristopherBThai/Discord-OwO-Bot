@@ -115,7 +115,11 @@ module.exports = new CommandInterface({
 			if (reason != 'done') {
 				embed.color = 6381923;
 				components[0].components[0].disabled = true;
-				await message.edit({ content:`${warningEmoji} **You must accept these rules to use the bot!**\nThis message is now inactive.`, embed: embed, components });
+				try {
+					await message.edit({ content:`${warningEmoji} **You must accept these rules to use the bot!**\nThis message is now inactive.`, embed: embed, components });
+				} catch (err) {
+					console.error(`[${message.id}] Could not edit message`);
+				}
 			}
 		});
 	}
