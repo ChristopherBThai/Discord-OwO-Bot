@@ -54,7 +54,8 @@
 		"warning": "⚠️",
 		"perkTicket": {
 			"common": "<:cticket:815767124680114206>"
-		}
+		},
+		"boss_ticket": "<:bticket:878871063273017356>"
 	},
 	"guildlink": "https://discord.com/invite/owobot",
 	"invitelink": "https://discordapp.com/oauth2/authorize?client_id=408785106942164992&permissions=1074120776&scope=bot",

@@ -222,7 +222,8 @@ exports.renameTeam = async function(p,teamName){
 	}
 }
 
-const getTeam = exports.getTeam = async function (p) {
+const getTeam = exports.getTeam = async function (p, userId) {
+	const id = userId || p.msg.author.id;
 	/* Query info */
 	let sql = `SELECT pt.pgid,tname,pos,name,nickname,a.pid,xp,pt.streak,highest_streak
 		FROM user u
@@ -232,7 +233,7 @@ const getTeam = exports.getTeam = async function (p) {
 				ON pt.pgid = pt_ani.pgid
 			INNER JOIN animal a
 				ON pt_ani.pid = a.pid
-		WHERE u.id = ${p.msg.author.id}
+		WHERE u.id = ${id}
 			AND pt.pgid = ( SELECT pt2.pgid
 				FROM pet_team pt2
 					LEFT JOIN pet_team_active pt_act
@@ -251,7 +252,7 @@ const getTeam = exports.getTeam = async function (p) {
 				ON uw.pid = a.pid
 			LEFT JOIN pet_team_animal pt_ani
 				ON pt_ani.pid = a.pid
-			WHERE u.id = ${p.msg.author.id}
+			WHERE u.id = ${id}
 				AND pt_ani.pgid = 
 					(SELECT pt.pgid FROM pet_team pt
 						LEFT JOIN pet_team_active pt_act

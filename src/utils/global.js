@@ -339,7 +339,16 @@ exports.replacer = function (text, replacer) {
 	return text;
 }
 
-exports.createUser = async function (p) {
-	const result = await p.query(`INSERT INTO user (id, count) VALUES (${p.msg.author.id}, 0);`);
+exports.createUser = async function (userId) {
+	const result = await msyql.query(`INSERT INTO user (id, count) VALUES (${userId}, 0);`);
 	return result.insertId;
+}
+
+exports.toMySqlDate = function (date) {
+	return "'"+date.getFullYear() + '-' +
+		('00' + (date.getMonth()+1)).slice(-2) + '-' +
+		('00' + date.getDate()).slice(-2) + ' ' +
+		('00' + date.getHours()).slice(-2) + ':' +
+		('00' + date.getMinutes()).slice(-2) + ':' +
+		('00' + date.getSeconds()).slice(-2) + "'";
 }
