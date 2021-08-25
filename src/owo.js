@@ -36,6 +36,9 @@ class OwO extends Base{
 		// Handles discord interaction events
 		this.interactionHandlers = new (require('./interactionHandlers'))(this);
 
+		// Creates a pageable message
+		this.PagedMessage = require('./utils/PagedMessage.js');
+
 		// Websocket connection to our emulator server
 		this.socketio = new (require('./utils/socketio.js'))(this);
 

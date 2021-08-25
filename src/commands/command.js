@@ -24,6 +24,7 @@ class Command {
 		this.main = main;
 		this.prefix = main.prefix;
 		initCommands();
+		this.commands = commands;
 	}
 
 	async execute (msg, raw) {
@@ -73,8 +74,7 @@ class Command {
 		}
 
 		// Init params to pass into command
-		// TODO args
-		let param = initParam(interaction, command, [], this.main);
+		let param = initParam(interaction, command, interaction.args, this.main);
 
 		// Execute the command
 		await executeCommand(this.main, param);
@@ -269,6 +269,7 @@ function initParam(msg,command,args,main){
 		"quest":function(questName,count,extra){main.questHandler.increment(msg,questName,count,extra).catch(console.error)},
 		"reactionCollector":main.reactionCollector,
 		"interactionCollector":main.interactionCollector,
+		"PagedMessage":main.PagedMessage,
 		"dateUtil":main.dateUtil,
 		"neo4j":main.neo4j
 	};

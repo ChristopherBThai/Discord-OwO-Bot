@@ -11,15 +11,35 @@ exports.handle = function(packet, id){
 	if (packet.t === 'INTERACTION_CREATE') {
 		switch (packet.d.type) {
 			case 2:
-				const interaction = new Interaction(this.bot, packet.d);
-				this.command.executeInteraction(interaction);
+				handleApplicationCommand.bind(this)(packet);
 				break;
+
+			// Buttons
 			case 3:
-				this.interactionCollector.interact(packet.d);
-				this.interactionHandlers.emit(packet.d.data.custom_id, packet.d);
+				handleMessageComponent.bind(this)(packet);
 				break;
 		}
 	}
+}
+
+function handleApplicationCommand (packet) {
+	const interaction = new Interaction(this.bot, packet.d);
+	switch (packet.d.data.type) {
+		// Slash commands
+		case 1:
+			this.command.executeInteraction(interaction);
+			break;
+
+		// Message commands
+		case 3:
+			this.interactionHandlers.messages.emit(interaction);
+			break;
+	}
+}
+
+function handleMessageComponent(packet) {
+	this.interactionCollector.interact(packet.d);
+	this.interactionHandlers.buttons.emit(packet.d.data.custom_id, packet.d);
 }
 
 class Interaction {
@@ -57,12 +77,18 @@ class Interaction {
 		}
 
 		this.replied = false;
+		this.token = data.token;
 		this.url = `https://discord.com/api/v8/interactions/${data.id}/${data.token}/callback`
 		this.followUpUrl = `https://discord.com/api/v8/webhooks/${bot.application.id}/${data.token}/messages/@original`
+
+		this.packet = data;
+
+		// TODO
+		this.args = []
 	}
 
 	async createMessage (content, file, del) {
-		await axios.post(this.url, {
+		const msg = await axios.post(this.url, {
 			type: 4,
 			data: content
 		});

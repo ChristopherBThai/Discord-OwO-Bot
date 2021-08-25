@@ -66,7 +66,7 @@ async function createMessage (msg, content, file, del) {
 		if (del) {
 			const sentMsg = await msg.channel.createMessage(content, file);
 			setTimeout(() => {
-				sentMsg.delete();
+				sentMsg.delete().catch(() => {console.error(`[${sentMsg.id}] Failed to delete message`)});
 			}, del);
 			return sentMsg;
 		} else {

@@ -45,6 +45,7 @@ module.exports = new CommandInterface({
 			let emojis = "";
 			for(let i in msgs){
 				emojis += msgs[i].content;
+				emojis += JSON.stringify(msgs[i].embeds);
 			}
 
 			emojis = parseIDs(emojis);
@@ -90,92 +91,77 @@ function parseIDs(text){
 	return emojis;
 }
 
-async function display(p, emojis){
-	let loc = 0;
-	let embed = createEmbed(p, loc, emojis);
-	let msg = await p.send({embed});
+async function display (p, emojis) {
 
-	// Check if user set stealing
-	let sql = `SELECT emoji_steal.guild FROM emoji_steal INNER JOIN user ON emoji_steal.uid = user.uid WHERE id = ${p.msg.author.id};`;
-	let result = await p.query(sql);
-	let canSteal = (await p.query(sql))[0]?.guild;
-
-	// Add reactions
-	await msg.addReaction(prevPageEmoji);
-	await msg.addReaction(nextPageEmoji);
-	if(canSteal) await msg.addReaction(stealEmoji);
-
-	// Create reaction collector
-	let filter = (emoji, userId) => {
-		if(emoji.name == stealEmoji && userId != p.client.user.id){
-			return true;
-		}else return ([nextPageEmoji,prevPageEmoji].includes(emoji.name) && userId == p.msg.author.id);
-	}
-	let collector = p.reactionCollector.create(msg, filter, {idle:120000});
-
-	// Logic to respond to reactions
 	const emojiAdders = [];
-	collector.on('collect', async function(emoji,userId){
-		if(emoji.name===nextPageEmoji&&loc+1<emojis.length) {
-			loc++;
-			await msg.edit({embed: createEmbed(p, loc, emojis, emojiAdders)});
-		}else if(emoji.name===prevPageEmoji&&loc>0){
-			loc--;
-			await msg.edit({embed: createEmbed(p, loc, emojis, emojiAdders)});
-		}else if(emoji.name===stealEmoji){
-			if (!emojiAdders[loc]) emojiAdders[loc] = new p.EmojiAdder(p, emojis[loc].name, emojis[loc].url);
+	const createEmbed = (currentPage, maxPage) => {
+		const emoji = emojis[currentPage];
+
+		const embed = {
+			author: {
+				name: "Enlarged Emojis!",
+				url: emoji.url,
+				icon_url: p.msg.author.avatarURL
+			},
+			description: `\`${emoji.name}\` \`${emoji.id}\``,
+			color: p.config.embed_color,
+			image: { url: emoji.url },
+			url: emoji.url,
+			footer: { text: `page ${currentPage + 1}/${maxPage + 1}` }
+		}
+
+		const emojiAdder = emojiAdders?.[currentPage];
+		if (emojiAdder) {
+			if (emojiAdder.successCount) {
+				embed.footer.text += " - Successfully stolen" + (emojiAdder.successCount>1 ? ' x' + emojiAdder.successCount : '');
+				embed.color = 65280;
+			} else {
+				embed.footer.text += " - Failed to steal" + (emojiAdder.failureCount>1 ? ' x' + emojiAdder.failureCount : '');
+				embed.color = 16711680;
+			}
+		}
+
+		return embed;
+	}
+
+	const additionalButtons = await getStealButton(p);
+	const additionalFilter = (componentName, user) => componentName === 'steal';
+	const pagedMsg = new p.PagedMessage(p, createEmbed, emojis.length - 1, { idle: 120000, additionalFilter, additionalButtons })
+
+	pagedMsg.on('button', async (component, user, ack, { currentPage, maxPage }) => {
+		if (component === 'steal') {
+			const emoji = emojis[currentPage];
+			if (!emojiAdders[currentPage]) emojiAdders[currentPage] = new p.EmojiAdder(p, emoji.name, emoji.url);
 			try {
-				if (await emojiAdders[loc].addEmoji(userId)) {
-					await msg.edit({embed: createEmbed(p, loc, emojis, emojiAdders)});
+				if (await emojiAdders[currentPage].addEmoji(user.id)) {
+					await ack({ embed: createEmbed(currentPage, maxPage) });
 				}
 			} catch (err) {
-				if (!emojiAdders[loc].successCount) {
-					await msg.edit({embed: createEmbed(p, loc, emojis, emojiAdders)});
+				if (!emojiAdders[currentPage].successCount) {
+					await ack({ embed: createEmbed(currentPage, maxPage) });
 				}
 			}
 		}
-	});
-
-	collector.on('end',async function(collected){
-		const embed = createEmbed(p, loc, emojis, emojiAdders)
-		embed.color = 6381923;
-		await msg.edit({content:"This message is now inactive",embed});
-	});
-
+	})
 }
 
-function createEmbed(p, loc, emojis, emojiAdders){
-	const emoji = emojis[loc];
-
-	const embed = {
-		"author":{
-			"name":"Enlarged Emojis!",
-			"url":emoji.url,
-			"icon_url":p.msg.author.avatarURL
-		},
-		"description":`\`${emoji.name}\` \`${emoji.id}\``,
-		"color":p.config.embed_color,
-		"image":{
-			"url":emoji.url
-		},
-		"url":emoji.url,
-		"footer":{
-			"text": "page "+(loc+1)+"/"+(emojis.length)
-		}
+async function getStealButton (p) {
+	const sql = `SELECT emoji_steal.guild FROM emoji_steal INNER JOIN user ON emoji_steal.uid = user.uid WHERE id = ${p.msg.author.id};`;
+	const canSteal = (await p.query(sql))[0]?.guild;
+	if (canSteal) {
+		return [
+			{
+				type: 2,
+				label: "Steal Emoji",
+				style: 1,
+				custom_id: "steal",
+				emoji: {
+					id: null,
+					name: stealEmoji
+				}
+			}
+		];
 	}
-
-	const emojiAdder = emojiAdders?.[loc];
-	if (emojiAdder) {
-		if (emojiAdder.successCount) {
-			embed.footer.text += " - Successfully stolen"+(emojiAdder.successCount>1 ? ' x'+emojiAdder.successCount : '');
-			embed.color = 65280;
-		} else {
-			embed.footer.text += " - Failed to steal"+(emojiAdder.failureCount>1 ? ' x'+emojiAdder.failureCount : '');
-			embed.color = 16711680;
-		}
-	}
-
-	return embed;
 }
 
 async function setServer(p){
