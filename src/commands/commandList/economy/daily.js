@@ -1,6 +1,6 @@
 /*
  * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Copyright (C) 2021 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
@@ -12,7 +12,6 @@ const CommandInterface = require('../../CommandInterface.js');
  * Users can claim a daily once per day after midnight
  */
 
-const dateUtil = require('../../../utils/dateUtil.js');
 const levels = require('../../../utils/levels.js');
 const rings = require('../../../data/rings.json');
 
@@ -37,73 +36,20 @@ module.exports = new CommandInterface({
 	six:500,
 	bot:true,
 
-	execute: async function(p){
-		/* Query for user info */
-		let msg = p.msg,con = p.con;
-		let sql = "SELECT daily,daily_streak,user.uid,IF(patreonDaily = 1 OR ((TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths) AND patreonType = 3),1,0) as patreon  FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id LEFT JOIN patreons ON user.uid = patreons.uid WHERE cowoncy.id = "+msg.author.id+";";
-		sql += "SELECT * FROM user_announcement where uid = (SELECT uid FROM user WHERE id = "+msg.author.id+") AND (aid = (SELECT aid FROM announcement ORDER BY aid DESC limit 1) OR disabled = 1);"
-		sql += `SELECT 
-					u1.id AS id1,c1.daily AS daily1,c1.daily_streak AS streak1,
-					u2.id AS id2,c2.daily AS daily2,c2.daily_streak AS streak2,
-					marriage.* 
-				FROM marriage 
-					LEFT JOIN user AS u1 ON marriage.uid1 = u1.uid 
-						LEFT JOIN cowoncy AS c1 ON c1.id = u1.id
-					LEFT JOIN user AS u2 ON marriage.uid2 = u2.uid 
-						LEFT JOIN cowoncy AS c2 ON c2.id = u2.id
-					LEFT JOIN user AS temp ON marriage.uid1 = temp.uid OR marriage.uid2 = temp.uid
-				WHERE temp.id = ${p.msg.author.id};`;
+	execute: async function (p) {
+		const { cowoncy, announcement, marriage } = await getUserInfo(p);
 
-		let rows = await p.query(sql);
-
-		/* Parse user's date info */
-		let afterMid = dateUtil.afterMidnight((rows[0][0])?rows[0][0].daily:undefined);
+		const afterMid = p.dateUtil.afterMidnight(cowoncy);
 		
-		if (!rows[0][0]) {
+		if (!cowoncy) {
 			await p.query(`INSERT IGNORE INTO user (id, count) VALUES (${p.msg.author.id}, 0); INSERT IGNORE INTO cowoncy (id, money) VALUES (${p.msg.author.id}, 0);`);
 		}
 
 		/* If it's not past midnight */
-		if(afterMid&&!afterMid.after){
+		if (afterMid && !afterMid.after) {
 			/* double check marriage */
-			if(rows[2][0]&&rows[2][0].daily1&&rows[2][0].daily2){
-				afterMid = dateUtil.afterMidnight(rows[2][0].claimDate);
-				if(afterMid.after){
-					const u1Date = dateUtil.afterMidnight(rows[2][0].daily1);
-					const u2Date = dateUtil.afterMidnight(rows[2][0].daily2);
-					if (!u1Date.after && !u2Date.after) {
-						let totalStreak = rows[2][0].streak1 + rows[2][0].streak2;
-						let totalGain = Math.round(100 + Math.floor(Math.random()*100)+totalStreak*12.5);
-						if(totalGain>1000) totalGain = 1000;
-						sql = `UPDATE marriage SET claimDate = ${afterMid.sql}, dailies = dailies + 1 WHERE uid1 = ${rows[2][0].uid1} AND uid2 = ${rows[2][0].uid2} AND dailies = ${rows[2][0].dailies};`;
-						let result = await p.query(sql);
-						if (result.changedRows) {
-							let so;
-							if(p.msg.author.id == rows[2][0].id1){
-								so = await p.fetch.getUser(rows[2][0].id2);
-							} else {
-								so = await p.fetch.getUser(rows[2][0].id1);
-							}
-							const ring = rings[rows[2][0].rid];
-							let text = ring.emoji+"** |** You and "+(so?so.username:"your partner")+" received <:cowoncy:416043450337853441> **"+totalGain+" Cowoncy** and a ";
-
-							sql = `UPDATE cowoncy SET money = money + ${totalGain} WHERE id IN (${rows[2][0].id1},${rows[2][0].id2});`;
-							if(Math.random()<.5){
-								sql += "INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES ("+rows[2][0].id2+",1,0,'2017-01-01'),("+rows[2][0].id2+",1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
-								text += "<:box:427352600476647425> **lootbox**!";
-							}else{
-								sql += "INSERT INTO crate(uid,cratetype,boxcount,claimcount,claim) VALUES ((SELECT uid FROM user WHERE id = "+rows[2][0].id1+"),0,1,0,'2017-01-01'),((SELECT uid FROM user WHERE id = "+rows[2][0].id2+"),0,1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
-								text += "<:crate:523771259302182922> **weapon crate**!";
-							}
-							await p.query(sql);
-							p.send(text);
-							return;
-						}
-					}
-				}
-			}
-			p.send("**⏱ |** Nu! **"+msg.author.username+"**! You need to wait **"+afterMid.hours+"H "+afterMid.minutes+"M "+afterMid.seconds+"S**");
-
+			await doubleCheckMarriage(p, afterMid, marriage);
+			
 		/* Past midnight */
 		}else{
 			sql = "";
@@ -231,3 +177,71 @@ module.exports = new CommandInterface({
 	}
 
 })
+
+async function getUserInfo (p) {
+	const sql = "SELECT daily,daily_streak,user.uid,IF(patreonDaily = 1 OR ((TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths) AND patreonType = 3),1,0) as patreon  FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id LEFT JOIN patreons ON user.uid = patreons.uid WHERE cowoncy.id = "+msg.author.id+";";
+	sql += "SELECT * FROM user_announcement where uid = (SELECT uid FROM user WHERE id = "+msg.author.id+") AND (aid = (SELECT aid FROM announcement ORDER BY aid DESC limit 1) OR disabled = 1);"
+	sql += `SELECT 
+				u1.id AS id1, c1.daily AS daily1, c1.daily_streak AS streak1,
+				u2.id AS id2, c2.daily AS daily2, c2.daily_streak AS streak2,
+				marriage.* 
+			FROM marriage 
+				LEFT JOIN user AS u1 ON marriage.uid1 = u1.uid 
+					LEFT JOIN cowoncy AS c1 ON c1.id = u1.id
+				LEFT JOIN user AS u2 ON marriage.uid2 = u2.uid 
+					LEFT JOIN cowoncy AS c2 ON c2.id = u2.id
+				LEFT JOIN user AS temp ON marriage.uid1 = temp.uid OR marriage.uid2 = temp.uid
+			WHERE temp.id = ${p.msg.author.id};`;
+	const rows = await p.query(sql);
+
+	return {
+		cowoncy: rows[0][0],
+		announcement: rows[1],
+		marriage: rows[2][0]
+	}
+}
+
+async function doubleCheckMarriage (p, afterMid, marriage) {
+	// Exists in database?
+	if (marriage && marriage.daily1 && marriage.daily2) {
+
+		const afterMid = dateUtil.afterMidnight(marriage.claimDate);
+
+		if (afterMid.after) {
+			const u1Date = dateUtil.afterMidnight(marriage.daily1);
+			const u2Date = dateUtil.afterMidnight(marriage.daily2);
+
+			if (!u1Date.after && !u2Date.after) {
+				const totalGain = calculateMarriageBonus(marriage);
+				let sql = `UPDATE marriage SET claimDate = ${afterMid.sql}, dailies = dailies + 1 WHERE uid1 = ${marriage.uid1} AND uid2 = ${marriage.uid2} AND dailies = ${marriage.dailies};`;
+				const result = await p.query(sql);
+
+				if (result.changedRows) {
+					const so = (p.msg.author.id == marriage.id1) ? await p.fetch.getUser(marriage.id2) : await p.fetch.getUser(marriage.id1);
+					const ring = rings[marriage.rid];
+					let text = `${ring.emoji} **|** You and ${so ? so.username : "your partner"} received ${p.config.emoji.cowoncy} **${totalGain} Cowoncy** and a `;
+
+					sql = `UPDATE cowoncy SET money = money + ${totalGain} WHERE id IN (${marriage.id1}, ${marriage.id2});`;
+					if (Math.random() < .5) {
+						sql += `INSERT INTO lootbox (id, boxcount, claimcount, claim) VALUES (${marriage.id2}, 1, 0, '2017-01-01'), (${marriage.id2}, 1, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;`;
+						text += `${p.config.emoji.lootbox} **lootbox**!`;
+					}else{
+						sql += `INSERT INTO crate (uid, cratetype, boxcount, claimcount, claim) VALUES ((SELECT uid FROM user WHERE id = ${marriage.id1}), 0, 1, 0, '2017-01-01'), ((SELECT uid FROM user WHERE id = ${marriage.id2}), 0, 1, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;`;
+						text += `${p.config.emoji.crate} **weapon crate**!`;
+					}
+					await p.query(sql);
+					p.send(text);
+					return;
+				}
+			}
+		}
+	}
+	p.send(`**⏱ |** Nu! **${msg.author.username}**! You need to wait **${afterMid.hours}H ${afterMid.minutes}M ${afterMid.seconds}S**`);
+}
+
+function calculateMarriageBonus (marriage) {
+	let totalStreak = marriage.streak1 + marriage.streak2;
+	let totalGain = Math.round(100 + Math.floor(Math.random()*100)+totalStreak*12.5);
+	if(totalGain>1000) totalGain = 1000;
+	return totalGain;
+}
