@@ -17,10 +17,12 @@ for (let i in gems) {
 	emojis[i] = gems[i].emoji;
 }
 
-exports.alter = function(id,text) {
-	switch(id){
+exports.alter = function(p, text, info) {
+	switch(p.msg.author.id){
 		case '658299153042112512':
 			return grace(text);
+		case '456598711590715403':
+			return lexx(p, info);
 		default:
 			return text;
 	}
@@ -65,4 +67,15 @@ function grace(text) {
 	text = text.join('\n');
 
 	return text;
+}
+
+function lexx (p, info) {
+	const embed = {
+		color: p.config.embed_color,
+		image: {
+			url: "https://cdn.discordapp.com/attachments/696878982758531152/840432649336127488/AmyWong.png"
+		},
+		description: `**${info.user.username}'s inv of Rings, Tickets, Gems & Weapons**\n${info.inv}`
+	}
+	return { embed }
 }

@@ -29,6 +29,8 @@ exports.alter = function(id,text,type) {
 			return kirito(text,type);
 		case '575555630312456193':
 			return xmelanie(text,type);
+		case '216710431572492289':
+			return arichy(text,type);
 		default:
 			return text;
 	}
@@ -526,6 +528,44 @@ function xmelanie(text, type) {
 			text.fields[5].name = text.fields[5].name.replace("⚔ Experience","<a:blancheneige:747725839025700884> Where dreams come true <a:d_marie:747725839403188234>");
 			text.fields[6].name = text.fields[6].name.replace("📡 Radar","<a:cute_sparks:747725838077788328> Pixy Dust <a:cute_sparks:747725838077788328>");
 			text.fields[7].name = text.fields[7].name.replace("<a:essence:451638978299428875> Animal Essence","<a:fairy_god_mother:747725839440805888> Magic of Disney <a:bippity_boppity_boo:747725838564458516>");
+			return text;
+		default:
+			return text;
+	}
+}
+
+function arichy(text,type) {
+	switch(type){
+		case 'hb':
+			text.author.name = "Arichy’s Wizard's Sanctum"
+			text.fields[0].name = "<a:1_:839769859193831434> Welcome to our Sanctuary of Magic. I’m Ari, the Archmage of this Kingdom.";
+			text.fields[0].value = "There are some tips which will help you feel like home."
+				+ "\nIn our Kingdom we have Well of Power - you can use it for increasing your power and meet more allies."
+				+ "\nTo upgrade one of traits, use the spell `owo upgrade {trait}`."
+				+ "\nTo obtain more power, use `owo sacrifice {animal} {count}`." 
+				+ "\nDon't worry, it will not harm any of our friends - you can visit them anytime in their Villages.";
+			text.fields[1].name = text.fields[1].name.replace("⏱ Efficiency", "<:7_:839769858958032936> Thermal Void");
+			text.fields[2].name = text.fields[2].name.replace("⏳ Duration", "<:6_:839769859130785822> Time Warp");
+			text.fields[3].name = text.fields[3].name.replace("<:cowoncy:416043450337853441> Cost", "<:5_:839769858987261972> Mana");
+			text.fields[4].name = text.fields[4].name.replace("🔧 Gain", "<:4_:839769858841640981> Arcane Power");
+			text.fields[5].name = text.fields[5].name.replace("⚔ Experience", "<:3_:839769858975334400> Intellect");
+			text.fields[6].name = text.fields[6].name.replace("📡 Radar", "<:2_:839769858932736020> Supernova");
+			text.fields[7].name = text.fields[7].name.replace("<a:essence:451638978299428875> Animal Essence", "<a:1_:839769859193831434> Well of Power");
+			if(text.fields.length>=9){
+				text.fields[8].name = "<a:11_:839770046867439669> The Archmage is currently on a mission!";
+				text.fields[8].value = text.fields[8].value.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","If you have something urgent, please leave a message. I will be back in")
+					.replace("DONE", "of dungeon passed")
+					.replace("ANIMALS CAPTURED","Animals joined Kingdom");
+			}
+			text.thumbnail = {
+				url: "https://i.imgur.com/bWhw90x.gif"
+			}
+			return text;
+		case 'progress':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi, "<a:11_:839770046867439669>")
+				.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","If you have something urgent, please leave a message. I will be back in")
+				.replace("DONE", "of dungeon passed")
+				.replace("ANIMALS CAPTURED","Animals joined Kingdom");
 			return text;
 		default:
 			return text;

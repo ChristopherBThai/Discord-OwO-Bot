@@ -2,7 +2,7 @@ const redis = require('./redis.js');
 const logger = require('./logger.js');
 const levelRewards = require('./levelRewards.js');
 var macro;
-try{macro = require('../../../tokens/macro.js');}catch(e){console.error("Missing macro.js. Please add this file to ../tokens/macro.js\n",e)}
+macro = require('../../../tokens/macro.js');
 const minXP = 10, maxXP = 15, dailyLimit = 3000;
 var banned = {};
 
@@ -53,7 +53,8 @@ exports.giveXP = async function(msg){
 
 	// Distribute xp
 	if(!limitHit||!guildLimitHit){
-		redis.hmset("xplimit_"+msg.author.id,limit);
+		redis.hmset("xplimit_"+msg.author.id,limit)
+			.then(() => redis.expire("xplimit_"+msg.author.id));
 	}
 	let xp;
 	if(!limitHit){

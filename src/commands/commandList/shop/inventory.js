@@ -50,12 +50,12 @@ module.exports = new CommandInterface({
 			wallpaperUtil.getItems(p),
 			itemUtil.getItems(p),
 		]);
-		let text = addToString(promises);
+		let inv = addToString(promises);
 
 
-		if(text=="") text = "Your inventory is empty :c";
-		text = "**====== "+msg.author.username+"'s Inventory ======**\n"+text;
-		text = alterInventory.alter(msg.author.id, text);
+		let text = "**====== "+msg.author.username+"'s Inventory ======**\n" + inv;
+		if(inv=="") text = "Your inventory is empty :c";
+		text = alterInventory.alter(p, text, { user: p.msg.author, inv });
 		p.send(text);
 	}
 

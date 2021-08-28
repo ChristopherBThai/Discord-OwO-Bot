@@ -690,7 +690,7 @@ exports.displayAllBattles = async function(p,battle,logs,setting){
 	updatePreviousStats(battle);
 	let embed = await display(p,battle,undefined,setting);
 	embed.embed.footer = {"text":"Turn 0/"+(logs.length-1)};
-	embed.embed = alterBattle.alter(p.msg.author.id,embed.embed);
+	embed.embed = await alterBattle.alter(p, p.msg.author,embed.embed);
 	let msg = await p.send(embed);
 
 	/* Update the message for each log in log timeline */
@@ -996,7 +996,7 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 	}
 
 
-	const opt = {turns: logs ? logs.length : 0};
+	const opt = {turns: logs ? logs.length : 0, user: p.msg.author};
 	if(!setting||!setting.noMsg){
 		/* Send result message */
 		let embed = await display(p,battle,logs,setting);
@@ -1020,7 +1020,7 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 			}
 		}else text += '!';
 		embed.embed.footer = {text};
-		embed.embed = alterBattle.alter(p.msg.author.id,embed.embed, opt);
+		embed.embed = await alterBattle.alter(p, p.msg.author,embed.embed, opt);
 		if(msg) await msg.edit(embed);
 		else p.send(embed);
 	}
@@ -1035,7 +1035,7 @@ async function finishFriendlyBattle(msg,p,battle,color,text,playerWin,enemyWin,l
 	let embed = await display(p,battle,logs,setting);
 	embed.embed.color = color;
 	embed.embed.footer = {text};
-	embed.embed = alterBattle.alter(p.msg.author.id,embed.embed);
+	embed.embed = await alterBattle.alter(p, p.msg.author,embed.embed);
 	if(msg) await msg.edit(embed);
 	else await p.send(embed);
 }
