@@ -17,7 +17,8 @@ tags
 
 # Node dependencies
 node_modules/
-package-lock.json
 
 # log files
 .log
+
+.env

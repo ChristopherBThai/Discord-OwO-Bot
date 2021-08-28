@@ -28,7 +28,7 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: function(p){
-		let text = "**<:owo:448256976141549568> |** Come join our discord to ask for help or just have fun!\n";
+		let text = "**<:owo:816240025942753350> |** Come join our discord to ask for help or just have fun!\n";
 		text += "**<:blank:427371936482328596> |** "+p.config.guildlink;
 		p.send(text);
 	}
