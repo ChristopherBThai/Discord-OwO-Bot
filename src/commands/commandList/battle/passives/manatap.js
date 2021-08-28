@@ -20,10 +20,9 @@ module.exports = class ManaTap extends PassiveInterface{
 		this.qualityList = [[15,30]];
 	}
 
-	postAttack(animal,attackee,damage,type,tags){
+	postAttack(animal,attackee,totalDamage,type,tags){
 		let logs = new Log();
 
-		let totalDamage = damage.reduce((a,b)=>a+b,0);
 		let mana = totalDamage*this.stats[0]/100;
 		mana = WeaponInterface.replenish(animal,mana,animal,tags);
 

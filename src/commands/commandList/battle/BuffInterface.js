@@ -84,9 +84,9 @@ module.exports = class BuffInterface{
 	/* If the passive owner is replenished */
 	replenished(animal,healer,amount,tag){}
 	/* If the buff owner is attacking (after bonus damage) */
-	postAttack(animal,attackee,damage,type,last){}
+	postAttack(animal,attackee,totalDamage,type,last){}
 	/* If the buff owner is attacked (after bonus damage) */
-	postAttacked(animal,attacker,damage,type,last){}
+	postAttacked(animal,attacker,totalDamage,type,last){}
 	/* If the buff owner is healing(after bonus heal) */
 	postHeal(animal,healer,amount,tag){}
 	/* If the buff owner is healed (after bonus heal) */

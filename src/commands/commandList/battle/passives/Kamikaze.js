@@ -22,7 +22,7 @@ module.exports = class Kamikaze extends PassiveInterface{
 		this.qualityList = [[50,75]];
 	}
 
-	postAttacked(animal,attacker,damage,type,tags){
+	postAttacked(animal,attacker,totalDamage,type,tags){
 		if(tags.kamikaze) return;
 
 		//Ignore if the animal is still alive
