@@ -7,7 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const description = "•  Any actions performed to gain an unfair advantage over other users are explicitly against the rules. This includes but not limited to:\n├> Using macros/scripts for any commands\n└> Using multiple accounts for any reason\n\n•  Do **not** use any exploits and report any found in the bot\n\n•  You can **not** sell/trade cowoncy or any bot goods for anything outside of the bot\n\n•  If you have any questions come ask us in our [server](https://discord.gg/VKesv7J)!";
+const description = "•  Any actions performed to gain an unfair advantage over other users are explicitly against the rules. This includes but not limited to:\n├> Using macros/scripts for any commands\n└> Using multiple accounts for any reason\n\n•  Do **not** use any exploits and report any found in the bot\n\n•  You can **not** sell/trade cowoncy or any bot goods for anything outside of the bot\n\n•  If you have any questions come ask us in our [server](https://discord.gg/owobot)!";
 const agreeEmoji = '👍';
 const disagreeEmoji = '👎';
 const warningEmoji = '⚠️';
@@ -70,38 +70,58 @@ module.exports = new CommandInterface({
 		if (!voted) {
 			content = `${warningEmoji} **You must accept these rules to use the bot!**`
 		}
-		let message = await p.send({content, embed});
-		if(voted) return;
-		
-		await message.addReaction(agreeEmoji)
 
-		/* Reaction collector */
-		let filter = (emoji, userID) => emoji.name === agreeEmoji && userID === p.msg.author.id;
-		let collector = p.reactionCollector.create(message,filter,{time:900000,idle:120000});
+		let components = !voted ? [
+			{
+				type: 1,
+				components: [
+					{
+						type: 2,
+						label: "I accept the OwO Bot Rules",
+						style: 1,
+						custom_id: "accept_rules",
+						emoji: {
+							id: null,
+							name: agreeEmoji
+						}
+					}
+				]
+			}
+		] : null
+		let message = await p.send({content, embed, components});
 
-		collector.on('collect',async r => {
+		if (voted) return;
+		let filter = (componentName, user) => componentName === 'accept_rules' && user.id === p.msg.author.id;
+		let collector = p.interactionCollector.create(message, filter, { time: 900000 });
+
+		collector.on('collect',async (component, user, ack) => {
 			collector.stop("done");
 
-			/* Construct sql */
+			// Construct sql 
 			let sql = "INSERT IGNORE INTO rules (uid,opinion) VALUES ((SELECT uid FROM user WHERE id = ?),1)";
 			embed.footer.text = p.global.toFancyNum(agree+1)+" Users agreed";
 			embed.description = description + "\n\nOwO what's this? You agreed to these rules! <3";
 			sql = "INSERT IGNORE INTO user (id,count) VALUES (?,0);"+sql;
 
-			/* Query and edit existing message */
-			result = await p.query(sql,[BigInt(p.msg.author.id),BigInt(p.msg.author.id)]);
+			// Query and edit existing message
+			result = await p.query(sql, [BigInt(user.id), BigInt(user.id)]);
 			embed.color = 65280;
-			await message.edit({embed});
+			components[0].components[0].disabled = true;
+			await ack({ embed, components });
 			p.msg.author.acceptedRules = true; 
 		});
-		collector.on('end',async function(reason){
+
+		collector.on('end',async (reason) => {
 			if (reason != 'done') {
 				embed.color = 6381923;
-				await message.edit({content:`${warningEmoji} **You must accept these rules to use the bot!**\nThis message is now inactive.`,embed:embed});
-				await message.removeReaction(agreeEmoji);
+				components[0].components[0].disabled = true;
+				try {
+					await message.edit({ content:`${warningEmoji} **You must accept these rules to use the bot!**\nThis message is now inactive.`, embed: embed, components });
+				} catch (err) {
+					console.error(`[${message.id}] Could not edit message`);
+				}
 			}
 		});
-
 	}
 
 })

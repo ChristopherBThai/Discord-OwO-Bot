@@ -1,8 +1,7 @@
 const redis = require('redis');
-const login = require('../../../tokens/owo-login.json');
 const client = redis.createClient({
-  host: login.redis_host,
-  password: login.redis_pass
+  host: process.env.REDIS_HOST,
+  password: process.env.REDIS_PASS
 });
 
 exports.incr = function(key,value=1){
@@ -161,6 +160,17 @@ exports.sadd = function(table,value){
 exports.del = function(table){
 	return new Promise(function(res,rej){
 		client.del(table,function(err,reply){
+			if(err)
+				rej(err);
+			else
+				res(reply);
+		});
+	});
+}
+
+exports.expire = function(key, timer = 259200) { // 3 days
+	return new Promise(function(res,rej){
+		client.expire(key, timer, function(err,reply){
 			if(err)
 				rej(err);
 			else

@@ -18,7 +18,7 @@ module.exports = new CommandInterface({
 	dm:true,
 
 	execute: async function(p){
-		let {url, text, buffer} = await captcha({}, p.msg.author);
+		let {url, text, buffer} = await captcha.gen({}, p.msg.author);
 		if (url) {
 			p.send(url);
 		} else {

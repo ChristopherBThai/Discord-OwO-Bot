@@ -7,7 +7,9 @@
 
 const blank = '<:blank:427371936482328596>';
 const huntEmoji = "🌱";
-exports.alter = function(id,text,info){
+exports.alter = async function(p, id, text, info){
+	const result = await checkDb(p, id, text, info);
+	if (result) return result;
 	switch(id){
 		case '220934553861226498':
 			return geist(text);
@@ -83,6 +85,58 @@ function getA(text) {
 	return ['a', 'e', 'i', 'o', 'u'].includes(text[0]) 
 		? 'an'
 		: 'a'
+}
+
+async function checkDb (p, id, text, info) {
+	let type, replacers;
+
+	if (info.gemText) {
+		type = 'gems';
+		replacers = {
+			username: p.msg.author.username,
+			discriminator: p.msg.author.discriminator,
+			blank: p.config.emoji.blank,
+			gems: info.gemText,
+			animals: info.animalEmojis,
+			pets: info.petText || '',
+			xp: info.animalXp || ''
+		}
+	} else {
+		type = 'nogems';
+		replacers = {
+			username: p.msg.author.username,
+			discriminator: p.msg.author.discriminator,
+			blank: p.config.emoji.blank,
+			pets: info.petText || '',
+			xp: info.animalXp || '',
+			a: getA(info.animal[0][2]),
+			animalRank: info.animal[0][2],
+			animalRankEmoji: info.animal[0][0].match(/<a?:\w*:\d*>/i)[0],
+			animal: info.animalEmojis
+		}
+	}
+	const sql = `SELECT alterhunt.* from alterhunt INNER JOIN user ON alterhunt.uid = user.uid WHERE user.id = ${p.msg.author.id} AND alterhunt.type = '${type}'`;
+	const result = (await p.query(sql))[0];
+	if (!result || !result.text) return
+
+	result.text += info.lootboxText || '';
+	result.text = p.global.replacer(result.text,replacers);
+	if (!result.isEmbed) {
+		return result.text
+	}
+
+	return { embed: {
+		description: result.text,
+		title: p.global.replacer(result.title, replacers),
+		color: result.color || 1,
+		footer: { text: p.global.replacer(result.footer, replacers) },
+		thumbnail: { url: result.sideImg },
+		image: { url: result.bottomImg },
+		author: {
+			name: p.global.replacer(result.author, replacers), 
+			icon_url: result.showAvatar ? p.msg.author.avatarURL : null
+		}
+	}}
 }
 
 function geist(text){
@@ -666,29 +720,37 @@ function direwolf(text, info) {
 function notJames(text, info) {
 	const moon = '<a:moon:819081050520813568>';
 	const peach = '<:peach:819081050369949736>';
+	const spark3 = '<a:spark3:843740415449890868>';
+	const spark6 = '<a:spark6:843740442662404096>';
+	const star8 = '<a:star8:843740415341625385>';
+	const star7 = '<a:star7:843740442394099754>';
 
 	if(info.gemText){
-		text = `${moon} **| ${info.author.username}** broke into a peach farm, charmed by ${info.gemText}\n`;
-		text += `${peach} **|** and ran away with ${info.animalEmojis}`;
+		text = `${moon} **| ${info.author.username}** storms into a peach farm\n`
+			+ `${spark3} **|** with by ${info.gemText.replace(/\/\d+|`+/gi,'')}\n`
+			+ `${spark6} **|** and runs away with ${info.animalEmojis}`;
 		if (info.petText) {
-			text += `\n${peach} **|** ${info.petText} gained **${info.animalXp} peaches**!`;
+			text += `\n${star8} **|** ${info.petText} gain **${info.animalXp}** ${peach}`;
 		}
 	}else{
 		const a = getA(info.animal[0][0]);
-		text = `${moon} **| ${info.author.username}** broke into a peach farm with bare hands\n`;
-		text += `${peach} **|** and ran away with ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
+		text = `${moon} **| ${info.author.username}** breaks into a peach farm with bare hands\n`;
+		text += `${spark6} **|** and runs away with ${a} ${info.animal[0][0]} ${info.animalEmojis}`;
 		if (info.petText) {
-			text += `\n${peach} **|** ${info.petText} gained **${info.animalXp} peaches**`;
+			text += `\n${star7} **|** ${info.petText} gain **${info.animalXp}** ${peach}`;
 		}
 	}
-	text += info.lootboxText || '';
+	if (info.lootboxText) {
+		text += `\n**Lootbox** [**${info.lootboxText.match(/\[\d+\//gi)[0].match(/\d+/gi)[0]}**] is found!`;
+	}
+
+	const url = Math.random() > .5 ? 'https://cdn.discordapp.com/attachments/815195361379090442/817327541010038784/J_1.gif'
+		: 'https://cdn.discordapp.com/attachments/815195361379090442/835389547713003520/Test-4.gif';
 
 	const embed = {
 		description: text,
-		color: 1,
-		thumbnail: {
-			url: "https://cdn.discordapp.com/attachments/769619375296610304/817702733254885376/image0.gif" 
-		}
+		color: 16776664,
+		thumbnail: { url }
 	}
 
 	return {embed};
@@ -821,11 +883,11 @@ function vanor (text, info) {
 	const emoji = '<a:harleyquinn:832531027900628992>';
 
 	if(info.gemText){
-		text =  `${emoji} **| Hey Puddin'!** Look what I got gotcha! ${info.gemText}\n`;
-		text += `${emoji} **|** I looked **everywhere!** ${info.animalEmojis}`;
+		text =  `${emoji} **|** Here Ya Go **Puddin'!** ${info.gemText}\n`;
+		text += `${emoji} **| What Do** You Think? ${info.animalEmojis}`;
 	}else{
-		text =  `${emoji} **| Hey Puddin'!** Look what I got gotcha!\n`;
-		text += `${emoji} **|** I looked **everywhere!** ${info.animalEmojis}`;
+		text =  `${emoji} **|** Here Ya Go **Puddin'!**\n`;
+		text += `${emoji} **| What Do** You Think? ${info.animalEmojis}`;
 	}
 	if (info.petText) {
 		text += `\n${emoji} **|** ${info.petText} gained **${info.animalXp} xp**`;

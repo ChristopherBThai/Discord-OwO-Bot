@@ -28,8 +28,12 @@ exports.addText = async function (args,p,ctx,canvas,callback){
 	let text = args.text;
 	if(!text){ callback(); return;}
 	if(p.global.isUser(text)){
+		if (args.ifImage?.x) args = { ...args, x: args.x + args.ifImage.x }
+		if (args.ifImage?.y) args = { ...args, y: args.y + args.ifImage.y }
 		addUser(args,p,ctx,canvas,callback);
 	}else if((/^\s*<a?:[a-zA-Z0-9]+:[0-9]+>\s*$/gi).test(text)){
+		if (args.ifImage?.x) args = { ...args, x: args.x + args.ifImage.x }
+		if (args.ifImage?.y) args = { ...args, y: args.y + args.ifImage.y }
 		addEmoji(args,p,ctx,canvas,callback);
 	}else{
 		addText(args,p,ctx,canvas,callback);
@@ -43,7 +47,8 @@ async function addUser(args,p,ctx,canvas,callback){
 
 	ctx.save();
 
-	ctx.font = '20px '+(args.font?args.font:font);
+	const fontSize = args.imageFontSize || 20;
+	ctx.font = fontSize + 'px '+(args.font?args.font:font);
 	let x = args.x + (args.width/2) - (args.imageSize/2);
 	let y = args.y - (args.imageSize/2);
 	if(args.imageX) x = args.imageX;
@@ -153,8 +158,8 @@ function addText(args,p,ctx,canvas,callback){
 		ctx.fillStyle = 'white';
 	}else ctx.fillStyle = args.color;
 	ctx.fillText(text,x,y-(height/2));
-	//ctx.rect(x-((args.align=="center")?args.width/2:0),y-(args.height/2),args.width,args.height);
-	//ctx.stroke();
+	// ctx.rect(x-((args.align=="center")?args.width/2:0),y-(args.height/2),args.width,args.height);
+	// ctx.stroke();
 
 	ctx.restore();
 	callback();
