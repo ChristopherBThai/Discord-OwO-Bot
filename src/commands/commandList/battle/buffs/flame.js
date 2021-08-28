@@ -17,7 +17,7 @@ module.exports = class Flame extends BuffInterface{
 		this.debuff = true;
 		this.emoji = "<:flame:572915106854469633>";
 		this.statDesc = "Deals **?%** of your "+WeaponInterface.magEmoji+" MAG at the end of the turn. Applying flame on a target that already has flame will explode and deal **?%** damage to the target.";
-		this.qualityList = [[20,40],[40,60]];
+		this.qualityList = [[20,40],[60,80]];
 	}
 
 	// Override
@@ -40,6 +40,7 @@ module.exports = class Flame extends BuffInterface{
 	postTurn(animal,ally,enemy,action){
 		if(!this.from) return;
 		if(animal.stats.hp[0]<=0) return;
+		if (this.markedForDeath) return;
 
 		let logs = new Logs();
 
