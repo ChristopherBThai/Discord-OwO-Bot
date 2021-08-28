@@ -20,7 +20,7 @@ module.exports = class FStaff extends WeaponInterface{
 		this.statDesc = "Deals **?%** of your "+WeaponInterface.magEmoji+" MAG to a random enemy and applies **flame** for 3 turns";
 		this.availablePassives = "all";
 		this.passiveCount = 1;
-		this.qualityList = [[70,90]];
+		this.qualityList = [[75,95]];
 		this.manaRange = [200,100];
 		this.buffList = [3];
 	}
