@@ -17,7 +17,7 @@ module.exports = class AttackUp extends BuffInterface{
 		this.debuff = false;
 		this.emoji = "<:attupp:619405867543953408>";
 		this.statDesc = "Increases all damage by **?%**. Cannot stack with other Attack Up+ buffs";
-		this.qualityList = [[20,30]];
+		this.qualityList = [[25,35]];
 	}
 
 	// Override
@@ -33,6 +33,7 @@ module.exports = class AttackUp extends BuffInterface{
 	}
 
 	attack(animal,attackee,damage,type,last){
+		if (this.markedForDeath) return;
 		let logs = new Logs();
 
 		let bonus = damage[0]*(this.stats[0]/100);
