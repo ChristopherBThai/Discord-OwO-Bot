@@ -5,17 +5,17 @@
  * For more information, see README.md and LICENSE
   */
 
-var timer;
+let timer;
 
 exports.handle = async function(main, message){
 	if(timer){
 		clearTimeout(timer);
 		delete timer;
 	}
-	let time = main.clusterID*100000;
+	const time = main.clusterID * 3 * 60 * 1000;
 	console.log("ending "+main.clusterID+" in "+time+"ms");
-	timer = setTimeout(function(){
+	timer = setTimeout(() => {
 		process.exit(0);
-	},time);
+	}, time);
 }
 

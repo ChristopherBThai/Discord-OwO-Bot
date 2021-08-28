@@ -18,7 +18,7 @@ module.exports = new CommandInterface({
 
 	args:"{@user}",
 
-	desc:"Give two chickens to someone! You can only gain one if you receive it! This command was created by ?"+owner+"?",
+	desc:"Give two chickens to someone! You can only gain one if you receive it! This command was created by ?"+owner+"? and ?428249367577755690?",
 
 	example:[],
 
