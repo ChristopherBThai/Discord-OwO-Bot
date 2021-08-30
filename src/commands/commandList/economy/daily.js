@@ -15,6 +15,7 @@ const CommandInterface = require('../../CommandInterface.js');
 const levels = require('../../../utils/levels.js');
 const rings = require('../../../data/rings.json');
 const moneyEmoji = '💰';
+const surveyEmoji = '📝';
 
 module.exports = new CommandInterface({
 
@@ -38,7 +39,8 @@ module.exports = new CommandInterface({
 	bot:true,
 
 	execute: async function (p) {
-		const { cowoncy, showAnnouncement, marriage } = await getUserInfo(p);
+		const uid = await p.global.getUid(p.msg.author.id);
+		const { cowoncy, showAnnouncement, marriage, showSurvey } = await getUserInfo(p, uid);
 		const afterMid = p.dateUtil.afterMidnight(cowoncy?.daily);
 		
 		if (!cowoncy) {
@@ -52,22 +54,20 @@ module.exports = new CommandInterface({
 			
 		// Past midnight
 		} else {
-			const uid = await p.global.getUid(p.msg.author.id);
-
 			const generalRewards = getRewards(cowoncy, afterMid);
 			const boxRewards = getRandomBox(p, uid);
 			const marriageRewards = await checkMarriage(p, marriage);	
 
-			const { sql, text } = finalizeText(p, uid, generalRewards, boxRewards, marriageRewards, showAnnouncement, afterMid);
+			const { sql, text } = finalizeText(p, uid, generalRewards, boxRewards, marriageRewards, showAnnouncement, showSurvey, afterMid);
 			const cowoncySql = `UPDATE cowoncy SET money = money + ${generalRewards.gain + generalRewards.extra}, daily_streak = ${generalRewards.streak}, daily = ${afterMid.sql} WHERE id = ${p.msg.author.id} ${cowoncy ? ` AND daily_streak = ${cowoncy.daily_streak}` : ''} ;`;
 
-			await executeQuery(p, cowoncySql, sql, text, showAnnouncement && cowoncy, generalRewards);
+			await executeQuery(p, cowoncySql, sql, text, showAnnouncement && cowoncy, showSurvey, generalRewards);
 		}
 	}
 
 })
 
-function finalizeText (p, uid, { streak, gain, extra }, boxRewards, marriageRewards, showAnnouncement, afterMid) {
+function finalizeText (p, uid, { streak, gain, extra }, boxRewards, marriageRewards, showAnnouncement, showSurvey, afterMid) {
 	let sql = "";
 
 	if (showAnnouncement) {
@@ -92,12 +92,22 @@ function finalizeText (p, uid, { streak, gain, extra }, boxRewards, marriageRewa
 		text += marriageRewards.text;
 	}
 
+	if (showSurvey) {
+		sql += `INSERT INTO user_survey (uid, sid)
+			VALUES (${uid}, (SELECT sid FROM survey ORDER BY sid DESC LIMIT 1))
+			ON DUPLICATE KEY UPDATE
+				sid = (SELECT sid FROM survey ORDER BY sid DESC LIMIT 1),
+				question_number = 1,
+				in_progress = 0;`
+		text += `\n${surveyEmoji} **|** You have a survey available! Answer some questions for some cool rewards!`;
+	}
+
 	text += `\n**⏱ |** Your next daily is in: ${afterMid.hours}H ${afterMid.minutes}M ${afterMid.seconds}S`;
 
 	return { sql, text }
 }
 
-async function executeQuery(p, cowoncySql, sql, text, showAnnouncement, { gain, extra }) {
+async function executeQuery(p, cowoncySql, sql, text, showAnnouncement, showSurvey, { gain, extra }) {
 	let rows = await p.query(cowoncySql);
 
 	if (!rows.changedRows) {
@@ -106,23 +116,56 @@ async function executeQuery(p, cowoncySql, sql, text, showAnnouncement, { gain, 
 
 	rows = await p.query(sql);
 	p.logger.incr(`cowoncy`, gain + extra, { type: 'daily' }, p.msg);
+
+	let embed, components;
 	if (showAnnouncement && rows[0][0].url) {
-		const embed = {
+		embed = {
 			image: { url: rows[0][0].url },
 			color: p.config.embed_color,
 			timestamp: new Date(rows[0][0].adate)
 		};
-		p.send({ content: text, embed });
-	} else {
-		p.send(text);
 	}
+	if (showSurvey) {
+		components = [
+			{
+				type: 1,
+				components: [
+					{
+						type: 2,
+						label: "Answer Survey",
+						style: 1,
+						custom_id: "survey",
+						emoji: {
+							id: null,
+							name: surveyEmoji
+						}
+					}
+				]
+			}
+		];
+	}
+	p.send({ content: text, embed, components });
 
 	levels.giveUserXP(p.msg.author.id, 100);
 }
 
-async function getUserInfo (p) {
-	let sql = "SELECT daily,daily_streak,user.uid,IF(patreonDaily = 1 OR ((TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths) AND patreonType = 3),1,0) as patreon  FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id LEFT JOIN patreons ON user.uid = patreons.uid WHERE cowoncy.id = "+p.msg.author.id+";";
-	sql += "SELECT * FROM user_announcement where uid = (SELECT uid FROM user WHERE id = "+p.msg.author.id+") AND (aid = (SELECT aid FROM announcement ORDER BY aid DESC limit 1) OR disabled = 1);"
+async function getUserInfo (p, uid) {
+	let sql = `SELECT
+				daily,
+				daily_streak,
+				IF (patreonDaily = 1 OR ((TIMESTAMPDIFF(MONTH, patreonTimer, NOW()) < patreonMonths) AND patreonType = 3), 1, 0) as patreon 
+			FROM cowoncy
+				LEFT JOIN user ON cowoncy.id = user.id
+				LEFT JOIN patreons ON user.uid = patreons.uid
+			WHERE cowoncy.id = ${p.msg.author.id};`;
+	sql += `SELECT *
+			FROM user_announcement
+			WHERE
+				uid = ${uid}
+				AND (
+					aid = (SELECT aid FROM announcement ORDER BY aid DESC limit 1)
+					OR disabled = 1
+				);`
 	sql += `SELECT 
 				u1.id AS id1, c1.daily AS daily1, c1.daily_streak AS streak1,
 				u2.id AS id2, c2.daily AS daily2, c2.daily_streak AS streak2,
@@ -134,12 +177,24 @@ async function getUserInfo (p) {
 					LEFT JOIN cowoncy AS c2 ON c2.id = u2.id
 				LEFT JOIN user AS temp ON marriage.uid1 = temp.uid OR marriage.uid2 = temp.uid
 			WHERE temp.id = ${p.msg.author.id};`;
+	sql += `SELECT *
+			FROM user_survey
+			WHERE
+				uid = ${uid}
+				AND (
+					in_progress = 1
+					OR (
+						sid = (SELECT sid FROM survey ORDER BY sid DESC limit 1)
+						AND is_done = 1
+					)
+				);`
 	const rows = await p.query(sql);
 
 	return {
 		cowoncy: rows[0][0],
 		showAnnouncement: !rows[1][0],
-		marriage: rows[2][0]
+		marriage: rows[2][0],
+		showSurvey: !rows[3][0]
 	}
 }
 
