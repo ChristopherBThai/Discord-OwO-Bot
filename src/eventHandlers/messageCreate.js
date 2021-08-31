@@ -14,22 +14,27 @@ const blacklist = require('../utils/blacklist.js');
 // Fired when a message is created
 exports.handle = function(msg, raw){
 
-	if (blacklist.checkBot(msg)) return;
+	// if (blacklist.checkBot(msg)) return;
 
 	//Ignore if bot
-	if(msg.author.bot) return;
+	if (msg.author.bot) { return; }
 
 	/* Ignore guilds if in debug mode */
 	//else if(this.debug&&msg.channel.guild&&!whitelist.includes(msg.channel.guild.id)) return;
 
-	else if(modChannel.includes(msg.channel.id)) this.command.executeMod(msg);
+	else if(modChannel.includes(msg.channel.id)) { this.command.executeMod(msg); }
 
-	else if(msg.author.id==this.auth.admin) this.command.executeAdmin(msg, raw);
+	// todo remove
+	// else if(msg.author.id==this.auth.admin) { this.command.executeAdmin(msg, raw); }
 
-	else if(msg.channel.type===PrivateChannel) this.macro.verify(msg,msg.content.trim());
+	else if (msg.channel.type===PrivateChannel) {
+		if (this.macro.verify(msg, msg.content.trim())) {
+			console.log(msg.content);
 
-	else 
-		this.command.execute(msg, raw);
+			// todo
+		}
+
+	} else { this.command.execute(msg, raw); }
 
 	levels.giveXP(msg);
 }
