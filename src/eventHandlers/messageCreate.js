@@ -10,6 +10,7 @@ const modChannel = ["471579186059018241","596220958730223619","64550193603621686
 const PrivateChannel = 1;
 const levels = require('../utils/levels.js');
 const blacklist = require('../utils/blacklist.js');
+const survey = require('../utils/survey.js');
 
 // Fired when a message is created
 exports.handle = function(msg, raw){
@@ -24,14 +25,11 @@ exports.handle = function(msg, raw){
 
 	else if(modChannel.includes(msg.channel.id)) { this.command.executeMod(msg); }
 
-	// todo remove
 	// else if(msg.author.id==this.auth.admin) { this.command.executeAdmin(msg, raw); }
 
 	else if (msg.channel.type===PrivateChannel) {
 		if (this.macro.verify(msg, msg.content.trim())) {
-			console.log(msg.content);
-
-			// todo
+			survey.handle.bind(this)(msg);
 		}
 
 	} else { this.command.execute(msg, raw); }
