@@ -75,14 +75,4 @@ async function startSurvey (user, uid) {
 	}
 
 	return true;
-			
-	/*
-	const sql = `SELECT sq.*
-			FROM user u
-				INNER JOIN user_survey us ON u.uid = us.uid
-				INNER JOIN survey_question sq ON sq.sid = us.sid AND sq.number = us.question_number
-			WHERE u.id = ${user.id}
-				AND in_progress = 1;`;
-	const question = await this.query(sql)[0];
-	*/
 }
