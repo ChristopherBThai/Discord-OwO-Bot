@@ -25,7 +25,7 @@ exports.handle = async function (msg, ack) {
 	}
 	await this.sender.msgChannel(surveyLogChannel, { embed });
 
-	await nextQuestion.bind(this)(msg, survey);
+	await sendNextQuestion.bind(this)(msg, survey);
 }
 
 async function getSurvey (userId) {
@@ -38,5 +38,56 @@ async function getSurvey (userId) {
 	return await this.query(sql) || [];
 }
 
-async function nextQuestion (msg, survey) {
+async function sendNextQuestion (msg, survey) {
+	const currentQuestion = survey.find(question => question.question_number === question.number)
+	const { uid, sid, number } = currentQuestion;
+	const nextQuestion = survey.find(question => number + 1 === question.number)
+
+	const con = await this.mysqlhandler.startTransaction();
+	try {
+		if (nextQuestion) {
+			const sql = `UPDATE user_survey
+					SET question_number = question_number + 1
+					WHERE uid = ${uid}
+						AND sid = ${sid}
+						AND in_progress = 1
+						AND is_done = 0
+						AND question_number = ${number};`;
+			const result = await con.query(sql);
+			if (result.changedRows) {
+				const text = `**Question ${nextQuestion.number}:** *${nextQuestion.question}*`;
+				await this.sender.msgUser(msg.author.id, text);
+			} else {
+				throw "Failed to update question";
+			}
+		} else {
+			let sql = `UPDATE user_survey
+					SET question_number = question_number + 1,
+						in_progress = 0,
+						is_done = 1
+					WHERE uid = ${uid}
+						AND sid = ${sid}
+						AND in_progress = 1
+						AND is_done = 0
+						AND question_number = ${number};`;
+			sql += `INSERT INTO lootbox (id, boxcount, claimcount, claim)
+					VALUES (${msg.author.id}, 5, 0, '2017-01-01')
+					ON DUPLICATE KEY UPDATE boxcount = boxcount + 5;`;
+			sql += `INSERT INTO crate (uid, cratetype, boxcount, claimcount, claim)
+					VALUES (${uid}, 0, 5, 0, '2017-01-01')
+					ON DUPLICATE KEY UPDATE boxcount = boxcount + 5;`;
+			const result = await con.query(sql);
+			if (result[0].changedRows) {
+				const text = `${surveyEmoji} **|** Thanks for completing the survey! You have received 5 ${this.config.emoji.lootbox} and 5 ${this.config.emoji.crate}`;
+				await this.sender.msgUser(msg.author.id, text);
+			} else {
+				throw "Failed to give rewards";
+			}
+		}
+
+		con.commit();
+	} catch (err) {
+		console.error(err);
+		con.rollback();
+	}
 }
