@@ -13,7 +13,7 @@ const blacklist = require('../utils/blacklist.js');
 const survey = require('../utils/survey.js');
 
 // Fired when a message is created
-exports.handle = function(msg, raw){
+exports.handle = async function (msg, raw) {
 
 	// if (blacklist.checkBot(msg)) return;
 
@@ -28,7 +28,7 @@ exports.handle = function(msg, raw){
 	// else if(msg.author.id==this.auth.admin) { this.command.executeAdmin(msg, raw); }
 
 	else if (msg.channel.type===PrivateChannel) {
-		if (this.macro.verify(msg, msg.content.trim())) {
+		if (await this.macro.verify(msg, msg.content.trim())) {
 			survey.handle.bind(this)(msg);
 		}
 
