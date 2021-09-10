@@ -55,16 +55,23 @@ async function requestRec(url){
 	}
 
 	//Grab users
+	const users = {};
 	for(let i in result.rawJson.included){
 		let obj = result.rawJson.included[i];
 		if(obj.type=='user'){
-			for(let j in benefits){
-				if(benefits[j].users.includes(obj.id)){
-					res[benefits[j].title].push({
-						name:obj.attributes.full_name,
-						discordID:(obj.attributes.social_connections?.discord?obj.attributes.social_connections.discord.user_id:null)
-					});
-				}
+			users[obj.id] = obj;
+			
+		}
+	}
+
+	for (let i in benefits){
+		for (let j in benefits[i].users) {
+			const user = users[benefits[i].users[j]];
+			if (user) {
+				res[benefits[i].title].push({
+					name: user.attributes.full_name,
+					discordID:(user.attributes.social_connections?.discord ? user.attributes.social_connections.discord.user_id : null)
+				});
 			}
 		}
 	}
