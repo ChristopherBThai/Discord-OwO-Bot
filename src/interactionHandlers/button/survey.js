@@ -44,7 +44,7 @@ async function startSurvey (user, uid) {
 			return false;
 
 		// User finished latest survey
-		} else if (userSurvey.sid == survey.sid && userSurvey.is_done) {
+		} else if (userSurvey.sid == survey[0].sid && userSurvey.is_done) {
 			con.rollback();
 			return false;
 		}
