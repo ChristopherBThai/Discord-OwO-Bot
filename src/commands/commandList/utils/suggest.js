@@ -33,7 +33,7 @@ module.exports = new CommandInterface({
 
 	group:["utility"],
 
-	cooldown:00000,
+	cooldown:600000,
 	half:15,
 	six:30,
 
