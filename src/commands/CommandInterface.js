@@ -37,7 +37,7 @@ module.exports = class CommandInterface{
 			params.errorMsg(", This command can only be used in **nsfw** channels!", 5000);
 			return;
 		}
-		await this.executeCommand(params);
+		await this.executeCommand.bind(params)(params);
 	}
 
 }

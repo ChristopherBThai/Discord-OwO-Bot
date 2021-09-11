@@ -34,6 +34,7 @@
 	"embed_color": 8240363,
 	"success_color": 65280,
 	"fail_color": 16711680,
+	"timeout_color": 6381923,
 	"emoji":{
 		"cowoncy": "<:cowoncy:416043450337853441>",
 		"blank": "<:blank:427371936482328596>",
