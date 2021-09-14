@@ -727,7 +727,7 @@ function notJames(text, info) {
 
 	if(info.gemText){
 		text = `${moon} **| ${info.author.username}** storms into a peach farm\n`
-			+ `${spark3} **|** with by ${info.gemText.replace(/\/\d+|`+/gi,'')}\n`
+			+ `${spark3} **|** with ${info.gemText.replace(/\/\d+|`+/gi,'')}\n`
 			+ `${spark6} **|** and runs away with ${info.animalEmojis}`;
 		if (info.petText) {
 			text += `\n${star8} **|** ${info.petText} gain **${info.animalXp}** ${peach}`;
@@ -741,7 +741,7 @@ function notJames(text, info) {
 		}
 	}
 	if (info.lootboxText) {
-		text += `\n**Lootbox** [**${info.lootboxText.match(/\[\d+\//gi)[0].match(/\d+/gi)[0]}**] is found!`;
+		text += `\n${blank} **| Lootbox** [**${info.lootboxText.match(/\[\d+\//gi)[0].match(/\d+/gi)[0]}**] is found!`;
 	}
 
 	const url = Math.random() > .5 ? 'https://cdn.discordapp.com/attachments/815195361379090442/817327541010038784/J_1.gif'
