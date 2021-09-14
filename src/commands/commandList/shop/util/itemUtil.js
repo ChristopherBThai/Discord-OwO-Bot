@@ -14,7 +14,7 @@ const items = {
 		name: "Common Ticket",
 		emoji: config.emoji.perkTicket.common,
 		column: "common_tickets",
-		desc: "You can use this item to redeem 1 month of common tier perks!\n\nYou can trade this item with other users with `owo trade 10 {@user} ${pricePerTicket} ${numberOfTickets}`. An example would be `owo trade 10 @Scuttler 100000 2`. This will trade 2 tickets for a total price of 200000 cowoncy.\n\nYou can also use this item by typing in `owo use 10`."
+		desc: "You can use this item to redeem 1 month of common tier perks!\n\nYou can trade this item with other users with `owo trade 10 {@user} {pricePerTicket} {numberOfTickets}`. An example would be `owo trade 10 @Scuttler 100000 2`. This will trade 2 tickets for a total price of 200000 cowoncy.\n\nYou can also use this item by typing in `owo use 10`."
 	}
 };
 
