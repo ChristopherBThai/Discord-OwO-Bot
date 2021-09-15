@@ -42,7 +42,7 @@ module.exports = new CommandInterface({
 			}
 		}
 			
-		else if(guild = await p.fetch.getGuild(p.args[0]))
+		else if(guild = await p.fetch.getGuild(p.args[0], false))
 			p.send("Penalty has been set to 0 for guild: "+guild.name);
 		else
 			p.send("Failed to set penalty for that user");
