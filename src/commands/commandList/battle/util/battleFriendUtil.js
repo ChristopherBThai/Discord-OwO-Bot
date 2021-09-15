@@ -156,7 +156,7 @@ function toEmbedRequest(p,stats,bet,sender,receiver,flags){
 	flags = flags.split(",");
 	for(let i in flags){
 		let flag = flags[i];
-		if(flag=="log"){
+		if(flag=="log"||flag=="link"){
 			flagText += "`LOGS` ";
 		}else if(flag=="compact"||flag=="image"||flag=="text"){
 			flagText += "`"+flag.toUpperCase()+"` ";
@@ -231,6 +231,7 @@ function parseFlags(p,flags){
 
 	flags = flags.join("")
 		.replace(/[=:]/gi,"")
+		.replace(/[,]/gi,"-")
 		.toLowerCase()
 		.split("-");
 
@@ -261,8 +262,15 @@ function parseFlag(p,flag){
 			default:
 				return undefined;
 		}
-	}else if(flag=="log"||flag=="logs"){
-		return {flag:"log",res:"log"};
+	}else if(flag.startsWith("log")) {
+		flag = flag.replace("logs", "")
+			.replace("log", "");
+			switch(flag) {
+				case "link":
+					return {flag:"log",res:"link"};
+				default:
+					return {flag:"log",res:"log"};
+			}
 	}else if(flag.startsWith("lvl")||flag.startsWith("level")){
 		flag = flag.replace("level","")
 			.replace("lvl","");
