@@ -15,6 +15,7 @@ const letters = "abcdefghijklmnopqrstuvwxyz";
 const botrank = "SELECT (COUNT(*)) AS rank, (SELECT COUNT(*) FROM autohunt) AS total FROM autohunt WHERE autohunt.total >= (SELECT autohunt.total FROM autohunt WHERE id = ";
 const logger = require('../../../utils/logger.js');
 const animals = require('../../../../../tokens/owo-animals.json');
+const parse = require('parse-duration');
 
 module.exports = new CommandInterface({
 
@@ -24,7 +25,7 @@ module.exports = new CommandInterface({
 
 	desc:"Use autohunt to hunt for animals automatically! Upgrade huntbot for more efficient hunts!",
 
-	example:["owo autohunt","owo autohunt 1000"],
+	example:["owo autohunt","owo autohunt 1000", "owo autohunt 10h"],
 
 	related:["owo sacrifice","owo upgrade"],
 
@@ -141,24 +142,32 @@ async function claim(p,msg,con,query,bot){
 async function autohunt(p,msg,con,args,global,send){
 	let cowoncy;
 	let password;
-	if(global.isInt(args[0])){
+	let length;
+	if(global.isInt(args[0])||parse(args[0], 'h')){
 		cowoncy = parseInt(args[0]);
 		password = args[1];
-	}else if(global.isInt(args[1])){
+		length = parse(args[0], 'h');
+	}else if(global.isInt(args[1])||parse(args[1], 'h')){
 		cowoncy = parseInt(args[1]);
 		password = args[0];
+		length = parse(args[1], 'h');
 	}
 
 	if(password)
 		password = password.toLowerCase();
 
-	if(!cowoncy){
+	if(!cowoncy && !length){
 		send("**🚫 | "+msg.author.username+"**, Wrong syntax!",3000);
 		return;
 	}
 
-	if(cowoncy<=0){
+	if(cowoncy<=0 && !length){
 		send("**🚫 | "+msg.author.username+"**, Invalid cowoncy amount!",3000);
+		return;
+	}
+
+	if (length != null && length <= 0) {
+		send("**🚫 | "+msg.author.username+"**, Invalid duration!",3000);
 		return;
 	}
 
@@ -180,6 +189,13 @@ async function autohunt(p,msg,con,args,global,send){
 			send(text);
 		}
 		return;
+	}
+
+	// convert duration to cowoncy
+	if(length) {
+		let efficiency = autohuntutil.getLvl(result[0][0].efficiency,0,"efficiency");
+		let cost = autohuntutil.getLvl(result[0][0].cost,0,"cost");
+		cowoncy = Math.floor(efficiency.stat * cost.stat * length);
 	}
 
 	//Check if enough cowoncy

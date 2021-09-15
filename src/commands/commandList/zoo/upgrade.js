@@ -57,6 +57,7 @@ module.exports = new CommandInterface({
 
 		let count = undefined;
 		let trait = undefined;
+		let all = undefined;
 
 		//if arg0 is an int
 		if(global.isInt(args[0])){
@@ -70,7 +71,14 @@ module.exports = new CommandInterface({
 				trait = traits[args[0].toLowerCase()];
 			count = parseInt(args[1]);
 
-		}else{
+		}
+		// owo upg duration all
+		else if ("all" == args[1].toLowerCase()) {
+			if(args[0])
+				trait = traits[args[0].toLowerCase()];
+			all = true;
+		}
+		else{
 			p.send("**🚫 |** Please include how many animal essence to use!",3000);
 			return;
 		}
@@ -80,17 +88,27 @@ module.exports = new CommandInterface({
 			p.send("**🚫 |** I could not find that autohunt trait!\n**<:blank:427371936482328596> |** You can choose from: `efficiency`, `duration`, `cost`, `gain`,`exp`, or `radar`",5000);
 			return;
 		}
-		if(!count||count<=0){
+		if(!all && (!count || count<=0)){
 			p.send("**🚫 |** You need to use more than 1 animal essence silly~",3000);
 			return;
 		}
 
 		let sql = "SELECT * FROM autohunt WHERE id = "+msg.author.id+";";
-		sql += "UPDATE autohunt SET essence = essence - "+count+","+trait+"="+trait+"+"+count+" WHERE id = "+msg.author.id+" AND essence >= "+count+";";
+		if (all) {
+			// dump all essence into the given trait
+			sql += "UPDATE autohunt SET "+trait+"="+trait+"+essence, essence = 0 WHERE id = "+msg.author.id+";";
+		}
+		else {
+			// default logic
+			sql += "UPDATE autohunt SET essence = essence - "+count+","+trait+"="+trait+"+"+count+" WHERE id = "+msg.author.id+" AND essence >= "+count+";";
+		}
 		let result = await p.query(sql);
 		if(!result[0][0]||result[1].affectedRows==0){
 			p.send("**🚫 | "+msg.author.username+"** You do not have enough animal essence!",3000);
 			return;
+		}
+		if (all) {
+			count = result[0][0]['essence'];
 		}
 		let stat = autohuntUtil.getLvl(result[0][0][trait],count,trait);
 		/* Refund overflowing mana */
