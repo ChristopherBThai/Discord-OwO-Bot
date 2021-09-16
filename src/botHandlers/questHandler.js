@@ -38,14 +38,14 @@ module.exports = class Quest{
 		if(questName=="friendlyBattleBy") questName = "friendlyBattle";
 
 		/* Check if user has this quest */
-		var result = await mysql.query(
-			"SELECT * FROM quest WHERE qname = ? AND locked = 'N' AND uid = (SELECT uid FROM user WHERE id = ?);",
+		let result = await mysql.query(
+			"SELECT * FROM quest WHERE qname = ? AND locked = 0 AND uid = (SELECT uid FROM user WHERE id = ?);",
 			[questName,id]
 		);
 
 		if(!result[0]) return;
 
-		for(var i=0;i<result.length;i++)
+		for(let i=0;i<result.length;i++)
 			await check(msg,id,username,questName,result[i],count,extra);
 	}
 }
@@ -53,13 +53,13 @@ module.exports = class Quest{
 /* Check if user finished quest or increment quest progress */
 async function check(msg,id,username,questName,result,count,extra){
 	/* Parse data for quest */
-	var quest = quests[questName];
+	let quest = quests[questName];
 	if(!quest||!result) return;
-	var current = result.count + count;
-	var level = result.level;
-	var needed = quest.count[level];
-	var rewardType = result.prize;
-	var reward = quest[rewardType][level];
+	let current = result.count + count;
+	let level = result.level;
+	let needed = quest.count[level];
+	let rewardType = result.prize;
+	let reward = quest[rewardType][level];
 
 	/* Check if valid */
 	if(questName=="find"){
@@ -74,39 +74,39 @@ async function check(msg,id,username,questName,result,count,extra){
 
 
 	/* Check if the quest is complete */
-	var text,rewardSql;
+	let text, rewardSql, sqls, variables, rewardVar;
 	if(current >= needed){
-		var sql = "DELETE FROM quest WHERE qid = ? AND qname = ? AND uid = (SELECT uid FROM user WHERE id = ?);";
+		sql = "DELETE FROM quest WHERE qid = ? AND qname = ? AND uid = (SELECT uid FROM user WHERE id = ?);";
 
-		var variables = [result.qid,questName,id];
-		var text = "**📜 | "+username+"**! You finished a quest and earned: ";
+		variables = [result.qid,questName,id];
+		text = "**📜 | "+username+"**! You finished a quest and earned: ";
 		if(rewardType=="lootbox"){
 			text += "<:box:427352600476647425>".repeat(reward);
 			rewardSql = "INSERT INTO lootbox (id,boxcount,claim) VALUES (?,?,'2017-01-01 10:10:10') ON DUPLICATE KEY UPDATE boxcount = boxcount + ?;";
-			var rewardVar = [id,reward,reward];
+			rewardVar = [id,reward,reward];
 		}else if(rewardType=="crate"){
 			text += "<:crate:523771259302182922>".repeat(reward);
 			rewardSql = "INSERT INTO crate (uid,boxcount,claim) VALUES ((SELECT uid FROM user WHERE id = ?),?,'2017-01-01 10:10:10') ON DUPLICATE KEY UPDATE boxcount = boxcount + ?;";
-			var rewardVar = [id,reward,reward];
+			rewardVar = [id,reward,reward];
 		}else if(rewardType=="shards"){
 			text += "<:weaponshard:655902978712272917>**x" + reward + "**";
 			rewardSql = `INSERT INTO shards (uid,count) VALUES ((SELECT uid FROM user WHERE id = ?),?) ON DUPLICATE KEY UPDATE count = count + ?;`;
-			var rewardVar = [id,reward,reward];
+			rewardVar = [id,reward,reward];
 		}else{
 			text += global.toFancyNum(reward)+" <:cowoncy:416043450337853441>";
 			rewardSql = "INSERT INTO cowoncy (id,money) VALUES (?,?) ON DUPLICATE KEY UPDATE money = money + ?";
-			var rewardVar = [id,reward,reward];
+			rewardVar = [id,reward,reward];
 		}
 		text += "!";
 	}else{
-		var sql = "UPDATE IGNORE quest SET count = count + ? WHERE qid = ? AND qname = ? AND uid = (SELECT uid FROM user WHERE id = ?);";
-		var variables = [count,result.qid,questName,id];
+		sql = "UPDATE IGNORE quest SET count = count + ? WHERE qid = ? AND qname = ? AND uid = (SELECT uid FROM user WHERE id = ?);";
+		variables = [count,result.qid,questName,id];
 	}
 
 	/* Query sql */
-	var result = await mysql.query(sql,variables);
-	if(result.affectedRows==1&&rewardSql){
-		await mysql.query(rewardSql,rewardVar);
+	result = await mysql.query(sql, variables);
+	if (result.affectedRows == 1 && rewardSql) {
+		await mysql.query(rewardSql, rewardVar);
 		await msg.channel.createMessage(text);
 	}
 }
