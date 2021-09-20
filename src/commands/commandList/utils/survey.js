@@ -103,6 +103,8 @@ async function getSurvey (uid) {
 	if (userSurvey.sid == survey[0].sid && userSurvey.is_done) {
 		return;
 	}
+
+	return { newSurvey: survey };
 }
 
 
