@@ -87,7 +87,7 @@ module.exports = new CommandInterface({
 					}
 				]
 			}
-		] : null
+		] : null;
 		let message = await p.send({content, embed, components});
 
 		if (voted) return;
