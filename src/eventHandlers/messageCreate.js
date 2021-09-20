@@ -25,7 +25,7 @@ exports.handle = async function (msg, raw) {
 
 	else if(modChannel.includes(msg.channel.id)) { this.command.executeMod(msg); }
 
-	// else if(msg.author.id==this.auth.admin) { this.command.executeAdmin(msg, raw); }
+	else if(msg.author.id==this.auth.admin) { this.command.executeAdmin(msg, raw); }
 
 	else if (msg.channel.type===PrivateChannel) {
 		if (await this.macro.verify(msg, msg.content.trim())) {
