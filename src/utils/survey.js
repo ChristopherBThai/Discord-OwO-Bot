@@ -23,7 +23,7 @@ exports.handle = async function (msg, ack) {
 		description: msg.content.trim(),
 		color: this.config.embed_color
 	}
-	await this.sender.msgChannel(surveyLogChannel, { embed });
+	this.sender.msgChannel(surveyLogChannel, { embed });
 
 	await sendNextQuestion.bind(this)(msg, survey);
 }
