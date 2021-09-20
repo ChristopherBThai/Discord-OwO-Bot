@@ -51,8 +51,7 @@ module.exports = new CommandInterface({
 			}else if(!item){
 				p.errorMsg(`, I could not find item ${args[i]}`,3000);
 				return;
-			}
-			else if (i > 0 && item.name != "gem") {
+			}else if (i > 0 && item.name != "gem") {
 				p.errorMsg(", you can only use multiple gems at one time!",3000);
 				return;
 			}
@@ -63,7 +62,7 @@ module.exports = new CommandInterface({
 			return;
 		}
 
-		if (itemList[0].name=="gem" && itemList.length > 1) {
+		if (itemList[0].name=="gem") {
 			gemUtil.use(p, itemList.map(gem => gem.id));
 			return;
 		}
