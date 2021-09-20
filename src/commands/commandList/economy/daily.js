@@ -42,7 +42,7 @@ module.exports = new CommandInterface({
 		const uid = await p.global.getUid(p.msg.author.id);
 		const { cowoncy, showAnnouncement, marriage, showSurvey } = await getUserInfo(p, uid);
 		const afterMid = p.dateUtil.afterMidnight(cowoncy?.daily);
-		
+
 		if (!cowoncy) {
 			await p.query(`INSERT IGNORE INTO user (id, count) VALUES (${p.msg.author.id}, 0); INSERT IGNORE INTO cowoncy (id, money) VALUES (${p.msg.author.id}, 0);`);
 		}
@@ -194,7 +194,8 @@ async function getUserInfo (p, uid) {
 		cowoncy: rows[0][0],
 		showAnnouncement: !rows[1][0],
 		marriage: rows[2][0],
-		showSurvey: !rows[3][0]
+		// showSurvey: !rows[3][0]
+		showSurvey: false
 	}
 }
 
