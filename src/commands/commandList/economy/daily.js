@@ -188,13 +188,14 @@ async function getUserInfo (p, uid) {
 						AND is_done = 1
 					)
 				);`
+	sql += 'SELECT sid FROM survey ORDER BY sid DESC limit 1';
 	const rows = await p.query(sql);
 
 	return {
 		cowoncy: rows[0][0],
 		showAnnouncement: !rows[1][0],
 		marriage: rows[2][0],
-		showSurvey: !rows[3][0]
+		showSurvey: rows[4][0] ? !rows[3][0] : false
 	}
 }
 
