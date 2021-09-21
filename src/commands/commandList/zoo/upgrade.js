@@ -71,7 +71,7 @@ module.exports = new CommandInterface({
 			count = parseInt(args[1]);
 
 		// owo upg duration all
-		} else if ("all" == args[1].toLowerCase()) {
+		} else if (args[1] && "all" == args[1].toLowerCase()) {
 			if (args[0]) {
 				trait = traits[args[0].toLowerCase()];
 			}

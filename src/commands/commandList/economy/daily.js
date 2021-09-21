@@ -194,8 +194,7 @@ async function getUserInfo (p, uid) {
 		cowoncy: rows[0][0],
 		showAnnouncement: !rows[1][0],
 		marriage: rows[2][0],
-		// showSurvey: !rows[3][0]
-		showSurvey: false
+		showSurvey: !rows[3][0]
 	}
 }
 

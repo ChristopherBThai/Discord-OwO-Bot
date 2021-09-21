@@ -39,8 +39,9 @@ class OwO extends Base{
 		// Creates a pageable message
 		this.PagedMessage = require('./utils/PagedMessage.js');
 
-		// Websocket connection to our emulator server
-		this.socketio = new (require('./utils/socketio.js'))(this);
+		// Websockets
+		this.streamSocket = new (require('./utils/streamSocket.js'))(this);
+		this.snailSocket = new (require('./utils/snailSocket.js'))(this);
 
 		// Logger
 		this.logger = require('./utils/logger.js');
