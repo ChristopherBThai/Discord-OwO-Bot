@@ -93,7 +93,7 @@ function display(p){
 			{"name":"🎭 Social",
 				"value":"`cookie` `ship`  `pray`  `curse`  `marry`  `emoji`  `profile`  `level`  `wallpaper`  `owoify`  `avatar`"},
 			{"name":"😂 Meme Generation",
-				"value":"`spongebobchicken`  `slapcar`  `isthisa`  `drake`  `distractedbf`  `communismcat`  `eject`  `emergencymeeting`  `headpat`  `tradeoffer`"},
+				"value":"`spongebobchicken`  `slapcar`  `isthisa`  `drake`  `distractedbf`  `communismcat`  `eject`  `emergencymeeting`  `headpat`  `tradeoffer`  `waddle`"},
 			{"name":"🙂 Emotes",
 				"value":sEmotes},
 			{"name":"🤗 Actions",
