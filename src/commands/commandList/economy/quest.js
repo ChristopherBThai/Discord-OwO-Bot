@@ -78,10 +78,6 @@ async function rrQuest (p) {
 		p.errorMsg(", Could not locate the quest.", 3000);
 		return;
 	}
-	if (locked) {
-		p.errorMsg(", this quest is locked! Please unlock it before rerolling.", 3000);
-		return;
-	}
 
 	/* alright, we can now find a new quest! */
 	let quest = getQuest(p.msg.author.id, {qnum}, undefined, locked);
