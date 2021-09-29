@@ -128,7 +128,7 @@ async function sendMessage (p, { item, user, price, count }) {
 			},
 			{
 				name: `${user.username}#${user.discriminator} will give:`,
-				value: `\`\`\`fix\n${count * price} cowoncy${spacer}\n\`\`\``,
+				value: `\`\`\`fix\n${p.global.toFancyNum(count * price)} cowoncy${spacer}\n\`\`\``,
 				inline: true
 			}
 		]
