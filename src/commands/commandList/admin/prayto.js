@@ -61,8 +61,8 @@ async function banList(p){
 			bans.push(result[i].sender);
 		}
 		let count = bans.length;
-		bans = "("+bans.join(",99999),(")+",99999)";
-		sql = `INSERT IGNORE INTO timeout (id,penalty) VALUES ${bans} ON DUPLICATE KEY UPDATE penalty = 99999;`;
+		const bansSql = "("+bans.join(",99999),(")+",99999)";
+		sql = `INSERT IGNORE INTO timeout (id,penalty) VALUES ${bansSql} ON DUPLICATE KEY UPDATE penalty = 99999;`;
 		await p.query(sql);
 		
 		if(user){
@@ -74,7 +74,16 @@ async function banList(p){
 			}
 		}
 
-		p.replyMsg(banEmoji,", **"+username+"** and "+(count-1)+" users have been banned");
+	let userList = '';
+	for (let i in bans) {
+		userList += bans[i] + ', ';
+		if ( !((parseInt(i) + 1) % 10) && i + 1 != bans.length) {
+			userList += '\n';
+		}
+	}
+	userList = userList.slice(0, -2); 
+	const userListBuffer = Buffer.from(userList, 'utf8');
+	p.replyMsg(banEmoji,", **"+username+"** and "+(count-1)+" users have been banned", null, { file: userListBuffer, name: 'list.txt' });
 }
 
 async function displayList(p){
