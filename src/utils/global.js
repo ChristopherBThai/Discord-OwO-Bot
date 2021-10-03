@@ -269,6 +269,7 @@ exports.filteredName = function (name) {
 		.replace(/@everyone/gi,"everyone")
 		.replace(/<@!?[0-9]+>/gi,"User")
 		.replace(/[*`]+/gi,"'")
+		.replace(/\[+|\)+|(\]\(\))+/gi,"")
 		.replace(/\|\|/g,'│');
 
 	return { name, offensive:false }
