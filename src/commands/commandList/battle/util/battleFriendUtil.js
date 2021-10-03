@@ -37,7 +37,7 @@ exports.challenge = async function(p,id,bet){
 				LEFT JOIN pet_team_active pt_act
 					ON pt2.pgid = pt_act.pgid
 			WHERE u2.id = ${id}
-			ORDER BY pt_act.pgid DESC, pt2.pgid ASC
+			ORDER BY pt_act.pgid ${id === p.msg.author.id ? 'ASC' : 'DESC'}, pt2.pgid ASC
 			LIMIT 1)
 		ORDER BY pos ASC;`;
 	sql += `SELECT pet_team.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
