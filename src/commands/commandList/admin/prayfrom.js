@@ -31,50 +31,59 @@ module.exports = new CommandInterface({
 })
 
 async function banList(p){
-		if(p.args[0]!="ban"){
-			p.errorMsg(", Invalid syntax! The correct use is `owo prayfrom ban {id} {minPrayCount}`",4000);
-			return;
-		}
-		let userid = p.args[1];
-		if(!p.global.isInt(userid)){
-			p.errorMsg(", Invalid user id!",3000);
-			return;
-		}
-		let min = p.args[2];
-		if(!p.global.isInt(min)){
-			p.errorMsg(", Invalid minimum pray count!",4000);
-			return;
-		}
+	if(p.args[0]!="ban"){
+		p.errorMsg(", Invalid syntax! The correct use is `owo prayfrom ban {id} {minPrayCount}`",4000);
+		return;
+	}
+	let userid = p.args[1];
+	if(!p.global.isInt(userid)){
+		p.errorMsg(", Invalid user id!",3000);
+		return;
+	}
+	let min = p.args[2];
+	if(!p.global.isInt(min)){
+		p.errorMsg(", Invalid minimum pray count!",4000);
+		return;
+	}
 
-		min = parseInt(min);
-		let user = await p.fetch.getUser(userid);
-		let username = user?user.username:userid;
+	min = parseInt(min);
+	let user = await p.fetch.getUser(userid);
+	let username = user?user.username:userid;
 
-		let sql = `SELECT receiver FROM user_pray WHERE sender = ${userid} AND count >= ${min};`;
-		let result = await p.query(sql);
-		if(!result||result.length==0){
-			p.errorMsg(", no users found",3000);
+	let sql = `SELECT receiver FROM user_pray WHERE sender = ${userid} AND count >= ${min};`;
+	let result = await p.query(sql);
+	if(!result||result.length==0){
+		p.errorMsg(", no users found",3000);
+		return;
+	}
+	let bans = [userid];
+	for(let i in result){
+		bans.push(result[i].receiver);
+	}
+	let count = bans.length;
+	const bansSql = "("+bans.join(",99999),(")+",99999)";
+	sql = `INSERT IGNORE INTO timeout (id,penalty) VALUES ${bansSql} ON DUPLICATE KEY UPDATE penalty = 99999;`;
+	await p.query(sql);
+	
+	if(user){
+		try{
+			await (await user.getDMChannel()).createMessage("Your accounts has been banned for abusing pray/curse");
+		}catch(e){
+			p.replyMsg(banEmoji,", **"+username+"** and "+(count-1)+" users have been banned, I couldn't DM them.");
 			return;
 		}
-		let bans = [userid];
-		for(let i in result){
-			bans.push(result[i].receiver);
-		}
-		let count = bans.length;
-		bans = "("+bans.join(",99999),(")+",99999)";
-		sql = `INSERT IGNORE INTO timeout (id,penalty) VALUES ${bans} ON DUPLICATE KEY UPDATE penalty = 99999;`;
-		await p.query(sql);
-		
-		if(user){
-			try{
-				await (await user.getDMChannel()).createMessage("Your accounts has been banned for abusing pray/curse");
-			}catch(e){
-				p.replyMsg(banEmoji,", **"+username+"** and "+(count-1)+" users have been banned, I couldn't DM them.");
-				return;
-			}
-		}
+	}
 
-		p.replyMsg(banEmoji,", **"+username+"** and "+(count-1)+" users have been banned");
+	let userList = '';
+	for (let i in bans) {
+		userList += bans[i] + ', ';
+		if ( !((parseInt(i) + 1) % 10) && i + 1 != bans.length) {
+			userList += '\n';
+		}
+	}
+	userList = userList.slice(0, -2); 
+	const userListBuffer = Buffer.from(userList, 'utf8');
+	p.replyMsg(banEmoji,", **"+username+"** and "+(count-1)+" users have been banned", null, { file: userListBuffer, name: 'list.txt' });
 }
 
 async function displayList(p){
