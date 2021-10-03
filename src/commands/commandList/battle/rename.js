@@ -30,37 +30,37 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: async function(p){
-		if(p.args.length<2){
-			p.errorMsg(", The correct command is `owo rename [animal] [name]`!");
-			return;
+		if (p.args.length<2) {
+			return p.errorMsg(", The correct command is `owo rename [animal] [name]`!");
 		}
 
-		var animal = p.args.shift();
-		var input = p.args.join(" ");
+		let animal = p.args.shift();
+		let input = p.args.join(" ");
 
 		/* Validity check */
 		animal = p.global.validAnimal(animal);
-		if(!animal){
-			p.errorMsg(", I couldn't find that animal! D:");
-			return;
+		if (!animal) {
+			return p.errorMsg(", I couldn't find that animal! D:");
 		}
-		if(input.length>35){
-			p.errorMsg(", The nickname is too long!",3000);
-			return;
-		}else if(input==""){
-			p.errorMsg(", Invalid nickname!",3000);
-			return;
+		if (input.length > 35) {
+			return p.errorMsg(", The nickname is too long!",3000);
+		} else if(input == '') {
+			return p.errorMsg(", Invalid nickname!",3000);
 		}
 
 		/* Alter names to be appropriate */
 		const { name, offensive } = p.global.filteredName(input);
 
-		let sql = `UPDATE animal SET nickname = ? , offensive = ${offensive} WHERE id = ${p.msg.author.id} AND name = '${animal.value}'`;
-		let result = await p.query(sql,[name]);
+		if (name == '') {
+			return p.errorMsg(", Invalid nickname!", 3000);
+		}
 
-		if(result.affectedRows==0){
-			p.errorMsg(", you do not own this pet!",3000);
-		}else{
+		let sql = `UPDATE animal SET nickname = ? , offensive = ${offensive} WHERE id = ${p.msg.author.id} AND name = '${animal.value}'`;
+		let result = await p.query(sql, [name]);
+
+		if (result.affectedRows == 0) {
+			p.errorMsg(", you do not own this pet!", 3000);
+		} else {
 			p.replyMsg("🌱",p.replaceMentions(", you successfully named your pet **"+((animal.uni)?animal.uni:animal.value)+"** to **"+name+"**!"));
 		}
 	}
