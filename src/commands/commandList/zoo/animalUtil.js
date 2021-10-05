@@ -1,19 +1,20 @@
 /*
  * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Copyright (C) 2021 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
 	*/
 
-var animals = require('../../../../../tokens/owo-animals.json');
+const animals = require('../../../../../tokens/owo-animals.json');
+
 let enableDistortedTier = true;
 setTimeout(() => {
 	// Disable distorted after 6 hours;
 	enableDistortedTier = false;
-},21600000);
+}, 21600000);
 
 const specialRates = animals.specialRates;
-var specialPercent = 0;
+let specialPercent = 0;
 if (specialRates && specialRates.length) {
 	for (let i in specialRates) {
 		specialPercent += specialRates[i].rate
@@ -23,14 +24,14 @@ if (specialRates && specialRates.length) {
 /**
  * Picks a random animal from secret json file
  */
-exports.randAnimal = function( {patreon, gem, lucky, huntbot, manual} = {} ){
-	var rand = Math.random();
-	var result = [];
+exports.randAnimal = function({patreon, gem, lucky, huntbot, manual} = {}){
+	let rand = Math.random();
+	let result = [];
 
 	/* Calculate percentage */
-	var patreonPercent = animals.cpatreon[0]+animals.patreon[0];
+	let patreonPercent = animals.cpatreon[0]+animals.patreon[0];
 	if(!patreon) patreonPercent = 0;
-	var gemPercent = animals.gem[0];
+	let gemPercent = animals.gem[0];
 	if(!gem) gemPercent = 0;
 	else if(lucky) gemPercent += gemPercent*lucky.amount;
 	let distortedPercent = enableDistortedTier && manual ? animals.distorted[0] : 0;
@@ -138,10 +139,10 @@ exports.randAnimal = function( {patreon, gem, lucky, huntbot, manual} = {} ){
 }
 
 exports.toSmallNum = function(count,digits){
-	var result = "";
-	var num = count;
+	let result = "";
+	let num = count;
 	for(i=0;i<digits;i++){
-		var digit = count%10;
+		let digit = count%10;
 		count = Math.trunc(count/10);
 		result = animals.numbers[digit]+result;
 	}
@@ -149,7 +150,7 @@ exports.toSmallNum = function(count,digits){
 }
 
 exports.zooScore = function(zoo){
-	var text = "";
+	let text = "";
 	if(zoo.hidden>0)
 		text += "H-"+zoo.hidden+", ";
 	if(zoo.fabled>0)
