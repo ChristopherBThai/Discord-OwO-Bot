@@ -63,7 +63,7 @@ module.exports = new CommandInterface({
 			//Sort gem benefits
 			let gems = {}
 			let uid = undefined;
-			for(var i=0;i<result[3].length;i++){
+			for(let i=0;i<result[3].length;i++){
 				tempGem = gemUtil.getGem(result[3][i].gname);
 				tempGem.uid = result[3][i].uid;
 				tempGem.activecount = result[3][i].activecount;
@@ -123,32 +123,30 @@ module.exports = new CommandInterface({
 
 function getAnimals(p,result,gems,uid){
 	/* Parse if user is a patreon */
-	var patreon = (result[0][0].patreon==1);
-	var patreonGem = (gems["Patreon"])?true:false;
+	let patreon = (result[0][0].patreon==1);
+	let patreonGem = (gems["Patreon"])?true:false;
 
 	/* If no gems */
-	var gemLength = Object.keys(gems).length;
-	if(gemLength==0){
-		var animal = [animalUtil.randAnimal({
-			patreon: patreon,
-			manual: true
-		})];
+	let gemLength = Object.keys(gems).length;
+	let animal;
+	if (gemLength==0) {
+		animal = [animalUtil.randAnimal({ patreon: patreon, manual: true })];
 
 	/* If gems... */
-	}else{
+	} else {
 		/* Calculate how many animals we need */
 		let count = 1;
-		if(gems["Hunting"]) count += gems["Hunting"].amount
-		if(gems["Empowering"]) count *= 2
+		if(gems["Hunting"])     count += gems["Hunting"].amount
+		if(gems["Empowering"])  count *= 2
 
 		/* Grabs 1-2 animal to check for patreongem */
-		var animal = [animalUtil.randAnimal({
+		animal = [animalUtil.randAnimal({
 			patreon: (patreon||patreonGem),
 			gem: true,
 			lucky: gems["Lucky"],
 			manual: true
 		})];
-		if(gems["Patreon"]) animal.push(animalUtil.randAnimal({
+		if (gems["Patreon"]) animal.push(animalUtil.randAnimal({
 			patreon: true,
 			gem: true,
 			lucky: gems["Lucky"],
@@ -156,37 +154,38 @@ function getAnimals(p,result,gems,uid){
 		}));
 
 		/* Get the rest of the animals */
-		for(var i=1;i<count;i++)
+		for (let i=1;i<count;i++) {
 			animal.push(animalUtil.randAnimal({
 				patreon: patreon,
 				gem: true,
 				lucky: gems["Lucky"],
 				manual: true
 			}));
+		}
 	}
 
 	/* Construct sql statement for animal insertion */
-	var sql = "";
-	var xp = 0;
-	var insertAnimal = "INSERT INTO animal (count,totalcount,id,name) VALUES ";
-	var typeCount = {};
-	for(var i=0;i<animal.length;i++){
-		var type = animal[i][2];
+	let sql = "";
+	let xp = 0;
+	let insertAnimal = "INSERT INTO animal (count,totalcount,id,name) VALUES ";
+	let typeCount = {};
+	for(let i=0;i<animal.length;i++){
+		let type = animal[i][2];
 		xp += animal[i][3];
 		insertAnimal += "(1,1,"+p.msg.author.id+",'"+animal[i][1]+"'),";
 		if(!typeCount[type]) typeCount[type] = 0;
 		typeCount[type] += 1;
 	}
 	sql += insertAnimal.slice(0,-1)+" ON DUPLICATE KEY UPDATE count = count +1,totalcount = totalcount+1;";
-	var insertCount = "";
-	for(var key in typeCount){
+	let insertCount = "";
+	for(let key in typeCount){
 		insertCount += "INSERT INTO animal_count (id,"+key+") VALUES ("+p.msg.author.id+","+typeCount[key]+") ON DUPLICATE KEY UPDATE "+key+" = "+key+"+"+typeCount[key]+";";
 	}
 	sql += insertCount+"UPDATE cowoncy SET money = money - 5 WHERE id = "+p.msg.author.id+";";
 
 	/* Construct sql statements for gem usage */
-	var huntingActive = false;
-	var empoweringActive = false;
+	let huntingActive = false;
+	let empoweringActive = false;
 	if(gems["Patreon"]) sql += "UPDATE user_gem SET activecount = GREATEST(activecount - 1, 0) WHERE uid = "+uid+" AND gname = '"+gems["Patreon"].gname+"';";
 	if(gems["Hunting"]) {
 		huntingActive = true;
@@ -198,7 +197,7 @@ function getAnimals(p,result,gems,uid){
 	}
 	if(gems["Lucky"]) {
 		// make lucky gems last twice as long if you're running all 3 gems
-		var luckySubtract = (huntingActive && empoweringActive) ? Math.trunc(animal.length/2) : animal.length;
+		let luckySubtract = (huntingActive && empoweringActive) ? Math.trunc(animal.length/2) : animal.length;
 
 		sql += "UPDATE user_gem SET activecount = GREATEST(activecount - "+luckySubtract+", 0) WHERE uid = "+uid+" AND gname = '"+gems["Lucky"].gname+"';";
 	} 
@@ -217,7 +216,7 @@ function getAnimals(p,result,gems,uid){
 			gemText += gems[i].emoji+"`["+remaining+"/"+gems[i].length+"]` ";
 		}
 		text += gemText+" !\n**<:blank:427371936482328596> |** You found: ";
-		for(var i=1;i<animal.length;i++) animalText += " "+global.unicodeAnimal(animal[i][1]);
+		for(let i=1;i<animal.length;i++) animalText += " "+global.unicodeAnimal(animal[i][1]);
 		text += animalText;
 	}
 
@@ -225,9 +224,9 @@ function getAnimals(p,result,gems,uid){
 }
 
 function getLootbox(p,query,lbReset){
-	var rand = Math.random();
-	var sql = "INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES ("+p.msg.author.id+",1,1,"+lbReset.sql+") ON DUPLICATE KEY UPDATE boxcount = boxcount + 1, claimcount = 1, claim = "+lbReset.sql+";";
-	var count = 1;
+	let rand = Math.random();
+	let sql = "INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES ("+p.msg.author.id+",1,1,"+lbReset.sql+") ON DUPLICATE KEY UPDATE boxcount = boxcount + 1, claimcount = 1, claim = "+lbReset.sql+";";
+	let count = 1;
 	if(!query||lbReset.after)
 		rand = 0;
 	else{

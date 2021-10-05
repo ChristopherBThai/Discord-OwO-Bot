@@ -103,6 +103,7 @@ async function checkDb (p, id, text, info) {
 		}
 	} else {
 		type = 'nogems';
+		const animal = p.global.validAnimal(info.animal[0][1]);
 		replacers = {
 			username: p.msg.author.username,
 			discriminator: p.msg.author.discriminator,
@@ -112,7 +113,8 @@ async function checkDb (p, id, text, info) {
 			a: getA(info.animal[0][2]),
 			animalRank: info.animal[0][2],
 			animalRankEmoji: info.animal[0][0].match(/<a?:\w*:\d*>/i)[0],
-			animal: info.animalEmojis
+			animal: info.animalEmojis,
+			animalName: animal.name
 		}
 	}
 	const sql = `SELECT alterhunt.* from alterhunt INNER JOIN user ON alterhunt.uid = user.uid WHERE user.id = ${p.msg.author.id} AND alterhunt.type = '${type}'`;
