@@ -37,9 +37,9 @@ function rhine (p, info) {
 		image: {
 			url: "https://media.discordapp.net/attachments/887582241243422721/889401388633833472/lines-stars-757683.gif"
 		},
-		description: `💬 **|** ${info.from.username} says: "Save money and money will save you."`
-			+ `\n💵 **|** sent ${info.amount} cowoncy`
-			+ `\n🌸 **|** to ${info.to.username}`
+		description: `💬 **|** **${info.from.username}** says: "Save money and money will save you."`
+			+ `\n💵 **|** sent **${info.amount} cowoncy**`
+			+ `\n🌸 **|** to **${info.to.username}**`
 	}
 	return { embed };
 }

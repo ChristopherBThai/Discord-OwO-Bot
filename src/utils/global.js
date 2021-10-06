@@ -263,13 +263,13 @@ exports.filteredName = function (name) {
 	}
 	name = name.replace(/\n/g,"")
 		.replace(/\r/g,"")
+		.replace(/\[+|\)+|(\]\(\))+/gi,"")
 		.replace(/https:/gi,"https;")
 		.replace(/http:/gi,"http;")
 		.replace(/discord.gg/gi,"discord,gg")
 		.replace(/@everyone/gi,"everyone")
 		.replace(/<@!?[0-9]+>/gi,"User")
 		.replace(/[*`]+/gi,"'")
-		.replace(/\[+|\)+|(\]\(\))+/gi,"")
 		.replace(/\|\|/g,'│');
 
 	return { name, offensive:false }
