@@ -86,10 +86,11 @@ module.exports = new CommandInterface({
 			for(let i in ids){
 				descID = ids[i].match(/[0-9]+/)
 				tempUser = await p.fetch.getUser(descID[0]);
-				desc = desc.replace(' ?'+descID+'? \n',(tempUser)?"* ***"+tempUser.username+"*** \n*":"* ***A User*** \n*");
-				desc = desc.replace(' ?'+descID+'?\n',(tempUser)?"* ***"+tempUser.username+"*** \n*":"* ***A User*** \n*");
-				desc = desc.replace(' ?'+descID+'? ',(tempUser)?"* ***"+tempUser.username+"*** *":"* ***A User*** *");
-				desc = desc.replace(' ?'+descID+'?*',(tempUser)?"* ***"+tempUser.username+"***":"* ***A User***");
+				desc = desc.replace(' ?'+descID+'? \n',(tempUser)?"* ***"+tempUser.username+"*** \n*":"* ***A User*** \n*")
+					.replace(' ?'+descID+'?\n',(tempUser)?"* ***"+tempUser.username+"*** \n*":"* ***A User*** \n*")
+					.replace(' ?'+descID+'? ',(tempUser)?"* ***"+tempUser.username+"*** *":"* ***A User*** *")
+					.replace(' ?'+descID+'?*',(tempUser)?"* ***"+tempUser.username+"***":"* ***A User***")
+					.replace(' ?'+descID+'?,',(tempUser)?"* ***"+tempUser.username+"*** *,":"* ***A User*** *,");
 			}
 			ids = desc.match(/\?[0-9]+\!/g);
 			for(let i in ids){
@@ -99,7 +100,8 @@ module.exports = new CommandInterface({
 				desc = desc.replace(' ?'+descID+'! \n', "* ***"+username+"*** \n*")
 					.replace(' ?'+descID+'!\n', "* ***"+username+"*** \n*")
 					.replace(' ?'+descID+'! ', "* ***"+username+"*** *")
-					.replace(' ?'+descID+'!*', "* ***"+username+"***");
+					.replace(' ?'+descID+'!*', "* ***"+username+"***")
+					.replace(' ?'+descID+'!,', "* ***"+username+"*** *,");
 			}
 		}
 		desc = desc.replace(/\n\*\*$/,"");
