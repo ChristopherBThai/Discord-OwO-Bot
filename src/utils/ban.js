@@ -49,7 +49,6 @@ exports.check = async function(p,command){
 		}
 	}
 
-
 	//Check if the command is enabled
 	let commandNames = `'all','${command}'`;
 	for (let i in p.commands[command].group) {

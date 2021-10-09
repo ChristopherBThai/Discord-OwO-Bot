@@ -254,7 +254,7 @@ function getRewards (cowoncy, afterMid) {
 	}
 
 	//Calculate daily amount
-	let gain = 100 + Math.floor(Math.random() * 100);
+	let gain = 500 + Math.floor(Math.random() * 200);
 	let extra = 0;
 
 	// Reset streak if its over 1 whole day
