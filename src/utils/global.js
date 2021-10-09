@@ -249,6 +249,11 @@ exports.getTotalShardCount = function(){
 	});
 }
 
+/* Generates a random name with the provided word count */
+exports.generateRandomName = function (wordCount) {
+	return namor.generate({ words: wordCount, saltLength: 0, separator:' ' });
+}
+
 /* Converts name to more kid-friendly */
 exports.filteredName = function (name) {
 

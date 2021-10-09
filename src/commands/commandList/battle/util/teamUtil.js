@@ -344,8 +344,9 @@ function parseTeam(p,animals,weapons,censor=false){
 		if(!used.includes(animal.pid)){
 			used.push(animal.pid);
 			let animalObj = p.global.validAnimal(animal.name);
-			let nickname = (censor&&animal.acensor==1)?"Censored":animal.nickname;
+			let nickname = (animal.acensor==1)?"Censored":animal.nickname;
 			if(!nickname) nickname = animalObj.name;
+			if (censor) nickname = p.global.generateRandomName(1);
 			result.push({
 				pid:animal.pid,
 				animal:animalObj,

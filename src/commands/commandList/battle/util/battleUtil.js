@@ -77,7 +77,7 @@ var getBattle = exports.getBattle = async function(p,setting){
 
 	let result = await p.query(sql);
 
-	let censor = true;
+	let censor = setting.censor;
 
 	/* Grab pgid */
 	let pgid = result[0][0]?result[0][0].pgid:undefined;
@@ -115,7 +115,7 @@ var getBattle = exports.getBattle = async function(p,setting){
 		highestStreak:result[0][0].highest_streak,
 		team:pTeam};
 	let enemy = {pgid:epgid,
-		name:(censor&&result[1][0].ptcensor==1)?"Censored":result[1][0].tname,
+		name:censor?p.global.generateRandomName(3):(result[1][0].ptcensor==1)?"Censored":result[1][0].tname,
 		team:eTeam};
 	let teams = {player,enemy};
 
@@ -162,7 +162,7 @@ exports.initBattle = async function(p,setting){
 
 	let result = await p.query(sql);
 
-	let censor = true;
+	let censor = setting.censor;
 
 	pgid = result[1][0]?result[1][0].pgid:undefined;
 	let epgid = result[0][0]?result[0][0].pgid:undefined;
@@ -187,7 +187,7 @@ exports.initBattle = async function(p,setting){
 		highestStreak:result[1][0].highest_streak,
 		team:pTeam};
 	let enemy = {pgid:epgid,
-		name:(censor&&result[0][0].ptcensor==1)?"Censored":result[0][0].tname,
+		name:censor?p.global.generateRandomName(3):(result[0][0].ptcensor==1)?"Censored":result[0][0].tname,
 		team:eTeam};
 	let teams = {player,enemy};
 
