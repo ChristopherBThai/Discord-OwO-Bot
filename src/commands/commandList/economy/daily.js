@@ -263,7 +263,7 @@ function getRewards (cowoncy, afterMid) {
 
 	// Calculate streak/patreon cowoncy
 	gain += streak * 25;
-	if (gain > 1000) gain = 1000
+	if (gain > 5000) gain = 5000
 	if (patreon) extra = gain;
 
 	return { gain, extra, streak };
