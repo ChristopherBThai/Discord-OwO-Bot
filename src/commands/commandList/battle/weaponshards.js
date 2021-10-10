@@ -154,7 +154,7 @@ async function dismantleId(p,uwid){
 	}
 
 	/* Grab the item we will dismantle */
-	let sql = `SELECT user.uid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
+	let sql = `SELECT user.uid,a.uwid,a.wid,a.stat,a.favorite,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
 		FROM user
 			LEFT JOIN user_weapon a ON user.uid = a.uid
 			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
@@ -166,6 +166,12 @@ async function dismantleId(p,uwid){
 	/* not a real weapon! */
 	if(!result[0]){
 		p.errorMsg(", you do not have a weapon with this id!",3000);
+		return;
+	}
+
+	/* If the weapon is marked as favorite */
+	if(result[0]&&result[0].favorite){
+		p.errorMsg(", please unfavorite the weapon to dismantle it!",3000);
 		return;
 	}
 
