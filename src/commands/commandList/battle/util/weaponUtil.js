@@ -185,7 +185,7 @@ var display = exports.display = async function(p,pageNum=0,sort=0,opt){
 				page = await getDisplayPage(p,user,pageNum,sort,opt);
 				if(page) await msg.edit({embed:page.embed});
 			}else if(emoji.name===sortEmoji){
-				sort = (sort+1)%4;
+				sort = (sort+1)%5;
 				page = await getDisplayPage(p,user,pageNum,sort,opt);
 				if(page) await msg.edit({embed:page.embed});
 			}else if(emoji.name===rewindEmoji){
@@ -295,6 +295,8 @@ var getDisplayPage = async function(p,user,page,sort,opt={}){
 				sql += 'user_weapon.wid DESC, user_weapon.avg DESC,';
 			else if(sort===3)
 				sql += 'user_weapon.pid DESC,';
+			else if(sort===4)
+				sql += 'user_weapon.favorite DESC, user_weapon.avg DESC, ';
 
 	sql += 			` user_weapon.uwid DESC
 			LIMIT ${weaponPerPage}
@@ -396,6 +398,8 @@ var getDisplayPage = async function(p,user,page,sort,opt={}){
 		embed.footer.text += "Sorting by type";
 	else if(sort===3)
 		embed.footer.text += "Sorting by equipped";
+	else if(sort===4)
+		embed.footer.text += "Sorting by favorite";
 
 	embed = alterWeapon.alter(user.id, embed, {
 		page: page+1,
