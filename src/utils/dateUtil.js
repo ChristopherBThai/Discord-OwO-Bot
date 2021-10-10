@@ -13,25 +13,25 @@ const overrideWithinDay = true;
 exports.afterMidnight = function(date){
 
 	/* Grab current time */
-	var now = new Date();
+	let now = new Date();
 	let sqlNow = toMySQL(now);
-	var midnight = new Date(now.getFullYear(),now.getMonth(),now.getDate());
+	let midnight = new Date(now.getFullYear(),now.getMonth(),now.getDate());
 
 	/* Calculate time until midnight */
-	var temp = Math.trunc(((midnight-now)+86400000)/1000);
-	var seconds = temp%60;
+	let temp = Math.trunc(((midnight-now)+86400000)/1000);
+	let seconds = temp%60;
 	temp = Math.trunc(temp/60);
-	var minutes = temp%60
+	let minutes = temp%60
 	temp = Math.trunc(temp/60);
-	var hours = temp%24;
+	let hours = temp%24;
 	temp = Math.trunc(temp/24);
-	var days = temp;
+	let days = temp;
 
 	/* If there is no data */
 	if(!date) return {after:true,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow,now};
 
-	var pDate = new Date(date);
-	var diff = midnight - pDate;
+	let pDate = new Date(date);
+	let diff = midnight - pDate;
 
 	/* Not past midnight */
 	if(diff<=0) return {after:false,diff:diff,seconds:seconds,minutes:minutes,hours:hours,days:days,sql:sqlNow,now};
