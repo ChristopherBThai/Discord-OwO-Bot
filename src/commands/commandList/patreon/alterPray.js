@@ -15,6 +15,8 @@ exports.alter = function (id,text,info) {
 			return lexx(text, info);
 		case '417350932662059009':
 			return sky(text, info);
+		case '707939636835516457':
+			return dire(text, info);
 		default:
 			return text;
 	}
@@ -131,5 +133,47 @@ function sky (text, info) {
 		}
 	}
 	return text;
+}
+
+
+function dire (text, info) {
+	let sideImg, bottomImg, title, color, desc;
+	
+	if (info.command == "pray") {
+		sideImg = "https://cdn.discordapp.com/attachments/771398927912009738/893263637857308732/image0.gif";
+		bottomImg = "https://cdn.discordapp.com/attachments/771398927912009738/893263640818483280/image1.gif"
+		color = 16514296;
+		title = "First Guild Master, Mavis, invokes Fairy Law!"
+		if (info.user) {
+			desc = `<a:flame_white:901377312065482752> **| ${info.author.username}**, invokes **Fairy Law** - one of FairyTail's **Three Grand Spells**!\n`
+				+ `<a:sparkle:901377312174510130> **| ${info.user.username}** envelops the entire area in light and inflicts massive damage to those who they perceive as foes in their heart...\n`
+				+ `<a:luck:901377312493277214> **| ${info.author.username}** has ${info.luck} luck points!`
+		} else {
+			desc = `<a:flame_white:901377312065482752> **| ${info.author.username}**, invokes **Fairy Law** - one of FairyTail's **Three Grand Spells**!\n`
+				+ `<a:luck:901377312493277214> **| ${info.author.username}** has ${info.luck} luck points!`
+		}
+	} else {
+		sideImg = "https://cdn.discordapp.com/attachments/771398927912009738/893263444738998312/image0.gif";
+		bottomImg = "https://cdn.discordapp.com/attachments/771398927912009738/893263445145841744/image1.gif"
+		color = 40406;
+		title = "The Emperor Spriggan, Zeref, is inflicted with the Contradictory Curse!"
+		if (info.user) {
+			desc = `<a:flame_black:901377311859957781> **| ${info.author.username}**, with the help of Ankhseram, inflicts the **Curse of Contradiction**!\n`
+				+ `<a:flame_black2:901377312157736961> **| ${info.user.username}** exudes black miasma killing all life it comes into contact with and will live in despair forever...\n`
+				+ `<a:luck:901377312493277214> **| ${info.author.username}** has ${info.luck} luck points!`
+		} else {
+			desc = `<a:flame_black:901377311859957781> **| ${info.author.username}**, with the help of Ankhseram, inflicts the **Curse of Contradiction**!\n`
+				+ `<a:luck:901377312493277214> **| ${info.author.username}** has ${info.luck} luck points!`
+		}
+	}
+	return {
+		embed: {
+			description: desc,
+			color: color,
+			thumbnail: { url: sideImg },
+			image: { url: bottomImg },
+			title: title
+		}
+	};
 }
 

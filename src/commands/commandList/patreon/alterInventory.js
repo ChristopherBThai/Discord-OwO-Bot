@@ -23,6 +23,8 @@ exports.alter = function(p, text, info) {
 			return grace(text);
 		case '456598711590715403':
 			return lexx(p, info);
+		case '427296171883626496':
+			return lIlIIIll(p, info);
 		default:
 			return text;
 	}
@@ -76,6 +78,17 @@ function lexx (p, info) {
 			url: "https://cdn.discordapp.com/attachments/696878982758531152/840432649336127488/AmyWong.png"
 		},
 		description: `**${info.user.username}'s inv of Rings, Tickets, Gems & Weapons**\n${info.inv}`
+	}
+	return { embed }
+}
+
+function lIlIIIll (p, info) {
+	const embed = {
+		color: 1,
+		image: {
+			url: "https://cdn.discordapp.com/attachments/787404412335161354/889274811908513842/output-onlinegiftools_34.gif"
+		},
+		description: `**====== ${info.user.username}'s Inventory ======**\n${info.inv}`
 	}
 	return { embed }
 }
