@@ -28,7 +28,7 @@ module.exports = new CommandInterface({
 
 	args:["@user"],
 
-	desc:"A custom command created by ?"+owner+"?! Bully your friends!",
+	desc:"A custom command created by ?"+owner+"?! Bonk your friends!",
 
 	example:["owo bonk @user"],
 
