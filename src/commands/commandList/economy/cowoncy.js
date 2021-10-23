@@ -6,6 +6,7 @@
   */
 
 const CommandInterface = require('../../CommandInterface.js');
+const alterCowoncy = require('../patreon/alterCowoncy.js');
 
 module.exports = new CommandInterface({
 
@@ -27,14 +28,19 @@ module.exports = new CommandInterface({
 	half:100,
 	six:500,
 
-	execute: async function(p){
-		let sql = "SELECT money FROM cowoncy WHERE id = "+p.msg.author.id+";";
+	execute: async function () {
+		const sql = `SELECT money FROM cowoncy WHERE id = ${this.msg.author.id};`;
+		const result = await this.query(sql);
 
-		let result = await p.query(sql);
-		if(!result[0])
-			p.replyMsg("<:cowoncy:416043450337853441>",", you currently have **__0__ cowoncy!**");
-		else
-			p.replyMsg("<:cowoncy:416043450337853441>",", you currently have **__"+(p.global.toFancyNum(result[0].money))+"__ cowoncy!**");
+		const money = result[0] ? this.global.toFancyNum(result[0].money) : '0';
+		let text = `${this.config.emoji.cowoncy} **| ${this.msg.author.username}**, you currently have **__${money}__ cowoncy!**`;
+
+		text = alterCowoncy.alter(this, this.msg.author.id, text, {
+			user: this.msg.author,
+			money: money
+		});
+
+		await this.send(text);
 	}
 
 })
