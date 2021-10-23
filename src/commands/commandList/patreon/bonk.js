@@ -61,13 +61,14 @@ module.exports = new CommandInterface({
 		let emote = emotes[Math.trunc(Math.random()*emotes.length)];
 
 		let text;
-		if (p.msg.author.id == owner) {
+		if (target == owner) {
 			if (Math.random() < 0.1) {
 				let comment = bonkComments[Math.trunc(Math.random()*bonkComments.length)];
 				text = `${target.username} got bonked by ${p.msg.author.username}! ${comment}`;
 			} else {
 				let comment = noBonkComments[Math.trunc(Math.random()*noBonkComments.length)];
 				text = `${target.username} dodged ${p.msg.author.username}! ${comment}`;
+				emote = "";
 			}
 		} else {
 			if (Math.random() < 0.9) {
@@ -76,6 +77,7 @@ module.exports = new CommandInterface({
 			} else {
 				let comment = noBonkComments[Math.trunc(Math.random()*noBonkComments.length)];
 				text = `${target.username} dodged ${p.msg.author.username}! ${comment}`;
+				emote = "";
 			}
 		}
 
