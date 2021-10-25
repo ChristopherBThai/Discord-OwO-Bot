@@ -143,10 +143,7 @@ async function executeCommand(main,p){
 	let {ban,cooldown,logger} = main;
 
 	// Check if the command/user/channel is banned
-	if(!(await ban.check(p,p.commandAlias))) {
-		logger.logstashBanned(p.commandAlias, p);
-		return;
-	}
+	if(!(await ban.check(p,p.commandAlias))) return;
 
 	// Check for cooldowns 
 	if(!(await cooldown.check(p,p.commandAlias))) return;

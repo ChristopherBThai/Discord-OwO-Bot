@@ -13,7 +13,6 @@ const liftEmoji = '🙇';
 const timerEmoji = '⏱';
 
 exports.check = async function(p,command){
-
 	let channel = p.msg.channel.id;
 	let guild = p.msg.channel.guild.id;
 	let author = p.msg.author.id;
@@ -60,11 +59,13 @@ exports.check = async function(p,command){
 	let result = await p.query(sql);
 	if(result[1][0]){
 		// User in timeout
+		p.logger.logstashBanned(p.commandAlias, p);
 	}else if(result[2][0]){
 		// User is banned from this command
 		cooldown[author+command] = true;
 		setTimeout(() => {delete cooldown[author+command];}, 10000);
 		if(command!="points") await p.errorMsg(", you're banned from this command! >:c",3000);
+		p.logger.logstashBanned(p.commandAlias, p);
 	}else if(!result[0][0]||["points","disable","enable"].includes(command)){
 		// Success
 		return true;
