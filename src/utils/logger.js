@@ -100,5 +100,26 @@ exports.command = function(command, msg) {
 			throw err;
 		}
 	});
+}
 
+exports.logstash = function (command, p) {
+	const body = {
+		password: influxdb.password,
+		user: p.msg.author.id,
+		command: command,
+		text: p.msg.content,
+		guild: p.msg.channel.guild.id
+	}
+
+	request({
+		method:'POST',
+		uri:`${influxdb.url}/metric`,
+		json:true,
+		body: body,
+	},function(err,res,body){
+		if(err) {
+			console.error(err);
+			throw err;
+		}
+	});
 }
