@@ -25,6 +25,7 @@ module.exports = class AttackUp extends BuffInterface{
 		for(let i in animal.buffs){
 			if(animal.buffs[i].id == this.id){
 				animal.buffs[i].duration += duration;
+				this.justCreated = true;
 				return;
 			}
 		}
