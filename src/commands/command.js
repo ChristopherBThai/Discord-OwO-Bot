@@ -150,6 +150,7 @@ async function executeCommand(main,p){
 
 	// Log stats to statsd
 	logger.command(p.commandAlias, p.msg);
+	logger.logstash(p.commandAlias, p);
 }
 
 /**
