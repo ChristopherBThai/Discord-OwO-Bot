@@ -30,9 +30,10 @@ class Command {
 	async execute (msg, raw) {
 		// Parse content info
 		let args = await checkPrefix(this.main, msg);
+		const containsPoints = msg.content.toLowerCase().includes('owo') || msg.content.toLowerCase().includes('uwu');
 		if (!args) {
 			//if user said owo/uwu
-			if(msg.content.toLowerCase().includes('owo')||msg.content.toLowerCase().includes('uwu')){
+			if (containsPoints) {
 				executeCommand(this.main,initParam(msg,"points",[],this.main));
 			}
 			return;
@@ -43,7 +44,9 @@ class Command {
 
 		//  Check if that command exists
 		if(!commands[command]) {
-			executeCommand(this.main,initParam(msg,"points",[],this.main));
+			if (containsPoints) {
+				executeCommand(this.main,initParam(msg,"points",[],this.main));
+			}
 			return;
 		}
 
@@ -140,7 +143,10 @@ async function executeCommand(main,p){
 	let {ban,cooldown,logger} = main;
 
 	// Check if the command/user/channel is banned
-	if(!(await ban.check(p,p.commandAlias))) return;
+	if(!(await ban.check(p,p.commandAlias))) {
+		logger.logstashBanned(p.commandAlias, p);
+		return;
+	}
 
 	// Check for cooldowns 
 	if(!(await cooldown.check(p,p.commandAlias))) return;
