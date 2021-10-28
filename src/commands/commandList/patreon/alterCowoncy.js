@@ -9,7 +9,7 @@ const blank = '<:blank:427371936482328596>';
 
 exports.alter = function (p, id, text, info) {
 	switch(id) {
-		case '456598711590715403':
+		case '605994815317999635':
 			return rhine(p, info);
 		default:
 			return text;
