@@ -23,7 +23,7 @@ module.exports = class Lifesteal extends PassiveInterface{
 	}
 
 	postAttack(animal,attackee,damage,type,tags){
-		if(tags.lifesteal || animal.stats.hp[0]<=0 ) return;
+		if (tags.lifesteal || tags.kamikaze || animal.stats.hp[0]<=0) return;
 		let logs = new Log();
 		let totalDamage = damage.reduce((a,b)=>a+b,0);
 		let heal = totalDamage*this.stats[0]/100;
