@@ -37,7 +37,7 @@ module.exports = new CommandInterface({
 });
 
 async function announcement(p){
-	let sql = "SELECT * FROM announcement ORDER BY aid DESC LIMIT 1";
+	let sql = "SELECT * FROM announcement WHERE adate <= NOW() ORDER BY aid DESC LIMIT 1";
 	let result = await p.query(sql);
 	if(!result[0])
 		p.send("**📮 |** There are no announcements!",3000);

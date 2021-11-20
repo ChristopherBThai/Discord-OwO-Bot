@@ -71,8 +71,8 @@ function finalizeText (p, uid, { streak, gain, extra }, boxRewards, marriageRewa
 	let sql = "";
 
 	if (showAnnouncement) {
-		sql += `SELECT * FROM announcement ORDER BY aid DESC LIMIT 1;`;
-		sql += `INSERT INTO user_announcement (uid, aid) VALUES (${uid}, (SELECT aid FROM announcement ORDER BY aid DESC LIMIT 1)) ON DUPLICATE KEY UPDATE aid = (SELECT aid FROM announcement ORDER BY aid DESC LIMIT 1);`
+		sql += `SELECT * FROM announcement WHERE adate <= NOW() ORDER BY aid DESC LIMIT 1;`;
+		sql += `INSERT INTO user_announcement (uid, aid) VALUES (${uid}, (SELECT aid FROM announcement WHERE adate <= NOW() ORDER BY aid DESC LIMIT 1)) ON DUPLICATE KEY UPDATE aid = (SELECT aid FROM announcement WHERE adate <= NOW() ORDER BY aid DESC LIMIT 1);`
 	}
 
 	let text = `${moneyEmoji} **| ${p.msg.author.username}**, Here is your daily **<:cowoncy:416043450337853441> ${gain} Cowoncy**!`;
@@ -163,7 +163,7 @@ async function getUserInfo (p, uid) {
 			WHERE
 				uid = ${uid}
 				AND (
-					aid = (SELECT aid FROM announcement ORDER BY aid DESC limit 1)
+					aid = (SELECT aid FROM announcement WHERE adate <= NOW() ORDER BY aid DESC limit 1)
 					OR disabled = 1
 				);`
 	sql += `SELECT 

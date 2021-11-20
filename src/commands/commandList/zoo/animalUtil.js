@@ -13,20 +13,21 @@ setTimeout(() => {
 	enableDistortedTier = false;
 }, 21600000);
 
-const specialRates = animals.specialRates;
-let specialPercent = 0;
-if (specialRates && specialRates.length) {
-	for (let i in specialRates) {
-		specialPercent += specialRates[i].rate
-	}
-}
 
 /**
  * Picks a random animal from secret json file
  */
-exports.randAnimal = function({patreon, gem, lucky, huntbot, manual} = {}){
+exports.randAnimal = function({patreon, gem, lucky, huntbot, manual, specials} = {}){
 	let rand = Math.random();
 	let result = [];
+
+	/* Calculate special */
+	let specialPercent = 0;
+	if (specials && specials.length) {
+		for (let i in specials) {
+			specialPercent += specials[i].rate
+		}
+	}
 
 	/* Calculate percentage */
 	let patreonPercent = animals.cpatreon[0]+animals.patreon[0];
@@ -58,12 +59,12 @@ exports.randAnimal = function({patreon, gem, lucky, huntbot, manual} = {}){
 	}else if(specialPercent&&rand<specialPercent+patreonPercent){
 		let tempRate = patreonPercent;
 		let found = false;
-		for (let i in specialRates) {
-			tempRate += specialRates[i].rate;
+		for (let i in specials) {
+			tempRate += specials[i].rate;
 			if (!found && rand<=tempRate){
 				found = true;
 				result.push("**special** "+animals.ranks.special);
-				result.push(specialRates[i].animal);
+				result.push(specials[i].animal);
 				result.push("special");
 				result.push(500);
 			}
