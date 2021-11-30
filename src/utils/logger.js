@@ -145,3 +145,22 @@ exports.logstashBanned  = function (command, p) {
 		}
 	});
 }
+
+exports.logstashCaptcha = function (metric) {
+	const body = {
+		password: influxdb.password,
+		metric: metric
+	}
+
+	request({
+		method:'POST',
+		uri:`${influxdb.url}/captcha`,
+		json:true,
+		body: body,
+	},function(err,res,body){
+		if(err) {
+			console.error(err);
+			throw err;
+		}
+	});
+}
