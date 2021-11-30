@@ -18,7 +18,13 @@ module.exports = new CommandInterface({
 	dm:true,
 
 	execute: async function(p){
-		let {url, text, buffer} = await captcha.gen({}, p.msg.author);
+		const opts = {}
+		if (p.args[0] == "link") {
+			opts.forceUrl = true;
+		} else if (p.args[0] == "image") {
+			opts.noUrl = true;
+		}
+		let {url, text, buffer} = await captcha.gen(opts, p.msg.author);
 		if (url) {
 			p.send(url);
 		} else {
