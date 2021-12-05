@@ -27,7 +27,7 @@ if(require('cluster').isMaster){
 	const RamCheck = new (require('./utils/ramCheck.js'))(global);
 }
 
-const clusters = 60;
+let clusters = 60;
 
 (async () => {
 	try{
