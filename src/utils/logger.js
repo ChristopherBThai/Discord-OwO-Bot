@@ -147,16 +147,13 @@ exports.logstashBanned  = function (command, p) {
 }
 
 exports.logstashCaptcha = function (metric) {
-	const body = {
-		password: influxdb.password,
-		metric: metric
-	}
+	metric.password = influxdb.password;
 
 	request({
 		method:'POST',
 		uri:`${influxdb.url}/captcha`,
 		json:true,
-		body: body,
+		body: metric,
 	},function(err,res,body){
 		if(err) {
 			console.error(err);
