@@ -33,6 +33,8 @@ embed.embed.description += " - Once the pet is created, there is no refund.\n";
 embed.embed.description += "\nIf you have any questions, please feel free to ask!\n";
 embed.embed.description += "\n⚠️**__DO NOT REPLY TO THIS DM. ALL MESSAGES SHOULD GO TO <@184587051943985152>__**⚠️";
 
+const embedString = JSON.stringify(embed);
+
 module.exports = new CommandInterface({
 
 	alias:["custompet"],
@@ -77,7 +79,8 @@ async function msgUser(p, id) {
 
 	// Send msgs
 	let user;
-	user = await p.sender.msgUser(id, embed);
+	user = await p.sender.msgUser(id, JSON.parse(embedString));
+	console.log(user);
 
 	if(user && !user.dmError)
 		return { user }
