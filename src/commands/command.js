@@ -96,7 +96,7 @@ class Command {
 
 		let param = initParam(msg,command,args,this.main);
 
-		if(msg.channel.type==1){
+		if(!msg.channel.guild){
 			if(adminCommands[command]&&adminCommands[command].dm)
 				adminCommands[command].execute(param);
 		}else{

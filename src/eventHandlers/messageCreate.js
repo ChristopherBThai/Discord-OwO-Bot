@@ -33,7 +33,9 @@ exports.handle = async function (msg, raw) {
 			survey.handle.bind(this)(msg);
 		}
 
-	} else { this.command.execute(msg, raw); }
+	} else {
+		this.command.execute(msg, raw);
+		levels.giveXP(msg);
+	}
 
-	levels.giveXP(msg);
 }
