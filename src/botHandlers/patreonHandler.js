@@ -25,7 +25,9 @@ exports.request = async function(){
 }
 
 async function requestRec(url){
+	console.log('requesting...');
 	let result = await patreon_client(url)
+	console.log('request done');
 	let res = {};
 
 	// Grab benefits

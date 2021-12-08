@@ -63,14 +63,15 @@ async function createMessage (msg, content, file, del) {
 		}
 		return msg.createMessage(content, file, del);
 	} else {
+		const channel = msg.channel.createMessage ? msg.channel : await msg.author.getDMChannel();
 		if (del) {
-			const sentMsg = await msg.channel.createMessage(content, file);
+			const sentMsg = await channel.createMessage(content, file);
 			setTimeout(() => {
 				sentMsg.delete().catch(() => {console.error(`[${sentMsg.id}] Failed to delete message`)});
 			}, del);
 			return sentMsg;
 		} else {
-			return msg.channel.createMessage(content, file);
+			return channel.createMessage(content, file);
 		}
 	}
 }

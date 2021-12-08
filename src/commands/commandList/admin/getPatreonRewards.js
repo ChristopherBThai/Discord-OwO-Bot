@@ -19,6 +19,7 @@ module.exports = new CommandInterface({
 
 	execute: async function(p){
 		if(p.command == "getpatreons"){
+			console.log("Starting fetching patreons...");
 			await getPatreons(p);
 		}else{
 			await distributeCowoncy(p);
