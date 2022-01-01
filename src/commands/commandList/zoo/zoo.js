@@ -48,7 +48,7 @@ module.exports = new CommandInterface({
 	execute: function(p){
 		let con=p.con,msg=p.msg,global=p.global;
 		let sql = "SELECT count,name FROM animal WHERE id = "+msg.author.id+";";
-		if(p.args[0]&&p.args[0].toLowerCase()=="display"){
+		if(p.args[0]&&(p.args[0].toLowerCase()=="display" || p.args[0].toLowerCase()=="d")){
 			sql = "SELECT (totalcount) as count,name FROM animal WHERE id = "+msg.author.id+";";
 			sql += "SELECT common,uncommon,rare,epic,mythical,gem,legendary,fabled,patreon,cpatreon,hidden,special,bot,distorted,MAX(totalcount) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = "+msg.author.id+" GROUP BY id;";
 		}else{
