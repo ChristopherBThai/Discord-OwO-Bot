@@ -120,7 +120,7 @@ function sellAnimal(msg,con,animal,count,send,global,p){
 		send("**🚫 |** You need to sell more than 1 silly~",3000);
 		return;
 	}
-	var sql = "UPDATE cowoncy NATURAL JOIN animal SET money = money + "+(count*animal.price)+", count = count - "+count+", sellcount = sellcount + "+count+" WHERE id = "+msg.author.id+" AND name = '"+animal.value+"' AND count >= "+count+";";
+	let sql = "UPDATE cowoncy NATURAL JOIN animal SET money = money + "+(count*animal.price)+", count = count - "+count+", sellcount = sellcount + "+count+" WHERE id = "+msg.author.id+" AND name = '"+animal.value+"' AND count >= "+count+";";
 	if(count=="all"){
 		sql = "SELECT count FROM animal WHERE id = "+msg.author.id+" AND name = '"+animal.value+"';";
 		sql += "UPDATE cowoncy NATURAL JOIN animal SET money = money + (count*"+animal.price+"), sellcount = sellcount + count, count = 0 WHERE id = "+msg.author.id+" AND name = '"+animal.value+"' AND count >= 1;";
@@ -147,8 +147,8 @@ function sellAnimal(msg,con,animal,count,send,global,p){
 }
 
 function sellRank(msg,con,rank,send,global,p){
-	var animals = "('"+rank.animals.join("','")+"')";
-	var sql = "SELECT SUM(count) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
+	let animals = "('"+rank.animals.join("','")+"')";
+	let sql = "SELECT SUM(count) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
 	sql += "UPDATE animal INNER JOIN cowoncy ON animal.id = cowoncy.id INNER JOIN (SELECT COALESCE(SUM(count),0) AS sum FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+") s SET money = money + (s.sum*"+rank.price+"), sellcount = sellcount + count, count = 0 WHERE animal.id = "+msg.author.id+" AND name IN "+animals+" AND count > 0;";
 	con.query(sql,function(err,result){
 		if(err) {console.error(err);return;}
@@ -163,34 +163,32 @@ function sellRank(msg,con,rank,send,global,p){
 	});
 }
 
-function sellRanks(msg,con,ranks,send,global,p){
-	var sql = "";
+async function sellRanks(msg,con,ranks,send,global,p){
+	let sold = "", total = 0;
 	for(i in ranks){
 		let rank = ranks[i];
-		var animals = "('"+rank.animals.join("','")+"')";
-		sql += "SELECT SUM(count) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
+		let animals = "('"+rank.animals.join("','")+"')";
+		let sql = "SELECT SUM(count) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
 		sql += "UPDATE animal INNER JOIN cowoncy ON animal.id = cowoncy.id INNER JOIN (SELECT COALESCE(SUM(count),0) AS sum FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+") s SET money = money + (s.sum*"+rank.price+"), sellcount = sellcount + count, count = 0 WHERE animal.id = "+msg.author.id+" AND name IN "+animals+" AND count > 0;";
-	}
-	con.query(sql,function(err,result){
-		if(err) {console.error(err);return;}
-		let sold = "";
-		let total = 0;
-		let count = 0;
-		for(i in ranks){
-			let rank = ranks[i];
-			let sellCount = result[count*2][0].total;
-			if(sellCount>0){
-				sold += rank.emoji+"x"+result[count*2][0].total+" ";
+
+		try {
+			let result = await p.query(sql);
+			let sellCount = result[0][0].total;
+			if (sellCount > 0) {
+				sold += rank.emoji+"x"+result[0][0].total+" ";
 				total += sellCount * rank.price;
 			}
-			count++;
+		} catch (err) {
+			console.error(err);
 		}
-		if(sold!=""){
-			sold = sold.slice(0,-1);
-			send("**🔪 | "+msg.author.username+"** sold **"+sold+"** for a total of **<:cowoncy:416043450337853441> "+(global.toFancyNum(total))+"**");
-			p.logger.incr(`cowoncy`, total, {type:'sell'}, p.msg);
-			// TODO neo4j
-		}else
-			send("**🚫 | "+msg.author.username+"**, You don't have enough animals! >:c",3000);
-	});
+	}
+	
+	if (sold != "") {
+		sold = sold.slice(0,-1);
+		send("**🔪 | "+msg.author.username+"** sold **"+sold+"** for a total of **<:cowoncy:416043450337853441> "+(global.toFancyNum(total))+"**");
+		p.logger.incr(`cowoncy`, total, {type:'sell'}, p.msg);
+		// TODO neo4j
+	} else {
+		send("**🚫 | "+msg.author.username+"**, You don't have enough animals! >:c",3000);
+	}
 }
