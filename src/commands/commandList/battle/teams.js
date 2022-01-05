@@ -136,14 +136,14 @@ async function displayTeams (p) {
 			p.errorMsg(", I couldn't parse your team... something went terribly wrong!",3000);
 			return;
 		}
-		teams[teamOrder] = {embed};
+		teams[teamOrder] = embed;
 
 	}
 
 	// Construct embed array to display message
 	for ( let i = 0; i < maxTeams; i++ ) {
 		if ( !teams[i] ) {
-			teams[i] = {embed:{
+			teams[i] = {
 				"author":{
 					"name":p.msg.author.username+"'s team",
 					"icon_url":p.msg.author.avatarURL
@@ -154,9 +154,9 @@ async function displayTeams (p) {
 					"text":`Current Streak: 0 | Highest Streak: 0 | Page ${i+1}/${maxTeams}`
 				},
 				fields: []
-			}};
+			};
 			for ( let j=1; j<=3; j++ ) {
-				teams[i].embed.fields.push({
+				teams[i].fields.push({
 					name: "none",
 					value: "*`owo team add {animal} "+j+"`*",
 					inline: true
@@ -164,49 +164,45 @@ async function displayTeams (p) {
 			}
 
 		} else {
-			teams[i].embed.footer.text += ` | Page ${i+1}/${maxTeams}`;
+			teams[i].footer.text += ` | Page ${i+1}/${maxTeams}`;
 		}
 		if ( activeTeam == i ) {
-			teams[i].embed.footer.text += ' '+starEmoji;
+			teams[i].footer.text += ' '+starEmoji;
 		}
 	}
 
-	// Reaction collector logic
-	let currPage = activeTeam;
-	let msg = await p.send(teams[currPage]);
-
-	let filter = (emoji,userID) => [nextPageEmoji, prevPageEmoji, starEmoji].includes(emoji.name)&&userID===p.msg.author.id;
-	let collector = p.reactionCollector.create(msg,filter,{time:900000,idle:120000});
-
-	await msg.addReaction(prevPageEmoji);
-	await msg.addReaction(nextPageEmoji);
-	await msg.addReaction(starEmoji);
-
-	collector.on('collect', async function(emoji){
-		if(emoji.name===nextPageEmoji) {
-			if(currPage<maxTeams-1) currPage++;
-			else currPage = 0;
-			await msg.edit(teams[currPage]);
-		}else if(emoji.name===prevPageEmoji){
-			if(currPage>0) currPage--;
-			else currPage = maxTeams-1;
-			await msg.edit(teams[currPage]);
-		}else if(emoji.name===starEmoji){
-			await setTeam(p,currPage+1,true);
-			for (let i in teams) {
-				teams[i].embed.footer.text = teams[i].embed.footer.text.replace(` ${starEmoji}`,'');
+	const createEmbed = (curr) => {
+		return teams[curr];
+	}
+	const additionalButtons = [
+		{
+			type: 2,
+			style: 1,
+			custom_id: "star",
+			emoji: {
+				id: null,
+				name: starEmoji 
 			}
-			teams[currPage].embed.footer.text += ` ${starEmoji}`;
-			await msg.edit(teams[currPage]);
+		}
+	];
+	const additionalFilter = (componentName, user) => componentName === 'star';
+	const pagedMsg = new p.PagedMessage(
+		p,
+		createEmbed,
+		teams.length - 1,
+		{ startingPage: activeTeam, idle: 120000, additionalFilter, additionalButtons }
+	)
+
+	pagedMsg.on('button', async (component, user, ack, { currentPage, maxPage }) => {
+		if (component === 'star') {
+			await setTeam(p, currentPage + 1, true);
+			for (let i in teams) {
+				teams[i].footer.text = teams[i].footer.text.replace(` ${starEmoji}`,'');
+			}
+			teams[currentPage].footer.text += ` ${starEmoji}`;
+			await ack({ embed: teams[currentPage] });
 		}
 	});
-
-	collector.on('end',async function(collected){
-		embed = teams[currPage].embed;
-		embed.color = 6381923;
-		await msg.edit({content:"This message is now inactive",embed});
-	});
-
 }
 
 async function setTeam(p, teamNum, dontDisplay) {
