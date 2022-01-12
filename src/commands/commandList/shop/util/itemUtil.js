@@ -15,17 +15,17 @@ const items = {
 		emoji: config.emoji.perkTicket.wcommon,
 		column: "common_tickets",
 		tradeNote: "⚠️ **You can only trade this item ONCE. The ticket will be unwrapped.**",
-		tradeConvert: 11,
+		tradeConvert: 14,
 		desc: "You can use this item to redeem 1 month of common tier perks!\n\nYou can trade this item with other users with `owo trade 10 {@user} {pricePerTicket} {numberOfTickets}`. An example would be `owo trade 10 @Scuttler 100000 2`. This will trade 2 tickets for a total price of 200000 cowoncy.\n\n**This ticket is only tradeable ONCE.** It will be unwrapped once traded.\n\nYou can also use this item by typing in `owo use 10`."
 	},
 	unwrapped_common_tickets: {
-		id: 11,
+		id: 14,
 		name: "Common Ticket",
 		emoji: config.emoji.perkTicket.common,
 		column: "unwrapped_common_tickets",
 		tradeLimit: 1,
 		giveOnly: true,
-		desc: "You can use this item to redeem 1 month of common tier perks by typing `owo use 11`."
+		desc: "You can use this item to redeem 1 month of common tier perks by typing `owo use 14`."
 	}
 };
 
@@ -57,7 +57,7 @@ exports.use = async function (id, p) {
 	let item = getById(id);
 	switch (item?.id) {
 		case 10:
-		case 11:
+		case 14:
 			await useCommonTicket(item, p);
 			break;
 		default:
@@ -195,19 +195,19 @@ exports.desc = async function (p, id) {
 	};
 
 	if (item.giveOnly) {
-		embed.fields[0].value += `\n\n💸 **This item cannot be traded for cowoncy.**`;
+		embed.fields[0].value += `\n\n💸 **This item can only be gifted. You cannot trade this for cowoncy.**`;
 	}
 
 	if (item.tradeLimit) {
 		const afterMid = p.dateUtil.afterMidnight(result[0].daily_reset);
 		if (afterMid.after) {
-				embed.fields[0].value += `\n\n📑 **You can trade this item ${item.tradeLimit} more times today.**`
+				embed.fields[0].value += `\n\n📑 **You can ${item.giveOnly ? 'gift' : 'trade'} this item ${item.tradeLimit} more times today.**`
 		} else {
 			if (result[0].daily_count >= item.tradeLimit) {
-				embed.fields[0].value += `\n\n📑 **You have hit the max trade limit for today.**`
+				embed.fields[0].value += `\n\n📑 **You have hit the max ${item.giveOnly ? 'gift' : 'trade'} limit for today.**`
 			} else {
 				const diff = item.tradeLimit - result[0].daily_count;
-				embed.fields[0].value += `\n\n📑 **You can trade this item ${diff} more times today.**`
+				embed.fields[0].value += `\n\n📑 **You can ${item.giveOnly ? 'gift' : 'trade'} this item ${diff} more times today.**`
 			}
 		}
 	}

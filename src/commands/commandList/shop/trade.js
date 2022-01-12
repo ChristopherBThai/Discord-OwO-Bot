@@ -15,7 +15,7 @@ const spacer = '                                                               '
 
 module.exports = new CommandInterface({
 
-	alias:["trade", "tr"],
+	alias:["trade", "tr", "gift"],
 
 	args:"itemId @user price {count}",
 
@@ -161,6 +161,9 @@ async function sendMessage (p, { item, user, price, count }) {
 	}
 	if (item.tradeLimit) {
 		embed.description += `\n\n📑 **You can only trade this item ${item.tradeLimit} times per day.**`;
+	}
+	if (item.giveOnly) {
+		embed.description += `\n\n⚠️ **You can not trade this item for cowoncy. Failure to follow these rules can result in a ban.**`;
 	}
 	const msg = await p.send({ embed });
 	return { msg, embed };
