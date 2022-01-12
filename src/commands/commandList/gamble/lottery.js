@@ -7,7 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const maxBet = 100000;
+const maxBet = 150000;
 
 module.exports = new CommandInterface({
 

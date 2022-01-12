@@ -8,6 +8,7 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const alterGive = require('../patreon/alterGive.js');
+const cowoncyUtils = require('./utils/cowoncyUtils.js');
 
 module.exports = new CommandInterface({
 
@@ -15,7 +16,7 @@ module.exports = new CommandInterface({
 
 	args:"{@user} {amount}",
 
-	desc:"Send some cowoncy to other users! This command must contain a @mention and an amount",
+	desc:"Send some cowoncy to other users! This command must contain a @mention and an amount\n\nThere is a limit on how much cowoncy you can receive and give.",
 
 	example:["owo give @Scuttler 25"],
 
@@ -30,62 +31,73 @@ module.exports = new CommandInterface({
 	six:500,
 	bot:true,
 
-	execute: async function(p){
-		let msg=p.msg, args=p.args, con=p.con, global=p.global;
-		let amount=-1, id="", invalid=false;
+	execute: async function() {
+		let amount, id, invalid;
 
 		//Grab ID and Amount
-		for(var i = 0;i<args.length;i++){
-			if(global.isInt(args[i])&&amount==-1)
-				amount = parseInt(args[i]);
-			else if(global.isUser(args[i])&&id=="")
-				id = args[i].match(/[0-9]+/)[0];
-			else
+		for(let i = 0; i < this.args.length; i++) {
+			if(this.global.isInt(this.args[i]) && !amount) {
+				amount = parseInt(this.args[i]);
+			} else if(this.global.isUser(this.args[i]) && !id) {
+				id = this.args[i].match(/[0-9]+/)[0];
+			} else {
 				invalid = true;
+			}
 		}
 
 		//Check for valid amount/id
-		if(invalid||id==""||amount<=0){
-			p.send("**🚫 | "+msg.author.username+"**, Invalid arguments! :c",3000);
-			return;
+		if(invalid || !id || !amount || amount <= 0) {
+			return this.send("**🚫 | " + this.msg.author.username + "**, Invalid arguments! :c", 3000);
 		}
 
-		if(amount>1000000) amount = 1000000;
-
-
 		//Check if valid user
-		let user = await p.getMention(id);
-		if(user==undefined){
-			p.send("**🚫 | "+msg.author.username+"**, I could not find that user!",3000);
-			return
-		}else if(user.bot){
-			p.send("**🚫 | "+msg.author.username+"**, You can't send cowoncy to a bot silly!",3000);
-			return;
-		}else if(user.id==msg.author.id){
-			p.send("**💳 | "+msg.author.username+"** sent **"+(p.global.toFancyNum(amount))+" cowoncy** to... **"+user.username+"**... *but... why?*");
-			return;
+		let user = await this.getMention(id);
+		if(!user) {
+			return this.send("**🚫 | "+this.msg.author.username+"**, I could not find that user!", 3000);
+		} else if(user.bot) {
+			return this.send("**🚫 | "+this.msg.author.username+"**, You can't send cowoncy to a bot silly!", 3000);
+		} else if(user.id == this.msg.author.id) {
+			return this.send("**💳 | "+this.msg.author.username+"** sent **"+(this.global.toFancyNum(amount))+" cowoncy** to... **"+user.username+"**... *but... why?*");
 		}
 
 		//Gives money
-		var sql = `SELECT money FROM cowoncy WHERE id = ${msg.author.id} AND money >= ${amount};
-			CALL CowoncyTransfer(${msg.author.id},${id},${amount})`;
-		con.query(sql,function(err,rows,fields){
-			if(err){console.error(err);return;}
-			if(rows[0][0]==undefined||rows[0][0].money<amount){
-				p.send("**🚫 |** Silly **"+msg.author.username+"**, you don't have enough cowoncy!",3000);
-			}else{
-				let text = "**💳 | "+msg.author.username+"** sent **"+(p.global.toFancyNum(amount))+" cowoncy** to **"+user.username+"**!";
-				text = alterGive.alter(p, p.msg.author.id, text, {
-					from: p.msg.author,
-					to: user,
-					amount: p.global.toFancyNum(amount)
-				});
-				p.send(text);
-				p.neo4j.give(p.msg,user,amount);
-				p.logger.incr(`cowoncy`, amount, {type:'given'}, p.msg);
-				p.logger.decr(`cowoncy`, -1 * amount, {type:'give'}, p.msg);
+		const con = await this.startTransaction()
+		try {
+			const canGive = await cowoncyUtils.canGive.bind(this)(this.msg.author, user, amount, con);
+			if (canGive.error) {
+				this.errorMsg(canGive.error);
+				return con.rollback();
 			}
+
+			let sql = `UPDATE cowoncy SET money = money - ${amount} WHERE id = ${this.msg.author.id} AND money >= ${amount};`;
+			sql += `INSERT INTO cowoncy (id, money) VALUES (${id}, ${amount}) ON DUPLICATE KEY UPDATE money = money + ${amount};`;
+			sql += `INSERT INTO transaction (sender, reciever, amount) VALUES (${this.msg.author.id}, ${id}, ${amount});`;
+			sql += canGive.sql;
+			let result = await con.query(sql);
+
+			if (!result[0].changedRows) {
+				this.errorMsg(', you silly hooman! You don\'t have enough cowoncy!', 3000);
+				return con.rollback();
+			}
+
+			await con.commit();
+		} catch (err) {
+			console.error(err);
+			this.errorMsg(", there was an error sending cowoncy! Please try again later.", 3000);
+			return con.rollback();
+		}
+
+		let text = `**💳 | ${this.msg.author.username}** sent **${this.global.toFancyNum(amount)} cowoncy** to **${user.username}**!`;
+		text = alterGive.alter(this, this.msg.author.id, text, {
+			from: this.msg.author,
+			to: user,
+			amount: this.global.toFancyNum(amount)
 		});
+
+		this.send(text);
+		this.neo4j.give(this.msg,user, amount);
+		this.logger.incr(`cowoncy`, amount, {type:'given'}, this.msg);
+		this.logger.decr(`cowoncy`, -1 * amount, {type:'give'}, this.msg);
 	}
 
 })

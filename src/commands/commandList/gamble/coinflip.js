@@ -8,7 +8,7 @@
 const CommandInterface = require('../../CommandInterface.js');
 const altercoinflip = require('../patreon/altercoinflip.js');
 
-const maxBet = 50000;
+const maxBet = 150000;
 const cowoncy = "<:cowoncy:416043450337853441>";
 const spin = "<a:coinflip:436677458339823636>";
 const heads = "<:head:436677933977960478>";

@@ -54,6 +54,10 @@ async function validate (p) {
 		await p.errorMsg(", an item with that id does not exist or you cannot trade that item.", 3000);
 		return { error: true };
 	}
+	if (item.untradeable) {
+		await p.errorMsg(`, ${item.emoji} **${item.name}** is not tradeable!`, 3000);
+		return { error: true };
+	}
 
 	user = p.getMention(user);
 	if (!user) {
@@ -65,22 +69,28 @@ async function validate (p) {
 		return { error: true };
 	}
 
-	if (!price) {
+	if (!item.giveOnly && !price) {
 		await p.errorMsg(", please specify what price you want to sell the item for!", 3000);
 		return { error: true };
 	}
-	if (!p.global.isInt(price)) {
+	if (!item.giveOnly && !p.global.isInt(price)) {
 		await p.errorMsg(", price must be a number!", 3000);
 		return { error: true };
 	}
-	price = parseInt(price);
-	if (price < 1) {
-		await p.errorMsg(", the price must be greater than 0!", 3000);
-		return { error: true };
-	}
-	if (price > 2000000) {
-		await p.errorMsg(", the price per ticket is too high!", 3000);
-		return { error: true };
+	price = parseInt(price) || 0;
+	if (item.giveOnly) {
+		if (price > 0) {
+			await p.errorMsg(", this item cannot be traded for cowoncy!", 3000);
+			return { error: true };
+		}
+	} else {
+		if (price < 1) {
+			await p.errorMsg(", the price must be greater than 0!", 3000);
+			return { error: true };
+		} else if (price > 2000000) {
+			await p.errorMsg(", the price per ticket is too high!", 3000);
+			return { error: true };
+		}
 	}
 
 	if (!p.global.isInt(count)) {
@@ -93,16 +103,29 @@ async function validate (p) {
 		return { error: true };
 	}
 
-	let sql = `SELECT ${item.column} FROM items INNER JOIN user ON items.uid = user.uid WHERE user.id = ${p.msg.author.id};`;
+	let sql = `SELECT ui.* FROM user_item ui INNER JOIN user u ON ui.uid = u.uid WHERE u.id = ${p.msg.author.id} AND ui.name = '${item.column}';`;
 	sql += `SELECT id FROM timeout WHERE id = ${user.id} AND TIMESTAMPDIFF(HOUR,time,NOW()) < penalty;`;
 	let result = await p.query(sql);
-	if (!result[0][0] || result[0][0][item.column] < count) {
+	if (!result[0][0] || result[0][0].count < count) {
 		await p.errorMsg(`, you do not have enough ${item.name}s!`, 3000);
 		return { error: true };
 	}
 	if (result[1][0]?.id) {
 		await p.errorMsg(`, you cannot trade with this user!`, 3000);
 		return { error: true };
+	}
+	if (item.tradeLimit) {
+		const afterMid = p.dateUtil.afterMidnight(result[0][0].daily_reset);
+		if (!afterMid.after) {
+			if (result[0][0].daily_count >= item.tradeLimit) {
+				await p.errorMsg(`, you can only trade this item ${item.tradeLimit}x per day!`, 3000);
+				return { error: true };
+			} else if (result[0][0].daily_count + count > item.tradeLimit) {
+				const diff = item.tradeLimit - result[0][0].daily_count;
+				await p.errorMsg(`, you can only trade this item ${diff} more times today!`, 3000);
+				return { error: true };
+			}
+		}
 	}
 
 	return { item, user, price, count };
@@ -132,6 +155,12 @@ async function sendMessage (p, { item, user, price, count }) {
 				inline: true
 			}
 		]
+	}
+	if (item.tradeNote) {
+		embed.description += "\n\n" + item.tradeNote;
+	}
+	if (item.tradeLimit) {
+		embed.description += `\n\n📑 **You can only trade this item ${item.tradeLimit} times per day.**`;
 	}
 	const msg = await p.send({ embed });
 	return { msg, embed };
@@ -182,21 +211,60 @@ async function awaitReaction (p, info) {
 
 async function executeTransaction(p, msg, embed, { item, user, price, count }) {
 	const totalPrice = count * price;
+	const uid = await p.global.getUid(p.msg.author.id);
 	
 	const con = await p.startTransaction()
 	try {
+		// Check tradelimit
+		if (item.tradeLimit) {
+			if (count > item.tradeLimit) {
+				embed.color = p.config.fail_color;
+				msg.edit({content:`${p.config.emoji.error} **| ${p.msg.author.username}**, you can only trade this item ${item.tradeLimit}x per day!`, embed});
+				return await con.rollback();
+			}
+
+			let sql = `SELECT * FROM user_item ui WHERE ui.uid = ${uid} AND ui.name = '${item.column}' FOR UPDATE;`;
+			let result = await con.query(sql);
+			const afterMid = p.dateUtil.afterMidnight(result[0].daily_reset);
+
+			if (afterMid.after) {
+				sql = `UPDATE user_item SET daily_count = ${count}, daily_reset = ${afterMid.sql} WHERE user_item.uid = ${uid} AND user_item.name = '${item.column}'`;
+				await con.query(sql);
+			} else {
+				if (result[0].daily_count >= item.tradeLimit) {
+					embed.color = p.config.fail_color;
+					msg.edit({content:`${p.config.emoji.error} **| ${p.msg.author.username}**, you can only trade this item ${item.tradeLimit}x per day!`, embed});
+					return await con.rollback();
+				} else if (result[0].daily_count + count > item.tradeLimit) {
+					const diff = item.tradeLimit - result[0].daily_count;
+					embed.color = p.config.fail_color;
+					msg.edit({content:`${p.config.emoji.error} **| ${p.msg.author.username}**, you can only trade this item ${diff} more times today!`, embed});
+					return await con.rollback();
+				} else {
+					sql = `UPDATE user_item SET daily_count = daily_count + ${count} WHERE user_item.uid = ${uid} AND user_item.name = '${item.column}'`;
+					await con.query(sql);
+				}
+			}
+
+		}
+
+		let tradeColumn = item.column;
+		if (item.tradeConvert) {
+			tradeColumn = itemUtil.getById(item.tradeConvert).column;
+		}
+
 		let sql = `UPDATE cowoncy SET money = money - ${totalPrice} WHERE id = ${user.id} AND money >= ${totalPrice};`;
 		sql += `UPDATE cowoncy SET money = money + ${totalPrice} WHERE id = ${p.msg.author.id};`;
-		sql += `UPDATE items INNER JOIN user ON items.uid = user.uid SET ${item.column} = ${item.column} - ${count} WHERE user.id = ${p.msg.author.id} AND ${item.column} >= ${count};`;
-		sql += `INSERT INTO items (uid, ${item.column}) VALUES ((SELECT uid FROM user WHERE user.id = ${user.id}), ${count}) ON DUPLICATE KEY UPDATE ${item.column} = ${item.column} + ${count};`;
+		sql += `UPDATE user_item SET count = count - ${count} WHERE uid = ${uid} AND count >= ${count} AND name = '${item.column}';`;
+		sql += `INSERT INTO user_item (uid, name, count) VALUES ((SELECT uid FROM user WHERE user.id = ${user.id}), '${tradeColumn}', ${count}) ON DUPLICATE KEY UPDATE count = count + ${count};`;
 		sql += `INSERT INTO transaction (sender, reciever, amount) VALUES (${user.id}, ${p.msg.author.id}, ${totalPrice});`;
 		let result = await con.query(sql);
-		if (!result[0].changedRows) {
+		if (!item.giveOnly && !result[0].changedRows) {
 			embed.color = p.config.fail_color;
 			msg.edit({content:`${p.config.emoji.error} **| ${user.username}** does not have enough money!`, embed});
 			await con.rollback();
 			return;
-		} else if (!result[1].changedRows) {
+		} else if (!item.giveOnly && !result[1].changedRows) {
 			embed.color = p.config.fail_color;
 			msg.edit({content:`${p.config.emoji.error} **|** I could not give money to **${p.msg.author.username}**. Please try again later.`, embed});
 			await con.rollback();

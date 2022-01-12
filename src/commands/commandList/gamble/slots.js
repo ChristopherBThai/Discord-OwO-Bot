@@ -7,7 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const maxBet = 50000;
+const maxBet = 150000;
 const slots = ["<:eggplant:417475705719226369>","<:heart:417475705899712522>","<:cherry:417475705178161162>","<:cowoncy:417475705912426496>","<:o_:417475705899843604>","<:w_:417475705920684053>"];
 const moving = "<a:slot_gif:417473893368987649>";
 const alterSlot = require('../patreon/alterSlot.js');
