@@ -48,6 +48,7 @@ class Fetch{
 				return;
 			}
 			if(!member.id) member.id = member.user.id;
+			if(!member.status) member.status = member.user.presence?.status;
 			if(member&&cache){
 				guild.members.add(member,guild,false);
 			}

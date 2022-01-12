@@ -52,7 +52,7 @@ module.exports = new CommandInterface({
 
 		if(member = await p.fetch.getMember(p.msg.channel.guild,user.id)){
 			let hex = p.global.getRoleColor(member);
-			let memberStatus = !member.user.presence ? 'offline' : member.user.presence.status;
+			let memberStatus = !member.status ? 'offline' : member.status;
 			embed.fields[0].value = ((member.nick)?"`Nickname: "+member.nick+"`\n":"")+"`ID: "+member.id+"`"+((hex)?"\n`RoleColor: "+hex+"`":"");
 			embed.fields[0].name += "  `"+memberStatus+"`";
 		}
