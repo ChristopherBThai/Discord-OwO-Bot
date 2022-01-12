@@ -54,7 +54,8 @@
 		"cross_box": "<:cross_box:808212600331829259>",
 		"warning": "⚠️",
 		"perkTicket": {
-			"common": "<:cticket:815767124680114206>"
+			"common": "<:cticket:815767124680114206>",
+			"wcommon": "<:wcticket:930641266159517726>"
 		}
 	},
 	"guildlink": "https://discord.com/invite/owobot",
