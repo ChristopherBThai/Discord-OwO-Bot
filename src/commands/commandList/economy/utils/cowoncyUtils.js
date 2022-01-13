@@ -111,10 +111,22 @@ async function checkReceiver(user, amount, con) {
 const getUserLimits = exports.getUserLimits = async function(id) {
 	const lvl = (await levels.getUserLevel(id)).level;
 	const tens = Math.floor(lvl / 10);
-	const limit = 50000 + (lvl * 14000 * (tens + 1));
+	const limit = 50000 + (lvl * 14000) + (tens * 5000000);
 
 	return {
 		send: limit,
 		receive: Math.ceil(limit * ((tens/2) + 1))
 	};
 }
+
+/*
+for (let lvl = 1; lvl < 60; lvl++) {
+	const tens = Math.floor(lvl / 10);
+	const limit = 50000 + (lvl * 14000) + (tens * 5000000);
+
+	const send = limit;
+	const receive = Math.ceil(limit * ((tens/2) + 1))
+
+	console.log(`[${lvl}] ${send} | ${receive}`);
+}
+*/
