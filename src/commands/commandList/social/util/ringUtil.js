@@ -5,6 +5,7 @@
  * For more information, see README.md and LICENSE
   */
 
+const alterBuy = require('../../patreon/alterBuy.js');
 const rings = require('../../../../data/rings.json');
 const cart = '🛒';
 const sold = '💰';
@@ -34,7 +35,18 @@ exports.buy = async function(p,id){
 
 	// TODO neo4j
 	p.logger.decr(`cowoncy`, -1 * ring.price, {type:'ring'}, p.msg);
-	p.replyMsg(cart,", you bought a"+(p.global.isVowel(ring.name)?"n":"")+" "+ring.emoji+" **"+ring.name+"** for **"+p.global.toFancyNum(ring.price)+"** "+p.config.emoji.cowoncy+"!");
+	let an = p.global.isVowel(ring.name) ? 'n' : '';
+	let text = `${cart} **| ${p.msg.author.username}**, you bought a${an} ${ring.emoji} **${ring.name}** for **${p.global.toFancyNum(ring.price)}** ${p.config.emoji.cowoncy}!`;
+	text = alterBuy.alter(p, text, {
+		type: 'ring',
+		an,
+		ring,
+		price: p.global.toFancyNum(ring.price),
+		user: p.msg.author
+	});
+	console.log(text);
+
+	p.send(text);
 }
 
 exports.getItems = async function(p){
