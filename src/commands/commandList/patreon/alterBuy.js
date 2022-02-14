@@ -49,7 +49,6 @@ function quincey(text, opt) {
 			default:
 				return text;
 		}
-		console.log(embed);
 		return { embed };
 	}
 	return text;
