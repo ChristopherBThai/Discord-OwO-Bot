@@ -44,7 +44,6 @@ exports.buy = async function(p,id){
 		price: p.global.toFancyNum(ring.price),
 		user: p.msg.author
 	});
-	console.log(text);
 
 	p.send(text);
 }
