@@ -13,6 +13,8 @@ exports.alter = function(id, text, opt){
 			return eliza(text, opt);
 		case '413344554247258112':
 			return ameodssbxiw(text, opt);
+		case '427296171883626496':
+			return lIlIIIll(text, opt);
 		default:
 			return text
 	}
@@ -54,5 +56,13 @@ function ameodssbxiw (text, opt) {
 	text.footer.text += ' | Where a few successes brought us';
 	text.color = 2003199;
 	
+	return text;
+}
+
+function lIlIIIll (text, opt) {
+	text.description = opt.desc;
+	text.image = {
+		url: "https://cdn.discordapp.com/attachments/787404412335161354/927784700997677116/output-onlinegiftools_61.gif"
+	}
 	return text;
 }
