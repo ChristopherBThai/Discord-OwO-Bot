@@ -61,7 +61,14 @@ async function createMessage (msg, content, file, del) {
 			content.embeds = [ content.embed ];
 			delete content.embed;
 		}
-		return msg.createMessage(content, file, del);
+		await msg.createMessage(content, file, del);
+		return {
+			id: msg.id,
+			channel: msg.channel,
+			edit: (content, file) => {
+				msg.editOriginalMessage(content, file);
+			}
+		}
 	} else {
 		const channel = msg.channel.createMessage ? msg.channel : await msg.author.getDMChannel();
 		if (del) {
