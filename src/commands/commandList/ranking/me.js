@@ -29,9 +29,10 @@ module.exports = new CommandInterface({
 
 	group:["rankings"],
 
-	cooldown:5000,
-	half:100,
-	six:500,
+	cooldown:60000,
+	half:20,
+	six:200,
+  bot: true,
 
 	execute: async function(p){
 		if(p.command=="guild")
