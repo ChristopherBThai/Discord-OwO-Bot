@@ -32,7 +32,7 @@ module.exports = new CommandInterface({
 	cooldown:60000,
 	half:20,
 	six:200,
-  bot: true,
+	bot: true,
 
 	execute: async function(p){
 		if(p.command=="guild")
