@@ -15,3 +15,10 @@ exports.giveCustomBattle = async function (p, id) {
 			"It\'s a tie in {turns} turns! Your team gained {xp} xp! Streak: {streak}", '{username} goes into battle');`;
 	const result = await p.query(sql);
 }
+
+exports.giveCustomHunt = async function (p, id) {
+	const sql = `INSERT INTO alterhunt (uid, type) VALUES
+		((SELECT uid FROM user WHERE id = ${id}), 'gems'),
+		((SELECT uid FROM user WHERE id = ${id}), 'nogems');`
+	const result = await p.query(sql);
+}

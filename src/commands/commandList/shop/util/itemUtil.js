@@ -11,25 +11,38 @@ const thumbsdown = '👎';
 const items = {
 	common_tickets: {
 		id: 10,
+		name: "Wrapped Common Ticket",
+		emoji: config.emoji.perkTicket.wcommon,
+		column: "common_tickets",
+		tradeNote: "⚠️ **You can only trade this item ONCE. The ticket will be unwrapped.**",
+		tradeConvert: 14,
+		desc: "You can use this item to redeem 1 month of common tier perks!\n\nYou can trade this item with other users with `owo trade 10 {@user} {pricePerTicket} {numberOfTickets}`. An example would be `owo trade 10 @Scuttler 100000 2`. This will trade 2 tickets for a total price of 200000 cowoncy.\n\n**This ticket is only tradeable ONCE.** It will be unwrapped once traded.\n\nYou can also use this item by typing in `owo use 10`."
+	},
+	unwrapped_common_tickets: {
+		id: 14,
 		name: "Common Ticket",
 		emoji: config.emoji.perkTicket.common,
-		column: "common_tickets",
-		desc: "You can use this item to redeem 1 month of common tier perks!\n\nYou can trade this item with other users with `owo trade 10 {@user} {pricePerTicket} {numberOfTickets}`. An example would be `owo trade 10 @Scuttler 100000 2`. This will trade 2 tickets for a total price of 200000 cowoncy.\n\nYou can also use this item by typing in `owo use 10`."
+		column: "unwrapped_common_tickets",
+		tradeLimit: 1,
+		giveOnly: true,
+		desc: "You can use this item to redeem 1 month of common tier perks by typing `owo use 14`."
 	}
 };
 
 exports.getItems = async function(p){
-	let sql = `SELECT items.* FROM items INNER JOIN user ON items.uid = user.uid WHERE user.id = ${p.msg.author.id};`;
+	let sql = `SELECT ui.* FROM user_item ui INNER JOIN user u ON ui.uid = u.uid WHERE u.id = ${p.msg.author.id};`;
 	let result = await p.query(sql);
 	if(!result[0]){return {}}
 
 	let inv = {};
 
-	for(let key in items){
-		if (result[0][key]) {
-			const count = result[0][key]
-			const info = items[key]
+	for (let i in result) {
+		const count = result[i].count;
+		const info = items[result[i].name]
 
+		if (!info) {
+			console.error("No item for: " + result[i].name);
+		} else if(count > 0) {
 			inv[info.id] = {
 				id: info.id,
 				emoji: info.emoji,
@@ -37,7 +50,6 @@ exports.getItems = async function(p){
 			};
 		}
 	}
-	
 	return inv;
 }
 
@@ -45,6 +57,7 @@ exports.use = async function (id, p) {
 	let item = getById(id);
 	switch (item?.id) {
 		case 10:
+		case 14:
 			await useCommonTicket(item, p);
 			break;
 		default:
@@ -62,12 +75,12 @@ async function useCommonTicket (ticket, p) {
 	if (!count) {
 		count = 1;
 	} else if (count == "all") {
-		let result = await p.query(`SELECT ${ticket.column} FROM items INNER JOIN user ON items.uid = user.uid WHERE user.id = ${p.msg.author.id}`);
-		if (!result[0] || result[0][ticket.column] < 0) {
+		let result = await p.query(`SELECT ui.count FROM user_item ui INNER JOIN user u ON ui.uid = u.uid WHERE u.id = ${p.msg.author.id} AND ui.name = '${ticket.column}'`);
+		if (!result[0] || result[0].count < 0) {
 			p.errorMsg(", you do not have this item!", 3000);
 			return;
 		}
-		count = result[0][ticket.column];
+		count = result[0].count;
 	} else if (p.global.isInt(count)) {
 		count = parseInt(count);
 	} else {
@@ -81,7 +94,7 @@ async function useCommonTicket (ticket, p) {
 	}
 
 	const embed = {
-		description: `${p.msg.author.username}, are you sure you want to redeem **${count}** ${ticket.emoji} **${ticket.name}${count > 1 ? 's' : ''}**?`,
+		description: `**${p.msg.author.username}**, are you sure you want to redeem **${count}** ${ticket.emoji} **${ticket.name}${count > 1 ? 's' : ''}**?`,
 		color: p.config.embed_color,
 	}
 	const msg = await p.send({ embed });
@@ -102,7 +115,7 @@ async function useCommonTicket (ticket, p) {
 		let date;
 		try {
 			// remove tickets
-			let sql = `UPDATE items INNER JOIN user ON items.uid = user.uid SET ${ticket.column} = ${ticket.column} - ${count}  WHERE user.id = ${p.msg.author.id} AND ${ticket.column} >= ${count};`
+			let sql = `UPDATE user_item INNER JOIN user ON user_item.uid = user.uid SET user_item.count = user_item.count - ${count}  WHERE user.id = ${p.msg.author.id} AND user_item.count >= ${count} AND user_item.name = '${ticket.column}';`
 			let result = await con.query(sql);
 			if (!result.changedRows) {
 				await con.rollback();
@@ -141,7 +154,7 @@ async function useCommonTicket (ticket, p) {
 			con.rollback();
 			return;
 		}
-		embed.description = `${ticket.emoji} **| ${p.msg.author.username}**, your patreon has been extended by ${count} month${count > 1 ? 's' : ''}!\n${p.config.emoji.blank} **|** Expires on: **${date}**`;
+		embed.description = `**${p.msg.author.username}**, your patreon has been extended by **${count} month${count > 1 ? 's' : ''}**!\nExpires on: **${date}**`;
 		await msg.edit({embed});
 	});
 
@@ -164,10 +177,11 @@ exports.desc = async function (p, id) {
 		return;
 	}
 
-	let sql = `SELECT ${item.column} FROM items INNER JOIN user ON items.uid = user.uid WHERE user.id = ${p.msg.author.id};`;
+	let sql = `SELECT ui.* FROM user_item ui INNER JOIN user u ON ui.uid = u.uid WHERE u.id = ${p.msg.author.id} AND ui.name = '${item.column}';`;
 	let result = await p.query(sql);
-	if (!result || !result[0][item.column]) {
+	if (!result[0] || !result[0].count) {
 		p.errorMsg(", you do not have this item");
+		return;
 	}
 
 	let embed = {
@@ -179,6 +193,25 @@ exports.desc = async function (p, id) {
 			}
 		]
 	};
+
+	if (item.giveOnly) {
+		embed.fields[0].value += `\n\n💸 **This item can only be gifted. You cannot trade this for cowoncy.**`;
+	}
+
+	if (item.tradeLimit) {
+		const afterMid = p.dateUtil.afterMidnight(result[0].daily_reset);
+		if (afterMid.after) {
+				embed.fields[0].value += `\n\n📑 **You can ${item.giveOnly ? 'gift' : 'trade'} this item ${item.tradeLimit} more times today.**`
+		} else {
+			if (result[0].daily_count >= item.tradeLimit) {
+				embed.fields[0].value += `\n\n📑 **You have hit the max ${item.giveOnly ? 'gift' : 'trade'} limit for today.**`
+			} else {
+				const diff = item.tradeLimit - result[0].daily_count;
+				embed.fields[0].value += `\n\n📑 **You can ${item.giveOnly ? 'gift' : 'trade'} this item ${diff} more times today.**`
+			}
+		}
+	}
+
 	await p.send({ embed });
 
 }

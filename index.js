@@ -27,7 +27,7 @@ if(require('cluster').isMaster){
 	const RamCheck = new (require('./utils/ramCheck.js'))(global);
 }
 
-const totalShards = 10;
+let clusters = 60;
 
 (async () => {
 	try{
@@ -39,8 +39,6 @@ const totalShards = 10;
 			firstShardID = parseInt(result["firstShardID"]);
 			lastShardID = parseInt(result["lastShardID"]);
 		}
-		// How many clusters we will have
-		var clusters = Math.ceil(shards/totalShards);
 		if(debug){
 			shards = 2;
 			firstShardID = 0;

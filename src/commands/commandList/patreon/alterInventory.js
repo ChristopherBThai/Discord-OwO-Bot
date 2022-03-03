@@ -25,6 +25,8 @@ exports.alter = function(p, text, info) {
 			return lexx(p, info);
 		case '427296171883626496':
 			return lIlIIIll(p, info);
+		case '460987842961866762':
+			return estee(p, info);
 		default:
 			return text;
 	}
@@ -89,6 +91,20 @@ function lIlIIIll (p, info) {
 			url: "https://cdn.discordapp.com/attachments/787404412335161354/889274811908513842/output-onlinegiftools_34.gif"
 		},
 		description: `**====== ${info.user.username}'s Inventory ======**\n${info.inv}`
+	}
+	return { embed }
+}
+
+function estee (p, info) {
+	const embed = {
+		color: p.config.embed_color,
+		author: {
+			name: "꧁•⊹٭𝙴𝚜𝚝𝚎𝚎'𝚜 𝚂𝚎𝚌𝚛𝚎𝚝 𝚃𝚛𝚎𝚊𝚜𝚞𝚛𝚎𝚜٭⊹•꧂"
+		},
+		image: {
+			url: "https://i.imgur.com/eK7F8Gv.gif"
+		},
+		description: info.inv
 	}
 	return { embed }
 }

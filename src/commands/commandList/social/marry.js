@@ -7,6 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
+const alterMarry = require('../patreon/alterMarry.js');
 const rings = require('../../../data/rings.json');
 const dateOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
 const quotes = ["How cute!","You look wonderful together!","You guys are adorable!","The perfect pair!","Too cute~!!!","Now kiss!"];
@@ -243,5 +244,13 @@ async function display(p){
 		},
 		"color": p.config.embed_color
 	}
+
+	embed = alterMarry.alter(p, embed, {
+		user: p.msg.author,
+		so: so,
+		marriedSince: (new Date(result[0].marriedDate)).toLocaleDateString("default",dateOptions),
+		marriedDays: result[0].days,
+		marriedClaims: result[0].dailies
+	});
 	p.send({embed});
 }

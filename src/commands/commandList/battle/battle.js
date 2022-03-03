@@ -39,8 +39,10 @@ module.exports = new CommandInterface({
 		if(p.global.isUser(p.args[0])){
 			let id = p.args[0].match(/[0-9]+/)[0];
 			let bet = 0;
+			/* Bets are removed
 			if(p.global.isInt(p.args[1])) bet = parseInt(p.args[1]);
 			if(bet>1000000) bet = 1000000;
+			*/
 			if(!id){
 				p.errorMsg(", The correct command is `owo battle @user`!",3000);
 			}else if(id==p.msg.author.id){

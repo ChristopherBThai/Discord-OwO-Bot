@@ -27,12 +27,15 @@ exports.handle = async function (msg, raw) {
 
 	else if(msg.author.id==this.auth.admin) { this.command.executeAdmin(msg, raw); }
 
-	else if (msg.channel.type===PrivateChannel) {
+	// no guild, its a dm
+	else if (!msg.channel.guild) {
 		if (await this.macro.verify(msg, msg.content.trim())) {
 			survey.handle.bind(this)(msg);
 		}
 
-	} else { this.command.execute(msg, raw); }
+	} else {
+		this.command.execute(msg, raw);
+		levels.giveXP(msg);
+	}
 
-	levels.giveXP(msg);
 }
