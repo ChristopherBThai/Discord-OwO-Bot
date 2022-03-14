@@ -38,8 +38,8 @@ function handleApplicationCommand (packet) {
 }
 
 function handleMessageComponent(packet) {
+	this.interactionHandlers.buttons.emit(packet.d.data.custom_id, packet.d) ||
 	this.interactionCollector.interact(packet.d);
-	this.interactionHandlers.buttons.emit(packet.d.data.custom_id, packet.d);
 }
 
 class Interaction {

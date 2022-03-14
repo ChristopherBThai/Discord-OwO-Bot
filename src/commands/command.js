@@ -243,6 +243,7 @@ function initCommands(){
 function initParam(msg,command,args,main){
 	let param = {
 		"msg":msg,
+		"options":msg.options || {},
 		"args":args,
 		"command":command,
 		"client":main.bot,

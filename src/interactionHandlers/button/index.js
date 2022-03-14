@@ -26,7 +26,9 @@ class InteractionHandler {
 				return axios.post(url, { type: 6 });
 			}
 			this.listeners[name](data, ack);
+			return true;
 		}
+		return false;
 	}
 }
 

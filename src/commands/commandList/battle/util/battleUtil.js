@@ -1022,11 +1022,11 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 		embed.embed.footer = {text};
 		embed.embed = await alterBattle.alter(p, p.msg.author,embed.embed, opt);
 		if(msg) await msg.edit(embed);
-		else p.send(embed);
+		else await p.send(embed);
 	}
 
 	/* send message for crate reward */
-	if(crate&&crate.text) p.send(crate.text);
+	if(crate&&crate.text) await p.send(crate.text);
 }
 
 /* finish friendly battle */

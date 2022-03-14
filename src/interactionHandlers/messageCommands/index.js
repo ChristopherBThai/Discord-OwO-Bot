@@ -23,7 +23,9 @@ class InteractionHandler {
 	emit (interaction) {
 		if (this.listeners[interaction.command]) {
 			this.listeners[interaction.command](interaction);
+			return true;
 		}
+		return false;
 	}
 }
 

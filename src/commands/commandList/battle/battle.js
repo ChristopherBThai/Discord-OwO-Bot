@@ -36,19 +36,31 @@ module.exports = new CommandInterface({
 	execute: async function(p){
 
 		/* If its a friendly battle... */
-		if(p.global.isUser(p.args[0])){
+		if (p.global.isUser(p.args[0])) {
 			let id = p.args[0].match(/[0-9]+/)[0];
+			let opponent = p.msg.mentions[0];
+			if(!opponent) {
+				p.errorMsg(", That is not a valid id!");
+				return;
+			}
 			let bet = 0;
 			/* Bets are removed
 			if(p.global.isInt(p.args[1])) bet = parseInt(p.args[1]);
 			if(bet>1000000) bet = 1000000;
 			*/
-			if(!id){
-				p.errorMsg(", The correct command is `owo battle @user`!",3000);
-			}else if(id==p.msg.author.id){
-				battleFriendUtil.challenge(p,id,0);
-			}else{
-				battleFriendUtil.challenge(p,id,bet);
+			if(!id) {
+				await p.errorMsg(", The correct command is `owo battle @user`!", 3000);
+			} else if(id == p.msg.author.id) {
+				battleFriendUtil.challenge(p, p.msg.author);
+			} else {
+				battleFriendUtil.challenge(p, opponent, bet);
+			}
+			return;
+		} else if(p.options.user) {
+			if(p.options.user.id == p.msg.author.id) {
+				battleFriendUtil.challenge(p, p.msg.author);
+			} else {
+				battleFriendUtil.challenge(p, p.options.user);
 			}
 			return;
 		}

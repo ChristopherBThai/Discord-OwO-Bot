@@ -25,8 +25,19 @@ class InteractionCollector{
 
 	interact ({ member, message, data, id, token }){
 		const listener = this.listeners[message.id] || this.listeners[message.interaction?.id]
-		if(!listener) return
-		listener.interact(data, member.user, id, token);
+		if (listener) {
+			listener.interact(data, member.user, id, token);
+		} else {
+			const url = `https://discord.com/api/v8/interactions/${id}/${token}/callback`
+			const content = {
+				content: "🚫 **|** You cannot use this button",
+				flags: 64
+			}
+			return axios.post(url, {
+				type: 4,
+				data: content
+			});
+		}
 	}
 }
 

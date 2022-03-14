@@ -7,15 +7,11 @@
 
 const teamUtil = require('./teamUtil.js');
 const animalUtil = require('./animalUtil.js');
+const ab = require('../ab.js');
+const db = require('../db.js');
 
-exports.challenge = async function(p,id,bet){
-
-	/* Get opponent info */
-	let opponent = p.msg.mentions[0];
-	if(!opponent){
-		p.errorMsg(", That is not a valid id!");
-		return;
-	}
+exports.challenge = async function(p, opponent, bet = 0) {
+	let id = opponent.id;
 	let user1 = p.msg.author.id;
 	let user2 = opponent.id;
 	if(p.msg.author.id>opponent.id){
@@ -115,8 +111,63 @@ exports.challenge = async function(p,id,bet){
 	result = p.query(sql);
 
 	/* Send challenge request */
-	let embed = toEmbedRequest(p,stats,bet,player,enemy,flags);
-	p.send({embed});
+	let content = toEmbedRequest(p,stats,bet,player,enemy,flags);
+	content.components = [
+		{
+			type: 1,
+			components: [
+				{
+					type: 2,
+					label: "Accept",
+					style: 3,
+					custom_id: "battle_accept",
+				},
+				{
+					type: 2,
+					label: "Decline",
+					style: 4,
+					custom_id: "battle_decline",
+				}
+			]
+		}
+	];
+	const msg = await p.send(content);
+	
+	/* create interaction collector */
+	let filter = (componentName, user) => ['battle_accept', 'battle_decline'].includes(componentName) && user.id === opponent.id;
+	let collector = p.interactionCollector.create(msg, filter, { time: 900000 });
+
+	collector.on('collect', async (component, user, ack) => {
+		collector.stop("done");
+		content.components[0].components[0].disabled = true;
+		content.components[0].components[1].disabled = true;
+		if (component === 'battle_accept') {
+			content.embed.color = p.config.success_color;
+			content.embed.footer.text = "The battle was accepted!"
+			p.command = "ab";
+			ab.execute(p);
+		} else {
+			content.embed.color = p.config.fail_color;
+			content.embed.footer.text = "The battle was declined."
+			p.command = "db";
+			db.execute(p);
+		}
+		ack(content);
+	});
+
+	collector.on('end',async (reason) => {
+		if (reason === "done") return;
+		content.embed.color = p.config.timeout_color;
+		content.components[0].components[0].disabled = true;
+		content.components[0].components[1].disabled = true;
+		content.content = `${p.config.emoji.warning} This message is now inactive.`;
+		try {
+			await msg.edit(content);
+		} catch (err) {
+			console.error(err);
+			console.error(`[${msg.id}] Could not edit message`);
+		}
+	});
 }
 
 function toEmbedRequest(p,stats,bet,sender,receiver,flags){
@@ -173,7 +224,7 @@ function toEmbedRequest(p,stats,bet,sender,receiver,flags){
 
 	let embed = {
 		author:{
-			name: sender.username+" challenged "+receiver.username+" to a battle!",
+			name: `${receiver.username}, ${sender.username} challenges you to a duel!`,
 			icon_url: p.msg.author.avatarURL
 		},
 		description: "Bet amount: "+bet+" cowoncy"+flagText+acceptText+"\n`owo db` to decline the battle!",
@@ -213,7 +264,9 @@ function toEmbedRequest(p,stats,bet,sender,receiver,flags){
 		}];
 	}
 
-	return embed;
+	let content = `<@${receiver.id}>`;
+
+	return {content, embed};
 }
 
 exports.inBattle = async function(p){
