@@ -52,21 +52,18 @@ exports.send = function(msg){
 	}
 }
 
-async function createMessage (msg, content, file, del) {
+async function createMessage (msg, content, file, del, opt = {}) {
 	if (msg.interaction) {
-		if (typeof content === "string") {
-			content = { content }
-		}
-		if (content.embed) {
-			content.embeds = [ content.embed ];
-			delete content.embed;
-		}
-		await msg.createMessage(content, file, del);
-		return {
+		msg.ignoreDefer = true;
+		const tempContent = cleanContent(content);
+		if (opt.ephemeral) tempContent.flags = 64;
+		let returnMsg = await msg.createMessage(tempContent, file, del);
+		return returnMsg || {
 			id: msg.id,
 			channel: msg.channel,
 			edit: (content, file) => {
-				msg.editOriginalMessage(content, file);
+				const tempContent = cleanContent(content);
+				msg.editOriginalMessage(tempContent, file);
 			}
 		}
 	} else {
@@ -104,9 +101,9 @@ exports.reply = function(msg){
 			for(let i in split){
 				if(total.length+split[i].length>=2000){
 					if(total===""){
-						return createMessage(msg, "ERROR: The message is too long to send");
+						return createMessage(msg, "ERROR: The message is too long to send", null, null, opt);
 					}else{
-						createMessage(msg, total);
+						createMessage(msg, total, null, null, opt);
 						total = split[i];
 					}
 				}else{
@@ -114,26 +111,26 @@ exports.reply = function(msg){
 				}
 			}
 			if(total!==""){
-				return createMessage(msg, total);
+				return createMessage(msg, total, null, null, opt);
 			}
 		}else if(del)
-			return createMessage(msg, tempContent, file, del)
+			return createMessage(msg, tempContent, file, del, opt)
 		else
-			return createMessage(msg, tempContent, file)
+			return createMessage(msg, tempContent, file, null, opt)
 	}
 }
 
 /**
  * Sends a msg to channel
  */
-exports.error = function(errorEmoji,msg){
-	return function(content,del,file,opt){
+exports.error = function(errorEmoji,msg) {
+	return function(content,del,file,opt) {
 		let username = msg.author.username;
 		let emoji = errorEmoji;
 		let tempContent = {};
-		if(typeof content === "string")
+		if (typeof content === "string") {
 			tempContent.content = `**${emoji} | ${username}**${content}`;
-		else{
+		} else {
 			tempContent = {...content};
 			tempContent.content = `**${emoji} | ${username}**${content.content}`;
 		}
@@ -208,4 +205,18 @@ exports.msgModLogChannel = async function (msg){
 exports.init = function(main){
 	client = main.bot;
 	pubsub = main.pubsub;
+}
+
+function cleanContent(content) {
+	let tempContent;
+	if (typeof content === "string") {
+		tempContent = { content }
+	} else {
+		tempContent = {...content};
+	}
+	if (tempContent.embed) {
+		tempContent.embeds = [ tempContent.embed ];
+		delete tempContent.embed;
+	}
+	return tempContent;
 }

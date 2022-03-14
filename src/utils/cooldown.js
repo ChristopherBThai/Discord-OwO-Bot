@@ -7,7 +7,7 @@ exports.check = async function(p,command){
 	let key = "cd_"+command+"_"+p.msg.author.id;
 
 	// On cooldown
-	if(cooldown[key]) return;
+	if(cooldown[key] && !p.msg.interaction) return;
 
 	// Parse variables
 	let {redis, mcommands} = p;
@@ -38,7 +38,7 @@ exports.check = async function(p,command){
 				now = false;
 			}else{
 				let {timerText, time} = parseTimer(mcommands[ccd.command].cd-diff);
-				await p.replyMsg(timerEmoji,"! Please wait "+timerText+" and try again!",time);
+				await p.replyMsg(timerEmoji,"! Please wait "+timerText+" and try again!",time, null, {ephemeral: true});
 				cooldown[key] = true;
 				setTimeout(() => {delete cooldown[key];}, time);
 				now = false;
