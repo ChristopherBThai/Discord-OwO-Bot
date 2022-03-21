@@ -28,18 +28,19 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: async function(p){
+		const author = p.opt?.author || p.msg.author;
 		let sql = `SELECT u1.id as user1,u2.id as user2 FROM user_battle
 				LEFT JOIN user u1 ON user_battle.user1 = u1.uid
 				LEFT JOIN user u2 ON user_battle.user2 = u2.uid
 			WHERE
 				TIMESTAMPDIFF(MINUTE,time,NOW()) < 10 AND (
-					u1.id = ${p.msg.author.id} OR
-					u2.id = ${p.msg.author.id}
+					u1.id = ${author.id} OR
+					u2.id = ${author.id}
 				);`;
 		sql += `UPDATE user_battle SET time = '2018-01-01' WHERE
 			TIMESTAMPDIFF(MINUTE,time,NOW()) < 10 AND (
-				user1 = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) OR
-				user2 = (SELECT uid FROM user WHERE id = ${p.msg.author.id})
+				user1 = (SELECT uid FROM user WHERE id = ${author.id}) OR
+				user2 = (SELECT uid FROM user WHERE id = ${author.id})
 			);`;
 		let result = await p.query(sql);
 
@@ -50,7 +51,7 @@ module.exports = new CommandInterface({
 
 		/* Get opponent name */
 		let user = result[0][0];
-		if(user.user1==p.msg.author.id) user = user.user2;
+		if(user.user1==author.id) user = user.user2;
 		else user = user.user1;
 		user = await p.fetch.getUser(user);
 		if(!user) user = "an opponent";
