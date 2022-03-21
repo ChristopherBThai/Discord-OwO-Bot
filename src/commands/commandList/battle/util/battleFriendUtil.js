@@ -134,22 +134,43 @@ exports.challenge = async function(p, opponent, bet = 0) {
 	const msg = await p.send(content);
 	
 	/* create interaction collector */
-	let filter = (componentName, user) => ['battle_accept', 'battle_decline'].includes(componentName) && user.id === opponent.id;
+	let filter = (componentName, user) => ['battle_accept', 'battle_decline'].includes(componentName) && [p.msg.author.id, opponent.id].includes(user.id);
 	let collector = p.interactionCollector.create(msg, filter, { time: 900000 });
 
-	collector.on('collect', async (component, user, ack) => {
-		collector.stop("done");
+	collector.on('collect', async (component, user, ack, err) => {
 		content.components[0].components[0].disabled = true;
 		content.components[0].components[1].disabled = true;
 		if (component === 'battle_accept') {
 			content.embed.color = p.config.success_color;
 			content.embed.footer.text = "The battle was accepted!"
-			p.command = "ab";
-			ab.execute(p);
+			if (user.id === opponent.id) {
+				collector.stop("done");
+				p.command = "ab";
+				p.opt = {
+					author: opponent 
+				}
+				ab.execute(p);
+			} else {
+				p.opt = {
+					author: p.msg.author 
+				}
+				err(`${p.config.emoji.error} **|** The opponent must accept the battle.`);
+				return;
+			}
 		} else {
+			collector.stop("done");
 			content.embed.color = p.config.fail_color;
 			content.embed.footer.text = "The battle was declined."
 			p.command = "db";
+			if (user.id === opponent.id) {
+				p.opt = {
+					author: opponent 
+				}
+			} else {
+				p.opt = {
+					author: p.msg.author 
+				}
+			}
 			db.execute(p);
 		}
 		ack(content);

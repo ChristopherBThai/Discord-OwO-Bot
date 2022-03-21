@@ -32,9 +32,10 @@ module.exports = new CommandInterface({
 	six:500,
 
 	execute: async function(p){
+		const author = p.opt?.author || p.msg.author;
 		let sql = `SELECT (SELECT id FROM user WHERE uid = sender) AS sender,bet,flags,channel
 			FROM user_battle JOIN
-				(SELECT uid FROM user WHERE id = ${p.msg.author.id}) AS user
+				(SELECT uid FROM user WHERE id = ${author.id}) AS user
 			WHERE
 				TIMESTAMPDIFF(MINUTE,time,NOW()) < 10 AND (
 					user1 = user.uid OR
@@ -44,7 +45,7 @@ module.exports = new CommandInterface({
 					user1 = user2
 				);`;
 		sql += `UPDATE user_battle JOIN
-				(SELECT uid FROM user WHERE id = ${p.msg.author.id}) AS user
+				(SELECT uid FROM user WHERE id = ${author.id}) AS user
 			SET time = '2018-01-01' WHERE
 			TIMESTAMPDIFF(MINUTE,time,NOW()) < 10 AND (
 				user1 = user.uid OR
@@ -75,7 +76,7 @@ module.exports = new CommandInterface({
 		}
 
 		/* Grab teams */
-		let teams = await parseTeams(p, p.msg.author,sender,flags);
+		let teams = await parseTeams(p, author,sender,flags);
 		if(!teams) return;
 
 		/* Handle bet */
@@ -91,25 +92,25 @@ module.exports = new CommandInterface({
 
 		/* take bets if one person won*/
 		let outcome = logs[logs.length-1];
-		let user1 = p.msg.author.id;
+		let user1 = author.id;
 		let user2 = sender.id;
-		if(p.msg.author.id>sender.id){
+		if(author.id>sender.id){
 			user1 = sender.id;
-			user2 = p.msg.author.id;
+			user2 = author.id;
 		}
 		let winColumn = "tie";
 		let msg = "There are no winners!";
 		let winner,loser;
 		if(outcome.player&&!outcome.enemy){
 			if(bet>0)
-				msg = p.msg.author.username+" wins "+bet+" cowoncy!";
+				msg = author.username+" wins "+bet+" cowoncy!";
 			else
-				msg = p.msg.author.username+" wins!";
-			if(user1==p.msg.author.id)
+				msg = author.username+" wins!";
+			if(user1==author.id)
 				winColumn = "win1";
 			else
 				winColumn = "win2";
-			winner = p.msg.author;
+			winner = author;
 			loser = sender;
 		}else if(outcome.enemy&&!outcome.player){
 			if(bet>0)
@@ -121,7 +122,7 @@ module.exports = new CommandInterface({
 			else
 				winColumn = "win2";
 			winner = sender;
-			loser = p.msg.author;
+			loser = author;
 		}
 		outcome.text = msg;
 
@@ -130,8 +131,8 @@ module.exports = new CommandInterface({
 		if(winner&&bet>0){
 			sql = `UPDATE cowoncy c
 				SET c.money = c.money - ${bet}
-				WHERE c.id IN (${p.msg.author.id},${sender.id}) AND
-					(SELECT * FROM (SELECT COUNT(id) FROM cowoncy c2 WHERE c2.id IN (${p.msg.author.id},${sender.id}) AND c2.money >= ${bet}) c3) >= 2`
+				WHERE c.id IN (${author.id},${sender.id}) AND
+					(SELECT * FROM (SELECT COUNT(id) FROM cowoncy c2 WHERE c2.id IN (${author.id},${sender.id}) AND c2.money >= ${bet}) c3) >= 2`
 			result = await p.query(sql);
 			if(result.changedRows<2){
 				p.errorMsg(", looks like someone doesn't have enough money!",3000);
@@ -149,11 +150,11 @@ module.exports = new CommandInterface({
 			display:flags.display?flags.display:"image",
 			speed:flags.log?"instant":"short",
 			instant:flags.log?true:false,
-			title:p.msg.author.username+" vs "+sender.username,
+			title:author.username+" vs "+sender.username,
 			showLogs:flags.link?"link":flags.log?true:false
 		}
 
-		if(sender&&sender.id!=p.msg.author.id){
+		if(sender&&sender.id!=author.id){
 			p.quest("friendlyBattle");
 			p.quest("friendlyBattleBy",1,sender);
 		}

@@ -80,7 +80,23 @@ class InteractionEventEmitter extends EventEmitter{
 			}
 		}
 
-		this.emit('collect', component.custom_id, user, ack);
+		function err (content) {
+			if (typeof content === "string") {
+				content = { content }
+			}
+			if (content.embed) {
+				content.embeds = [ content.embed ];
+				delete content.embed;
+			}
+			const url = `https://discord.com/api/v8/interactions/${id}/${token}/callback`
+			content.flags = 64
+			return axios.post(url, {
+				type: 4,
+				data: content
+			});
+		}
+
+		this.emit('collect', component.custom_id, user, ack, err);
 
 		if(this.idleTimeout) {
 			clearTimeout(this.idle);

@@ -85,7 +85,7 @@ async function createMessage (msg, content, file, del, opt = {}) {
  */
 exports.reply = function(msg){
 	return function(emoji,content,del,file,opt){
-		let username = msg.author.username;
+		let username = this.opt?.author?.username || msg.author.username;
 		let tempContent = {};
 		if(typeof content === "string")
 			tempContent.content = `**${emoji} | ${username}**${content}`;
