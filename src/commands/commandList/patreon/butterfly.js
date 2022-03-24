@@ -7,17 +7,18 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const emoji = "<:nierchip:956489707829743636>";
-const owner = "282666590565171210";
-const data = "nier";
+const emoji = "<a:butterfly:956490290817015828>";
+const owner = "692146302284202134";
+const owner2 = "460987842961866762";
+const data = "butterfly";
 
 module.exports = new CommandInterface({
 
-	alias:["nier"],
+	alias:["butterfly","btf"],
 
 	args:"{@user}",
 
-	desc: "Plug-in Chips are items that you can acquire for Skills. Enjoy it. This command was created by ?" + owner + "?",
+	desc:"Leila & Estee\n\nA rebirth of an angel, the reincarnation of souls, my love your gentle touch flutters my heart. This command was created by ?" + owner + "? and ?" + owner2 + "?",
 
 	example:[],
 
@@ -43,8 +44,8 @@ module.exports = new CommandInterface({
 					return;
 				}
 			}
-			if(user.id==p.msg.author.id){
-				p.errorMsg(", You cannot give it yourself!!",3000);
+			if (p.msg.author.id != owner && p.msg.author.id != owner2) {
+				p.errorMsg(", only the owners of this command can give items!",3000);
 				p.setCooldown(5);
 				return;
 			}
@@ -57,22 +58,12 @@ async function display(p){
 	let count = await p.redis.hget("data_"+p.msg.author.id, data);
 	if(!count) count = 0;
 
-	p.replyMsg(emoji, ", you currently have "+count+" "+emoji+" **Plug-in chip**!");
+	let name = "Butterfly";
+	if (count > 1) name = "Butterflies";
+	p.replyMsg(emoji, ", you currently have "+count+" "+emoji+" **" + name + "**!");
 }
 
 async function give(p, user){
-	if(p.msg.author.id!=owner){
-		let result = await p.redis.hincrby("data_"+p.msg.author.id, data, -1);
-
-		// Error checking
-		if(result==null||result<0){
-			if(result<0) p.redis.hincrby("data_"+p.msg.author.id, data, 1);
-			p.errorMsg(", you do not have any **Plug-in chips** to give! >:c",3000);
-			p.setCooldown(5);
-			return;
-		}
-	}
-
 	await p.redis.hincrby("data_"+user.id, data, 1);
-	p.send(`${emoji} **| ${user.username}**, you have been given 1 **Plug-in chip**.`);
+	p.send(`${emoji} **| ${user.username}**, you have been given 1 **Butterfly**.`);
 }
