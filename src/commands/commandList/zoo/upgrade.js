@@ -20,10 +20,10 @@ for(let i=0;i<cost.length;i++)
 const duration = ["duration","totaltime","time"];
 for(let i=0;i<duration.length;i++)
 	traits[duration[i]] = "duration";
-const gain = ["gain","essence"];
+const gain = ["gain","essence", "ess"];
 for(let i=0;i<gain.length;i++)
 	traits[gain[i]] = "gain";
-const exp = ["exp","experience","pet"];
+const exp = ["exp","experience","pet", "xp"];
 for(let i=0;i<exp.length;i++)
 	traits[exp[i]] = "exp";
 const radar = ["radar"];
@@ -54,7 +54,7 @@ module.exports = new CommandInterface({
 
 	execute: async function (p) {
 		let { global, msg, args } = p;
-		let count, trait, all;
+		let count, trait, all, lvl;
 
 		//if arg0 is an int
 		if (global.isInt(p.args[0])) {
@@ -77,6 +77,13 @@ module.exports = new CommandInterface({
 			}
 			all = true;
 
+		// owo upg duration lvl
+		} else if (args[1] && ("lvl" == args[1].toLowerCase()) || "level" == args[1].toLowerCase()) {
+			if (args[0]) {
+				trait = traits[args[0].toLowerCase()];
+			}
+			lvl = true;
+
 		} else {
 			p.errorMsg(", Please include how many animal essence to use!", 3000);
 			return;
@@ -87,13 +94,29 @@ module.exports = new CommandInterface({
 			p.errorMsg(", I could not find that autohunt trait!\n**<:blank:427371936482328596> |** You can choose from: `efficiency`, `duration`, `cost`, `gain`,`exp`, or `radar`");
 			return;
 		}
-		if (!all && (!count || count <= 0)) {
+		if (!(all || lvl) && (!count || count <= 0)) {
 			p.errorMsg(", You need to use more than 1 animal essence silly~", 3000);
 			return;
 		}
 
+		const con = await p.startTransaction()
 		let sql = `SELECT * FROM autohunt WHERE id = ${msg.author.id};`;
-		if (all) {
+
+		if (lvl) {
+			// get current xp
+			let result = await con.query(sql);
+			// determine xp needed for level
+			let stat = autohuntUtil.getLvl(result[0][trait], 0, trait);
+			if (stat.max) {
+				count = 0;
+			}
+			else {
+				count = stat.maxxp-stat.currentxp;
+			}
+			
+			sql += `UPDATE autohunt SET essence = essence - ${count}, ${trait} = ${trait} + ${count} WHERE id = ${msg.author.id} AND essence >= ${count};`;
+		}
+		else if (all) {
 			// dump all essence into the given trait
 			sql += `UPDATE autohunt SET ${trait} = ${trait} + essence, essence = 0 WHERE id = ${msg.author.id};`;
 		} else {
@@ -101,8 +124,6 @@ module.exports = new CommandInterface({
 			sql += `UPDATE autohunt SET essence = essence - ${count}, ${trait} = ${trait} + ${count} WHERE id = ${msg.author.id} AND essence >= ${count};`;
 		}
 
-
-		const con = await p.startTransaction()
 		let result;
 		try {
 			result = await con.query(sql);
@@ -130,7 +151,7 @@ module.exports = new CommandInterface({
 		}
 
 		let text = `**🛠 | ${msg.author.username}**, You successfully upgraded \`${trait}\` with  **${p.global.toFancyNum(count)} Animal Essence** ${essence}!`;
-		text += `\n**<:blank:427371936482328596> |** \`${trait}: ${stat.stat + stat.prefix} -  Lvl ${stat.lvl} ${stat.max ? "[MAX]" : `[${stat.currentxp}/${stat.maxxp}}]`}\``;
+		text += `\n**<:blank:427371936482328596> |** \`${trait}: ${stat.stat + stat.prefix} -  Lvl ${stat.lvl} ${stat.max ? "[MAX]" : `[${stat.currentxp}/${stat.maxxp}]`}\``;
 		if (stat.max) {
 			text += "\n**<:blank:427371936482328596> |** HuntBot is at max level!";
 		} else if (stat.lvlup) {
