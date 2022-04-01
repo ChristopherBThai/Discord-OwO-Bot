@@ -46,7 +46,7 @@ module.exports = new CommandInterface({
 				p.send(`Here is your random dare: **${dare}**`);
 			}
 		} else {
-			p.errorMsg(", you must specificy either `truth` or `dare`!", 3000);
+			p.errorMsg(", you must specify either `truth` or `dare`!", 3000);
 		}
 	}
 
