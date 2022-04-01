@@ -62,16 +62,16 @@ async function applyChange(p, weapon){
 function parseArgs(p){
 	/* Parse reroll type and weapon id */
 	let rrType, uwid;
-	if(passiveArray.includes(p.args[1])){
+	if(passiveArray.includes(p.args[1].toLowerCase())){
 		rrType = "p";
 		uwid = p.args[2];
-	}else if(passiveArray.includes(p.args[2])){
+	}else if(passiveArray.includes(p.args[2].toLowerCase())){
 		rrType = "p";
 		uwid = p.args[1];
-	}else if(["stat","stats","s"].includes(p.args[1])){
+	}else if(statArray.includes(p.args[1].toLowerCase())){
 		rrType = "s";
 		uwid = p.args[2];
-	}else if(["stat","stats","s"].includes(p.args[2])){
+	}else if(statArray.includes(p.args[2].toLowerCase())){
 		rrType = "s";
 		uwid = p.args[1];
 	}else{
