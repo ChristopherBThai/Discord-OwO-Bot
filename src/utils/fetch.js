@@ -41,13 +41,16 @@ class Fetch{
 		if(!userID) return;
 		userID = userID[0];
 		let member = guild.members.get(userID);
-		if(!member){
+		if(member){
+			member.status = member.user.presence?.status;
+		}else{
 			try{
 				member = await guild.getRESTMember(userID);
 			}catch(e){
 				return;
 			}
 			if(!member.id) member.id = member.user.id;
+			if(!member.status) member.status = member.user.presence?.status;
 			if(member&&cache){
 				guild.members.add(member,guild,false);
 			}
