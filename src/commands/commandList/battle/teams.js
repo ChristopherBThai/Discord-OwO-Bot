@@ -185,7 +185,7 @@ async function displayTeams (p) {
 			}
 		}
 	];
-	const additionalFilter = (componentName, user) => componentName === 'star';
+	const additionalFilter = (componentName, user) => componentName === 'star' && user == p.msg.author.id;
 	const pagedMsg = new p.PagedMessage(
 		p,
 		createEmbed,

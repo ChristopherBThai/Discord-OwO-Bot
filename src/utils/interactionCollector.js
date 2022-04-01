@@ -58,8 +58,30 @@ class InteractionEventEmitter extends EventEmitter{
 	}
 
 	interact (component, user, id, token) {
-		if(!this.checkFilter(component.custom_id, user)) return;
-		if(this.ended) return;
+		if(!this.checkFilter(component.custom_id, user)) {
+			const url = `https://discord.com/api/v8/interactions/${id}/${token}/callback`
+			const content = {
+				content: "🚫 **|** You cannot use this button",
+				flags: 64
+			}
+			return axios.post(url, {
+				type: 4,
+				data: content
+			});
+			return;
+		}
+		if(this.ended) {
+			const url = `https://discord.com/api/v8/interactions/${id}/${token}/callback`
+			const content = {
+				content: "🚫 **|** This button is no longer active",
+				flags: 64
+			}
+			return axios.post(url, {
+				type: 4,
+				data: content
+			});
+			return;
+		}
 
 		const url = `https://discord.com/api/v8/interactions/${id}/${token}/callback`
 		function ack (content) {
