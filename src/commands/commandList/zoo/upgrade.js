@@ -100,32 +100,33 @@ module.exports = new CommandInterface({
 		}
 
 		const con = await p.startTransaction()
+		let result;
 		let sql = `SELECT * FROM autohunt WHERE id = ${msg.author.id};`;
 
-		if (lvl) {
-			// get current xp
-			let result = await con.query(sql);
-			// determine xp needed for level
-			let stat = autohuntUtil.getLvl(result[0][trait], 0, trait);
-			if (stat.max) {
-				count = 0;
-			}
-			else {
-				count = stat.maxxp-stat.currentxp;
-			}
-			
-			sql += `UPDATE autohunt SET essence = essence - ${count}, ${trait} = ${trait} + ${count} WHERE id = ${msg.author.id} AND essence >= ${count};`;
-		}
-		else if (all) {
-			// dump all essence into the given trait
-			sql += `UPDATE autohunt SET ${trait} = ${trait} + essence, essence = 0 WHERE id = ${msg.author.id};`;
-		} else {
-			// default logic
-			sql += `UPDATE autohunt SET essence = essence - ${count}, ${trait} = ${trait} + ${count} WHERE id = ${msg.author.id} AND essence >= ${count};`;
-		}
-
-		let result;
 		try {
+			if (lvl) {
+				// get current xp
+				result = await con.query(sql);
+				// determine xp needed for level
+				let stat = autohuntUtil.getLvl(result[0][trait], 0, trait);
+				if (stat.max) {
+					count = 0;
+					p.errorMsg(", this trait is already maxed out!", 3000);
+					con.rollback();
+					return;
+				} else {
+					count = stat.maxxp-stat.currentxp;
+				}
+				
+				sql += `UPDATE autohunt SET essence = essence - ${count}, ${trait} = ${trait} + ${count} WHERE id = ${msg.author.id} AND essence >= ${count};`;
+			} else if (all) {
+				// dump all essence into the given trait
+				sql += `UPDATE autohunt SET ${trait} = ${trait} + essence, essence = 0 WHERE id = ${msg.author.id};`;
+			} else {
+				// default logic
+				sql += `UPDATE autohunt SET essence = essence - ${count}, ${trait} = ${trait} + ${count} WHERE id = ${msg.author.id} AND essence >= ${count};`;
+			}
+
 			result = await con.query(sql);
 			await con.commit();
 		} catch (err) {
