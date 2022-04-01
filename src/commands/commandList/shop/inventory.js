@@ -88,7 +88,7 @@ function addToString(items){
 	let count = 0;
 	for(let i=0;i<items.length;i++){
 		let item = items[i];
-		text += "`"+((item.id<9)?"0":"")+item.id+"`"+item.emoji+ shopUtil.toSmallNum(item.count,digits);
+		text += "`"+((item.id<10)?"0":"")+((item.id<100)?"0":"")+item.id+"`"+item.emoji+ shopUtil.toSmallNum(item.count,digits);
 		count++;
 		if(count==4){
 			text += "\n";
