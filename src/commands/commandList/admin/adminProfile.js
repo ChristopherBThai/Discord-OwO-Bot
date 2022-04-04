@@ -14,9 +14,10 @@ module.exports = new CommandInterface({
 
 	alias:["adminprofile"],
 
-	admin:true,
-	mod:true,
-	dm:true,
+	owner: true,
+	admin: true,
+	manager: true,
+	helper:true,
 
 	execute: async function(p){
 		if (p.global.isUser(p.args[0]) || p.global.isInt(p.args[0])) {

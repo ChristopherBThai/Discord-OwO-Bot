@@ -13,9 +13,7 @@ module.exports = new CommandInterface({
 
 	alias:["captcha"],
 
-	admin:true,
-	mod:true,
-	dm:true,
+	owner:true,
 
 	execute: async function(p){
 		const opts = {}

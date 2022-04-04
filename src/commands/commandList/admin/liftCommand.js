@@ -13,9 +13,8 @@ module.exports = new CommandInterface({
 
 	alias:["liftcommand","lc"],
 
+	owner:true,
 	admin:true,
-	mod:true,
-	dm:true,
 
 	execute: async function(p){
 

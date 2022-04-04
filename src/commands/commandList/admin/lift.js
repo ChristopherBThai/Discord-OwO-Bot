@@ -11,9 +11,8 @@ module.exports = new CommandInterface({
 
 	alias:["lift"],
 
+	owner:true,
 	admin:true,
-	mod:true,
-	dm:true,
 
 	execute: async function(p){
 		let time;

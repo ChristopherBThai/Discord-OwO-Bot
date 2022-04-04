@@ -13,9 +13,8 @@ module.exports = new CommandInterface({
 
 	alias:["ban"],
 
+	owner:true,
 	admin:true,
-	mod:true,
-	dm:true,
 
 	execute: async function(p) {
 		let users = [], reason = [];

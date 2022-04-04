@@ -17,9 +17,9 @@ module.exports = new CommandInterface({
 
 	alias:["prayfrom"],
 
+	owner:true,
 	admin:true,
-	mod:true,
-	dm:true,
+	manager:true,
 
 	execute: async function(p){
 		if(p.args.length>2)

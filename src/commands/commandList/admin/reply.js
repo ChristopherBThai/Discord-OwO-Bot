@@ -11,9 +11,8 @@ module.exports = new CommandInterface({
 
 	alias:["reply"],
 
+	owner:true,
 	admin:true,
-	dm:true,
-	mod:true,
 
 	execute: async function(p){
 

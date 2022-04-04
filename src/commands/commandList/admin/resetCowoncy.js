@@ -11,9 +11,8 @@ module.exports = new CommandInterface({
 
 	alias:["resetcowoncy"],
 
+	owner:true,
 	admin:true,
-	mod:true,
-	dm:true,
 
 	execute: async function(p){
 		if(p.args.length<=1){

@@ -11,9 +11,8 @@ module.exports = new CommandInterface({
 
 	alias:["disablecaptcha", "enablecaptcha"],
 
+	owner:true,
 	admin:true,
-	mod:true,
-	dm:true,
 
 	execute: async function() {
 		const enableCaptcha = this.command === "enablecaptcha"

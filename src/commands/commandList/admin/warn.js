@@ -11,9 +11,9 @@ module.exports = new CommandInterface({
 
 	alias:["warn"],
 
+	owner:true,
 	admin:true,
-	mod:true,
-	dm:true,
+	manager:true,
 
 	execute: async function(p){
 		if(p.args.length<=1){

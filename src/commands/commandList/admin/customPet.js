@@ -39,8 +39,7 @@ module.exports = new CommandInterface({
 
 	alias:["custompet"],
 
-	admin:true,
-	dm:true,
+	owner:true,
 
 	execute: async function(p){
 			await msgUsers(p);

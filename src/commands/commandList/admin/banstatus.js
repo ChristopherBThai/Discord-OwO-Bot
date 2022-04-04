@@ -13,9 +13,10 @@ module.exports = new CommandInterface({
 
 	alias:["banstatus"],
 
+	owner:true,
 	admin:true,
-	mod:true,
-	dm:true,
+	manager:true,
+	helper:true,
 
 	execute: async function(p){
 		let userid = p.args[0];

@@ -13,9 +13,8 @@ module.exports = new CommandInterface({
 
 	alias:["sendverif"],
 
+	owner:true,
 	admin:true,
-	mod:true,
-	dm:true,
 
 	execute: async function(p){
 		if ( p.args.length < 1 ) {

@@ -11,7 +11,7 @@ module.exports = new CommandInterface({
 
 	alias:["giveall"],
 
-	admin:true,
+	owner:true,
 
 	execute: async function(p){
 		let amount = 0;

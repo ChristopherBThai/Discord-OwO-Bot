@@ -11,8 +11,7 @@ module.exports = new CommandInterface({
 
 	alias:["addannouncement"],
 
-	admin:true,
-	dm:true,
+	owner:true,
 
 	execute: async function(p){
 		try{
