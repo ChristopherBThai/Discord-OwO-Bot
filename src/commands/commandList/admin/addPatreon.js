@@ -14,8 +14,7 @@ module.exports = new CommandInterface({
 
 	alias:["addpatreon", "addpatreons"],
 
-	admin:true,
-	dm:true,
+	owner:true,
 
 	execute: async function(p){
 		if (p.command == "addpatreon") {

@@ -12,7 +12,6 @@ const CommandInterface = require('./CommandInterface.js');
 
 const commands = {};
 const adminCommands = {};
-const modCommands = {};
 
 const aliasToCommand = {};
 const mcommands = {};
@@ -83,41 +82,34 @@ class Command {
 		await executeCommand(this.main, param);
 	}
 
-	async executeAdmin (msg, raw){
-		let args;
-		if(msg.content.toLowerCase().indexOf(this.prefix) === 0)
-			args = msg.content.slice(this.prefix.length).trim().split(/ +/g);
-		else {
-			this.execute(msg, raw);
-			return;
+	executeAdmin (msg) {
+		if (msg.content.toLowerCase().indexOf(this.prefix) !== 0) {
+			return false;
 		}
-
+		let args = msg.content.slice(this.prefix.length).trim().split(/ +/g);
 		let command = args.shift().toLowerCase();
-
-		let param = initParam(msg,command,args,this.main);
-
-		if(!msg.channel.guild){
-			if(adminCommands[command]&&adminCommands[command].dm)
-				adminCommands[command].execute(param);
-		}else{
-			if(adminCommands[command]&&!adminCommands[command].dm)
-				adminCommands[command].execute(param);
-			else
-				this.execute(msg, raw);
+		let commandObj = adminCommands[command];
+		if (!commandObj) {
+			return false;
 		}
-	}
+		let param = initParam(msg, command, args, this.main);
 
-	async executeMod (msg){
-		let args;
-		if(msg.content.toLowerCase().indexOf(this.prefix) === 0)
-			args = msg.content.slice(this.prefix.length).trim().split(/ +/g);
-		else return;
-
-		let command = args.shift().toLowerCase();
-		let param = initParam(msg,command,args,this.main);
-
-		if(modCommands[command]) modCommands[command].execute(param);
-
+		if (commandObj.owner && msg.author.id === this.main.config.owner) {
+			adminCommands[command].execute(param);
+			return true;
+		} else if (this.main.config.modChannels.includes(msg.channel.id)) {
+			if (commandObj.admin && this.main.config.role.admin.find(id => msg.member?.roles.includes(id))) {
+				adminCommands[command].execute(param);
+				return true;
+			} else if (commandObj.manager && this.main.config.role.manager.find(id => msg.member?.roles.includes(id))) {
+				adminCommands[command].execute(param);
+				return true;
+			} else if (commandObj.helper && this.main.config.role.helper.find(id => msg.member?.roles.includes(id))) {
+				adminCommands[command].execute(param);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	checkRaw (raw) {
@@ -176,6 +168,9 @@ function initCommands(){
 	}
 
 	let addCommand = function(command){
+		if (command.owner || command.admin || command.manager || command.helper) {
+			return addAdminCommand(command);
+		}
 		let alias = command.alias;
 		let name = alias[0];
 		if(alias){
@@ -214,23 +209,16 @@ function initCommands(){
 		if(alias){
 			for(let i=0;i<alias.length;i++){
 				adminCommands[alias[i]] = command;
-				if(command.mod) modCommands[alias[i]] = command;
 			}
 		}
 	}
-	for(var key in dir){
-		if(dir[key] instanceof CommandInterface){
-			if(dir[key].admin||dir[key].mod)
-				addAdminCommand(dir[key]);
-			else
-				addCommand(dir[key]);
-		}else{
-			for(var key2 in dir[key]){
+	for (let key in dir) {
+		if (dir[key] instanceof CommandInterface) {
+			addCommand(dir[key]);
+		} else {
+			for (let key2 in dir[key]) {
 				if(dir[key][key2] instanceof CommandInterface){
-					if(dir[key][key2].admin||dir[key][key2].mod)
-						addAdminCommand(dir[key][key2]);
-					else
-						addCommand(dir[key][key2]);
+					addCommand(dir[key][key2]);
 				}
 			}
 		}

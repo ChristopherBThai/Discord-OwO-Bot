@@ -13,8 +13,7 @@ module.exports = new CommandInterface({
 
 	alias:["resetbot","restartbot"],
 
-	admin:true,
-	dm:true,
+	owner:true,
 
 	execute: function(p){
 		p.send("Restarting all shards");

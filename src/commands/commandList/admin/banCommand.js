@@ -13,9 +13,8 @@ module.exports = new CommandInterface({
 
 	alias:["bancommand","bc"],
 
+	owner:true,
 	admin:true,
-	mod:true,
-	dm:true,
 
 	execute: async function(p){
 		// Check if enough arguments

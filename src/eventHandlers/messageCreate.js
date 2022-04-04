@@ -6,7 +6,6 @@
   */
 
 const whitelist = ['409959187229966337','420104212895105044','552384921914572802']
-const modChannel = ["471579186059018241","596220958730223619","645501936036216862","759637235237650440"];
 const PrivateChannel = 1;
 const levels = require('../utils/levels.js');
 const blacklist = require('../utils/blacklist.js');
@@ -21,14 +20,14 @@ exports.handle = async function (msg, raw) {
 	if (msg.author.bot) { return; }
 
 	/* Ignore guilds if in debug mode */
-	//else if(this.debug&&msg.channel.guild&&!whitelist.includes(msg.channel.guild.id)) return;
+	else if (this.debug&&msg.channel.guild&&!whitelist.includes(msg.channel.guild.id)) {
+		return;
 
-	else if(modChannel.includes(msg.channel.id)) { this.command.executeMod(msg); }
-
-	else if(msg.author.id==this.auth.admin) { this.command.executeAdmin(msg, raw); }
+	} else if (this.command.executeAdmin(msg, raw)) {
+		return;
 
 	// no guild, its a dm
-	else if (!msg.channel.guild) {
+	} else if (!msg.channel.guild) {
 		if (await this.macro.verify(msg, msg.content.trim())) {
 			survey.handle.bind(this)(msg);
 		}

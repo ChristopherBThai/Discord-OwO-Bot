@@ -17,9 +17,9 @@ module.exports = new CommandInterface({
 
 	alias:["transaction"],
 
+	owner:true,
 	admin:true,
-	mod:true,
-	dm:true,
+	manager:true,
 
 	execute: function(p){
 		if (p.args[0] == "to") {

@@ -14,8 +14,7 @@ module.exports = new CommandInterface({
 
 	alias:["addhunt"],
 
-	admin:true,
-	dm:true,
+	owner:true,
 
 	execute: async function(p){
 		const list = await parseUsers(p);

@@ -11,9 +11,8 @@ module.exports = new CommandInterface({
 
 	alias:["banguildmembers"],
 
+	owner:true,
 	admin:true,
-	mod:true,
-	dm:true,
 
 	execute: async function () {
 		const guildId = this.args[0];
