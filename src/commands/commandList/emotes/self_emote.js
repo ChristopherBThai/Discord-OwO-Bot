@@ -9,8 +9,8 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const weeb = require('../../../utils/weeb.js');
 const emotes = require('../../../data/emotes.json').sEmote;
-var emoteList = [];
-for(var key in emotes)
+const emoteList = [];
+for(let key in emotes)
 	emoteList.push(key);
 
 module.exports = new CommandInterface({
