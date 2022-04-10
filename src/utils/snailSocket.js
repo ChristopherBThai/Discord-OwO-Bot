@@ -24,7 +24,10 @@ class SnailSocket {
 	messageChannel (channelId, contents) {
 		this.socket.emit('message-channel', { channelId, contents });
 	}
-	
+
+	userBanned (userId, isBanned) {
+		this.socket.emit('user-banned', { userId, isBanned });
+	}
 }
 
 module.exports = SnailSocket;
