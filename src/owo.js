@@ -8,17 +8,13 @@
 const Base = require('eris-sharder').Base;
 const EventHandler = require('./eventHandlers/EventHandler.js');
 
-// Secret file
-const auth = require('../../tokens/owo-auth.json');
-
 // Discordbots.org api
 const DBL = require("dblapi.js");
-const dbl = new DBL(auth.dbl);
+const dbl = new DBL(process.env.DBL_TOKEN);
 
 class OwO extends Base{
 	constructor(bot){
 		super(bot);
-		this.auth = auth;
 		this.dbl = dbl;
 
 		// Mysql connection

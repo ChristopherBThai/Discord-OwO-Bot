@@ -11,7 +11,6 @@
 const numbers = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
 const request = require('request');
 const filter = new (require('bad-words'))({placeHolder: "OwO", replaceRegex: /\w+/g});
-const secret = require('../../../tokens/wsserver.json');
 const badwords = require('../../../tokens/badwords.json');
 const { Profanity, ProfanityOptions } = require("@2toad/profanity")
 const options = new ProfanityOptions();
@@ -231,7 +230,7 @@ exports.getTotalShardCount = function(){
 	return new Promise( (resolve, reject) => {
 		let req = request({
 			method:'GET',
-			uri:secret.url+"/totalShards",
+			uri:process.env.SHARDER_HOST+"/totalShards",
 		},(error,res,body)=>{
 			if(error){
 				reject();

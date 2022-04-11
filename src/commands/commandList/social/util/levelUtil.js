@@ -6,20 +6,19 @@
   */
 
 const request = require('request');
-const imagegenAuth = require('../../../../../../tokens/imagegen.json');
 const levels = require('../../../../utils/levels.js');
 
 exports.display = async function(p,user,opt){
 	/* Construct json for POST request */
 	let info = await generateJson(p,user,opt);
-	info.password = imagegenAuth.password;
+	info.password = process.env.GEN_PASS;
 
 	/* Returns a promise to avoid callback hell */
 	try{
 		return new Promise( (resolve, reject) => {
 			let req = request({
 				method:'POST',
-				uri:imagegenAuth.levelImageUri,
+				uri:`${process.env.GEN_API_HOST}/levelgen`,
 				json:true,
 				body: info,
 			},(error,res,body)=>{

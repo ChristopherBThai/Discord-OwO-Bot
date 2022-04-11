@@ -7,7 +7,6 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const imagegen = require('../../../../../tokens/imagegen.json');
 const offsetID = 200;
 const nextPageEmoji = '➡️';
 const prevPageEmoji = '⬅️';
@@ -94,7 +93,7 @@ async function createPage(p,page,totalPages){
 	if(result[0]){
 		embed.description = "`"+(offsetID+result[0].bid)+"` **"+result[0].bname+"**";
 		embed.image = {
-			"url":imagegen.assetUrl+"/background/"+result[0].bid+".png"
+			"url":`${process.env.GEN_ASSET_HOST}/background/${result[0].bid}.png`
 		};
 		if(result[0].profile)
 			embed.description += "   *Currently Equipped*";

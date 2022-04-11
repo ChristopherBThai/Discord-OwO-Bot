@@ -1,17 +1,8 @@
 const request = require('request');
-
-let neo4j_auth;
-
-try {
-	neo4j_auth = require('../../../tokens/owo-neo4j.json');
-} catch (err) {
-	console.error("'../tokens/owo-neo4j.json' not found. Skipping neo4j logging");
-}
-
-neo4j_auth = null;
+const disabled = true;
 
 exports.give = function(msg, receiver, amount) {
-	if (!neo4j_auth) return;
+	if (disabled) return;
 	const info = {
 		senderId: msg.author.id,
 		senderName: `${msg.author.username}#${msg.author.discriminator}`,
@@ -23,11 +14,11 @@ exports.give = function(msg, receiver, amount) {
 		channelName: msg.channel.name,
 		transactionAmount: amount,
 		transactionTime: Date.now(),
-		password: neo4j_auth.password
+		password: process.env.NEO4J_PASS
 	}
 	request({
 		method:'POST',
-		uri:`${neo4j_auth.url}/give`,
+		uri:`${process.env.NEO4J_HOST}/give`,
 		json:true,
 		body: info,
 	},(error,res,body)=>{
@@ -36,7 +27,7 @@ exports.give = function(msg, receiver, amount) {
 }
 
 exports.battle = function(msg, sender, receiver, amount) {
-	if (!neo4j_auth) return;
+	if (disabled) return;
 	const info = {
 		senderId: sender.id,
 		senderName: `${sender.username}#${sender.discriminator}`,
@@ -48,11 +39,11 @@ exports.battle = function(msg, sender, receiver, amount) {
 		channelName: msg.channel.name,
 		transactionAmount: amount,
 		transactionTime: Date.now(),
-		password: neo4j_auth.password
+		password: process.env.NEO4J_PASS
 	}
 	request({
 		method:'POST',
-		uri:`${neo4j_auth.url}/battle`,
+		uri:`${process.env.NEO4J_HOST}/battle`,
 		json:true,
 		body: info,
 	},(error,res,body)=>{
@@ -61,7 +52,7 @@ exports.battle = function(msg, sender, receiver, amount) {
 }
 
 exports.drop = function(msg, amount) {
-	if (!neo4j_auth) return;
+	if (disabled) return;
 	const info = {
 		senderId: msg.author.id,
 		senderName: `${msg.author.username}#${msg.author.discriminator}`,
@@ -71,11 +62,11 @@ exports.drop = function(msg, amount) {
 		channelName: msg.channel.name,
 		transactionAmount: amount,
 		transactionTime: Date.now(),
-		password: neo4j_auth.password
+		password: process.env.NEO4J_PASS
 	}
 	request({
 		method:'POST',
-		uri:`${neo4j_auth.url}/drop`,
+		uri:`${process.env.NEO4J_HOST}/drop`,
 		json:true,
 		body: info,
 	},(error,res,body)=>{
@@ -84,7 +75,7 @@ exports.drop = function(msg, amount) {
 }
 
 exports.pickup = function(msg, amount) {
-	if (!neo4j_auth) return;
+	if (disabled) return;
 	const info = {
 		senderId: msg.author.id,
 		senderName: `${msg.author.username}#${msg.author.discriminator}`,
@@ -94,11 +85,11 @@ exports.pickup = function(msg, amount) {
 		channelName: msg.channel.name,
 		transactionAmount: amount,
 		transactionTime: Date.now(),
-		password: neo4j_auth.password
+		password: process.env.NEO4J_PASS
 	}
 	request({
 		method:'POST',
-		uri:`${neo4j_auth.url}/pickup`,
+		uri:`${process.env.NEO4J_HOST}/pickup`,
 		json:true,
 		body: info,
 	},(error,res,body)=>{

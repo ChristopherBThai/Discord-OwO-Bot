@@ -8,7 +8,6 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const request = require('request');
-const secret = require('../../../../../tokens/wsserver.json');
 let cases = {};
 fetchCases();
 setInterval(fetchCases,1800000);
@@ -143,7 +142,7 @@ function showStats(p, name) {
 async function fetchCases() {
 	request({
 		method:'GET',
-		uri:secret.url+"/covid",
+		uri:process.env.SHARDER_HOST+"/covid",
 	},(error,res,body)=>{
 		if(error){
 			console.error(error);

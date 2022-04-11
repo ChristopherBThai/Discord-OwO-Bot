@@ -6,7 +6,6 @@
   */
 	
 let client, pubsub, admin;
-const auth = require('../../../tokens/owo-auth.json');
 const logChannel = "739393782805692476";
 const modLogChannel = "471579186059018241";
 
@@ -167,16 +166,6 @@ exports.msgUser = async function(id,msg){
 	}
 	
 	return user;
-}
-
-/**
- * Sends a message to an admin
- */
-exports.msgAdmin = async function (message){
-	if(admin==undefined)
-		admin = await client.getDMChannel(auth.admin,true);
-	if(admin)
-		admin.createMessage(message);
 }
 
 exports.msgChannel = async function (channel,msg,options){

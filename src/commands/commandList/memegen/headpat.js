@@ -8,7 +8,6 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const request = require('request');
-const imagegenAuth = require('../../../../../tokens/imagegen.json');
 
 module.exports = new CommandInterface({
 
@@ -54,7 +53,7 @@ module.exports = new CommandInterface({
 
 		try {
 			const uuid = await fetchImage(p, link);
-			const url = `${imagegenAuth.imageGenUrl}/img/${uuid}.gif`
+			const url = `${process.env.GEN_HOST}/img/${uuid}.gif`
 			await display(p, url, name);
 		} catch (err) {
 			console.log(err);
@@ -134,14 +133,14 @@ function createEmbed (p, url, name, emojiName, emojiAdder) {
 async function fetchImage (p, link) {
 	const info = {
 		avatarLink: link,
-		password: imagegenAuth.password
+		password: process.env.GEN_PASS
 	}
 
 	return new Promise( (resolve, reject) => {
 		try {
 			let req = request({
 				method:'POST',
-				uri:imagegenAuth.imageApiUri+"/headpat",
+				uri:`${process.env.GEN_API_HOST}/headpat`,
 				json:true,
 				body: info,
 			},(error,res,body)=>{

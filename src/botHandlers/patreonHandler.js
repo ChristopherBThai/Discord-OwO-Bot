@@ -8,19 +8,14 @@
 var url = require('url');
 var patreon = require('patreon');
 
-// Use the client id and secret you received when setting up your OAuth account
-const auth = require('../../../tokens/owo-auth.json');
-var CLIENT_ID = auth.patreonID;
-var CLIENT_SECRET = auth.patreonSecret;
-
 var patreonAPI,patreonOAuth,patreonOAuthClient,patreon_client;
 var link = '/campaigns/1623609?include=benefits.deliverables.user&fields%5Bbenefit%5D=title&fields%5Buser%5D=full_name,social_connections';
 
 exports.request = async function(){
 	patreonAPI = patreon.patreon;
 	patreonOAuth = patreon.oauth;
-	patreonOAuthClient = patreonOAuth(CLIENT_ID, CLIENT_SECRET);
-	patreon_client = patreonAPI(auth.patreonAccessToken);
+	patreonOAuthClient = patreonOAuth(process.env.PATREON_CLIENT_ID, process.env.PATREON_CLIENT_SECRET);
+	patreon_client = patreonAPI(process.env.PATREON_ACCESS_TOKEN);
 	return await requestRec(link);
 }
 

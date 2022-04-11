@@ -13,9 +13,6 @@ const config = require('./src/data/config.json');
 const debug = config.debug;
 if(!debug) var tracer = require('dd-trace').init();
 
-if(debug) var auth = require('../tokens/scuttester-auth.json');
-else var auth = require('../tokens/owo-auth.json');
-
 const request = require('./utils/request.js');
 // Eris-Sharder
 const Sharder = require('eris-sharder').Master;
@@ -49,7 +46,7 @@ let clusters = 60;
 		console.log("Creating shards "+firstShardID+"~"+lastShardID+" out of "+shards+" total shards!");
 
 		// Start sharder
-		const sharder = new Sharder("Bot "+auth.token, config.sharder.path, {
+		const sharder = new Sharder("Bot "+process.env.BOT_TOKEN, config.sharder.path, {
 			name: config.sharder.name,
 			clientOptions: config.eris.clientOptions,
 			debug:true,

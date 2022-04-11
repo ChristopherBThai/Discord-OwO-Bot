@@ -8,7 +8,6 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const request = require('request');
-const secret = require('../../../../../tokens/wsserver.json');
 const maxDiff = 30000;
 const perPage = 20;
 const nextPageEmoji = '➡️';
@@ -141,7 +140,7 @@ async function fetchInfo(p){
 		setTimeout(function(){
 			let req = request({
 				method:'GET',
-				uri:secret.url+"/shard-status",
+				uri:process.env.SHARDER_HOST+"/shard-status",
 			},(error,res,body)=>{
 				if(error){
 					reject();

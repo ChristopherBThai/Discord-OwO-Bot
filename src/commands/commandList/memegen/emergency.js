@@ -8,7 +8,6 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const request = require('request');
-const imagegenAuth = require('../../../../../tokens/imagegen.json');
 const Vibrant = require('node-vibrant');
 const rocketEmoji = '🚀';
 
@@ -36,7 +35,7 @@ module.exports = new CommandInterface({
 	execute: async function(p){
 		try {
 			const uuid = await fetchImage(p, p.msg.author);
-			const url = `${imagegenAuth.imageGenUrl}/img/${uuid}.gif`
+			const url = `${process.env.GEN_HOST}/img/${uuid}.gif`
 			const data = await p.DataResolver.urlToBuffer(url);
 			await p.send(`${rocketEmoji} **| ${p.msg.author.username}** called an emergency meeting!`,null,{file:data,name:"eject.gif"});
 		} catch (err) {
@@ -61,14 +60,14 @@ async function fetchImage(p, user) {
 	const info = {
 		avatarLink: user.dynamicAvatarURL("png"),
 		handColor,
-		password: imagegenAuth.password
+		password: process.env.GEN_PASS
 	}
 
 	return new Promise( (resolve, reject) => {
 		try {
 			let req = request({
 				method:'POST',
-				uri:imagegenAuth.imageApiUri+"/emergency",
+				uri:`${process.env.GEN_API_HOST}/emergency`,
 				json:true,
 				body: info,
 			},(error,res,body)=>{

@@ -8,7 +8,6 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const request = require('request');
-const imagegenAuth = require('../../../../../tokens/imagegen.json');
 const maxInt = 16777215;
 const Vibrant = require('node-vibrant');
 const colorEmoji = '🎨';
@@ -180,7 +179,7 @@ async function constructEmbed(color,p){
 		description,
 		color:color.intValue,
 		thumbnail:{
-			url:imagegenAuth.imageGenUrl+"/color/"+uuid
+			url:`${process.env.GEN_HOST}/color/${uuid}`
 		}
 	}
 	return embed;
@@ -349,14 +348,14 @@ function hslToRgb(h, s, l){
 function generateImage(color){
 	/* Construct json for POST request */
 	let info = color;
-	info.password = imagegenAuth.password;
+	info.password = process.env.GEN_PASS;
 
 	/* Returns a promise to avoid callback hell */
 	try{
 		return new Promise( (resolve, reject) => {
 			let req = request({
 				method:'POST',
-				uri:imagegenAuth.colorImageUri,
+				uri:`${process.env.GEN_API_HOST}/colorgen`,
 				json:true,
 				body: info,
 			},(error,res,body)=>{

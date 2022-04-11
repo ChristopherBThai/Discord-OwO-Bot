@@ -6,8 +6,7 @@
   */
 	
 const weeb = require("weeb.js");
-const auth = require('../../../tokens/owo-auth.json');
-const sh = new weeb("Wolke "+auth.weebsh,"owo/1.0");
+const sh = new weeb("Wolke "+process.env.WEEBSH_TOKEN,"owo/1.0");
 
 /**
  * Gets an image from weeb.sh

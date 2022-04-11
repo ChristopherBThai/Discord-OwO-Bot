@@ -6,7 +6,6 @@
   */
 
 const CommandInterface = require('../../CommandInterface.js');
-const imagegenAuth = require('../../../../../tokens/imagegen.json');
 const levelRewards = require('../../../utils/levelRewards.js');
 const levelUtil = require('./util/levelUtil.js');
 const settingEmoji = '⚙';
@@ -64,7 +63,7 @@ module.exports = new CommandInterface({
 					return;
 				}
 
-				let url = imagegenAuth.imageGenUrl+'/level/'+uuid+'.png';
+				let url = `${process.env.GEN_HOST}/level/${uuid}.png`;
 				let data = await p.DataResolver.urlToBuffer(url);
 				await p.send("",null,{file:data,name:"level.png"});
 				if(!opt.guild) await levelRewards.distributeRewards(p.msg);

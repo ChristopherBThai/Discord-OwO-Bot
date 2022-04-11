@@ -7,7 +7,6 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 const request = require('request');
-const secret = require('../../../../../tokens/wsserver.json');
 
 module.exports = new CommandInterface({
 
@@ -74,7 +73,7 @@ function fetchInfo(p){
 		setTimeout(function(){
 			let req = request({
 				method:'GET',
-				uri:secret.url+"/botinfo",
+				uri:process.env.SHARDER_HOST+"/botinfo",
 			},(error,res,body)=>{
 				if(error){
 					reject();

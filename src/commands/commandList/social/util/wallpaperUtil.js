@@ -6,7 +6,6 @@
   */
 
 const offsetID = 200;
-const imagegen = require('../../../../../../tokens/imagegen.json');
 const wallpaperEmoji = '🖼';
 
 exports.buy = async function(p,id){
@@ -55,7 +54,7 @@ exports.buy = async function(p,id){
 		},
 		"color": p.config.embed_color,
 		"image":{
-			"url":imagegen.assetUrl+"/background/"+bid+".png"
+			"url":`${process.env.GEN_ASSET_HOST}/background/${bid}/.png`
 		}
 	}
 	await p.send({embed});

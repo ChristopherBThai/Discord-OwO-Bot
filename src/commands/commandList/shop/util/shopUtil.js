@@ -7,7 +7,6 @@
 
 const global = require('../../../../utils/global.js');
 const numbers = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
-const imagegen = require('../../../../../../tokens/imagegen.json');
 const nextPageEmoji = '➡️';
 const prevPageEmoji = '⬅️';
 
@@ -112,7 +111,7 @@ async function getWallpaperPage(p,currentPage,totalPages){
 		let cLength = charLen-result[0].bname.length+(4-(""+price).length);
 		embed.description = `\`${idOffset+result[0].bid}\` **\`${result[0].bname}\`**\`${"-".repeat(cLength)} ${price}\` <:cowoncy:416043450337853441>`;
 		embed.image = {
-			"url":imagegen.assetUrl+"/background/"+result[0].bid+".png"
+			"url":`${process.env.GEN_ASSET_HOST}/background/${result[0].bid}.png`
 		};
 		if(result[0].profile)
 			embed.description = "*"+embed.description;
