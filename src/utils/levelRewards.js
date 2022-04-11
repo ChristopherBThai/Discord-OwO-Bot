@@ -1,5 +1,4 @@
 const mysql = require('../botHandlers/mysqlHandler.js');
-const imagegenAuth = require('../../../tokens/imagegen.json');
 const request = require('request');
 const levels = require('./levels.js');
 const global = require('./global.js');
@@ -84,7 +83,7 @@ exports.distributeRewards = async function(msg){
 	try{
 		uuid = await generateImage(msg,{level,cowoncy,lootbox,weaponcrate});
 		if(!uuid||uuid=="") throw "No uuid";
-		url = imagegenAuth.imageGenUrl+'/levelup/'+uuid+'.png';
+		url = `${process.env.GEN_HOST}/levelup/${uuid}.png`;
 		buffer = await DataResolver.urlToBuffer(url);
 	}catch(e){
 		return;
@@ -145,12 +144,12 @@ async function generateImage(msg,reward){
 			{img:'crate.png',text:'+'+global.toFancyNum(reward.weaponcrate)},
 		]
 	};
-	info.password = imagegenAuth.password;
+	info.password = process.env.GEN_PASS;
 	try{
 		return new Promise( (resolve, reject) => {
 			let req = request({
 				method:'POST',
-				uri:imagegenAuth.levelupImageUri,
+				uri: `${process.env.GEN_API_HOST}/levelupgen`,
 				json:true,
 				body: info,
 			},(error,res,body)=>{

@@ -9,7 +9,6 @@ let cooldown = 3000;
 let onCooldown = false;
 
 const request = require('request');
-const secret = require('../../../../tokens/wsserver.json');
 
 exports.handle = async function(main, message){
 	if(onCooldown) return;
@@ -18,7 +17,7 @@ exports.handle = async function(main, message){
 
 	request({
 		method:'POST',
-		uri:secret.url+"/update-shard",
+		uri:process.env.SHARDER_HOST+"/update-shard",
 		json:true,
 		body: fetchInfo(main),
 	},function(err,res,body){
@@ -31,7 +30,7 @@ exports.handle = async function(main, message){
 }
 
 function fetchInfo(main){
-	let result = {password:secret.password};
+	let result = {password:process.env.SHARDER_PASS};
 	let shards = main.bot.shards;
 
 	shards.forEach(function(val,key,map){

@@ -14,7 +14,6 @@ const animalUtil = require('./animalUtil.js');
 const battleImageUtil = require('../battleImage.js');
 const WeaponInterface = require('../WeaponInterface.js');
 var allBuffs = WeaponInterface.allBuffs;
-const imagegenAuth = require('../../../../../../tokens/imagegen.json');
 const request = require('request');
 const crateUtil = require('./crateUtil.js');
 const alterBattle = require('../../patreon/alterBattle.js');
@@ -281,7 +280,7 @@ var display = exports.display = async function(p,team,logs,{display,title,showLo
 		}
 		],
 		"image":{
-			"url":imagegenAuth.imageGenUrl+"/image/"+image
+			"url":`${process.env.GEN_HOST}/image/${image}`
 		}
 	}
 
@@ -644,7 +643,7 @@ exports.displayAllBattles = async function(p,battle,logs,setting){
 	let logLink;
 	if(setting.showLogs=="link"){
 		let uuid = await createLogUUID(logs.slice(0,-1));
-		if(uuid) logLink = imagegenAuth.owobotSite+"/battle-log/"+uuid;
+		if(uuid) logLink = `${process.env.GEN_HOST}/battle-log/${uuid}`;
 	}
 	setting.logLink = logLink;
 	/* Instant mode sends just one message */
@@ -1263,12 +1262,12 @@ function parseLogs(logs){
 
 /* Creates a uuid for battle logs website */
 async function createLogUUID(logs){
-	let info = {logs,password:imagegenAuth.password};
+	let info = {logs,password:process.env.GEN_PASS};
 	try{
 		return new Promise( (resolve, reject) => {
 			let req = request({
 				method:'POST',
-				uri:imagegenAuth.battleLogUri,
+				uri:`${process.env.GEN_API_HOST}/savelog`,
 				json:true,
 				body: info,
 			},(error,res,body)=>{

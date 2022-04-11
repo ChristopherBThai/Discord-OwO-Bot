@@ -6,7 +6,6 @@
   */
 
 const request = require('request');
-const imagegenAuth = require('../../../../../../tokens/imagegen.json');
 const rings = require('../../../../data/rings.json');
 const levels = require('../../../../utils/levels.js');
 const animalUtil = require('../../battle/util/animalUtil.js');
@@ -16,14 +15,14 @@ const settingEmoji = '⚙';
 var display = exports.display = async function(p,user){
 	/* Construct json for POST request */
 	let info = await generateJson(p,user);
-	info.password = imagegenAuth.password;
+	info.password = process.env.GEN_PASS;
 
 	/* Returns a promise to avoid callback hell */
 	try{
 		return new Promise( (resolve, reject) => {
 			let req = request({
 				method:'POST',
-				uri:imagegenAuth.profileImageUri,
+				uri:`${process.env.GEN_API_HOST}/profilegen`,
 				json:true,
 				body: info,
 			},(error,res,body)=>{
@@ -217,7 +216,7 @@ async function getInfo(p,user){
 var displayProfile = exports.displayProfile = async function(p,user){
 		try{
 			let uuid = await display(p,user);
-			let url = imagegenAuth.imageGenUrl+'/profile/'+uuid+'.png';
+			let url = `${process.env.GEN_HOST}/profile/${uuid}.png`;
 			let data = await p.DataResolver.urlToBuffer(url);
 			if(uuid){
 				let warning = '⚠';

@@ -7,7 +7,6 @@
 
 const PageClass = require('./../PageClass.js');
 
-const imagegen = require('../../../../../../tokens/imagegen.json');
 const perPage = 10;
 const pictureEmoji = '🖼';
 const idOffset = 200;
@@ -37,7 +36,7 @@ module.exports = class WallpaperPage extends PageClass {
 				id:idOffset+wallpaper.bid,
 				emoji: pictureEmoji,
 				name: wallpaper.bname,
-				url: `${imagegen.assetUrl}/background/${wallpaper.bid}.png`,
+				url: `${process.env.GEN_ASSET_HOST}/background/${wallpaper.bid}.png`,
 				price: this.p.global.toShortNum(wallpaper.price),
 				priceEmoji: '<:cowoncy:416043450337853441>',
 				lineThrough: !!wallpaper.uid

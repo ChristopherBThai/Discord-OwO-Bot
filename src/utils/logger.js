@@ -51,7 +51,6 @@ const sdc = new SDC({
 	prefix: 'owo',
 	socketTimeout: 5000
 });
-const influxdb = require('../../../tokens/influxdb.json');
 
 const incr = exports.incr = function (name, amount=1, tags={}, msg) {
 	return;
@@ -84,14 +83,14 @@ const decr = exports.decr = function (name, amount=-1, tags={}, msg) {
 const request = require('request');
 exports.command = function(command, msg) {
 	const body = {
-		password: influxdb.password,
+		password: process.env.INFLUXDB_PASS,
 		command: command,
 		user: msg.author.id
 	}
 
 	request({
 		method:'POST',
-		uri:`${influxdb.url}/command`,
+		uri:`${process.env.INFLUXDB_HOST}/command`,
 		json:true,
 		body: body,
 	},function(err,res,body){
@@ -104,7 +103,7 @@ exports.command = function(command, msg) {
 
 exports.logstash = function (command, p) {
 	const body = {
-		password: influxdb.password,
+		password: process.env.INFLUXDB_PASS,
 		user: p.msg.author.id,
 		command: command,
 		text: p.msg.content,
@@ -113,7 +112,7 @@ exports.logstash = function (command, p) {
 
 	request({
 		method:'POST',
-		uri:`${influxdb.url}/metric`,
+		uri:`${process.env.INFLUXDB_HOST}/metric`,
 		json:true,
 		body: body,
 	},function(err,res,body){
@@ -126,7 +125,7 @@ exports.logstash = function (command, p) {
 
 exports.logstashBanned  = function (command, p) {
 	const body = {
-		password: influxdb.password,
+		password: process.env.INFLUXDB_PASS,
 		user: p.msg.author.id,
 		bannedCommand: command,
 		text: p.msg.content,
@@ -135,7 +134,7 @@ exports.logstashBanned  = function (command, p) {
 
 	request({
 		method:'POST',
-		uri:`${influxdb.url}/metric`,
+		uri:`${process.env.INFLUXDB_HOST}/metric`,
 		json:true,
 		body: body,
 	},function(err,res,body){
@@ -147,11 +146,11 @@ exports.logstashBanned  = function (command, p) {
 }
 
 exports.logstashCaptcha = function (metric) {
-	metric.password = influxdb.password;
+	metric.password = process.env.INFLUXDB_PASS;
 
 	request({
 		method:'POST',
-		uri:`${influxdb.url}/captcha`,
+		uri:`${process.env.INFLUXDB_HOST}/captcha`,
 		json:true,
 		body: metric,
 	},function(err,res,body){

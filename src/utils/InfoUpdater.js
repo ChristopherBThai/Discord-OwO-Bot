@@ -7,7 +7,6 @@
 
 const interval = 300000;
 const request = require('request');
-const secret = require('../../../tokens/wsserver.json');
 
 class InfoUpdater{
 	constructor(main){
@@ -22,7 +21,7 @@ class InfoUpdater{
 
 	updateBotInfo(){
 		let info = {
-			password:secret.password,
+			password:process.env.SHARDER_PASS,
 			guilds:this.main.bot.guilds.size,
 			channels:0,
 			users:this.main.bot.users.size
@@ -30,7 +29,7 @@ class InfoUpdater{
 
 		request({
 			method:'POST',
-			uri:`${secret.url}/update-bot/${secret.server}-${this.main.clusterID}`,
+			uri:`${process.env.SHARDER_HOST}/update-bot/${process.env.SHARDER_SERVER}-${this.main.clusterID}`,
 			json:true,
 			body: info,
 		},(err,res,body) => {
