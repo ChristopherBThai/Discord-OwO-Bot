@@ -13,6 +13,8 @@ exports.alter = function (p, id, text, info) {
 			return lexx(p, info);
 		case '605994815317999635':
 			return rhine(p, info);
+		case '379213399973953537':
+			return king(p, info);
 		default:
 			return text;
 	}
@@ -35,11 +37,24 @@ function rhine (p, info) {
 	const embed = {
 		color: 16758232,
 		image: {
-			url: "https://media.discordapp.net/attachments/887582241243422721/889401388633833472/lines-stars-757683.gif"
+			url: "https://media.discordapp.net/attachments/886547029478768640/963001595472261140/ezgif-3-1f6690830d.gif"
 		},
 		description: `💬 **|** **${info.from.username}** says: "Save money and money will save you."`
 			+ `\n💵 **|** sent **${info.amount} cowoncy**`
 			+ `\n🌸 **|** to **${info.to.username}**`
+	}
+	return { embed };
+}
+
+function king (p, info) {
+	const embed = {
+		color: 1245180,
+		image: {
+			url: "https://media.discordapp.net/attachments/775674852303700008/962756882949341204/204180c6-c717-46d0-a1e2-9062dbc2ad03-1-1-1.png"
+		},
+		description: `📜 **|** **${info.from.username}** says: "Save money and money will save you."`
+			+ `\n💰 **|** sent **${info.amount} uwu!**`
+			+ `\n🚀 **|** to **${info.to.username}**`
 	}
 	return { embed };
 }

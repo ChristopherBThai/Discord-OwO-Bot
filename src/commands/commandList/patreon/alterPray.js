@@ -6,6 +6,7 @@
   */
 
 const blank = '<:blank:427371936482328596>';
+const emoji = '🙏';
 
 exports.alter = function (id,text,info) {
 	switch (id) {
@@ -17,6 +18,8 @@ exports.alter = function (id,text,info) {
 			return sky(text, info);
 		case '707939636835516457':
 			return dire(text, info);
+		case '856036736970260490':
+			return lapiis(text, info);
 		default:
 			return text;
 	}
@@ -177,3 +180,13 @@ function dire (text, info) {
 	};
 }
 
+function lapiis (text, info) {
+	let desc = text.replace(emoji, '<a:heart:965019226228269086>');
+	return {
+		embed: {
+			description: desc,
+			thumbnail: { url: 'https://c.tenor.com/HKIpSkjda9kAAAAi/tkthao219-bubududu.gif' },
+			color: 8240363
+		}
+	}
+}

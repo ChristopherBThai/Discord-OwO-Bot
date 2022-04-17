@@ -145,7 +145,6 @@ async function fetchImage (p, link) {
 				body: info,
 			},(error,res,body)=>{
 				if(error){
-					console.log(error);
 					reject();
 					return;
 				}
