@@ -37,7 +37,7 @@ function lanre (text, opt) {
 
 function eliza (text, opt) {
 	text.description = opt.desc;
-	text.author.name = "Guarded by ameodssbxiw, Danny and Roshi";
+	text.author.name = "Guarded by Danny and Roshi";
 	text.image = {
 		url: "https://cdn.discordapp.com/attachments/833776274139775056/844240371731136533/IMG_20201019_175851_027.jpg"
 	}
