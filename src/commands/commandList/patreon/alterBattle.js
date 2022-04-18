@@ -449,7 +449,7 @@ function notJames(text,opt) {
 		case 16711680:
 			if (opt) {
 				text.author.name = 'chem has arrived to protect the Fallen Stars from outerspace invaders!';
-				text.footer.text = `Wait...what?! The battle ended after ${opt.turns} turns. You sadly collected 50 star fragments and lost your streak of ${opt.streak} victories...`;
+				text.footer.text = `Defeat || Collected: 50 stardust || Lost: ${opt.streak} booms :c`;
 			}
 			text.color = 1262169;
 			text.thumbnail = {
@@ -461,17 +461,17 @@ function notJames(text,opt) {
 		case 65280:
 			if (opt) {
 				const stardust = (''+opt.xp).includes('+') ? 'bonus stardust' : 'stardust'
-				text.author.name = 'chem has arrived to protect the Fallen Stars from outerspace invaders!';
+				text.author.name = 'james has arrived to protect the Fallen Stars from outerspace invaders!';
 				if (opt.streak % 10000 == 0) {
-					text.footer.text = `Glorius victory! You defeated the bad guys and cleared the Starlight Pathway. You happily returned home with ${opt.xp} bonus star shards! Win streak: ${opt.streak} `;
+					text.footer.text = `Victory || Collected: ${opt.xp} bonus star shards || Boomoos: ${opt.streak}`;
 				} else if (opt.streak % 1000 == 0) {
-					text.footer.text = `Muahahaha! The evil force has been defeated! You collected ${opt.xp} bonus star shards and unlocked a new Star Constellation! Streak: ${opt.streak}!`;
+					text.footer.text = `Victory || Collected: ${opt.xp} bonus star shards || Boomieos: ${opt.streak}`;
 				} else if (opt.streak % 100 == 0) {
-					text.footer.text = `UwU.. a Victory! You sent the enemy back to Space and brought home ${opt.xp} bonus stardust! Streak: ${opt.streak}`;
+					text.footer.text = `Victory || Collected: ${opt.xp} bonus star shards || Boomies: ${opt.streak}`;
 				} else if (opt.streak % 10 == 0) {
-					text.footer.text = `Victory! You collected ${opt.xp} bonus stardust and kicked the enemy out of the planet! Streak: ${opt.streak}`;
+					text.footer.text = `Victory || Collected: ${opt.xp} bonus star shards || Booms: ${opt.streak}`;
 				} else {
-					text.footer.text = `Victory! You collected ${opt.xp} ${stardust} and punched the enemy out of the planet! Streak: ${opt.streak}`;
+					text.footer.text = `Victory || Collected: ${opt.xp} ${stardust} || Booms: ${opt.streak}`;
 				}
 			}
 			text.color = 1190467;
@@ -483,8 +483,8 @@ function notJames(text,opt) {
 		//tie
 		case 6381923:
 			if (opt) {
-				text.author.name = 'chem has arrived to protect the Fallen Stars from outerspace invaders!';
-				text.footer.text = `Ahhh!! Close call, but you still managed to collect ${opt.xp} star fragments! Need some rest now.. Streak: ${opt.streak}`;
+				text.author.name = 'james has arrived to protect the Fallen Stars from outerspace invaders!';
+				text.footer.text = `Tie || Collected: ${opt.xp} star fragments || Booms: ${opt.streak}`;
 			}
 			text.color = 4539717;
 			text.thumbnail = {
