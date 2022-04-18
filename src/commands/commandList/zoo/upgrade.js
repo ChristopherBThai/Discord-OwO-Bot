@@ -37,9 +37,9 @@ module.exports = new CommandInterface({
 
 	args:"{trait} {count}",
 
-	desc:"Use animal essence to upgrade autohunt!",
+	desc:"Use animal essence to upgrade autohunt!\nYou can specify an amount, upgrade to the next level, or use all your essence.",
 
-	example:["owo upgrade efficiency 200","owo upgrade cost 5000"],
+	example:["owo upgrade efficiency 200","owo upgrade cost level","owo upgrade duration all"],
 
 	related:["owo autohunt","owo sacrifice"],
 
