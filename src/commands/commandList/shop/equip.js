@@ -20,9 +20,9 @@ module.exports = new CommandInterface({
 
 	args:"{id}",
 
-	desc:"Use an item from your inventory!",
+	desc:"Use items from your inventory!",
 
-	example:["owo equip 2"],
+	example:["owo equip 50","owo equip 57 71 78","owo equip 101"],
 
 	related:["owo inv","owo weapon"],
 
