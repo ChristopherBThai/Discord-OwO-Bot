@@ -7,35 +7,15 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const emojis = ["<a:cat1:965356299082690590>", "<a:cat2:965356299221078016>", "<a:cat3:965356298600337418>"];
-const owners = ["412812867348463636", "692146302284202134", "606142158067597332"];
-const data = "catto";
+const emoji = "<a:latte:965526667521040444>";
+const owners = ["863101441697775616"];
+const data = "latte";
 const ownerOnly = true;
 const giveAmount = 1;
-const desc = "Hopefully these fluffy cattos make your day brighter! These collectibles are only given out by ?412812867348463636?, ?692146302284202134? and ?606142158067597332?";
-function sendDisplay (count) {
-	const plural = count > 1 ? 's' : '';
-	const msg = `, you currently have ${count} **catto${plural}**\nTake care of them or they'll run away..`;
-	const emoji = emojis[Math.floor(emojis.length * Math.random())];
-	this.replyMsg(emoji, msg);
-}
-function sendBroke () {
-	const msg = `, you do not have any cattos to give! >:c`;
-	this.errorMsg(brokeMsg, 3000);
-}
-function sendGive (giver, receiver) {
-	const emoji = emojis[Math.floor(emojis.length * Math.random())];
-	let msg = `${emoji} **| ${receiver.username}**, you have received one catto from ${giver.username}! *meow~*\n${this.config.emoji.blank} **|** `;
-	const rand = Math.random();
-	if (rand < 0.333) {
-		msg += `He's probably sleeping don't wake him up... <a:cat4:965356298893950977>`;
-	} else if (rand < 0.666) {
-		msg += `The purr-fect company for your lonely nights <a:cat5:965356298965245992>`;
-	} else {
-		msg += `Maybe now you'll have 9 lives to waste...probably <a:cat6:965356298814238800>`;
-	}
-	this.send(msg)
-}
+const desc = "This custom item can only be given by the owner of this command.";
+const displayMsg = `, you currently have ?count? ${emoji} latte?plural?!`;
+const brokeMsg = `, you do not have any lattes to give! >:c`;
+const giveMsg = `, you have been given 1 ${emoji} latte.`;
 
 let ownersString = `?${owners[owners.length - 1]}?`;
 if (owners.slice(0, -1).length) {
@@ -44,7 +24,7 @@ if (owners.slice(0, -1).length) {
 
 module.exports = new CommandInterface({
 
-	alias:[data, "shifo", "ufo"],
+	alias:[data],
 
 	args:"{@user}",
 
@@ -91,7 +71,9 @@ module.exports = new CommandInterface({
 
 async function display () {
 	let count = await this.redis.hget("data_" + this.msg.author.id, data);
-	sendDisplay.bind(this)(count || 0);
+	const msg = displayMsg.replace('?count?', count || 0)
+		.replace('?plural?', count > 1 ? 's' : '');
+	this.replyMsg(emoji, msg);
 }
 
 async function give (user) {
@@ -100,12 +82,12 @@ async function give (user) {
 		// Error checking
 		if (result == null || result < 0) {
 			if (result<0) this.redis.hincrby("data_" + this.msg.author.id, data, 1);
-			sendBroke.bind(this)();
+			this.errorMsg(brokeMsg, 3000);
 			this.setCooldown(5);
 			return;
 		}
 	}
 
 	await this.redis.hincrby("data_" + user.id, data, giveAmount);
-	sendGive.bind(this)(this.msg.author, user);
+	this.send(`${emoji} **| ${user.username}**${giveMsg}`)
 }

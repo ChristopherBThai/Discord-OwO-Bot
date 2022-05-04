@@ -28,7 +28,13 @@ module.exports = new CommandInterface({
 })
 
 async function getPatreons(p){
-	let patreons = await patreon.request();
+	let patreons;
+	try {
+	 patreons = await patreon.request();
+	} catch (err) {
+		console.error(err);
+		return;
+	}
 	console.log(patreons);
 	let result = [];
 	if (p.args[0] != "ignoresql") {

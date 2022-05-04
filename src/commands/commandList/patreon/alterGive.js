@@ -52,7 +52,7 @@ function king (p, info) {
 		image: {
 			url: "https://media.discordapp.net/attachments/775674852303700008/962756882949341204/204180c6-c717-46d0-a1e2-9062dbc2ad03-1-1-1.png"
 		},
-		description: `📜 **|** **${info.from.username}** says: "Save money and money will save you."`
+		description: `📜 **|** **${info.from.username}** says: When We Have No Money, We Got No Power"`
 			+ `\n💰 **|** sent **${info.amount} uwu!**`
 			+ `\n🚀 **|** to **${info.to.username}**`
 	}
