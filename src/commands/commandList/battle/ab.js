@@ -155,8 +155,8 @@ module.exports = new CommandInterface({
 		}
 
 		if(sender&&sender.id!=author.id){
-			p.quest("friendlyBattle");
-			p.quest("friendlyBattleBy",1,sender);
+			p.quest("friendlyBattle", 1, author);
+			p.quest("friendlyBattleBy", 1, sender);
 		}
 		await battleUtil.displayAllBattles(p,teams,logs,setting);
 
