@@ -8,14 +8,14 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const emojis = ["<a:cat1:965356299082690590>", "<a:cat2:965356299221078016>", "<a:cat3:965356298600337418>"];
-const owners = ["412812867348463636", "692146302284202134", "606142158067597332", "184587051943985152"];
+const owners = ["412812867348463636", "692146302284202134", "606142158067597332"];
 const data = "catto";
 const ownerOnly = true;
 const giveAmount = 1;
 const desc = "Hopefully these fluffy cattos make your day brighter! These collectibles are only given out by ?412812867348463636?, ?692146302284202134? and ?606142158067597332?";
 function sendDisplay (count) {
 	const plural = count > 1 ? 's' : '';
-	const msg = `, you currently have ${count} **catto${plural}** Take care of them or they'll run away..`;
+	const msg = `, you currently have ${count} **catto${plural}**\nTake care of them or they'll run away..`;
 	const emoji = emojis[Math.floor(emojis.length * Math.random())];
 	this.replyMsg(emoji, msg);
 }
@@ -23,9 +23,9 @@ function sendBroke () {
 	const msg = `, you do not have any cattos to give! >:c`;
 	this.errorMsg(brokeMsg, 3000);
 }
-function sendGive (user) {
+function sendGive (giver, receiver) {
 	const emoji = emojis[Math.floor(emojis.length * Math.random())];
-	let msg = `${emoji} **| ${user.username}**, you have received one catto from creator! *meow~*\n${this.config.emoji.blank} **|** `;
+	let msg = `${emoji} **| ${receiver.username}**, you have received one catto from ${giver.username}! *meow~*\n${this.config.emoji.blank} **|** `;
 	const rand = Math.random();
 	if (rand < 0.333) {
 		msg += `He's probably sleeping don't wake him up... <a:cat4:965356298893950977>`;
@@ -44,7 +44,7 @@ if (owners.slice(0, -1).length) {
 
 module.exports = new CommandInterface({
 
-	alias:[data, "shifo"],
+	alias:[data, "shifo", "ufo"],
 
 	args:"{@user}",
 
@@ -107,5 +107,5 @@ async function give (user) {
 	}
 
 	await this.redis.hincrby("data_" + user.id, data, giveAmount);
-	sendGive.bind(this)(user);
+	sendGive.bind(this)(this.msg.author, user);
 }
