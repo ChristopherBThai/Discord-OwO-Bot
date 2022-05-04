@@ -15,7 +15,7 @@ const global = require('../utils/global.js');
 const findQuest = {"rare":["common","uncommon"],
 	"epic":["common","uncommon","rare"],
 	"mythical":["common","uncommon","rare","epic"]};
-const questBy = ["friendlyBattleBy","emoteBy","prayBy","curseBy","cookieBy"];
+const questBy = ["friendlyBattle","friendlyBattleBy","emoteBy","prayBy","curseBy","cookieBy"];
 
 module.exports = class Quest{
 
