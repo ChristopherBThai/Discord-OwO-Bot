@@ -46,24 +46,43 @@ exports.createEmbed = async function(p) {
 
 	for (let group in p.commandGroups) {
 		if (group != "undefined") {
-			let commands = "";
+			let commands = [];
 			let groupName;
 			if (all || disabled[group]) {
 				groupName = crossEmoji + " **" + group + "**";
 				for (let i in p.commandGroups[group]) {
-					commands += addCommandText(p.commandGroups[group][i], true);
+					commands.push(addCommandText(p.commandGroups[group][i], true));
 				}
 			} else {
 				groupName = checkEmoji + " **" + group + "**";
 				for (let i in p.commandGroups[group]) {
 					let command = p.commandGroups[group][i];
-					commands += addCommandText(command, disabled[command])
+					commands.push(addCommandText(command, disabled[command]))
 				}
 			}
-			embed.fields.push({
-				"name": groupName,
-				"value": commands
+
+			let wordCount = 0;
+			let commandString = '';
+			let fieldsCount = 0;
+			commands.forEach(command => {
+				wordCount += command.length + 1;
+				if (wordCount >= 1024) {
+					embed.fields.push({
+						"name": groupName + ` [${fieldsCount+1}]`,
+						"value": commandString
+					});
+					wordCount = 0;
+					commandString = '';
+					fieldsCount++;
+				}
+				commandString += command + ' ';
 			});
+			if (commandString !== '') {
+				embed.fields.push({
+					"name": groupName + (fieldsCount ? ` [${fieldsCount+1}]` : ``),
+					"value": commandString
+				});
+			}
 		}
 	}
 
@@ -74,7 +93,7 @@ function addCommandText(command, disabled) {
 	if (censored.has(command))
 		return "";
 	if (disabled) 
-		return "~~*`"+command+"`*~~ ";
+		return "~~*`"+command+"`*~~";
 	else
-		return "**"+command+"** ";
+		return "**"+command+"**";
 }
