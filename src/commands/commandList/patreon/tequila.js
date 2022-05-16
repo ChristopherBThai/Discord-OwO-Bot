@@ -6,16 +6,27 @@
   */
 
 const CommandInterface = require('../../CommandInterface.js');
+const config = require('../../../data/config.json');
 
-const emoji = "<:turnip:965004193398161510>";
-const owners = ["145541256779530240"];
-const data = "turnip";
+const emoji = "<:tequila:975318312990937099>";
+const owners = ["427296171883626496"];
+const data = "tequila";
 const ownerOnly = true;
+const dailyOnly = false;
 const giveAmount = 1;
-const desc = "Turnips are the lifeblood of the Nook family Fortune, if you would like one you must find it's creator ?owner?.";
-const displayMsg = `, you currently have ?count? ${emoji} turnip?plural?!`;
-const brokeMsg = `, you do not have any turnips to give! >:c`;
-const giveMsg = ` has received a turnip! I hear they sell for quite a few bells and are quite rare! ${emoji}`;
+
+const desc = "This item can only be given out by the creator.";
+const brokeMsg = `, you do not have any tequilas to give! >:c`;
+const giveMsg = `, you have been given 1 ${emoji} tequila!`;
+
+const hasMerge = false;
+const mergeNeeded = 5;
+const mergeEmoji = '';
+const mergeMsg = '';
+
+function getDisplay (count, mergeCount) {
+	return `, you currently have ?count? tequila?plural?!`;
+}
 
 let ownersString = `?${owners[owners.length - 1]}?`;
 if (owners.slice(0, -1).length) {
@@ -38,7 +49,7 @@ module.exports = new CommandInterface({
 
 	group:["patreon"],
 
-	cooldown:15000,
+	cooldown:000,
 
 	execute: async function () {
 		if (!this.args.length) {
@@ -71,23 +82,50 @@ module.exports = new CommandInterface({
 
 async function display () {
 	let count = await this.redis.hget("data_" + this.msg.author.id, data);
-	const msg = displayMsg.replace('?count?', count || 0)
-		.replace('?plural?', count > 1 ? 's' : '');
+	let mergeCount = 0;
+	if (hasMerge) {
+		mergeCount = Math.floor(count / mergeNeeded); 
+		count = count % mergeNeeded;
+	}
+	const displayMsg = getDisplay(count, mergeCount);
+	const msg = displayMsg
+		.replace('?count?', count || 0)
+		.replace('?mergeCount?', mergeCount || 0)
+		.replace('?plural?', count > 1 ? 's' : '')
+		.replace('?mergePlural?', mergeCount > 1 ? 's' : '')
 	this.replyMsg(emoji, msg);
 }
 
 async function give (user) {
 	if (!owners.includes(this.msg.author.id)) {
+		if (dailyOnly && !(await checkDaily.bind(this)())) {
+			return;
+		}
 		let result = await this.redis.hincrby("data_" + this.msg.author.id, data, -1);
-		// Error checking
-		if (result == null || result < 0) {
-			if (result<0) this.redis.hincrby("data_" + this.msg.author.id, data, 1);
+		const refund = +result < 0 || (hasMerge && ((+result+1) % mergeNeeded) <= 0);
+		if (result == null || refund) {
+			if (refund) this.redis.hincrby("data_" + this.msg.author.id, data, 1);
 			this.errorMsg(brokeMsg, 3000);
 			this.setCooldown(5);
 			return;
 		}
 	}
 
-	await this.redis.hincrby("data_" + user.id, data, giveAmount);
-	this.send(`${emoji} **| ${user.username}**${giveMsg}`)
+	let result = await this.redis.hincrby("data_" + user.id, data, giveAmount);
+	if (hasMerge && ((result % mergeNeeded) - giveAmount < 0) ) {
+		this.send(`${emoji} **| ${user.username}**${mergeMsg}`)
+	} else {
+		this.send(`${emoji} **| ${user.username}**${giveMsg}`)
+	}
+}
+
+async function checkDaily () {
+	let reset = await this.redis.hget("data_" + this.msg.author.id, data + '_reset');
+	let afterMid = this.dateUtil.afterMidnight(reset);
+	if (!afterMid.after) {
+		this.errorMsg(", you can only send this item once per day.", 3000);
+		return false;
+	}
+	await this.redis.hset("data_"+this.msg.author.id, data + '_reset', afterMid.now);
+	return true;
 }

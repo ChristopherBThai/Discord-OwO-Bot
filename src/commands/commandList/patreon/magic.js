@@ -7,15 +7,16 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const emoji = "<:turnip:965004193398161510>";
+const emoji = "<a:magic:975267257477394432>";
 const owners = ["145541256779530240"];
-const data = "turnip";
-const ownerOnly = true;
-const giveAmount = 1;
-const desc = "Turnips are the lifeblood of the Nook family Fortune, if you would like one you must find it's creator ?owner?.";
-const displayMsg = `, you currently have ?count? ${emoji} turnip?plural?!`;
-const brokeMsg = `, you do not have any turnips to give! >:c`;
-const giveMsg = ` has received a turnip! I hear they sell for quite a few bells and are quite rare! ${emoji}`;
+const data = "magic";
+const ownerOnly = false;
+const dailyOnly = false;
+const giveAmount = 2;
+const desc = "Give some Black Magic to a friend!";
+const displayMsg = `, you currently have ?count? ${emoji} Black Magic`;
+const brokeMsg = `, you do not have any Black Magic to give! >:c`;
+const giveMsg = `, you have been given 2 <a:sparkle1:975266751312965643> <a:sparkle2:975266751573020694> ${emoji} <a:sparkle1:975266751312965643> <a:sparkle2:975266751573020694> it fizzles and sparkles in your hand, these originated from the Black Magic Gang owo clan, trade these with other users to further spread the black magic upon these lands, GO! GO! BEFORE THEY CATCH YOU!`;
 
 let ownersString = `?${owners[owners.length - 1]}?`;
 if (owners.slice(0, -1).length) {
@@ -78,6 +79,9 @@ async function display () {
 
 async function give (user) {
 	if (!owners.includes(this.msg.author.id)) {
+		if (dailyOnly && !(await checkDaily.bind(this)())) {
+			return;
+		}
 		let result = await this.redis.hincrby("data_" + this.msg.author.id, data, -1);
 		// Error checking
 		if (result == null || result < 0) {
@@ -90,4 +94,15 @@ async function give (user) {
 
 	await this.redis.hincrby("data_" + user.id, data, giveAmount);
 	this.send(`${emoji} **| ${user.username}**${giveMsg}`)
+}
+
+async function checkDaily () {
+	let reset = await this.redis.hget("data_" + this.msg.author.id, data + '_reset');
+	let afterMid = this.dateUtil.afterMidnight(reset);
+	if (!afterMid.after) {
+		this.errorMsg(", you can only send this item once per day.", 3000);
+		return false;
+	}
+	await this.redis.hset("data_"+this.msg.author.id, data + '_reset', afterMid.now);
+	return true;
 }

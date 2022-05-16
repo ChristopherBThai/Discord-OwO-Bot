@@ -44,7 +44,7 @@ if (owners.slice(0, -1).length) {
 
 module.exports = new CommandInterface({
 
-	alias:[data, "shifo", "ufo"],
+	alias:[data, "shifu", "ufo"],
 
 	args:"{@user}",
 

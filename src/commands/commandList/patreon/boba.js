@@ -7,15 +7,15 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const emoji = "<:turnip:965004193398161510>";
-const owners = ["145541256779530240"];
-const data = "turnip";
-const ownerOnly = true;
-const giveAmount = 1;
-const desc = "Turnips are the lifeblood of the Nook family Fortune, if you would like one you must find it's creator ?owner?.";
-const displayMsg = `, you currently have ?count? ${emoji} turnip?plural?!`;
-const brokeMsg = `, you do not have any turnips to give! >:c`;
-const giveMsg = ` has received a turnip! I hear they sell for quite a few bells and are quite rare! ${emoji}`;
+const emoji = "<a:boba:975252713065562154>";
+const owners = ["863101441697775616", "473546331689058334"];
+const data = "boba";
+const ownerOnly = false;
+const giveAmount = 2;
+const desc = "This custom item can only be given by the owner of this command.";
+const displayMsg = `, you currently have ?count? ${emoji} boba?plural?!`;
+const brokeMsg = `, you do not have any bobas to give! >:c`;
+const giveMsg = `, you’ve received 1 *delicious* boba. you’re the bubble to my tea.`;
 
 let ownersString = `?${owners[owners.length - 1]}?`;
 if (owners.slice(0, -1).length) {
