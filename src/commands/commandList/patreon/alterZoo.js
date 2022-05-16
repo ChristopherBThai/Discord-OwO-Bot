@@ -22,7 +22,7 @@ const ranks = {
 	b:"<a:botrank:716545289497870407>"
 }
 
-exports.alter = function(id,text){
+exports.alter = function(id, text, opt){
 	switch(id){
 		case '250383887312748545':
 			return elsa(text);
@@ -38,6 +38,8 @@ exports.alter = function(id,text){
 			return tiggy(text);
 		case '714215538821431398':
 			return ivy(text);
+		case '427296171883626496':
+			return lIlIIIll(text, opt);
 		default:
 			return text;
 	}
@@ -193,6 +195,30 @@ function ivy (text) {
 	text = replaceRanks(text,newRanks)
 		.split("\n");
 	text[0] = "<a:butterfly1:856794924585975838> <a:heart1:856794924858998784> <a:wingleft:856794924430393385> <:_i:856794924413354004> <:_v:856794924396445716> <:_y:856794924028788758> <a:wingright:856794924777996288> <a:heart1:856794924858998784> <a:butterfly1:856794924585975838>";
+
+	return text.join("\n");
+}
+
+function lIlIIIll (text, opt) {
+let newRanks = {
+		c:"<:death:975319820461563914>",
+		u:"<:death:975319820461563914>",
+		r:"<:death:975319820461563914>",
+		e:"<:death:975319820461563914>",
+		m:"<:death:975319820461563914>",
+		p:"<:death:975319820461563914>",
+		cp:"<:death:975319820461563914>",
+		l:"<:death:975319820461563914>",
+		g:"<:death:975319820461563914>",
+		f:"<:death:975319820461563914>",
+		s:"<:death:975319820461563914>",
+		h:"<:death:975319820461563914>",
+		b:"<:death:975319820461563914>"
+	}
+
+	text = replaceRanks(text,newRanks)
+		.split("\n");
+	text[0] = `-漫~'¨¯¨'·舞~ ${opt.user.username} ~舞'¨¯¨'·~漫-`;
 
 	return text.join("\n");
 }

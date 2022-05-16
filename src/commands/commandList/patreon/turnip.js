@@ -12,8 +12,8 @@ const owners = ["145541256779530240"];
 const data = "turnip";
 const ownerOnly = true;
 const giveAmount = 1;
-const desc = "These collectables are only given out by ?owner?.";
-const displayMsg = `, you currently have ?count? ${emoji} turnip!`;
+const desc = "Turnips are the lifeblood of the Nook family Fortune, if you would like one you must find it's creator ?owner?.";
+const displayMsg = `, you currently have ?count? ${emoji} turnip?plural?!`;
 const brokeMsg = `, you do not have any turnips to give! >:c`;
 const giveMsg = ` has received a turnip! I hear they sell for quite a few bells and are quite rare! ${emoji}`;
 

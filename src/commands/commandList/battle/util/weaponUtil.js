@@ -8,6 +8,7 @@
 const requireDir = require('require-dir');
 const WeaponInterface = require('../WeaponInterface.js');
 const alterWeapon = require('../../patreon/alterWeapon.js');
+const alterWeaponDisplay = require('../../patreon/alterWeaponDisplay.js');
 
 const prices = {"Common":100,"Uncommon":250,"Rare":400,"Epic":600,"Mythical":5000,"Legendary":15000,"Fabled":50000};
 exports.shardPrices = {"Common":1,"Uncommon":3,"Rare":5,"Epic":25,"Mythical":300,"Legendary":1000,"Fabled":5000};
@@ -470,7 +471,7 @@ exports.describe = async function(p,uwid){
 	}
 
 	/* Construct embed */
-	const embed ={
+	let embed ={
 		"author":{
 			"name":username+"'s "+weapon.name,
 		},
@@ -480,7 +481,13 @@ exports.describe = async function(p,uwid){
 		},
 		"description":desc
 	};
-	if(user) embed.author.icon_url = user.avatarURL;
+	if(user) {
+		embed.author.icon_url = user.avatarURL;
+		embed = alterWeaponDisplay.alter(user.id, embed, {
+			user,
+			weapon
+		});
+	}
 	p.send({embed});
 }
 

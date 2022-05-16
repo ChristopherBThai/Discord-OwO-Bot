@@ -153,7 +153,7 @@ module.exports = new CommandInterface({
 				footer += animalUtil.zooScore(count)+"**";
 			}
 			let zooText = header+text+footer;
-			zooText = alterZoo.alter(p.msg.author.id,zooText);
+			zooText = alterZoo.alter(p.msg.author.id, zooText, {user: p.msg.author});
 			p.send(zooText);
 			/*
 			let pages = toPages(text);
