@@ -13,7 +13,7 @@ const data = "sun";
 const ownerOnly = true;
 const giveAmount = 1;
 const desc = "I love you like the sun loves the moon, forever separated by thousands of miles for thousands of years.\nHe died every night just to let her breathe.\n\nThe sun and moon love each other without any hope of meeting ever.\n\nLive by the sun";
-const displayMsg = `, you currently have ?count? ${emoji} You're are my Sun!`;
+const displayMsg = `, you currently have ?count? ${emoji} You are my Sun!`;
 const brokeMsg = `, you do not have any suns to give! >:c`;
 const giveMsg = `, you have been given 1 Live by the sun.
 `;

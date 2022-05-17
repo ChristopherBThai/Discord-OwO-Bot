@@ -7,7 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const emoji = "<a:angel:965017073933750292>";
+const emoji = "<a:angel:976024559662796880>";
 const owners = ["460987842961866762"];
 const data = "angel";
 const alias = [data, "agl"]

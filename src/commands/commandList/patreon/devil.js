@@ -7,7 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const emoji = "<a:devil:965017073879220234>";
+const emoji = "<a:devil:976024559650242580>";
 const owners = ["460987842961866762"];
 const data = "devil";
 const alias = [data, "dvl"]
@@ -16,7 +16,7 @@ const giveAmount = 1;
 const desc = "A pair of Devil wings to take you to the underworld a place called Hell.";
 const displayMsg = `, you currently have ?count? ${emoji} Devil Wing?plural?!`;
 const brokeMsg = `, you do not have any Devil Wings to give! >:c`;
-const giveMsg = `, you have been given 1 ${emoji} Falling to the Hell.`;
+const giveMsg = `, you have been given 1 ${emoji} Falling into Hell.`;
 
 let ownersString = `?${owners[owners.length - 1]}?`;
 if (owners.slice(0, -1).length) {
