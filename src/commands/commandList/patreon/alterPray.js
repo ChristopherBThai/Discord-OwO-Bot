@@ -20,6 +20,8 @@ exports.alter = function (id,text,info) {
 			return dire(text, info);
 		case '856036736970260490':
 			return lapiis(text, info);
+		case '460987842961866762':
+			return estee(text, info);
 		default:
 			return text;
 	}
@@ -189,4 +191,23 @@ function lapiis (text, info) {
 			color: 8240363
 		}
 	}
+}
+
+function estee (text, info) {
+	if (info.command == "pray") {
+		let desc;
+		if (info.user) {
+			desc = `<a:heart:976025908290924544> **| ${info.author.username}** Enchants a little love spell on **${info.user}**, sleep my love.\n${blank} **|** Angels have blessed you with ${info.luck} sweet dreams!`;
+		} else {
+			desc = `<a:heart:976025908290924544> **| ${info.author.username}** Enchants a little love spell, sleep my love.\n${blank} **|** Angels have blessed you with ${info.luck} sweet dreams!`;
+		}
+		return {
+			embed: {
+				description: desc,
+				image: { url: 'https://cdn.discordapp.com/attachments/810961856977174539/973157453002833960/output-onlinegiftools_5.gif' },
+				color: 16777215 
+			}
+		}
+	}
+	return text;
 }
