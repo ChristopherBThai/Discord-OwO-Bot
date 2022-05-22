@@ -56,6 +56,7 @@ module.exports = new CommandInterface({
 				ORDER BY pet_team_animal.pos ASC;`;
 		sql += "SELECT *,TIMESTAMPDIFF(HOUR,claim,NOW()) as time FROM lootbox WHERE id = "+msg.author.id+";";
 		sql += "SELECT uid,activecount,gname,type FROM user NATURAL JOIN user_gem NATURAL JOIN gem WHERE id = "+msg.author.id+" AND activecount > 0;";
+		sql += "SELECT config FROM `events` WHERE eventtype = 'SPECIAL' AND NOW() >= starttime AND NOW() <= endtime;"
 		let result = await p.query(sql);
 		if(result[0][0]==undefined||result[0][0].money<animals.rollprice){
 			p.errorMsg(", You don't have enough cowoncy!",3000);
@@ -126,11 +127,20 @@ function getAnimals(p,result,gems,uid){
 	let patreon = (result[0][0].patreon==1);
 	let patreonGem = (gems["Patreon"])?true:false;
 
+	/* Parse specials */
+	let specials =  [];
+	if (result[4]) {
+		for (let i = 0; i < result[4].length; i++) {
+			console.log(`${result[4][i].config}`);
+			specials.push(...JSON.parse(result[4][i].config));
+		}
+	}
+
 	/* If no gems */
 	let gemLength = Object.keys(gems).length;
 	let animal;
 	if (gemLength==0) {
-		animal = [animalUtil.randAnimal({ patreon: patreon, manual: true })];
+		animal = [animalUtil.randAnimal({ patreon: patreon, manual: true, specials: specials })];
 
 	/* If gems... */
 	} else {
@@ -144,13 +154,15 @@ function getAnimals(p,result,gems,uid){
 			patreon: (patreon||patreonGem),
 			gem: true,
 			lucky: gems["Lucky"],
-			manual: true
+			manual: true,
+			specials: specials
 		})];
 		if (gems["Patreon"]) animal.push(animalUtil.randAnimal({
 			patreon: true,
 			gem: true,
 			lucky: gems["Lucky"],
-			manual: true
+			manual: true,
+			specials: specials
 		}));
 
 		/* Get the rest of the animals */
@@ -159,7 +171,8 @@ function getAnimals(p,result,gems,uid){
 				patreon: patreon,
 				gem: true,
 				lucky: gems["Lucky"],
-				manual: true
+				manual: true,
+				specials: specials
 			}));
 		}
 	}

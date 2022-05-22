@@ -63,6 +63,7 @@ async function claim(p,msg,con,query,bot){
 
 	let sql = "SELECT IF(patreonAnimal = 1 OR (TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths),1,0) as patreon FROM user LEFT JOIN patreons ON user.uid = patreons.uid WHERE user.id = "+msg.author.id+";";
 	sql += "UPDATE autohunt SET huntmin = 0,huntcount=0,essence = essence +"+totalGain+",total = total + "+totalGain+" WHERE id = "+msg.author.id+" AND huntmin > 0;";
+	sql += "SELECT config FROM `events` WHERE eventtype = 'SPECIAL' AND NOW() >= starttime AND NOW() <= endtime;"
 	let result = await p.query(sql);
 
 	if(result[1].changedRows<=0){
@@ -71,8 +72,17 @@ async function claim(p,msg,con,query,bot){
 
 	//Check if patreon
 	let patreon = false;
-	if(result[0][0]&&result[0][0].patreon==1)
+	if (result[0][0]&&result[0][0].patreon==1) {
 		patreon = true;
+	}
+
+	// Parse specials
+	let specials =  [];
+	if (result[2]) {
+		for (let i = 0; i < result[2].length; i++) {
+			specials.push(...JSON.parse(result[2][i].config));
+		}
+	}
 
 	sql = "";
 	//Get total exp
@@ -97,7 +107,8 @@ async function claim(p,msg,con,query,bot){
 	for(let i=0;i<query.huntcount;i++){
 		let animal = animalUtil.randAnimal({
 			patreon: patreon, 
-			huntbot: radar.stat/100
+			huntbot: radar.stat/100,
+			specials: specials
 		});
 		if(total[animal[1]]){
 			total[animal[1]].count++;
