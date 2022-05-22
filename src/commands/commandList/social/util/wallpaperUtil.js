@@ -54,7 +54,7 @@ exports.buy = async function(p,id){
 		},
 		"color": p.config.embed_color,
 		"image":{
-			"url":`${process.env.GEN_ASSET_HOST}/background/${bid}/.png`
+			"url":`${process.env.GEN_HOST}/background/${bid}/.png`
 		}
 	}
 	await p.send({embed});

@@ -111,7 +111,7 @@ async function getWallpaperPage(p,currentPage,totalPages){
 		let cLength = charLen-result[0].bname.length+(4-(""+price).length);
 		embed.description = `\`${idOffset+result[0].bid}\` **\`${result[0].bname}\`**\`${"-".repeat(cLength)} ${price}\` <:cowoncy:416043450337853441>`;
 		embed.image = {
-			"url":`${process.env.GEN_ASSET_HOST}/background/${result[0].bid}.png`
+			"url":`${process.env.GEN_HOST}/background/${result[0].bid}.png`
 		};
 		if(result[0].profile)
 			embed.description = "*"+embed.description;

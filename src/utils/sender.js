@@ -52,17 +52,17 @@ exports.send = function(msg){
 }
 
 async function createMessage (msg, content, file, del, opt = {}) {
+	content = cleanContent(content);
 	if (msg.interaction) {
 		msg.ignoreDefer = true;
-		const tempContent = cleanContent(content);
-		if (opt.ephemeral) tempContent.flags = 64;
-		let returnMsg = await msg.createMessage(tempContent, file, del);
+		if (opt.ephemeral) content.flags = 64;
+		let returnMsg = await msg.createMessage(content, file, del);
 		return returnMsg || {
 			id: msg.id,
 			channel: msg.channel,
 			edit: (content, file) => {
-				const tempContent = cleanContent(content);
-				msg.editOriginalMessage(tempContent, file);
+				content = cleanContent(content);
+				msg.editOriginalMessage(content, file);
 			}
 		}
 	} else {
