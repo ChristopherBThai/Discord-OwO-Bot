@@ -215,10 +215,22 @@ function initCommands(){
 	for (let key in dir) {
 		if (dir[key] instanceof CommandInterface) {
 			addCommand(dir[key]);
+		} else if (Array.isArray(dir[key])) {
+			dir[key].forEach(val => {
+				if (val instanceof CommandInterface) {
+					addCommand(val);
+				}
+			});
 		} else {
 			for (let key2 in dir[key]) {
-				if(dir[key][key2] instanceof CommandInterface){
+				if (dir[key][key2] instanceof CommandInterface) {
 					addCommand(dir[key][key2]);
+				} else if (Array.isArray(dir[key][key2])) {
+					dir[key][key2].forEach(val => {
+						if (val instanceof CommandInterface) {
+							addCommand(val);
+						}
+					});
 				}
 			}
 		}

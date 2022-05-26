@@ -183,12 +183,23 @@ function dire (text, info) {
 }
 
 function lapiis (text, info) {
-	let desc = text.replace(emoji, '<a:heart:965019226228269086>');
-	return {
-		embed: {
-			description: desc,
-			thumbnail: { url: 'https://c.tenor.com/HKIpSkjda9kAAAAi/tkthao219-bubududu.gif' },
-			color: 8240363
+	if (info.command == "pray") {
+		let desc = text.replace(emoji, '<a:heart:965019226228269086>');
+		return {
+			embed: {
+				description: desc,
+				thumbnail: { url: 'https://c.tenor.com/HKIpSkjda9kAAAAi/tkthao219-bubududu.gif' },
+				color: 8240363
+			}
+		}
+	} else {
+		let desc = text.replace(emoji, '<a:cry:978022168627662889>');
+		return {
+			embed: {
+				description: desc,
+				thumbnail: { url: 'https://c.tenor.com/KkDb5-sgVZkAAAAj/sad-anxious.gif' },
+				color: 2395604
+			}
 		}
 	}
 }

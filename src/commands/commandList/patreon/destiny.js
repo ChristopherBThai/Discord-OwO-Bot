@@ -25,7 +25,7 @@ const mergeEmoji = "";
 const mergeMsg = ``;
 
 function getDisplay (count, mergeCount) {
-	return `, you currently have 1 ${emoji} Destiny!`;
+	return `, you currently have ?count? ${emoji} Destiny?plural?!`;
 }
 
 let ownersString = `?${owners[owners.length - 1]}?`;
@@ -49,7 +49,7 @@ module.exports = new CommandInterface({
 
 	group:["patreon"],
 
-	cooldown:000,
+	cooldown:15000,
 
 	execute: async function () {
 		if (!this.args.length) {
