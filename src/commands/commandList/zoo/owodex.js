@@ -37,7 +37,7 @@ module.exports = new CommandInterface({
 
 
 		if(args.length>1||args.length==0){
-			p.errorMsg(", wrong syntax!!",3000);
+			p.errorMsg(", the correct command is `owo dex {animal}`!",3000);
 			return;
 		}else if(!animal){
 			p.errorMsg(", I could not find that animal in your zoo!",3000);
