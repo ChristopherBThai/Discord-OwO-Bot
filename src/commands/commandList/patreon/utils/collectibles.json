@@ -3,7 +3,7 @@
     "alias": [],
     "emoji": "<a:fear:978025301013594162>",
     "owners": ["486604819545587723"],
-    "ownerOnly": false,
+    "ownerOnly": true,
     "dailyOnly": false,
     "ownerControl": false,
     "giveAmount": 1,

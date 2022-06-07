@@ -74,7 +74,7 @@ for (let data in collectibles) {
 			const msg = mergeMsg
 				.replaceAll('?giver?', this.msg.author.username)
 				.replaceAll('?receiver?', user.username)
-				.replaceAll('?emoji?', emoji);
+				.replaceAll('?emoji?', emoji)
 				.replaceAll('?mergeEmoji?', mergeEmoji);
 			this.send(msg)
 		} else {
