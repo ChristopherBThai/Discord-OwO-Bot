@@ -83,7 +83,7 @@ async function giveTicket(p, id, count = 1, type = 1) {
 	const uid = await p.global.getUid(id);
 
 	// Query result
-	let sql = `INSERT INTO items (uid, ${type}) VALUES (${uid}, ${count}) ON DUPLICATE KEY update ${type} = ${type} + ${count};`
+	let sql = `INSERT INTO user_item (uid, name, count) VALUES (${uid}, '${type}', ${count}) ON DUPLICATE KEY update count = count + ${count};`
 	let result = await p.query(sql);
 
 	// Send msgs
