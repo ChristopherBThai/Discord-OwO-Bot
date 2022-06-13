@@ -13,11 +13,16 @@ setTimeout(() => {
 	enableDistortedTier = false;
 }, 21600000);
 
-const specialRates = animals.specialRates;
-let specialPercent = 0;
-if (specialRates && specialRates.length) {
-	for (let i in specialRates) {
-		specialPercent += specialRates[i].rate
+const specialRatesManual = animals.specialRates;
+let specialRatesHuntbot = [];
+let specialPercentManual = 0;
+let specialPercentHuntbot = 0;
+if (specialRatesManual && specialRatesManual.length) {
+	for (let i in specialRatesManual) {
+		specialPercentManual += specialRatesManual[i].rate
+		specialRatesHuntbot[i] = { ...specialRatesManual[i] };
+		specialRatesHuntbot[i].rate = specialRatesHuntbot[i].rate / 4
+		specialPercentHuntbot += specialRatesHuntbot[i].rate
 	}
 }
 
@@ -29,11 +34,16 @@ exports.randAnimal = function({patreon, gem, lucky, huntbot, manual} = {}){
 	let result = [];
 
 	/* Calculate percentage */
+	const specialRates = huntbot ? specialRatesHuntbot : specialRatesManual;
+	const specialPercent = huntbot ? specialPercentHuntbot : specialPercentManual;
+	// If user has patreon
 	let patreonPercent = animals.cpatreon[0]+animals.patreon[0];
 	if(!patreon) patreonPercent = 0;
+	// If user is using gems
 	let gemPercent = animals.gem[0];
 	if(!gem) gemPercent = 0;
 	else if(lucky) gemPercent += gemPercent*lucky.amount;
+	// If bot has restarted
 	let distortedPercent = enableDistortedTier && manual ? animals.distorted[0] : 0;
 	if (distortedPercent) {
 		distortedPercent += specialPercent + patreonPercent;
