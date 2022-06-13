@@ -39,11 +39,11 @@ function quincey(text, opt) {
 				embed.color = 10445814;
 				break;
 			case 6:
-				embed.description = `<a:alring:876877927826997259>Quincey bought a <a:Lring76884817491402773> **Legendary Ring** <alring:876877927826997259>`;
+				embed.description = `<a:alring:876877927826997259>Quincey bought a <a:Lring:76884817491402773> **Legendary Ring** <a:lring:876877927826997259>`;
 				embed.color = 16577355;
 				break;
 			case 7:
-				embed.description = `<a:afring:876877836798009384>Quincey bought a <a:Fring76884855231762433> **Fabled Ring** <afring:876877836798009384>`;
+				embed.description = `<a:afring:876877836798009384>Quincey bought a <a:Fring:76884855231762433> **Fabled Ring** <a:fring:876877836798009384>`;
 				embed.color = 10280698;
 				break;
 			default:
