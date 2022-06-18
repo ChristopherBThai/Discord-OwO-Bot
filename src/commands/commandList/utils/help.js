@@ -85,7 +85,7 @@ function display(p){
 			{"name":"💰 Economy",
 				"value":"`cowoncy`  `give`  `daily`  `vote`  `quest`  `checklist`  `shop`  `buy`"},
 			{"name":"🌱 Animals",
-				"value":"`zoo`  `hunt`  `sell`  `battle`  `inv`  `equip`  `autohunt`  `owodex`  `lootbox`  `crate`  `battlesetting`  `team`  `weapon`  `rename` `dismantle`"},
+				"value":"`zoo`  `hunt`  `sell`  `sacrifice`  `battle`  `inv`  `equip`  `autohunt`  `owodex`  `lootbox`  `crate`  `battlesetting`  `team`  `weapon`  `rename` `dismantle`"},
 			{"name":"🎲 Gambling",
 				"value":"`slots`  `coinflip`  `lottery`  `blackjack`"},
 			{"name":"🎱 Fun",
