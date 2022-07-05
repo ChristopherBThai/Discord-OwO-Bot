@@ -16,7 +16,7 @@ module.exports = new CommandInterface({
 
 	args:"{@user}",
 
-	desc:"Give a sharingan to someone! You can only gain one if you receive it! This command was created by Rikudou Sennin",
+	desc:"Only the owner can send this item. This command was created by Rikudou Sennin",
 
 	example:[],
 
@@ -45,18 +45,13 @@ module.exports = new CommandInterface({
 					return;
 				}
 			}
-			if(user.id==p.msg.author.id){
-				p.errorMsg(", You cannot give it yourself!!",3000);
-				p.setCooldown(5);
-				return;
-			}
 			give(p,user);
 		}
 	}
 });
 
 async function display(p){
-	let count = await p.redis.zscore("sharingan",p.msg.author.id);
+	let count = await p.redis.zscore("sharingan2",p.msg.author.id);
 	if(!count) count = 0;
 
 	p.replyMsg(sharinganEmoji,", You currently have **"+count+"** Sharingan in your stash to give!");
@@ -64,17 +59,10 @@ async function display(p){
 
 async function give(p,user){
 	if(p.msg.author.id!=owner){
-		let result = await p.redis.incr("sharingan",p.msg.author.id,-1);
-
-		// Error checking
-		if(result==null||result<0){
-			if(result<0) p.redis.incr("sharingan",p.msg.author.id,1);
-			p.errorMsg(", you do not have any Sharingans! >:c",3000);
-			p.setCooldown(5);
-			return;
-		}
+		this.errorMsg(", only the owner of this command can give items!", 3000);
+		this.setCooldown(5);
+		return;
 	}
-
-	await p.redis.incr("sharingan",user.id,2);
+	await p.redis.incr("sharingan2",user.id,2);
 	p.send(`${sharinganEmoji} **| ${user.username}**, you have received two Sharingans ${sharinganEmoji} from ${p.msg.author.username}'s stash! Beware of Danzo and Obito!`);
 }
