@@ -23,7 +23,7 @@ for (let data in collectibles) {
 		alias,
     emoji,
     owners,
-		fullControl,
+    fullControl,
     ownerOnly,
     dailyOnly,
     giveAmount,
@@ -34,7 +34,7 @@ for (let data in collectibles) {
     hasMerge,
     mergeNeeded,
     mergeEmoji,
-		mergeDisplayMsg,
+    mergeDisplayMsg,
     mergeMsg
 	} = collectibles[data];
 	const ownerString = getOwnerString(owners);

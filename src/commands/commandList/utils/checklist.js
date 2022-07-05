@@ -46,7 +46,6 @@ module.exports = new CommandInterface({
 		checklist.push(quests(p));
 		checklist.push(lootboxes(p));
 		checklist.push(crates(p));
-		console.log(checklist);
 
 		let sql = "";
 		for(let i in checklist){
