@@ -7,6 +7,14 @@
 
 const blank = '<:blank:427371936482328596>';
 
+const efficiency = '⏱ ';
+const duration = '⏳ ';
+const cowoncy = '<:cowoncy:416043450337853441>';
+const gain = '🔧 ';
+const experience = '⚔ ';
+const radar = '📡;';
+const essence = '<a:essence:451638978299428875>';
+
 exports.alter = function(id,text,type) {
 	switch(id){
 		case '111619509529387008':
@@ -31,6 +39,8 @@ exports.alter = function(id,text,type) {
 			return xmelanie(text,type);
 		case '216710431572492289':
 			return arichy(text,type);
+		case '352273158025379841':
+			return capz(text,type);
 		default:
 			return text;
 	}
@@ -566,6 +576,35 @@ function arichy(text,type) {
 				.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","If you have something urgent, please leave a message. I will be back in")
 				.replace("DONE", "of dungeon passed")
 				.replace("ANIMALS CAPTURED","Animals joined Kingdom");
+			return text;
+		default:
+			return text;
+	}
+}
+
+function capz(text,type) {
+	switch(type){
+		case 'hb':
+			text.fields[0].name = "<:hb:993769506184900659> `Howdy! I am ready to search for pets to make new friends!`";
+			text.fields[1].name = text.fields[1].name.replace(efficiency, "<:efficiency:993769502095454229>");
+			text.fields[2].name = text.fields[2].name.replace(duration,"<:duration:993769501122379827>");
+			text.fields[3].name = text.fields[3].name.replace(cowoncy, "<:cost:993769499973140552>");
+			text.fields[4].name = text.fields[4].name.replace(gain, "<:gain:993769505169870870>");
+			text.fields[5].name = text.fields[5].name.replace(experience, "<:exp:993769504360378413>");
+			text.fields[6].name = text.fields[6].name.replace(radar, "<:radar:993769507627741184>");
+			text.fields[7].name = text.fields[7].name.replace(essence, "<:essence:993769503349542922>");
+			if(text.fields.length>=9){
+				text.fields[8].name = "<:searching:993769508693090315> I am still searching for pets!";
+				text.fields[8].value = text.fields[8].value.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","I will return in")
+					.replace("DONE", "done")
+					.replace("ANIMALS CAPTURED","pets found!");
+			}
+			return text;
+		case 'progress':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi, "<:searching:993769508693090315>")
+				.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","I will return in")
+				.replace("DONE", "done")
+				.replace("ANIMALS CAPTURED","pets found!");
 			return text;
 		default:
 			return text;

@@ -27,6 +27,8 @@ exports.alter = function(p, text, info) {
 			return lIlIIIll(p, info);
 		case '460987842961866762':
 			return estee(p, info);
+		case '709396638661083146':
+			return rosie(p, info);
 		default:
 			return text;
 	}
@@ -103,6 +105,21 @@ function estee (p, info) {
 		},
 		image: {
 			url: "https://i.imgur.com/eK7F8Gv.gif"
+		},
+		description: info.inv
+	}
+	return { embed }
+}
+
+function rosie (p, info) {
+	
+	const embed = {
+		color: 1,
+		author: {
+			name: "❀ 𝐑𝐨𝐬𝐢𝐞𝐬 𝐅𝐥𝐨𝐰𝐞𝐫 𝐈𝐧𝐯𝐞𝐧𝐭𝐨𝐫𝐲 ❀"
+		},
+		image: {
+			url: "https://cdn.discordapp.com/attachments/915122067865751562/976038270255378512/3A85D5FA-B90D-40B5-AB5F-C7EEBCDCB4C1.gif"
 		},
 		description: info.inv
 	}

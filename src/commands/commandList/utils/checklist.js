@@ -7,6 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
+const alterChecklist = require('../patreon/alterChecklist.js');
 const dateUtil = require('../../../utils/dateUtil.js');
 const check = "☑";
 const box = "⬛";
@@ -45,6 +46,7 @@ module.exports = new CommandInterface({
 		checklist.push(quests(p));
 		checklist.push(lootboxes(p));
 		checklist.push(crates(p));
+		console.log(checklist);
 
 		let sql = "";
 		for(let i in checklist){
@@ -54,18 +56,22 @@ module.exports = new CommandInterface({
 		let result = await p.query(sql);
 
 		let reward = true;
+		let done = false;
 
 		// Combine parse query and check if they completed all quests
+		let tasks = [];
 		for(let i in checklist){
 			let task = checklist[i].parse(result[i]);
 			description += "\n"+(task.done?check:box)+" "+task.emoji+" "+task.desc;
 			if(!task.done) reward = false;
+			tasks.push(task);
 		}
 
 		// Check if they already claimed
 		let afterMid = dateUtil.afterMidnight((result[result.length-1][0])?result[result.length-1][0].checklist:undefined);
 		if(afterMid&&!afterMid.after){
 			reward = false;
+			done = true;
 			description += "\n"+check+" "+tada+" You already claimed your checklist rewards!";
 		}else if(!reward){
 			description += "\n"+box+" "+tada+" Complete your checklist to get a reward!";
@@ -97,6 +103,14 @@ module.exports = new CommandInterface({
 			timestamp: new Date(),
 			description
 		}
+		embed = alterChecklist.alter(p.msg.author.id, {
+			embed,
+			tasks,
+			reward,
+			done,
+			emoji: this.config.emoji
+		});
+
 		p.send({embed});
 	}
 
