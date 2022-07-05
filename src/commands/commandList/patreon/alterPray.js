@@ -7,6 +7,7 @@
 
 const blank = '<:blank:427371936482328596>';
 const emoji = '🙏';
+const curseEmoji = '👻';
 
 exports.alter = function (id,text,info) {
 	switch (id) {
@@ -22,6 +23,8 @@ exports.alter = function (id,text,info) {
 			return lapiis(text, info);
 		case '460987842961866762':
 			return estee(text, info);
+		case '683742950668501001':
+			return dadada(text, info);
 		default:
 			return text;
 	}
@@ -189,11 +192,11 @@ function lapiis (text, info) {
 			embed: {
 				description: desc,
 				thumbnail: { url: 'https://c.tenor.com/HKIpSkjda9kAAAAi/tkthao219-bubududu.gif' },
-				color: 8240363
+				color: 16714382 
 			}
 		}
 	} else {
-		let desc = text.replace(emoji, '<a:cry:978022168627662889>');
+		let desc = text.replace(curseEmoji, '<a:cry:993743688687681578>');
 		return {
 			embed: {
 				description: desc,
@@ -217,6 +220,25 @@ function estee (text, info) {
 				description: desc,
 				image: { url: 'https://cdn.discordapp.com/attachments/810961856977174539/973157453002833960/output-onlinegiftools_5.gif' },
 				color: 16777215 
+			}
+		}
+	}
+	return text;
+}
+
+function dadada (text, info) {
+	if (info.command == "curse") {
+		let desc;
+		if (info.user) {
+			desc = `<a:curse1:993779469766623252> **| ${info.author.username}** puts a curse on **${info.user}**! You should be careful...<a:curse2:993779471230439504>\n<a:curse3:993779472140611655> **|** You have ${info.luck} luck point(s)! <a:curse4:993779473013026906>`;
+		} else {
+			desc = `<a:curse1:993779469766623252> **| ${info.author.username}** puts a curse! You should be careful...<a:curse2:993779471230439504>\n<a:curse3:993779472140611655> **|** You have ${info.luck} luck point(s)! <a:curse4:993779473013026906>`;
+		}
+		return {
+			embed: {
+				description: desc,
+				image: { url: 'https://data.whicdn.com/images/354158989/original.gif' },
+				color: 8240363,
 			}
 		}
 	}

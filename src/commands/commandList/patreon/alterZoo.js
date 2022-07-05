@@ -1,6 +1,6 @@
 /*
  * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Copyright (C) 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
   */
@@ -40,6 +40,8 @@ exports.alter = function(id, text, opt){
 			return ivy(text);
 		case '427296171883626496':
 			return lIlIIIll(text, opt);
+		case '460987842961866762':
+			return estee(text, opt);
 		default:
 			return text;
 	}
@@ -200,7 +202,7 @@ function ivy (text) {
 }
 
 function lIlIIIll (text, opt) {
-let newRanks = {
+	let newRanks = {
 		c:"<:death:975319820461563914>",
 		u:"<:death:975319820461563914>",
 		r:"<:death:975319820461563914>",
@@ -219,6 +221,30 @@ let newRanks = {
 	text = replaceRanks(text,newRanks)
 		.split("\n");
 	text[0] = `-漫~'¨¯¨'·舞~ ${opt.user.username} ~舞'¨¯¨'·~漫-`;
+
+	return text.join("\n");
+}
+
+function estee (text, opt) {
+	let newRanks = {
+		c:"<a:c_:993718849914548225>",
+		u:"<a:u_:993718860471603280>",
+		r:"<a:r_:993718858303164476>",
+		e:"<a:e_:993718851349004338>",
+		m:"<a:m_:993718856252141638>",
+		p:"<a:p_:993718857250381875>",
+		cp:"<a:p_:993718857250381875>",
+		l:"<a:l_:993718855312605265>",
+		g:"<a:g_:993718853353877534>",
+		f:"<a:f_:993718852418535494>",
+		s:"<a:s_:993718859502735360>",
+		h:"<a:h_:993718854356324374>",
+		b:"<a:b_:993718849058918521>"
+	}
+
+	text = replaceRanks(text,newRanks)
+		.split("\n");
+	text[0] = `꧁༺ 𝓔𝓼𝓽𝓮𝓮'𝓼 𝓒𝓮𝓶𝓮𝓽𝓮𝓻𝔂 ༻꧂`;
 
 	return text.join("\n");
 }

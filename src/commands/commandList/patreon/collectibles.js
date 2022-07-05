@@ -23,6 +23,7 @@ for (let data in collectibles) {
 		alias,
     emoji,
     owners,
+		fullControl,
     ownerOnly,
     dailyOnly,
     giveAmount,
@@ -33,6 +34,7 @@ for (let data in collectibles) {
     hasMerge,
     mergeNeeded,
     mergeEmoji,
+		mergeDisplayMsg,
     mergeMsg
 	} = collectibles[data];
 	const ownerString = getOwnerString(owners);
@@ -44,13 +46,24 @@ for (let data in collectibles) {
 			mergeCount = Math.floor(count / mergeNeeded); 
 			count = count % mergeNeeded;
 		}
-		const msg = displayMsg
-			.replaceAll('?count?', count || 0)
-			.replaceAll('?mergeCount?', mergeCount || 0)
-			.replaceAll('?plural?', count > 1 ? 's' : '')
-			.replaceAll('?mergePlural?', mergeCount > 1 ? 's' : '')
-			.replaceAll('?emoji?', emoji)
-			.replaceAll('?user?', this.msg.author.username);
+		let msg;
+		if (!mergeCount) {
+			msg = displayMsg
+				.replaceAll('?count?', count || 0)
+				.replaceAll('?plural?', count > 1 ? 's' : '')
+				.replaceAll('?emoji?', emoji)
+				.replaceAll('?user?', this.msg.author.username);
+		} else {
+			msg = mergeDisplayMsg
+				.replaceAll('?displayMsg?', displayMsg)
+				.replaceAll('?count?', count || 0)
+				.replaceAll('?mergeCount?', mergeCount || 0)
+				.replaceAll('?plural?', count > 1 ? 's' : '')
+				.replaceAll('?mergePlural?', mergeCount > 1 ? 's' : '')
+				.replaceAll('?emoji?', emoji)
+				.replaceAll('?mergeEmoji?', mergeEmoji)
+				.replaceAll('?user?', this.msg.author.username);
+		}
 		this.send(msg);
 	}
 
@@ -72,9 +85,11 @@ for (let data in collectibles) {
 		let result = await this.redis.hincrby("data_" + user.id, data, giveAmount);
 		if (hasMerge && ((result % mergeNeeded) - giveAmount < 0) ) {
 			const msg = mergeMsg
+				.replaceAll('?giveMsg?', giveMsg)
 				.replaceAll('?giver?', this.msg.author.username)
 				.replaceAll('?receiver?', user.username)
 				.replaceAll('?emoji?', emoji)
+				.replaceAll('?blank?', this.config.emoji.blank)
 				.replaceAll('?mergeEmoji?', mergeEmoji);
 			this.send(msg)
 		} else {
@@ -97,6 +112,22 @@ for (let data in collectibles) {
 		return true;
 	}
 
+	const reset = async function () {
+		this.setCooldown(5);
+		let user = this.getMention(this.args[1]);
+		if (!user) {
+			user = await this.fetch.getMember(this.msg.channel.guild, this.args[1]);
+			if (!user) {
+				this.errorMsg(", Invalid syntax! Please tag a user!", 3000);
+				return;
+			}
+		}
+
+		await this.redis.hset("data_" + user.id, data, 0);
+
+		await this.send(`⚙️ **| ${this.msg.author.username}**, I have reset the numbers for **${user.username}**`);
+	}
+
 	commands.push(new CommandInterface({
 		alias: [data, ...alias],
 		args: "{@user}",
@@ -112,6 +143,10 @@ for (let data in collectibles) {
 				display.bind(this)();
 				this.setCooldown(5);
 			} else {
+				if (fullControl && ['reset', 'remove'].includes(this.args[0]) && owners.includes(this.msg.author.id)) {
+					reset.bind(this)();
+					return;
+				}
 				let user = this.getMention(this.args[0]);
 				if (!user) {
 					user = await this.fetch.getMember(this.msg.channel.guild, this.args[0]);
@@ -121,7 +156,7 @@ for (let data in collectibles) {
 						return;
 					}
 				}
-				if (!ownerOnly && user.id === this.msg.author.id) {
+				if (!owners.includes(this.msg.author.id) && user.id === this.msg.author.id) {
 					this.errorMsg(", You cannot give this item to yourself!", 3000);
 					this.setCooldown(5);
 					return;
