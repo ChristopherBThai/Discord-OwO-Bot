@@ -1,6 +1,6 @@
 {
   "fear": {
-    "alias": [],
+    "alias": ["nommy"],
     "emoji": "<a:fear:978025301013594162>",
     "owners": ["486604819545587723"],
     "fullControl": false,
@@ -172,7 +172,7 @@
   "flame": {
     "alias": ["flm"],
     "emoji": "<a:eternalflame:993701550327353355>",
-    "owners": ["640563808884228126"],
+    "owners": ["640563808884228126", "863101441697775616", "460987842961866762"],
     "fullControl": true,
     "ownerOnly": true,
     "dailyOnly": false,

@@ -30,7 +30,7 @@ module.exports = new CommandInterface({
 async function getPatreons(p){
 	let patreons;
 	try {
-	 patreons = await patreon.request();
+	 patreons = await patreon.request(p.args.join(' '));
 	} catch (err) {
 		console.error(err);
 		return;
@@ -41,48 +41,46 @@ async function getPatreons(p){
 		let sql = `SELECT id FROM user INNER JOIN patreons ON user.uid = patreons.uid WHERE TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths;`;
 		result = await p.query(sql);
 	}
-	console.log(result);
 
 	let text = "";
 
 	console.log("customized commands");
-	if(patreons["Customized Command"].length){
+	if(patreons.customizedCommand.length){
 		text += "**Customized Command**\n";
-		let list = patreons["Customized Command"];
+		let list = patreons.customizedCommand;
 		for(let i in list){
-			text += "<@"+list[i].discordID+"> | **"+list[i].name+"** | "+list[i].discordID+"\n";
+			text += "<@"+list[i].discord+"> | **"+list[i].name+"** | "+list[i].discord+"\n";
 		}
 	}
 
 	console.log("custom commands");
-	if(patreons["Custom Command"].length){
+	if(patreons.customCommand.length){
 		text += "\n**Custom Command**\n";
-		let list = patreons["Custom Command"];
+		let list = patreons.customCommand;
 		for(let i in list){
-			text += "<@"+list[i].discordID+"> | **"+list[i].name+"** | "+list[i].discordID+"\n";
+			text += "<@"+list[i].discord+"> | **"+list[i].name+"** | "+list[i].discord+"\n";
 		}
 	}
 
 	console.log("custom pet");
 	csv = "Discord Name,Discord ID,Patreon Name,Pet Name,hp str pr wp mag mr,Pet Desc,Pet ID,SQL\n";
-	if(patreons["Custom Pet"].length){
+	if(patreons.pet.length){
 		text += "\n**Custom Pet**\n";
-		let list = patreons["Custom Pet"];
+		let list = patreons.pet;
 		for(let i in list){
-			console.log(list[i]);
-			text += "<@"+list[i].discordID+"> | **"+list[i].name+"** | "+list[i].discordID+"\n";
-			let user = await p.fetch.getUser(list[i].discordID);
-			csv += (user?user.username:"A User")+","+list[i].discordID+","+list[i].name+"\n";
+			text += "<@"+list[i].discord+"> | **"+list[i].name+"** | "+list[i].discord+"\n";
+			let user = await p.fetch.getUser(list[i].discord);
+			csv += (user?user.username:"A User")+","+list[i].discord+","+list[i].name+"\n";
 		}
 	}
 
 	console.log("monthly cowoncy");
 	cowoncy = [];
-	if(patreons["Monthly cowoncy"].length){
-		let list = patreons["Monthly cowoncy"];
+	if(patreons.cowoncy.length){
+		let list = patreons.cowoncy;
 		for(let i in list){
-			if(list[i].discordID)
-				cowoncy.push(list[i].discordID);
+			if(list[i].discord)
+				cowoncy.push(list[i].discord);
 		}
 		for(let i in result){
 			if(!cowoncy.includes(result[i].id))
@@ -94,7 +92,7 @@ async function getPatreons(p){
 	console.log("done");
 
 	await p.send(text,null,null,{split:true});
-	await p.send("Type `owo distributecowoncy {amount}` to send monthly cowoncy to "+cowoncy.length+" users");
+	await p.send("Type `owo distributecowoncy {amount}` to send monthly cowoncy to "+patreons.cowoncy.length+"+"+result.length+" users");
 	await p.send('```'+csv+'```',null,null,{split:{prepend:'```',append:'```'}})
 }
 
