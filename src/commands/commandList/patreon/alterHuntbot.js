@@ -33,8 +33,8 @@ exports.alter = function(id,text,type) {
 			return kuma(text,type);
 		case '325273108418396160':
 			return spotifybot2(text,type);
-		case '408875125283225621':
-			return kirito(text,type);
+		//case '408875125283225621':
+		//	return kirito(text,type);
 		case '575555630312456193':
 			return xmelanie(text,type);
 		case '216710431572492289':
