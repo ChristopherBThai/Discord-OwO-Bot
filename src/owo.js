@@ -16,42 +16,57 @@ class OwO extends Base{
 	constructor(bot){
 		super(bot);
 		this.dbl = dbl;
+		
+		const importNames = [
+			'mysql', 'redis', 'neo4j', 
+			'pubsub', 'PagedMessage', 'streamSocket', 
+			'snailSocket', 'logger', 'ban', 
+			'cooldown', 'global', 'sender', 
+			'dateUtil', 'fetch', 'reactionCollector', 
+			'dataResolver', 'EmojiAdder', 'patreon'
+		];
+		
+		const importObject = importNames.reduce(
+			(obj, current) => (
+				{ 
+					...obj, 
+					[current]: require(`./utils/${current}.js`)
+				}
+			), {});
+		
+		this = {
+			...this,
+			...importObject
+		}
+		
+		// Mysql connection, Optimized in the above function!
 
-		// Mysql connection
-		this.mysql = require('./utils/mysql.js');
+		// Redis connection, Optimized in the above function!
 
-		// Redis connection
-		this.redis = require('./utils/redis.js');
-
-		// Neo4j Logging
-		this.neo4j = require('./utils/neo4j.js');
+		// Neo4j Logging, Optimized in the above function!
 
 		// Redis pubsub to communicate with all the other shards/processes
-		this.pubsub = new (require('./utils/pubsub.js'))(this);
+		this.pubsub = new (this.pubsub)(this);
 
 		// Handles discord interaction events
 		this.interactionHandlers = new (require('./interactionHandlers'))(this);
 
-		// Creates a pageable message
-		this.PagedMessage = require('./utils/PagedMessage.js');
+		// Creates a pageable message, this.pubsub
 
 		// Websockets
-		this.streamSocket = new (require('./utils/streamSocket.js'))(this);
-		this.snailSocket = new (require('./utils/snailSocket.js'))(this);
+		this.streamSocket = new (this.streamSocket)(this);
+		this.snailSocket = new (this.snailSocket)(this);
 
-		// Logger
-		this.logger = require('./utils/logger.js');
+		// Logger, Optimized in the above function!
 
 		// Bot config file
 		this.config = require('./data/config.json');
 		this.debug = this.config.debug;
 		this.prefix = this.config.prefix;
 
-		// Ban check 
-		this.ban = require('./utils/ban.js');
+		// Ban check , Optimized in the above function!
 
-		// Cooldown check 
-		this.cooldown = require('./utils/cooldown.js');
+		// Cooldown check, Optimized in the above function!
 
 		// Quest Handler
 		this.questHandler = new (require("./botHandlers/questHandler.js"))();
@@ -61,16 +76,13 @@ class OwO extends Base{
 		this.query = this.mysqlhandler.query;
 
 		// Global helper methods
-		this.global = require('./utils/global.js');
 		this.global.client(this.bot);
 		this.global.con(this.mysql.con);
 
 		// Message sender helper methods
-		this.sender = require('./utils/sender.js');
 		this.sender.init(this);
 
-		// Date utility
-		this.dateUtil = require('./utils/dateUtil.js');
+		// Date utility, Optimized in the above function!
 
 		// Hidden macro detection file
 		this.macro = require('./../../tokens/macro.js');
@@ -78,22 +90,20 @@ class OwO extends Base{
 		this.cooldown.setMacro(this.macro);
 
 		// Allows me to check catch before any fetch requests (reduces api calls)
-		this.fetch = new (require('./utils/fetch.js'))(this);
+		this.fetch = new (this.fetch)(this);
 
 		// Creates a reaction collector for a message (works for uncached messages too)
-		this.reactionCollector = new (require('./utils/reactionCollector.js'))(this);
+		this.reactionCollector = new (this.reactionCollector)(this);
 
 		// Creates a reaction collector for a message (works for uncached messages too)
-		this.interactionCollector = new (require('./utils/interactionCollector.js'))(this);
+		this.interactionCollector = new (this.interactionCollector)(this);
 
-		// Fetches images and converts them to buffers
+		// Fetches images and converts them to buffers, Optimized in the above function!
 		this.DataResolver = require('./utils/dataResolver.js');
 
-		// Ability to add emojis to guilds
-		this.EmojiAdder = require('./utils/EmojiAdder.js');
+		// Ability to add emojis to guilds, Optimized in the above function!
 
 		// Helper for patreon benefits
-		this.patreon = require('./utils/patreon.js');
 		this.patreon.init(this);
 
 		// Create commands
