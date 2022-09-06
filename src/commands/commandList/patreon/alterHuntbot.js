@@ -12,7 +12,7 @@ const duration = '⏳ ';
 const cowoncy = '<:cowoncy:416043450337853441>';
 const gain = '🔧 ';
 const experience = '⚔ ';
-const radar = '📡;';
+const radar = '📡';
 const essence = '<a:essence:451638978299428875>';
 
 exports.alter = function(id,text,type) {
@@ -583,6 +583,9 @@ function arichy(text,type) {
 }
 
 function capz(text,type) {
+	const emoji1 = '<:emoji1:1016115443473338418>';
+	const emoji2 = '<:emoji2:1016115444811321354>';
+	const emoji3 = '<:emoji3:1016115442189860935>';
 	switch(type){
 		case 'hb':
 			text.fields[0].name = "<:hb:993769506184900659> `Howdy! I am ready to search for pets to make new friends!`";
@@ -591,20 +594,39 @@ function capz(text,type) {
 			text.fields[3].name = text.fields[3].name.replace(cowoncy, "<:cost:993769499973140552>");
 			text.fields[4].name = text.fields[4].name.replace(gain, "<:gain:993769505169870870>");
 			text.fields[5].name = text.fields[5].name.replace(experience, "<:exp:993769504360378413>");
-			text.fields[6].name = text.fields[6].name.replace(radar, "<:radar:993769507627741184>");
+			text.fields[6].name = text.fields[6].name.replace(radar, "<:radar:1016113320127901746>");
 			text.fields[7].name = text.fields[7].name.replace(essence, "<:essence:993769503349542922>");
 			if(text.fields.length>=9){
 				text.fields[8].name = "<:searching:993769508693090315> I am still searching for pets!";
-				text.fields[8].value = text.fields[8].value.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","I will return in")
+				text.fields[8].value = text.fields[8].value.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","Capz, I am still searching for pets! I will return in")
 					.replace("DONE", "done")
 					.replace("ANIMALS CAPTURED","pets found!");
 			}
 			return text;
 		case 'progress':
 			text = text.replace(/<:[a-z]bot:[0-9]+>/gi, "<:searching:993769508693090315>")
-				.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","I will return in")
+				.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","Capz, I am still searching for pets! I will return in")
 				.replace("DONE", "done")
 				.replace("ANIMALS CAPTURED","pets found!");
+			return text;
+		case 'returned':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi, emoji1)
+				.replace("BEEP BOOP. I AM BACK WITH","Capz, I have returned with")
+				.replace("ANIMALS","pets")
+				.replace("ESSENCE, AND","essence, and")
+				.replace("EXPERIENCE","experience");
+			return text;
+		case 'password':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi, emoji2);
+			return text;
+		case 'spent':
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi, emoji3)
+				.replace(/BEEP BOOP\. `\*\*`[^`]+`\*\*`, YOU SPENT/gi, "Capz, you spent ")
+				.replace("I WILL BE BACK IN","I will return in")
+				.replace("WITH","with")
+				.replace("ANIMALS","pets")
+				.replace("ESSENCE, AND","essence, and")
+				.replace("EXPERIENCE","experience");
 			return text;
 		default:
 			return text;
