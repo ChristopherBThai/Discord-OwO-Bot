@@ -29,6 +29,8 @@ exports.alter = function(p, text, info) {
 			return estee(p, info);
 		case '709396638661083146':
 			return rosie(p, info);
+		case '683742950668501001':
+			return dadada(p, info);
 		default:
 			return text;
 	}
@@ -122,6 +124,17 @@ function rosie (p, info) {
 			url: "https://cdn.discordapp.com/attachments/915122067865751562/976038270255378512/3A85D5FA-B90D-40B5-AB5F-C7EEBCDCB4C1.gif"
 		},
 		description: info.inv
+	}
+	return { embed }
+}
+
+function dadada (p, info) {
+	const embed = {
+		color: 1,
+		image: {
+			url: "https://cdn.discordapp.com/attachments/961392039482753064/1004148773582295070/DA43901A-C66C-460A-AC6F-9DF885F253AB.gif"
+		},
+		description: `**<a:heart:1016125455511851068> 𝔻𝕒𝕕𝕒’𝕤 𝕚𝕟𝕧𝕖𝕟𝕥𝕠𝕣𝕪 <a:heart:1016125455511851068>**\n${info.inv}`
 	}
 	return { embed }
 }

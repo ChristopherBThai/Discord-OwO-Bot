@@ -22,6 +22,8 @@ for (let data in collectibles) {
 	const {
 		alias,
     emoji,
+    pluralName,
+    singleName,
     owners,
     fullControl,
     ownerOnly,
@@ -32,10 +34,13 @@ for (let data in collectibles) {
     brokeMsg,
     giveMsg,
     hasMerge,
+		hasManualMerge,
+		manualMergeCommands,
     mergeNeeded,
     mergeEmoji,
     mergeDisplayMsg,
-    mergeMsg
+    mergeMsg,
+		manualMergeData
 	} = collectibles[data];
 	const ownerString = getOwnerString(owners);
 	
@@ -46,11 +51,15 @@ for (let data in collectibles) {
 			mergeCount = Math.floor(count / mergeNeeded); 
 			count = count % mergeNeeded;
 		}
+		if (hasManualMerge) {
+			mergeCount = await this.redis.hget("data_" + this.msg.author.id, manualMergeData);
+		}
 		let msg;
 		if (!mergeCount) {
 			msg = displayMsg
 				.replaceAll('?count?', count || 0)
 				.replaceAll('?plural?', count > 1 ? 's' : '')
+				.replaceAll('?pluralName?', count > 1 ? pluralName : singleName)
 				.replaceAll('?emoji?', emoji)
 				.replaceAll('?user?', this.msg.author.username);
 		} else {
@@ -59,6 +68,7 @@ for (let data in collectibles) {
 				.replaceAll('?count?', count || 0)
 				.replaceAll('?mergeCount?', mergeCount || 0)
 				.replaceAll('?plural?', count > 1 ? 's' : '')
+				.replaceAll('?pluralName?', count > 1 ? pluralName : singleName)
 				.replaceAll('?mergePlural?', mergeCount > 1 ? 's' : '')
 				.replaceAll('?emoji?', emoji)
 				.replaceAll('?mergeEmoji?', mergeEmoji)
@@ -124,8 +134,32 @@ for (let data in collectibles) {
 		}
 
 		await this.redis.hset("data_" + user.id, data, 0);
+		if (manualMergeData) {
+			await this.redis.hset("data_" + user.id, manualMergeData, 0);
+		}
 
 		await this.send(`⚙️ **| ${this.msg.author.username}**, I have reset the numbers for **${user.username}**`);
+	}
+
+	const manualMerge = async function () {
+		let result = await this.redis.hincrby("data_" + this.msg.author.id, data, -10);
+		if (result == null || result < 0) {
+			if (result < 0) this.redis.hincrby("data_" + this.msg.author.id, data, 10);
+			this.errorMsg(", you do not have have enough to merge! >:c", 3000);
+			this.setCooldown(5);
+			return;
+		}
+
+		const result2 = await this.redis.hincrby("data_" + this.msg.author.id, manualMergeData, 1);
+		const msg = mergeMsg
+			.replaceAll('?giveMsg?', giveMsg)
+			.replaceAll('?user?', this.msg.author.username)
+			.replaceAll('?emoji?', emoji)
+			.replaceAll('?blank?', this.config.emoji.blank)
+			.replaceAll('?mergeCount?', result2)
+			.replaceAll('?mergePlural?', result > 1 ? 's' : '')
+			.replaceAll('?mergeEmoji?', mergeEmoji);
+		this.send(msg)
 	}
 
 	commands.push(new CommandInterface({
@@ -145,6 +179,10 @@ for (let data in collectibles) {
 			} else {
 				if (fullControl && ['reset', 'remove'].includes(this.args[0]) && owners.includes(this.msg.author.id)) {
 					reset.bind(this)();
+					return;
+				}
+				if (hasManualMerge && manualMergeCommands?.includes(this.args[0])) {
+					manualMerge.bind(this)();
 					return;
 				}
 				let user = this.getMention(this.args[0]);

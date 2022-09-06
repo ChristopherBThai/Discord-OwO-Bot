@@ -53,21 +53,21 @@ function arichy (text, info) {
 function erys (text, info) {
 	let img, color, desc;
 	if (info.timer) {
-		desc = `<:cat1:993750688448389170> **| ${info.from.username}**! hope you enjoy your ${info.count} freshly baked cookies!\n<:cat2:993750689404698684> **|** Hope they fill you with love and joy! <a:cat3:993750690411319396>\n<:cat4:993750691476668506> **|** You may start baking your cookies in **${info.timer}**!`;
+		desc = `<:cat1:993750688448389170> **| ${info.from.username}**! hope you enjoy your **${info.count}** freshly baked cookies!\n<:cat2:993750689404698684> **|** Hope they fill you with love and joy! <a:cat3:993750690411319396>\n<:cat4:993750691476668506> **|** You may start baking your cookies in **${info.timer}**!`;
 		img = 'https://cdn.discordapp.com/attachments/970816432696881174/1002523522758873098/cookiedex.gif';
 		color = 15127782;
 	} else if (info.receive) {
 		desc = `<a:receive1:993752858342199376> **${info.to.username} | ${info.from.username}** made you freshly baked cookies, delivered by the magic cat <:receive2:993752859298517043>` +
-			`<a:receive3:993752859973787693> **|** Hope you enjoy them! nom`;
+			`\n<a:receive3:993752859973787693> **|** Hope you enjoy them! nom`;
 		img = 'https://cdn.discordapp.com/attachments/936398283750907965/984144172229459988/cookie.gif';
 		color = 16436896;
 	} else if (info.ready) {
-		desc = `<:cat1:993750688448389170> **| ${info.from.username}**! hope you enjoy your ${info.count} freshly baked cookies!\n<:cat2:993750689404698684> **|** Hope they fill you with love and joy! <a:cat3:993750690411319396>`;
+		desc = `<:cat1:993750688448389170> **| ${info.from.username}**! hope you enjoy your **${info.count}** freshly baked cookies!\n<:cat2:993750689404698684> **|** Hope they fill you with love and joy! <a:cat3:993750690411319396>`;
 		img = 'https://cdn.discordapp.com/attachments/970816432696881174/1002523522758873098/cookiedex.gif';
 		color = 15127782;
 	} else {
-		desc = `<a:give1:993752854877716521> **${info.from.username}**, **${info.to.username}** sent you a cookie from his catto's bakery! <:give2:993752856005980160>` +
- 			`<a:give3:993752857348157460> **|** It was made with love, hope it's tasty! nom`;
+		desc = `<a:give1:993752854877716521> **${info.to.username}**, **${info.from.username}** sent you a cookie from his catto's bakery! <:give2:993752856005980160>` +
+ 			`\n<a:give3:993752857348157460> **|** It was made with love, hope it's tasty! nom`;
 		img = 'https://cdn.discordapp.com/attachments/936398283750907965/984144172229459988/cookie.gif';
 
 		color = 16436896;
