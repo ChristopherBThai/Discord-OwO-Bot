@@ -10,7 +10,7 @@ const CommandInterface = require('../../CommandInterface.js');
 const emoji = "<a:butterfly:956490290817015828>";
 const owner = "692146302284202134";
 const owner2 = "460987842961866762";
-const data = "butterfly2";
+const data = "butterfly3";
 
 module.exports = new CommandInterface({
 

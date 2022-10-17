@@ -9,7 +9,7 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const emoji = "<a:sun:965014532160380948>";
 const owners = ["460987842961866762"];
-const data = "sun";
+const data = "sun2";
 const ownerOnly = true;
 const giveAmount = 1;
 const desc = "I love you like the sun loves the moon, forever separated by thousands of miles for thousands of years.\nHe died every night just to let her breathe.\n\nThe sun and moon love each other without any hope of meeting ever.\n\nLive by the sun";

@@ -23,8 +23,9 @@ const items = {
 		name: "Common Ticket",
 		emoji: config.emoji.perkTicket.common,
 		column: "unwrapped_common_tickets",
-		tradeLimit: 1,
-		giveOnly: true,
+		//tradeLimit: 1,
+		//giveOnly: true,
+		untradeable: true,
 		desc: "You can use this item to redeem 1 month of common tier perks by typing `owo use 14`."
 	}
 };
@@ -196,6 +197,10 @@ exports.desc = async function (p, id) {
 
 	if (item.giveOnly) {
 		embed.fields[0].value += `\n\n💸 **This item can only be gifted. You cannot trade this for cowoncy.**`;
+	}
+
+	if (item.untradeable) {
+		embed.fields[0].value += `\n\n🚫 **This item cn not be traded.**`;
 	}
 
 	if (item.tradeLimit) {

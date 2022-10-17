@@ -9,7 +9,7 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const emoji = "<:nierchip:956489707829743636>";
 const owner = "282666590565171210";
-const data = "nier";
+const data = "nier2";
 
 module.exports = new CommandInterface({
 

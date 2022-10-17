@@ -10,7 +10,7 @@ const config = require('../../../data/config.json');
 
 const emoji = "<a:crystal:976030431428354048>";
 const owners = ["460987842961866762"];
-const data = "destiny";
+const data = "destiny2";
 const ownerOnly = true;
 const dailyOnly = false;
 const giveAmount = 1;

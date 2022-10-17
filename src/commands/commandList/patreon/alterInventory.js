@@ -80,9 +80,6 @@ function grace(text) {
 function lexx (p, info) {
 	const embed = {
 		color: p.config.embed_color,
-		image: {
-			url: "https://cdn.discordapp.com/attachments/696878982758531152/840432649336127488/AmyWong.png"
-		},
 		description: `**${info.user.username}'s inv of Rings, Tickets, Gems & Weapons**\n${info.inv}`
 	}
 	return { embed }

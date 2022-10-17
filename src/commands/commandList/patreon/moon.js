@@ -9,7 +9,7 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const emoji = "<a:moon:965014532688863252>";
 const owners = ["460987842961866762"];
-const data = "moon";
+const data = "moon2";
 const ownerOnly = true;
 const giveAmount = 1;
 const desc = "I miss you like the moon misses the sun, forever separated by thousands of miles for thousands of years.\n\nDestined to chase it until the end of time.\n\nThe sun and moon misses each other without any hope of meeting ever.\n\nLove by the moon";
