@@ -18,9 +18,10 @@ function getOwnerString (owners) {
 
 const commands = [];
 
-for (let data in collectibles) {
+for (let dataName in collectibles) {
 	const {
 		alias,
+		dataOverride,
     emoji,
     pluralName,
     singleName,
@@ -41,8 +42,9 @@ for (let data in collectibles) {
     mergeDisplayMsg,
     mergeMsg,
 		manualMergeData
-	} = collectibles[data];
+	} = collectibles[dataName];
 	const ownerString = getOwnerString(owners);
+	const data = dataOverride || dataName;
 	
 	const display = async function () {
 		let count = await this.redis.hget("data_" + this.msg.author.id, data);
@@ -163,7 +165,7 @@ for (let data in collectibles) {
 	}
 
 	commands.push(new CommandInterface({
-		alias: [data, ...alias],
+		alias: [dataName, ...alias],
 		args: "{@user}",
 		desc: `${description}\n\nThis command was created by ${ownerString}`,
 		example:[],

@@ -9,7 +9,7 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const emoji = "<a:sakura:955408593228816414>";
 const owner = "460987842961866762";
-const data = "sakura";
+const data = "sakura2";
 
 module.exports = new CommandInterface({
 

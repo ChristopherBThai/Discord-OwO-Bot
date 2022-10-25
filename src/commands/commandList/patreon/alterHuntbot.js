@@ -589,19 +589,22 @@ function capz(text,type) {
 	switch(type){
 		case 'hb':
 			text.fields[0].name = "<:hb:993769506184900659> `Howdy! I am ready to search for pets to make new friends!`";
-			text.fields[1].name = text.fields[1].name.replace(efficiency, "<:efficiency:993769502095454229>");
-			text.fields[2].name = text.fields[2].name.replace(duration,"<:duration:993769501122379827>");
+			text.fields[1].name = text.fields[1].name.replace(efficiency, "<:efficiency:993769502095454229> ");
+			text.fields[2].name = text.fields[2].name.replace(duration,"<:duration:993769501122379827> ");
 			text.fields[3].name = text.fields[3].name.replace(cowoncy, "<:cost:993769499973140552>");
-			text.fields[4].name = text.fields[4].name.replace(gain, "<:gain:993769505169870870>");
-			text.fields[5].name = text.fields[5].name.replace(experience, "<:exp:993769504360378413>");
+			text.fields[4].name = text.fields[4].name.replace(gain, "<:gain:993769505169870870> ");
+			text.fields[5].name = text.fields[5].name.replace(experience, "<:exp:993769504360378413> ");
 			text.fields[6].name = text.fields[6].name.replace(radar, "<:radar:1016113320127901746>");
-			text.fields[7].name = text.fields[7].name.replace(essence, "<:essence:993769503349542922>");
+			text.fields[7].name = text.fields[7].name.replace(`essence`, "<:essence:993769503349542922>")
+				.replace('Animal', 'Empowered');
 			if(text.fields.length>=9){
 				text.fields[8].name = "<:searching:993769508693090315> I am still searching for pets!";
 				text.fields[8].value = text.fields[8].value.replace("BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN","Capz, I am still searching for pets! I will return in")
+					.replace("`\n",".`\n")
 					.replace("DONE", "done")
 					.replace("ANIMALS CAPTURED","pets found!");
 			}
+			text.author.name = text.author.name.replace('HuntBot', 'Huntbot');
 			return text;
 		case 'progress':
 			text = text.replace(/<:[a-z]bot:[0-9]+>/gi, "<:searching:993769508693090315>")
@@ -621,7 +624,7 @@ function capz(text,type) {
 			return text;
 		case 'spent':
 			text = text.replace(/<:[a-z]bot:[0-9]+>/gi, emoji3)
-				.replace(/BEEP BOOP\. `\*\*`[^`]+`\*\*`, YOU SPENT/gi, "Capz, you spent ")
+				.replace(/BEEP BOOP\. `\*\*`[^`]+`\*\*`, YOU SPENT/gi, "Capz, you spent")
 				.replace("I WILL BE BACK IN","I will return in")
 				.replace("WITH","with")
 				.replace("ANIMALS","pets")
