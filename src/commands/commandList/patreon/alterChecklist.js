@@ -12,7 +12,7 @@ const tada = "🎉";
 
 exports.alter = function(id, opt){
 	switch(id){
-		case '427296171883626496':
+		case '460987842961866762':
 			return estee(opt);
 		default:
 			return opt.embed;
