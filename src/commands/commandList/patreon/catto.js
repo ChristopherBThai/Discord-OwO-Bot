@@ -61,7 +61,11 @@ module.exports = new CommandInterface({
 	cooldown:15000,
 
 	execute: async function () {
-		if (!this.args.length) {
+
+		if (['reset', 'remove'].includes(this.args[0]) && owners.includes(this.msg.author.id)) {
+			reset.bind(this)();
+			return;
+		} else if (!this.args.length) {
 			display.bind(this)(this);
 			this.setCooldown(5);
 		} else {
@@ -109,3 +113,19 @@ async function give (user) {
 	await this.redis.hincrby("data_" + user.id, data, giveAmount);
 	sendGive.bind(this)(this.msg.author, user);
 }
+
+async function reset () {
+	this.setCooldown(5);
+	let user = this.getMention(this.args[1]);
+	if (!user) {
+		user = await this.fetch.getMember(this.msg.channel.guild, this.args[1]);
+		if (!user) {
+			this.errorMsg(", Invalid syntax! Please tag a user!", 3000);
+			return;
+		}
+	}
+	await this.redis.hset("data_" + user.id, data, 0);
+	await this.send(`⚙️ **| ${this.msg.author.username}**, I have reset the numbers for **${user.username}**`);
+}
+
+

@@ -94,6 +94,14 @@ module.exports = new CommandInterface({
 			display(p);
 			p.setCooldown(5);
 		}else{
+			if (["reset"].includes(p.args[0].toLowerCase())) {
+				if (owners.includes(p.msg.author.id)) {
+					reset.bind(this)();
+				} else {
+					await p.errorMsg(", only the owner of this command can use this!",3000);
+				}
+				return;
+			}
 			let user = p.getMention(p.args[0]);
 			if(!user){
 				user = await p.fetch.getMember(p.msg.channel.guild,p.args[0]);
@@ -114,8 +122,8 @@ module.exports = new CommandInterface({
 });
 
 async function display(p){
-	let items = await p.redis.hget("data_"+p.msg.author.id, data) || '{}';
-	items = JSON.parse(items);
+	let items = await p.redis.hget("data_"+p.msg.author.id, data);
+	items = JSON.parse(items) || {};
 	let text = `<:title1:1031470768820863076> <:title2:1031470777704402954> <:title3:1031470787712008192> **${p.msg.author.username} galaxy!** <:title3:1031470787712008192> <:title2:1031470777704402954> <:title1:1031470768820863076>\n`;
 	text += '<:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366>\n';
 	let biggest = 1;
@@ -145,9 +153,9 @@ async function display(p){
 
 async function give(p, user){
 	let text;
-	let items = await p.redis.hget("data_"+p.msg.author.id, data);
+	let items = await p.redis.hget("data2_"+p.msg.author.id, data);
 	try {
-		items = JSON.parse(items);
+		items = JSON.parse(items) || {};
 	} catch (err) {
 		console.error(err);
 		items = {};
@@ -167,4 +175,19 @@ async function give(p, user){
 	}
 	await p.redis.hset("data_"+p.msg.author.id, data, JSON.stringify(items));
 	p.send(text);
+}
+
+async function reset () {
+	this.setCooldown(5);
+	let user = this.getMention(this.args[1]);
+	if (!user) {
+		user = await this.fetch.getMember(this.msg.channel.guild, this.args[1]);
+		if (!user) {
+			this.errorMsg(", Invalid syntax! Please tag a user!", 3000);
+			return;
+		}
+	}
+
+	await this.redis.hset("data_" + user.id, data, '{}');
+	await this.send(`⚙️ **| ${this.msg.author.username}**, I have reset the numbers for **${user.username}**`);
 }

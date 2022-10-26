@@ -41,7 +41,11 @@ for (let dataName in collectibles) {
     mergeEmoji,
     mergeDisplayMsg,
     mergeMsg,
-		manualMergeData
+		manualMergeData,
+		dailyLimitMsg,
+		costAmount,
+		failChance,
+		failMessage
 	} = collectibles[dataName];
 	const ownerString = getOwnerString(owners);
 	const data = dataOverride || dataName;
@@ -81,23 +85,36 @@ for (let dataName in collectibles) {
 
 	const give = async function (user) {
 		if (!owners.includes(this.msg.author.id)) {
-			if (dailyOnly && !(await checkDaily.bind(this)())) {
+			if (dailyOnly && !(await checkDaily.bind(this)(user))) {
 				return;
 			}
-			let result = await this.redis.hincrby("data_" + this.msg.author.id, data, -1);
-			const refund = +result < 0 || (hasMerge && ((+result+1) % mergeNeeded) <= 0);
-			if (result == null || refund) {
-				if (refund) this.redis.hincrby("data_" + this.msg.author.id, data, 1);
-				this.errorMsg(brokeMsg, 3000);
-				this.setCooldown(5);
-				return;
+			let take = 1;
+			if (typeof costAmount === 'number') {
+				take = costAmount
+			}
+			if (costAmount > 0) {
+				let result = await this.redis.hincrby("data_" + this.msg.author.id, data, -1 * take);
+				// TODO double check merge for costAmount greater than 1
+				const refund = +result < 0 || (hasMerge && ((+result+take) % mergeNeeded) <= 0);
+				if (result == null || refund) {
+					if (refund) this.redis.hincrby("data_" + this.msg.author.id, data, take);
+					this.errorMsg(brokeMsg, 3000);
+					this.setCooldown(5);
+					return;
+				}
 			}
 		}
 
+		if (checkFailed.bind(this)(user)) return;
+
 		let result = await this.redis.hincrby("data_" + user.id, data, giveAmount);
+		let selectedGiveMsg = giveMsg;
+		if (Array.isArray(giveMsg)) {
+			selectedGiveMsg = giveMsg[Math.floor(Math.random() * giveMsg.length)];
+		}
 		if (hasMerge && ((result % mergeNeeded) - giveAmount < 0) ) {
 			const msg = mergeMsg
-				.replaceAll('?giveMsg?', giveMsg)
+				.replaceAll('?giveMsg?', selectedGiveMsg)
 				.replaceAll('?giver?', this.msg.author.username)
 				.replaceAll('?receiver?', user.username)
 				.replaceAll('?emoji?', emoji)
@@ -105,7 +122,7 @@ for (let dataName in collectibles) {
 				.replaceAll('?mergeEmoji?', mergeEmoji);
 			this.send(msg)
 		} else {
-			const msg = giveMsg
+			const msg = selectedGiveMsg
 				.replaceAll('?giver?', this.msg.author.username)
 				.replaceAll('?receiver?', user.username)
 				.replaceAll('?emoji?', emoji);
@@ -113,11 +130,34 @@ for (let dataName in collectibles) {
 		}
 	}
 
-	const checkDaily = async function () {
+	const checkFailed = function (user) {
+		if (typeof failChance !== 'number' || failChance <= 0) return false;
+		if (Math.random() <= failChance) {
+			const msg = failMessage
+				.replaceAll('?giver?', this.msg.author.username)
+				.replaceAll('?receiver?', user.username)
+				.replaceAll('?emoji?', emoji);
+			this.send(msg)
+			return true;
+		}
+		return false;
+	}
+
+	const checkDaily = async function (user) {
 		let reset = await this.redis.hget("data_" + this.msg.author.id, data + '_reset');
 		let afterMid = this.dateUtil.afterMidnight(reset);
 		if (!afterMid.after) {
-			this.errorMsg(", you can only send this item once per day.", 3000);
+			if (!dailyLimitMsg) {
+				this.errorMsg(", you can only send this item once per day.", 3000);
+			} else {
+				const msg = dailyLimitMsg
+					.replaceAll('?user?', this.msg.author.username)
+					.replaceAll('?giver?', user.username)
+					.replaceAll('?emoji?', emoji)
+					.replaceAll('?blank?', this.config.emoji.blank)
+					.replaceAll('?error?', this.config.emoji.error)
+				this.send(msg);
+			}
 			return false;
 		}
 		await this.redis.hset("data_"+this.msg.author.id, data + '_reset', afterMid.now);
@@ -153,8 +193,12 @@ for (let dataName in collectibles) {
 		}
 
 		const result2 = await this.redis.hincrby("data_" + this.msg.author.id, manualMergeData, 1);
+		let selectedGiveMsg = giveMsg;
+		if (Array.isArray(giveMsg)) {
+			selectedGiveMsg = giveMsg[Math.floor(Math.random() * giveMsg.length)];
+		}
 		const msg = mergeMsg
-			.replaceAll('?giveMsg?', giveMsg)
+			.replaceAll('?giveMsg?', selectedGiveMsg)
 			.replaceAll('?user?', this.msg.author.username)
 			.replaceAll('?emoji?', emoji)
 			.replaceAll('?blank?', this.config.emoji.blank)
