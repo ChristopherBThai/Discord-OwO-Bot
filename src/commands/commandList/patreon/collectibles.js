@@ -92,7 +92,7 @@ for (let dataName in collectibles) {
 			if (typeof costAmount === 'number') {
 				take = costAmount
 			}
-			if (costAmount > 0) {
+			if (take > 0) {
 				let result = await this.redis.hincrby("data_" + this.msg.author.id, data, -1 * take);
 				// TODO double check merge for costAmount greater than 1
 				const refund = +result < 0 || (hasMerge && ((+result+take) % mergeNeeded) <= 0);

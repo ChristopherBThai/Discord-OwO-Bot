@@ -16,7 +16,6 @@ const radar = '📡';
 const essence = '<a:essence:451638978299428875>';
 
 exports.alter = function(id,text,type) {
-			return capz(text,type);
 	switch(id){
 		case '111619509529387008':
 			return lexus(text,type);

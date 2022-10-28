@@ -26,7 +26,7 @@ const mergeMsg = `, you have been given 1 ${emoji} raindrop!\n${config.emoji.bla
 
 function getDisplay (count, mergeCount) {
 	if (mergeCount) {
-		return `, you currently have ?count? raindrop?plural? and ?mergeCount? rainbow?mergePlural?! Sometimes, If You Want The Rainbow, You Gotta Put Up With The Rain!`;
+		return `, you currently have ?count? raindrop?plural? <a:rainbow:975313415218266153> and ?mergeCount? rainbow?mergePlural?! <a:rainbow:1035472481563181057> Sometimes, If You Want The Rainbow, You Gotta Put Up With The Rain!`;
 	} else {
 		return `, you currently have ?count? raindrop?plural?! May Happiness Rain On You!`;
 	}
@@ -39,11 +39,11 @@ if (owners.slice(0, -1).length) {
 
 module.exports = new CommandInterface({
 
-	alias:[data, "rainbow", "raindrop"],
+	alias:[data, "rainbow", "raindrop", "wet"],
 
 	args:"{@user}",
 
-	desc: `${desc}\n\nThis command was created by ${ownersString}`,
+	desc: `${desc}\n\nThis command can only be given out by ${ownersString}`,
 
 	example:[],
 
