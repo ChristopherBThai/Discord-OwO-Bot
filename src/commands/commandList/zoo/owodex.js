@@ -86,7 +86,9 @@ module.exports = new CommandInterface({
 			for(let i in ids){
 				descID = ids[i].match(/[0-9]+/)
 				tempUser = await p.fetch.getUser(descID[0]);
-				desc = desc.replace(' ?'+descID+'? \n',(tempUser)?"* ***"+tempUser.username+"*** \n*":"* ***A User*** \n*")
+				desc = desc.replace(' ?'+descID+'? \n\n',(tempUser)?"* ***"+tempUser.username+"*** \n*":"* ***A User*** \n\n*")
+					.replace(' ?'+descID+'?\n\n',(tempUser)?"* ***"+tempUser.username+"*** \n*":"* ***A User*** \n\n*")
+					.replace(' ?'+descID+'? \n',(tempUser)?"* ***"+tempUser.username+"*** \n*":"* ***A User*** \n*")
 					.replace(' ?'+descID+'?\n',(tempUser)?"* ***"+tempUser.username+"*** \n*":"* ***A User*** \n*")
 					.replace(' ?'+descID+'? ',(tempUser)?"* ***"+tempUser.username+"*** *":"* ***A User*** *")
 					.replace(' ?'+descID+'?*',(tempUser)?"* ***"+tempUser.username+"***":"* ***A User***")
@@ -97,7 +99,9 @@ module.exports = new CommandInterface({
 				descID = ids[i].match(/[0-9]+/)
 				tempUser = await p.fetch.getUser(descID[0]);
 				const username = tempUser ? tempUser.username + '#' + tempUser.discriminator : 'A User';
-				desc = desc.replace(' ?'+descID+'! \n', "* ***"+username+"*** \n*")
+				desc = desc.replace(' ?'+descID+'! \n\n', "* ***"+username+"*** \n\n*")
+					.replace(' ?'+descID+'!\n\n', "* ***"+username+"*** \n\n*")
+					.replace(' ?'+descID+'! \n', "* ***"+username+"*** \n*")
 					.replace(' ?'+descID+'!\n', "* ***"+username+"*** \n*")
 					.replace(' ?'+descID+'! ', "* ***"+username+"*** *")
 					.replace(' ?'+descID+'!*', "* ***"+username+"***")
