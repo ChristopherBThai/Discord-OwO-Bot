@@ -81,6 +81,9 @@ const decr = exports.decr = function (name, amount=-1, tags={}, msg) {
 }
 
 const request = require('request');
+// Only display this error once per 5 minutes
+let influxErrorShown = false;
+setTimeout(() => { influxErrorShown = false; }, 5 * 60 * 60 * 1000);
 exports.command = function(command, msg) {
 	const body = {
 		password: process.env.INFLUXDB_PASS,
@@ -94,8 +97,9 @@ exports.command = function(command, msg) {
 		json:true,
 		body: body,
 	},function(err,res,body){
-		if(err) {
-			console.error(err);
+		if(err && !influxErrorShown) {
+			console.error('InfluxDB is inactive. Log upload will not work.');
+			influxErrorShown = true;
 			throw err;
 		}
 	});
@@ -116,8 +120,9 @@ exports.logstash = function (command, p) {
 		json:true,
 		body: body,
 	},function(err,res,body){
-		if(err) {
-			console.error(err);
+		if(err && !influxErrorShown) {
+			console.error('InfluxDB is inactive. Log upload will not work.');
+			influxErrorShown = true;
 			throw err;
 		}
 	});
@@ -138,8 +143,9 @@ exports.logstashBanned  = function (command, p) {
 		json:true,
 		body: body,
 	},function(err,res,body){
-		if(err) {
-			console.error(err);
+		if(err && !influxErrorShown) {
+			console.error('InfluxDB is inactive. Log upload will not work.');
+			influxErrorShown = true;
 			throw err;
 		}
 	});
@@ -154,8 +160,9 @@ exports.logstashCaptcha = function (metric) {
 		json:true,
 		body: metric,
 	},function(err,res,body){
-		if(err) {
-			console.error(err);
+		if(err && !influxErrorShown) {
+			console.error('InfluxDB is inactive. Log upload will not work.');
+			influxErrorShown = true;
 			throw err;
 		}
 	});
