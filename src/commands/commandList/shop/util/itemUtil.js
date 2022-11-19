@@ -200,7 +200,7 @@ exports.desc = async function (p, id) {
 	}
 
 	if (item.untradeable) {
-		embed.fields[0].value += `\n\n🚫 **This item cn not be traded.**`;
+		embed.fields[0].value += `\n\n🚫 **This item can not be traded.**`;
 	}
 
 	if (item.tradeLimit) {
