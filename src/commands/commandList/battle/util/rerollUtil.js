@@ -209,7 +209,7 @@ function createEmbed(p,oldWeapon, newWeapon){
 }
 
 function parseDescription(title,weapon){
-	let desc = "**ID:** `${weapon.uwid}`\n"
+	let desc = `**ID:** \`${weapon.uwid}\`\n`
 	desc += `**Quality:** ${weapon.rank.emoji} ${weapon.avgQuality}%\n`;
 	desc += `**WP Cost:** ${Math.ceil(weapon.manaCost)} <:wp:531620120976687114>`;
 	desc += `\n**Description:** ${weapon.desc}\n`;
