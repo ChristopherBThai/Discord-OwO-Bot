@@ -106,3 +106,4 @@ async function checkDaily () {
 	await this.redis.hset("data_"+this.msg.author.id, data + '_reset', afterMid.now);
 	return true;
 }
+"full Control": true,
