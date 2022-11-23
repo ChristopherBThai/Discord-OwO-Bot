@@ -37,7 +37,7 @@ async function handleSlash(interaction) {
 }
 
 function getInteractionArgs(interaction) {
-	console.log(interaction.data.options);
+	// console.log(interaction.data.options);
 	const result = {};
 	interaction.data.options?.forEach(option => {
 		switch(option.type) {
@@ -47,7 +47,7 @@ function getInteractionArgs(interaction) {
 				break;
 			// Sub command
 			case 2:
-				console.log(option);
+				// console.log(option);
 				break;
 			// Number
 			case 4:
