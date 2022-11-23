@@ -153,7 +153,7 @@ async function display(p){
 
 async function give(p, user){
 	let text;
-	let items = await p.redis.hget("data2_"+p.msg.author.id, data);
+	let items = await p.redis.hget("data_"+user.id, data);
 	try {
 		items = JSON.parse(items) || {};
 	} catch (err) {
@@ -162,18 +162,18 @@ async function give(p, user){
 	}
 	if (Math.random() < 0.3) {
 		const planet = planets[Math.floor(planets.length * Math.random())];
-		text = `<a:ufo1:1031470781022089216> | **${user.username}**! you have received something from exploring space..\n<a:box:1031470781949022238> | and it is.. `
+		text = `<a:ufo1:1031470781022089216> **|** **${user.username}**! you have received something from exploring space..\n<a:box:1031470781949022238> **|** and it is.. `
 		text += `${planet.emoji} **${planet.name}**`;
 		if (!items[planet.data]) items[planet.data] = 0;
 		items[planet.data]++;
 	} else {
 		const garbage = garbages[Math.floor(garbages.length * Math.random())];
-		text = `<a:ufo2:1031470779717668885> | **${user.username}**! you have received something from exploring space..\n<a:box:1031470781949022238> | you found: `
+		text = `<a:ufo2:1031470779717668885> **| ${user.username}**! you have received something from exploring space..\n<a:box:1031470781949022238> **|** you found: `
 		text += garbage.text;
 		if (!items[garbage.data]) items[garbage.data] = 0;
 		items[garbage.data]++;
 	}
-	await p.redis.hset("data_"+p.msg.author.id, data, JSON.stringify(items));
+	await p.redis.hset("data_"+user.id, data, JSON.stringify(items));
 	p.send(text);
 }
 
