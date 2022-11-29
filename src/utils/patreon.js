@@ -1,16 +1,14 @@
 /*
- * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Official OwO Bot for Discord
+ * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
-	
-const animal = "";
-const daily = "";
-var mysql,sender;
+*/
+const { stripIndents } = require('common-tags');
+let mysql, sender;
 
-exports.parsePatreon = function(query){
-	if(!query||!query.patreonMonths) return null;
+exports.parsePatreon = function(query) {
+	if (!query||!query.patreonMonths) return null;
 
 	// parse variables
 	let months = query.patreonMonths;
@@ -21,7 +19,7 @@ exports.parsePatreon = function(query){
 	let cowoncy = false;
 
 	// parse benefits
-	switch(type){
+	switch(type) {
 		case 1:
 			animal = true;
 			break;
@@ -34,88 +32,106 @@ exports.parsePatreon = function(query){
 	}
 
 	// Already expired
-	if(passed>=months) return null;
-
+	if (passed >= months) return null;
 
 	// parse expire date
-	if(!started||!months) return null;
+	if (!started || !months) return null;
 	let expireDate = new Date(started);
-	expireDate.setMonth(expireDate.getMonth()+months);
+	expireDate.setMonth(expireDate.getMonth() + months);
+	return { animal, cowoncy, expireDate };
+};
 
-	return {animal,cowoncy,expireDate};
-
-}
-
-exports.update = function(guild,oldMember,newMember){
-	if(guild.id != '420104212895105044') return;
-
-	if(oldMember.roles.includes('449429399217897473')){
-		if(!newMember.roles.includes('449429399217897473')){
-			lostDaily(newMember);
+exports.update = function(guild, oldMember, newMember) {
+	if (guild.id != '420104212895105044') return;
+	if(oldMember.roles.includes('449429399217897473')) {
+		if (!newMember.roles.includes('449429399217897473')) {
+			return lostDaily(newMember);
 		}
-	}else{
-		if(newMember.roles.includes('449429399217897473')){
-			gainedDaily(newMember);
+	} else {
+		if (newMember.roles.includes('449429399217897473')) {
+			return gainedDaily(newMember);
 		}
 	}
-	if(oldMember.roles.includes('449429255781351435')){
-		if(!newMember.roles.includes('449429255781351435')){
-			lostAnimal(newMember);
+	if (oldMember.roles.includes('449429255781351435')) {
+		if (!newMember.roles.includes('449429255781351435')) {
+			return lostAnimal(newMember);
 		}
-	}else{
-		if(newMember.roles.includes('449429255781351435')){
-			gainedAnimal(newMember);
+	} else {
+		if (newMember.roles.includes('449429255781351435')) {
+			return gainedAnimal(newMember);
 		}
 	}
-}
+};
 
-exports.left = async function(guild,member){
-	if(guild.id != '420104212895105044')
-		return;
-
-	let sql = "UPDATE IGNORE user SET patreonDaily = 0,patreonAnimal = 0 WHERE id = "+member.id+";";
+exports.left = async function(guild, member) {
+	if (guild.id != '420104212895105044') return;
+	let sql = `UPDATE IGNORE user SET patreonDaily = 0, patreonAnimal = 0 WHERE id = ${member.id};`;
 	let result = await mysql.query(sql);
-	if(result.changedRows>0)
-		sender.msgUser(member.id,"Just a heads up! Your Patreon benefits will not work if you leave the guild!");
+	if (result.changedRows > 0) {
+		return sender.msgUser(member.id, 'Just a heads up! Your Patreon benefits will not work if you leave the guild!');
+	}
+};
+
+function messageUser(user) {
+	return sender.msgUser(user.id, stripIndents`
+		Thank you for supporting owo bot! Every dollar counts and I appreciate your donation!! 
+		If you encounter any problems, let me know!
+		
+		
+		XOXO,
+		**Scuttler#0001**
+	`);
 }
 
-function messageUser(user){
-	sender.msgUser(user.id,"Thank you for supporting owo bot! Every dollar counts and I appreciate your donation!! If you encounter any problems, let me know!\n\nXOXO,\n**Scuttler#0001**");
-}
-
-async function gainedDaily(user){
-	let sql = "INSERT INTO user (id,count,patreonDaily) VALUES ("+user.id+",0,1) ON DUPLICATE KEY "+
-		"UPDATE patreonDaily = 1;";
-	sql += "SELECT * FROM user WHERE id = "+user.id+";";
+async function gainedDaily(user) {
+	let sql = stripIndents`
+		INSERT INTO user (id,count,patreonDaily) VALUES (${user.id},0,1) ON DUPLICATE KEY
+		UPDATE patreonDaily = 1;
+	`;
+	sql += `SELECT * FROM user WHERE id = ${user.id};`;
 	let result = await mysql.query(sql);
-	if(result[1][0]&&result[1][0].patreonAnimal== 0) await messageUser(user);
+	if (result[1][0] && result[1][0].patreonAnimal == 0) await messageUser(user);
 }
 
-async function lostDaily(user){
-	let sql = "UPDATE IGNORE user SET patreonDaily = 0 WHERE id = "+user.id+";";
+async function lostDaily(user) {
+	let sql = `UPDATE IGNORE user SET patreonDaily = 0 WHERE id = ${user.id};`;
 	await mysql.query(sql);
-	sender.msgUser(user.id,"Your patreon donation has expired! Thank you **so** much for supporting OwO bot! <3\n\nXOXO,\n**Scuttler#0001**");
+	return sender.msgUser(user.id, stripIndents`
+		Your patreon donation has expired! Thank you **so** much for supporting OwO bot! <3
+		
+		
+		XOXO,
+		**Scuttler#0001**
+	`);
 }
 
-async function gainedAnimal(user){
-	let sql = "INSERT INTO user (id,count,patreonAnimal) VALUES ("+user.id+",0,1) ON DUPLICATE KEY "+
-		"UPDATE patreonAnimal = 1;";
-	sql += "SELECT * FROM user WHERE id = "+user.id+";";
+async function gainedAnimal(user) {
+	let sql = stripIndents`
+		INSERT INTO user (id,count,patreonAnimal) VALUES (${user.id},0,1) ON DUPLICATE KEY 
+		UPDATE patreonAnimal = 1;
+	`;
+	sql += `SELECT * FROM user WHERE id = ${user.id};`;
 	let result = await mysql.query(sql);
-	if(result[1][0]&&result[1][0].patreonDaily == 0) await messageUser(user);
+	if (result[1][0] && result[1][0].patreonDaily == 0) await messageUser(user);
 }
 
-async function lostAnimal(user){
-	let sql = "UPDATE IGNORE user SET patreonAnimal = 0 WHERE id = "+user.id+";";
+async function lostAnimal(user) {
+	let sql = `UPDATE IGNORE user SET patreonAnimal = 0 WHERE id = ${user.id};`;
 	await mysql.query(sql);
-	sender.msgUser(user.id,"Your patreon donation has expired! Thank you **so** much for supporting OwO bot! <3\n\nXOXO,\n**Scuttler#0001**");
+	return sender.msgUser(user.id, stripIndents`
+		Your patreon donation has expired! Thank you **so** much for supporting OwO bot! <3
+		
+		
+		XOXO,
+		**Scuttler#0001**
+	`);
 }
 
-exports.checkPatreon = function(p,userID){
-	p.pubsub.publish("checkPatreon",{userID});
-}
+exports.checkPatreon = function(p, userID) {
+	p.pubsub.publish('checkPatreon', { userID });
+};
 
-exports.init = function(main){
+exports.init = function(main) {
 	mysql = main.mysqlhandler;
 	sender = main.sender;
-}
+};
