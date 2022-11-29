@@ -28,10 +28,13 @@ for (let dataName in collectibles) {
     owners,
     fullControl,
     ownerOnly,
+		ownerOnlyErrorMsg,
+		selfErrorMsg,
     dailyOnly,
     giveAmount,
     description,
     displayMsg,
+    displayNoneMsg,
     brokeMsg,
     giveMsg,
     hasMerge,
@@ -45,13 +48,17 @@ for (let dataName in collectibles) {
 		dailyLimitMsg,
 		costAmount,
 		failChance,
-		failMessage
+		failMessage,
+		trackDate
 	} = collectibles[dataName];
 	const ownerString = getOwnerString(owners);
 	const data = dataOverride || dataName;
 	
 	const display = async function () {
-		let count = await this.redis.hget("data_" + this.msg.author.id, data);
+		let count = await this.redis.hget(`data_${this.msg.author.id}`, data);
+		let receiveDate = await this.redis.hget(`data_${this.msg.author.id}`, `${data}_time`);
+		receiveDate = receiveDate ? new Date(+receiveDate).toLocaleDateString() : 'never';
+
 		let mergeCount = 0;
 		if (hasMerge) {
 			mergeCount = Math.floor(count / mergeNeeded); 
@@ -62,12 +69,23 @@ for (let dataName in collectibles) {
 		}
 		let msg;
 		if (!mergeCount) {
-			msg = displayMsg
-				.replaceAll('?count?', count || 0)
-				.replaceAll('?plural?', count > 1 ? 's' : '')
-				.replaceAll('?pluralName?', count > 1 ? pluralName : singleName)
-				.replaceAll('?emoji?', emoji)
-				.replaceAll('?user?', this.msg.author.username);
+			if (!count && displayNoneMsg) {
+				msg = displayNoneMsg
+					.replaceAll('?count?', count || 0)
+					.replaceAll('?plural?', count > 1 ? 's' : '')
+					.replaceAll('?pluralName?', count > 1 ? pluralName : singleName)
+					.replaceAll('?emoji?', emoji)
+					.replaceAll('?date?', receiveDate)
+					.replaceAll('?user?', this.msg.author.username);
+			} else {
+				msg = displayMsg
+					.replaceAll('?count?', count || 0)
+					.replaceAll('?plural?', count > 1 ? 's' : '')
+					.replaceAll('?pluralName?', count > 1 ? pluralName : singleName)
+					.replaceAll('?emoji?', emoji)
+					.replaceAll('?date?', receiveDate)
+					.replaceAll('?user?', this.msg.author.username);
+			}
 		} else {
 			msg = mergeDisplayMsg
 				.replaceAll('?displayMsg?', displayMsg)
@@ -107,7 +125,10 @@ for (let dataName in collectibles) {
 
 		if (checkFailed.bind(this)(user)) return;
 
-		let result = await this.redis.hincrby("data_" + user.id, data, giveAmount);
+		let result = await this.redis.hincrby(`data_${user.id}`, data, giveAmount);
+		if (trackDate) {
+			await this.redis.hset(`data_${user.id}`, `${data}_time`, Date.now());
+		}
 		let selectedGiveMsg = giveMsg;
 		if (Array.isArray(giveMsg)) {
 			selectedGiveMsg = giveMsg[Math.floor(Math.random() * giveMsg.length)];
@@ -240,13 +261,31 @@ for (let dataName in collectibles) {
 						return;
 					}
 				}
-				if (!owners.includes(this.msg.author.id) && user.id === this.msg.author.id) {
-					this.errorMsg(", You cannot give this item to yourself!", 3000);
+				if (ownerOnly && !owners.includes(this.msg.author.id)) {
+					if (ownerOnlyErrorMsg) {
+						const msg = ownerOnlyErrorMsg
+							.replaceAll('?user?', this.msg.author.username)
+							.replaceAll('?emoji?', emoji)
+							.replaceAll('?blank?', this.config.emoji.blank)
+							.replaceAll('?error?', this.config.emoji.error);
+						this.send(msg);
+					} else {
+						this.errorMsg(", only the owner of this command can give items!", 3000);
+					}
 					this.setCooldown(5);
 					return;
 				}
-				if (ownerOnly && !owners.includes(this.msg.author.id)) {
-					this.errorMsg(", only the owner of this command can give items!", 3000);
+				if (!owners.includes(this.msg.author.id) && user.id === this.msg.author.id) {
+					if (selfErrorMsg) {
+						const msg = selfErrorMsg 
+							.replaceAll('?user?', this.msg.author.username)
+							.replaceAll('?emoji?', emoji)
+							.replaceAll('?blank?', this.config.emoji.blank)
+							.replaceAll('?error?', this.config.emoji.error);
+						this.send(msg);
+					} else {
+						this.errorMsg(", You cannot give this item to yourself!", 3000);
+					}
 					this.setCooldown(5);
 					return;
 				}

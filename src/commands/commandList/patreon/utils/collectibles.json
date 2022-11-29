@@ -467,7 +467,8 @@
   "kfire": {
     "alias": [],
     "emoji": "<a:kfire:1016133894090788914>",
-    "owners": ["759412813617430619", "792369332654964746", "795287719240663100", "606183925932621827", "778204442411008021"],
+    "owners": ["792369332654964746", "778204442411008021"],
+    "dataOverride": "kfire2",
     "pluralName": "",
     "singleName": "",
     "fullControl": true,
@@ -704,5 +705,35 @@
     "displayMsg": "?emoji? **| ?user?**, you currently have ?count? bear?plural?",
     "brokeMsg": ", you do not have any bears to give >:c",
     "giveMsg": "?emoji? **| ?receiver?**, you have received 1 bear from **?giver?**"
+  },
+  "redwolf": {
+    "alias": [],
+    "emoji": "<:red_wolf:1047017575118274630>",
+    "owners": ["384202884553768961"],
+    "fullControl": true,
+    "ownerOnly": true,
+    "giveAmount": 1,
+    "pluralName": "wolves",
+    "singleName": "wolf",
+    "description": "The Red Wolf is the rarest and most endangered of all the wolf species, with less than 20 individuals left in the wild.\nIt is listed as a Critically Endangered species, facing an extremely high risk of extinction in the wild.\nExtinction is generally considered to be the death of the last individual of the species.\nToday the only place red wolves can be found in the wild is in eastern North Carolina's Albemarle Peninsula.",
+    "displayMsg": "?emoji? **| ?user?**, you currently have ?count? red ?pluralName?",
+    "brokeMsg": ", you do not have any red wolves to give >:c",
+    "giveMsg": "?emoji? **| ?receiver?**, you have received 1 red wolf from **?giver?**"
+  },
+  "obwspecial": {
+    "alias": [],
+    "emoji": "<a:obwspecial:1047025692291903528>",
+    "owners": ["384202884553768961"],
+    "fullControl": true,
+    "ownerOnly": true,
+    "trackDate": true,
+    "giveAmount": 1,
+    "description": "Exclusive collectible created for the OBW community on the collaboration with amazing OwO Bot Wiki discord members.\n\nSpecial thanks to Sliverme, Frosty_, Pandaddy, tinsetia, StunDra, Blue, Max Verstappen fan, dayang🌷, greywolf, jean., Amada, Mal., Radiohead, Xctroy, NarutoUzumaki, theraremixedchick, Ajea, ibot, Mrukia and everyone else who contributed",
+    "displayMsg": "?emoji? **| ?user?**, You have received token of appreciation ?count? time?plural? from OBW, most recent one being ?date?. ?emoji?",
+    "displayNoneMsg": "?emoji? **|** Ewwow 404 - Not Found! I seawched high and wow but couwdn't find what uu awe wooking fow. You couwd twy seawching in OBW which is beyond my weach. ?emoji? (⁎˃ᆺ˂)",
+    "ownerOnlyErrorMsg": "?error? **|** Ewwow 403! You don't haz wequiwed pewmission to pewfowm this action! ?emoji? (◠‿◠✿)",
+    "selfErrorMsg": "?error? **|** Ewwow 403! You don't haz wequiwed pewmission to pewfowm this action! ?emoji? (◠‿◠✿)",
+    "brokeMsg": ", Ewwow 403! You don't haz wequiwed pewmission to pewfowm this action! ?emoji? (◠‿◠✿)",
+    "giveMsg": "?emoji? **|** Congratulations! **?receiver?**, you have received a token of appreciation from **?giver?** on behalf of OBW. Thank you for your contribution to the community! ?emoji?"
   }
 }
