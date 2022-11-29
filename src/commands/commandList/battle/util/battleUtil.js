@@ -17,6 +17,7 @@ var allBuffs = WeaponInterface.allBuffs;
 const request = require('request');
 const crateUtil = require('./crateUtil.js');
 const alterBattle = require('../../patreon/alterBattle.js');
+const petUtil = require('./petUtil.js');
 
 const maxAnimals = 6;
 const attack = '👊🏼';
@@ -987,11 +988,16 @@ async function finishBattle(msg,p,battle,color,text,playerWin,enemyWin,logs,sett
 		/* An error occured */
 		if(!playerWin&&!enemyWin) return;
 
-		await teamUtil.giveXP(p,battle.player,pXP);
+		// update player streak
+		await teamUtil.updateStreak(p, battle.player, pXP.addStreak, pXP.resetStreak);
+
+		// give xp to player teams
+		await petUtil.giveXp(p, null, {base: pXP.xp, bonus: pXP.bonus, inactiveHalf: false});
+		
+		// give xp to enemy team
+		await petUtil.giveXp(p, battle.enemy, {base: eXP.xp, bonus: eXP.bonus});
 		/* xp quest */
 		p.quest("xp",pXP.total);
-
-		await teamUtil.giveXP(p,battle.enemy,eXP.xp);
 	}
 
 
