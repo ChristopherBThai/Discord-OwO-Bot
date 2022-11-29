@@ -21,6 +21,7 @@ exports.alter = function(id, opt){
 
 function estee (opt) {
 	let embed = opt.embed;
+	embed.color = 8421504;
 	embed.author.name = "꧁༺𝔼𝕤𝕥𝕖𝕖'𝕤 𝔻𝕖𝕒𝕥𝕙 ℕ𝕠𝕥𝕖༻꧂";
 	const tasks = [
 		'♤|Time of Death noted!',
