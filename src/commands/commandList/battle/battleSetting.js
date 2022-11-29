@@ -37,7 +37,7 @@ module.exports = new CommandInterface({
 })
 
 async function display(p){
-	let sql = `SELECT logs,auto,display,speed from user INNER JOIN battle_settings ON user.uid = battle_settings.uid WHERE id = ${p.msg.author.id};`;
+	let sql = `SELECT logs,auto,display,speed,censor from user INNER JOIN battle_settings ON user.uid = battle_settings.uid WHERE id = ${p.msg.author.id};`;
 	let result = await p.query(sql);
 
 	let settings = parseSettings(result);
@@ -48,6 +48,7 @@ async function display(p){
 	text += "**Speed = ** `"+settings.speed+"`";
 	if(settings.showLogs||!settings.auto) text += "~~";
 	text += "\n**Logs = ** `"+settings.showLogs+"`";
+	text += "\n**Censor = ** `"+settings.censor+"`";
 
 	let embed = {
 		"color":p.config.embed_color,
@@ -116,11 +117,21 @@ async function changeSettings(p){
 		}else if(args[1]=='link'){
 			setting = 2;
 		}else{
-			p.errorMsg(", the log settings can only be `true`, or `false`!");
+			p.errorMsg(", the log settings can only be `link`, `true`, or `false`!");
+			return;
+		}
+	}else if(args[0]=='censor'){
+		field = 'censor';
+		if(args[1]=='false'){
+			setting = 0;
+		}else if(args[1]=='true'){
+			setting = 1;
+		}else{
+			p.errorMsg(", the censor settings can only be `true`, or `false`!");
 			return;
 		}
 	}else{
-		p.errorMsg(", the display settings can only be `logs`, `display`, or `speed`!");
+		p.errorMsg(", the display settings can only be `logs`, `display`, `speed`, or `censor`!");
 		return;
 	}
 
@@ -144,6 +155,7 @@ function parseSettings(query){
 	let display = "image";
 	let speed = "short";
 	let logs = false;
+	let censor = false;
 
 	if(query[0]){
 		//if(query[0].auto==1)
@@ -162,6 +174,8 @@ function parseSettings(query){
 			logs = true;
 		else if(query[0].logs==2)
 			logs = "link";
+		if(query[0].censor==1)
+			censor = true;
 	}
-	return {auto,display,speed,showLogs:logs};
+	return {auto,display,speed,showLogs:logs,censor};
 }

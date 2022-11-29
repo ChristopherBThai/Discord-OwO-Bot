@@ -116,7 +116,7 @@ async function changeType(p,type){
 }
 
 async function parseSettings(p){
-	let sql = `SELECT logs,auto,display,speed from user INNER JOIN battle_settings ON user.uid = battle_settings.uid WHERE id = ${p.msg.author.id};`;
+	let sql = `SELECT logs,auto,display,speed,censor from user INNER JOIN battle_settings ON user.uid = battle_settings.uid WHERE id = ${p.msg.author.id};`;
 	let result = await p.query(sql);
 	return parseSetting(result);
 }
@@ -127,6 +127,7 @@ function parseSetting(query){
 	let speed = "short";
 	let showLogs = false;
 	let instant = false;
+	let censor = false;
 
 	if(query[0]){
 		//if(query[0].auto==1)
@@ -148,11 +149,14 @@ function parseSetting(query){
 			auto = true;
 			speed = "instant";
 		}
+		if (query[0].censor==1){
+			censor = true;
+		}
 	}
 
 	if(auto&&(speed=="short"||speed=="instant")){
 		instant = true;
 	}
 
-	return {auto,display,speed,instant,showLogs};
+	return {auto,display,speed,instant,showLogs,censor};
 }
