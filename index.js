@@ -12,6 +12,7 @@ const config = require('./src/data/config');
 // Grab tokens and secret files
 const debug = config.debug;
 const request = require('./utils/request');
+const { BOT_TOKEN } = process.env;
 
 let result, shards, firstShardID, lastShardID;
 
@@ -32,6 +33,15 @@ let result, shards, firstShardID, lastShardID;
 			clusters = 2;
 		}
 		console.log(`Creating shards ${firstShardID} ~ ${lastShardID} out of ${shards} total shards!`);
+		// Start sharder
+		const sharder = new Sharder(`Bot ${BOT_TOKEN}`, config.sharder.path, {
+			name: config.sharder.name,
+			clientOptions: config.eris.clientOptions,
+			debug:true,
+			shards,clusters,
+			firstShardID,
+			lastShardID,
+		});
 	} catch(e) {
 		console.error('Failed to start eris sharder');
 		return console.error(e);
