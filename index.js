@@ -4,7 +4,7 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
 */
-require('dotenv').config();
+require('dotenv').config()
 
 // Config file
 const config = require('./src/data/config');
@@ -14,7 +14,11 @@ const debug = config.debug;
 const request = require('./utils/request');
 const { BOT_TOKEN } = process.env;
 
+// Eris-Sharder
+const Sharder = require('eris-sharder').Master;
 let result, shards, firstShardID, lastShardID;
+
+let clusters = 60;
 
 (async () => {
 	try {
@@ -33,14 +37,16 @@ let result, shards, firstShardID, lastShardID;
 			clusters = 2;
 		}
 		console.log(`Creating shards ${firstShardID} ~ ${lastShardID} out of ${shards} total shards!`);
+
 		// Start sharder
 		const sharder = new Sharder(`Bot ${BOT_TOKEN}`, config.sharder.path, {
 			name: config.sharder.name,
 			clientOptions: config.eris.clientOptions,
-			debug:true,
-			shards,clusters,
+			debug: true,
+			shards,
+			clusters,
 			firstShardID,
-			lastShardID,
+			lastShardID
 		});
 	} catch(e) {
 		console.error('Failed to start eris sharder');
