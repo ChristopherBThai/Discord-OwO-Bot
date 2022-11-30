@@ -6,10 +6,10 @@
 */
 const request = require('request');
 const { SHARDER_HOST, SHARDER_PASS } = process.env;
+const cooldown = 3000;
+const onCooldown = false;
 
 exports.handle = async function(main) {
-	const cooldown = 3000;
-	const onCooldown = false;
 	if (onCooldown) return;
 	onCooldown = true;
 	setTimeout(function() { 

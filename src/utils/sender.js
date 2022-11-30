@@ -200,13 +200,13 @@ exports.init = function(main) {
 function cleanContent(content) {
 	let tempContent;
 	if (typeof content === 'string') {
-		return tempContent = { content }
+		tempContent = { content }
 	} else {
 		tempContent = { ...content };
 	}
 	if (tempContent.embed) {
 		tempContent.embeds = [ tempContent.embed ];
-		return delete tempContent.embed;
+		delete tempContent.embed;
 	}
 	return tempContent;
 };

@@ -9,9 +9,9 @@ const noEmoji = '🚫';
 const skullEmoji = '☠';
 const liftEmoji = '🙇';
 const timerEmoji = '⏱';
+const cooldown = {};
 
 exports.check = async function(p,command) {
-	const cooldown = {};
 	let channel = p.msg.channel.id;
 	let guild = p.msg.channel.guild.id;
 	let author = p.msg.author.id;

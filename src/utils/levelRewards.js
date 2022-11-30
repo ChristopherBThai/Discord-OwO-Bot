@@ -9,6 +9,7 @@ const mysql = require('../botHandlers/mysqlHandler');
 const levels = require('./levels');
 const global = require('./global');
 const DataResolver = require('./dataResolver');
+const { GEN_API_HOST, GEN_PASS } = process.env;
 const levelupEmoji = '🎉';
 const infoEmoji = 'ℹ';
 
@@ -148,6 +149,27 @@ async function generateImage(msg, reward) {
 			{ img: 'crate.png', text: '+' + global.toFancyNum(reward.weaponcrate) },
 		]
 	};
+	info.password = GEN_PASS;
+	try {
+		return new Promise((resolve, reject) => {
+			let req = request({
+				method: 'POST',
+				uri: `${GEN_API_HOST}/levelupgen`,
+				json: true,
+				body: info
+			}, (error, res, body) => {
+				if (error) {
+					resolve('');
+					return;
+				}
+				if (res.statusCode == 200) resolve(body);
+				else resolve('');
+			});
+		});
+	} catch (err) {
+		console.err(err);
+		return '';
+	}
 }
 
 async function getBackground(user) {

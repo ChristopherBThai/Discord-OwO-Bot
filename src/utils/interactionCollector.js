@@ -83,11 +83,11 @@ class InteractionEventEmitter extends EventEmitter{
 		function ack (content) {
 			if (content) {
 				if (typeof content === 'string') {
-					return content = { content };
+					content = { content };
 				}
 				if (content.embed) {
 					content.embeds = [ content.embed ];
-					return delete content.embed;
+					delete content.embed;
 				}
 				return axios.post(url, {
 					type: 7,
@@ -100,11 +100,11 @@ class InteractionEventEmitter extends EventEmitter{
 
 		function err (content) {
 			if (typeof content === 'string') {
-				return content = { content };
+				content = { content };
 			}
 			if (content.embed) {
 				content.embeds = [ content.embed ];
-				return delete content.embed;
+				delete content.embed;
 			}
 			const url = `https://discord.com/api/v8/interactions/${id}/${token}/callback`;
 			content.flags = 64;

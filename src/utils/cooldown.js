@@ -4,12 +4,12 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
 */
+const cooldown = {};
+const lock = {};
 const timerEmoji = '⏱';
+let macro;
 
 exports.check = async function(p, command) {
-	const cooldown = {};
-	const lock = {};
-	let macro;
 	let key = `cd_${command}_${p.msg.author.id}`;
 
 	// On cooldown

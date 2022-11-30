@@ -147,7 +147,7 @@ exports.logstashBanned  = function (command, p) {
 };
 
 exports.logstashCaptcha = function (metric) {
-	metric.password == INFLUXDB_PASS;
+	metric.password = INFLUXDB_PASS;
 	request({
 		method: 'POST',
 		uri: `${INFLUXDB_HOST}/captcha`,
