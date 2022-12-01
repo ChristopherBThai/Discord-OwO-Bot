@@ -39,7 +39,7 @@ module.exports = new CommandInterface({
 	execute: async function(p){
 		if(p.args.length>0&&p.global.isInt(p.args[0]))
 			await openMultiple(p,parseInt(p.args[0]));
-		else if(p.args.length>0&&p.args[0]=="all"){
+		else if(p.args.length>0&&p.args[0].toLowerCase()=="all"){
 			let sql = `SELECT boxcount FROM lootbox WHERE id = ${p.msg.author.id};`;
 			let result = await p.query(sql);
 			if(!result||result[0].boxcount<=0){
