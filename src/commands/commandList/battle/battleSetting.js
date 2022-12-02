@@ -66,7 +66,7 @@ async function changeSettings(p){
 	args = args.toLowerCase();
 	args = args.split("=");
 	if(args.length!=2){
-		p.errorMsg(", The correct command is `owo battlesetting {settingName=setting}`");
+		p.errorMsg(", The correct command is `owo battlesetting {settingName=setting}`. Type `owo help battlesetting` for more information.");
 		return;
 	}
 
@@ -116,11 +116,11 @@ async function changeSettings(p){
 		}else if(args[1]=='link'){
 			setting = 2;
 		}else{
-			p.errorMsg(", the log settings can only be `true`, or `false`!");
+			p.errorMsg(", the log settings can only be `true`, `false`, or `link`!");
 			return;
 		}
 	}else{
-		p.errorMsg(", the display settings can only be `logs`, `display`, or `speed`!");
+		p.errorMsg(", the battle settings can only be `display`, `speed`, or `logs`!");
 		return;
 	}
 
