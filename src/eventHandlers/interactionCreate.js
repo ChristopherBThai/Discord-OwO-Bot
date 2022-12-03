@@ -64,6 +64,6 @@ function ackTimer(interaction) {
 				.catch(err => {
 					console.error('Interaction defer failed.');
 				});
-			return interaction.acknowledged = true;
+			interaction.acknowledged = true;
 	}, 2500);
 };

@@ -8,5 +8,5 @@ exports.handle = async function(main, message) {
 	if (main.debug) return;
 	let { shardID, userID, msg } = JSON.parse(message);
 	if (!main.bot.shards.has(shardID)) return;
-	return main.sender.msgUser(userID, msg);
+	main.sender.msgUser(userID, msg);
 };	

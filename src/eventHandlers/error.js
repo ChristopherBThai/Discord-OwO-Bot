@@ -5,5 +5,5 @@
  * For more information, see README.md and LICENSE
 */
 exports.handle = function(err, id) {
-	return console.log(`[${id}] ${err}`);
+	console.log(`[${id}] ${err}`);
 };

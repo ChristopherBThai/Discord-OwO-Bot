@@ -45,20 +45,20 @@ exports.update = function(guild, oldMember, newMember) {
 	if (guild.id != '420104212895105044') return;
 	if(oldMember.roles.includes('449429399217897473')) {
 		if (!newMember.roles.includes('449429399217897473')) {
-			return lostDaily(newMember);
+			lostDaily(newMember);
 		}
 	} else {
 		if (newMember.roles.includes('449429399217897473')) {
-			return gainedDaily(newMember);
+			gainedDaily(newMember);
 		}
 	}
 	if (oldMember.roles.includes('449429255781351435')) {
 		if (!newMember.roles.includes('449429255781351435')) {
-			return lostAnimal(newMember);
+			lostAnimal(newMember);
 		}
 	} else {
 		if (newMember.roles.includes('449429255781351435')) {
-			return gainedAnimal(newMember);
+			gainedAnimal(newMember);
 		}
 	}
 };
@@ -68,12 +68,12 @@ exports.left = async function(guild, member) {
 	let sql = `UPDATE IGNORE user SET patreonDaily = 0, patreonAnimal = 0 WHERE id = ${member.id};`;
 	let result = await mysql.query(sql);
 	if (result.changedRows > 0) {
-		return sender.msgUser(member.id, 'Just a heads up! Your Patreon benefits will not work if you leave the guild!');
+		sender.msgUser(member.id, 'Just a heads up! Your Patreon benefits will not work if you leave the guild!');
 	}
 };
 
 function messageUser(user) {
-	return sender.msgUser(user.id, stripIndents`
+	sender.msgUser(user.id, stripIndents`
 		Thank you for supporting owo bot! Every dollar counts and I appreciate your donation!! 
 		If you encounter any problems, let me know!
 		
@@ -96,7 +96,7 @@ async function gainedDaily(user) {
 async function lostDaily(user) {
 	let sql = `UPDATE IGNORE user SET patreonDaily = 0 WHERE id = ${user.id};`;
 	await mysql.query(sql);
-	return sender.msgUser(user.id, stripIndents`
+	sender.msgUser(user.id, stripIndents`
 		Your patreon donation has expired! Thank you **so** much for supporting OwO bot! <3
 		
 		
@@ -118,7 +118,7 @@ async function gainedAnimal(user) {
 async function lostAnimal(user) {
 	let sql = `UPDATE IGNORE user SET patreonAnimal = 0 WHERE id = ${user.id};`;
 	await mysql.query(sql);
-	return sender.msgUser(user.id, stripIndents`
+	sender.msgUser(user.id, stripIndents`
 		Your patreon donation has expired! Thank you **so** much for supporting OwO bot! <3
 		
 		

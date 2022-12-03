@@ -92,6 +92,6 @@ async function sendNextQuestion (msg, survey) {
 		con.commit();
 	} catch (err) {
 		console.error(err);
-		return con.rollback();
+		con.rollback();
 	}
 };

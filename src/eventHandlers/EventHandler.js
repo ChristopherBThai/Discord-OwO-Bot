@@ -11,7 +11,7 @@ class EventHandler {
 	constructor(main) {
 		let filename = __filename.slice(__dirname.length + 1, -3);
 		for (let listener in dir) {
-			if (listener!=filename) return main.bot.on(listener,dir[listener].handle.bind(main));
+			if (listener!=filename) main.bot.on(listener,dir[listener].handle.bind(main));
 		}
 	}
 };

@@ -88,7 +88,7 @@ function disableComponents(components) {
 		if (component.type == 2) {
 			component.disabled = true;
 		} else if (component.type == 1) {
-			return disableComponents(component.components);
+			disableComponents(component.components);
 		}
 	}
 };

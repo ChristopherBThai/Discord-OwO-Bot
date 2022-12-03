@@ -72,21 +72,21 @@ async function check(msg, id, username, questName, result, count, extra) {
 		if (rewardType == 'lootbox') {
 			text += '<:box:427352600476647425>'.repeat(reward);
 			rewardSql = 'INSERT INTO lootbox (id,boxcount,claim) VALUES (?,?,\'2017-01-01 10:10:10\') ON DUPLICATE KEY UPDATE boxcount = boxcount + ?;';
-			return rewardVar = [id, reward, reward];
+			rewardVar = [id, reward, reward];
 		} else if (rewardType == 'crate') {
 			text += '<:crate:523771259302182922>'.repeat(reward);
 			rewardSql = 'INSERT INTO crate (uid,boxcount,claim) VALUES ((SELECT uid FROM user WHERE id = ?),?,\'2017-01-01 10:10:10\') ON DUPLICATE KEY UPDATE boxcount = boxcount + ?;';
-			return rewardVar = [id, reward, reward];
+			rewardVar = [id, reward, reward];
 		} else if (rewardType == 'shards') {
 			text += `<:weaponshard:655902978712272917>**x ${reward}**`;
 			rewardSql = 'INSERT INTO shards (uid,count) VALUES ((SELECT uid FROM user WHERE id = ?),?) ON DUPLICATE KEY UPDATE count = count + ?;';
-			return rewardVar = [id, reward, reward];
+			rewardVar = [id, reward, reward];
 		} else {
 			text += `${global.toFancyNum(reward)} <:cowoncy:416043450337853441>`;
 			rewardSql = 'INSERT INTO cowoncy (id,money) VALUES (?,?) ON DUPLICATE KEY UPDATE money = money + ?';
 			rewardVar = [id, reward, reward];
 		}
-		return text += '!';
+		text += '!';
 	} else {
 		sql = 'UPDATE IGNORE quest SET count = count + ? WHERE qid = ? AND qname = ? AND uid = (SELECT uid FROM user WHERE id = ?);';
 		variables = [count, result.qid, questName, id];

@@ -5,5 +5,5 @@
  * For more information, see README.md and LICENSE
 */
 exports.handle = function(msg, id) {
-	//return console.log(`[${id}] ${msg}`);
+	//console.log(`[${id}] ${msg}`);
 };

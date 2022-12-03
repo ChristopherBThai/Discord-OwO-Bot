@@ -7,7 +7,7 @@
 const User = require('../../node_modules/eris/lib/structures/User');
 const axios = require('axios');
 
-exports.handle = function(packet){
+exports.handle = function(packet, id) {
 	if (packet.t === 'INTERACTION_CREATE') {
 		switch (packet.d.type) {
 			case 2:
@@ -49,22 +49,22 @@ class Interaction {
 		if (author.discriminator !== '0000') {
 			this.author = bot.users.update(author, bot);
 		} else {
-			return this.author = new User(author, bot);
+			this.author = new User(author, bot);
 		}
 		if (this.channel.guild) {
 			if (data.member) {
 				data.member.id = this.author.id;
 				this.member = this.channel.guild.members.update(data.member, this.channel.guild);
 			} else if (this.channel.guild.members.has(this.author.id)) {
-				return this.member = this.channel.guild.members.get(this.author.id);
+				this.member = this.channel.guild.members.get(this.author.id);
 			} else {
-				return this.member = null;
+				this.member = null;
 			}
 			if (!this.guildID) {
 				this.guildID = this.channel.guild.id;
 			}
 		} else {
-			return this.member = null;
+			this.member = null;
 		}
 		this.replied = false;
 		this.token = data.token;
@@ -74,6 +74,13 @@ class Interaction {
 
 		// TODO
 		this.args = [];
+	}
+
+	async createMessage (content, file, del) {
+		const msg = await axios.post(this.url, {
+			type: 4,
+			data: content
+		});
 	}
 
 	async createMessage (del) {

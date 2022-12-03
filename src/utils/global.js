@@ -22,7 +22,7 @@ const goodwords = require('../../../tokens/goodwords');
 filter2.removeWords(goodwords);
 const mysql = require('./../botHandlers/mysqlHandler');
 const animaljson = require('../../../tokens/owo-animals');
-
+const { SHARDER_HOST } = process.env;
 const animalunicode = {};
 const animals = {};
 const ranks = {};
@@ -46,7 +46,7 @@ exports.isInt = function(value) {
  */
 exports.getids = function(members) {
 	let result = '';
-	members.forEach(function(key) {
+	members.forEach(function(ele, key, map) {
 		result += key + ',';
 	});
 	return result.slice(0, -1);
@@ -132,7 +132,7 @@ exports.client= function(tclient) {
 	for (key in animaljson.alias) {
 		rankAlias[key] = key;
 		for (let i = 0; i < animaljson.alias[key].length; i++) {
-			return rankAlias[animaljson.alias[key][i]] = key;
+			rankAlias[animaljson.alias[key][i]] = key;
 		}
 	}
 };
@@ -217,6 +217,25 @@ exports.getRoleColor = function(member) {
 
 exports.getTotalShardCount = function() {
 	if (totalShards) return totalShards;
+	return new Promise((resolve, reject) => {
+		let req = request({
+			method: 'GET',
+			uri: SHARDER_HOST + '/totalShards',
+		}, (error, res, body) => {
+			if (error) {
+				reject();
+				return;
+			}
+			if (res.statusCode == 200) {
+				body = JSON.parse(body);
+				totalShards = body.totalShards;
+				sharders = body.sharders;
+				resolve(totalShards);
+			} else {
+				reject();
+			}
+		});
+	});
 };
 
 /* Converts name to more kid-friendly */

@@ -12,13 +12,13 @@ exports.urlToBufferString = function(url) {
 			request.get(url, (error, response, body) => {
 				if (!error && response.statusCode == 200) {
 					data = 'data:' + response.headers['content-type'] + ';base64,' + Buffer.from(body).toString('base64');
-					return res(data);
+					res(data);
 				} else {
-					return rej('Failed to fetch image');
+					rej('Failed to fetch image');
 				}
 			});
 		} catch(err) {
-			return rej('Failed to fetch image');
+			rej('Failed to fetch image');
 		}
 	});
 };
@@ -28,13 +28,13 @@ exports.urlToBuffer = function(url) {
 		try {
 			request.get(url, (error, response, body) => {
 				if (!error && response.statusCode == 200) {
-					return res(Buffer.from(body));
+					res(Buffer.from(body));
 				} else {
-					return rej('Failed to fetch image');
+					rej('Failed to fetch image');
 				}
 			});
 		} catch(err) {
-			return rej('Failed to fetch image');
+			rej('Failed to fetch image');
 		}
 	});
 };

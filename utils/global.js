@@ -11,5 +11,5 @@ const pub = require('redis').createClient({
 });
 	
 exports.resetBot = async function() {
-	return pub.publish('endProcess', true);
+	pub.publish('endProcess', true);
 };

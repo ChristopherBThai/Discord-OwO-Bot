@@ -139,7 +139,7 @@ async function executeCommand(main, p){
 
 	// Log stats to statsd
 	logger.command(p.commandAlias, p.msg);
-	return logger.logstash(p.commandAlias, p);
+	logger.logstash(p.commandAlias, p);
 }
 
 /**
@@ -182,7 +182,7 @@ function initCommands(){
 						group:command.group
 					};
 				} else {
-					return aliasToCommand[alias[i]] = name;
+					aliasToCommand[alias[i]] = name;
 				}
 			}
 		}
@@ -213,7 +213,7 @@ function initCommands(){
 		} else if (Array.isArray(dir[key])) {
 			dir[key].forEach(val => {
 				if (val instanceof CommandInterface) {
-					return addCommand(val);
+					addCommand(val);
 				}
 			});
 		} else {
@@ -223,7 +223,7 @@ function initCommands(){
 				} else if (Array.isArray(dir[key][key2])) {
 					dir[key][key2].forEach(val => {
 						if (val instanceof CommandInterface) {
-							return addCommand(val);
+							addCommand(val);
 						}
 					});
 				}
@@ -274,7 +274,7 @@ function initParam(msg, command, args, main) {
 		'neo4j': main.neo4j
 	};
 	param.setCooldown = function(cooldown) {
-		return main.cooldown.setCooldown(param, aliasToCommand[command], cooldown);
+		main.cooldown.setCooldown(param, aliasToCommand[command], cooldown);
 	}
 	param.getMention = function(id) {
 		if (!id) return;

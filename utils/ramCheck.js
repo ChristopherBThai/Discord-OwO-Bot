@@ -24,7 +24,7 @@ class RamCheck {
 		let ram = mem.available - mem.swaptotal;
 		console.log(`CURRENT RAM USAGE: ${ram / (1024 * 1024 * 1024)}G`);
 		if (ram <= resetbyte) {
-			return console.log('NOT ENOUGH RAM. RESETTING SHARDS');
+			console.log('NOT ENOUGH RAM. RESETTING SHARDS');
 			//global.resetBot();
 		}
 	}

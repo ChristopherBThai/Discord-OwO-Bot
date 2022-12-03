@@ -55,7 +55,7 @@ exports.check = async function(p,command) {
 	//Check if the command is enabled
 	let commandNames = `'all','${command}'`;
 	for (let i in p.commands[command].group) {
-		return commandNames += ',\'' + p.commands[command].group[i] + '\'';
+		commandNames += ',\'' + p.commands[command].group[i] + '\'';
 	}
 	let sql = stripIndents`
 		SELECT * FROM disabled WHERE command IN (${commandNames}) AND channel = ${channel};
@@ -65,7 +65,7 @@ exports.check = async function(p,command) {
 	let result = await p.query(sql);
 	if (result[1][0]) {
 		// User in timeout
-		return p.logger.logstashBanned(p.commandAlias, p);
+		p.logger.logstashBanned(p.commandAlias, p);
 	} else if (result[2][0]) {
 		// User is banned from this command
 		cooldown[author + command] = true;
@@ -73,7 +73,7 @@ exports.check = async function(p,command) {
 			delete cooldown[author + command];
 		}, 10000);
 		if (command != 'points') await p.errorMsg(', you\'re banned from this command! >:c', 3000);
-		return p.logger.logstashBanned(p.commandAlias, p);
+		p.logger.logstashBanned(p.commandAlias, p);
 	} else if (!result[0][0] || ['points', 'disable', 'enable'].includes(command)) {
 		// Success
 		return true;

@@ -165,12 +165,12 @@ exports.expire = function(key, timer = 259200) { // 3 days
 };
 
 client.on('connect', function() {
-	//return console.log('Redis connected');
+	//console.log('Redis connected');
 });
 
 client.on('error', function(err) {
 	console.error(`Redis error on ${new Date().toLocaleString()}`);
-	return console.error(err);
+	console.error(err);
 });
 
 exports.client = client;

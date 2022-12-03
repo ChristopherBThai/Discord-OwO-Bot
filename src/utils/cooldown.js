@@ -59,7 +59,8 @@ exports.check = async function(p, command) {
 		}
 	} catch(e) {
 		console.error('cooldown.js check command');
-		return console.error(e);
+		console.error(e);
+		return;
 	} finally {
 		// We need to make sure we unlock the semaphore
 		delete lock[key];

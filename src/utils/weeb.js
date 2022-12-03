@@ -34,12 +34,12 @@ exports.grab = function(p, ptype, ftype, text, notsfw, retry) {
 				'icon_url': p.msg.author.avatarURL
 			}
 		};
-		return p.send({ embed });
+		p.send({ embed });
 	}).catch(err => {
 		if (retryt && (ftype == 'jpg' || ftype == 'png')) {
 			this.grab(p, ptype, (ftype == 'jpg') ? 'png' : 'jpg', text, notsfw, false);
 		} else {
-			return p.errorMsg(stripIntents`
+			p.errorMsg(stripIntents`
 				, I couldn\'t find that image type! :c 
 				Type \`owo help gif\` for the list of types!
 			`, 3000);
@@ -56,6 +56,6 @@ exports.getTypes = function(p) {
 		for (let i = 0; i < array.length; i++) txt += '`' + array[i] + '`, ';
 		txt += '`nsfw`';
 		txt += '\n*Some types will not work on pic*';
-		return p.send(txt);
+		p.send(txt);
 	});
 };

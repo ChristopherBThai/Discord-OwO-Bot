@@ -6,10 +6,10 @@
 */
 const request = require('request');
 const { SHARDER_HOST, SHARDER_PASS, SHARDER_SERVER } = process.env;
+const interval = 300000;
 
 class InfoUpdater {
 	constructor(main) {
-		const interval = 300000;
 		this.main = main;
 		this.totalShards = false;
 		if (!main.debug) {

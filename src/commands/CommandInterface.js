@@ -25,14 +25,16 @@ module.exports = class CommandInterface{
 					if (channelPerms.has('sendMessages') && channelPerms.has('readMessages')) {
 						params.errorMsg(`, the bot does not have the \`${this.permissions[i]}\` permission! Please reinvite the bot, or contact your server admin!`, 4000);
 					}
-					return params.logger.incr('noperms', 1, { permission: this.permissions }, params.msg);
+					params.logger.incr('noperms', 1, { permission: this.permissions }, params.msg);
+					return;
 				}
 			}
 		}
 
 		// Check if command is for nsfw only
 		if (this.nsfw && !params.msg.channel.nsfw) {
-			return params.errorMsg(', This command can only be used in **nsfw** channels!', 5000);
+			params.errorMsg(', This command can only be used in **nsfw** channels!', 5000);
+			return;
 		}
 		await this.executeCommand.bind(params)(params);
 	}

@@ -34,5 +34,5 @@ exports.handle = async function(main, message) {
 	userList = userList.slice(0, -2);
 	const buffer = Buffer.from(userList, 'utf8');
 	const msg = `${banEmoji} **|** Banned ${memberCount} members from **${guild.name}**.`
-	return main.bot.createMessage(replyChannel, msg, { file: buffer, name: 'list.txt' });
+	main.bot.createMessage(replyChannel, msg, { file: buffer, name: 'list.txt' });
 };

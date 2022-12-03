@@ -26,6 +26,6 @@ exports.handle = async function (msg, raw) {
 		}
 	} else {
 		this.command.execute(msg, raw);
-		return levels.giveXP(msg);
+		levels.giveXP(msg);
 	}
 };
