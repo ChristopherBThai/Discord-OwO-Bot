@@ -322,7 +322,7 @@ async function display(p,msg,con,send){
 			},
 		"fields": [{
 				"name": bot+" `BEEP. BOOP. I AM HUNTBOT. I WILL HUNT FOR YOU MASTER.`",
-				"value": "Use the command `owo autohunt {cowoncy}` to get started.\nYou can use `owo upgrade {trait}` to upgrade the traits below.\nTo obtain more essence, use `owo sacrifice {animal} {count}`.\n\n",
+				"value": "Use the command `owo autohunt {cowoncy}` to get started.\nYou can use `owo upgrade {trait} {count}` to upgrade the traits below.\nTo obtain more essence, use `owo sacrifice {animal} {count}`.\n\n",
 				"inline":false
 			},
 			{
