@@ -10,12 +10,12 @@ const patreonUtil = require('../patreon/utils/patreonUtil');
 const emoji = '🎉';
 
 module.exports = new CommandInterface({
-	alias:['addbattle'],
-	owner:true,
+	alias: ['addbattle'],
+	owner: true,
 
 	execute: async function(p) {
 		const list = await parseUsers(p);
-		return p.send(list.success + '\n\n' + list.failed);
+		p.send(list.success + '\n\n' + list.failed);
 	}
 });
 
@@ -25,7 +25,7 @@ async function parseUsers (p) {
 	const ids = p.args.join(' ').split(/\s+/gi);
 	for (let id of ids) {
 		if (!p.global.isUser(`<@${id}>`)) {
-			return p.errorMsg(`, Invalid user id: ${id}`);
+			p.errorMsg(`, Invalid user id: ${id}`);
 		} else {
 			try {
 				let result = await addPerk(p, id);
@@ -36,7 +36,7 @@ async function parseUsers (p) {
 				}
 			} catch (err) {
 				console.error(err);
-				return failed += `failed for [${id}]\n`;
+				failed += `failed for [${id}]\n`;
 			}
 		}
 	}

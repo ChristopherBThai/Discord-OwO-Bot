@@ -7,8 +7,8 @@
 const CommandInterface = require('../../CommandInterface');
 
 module.exports = new CommandInterface({
-	alias:['addannouncement'],
-	owner:true,
+	alias: ['addannouncement'],
+	owner: true,
 
 	execute: async function(p) {
 		try {
@@ -19,7 +19,7 @@ module.exports = new CommandInterface({
 			await p.query(sql, [url]);
 			await p.send('Added new announcement!');
 		} catch(err) {
-			return p.errorMsg(', failed to add announcement!');
+			p.errorMsg(', failed to add announcement!');
 		}
 	}
 });

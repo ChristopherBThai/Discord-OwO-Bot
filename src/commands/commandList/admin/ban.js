@@ -1,20 +1,16 @@
 /*
- * OwO Bot for Discord
- * Copyright (C) 2019 Christopher Thai
+ * Official OwO Bot for Discord
+ * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
-
-const CommandInterface = require('../../CommandInterface.js');
-
+*/
+const CommandInterface = require('../../CommandInterface');
 const banEmoji = '<:ban:444365501708107786>';
 
 module.exports = new CommandInterface({
-
-	alias:["ban"],
-
-	owner:true,
-	admin:true,
+	alias: ['ban'],
+	owner: true,
+	admin: true,
 
 	execute: async function(p) {
 		let users = [], reason = [];
@@ -29,45 +25,41 @@ module.exports = new CommandInterface({
 			}
 		}
 		const time = parseInt(users.pop());
-
 		if (!time || time > 1000000) {
-			p.errorMsg(", ban time must be under 1,000,000");
+			p.errorMsg(', ban time must be under 1,000,000');
 			return;
 		}
-
-		reason = reason.join(" ");
-		if (reason && reason!="") {
-			reason = "\n**<:blank:427371936482328596> | Reason:** "+reason;
+		reason = reason.join(' ');
+		if (reason && reason != '') {
+			reason = `\n**<:blank:427371936482328596> | Reason:** ${reason}`;
 		}
-
 		const sqlUsers = [];
 		users.forEach(user => {
 			sqlUsers.push(`(${user}, NOW(), 1, ${time})`);
 		});
 		const sql = `INSERT INTO timeout (id,time,count,penalty) VALUES ${sqlUsers.join(',')} ON DUPLICATE KEY UPDATE time = NOW(), count=count+1, penalty = ${time};`;
 		const rows = await p.query(sql);
-
 		const success = [];
 		const successGuild = [];
 		const dmFailed = [];
 		const failed = [];
 		for (let user of users) {
 			try {
-				if (userObj = await p.sender.msgUser(user, "**☠ |** You have been banned for "+time+" hours!"+reason))
+				if (userObj = await p.sender.msgUser(user, `**☠ |** You have been banned for ${time} hours!` + reason)) {
 					if (userObj.dmError) {
 						dmFailed.push(userObj);
 					} else {
 						success.push(userObj)
 					}
-				else if (guildObj = await p.fetch.getGuild(user, false))
+				} else if (guildObj = await p.fetch.getGuild(user, false)) {
 					successGuild.push(guildObj);
-				else
+				} else {
 					failed.push(user);
+				}
 			} catch (e) {
 				failed.push(user);
 			}
 		}
-
 		let text = `${banEmoji} **|** I have banned ${success.length} users:\n`;
 		success.forEach(user => {
 			text += `[${user.id}] ${user.username}#${user.discriminator}\n`;
@@ -86,9 +78,8 @@ module.exports = new CommandInterface({
 			});
 		}
 		if (reason) {
-			text += reason
+			text += reason;
 		}
-		p.send(text);
+		return p.send(text);
 	}
-
-})
+});
