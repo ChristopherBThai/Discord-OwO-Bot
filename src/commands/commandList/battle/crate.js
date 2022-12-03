@@ -29,7 +29,7 @@ module.exports = new CommandInterface({
 			await openCrate(p,parseInt(p.args[0]));
 		} else if (p.options.count) {
 			await openCrate(p,parseInt(p.options.count));
-		} else if (p.args.length > 0 && p.args[0] == 'all') {
+		} else if (p.args.length > 0 && p.args[0].toLowerCase() == 'all') {
 			let sql = `SELECT boxcount FROM crate INNER JOIN user ON crate.uid = user.uid WHERE id = ${p.msg.author.id};`;
 			let result = await p.query(sql);
 			if (!result || result[0].boxcount <= 0) {
