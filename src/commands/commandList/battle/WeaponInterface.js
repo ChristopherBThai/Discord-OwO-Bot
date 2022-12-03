@@ -438,152 +438,153 @@ module.exports = class WeaponInterface {
 		return { amount: Math.round(total), logs: subLogs };
 	}
 
-	getEmoji(quality){
+	getEmoji(quality) {
 		/* If there are multiple quality, get avg */
-		if(typeof quality == "string"){
+		if (typeof quality == 'string') {
 			quality = parseInt(quality.split(','));
-			quality = quality.reduce((a,b)=>a+b,0)/quality.length;
+			quality = quality.reduce((a, b) => a + b, 0) / quality.length;
 		}
-
 		quality /= 100;
 
 		/* Get correct rank */
-		var count = 0;
-		for(var i=0;i<ranks.length;i++){
+		let count = 0;
+		for (let i = 0; i < ranks.length; i++) {
 			count += ranks[i][0];
-			if(quality <= count)
-				return this.emojis[i];
+			if (quality <= count) return this.emojis[i];
 		}
 		return this.emojis[0];
-
 	}
 
-	rerollStats(){
+	rerollStats() {
 		let WeaponClass = weapons[this.id];
-		if(!WeaponClass) throw "Weapon Not Found for reroll";
-
+		if (!WeaponClass) throw 'Weapon Not Found for reroll';
 		let newQualities = this.randomQualities();
 		let newPassives = [];
-		for(let i in this.passives){
+		for (let i in this.passives) {
 			let PassiveClass = passives[this.passives[i].id];
-			if(!PassiveClass) throw "Weapon Passive Not Found for reroll";
+			if (!PassiveClass) throw 'Weapon Passive Not Found for reroll';
 			newPassives.push(new PassiveClass());
 		}
-
-		return new WeaponClass(newPassives,newQualities);
+		return new WeaponClass(newPassives, newQualities);
 	}
 
-	rerollPassives(){
+	rerollPassives() {
 		let WeaponClass = weapons[this.id];
-		if(!WeaponClass) throw "Weapon Not Found for reroll";
-
-		return new WeaponClass(null,this.qualities);
+		if (!WeaponClass) throw 'Weapon Not Found for reroll';
+		return new WeaponClass(null, this.qualities);
 	}
 
 	/* Get lowest hp animal */
-	static getLowestHp(team){
+	static getLowestHp(team) {
 		let lowest = undefined;
-		for(let i=0;i<team.length;i++)
-			if(team[i].stats.hp[0]>0)
-				if(!lowest||lowest.stats.hp[0]/(lowest.stats.hp[1]+lowest.stats.hp[3])
-						>team[i].stats.hp[0]/(team[i].stats.hp[1]+team[i].stats.hp[3]))
+		for (let i = 0; i < team.length; i++) {
+			if (team[i].stats.hp[0] > 0) {
+				if (!lowest || lowest.stats.hp[0] / (lowest.stats.hp[1] + lowest.stats.hp[3]) > team[i].stats.hp[0] / (team[i].stats.hp[1] + team[i].stats.hp[3])) {
 					lowest = team[i];
+				}
+			}
+		}
 		return lowest;
 	}
 
 	/* Get lowest wp animal */
-	static getLowestWp(team){
+	static getLowestWp(team) {
 		let lowest = undefined;
-		for(let i=0;i<team.length;i++)
-			if(team[i].stats.hp[0]>0)
-				if(!lowest||lowest.stats.wp[0]/(lowest.stats.wp[1]+lowest.stats.wp[3])
-						>team[i].stats.wp[0]/(team[i].stats.wp[1]+team[i].stats.wp[3]))
+		for (let i = 0; i < team.length; i++) {
+			if (team[i].stats.hp[0] > 0) {
+				if (!lowest || lowest.stats.wp[0] / (lowest.stats.wp[1] + lowest.stats.wp[3]) > team[i].stats.wp[0] / (team[i].stats.wp[1] + team[i].stats.wp[3])) {
 					lowest = team[i];
+				}
+			}
+		}
 		return lowest;
 	}
 
 	/* Gets a dead animal */
-	static getDead(team){
-		for(let i=0;i<team.length;i++)
-			if(team[i].stats.hp[0]<=0)
+	static getDead(team) {
+		for (let i = 0; i < team.length; i++) {
+			if (team[i].stats.hp[0] <= 0) {
 				return team[i];
+			}
+		}
 	}
 
 	/* Check if the animal is at max or higher health */
-	static isMaxHp(animal){
+	static isMaxHp(animal) {
 		let hp = animal.stats.hp;
-		return hp[0] >= hp[1]+hp[3];
+		return hp[0] >= hp[1] + hp[3];
 	}
 
 	/* Check if the animal is at max or higher health */
-	static isMaxWp(animal){
+	static isMaxWp(animal) {
 		let wp = animal.stats.wp;
-		return wp[0] >= wp[1]+wp[3];
+		return wp[0] >= wp[1] + wp[3];
 	}
 
 	/* Checks if the animal can attack or not */
-	static canAttack(animal,ally,enemy,action){
-		let result = {alive:animal.stats.hp[0]>0};
+	static canAttack(animal, ally, enemy, action) {
+		let result = { alive: animal.stats.hp[0] > 0 };
 		result.result = result.alive;
-
 		let subLogs = new Logs();
-		for(let i in animal.buffs)
-			subLogs.push(animal.buffs[i].canAttack(animal,ally,enemy,action,result));
-		if(animal.weapon)
-			for(let i in animal.weapon.passives)
-				subLogs.push(animal.weapon.passives[i].canAttack(animal,ally,enemy,action,result));
-
+		for (let i in animal.buffs) {
+			subLogs.push(animal.buffs[i].canAttack(animal, ally, enemy, action, result));
+		}
+		if (animal.weapon) {
+			for (let i in animal.weapon.passives) {
+				subLogs.push(animal.weapon.passives[i].canAttack(animal, ally, enemy, action, result));
+			}
+		}
 		result = result.result;
-		return {canAttack:result,logs:subLogs};
+		return { canAttack: result, logs: subLogs };
 	}
 
 	/* Convert resistance to percent */
-	static resToPercent(res){
-		res = res[0]+res[1];
-		res = (res/(100+res))*.8;
+	static resToPercent(res) {
+		res = res[0] + res[1];
+		res = (res / (100 + res)) * .8;
 		return res;
 	}
 
 	/* Convert resistance to pretty print percent */
-	static resToPrettyPercent(res){
+	static resToPrettyPercent(res) {
 		res = WeaponInterface.resToPercent(res);
-		return Math.round(res*100)+"%";
+		return Math.round(res * 100) + '%';
 	}
 
-	static get allPassives(){return passives}
-	static get allBuffs(){return buffs}
-	static get weapons(){return weapons}
-	static get PHYSICAL(){return 'p'}
-	static get MAGICAL(){return 'm'}
-	static get TRUE(){return 't'}
-	static get ranks(){return ranks}
-	static get strEmoji(){return '<:att:531616155450998794>'}
-	static get magEmoji(){return '<:mag:531616156231139338>'}
-	static get hpEmoji(){return '<:hp:531620120410456064>'}
-	static get wpEmoji(){return '<:wp:531620120976687114>'}
-	static get getID(){return new this(null,null,true).id}
-	static get disabled(){return new this(null,null,true).disabled}
-	static get getName(){return new this(null,null,true).name}
-	static get unsellable(){return new this(null,null,true).unsellable}
-	static get getDesc(){return new this(null,null,true).basicDesc}
-	static get getEmoji(){return new this(null,null,true).defaultEmoji}
-}
+	static get allPassives(){ return passives };
+	static get allBuffs(){ return buffs };
+	static get weapons(){ return weapons };
+	static get PHYSICAL(){ return 'p' };
+	static get MAGICAL(){ return 'm' };
+	static get TRUE(){ return 't' };
+	static get ranks(){ return ranks };
+	static get strEmoji(){ return '<:att:531616155450998794>' };
+	static get magEmoji(){ return '<:mag:531616156231139338>' };
+	static get hpEmoji(){ return '<:hp:531620120410456064>' };
+	static get wpEmoji(){ return '<:wp:531620120976687114>' };
+	static get getID(){ return new this(null, null, true).id };
+	static get disabled(){ return new this(null, null, true).disabled };
+	static get getName(){ return new this(null, null, true).name };
+	static get unsellable(){ return new this(null, null, true).unsellable };
+	static get getDesc(){ return new this(null, null, true).basicDesc };
+	static get getEmoji(){ return new this(null, null, true).defaultEmoji };
+};
 
 const passiveDir = requireDir('./passives');
 const passives = {};
-for(let key in passiveDir){
+for (let key in passiveDir) {
 	let passive = passiveDir[key];
 	passives[passive.getID] = passive;
 }
 const buffDir = requireDir('./buffs');
 const buffs = {};
-for(let key in buffDir){
+for (let key in buffDir) {
 	let buff = buffDir[key];
-	if(!buff.disabled) buffs[buff.getID] = buff;
+	if (!buff.disabled) buffs[buff.getID] = buff;
 }
 const weaponDir = requireDir('./weapons');
 const weapons = {};
-for(let key in weaponDir){
+for (let key in weaponDir) {
 	let weapon = weaponDir[key];
 	weapons[weapon.getID] = weapon;
-}
+};
