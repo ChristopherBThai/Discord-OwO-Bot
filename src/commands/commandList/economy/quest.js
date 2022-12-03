@@ -310,7 +310,7 @@ function parseQuest(questInfo){
 			text = "Have a friend use an action command on you "+count+" times!";
 			break;
 		case "find":
-			text = "Find 3 animals that are "+count+" rank!";
+			text = "Hunt 3 animals that are "+count+" rank!";
 			break;
 		case "cookieBy":
 			text = "Receive a cookie from "+count+" friends!";
