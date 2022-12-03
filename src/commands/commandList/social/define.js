@@ -39,7 +39,7 @@ module.exports = new CommandInterface({
 			return;
 		}
 		try{
-			await ud.term(word, function(error,entries,tags,sounds){
+			await ud.define(word, function(error,entries){
 				try{
 				if(error){
 					p.errorMsg(", I couldn't find that word! :c",3000);
