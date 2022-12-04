@@ -43,6 +43,10 @@ module.exports = new CommandInterface({
 		}else if(["rr","reroll"].includes(p.args[0])){
 			await rerollUtil.reroll(p);
 
+		/* favorite / unfavorite weapon */
+		}else if(["favorite", "unfavorite"].includes(p.args[0])) {
+			await weaponUtil.favoriteUnfavorite(p);
+
 		/* Describe weapon */
 		}else if(p.args.length==1){
 

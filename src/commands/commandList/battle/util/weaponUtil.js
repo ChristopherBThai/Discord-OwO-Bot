@@ -23,6 +23,7 @@ const prevPageEmoji = '⬅️';
 const rewindEmoji = '⏪';
 const fastForwardEmoji = '⏩';
 const sortEmoji = '🔃';
+const favoriteEmoji = '⭐';
 
 /* All weapons */
 var weapons = {};
@@ -107,6 +108,7 @@ var parseWeapon = exports.parseWeapon = function(data){
 	weapon.ruwid = data.ruwid;
 	weapon.pid = data.pid;
 	weapon.animal = data.animal;
+	weapon.favorite = data.favorite;
 
 	return weapon;
 }
@@ -124,6 +126,7 @@ var parseWeaponQuery = exports.parseWeaponQuery = function(query){
 					pid:query[i].pid,
 					id:query[i].wid,
 					stat:query[i].stat,
+					favorite:query[i].favorite,
 					animal:{
 						name:query[i].name,
 						nickname:query[i].nickname
@@ -183,7 +186,7 @@ var display = exports.display = async function(p,pageNum=0,sort=0,opt){
 				page = await getDisplayPage(p,user,pageNum,sort,opt);
 				if(page) await msg.edit({embed:page.embed});
 			}else if(emoji.name===sortEmoji){
-				sort = (sort+1)%4;
+				sort = (sort+1)%5;
 				page = await getDisplayPage(p,user,pageNum,sort,opt);
 				if(page) await msg.edit({embed:page.embed});
 			}else if(emoji.name===rewindEmoji){
@@ -277,7 +280,7 @@ var getDisplayPage = async function(p,user,page,sort,opt={}){
 	/* Query all weapons */
 	let sql = `SELECT temp.*,user_weapon_passive.wpid,user_weapon_passive.pcount,user_weapon_passive.stat as pstat
 		FROM
-			(SELECT user_weapon.uwid,user_weapon.wid,user_weapon.stat,animal.name,animal.nickname
+			(SELECT user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon.favorite,animal.name,animal.nickname
 			FROM  user
 				INNER JOIN user_weapon ON user.uid = user_weapon.uid
 				LEFT JOIN animal ON animal.pid = user_weapon.pid
@@ -293,6 +296,8 @@ var getDisplayPage = async function(p,user,page,sort,opt={}){
 				sql += 'user_weapon.wid DESC, user_weapon.avg DESC,';
 			else if(sort===3)
 				sql += 'user_weapon.pid DESC,';
+			else if(sort===4)
+				sql += 'user_weapon.favorite DESC, user_weapon.avg DESC, ';
 
 	sql += 			` user_weapon.uwid DESC
 			LIMIT ${weaponPerPage}
@@ -326,7 +331,7 @@ var getDisplayPage = async function(p,user,page,sort,opt={}){
 	let user_weapons = parseWeaponQuery(result[0]);
 
 	/* Parse actual weapon data for each weapon */
-	let descHelp = "Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nReroll: `owo w rr {weaponID} [passive|stat]`\nSell: `owo sell {weaponID|commonweapons,rareweapons...}`\nDismantle: `owo dismantle {weaponID|commonweapons,rareweapons...}`\n";
+	let descHelp = "Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nReroll: `owo w rr {weaponID} [passive|stat]`\nSell: `owo sell {weaponID|commonweapons,rareweapons...}`\nDismantle: `owo dismantle {weaponID|commonweapons,rareweapons...}`\nFavorite: `owo w favorite|unfavorite {weaponID}`\n";
 	let desc = '';
 	let fieldText;
 	let fields = []
@@ -340,6 +345,9 @@ var getDisplayPage = async function(p,user,page,sort,opt={}){
 				emoji += passive.emoji;
 			}
 			row += `\n\`${user_weapons[key].uwid}\` ${emoji} **${weapon.name}** | Quality: ${weapon.avgQuality}%`;
+			if(user_weapons[key].favorite) {
+				row += ` | ${favoriteEmoji}`;
+			}
 			if(user_weapons[key].animal.name){
 				let animal = p.global.validAnimal(user_weapons[key].animal.name);
 				row += p.replaceMentions(` | ${(animal.uni)?animal.uni:animal.value} ${(user_weapons[key].animal.nickname)?user_weapons[key].animal.nickname:""}`);
@@ -391,6 +399,8 @@ var getDisplayPage = async function(p,user,page,sort,opt={}){
 		embed.footer.text += "Sorting by type";
 	else if(sort===3)
 		embed.footer.text += "Sorting by equipped";
+	else if(sort===4)
+		embed.footer.text += "Sorting by favorite";
 
 	embed = alterWeapon.alter(user.id, embed, {
 		page: page+1,
@@ -402,7 +412,7 @@ var getDisplayPage = async function(p,user,page,sort,opt={}){
 	return {sql,embed,totalCount,nextPage,prevPage,maxPage}
 }
 
-exports.describe = async function(p,uwid){
+var describe = exports.describe = async function(p,uwid){
 	uwid = expandUWID(uwid);
 
 	/* Check if valid */
@@ -412,7 +422,7 @@ exports.describe = async function(p,uwid){
 	}
 
 	/* sql query */
-	let sql = `SELECT user.id,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat FROM user INNER JOIN user_weapon a ON user.uid = a.uid LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid WHERE a.uwid = ${uwid};`;
+	let sql = `SELECT user.id,a.uwid,a.wid,a.stat,a.favorite,b.pcount,b.wpid,b.stat as pstat FROM user INNER JOIN user_weapon a ON user.uid = a.uid LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid WHERE a.uwid = ${uwid};`;
 	let result = await p.query(sql);
 
 	/* Check if valid */
@@ -422,9 +432,9 @@ exports.describe = async function(p,uwid){
 	}
 
 	/* parse weapon to get info */
-	let weapon = this.parseWeaponQuery(result);
+	let weapon = parseWeaponQuery(result);
 	weapon = weapon[Object.keys(weapon)[0]];
-	weapon = this.parseWeapon(weapon);
+	weapon = parseWeapon(weapon);
 
 	/* If no weapon */
 	if(!weapon){
@@ -453,6 +463,10 @@ exports.describe = async function(p,uwid){
 	desc += `**Owner:** ${username}\n`;
 	desc += `**ID:** \`${shortenUWID(uwid)}\`\n`;
 	desc += `**Sell Value:** ${weapon.unsellable?"UNSELLABLE":prices[weapon.rank.name]}\n`;
+	// mark as favorite if you're looking at your own weapon
+	if (user && user.id === p.msg.author.id && weapon.favorite) {
+		desc += `**Favorite:** ${favoriteEmoji}\n`;
+	}
 	desc += `**Quality:** ${weapon.rank.emoji} ${weapon.avgQuality}%\n`;
 	desc += `**WP Cost:** ${Math.ceil(weapon.manaCost)} <:wp:531620120976687114>`;
 	desc += `\n**Description:** ${weapon.desc}\n`;
@@ -614,7 +628,7 @@ exports.sell = async function(p,uwid){
 	}
 
 	/* Grab the item we will sell */
-	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
+	let sql = `SELECT a.uwid,a.wid,a.stat,a.favorite,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
 		FROM user
 			LEFT JOIN user_weapon a ON user.uid = a.uid
 			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
@@ -626,6 +640,12 @@ exports.sell = async function(p,uwid){
 	/* not a real weapon! */
 	if(!result[0]){
 		p.errorMsg(", you do not have a weapon with this id!",3000);
+		return;
+	}
+
+	/* If the weapon is marked as favorite */
+	if(result[0]&&result[0].favorite){
+		p.errorMsg(", please unfavorite the weapon to sell it!",3000);
 		return;
 	}
 
@@ -703,7 +723,7 @@ var sellRank = exports.sellRank = async function(p,rankLoc){
 		FROM user
 			LEFT JOIN user_weapon a ON user.uid = a.uid
 			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
-		WHERE user.id = ${p.msg.author.id} AND avg > ${min} AND avg <= ${max} AND a.pid IS NULL LIMIT 500;`
+		WHERE user.id = ${p.msg.author.id} AND avg > ${min} AND avg <= ${max} AND a.pid IS NULL AND a.favorite = 0 LIMIT 500;`
 
 	let result = await p.query(sql);
 
@@ -772,6 +792,44 @@ var sellRank = exports.sellRank = async function(p,rankLoc){
 
 	p.replyMsg(weaponEmoji,`, You sold all your ${rank} weapons for **${price}** cowoncy!\n${p.config.emoji.blank} **| Sold:** ${weapons.join('')}`);
 	p.logger.incr(`cowoncy`, price, {type:'sell'}, p.msg);
+}
+
+/* marks a weapon as favorite to prevent selling / sharding */
+exports.favoriteUnfavorite = async function(p) {
+	let uwid = expandUWID(p.args[1]);
+
+	/* Check if valid */
+	if (!uwid) {
+		p.errorMsg(", I could not find a weapon with that unique weapon id! Please use `owo weapon` for the weapon ID!");
+		return;
+	}
+
+	/* sql query */
+	let sql = `SELECT uwid FROM user_weapon INNER JOIN user ON user_weapon.uid = user.uid WHERE uwid = ${uwid} and user.id = ${p.msg.author.id};`;
+	let result = await p.query(sql);
+
+	/* Check if valid */
+	if (!result[0]){
+		p.errorMsg(", I could not find a weapon with that unique weapon id! Please use `owo weapon` for the weapon ID!");
+		return;
+	}
+	/* update favorite status */
+	let favorite = false;
+	if (p.args[0].toLowerCase() == "favorite") {
+		favorite = true;
+	}
+
+	sql = `UPDATE user_weapon SET favorite = ${favorite} WHERE uwid = ${uwid};`;
+	result = await p.query(sql);
+
+	/* Check if updated */
+	if(result.affectedRows==0){
+		p.errorMsg(", you do not have a weapon with this id!",3000);
+		return;
+	}
+
+	/* show weapon */
+	await describe(p, p.args[1]);
 }
 
 /* Shorten a uwid to base36 */
