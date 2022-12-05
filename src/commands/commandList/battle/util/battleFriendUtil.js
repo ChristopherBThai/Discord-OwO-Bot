@@ -254,7 +254,7 @@ function toEmbedRequest(p, stats, bet, sender, receiver, flags) {
 		`,
 		color: p.config.embed_color,
 		footer:{
-			text: "This challenge will expire in 10 minutes"
+			text: 'This challenge will expire in 10 minutes'
 		},
 		timestamp: new Date()
 	};
