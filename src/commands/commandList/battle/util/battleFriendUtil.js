@@ -249,11 +249,12 @@ function toEmbedRequest(p, stats, bet, sender, receiver, flags) {
 			icon_url: p.msg.author.avatarURL
 		},
 		description: stripIndents`
-			Bet amount: ${bet} cowoncy ${flagText + acceptText}
-			\`owo db\` to decline the battle!`,
+			${flagText + acceptText}
+			\`owo db\` to decline the battle!
+		`,
 		color: p.config.embed_color,
-		footer: {
-			text: 'This challenge will expire in 10 minutes'
+		footer:{
+			text: "This challenge will expire in 10 minutes"
 		},
 		timestamp: new Date()
 	};
