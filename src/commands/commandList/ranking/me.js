@@ -58,24 +58,55 @@ async function display(p, con, msg, args) {
 
 	for (let i = 0; i < args.length; i++) {
 		if (!rankType) {
-			if (args[i] === "points" || args[i] === "point" || args[i] === "p") rankType = "points";
-			else if (args[i] === "guild" || args[i] === "server" || args[i] === "s" || args[i] === "g") rankType = "guild";
-			else if (args[i] === "zoo" || args[i] === "z") rankType = "zoo";
-			else if (args[i] === "cowoncy" || args[i] === "money" || args[i] === "m" || args[i] === "c" || args[i] === "cash") rankType = "money";
-			else if (args[i] === "cookies" || args[i] === "cookie" || args[i] === "rep" || args[i] === "r") rankType = "rep";
-			else if (args[i] === "pets" || args[i] === "pet") rankType = "pet";
-			else if (args[i] === "huntbot" || args[i] === "hb" || args[i] === "autohunt" || args[i] === "ah") rankType = "huntbot";
-			else if (args[i] === "luck" || args[i] === "pray") rankType = "luck";
-			else if (args[i] === "curse") rankType = "curse";
-			else if (args[i] === "battle" || args[i] === "streak") rankType = "battle";
-			else if (args[i] === "level" || args[i] === "lvl" || args[i] === "xp") rankType = "level";
-			else if (args[i] === "daily") rankType = "daily";
-			else if (args[i] === "shards" || args[i] === "shard" || args[i] === "ws" || args[i] === "weaponshard") rankType = "shard";
-			else if (args[i] === "global") globala = true;
-			else if (args[i] === "marriage" || args[i] === "marry") rankType = "marriage";
-			else {
-				p.errorMsg(", Invalid ranking type!", 3000);
-				return;
+			switch (args[i]) {
+				case "points": case "point": case "p":
+					rankType = "points";
+					break;
+				case "guild": case "g": case "server": case "s":
+					rankType = "guild";
+					break;
+				case "zoo": case "z":
+					rankType = "zoo";
+					break;
+				case "cowoncy": case "money": case "c": case "m": case "cash":
+					rankType = "money";
+					break;
+				case "cookies": case "cookie": case "rep": case "reputation": case "r":
+					rankType = "rep";
+					break;
+				case "pets": case "pet":
+					rankType = "pet";
+					break;
+				case "huntbot": case "hb": case "autohunt": case "ah":
+					rankType = "huntbot";
+					break;
+				case "luck": case "pray":
+					rankType = "luck";
+					break;
+				case "curse":
+					rankType = "curse";
+					break;
+				case "battle": case "streak":
+					rankType = "battle";
+					break;
+				case "daily":
+					rankType = "daily";
+					break;
+				case "level": case "lvl": case "xp":
+					rankType = "level";
+					break;
+				case "shards": case "shard": case "ws": case "weaponshards": case "weaponshard":
+					rankType = "shard";
+					break;
+				case "marriage": case "marry":
+					rankType = "marriage";
+					break;
+				case "global":
+					globala = true;
+					break;
+				default:
+					p.errorMsg(", Invalid ranking type!", 3000);
+					return;
 			}
 		} else if (args[i] === "global" || args[i] === "g") globala = true;
 		else {
