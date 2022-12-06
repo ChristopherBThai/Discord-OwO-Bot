@@ -122,7 +122,7 @@ async function display(p, con, msg, args) {
 			await getLevelRanking(globala, p);
 			break;
 		case "shard":
-			getShardRanking(globala, con, msg, count, p);
+			getShardRanking(globala, con, msg, p);
 			break;
 		case "marriage":
 			getMarriageRanking(globala, con, msg, p);
@@ -655,11 +655,13 @@ function getShardRanking(globalRank, con, msg, p) {
 function getMarriageRanking(globalRank, con, msg, p) {
 	let sql;
 	if (globalRank) {
-		sql = "SELECT uid1 AS id,uid2 AS id2,dailies FROM marriage ORDER BY dailies DESC LIMIT 2;";
+		sql = "SELECT uid1 AS id,uid2 AS id2,dailies FROM marriage WHERE dailies > (SELECT dailies FROM marriage WHERE uid1 = " + msg.author.id + " OR uid2 = " + msg.author.id + " LIMIT 1) ORDER BY dailies ASC LIMIT 2;";
+		sql += "SELECT uid1 AS id,uid2 AS id2,dailies FROM marriage WHERE dailies < (SELECT dailies FROM marriage WHERE uid1 = " + msg.author.id + " OR uid2 = " + msg.author.id + " LIMIT 1) ORDER BY dailies DESC LIMIT 2;";
 		sql += "SELECT uid1 AS id,uid2 AS id2,dailies,(SELECT COUNT(*)+1 FROM marriage WHERE dailies > u.dailies ) AS rank FROM marriage u WHERE u.uid1 = " + msg.author.id + " OR u.uid2 = " + msg.author.id + ";";
 	} else {
 		let users = global.getids(msg.channel.guild.members);
-		sql = "SELECT uid1 AS id,uid2 AS id2,dailies FROM marriage WHERE uid1 IN (" + users + ") OR uid2 IN (" + users + ") ORDER BY dailies DESC LIMIT 2;";
+		sql = "SELECT uid1 AS id,uid2 AS id2,dailies FROM marriage WHERE (uid1 IN (" + users + ") OR uid2 IN (" + users + ")) AND dailies > (SELECT dailies FROM marriage WHERE uid1 = " + msg.author.id + " OR uid2 = " + msg.author.id + " LIMIT 1) ORDER BY dailies ASC LIMIT 2;";
+		sql += "SELECT uid1 AS id,uid2 AS id2,dailies FROM marriage WHERE (uid1 IN (" + users + ") OR uid2 IN (" + users + ")) dailies < (SELECT dailies FROM marriage WHERE uid1 = " + msg.author.id + " OR uid2 = " + msg.author.id + " LIMIT 1) ORDER BY dailies DESC LIMIT 2;";
 		sql += "SELECT uid1 AS id,uid2 AS id2,dailies,(SELECT COUNT(*)+1 FROM marriage WHERE (uid1 IN (" + users + ") OR uid2 IN (" + users + ")) AND dailies > u.dailies ) AS rank FROM marriage u WHERE u.uid1 = " + msg.author.id + " OR u.uid2 = " + msg.author.id + ";";
 	}
 
