@@ -8,7 +8,7 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const regex = /^[\x00-\x7F]{1,25}$/i;
-const mentions = /<(@!|@&|#)(?<id>\d{17,20})>/;
+const mentions = /<(?:@[!&]?|#)\d+>/g;
 const settingEmoji = '⚙️';
 const comments = ["I like it!", "Fancy!", "nice.", ";)", "I love it <3", "It's perfect!", "amazing.", "wow", "Wonderful", "10/10","🎉"];
 
@@ -54,7 +54,7 @@ module.exports = new CommandInterface({
 		if (!regex.test(prefix)) {
 			p.errorMsg(", invalid prefix! Custom prefix must be under 25 character and exclude special characters",5000);
 			return;
-		} else if (!mentions.test(prefix)) {
+		} else if (mentions.test(prefix)) {
 			p.errorMsg(", invalid prefix! Custom prefix must exclude mentions",5000);
 			return;
 		}

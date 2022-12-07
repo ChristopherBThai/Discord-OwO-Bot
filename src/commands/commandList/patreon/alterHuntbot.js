@@ -589,8 +589,7 @@ function capz(text,type) {
 	switch(type){
 		case 'hb':
 			text.color = 10850303;
-			text.fields[0].value = blank;
-			text.fields[0].name = "<:hb:993769506184900659> `Howdy! I am ready to search for pets to make new friends!`";
+			text.title  = "<:hb:993769506184900659> `Howdy! I am ready to search for pets to make new friends!`";
 			text.fields[1].name = text.fields[1].name.replace(efficiency, "<:efficiency:993769502095454229> ");
 			text.fields[2].name = text.fields[2].name.replace(duration,"<:duration:993769501122379827> ");
 			text.fields[3].name = text.fields[3].name.replace(cowoncy, "<:cost:993769499973140552>");
@@ -606,6 +605,7 @@ function capz(text,type) {
 					.replace("DONE", "done")
 					.replace("ANIMALS CAPTURED","pets found!");
 			}
+			text.fields.shift();
 			text.author.name = text.author.name.replace('HuntBot', 'Huntbot');
 			return text;
 		case 'progress':
