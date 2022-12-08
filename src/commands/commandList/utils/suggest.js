@@ -13,7 +13,7 @@ const badwords = require('../../../../../tokens/badwords.json');
 const feedbackChannel = "519778148888346635";
 const supportGuild = "420104212895105044";
 const check = '✅';
-const cross = '❎';
+const cross = '❌';
 const interactionAgree = "interaction_agree";
 const interactionDisagree = "interaction_disagree";
 

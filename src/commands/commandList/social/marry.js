@@ -13,7 +13,7 @@ const dateOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'n
 const quotes = ["How cute!","You look wonderful together!","You guys are adorable!","The perfect pair!","Too cute~!!!","Now kiss!"];
 const quotes2 = ["（´・｀ ）♡","(๑°꒵°๑)･*♡","♡´･ᴗ･`♡","(*´c_,｀*)","(●´Д`●)","(つω`●）","(◕ᴗ◕✿)","(●⌒ｖ⌒●)","(´ ꒳ ` ✿)","OwO","<3",";3","c;"];
 const yes = '✅';
-const no = '❎';
+const no = '❌';
 
 module.exports = new CommandInterface({
 
