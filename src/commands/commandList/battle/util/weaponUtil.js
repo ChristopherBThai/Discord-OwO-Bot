@@ -788,6 +788,35 @@ var expandUWID = exports.expandUWID = function(euwid){
 	return parseInt(euwid.toLowerCase(),36);
 }
 
+/* Gets the ID of the last weapon that a user found */
+exports.getLastWeaponID = async function (p) {
+	//sql that returns the latest weapon and the found date.
+	let sql = `SELECT uwid FROM user_weapon INNER JOIN user ON user_weapon.uid = user.uid where id = ${p.msg.author.id} ORDER BY found desc LIMIT 1;`;
+	let result = await p.query(sql);
+
+	/* not a real weapon! */
+	if(!result[0]){
+		return "";
+	}
+
+	return shortenUWID(result[0].uwid);
+};
+
+/* Replaces all occurrences of {l(ast)} in the arguments with the last weapon id. */
+exports.replaceLastWithID = async function (p) {
+	let last = null;
+	//check all the arguments
+	for (let i = 0; i < p.args.length; i++) {
+		if (p.args[i].toLowerCase() === "last" || p.args[i].toLowerCase() === "l") {
+			if (last === null) {
+				//save it in 'last' to prevent multiple await calls.
+				last = await this.getLastWeaponID(p);
+			}
+			p.args[i] = last;
+		}
+	}
+};
+
 exports.getWID = function(id){
 	return weapons[id];
 }
