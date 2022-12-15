@@ -3,7 +3,7 @@
  * Copyright (C) 2021 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
+ */
 
 const surveyEmoji = '📝';
 const surveyLogChannel = '882521311371485184';
@@ -12,36 +12,42 @@ exports.handle = async function (msg, ack) {
 	const survey = await getSurvey.bind(this)(msg.author.id);
 	if (!survey.length) return;
 
-	const currentQuestion = survey.find(question => question.question_number === question.number)
+	const currentQuestion = survey.find(
+		(question) => question.question_number === question.number
+	);
 	if (!currentQuestion) return;
 
 	const embed = {
 		title: currentQuestion.question,
 		author: {
-			name: `Question ${currentQuestion.sid}.${currentQuestion.number}`
+			name: `Question ${currentQuestion.sid}.${currentQuestion.number}`,
 		},
 		description: msg.content.trim(),
-		color: this.config.embed_color
-	}
+		color: this.config.embed_color,
+	};
 	this.snailSocket.messageChannel(surveyLogChannel, { embed });
 
 	await sendNextQuestion.bind(this)(msg, survey);
-}
+};
 
-async function getSurvey (userId) {
+async function getSurvey(userId) {
 	const sql = `SELECT us.*, sq.*
 			FROM user u
 				INNER JOIN user_survey us ON u.uid = us.uid
 				INNER JOIN survey_question sq ON sq.sid = us.sid
 			WHERE u.id = ${userId}
 				AND in_progress = 1;`;
-	return await this.query(sql) || [];
+	return (await this.query(sql)) || [];
 }
 
-async function sendNextQuestion (msg, survey) {
-	const currentQuestion = survey.find(question => question.question_number === question.number)
+async function sendNextQuestion(msg, survey) {
+	const currentQuestion = survey.find(
+		(question) => question.question_number === question.number
+	);
 	const { uid, sid, number } = currentQuestion;
-	const nextQuestion = survey.find(question => number + 1 === question.number)
+	const nextQuestion = survey.find(
+		(question) => number + 1 === question.number
+	);
 
 	const con = await this.mysqlhandler.startTransaction();
 	try {
@@ -58,7 +64,7 @@ async function sendNextQuestion (msg, survey) {
 				const text = `**Question ${nextQuestion.number}:** *${nextQuestion.question}*`;
 				await this.sender.msgUser(msg.author.id, text);
 			} else {
-				throw "Failed to update question";
+				throw 'Failed to update question';
 			}
 		} else {
 			let sql = `UPDATE user_survey
@@ -81,7 +87,7 @@ async function sendNextQuestion (msg, survey) {
 				const text = `${surveyEmoji} **|** Thanks for completing the survey! You have received 5 ${this.config.emoji.lootbox} and 5 ${this.config.emoji.crate}`;
 				await this.sender.msgUser(msg.author.id, text);
 			} else {
-				throw "Failed to give rewards";
+				throw 'Failed to give rewards';
 			}
 		}
 

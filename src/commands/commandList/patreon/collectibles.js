@@ -3,12 +3,12 @@
  * Copyright (C) 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
+ */
 
 const CommandInterface = require('../../CommandInterface.js');
 const collectibles = require('./utils/collectibles.json');
 
-function getOwnerString (owners) {
+function getOwnerString(owners) {
 	let ownersString = `?${owners[owners.length - 1]}?`;
 	if (owners.slice(0, -1).length) {
 		ownersString = `?${owners.slice(0, -1).join('?, ?')}?, and ${ownersString}`;
@@ -22,50 +22,58 @@ for (let dataName in collectibles) {
 	const {
 		alias,
 		dataOverride,
-    emoji,
-    pluralName,
-    singleName,
-    owners,
-    fullControl,
-    ownerOnly,
+		emoji,
+		pluralName,
+		singleName,
+		owners,
+		fullControl,
+		ownerOnly,
 		ownerOnlyErrorMsg,
 		selfErrorMsg,
-    dailyOnly,
-    giveAmount,
-    description,
-    displayMsg,
-    displayNoneMsg,
-    brokeMsg,
-    giveMsg,
-    hasMerge,
+		dailyOnly,
+		giveAmount,
+		description,
+		displayMsg,
+		displayNoneMsg,
+		brokeMsg,
+		giveMsg,
+		hasMerge,
 		hasManualMerge,
 		manualMergeCommands,
-    mergeNeeded,
-    mergeEmoji,
-    mergeDisplayMsg,
-    mergeMsg,
+		mergeNeeded,
+		mergeEmoji,
+		mergeDisplayMsg,
+		mergeMsg,
 		manualMergeData,
 		dailyLimitMsg,
 		costAmount,
 		failChance,
 		failMessage,
-		trackDate
+		trackDate,
 	} = collectibles[dataName];
 	const ownerString = getOwnerString(owners);
 	const data = dataOverride || dataName;
-	
+
 	const display = async function () {
 		let count = await this.redis.hget(`data_${this.msg.author.id}`, data);
-		let receiveDate = await this.redis.hget(`data_${this.msg.author.id}`, `${data}_time`);
-		receiveDate = receiveDate ? new Date(+receiveDate).toLocaleDateString() : 'never';
+		let receiveDate = await this.redis.hget(
+			`data_${this.msg.author.id}`,
+			`${data}_time`
+		);
+		receiveDate = receiveDate
+			? new Date(+receiveDate).toLocaleDateString()
+			: 'never';
 
 		let mergeCount = 0;
 		if (hasMerge) {
-			mergeCount = Math.floor(count / mergeNeeded); 
+			mergeCount = Math.floor(count / mergeNeeded);
 			count = count % mergeNeeded;
 		}
 		if (hasManualMerge) {
-			mergeCount = await this.redis.hget("data_" + this.msg.author.id, manualMergeData);
+			mergeCount = await this.redis.hget(
+				'data_' + this.msg.author.id,
+				manualMergeData
+			);
 		}
 		let msg;
 		if (!mergeCount) {
@@ -99,7 +107,7 @@ for (let dataName in collectibles) {
 				.replaceAll('?user?', this.msg.author.username);
 		}
 		this.send(msg);
-	}
+	};
 
 	const give = async function (user) {
 		if (!owners.includes(this.msg.author.id)) {
@@ -108,14 +116,20 @@ for (let dataName in collectibles) {
 			}
 			let take = 1;
 			if (typeof costAmount === 'number') {
-				take = costAmount
+				take = costAmount;
 			}
 			if (take > 0) {
-				let result = await this.redis.hincrby("data_" + this.msg.author.id, data, -1 * take);
+				let result = await this.redis.hincrby(
+					'data_' + this.msg.author.id,
+					data,
+					-1 * take
+				);
 				// TODO double check merge for costAmount greater than 1
-				const refund = +result < 0 || (hasMerge && ((+result+take) % mergeNeeded) <= 0);
+				const refund =
+					+result < 0 || (hasMerge && (+result + take) % mergeNeeded <= 0);
 				if (result == null || refund) {
-					if (refund) this.redis.hincrby("data_" + this.msg.author.id, data, take);
+					if (refund)
+						this.redis.hincrby('data_' + this.msg.author.id, data, take);
 					this.errorMsg(brokeMsg, 3000);
 					this.setCooldown(5);
 					return;
@@ -133,7 +147,7 @@ for (let dataName in collectibles) {
 		if (Array.isArray(giveMsg)) {
 			selectedGiveMsg = giveMsg[Math.floor(Math.random() * giveMsg.length)];
 		}
-		if (hasMerge && ((result % mergeNeeded) - giveAmount < 0) ) {
+		if (hasMerge && (result % mergeNeeded) - giveAmount < 0) {
 			const msg = mergeMsg
 				.replaceAll('?giveMsg?', selectedGiveMsg)
 				.replaceAll('?giver?', this.msg.author.username)
@@ -141,15 +155,15 @@ for (let dataName in collectibles) {
 				.replaceAll('?emoji?', emoji)
 				.replaceAll('?blank?', this.config.emoji.blank)
 				.replaceAll('?mergeEmoji?', mergeEmoji);
-			this.send(msg)
+			this.send(msg);
 		} else {
 			const msg = selectedGiveMsg
 				.replaceAll('?giver?', this.msg.author.username)
 				.replaceAll('?receiver?', user.username)
 				.replaceAll('?emoji?', emoji);
-			this.send(msg)
+			this.send(msg);
 		}
-	}
+	};
 
 	const checkFailed = function (user) {
 		if (typeof failChance !== 'number' || failChance <= 0) return false;
@@ -158,32 +172,39 @@ for (let dataName in collectibles) {
 				.replaceAll('?giver?', this.msg.author.username)
 				.replaceAll('?receiver?', user.username)
 				.replaceAll('?emoji?', emoji);
-			this.send(msg)
+			this.send(msg);
 			return true;
 		}
 		return false;
-	}
+	};
 
 	const checkDaily = async function (user) {
-		let reset = await this.redis.hget("data_" + this.msg.author.id, data + '_reset');
+		let reset = await this.redis.hget(
+			'data_' + this.msg.author.id,
+			data + '_reset'
+		);
 		let afterMid = this.dateUtil.afterMidnight(reset);
 		if (!afterMid.after) {
 			if (!dailyLimitMsg) {
-				this.errorMsg(", you can only send this item once per day.", 3000);
+				this.errorMsg(', you can only send this item once per day.', 3000);
 			} else {
 				const msg = dailyLimitMsg
 					.replaceAll('?user?', this.msg.author.username)
 					.replaceAll('?giver?', user.username)
 					.replaceAll('?emoji?', emoji)
 					.replaceAll('?blank?', this.config.emoji.blank)
-					.replaceAll('?error?', this.config.emoji.error)
+					.replaceAll('?error?', this.config.emoji.error);
 				this.send(msg);
 			}
 			return false;
 		}
-		await this.redis.hset("data_"+this.msg.author.id, data + '_reset', afterMid.now);
+		await this.redis.hset(
+			'data_' + this.msg.author.id,
+			data + '_reset',
+			afterMid.now
+		);
 		return true;
-	}
+	};
 
 	const reset = async function () {
 		this.setCooldown(5);
@@ -191,29 +212,40 @@ for (let dataName in collectibles) {
 		if (!user) {
 			user = await this.fetch.getMember(this.msg.channel.guild, this.args[1]);
 			if (!user) {
-				this.errorMsg(", Invalid syntax! Please tag a user!", 3000);
+				this.errorMsg(', Invalid syntax! Please tag a user!', 3000);
 				return;
 			}
 		}
 
-		await this.redis.hset("data_" + user.id, data, 0);
+		await this.redis.hset('data_' + user.id, data, 0);
 		if (manualMergeData) {
-			await this.redis.hset("data_" + user.id, manualMergeData, 0);
+			await this.redis.hset('data_' + user.id, manualMergeData, 0);
 		}
 
-		await this.send(`⚙️ **| ${this.msg.author.username}**, I have reset the numbers for **${user.username}**`);
-	}
+		await this.send(
+			`⚙️ **| ${this.msg.author.username}**, I have reset the numbers for **${user.username}**`
+		);
+	};
 
 	const manualMerge = async function () {
-		let result = await this.redis.hincrby("data_" + this.msg.author.id, data, -10);
+		let result = await this.redis.hincrby(
+			'data_' + this.msg.author.id,
+			data,
+			-10
+		);
 		if (result == null || result < 0) {
-			if (result < 0) this.redis.hincrby("data_" + this.msg.author.id, data, 10);
-			this.errorMsg(", you do not have have enough to merge! >:c", 3000);
+			if (result < 0)
+				this.redis.hincrby('data_' + this.msg.author.id, data, 10);
+			this.errorMsg(', you do not have have enough to merge! >:c', 3000);
 			this.setCooldown(5);
 			return;
 		}
 
-		const result2 = await this.redis.hincrby("data_" + this.msg.author.id, manualMergeData, 1);
+		const result2 = await this.redis.hincrby(
+			'data_' + this.msg.author.id,
+			manualMergeData,
+			1
+		);
 		let selectedGiveMsg = giveMsg;
 		if (Array.isArray(giveMsg)) {
 			selectedGiveMsg = giveMsg[Math.floor(Math.random() * giveMsg.length)];
@@ -226,73 +258,88 @@ for (let dataName in collectibles) {
 			.replaceAll('?mergeCount?', result2)
 			.replaceAll('?mergePlural?', result > 1 ? 's' : '')
 			.replaceAll('?mergeEmoji?', mergeEmoji);
-		this.send(msg)
-	}
+		this.send(msg);
+	};
 
-	commands.push(new CommandInterface({
-		alias: [dataName, ...alias],
-		args: "{@user}",
-		desc: `${description}\n\nThis command was created by ${ownerString}`,
-		example:[],
-		related:[],
-		permissions:["sendMessages"],
-		group:["patreon"],
-		cooldown:15000,
+	commands.push(
+		new CommandInterface({
+			alias: [dataName, ...alias],
+			args: '{@user}',
+			desc: `${description}\n\nThis command was created by ${ownerString}`,
+			example: [],
+			related: [],
+			permissions: ['sendMessages'],
+			group: ['patreon'],
+			cooldown: 15000,
 
-		execute: async function () {
-			if (!this.args.length) {
-				display.bind(this)();
-				this.setCooldown(5);
-			} else {
-				if (fullControl && ['reset', 'remove'].includes(this.args[0]) && owners.includes(this.msg.author.id)) {
-					reset.bind(this)();
-					return;
-				}
-				if (hasManualMerge && manualMergeCommands?.includes(this.args[0])) {
-					manualMerge.bind(this)();
-					return;
-				}
-				let user = this.getMention(this.args[0]);
-				if (!user) {
-					user = await this.fetch.getMember(this.msg.channel.guild, this.args[0]);
+			execute: async function () {
+				if (!this.args.length) {
+					display.bind(this)();
+					this.setCooldown(5);
+				} else {
+					if (
+						fullControl &&
+						['reset', 'remove'].includes(this.args[0]) &&
+						owners.includes(this.msg.author.id)
+					) {
+						reset.bind(this)();
+						return;
+					}
+					if (hasManualMerge && manualMergeCommands?.includes(this.args[0])) {
+						manualMerge.bind(this)();
+						return;
+					}
+					let user = this.getMention(this.args[0]);
 					if (!user) {
-						this.errorMsg(", Invalid syntax! Please tag a user!", 3000);
+						user = await this.fetch.getMember(
+							this.msg.channel.guild,
+							this.args[0]
+						);
+						if (!user) {
+							this.errorMsg(', Invalid syntax! Please tag a user!', 3000);
+							this.setCooldown(5);
+							return;
+						}
+					}
+					if (ownerOnly && !owners.includes(this.msg.author.id)) {
+						if (ownerOnlyErrorMsg) {
+							const msg = ownerOnlyErrorMsg
+								.replaceAll('?user?', this.msg.author.username)
+								.replaceAll('?emoji?', emoji)
+								.replaceAll('?blank?', this.config.emoji.blank)
+								.replaceAll('?error?', this.config.emoji.error);
+							this.send(msg);
+						} else {
+							this.errorMsg(
+								', only the owner of this command can give items!',
+								3000
+							);
+						}
 						this.setCooldown(5);
 						return;
 					}
-				}
-				if (ownerOnly && !owners.includes(this.msg.author.id)) {
-					if (ownerOnlyErrorMsg) {
-						const msg = ownerOnlyErrorMsg
-							.replaceAll('?user?', this.msg.author.username)
-							.replaceAll('?emoji?', emoji)
-							.replaceAll('?blank?', this.config.emoji.blank)
-							.replaceAll('?error?', this.config.emoji.error);
-						this.send(msg);
-					} else {
-						this.errorMsg(", only the owner of this command can give items!", 3000);
+					if (
+						!owners.includes(this.msg.author.id) &&
+						user.id === this.msg.author.id
+					) {
+						if (selfErrorMsg) {
+							const msg = selfErrorMsg
+								.replaceAll('?user?', this.msg.author.username)
+								.replaceAll('?emoji?', emoji)
+								.replaceAll('?blank?', this.config.emoji.blank)
+								.replaceAll('?error?', this.config.emoji.error);
+							this.send(msg);
+						} else {
+							this.errorMsg(', You cannot give this item to yourself!', 3000);
+						}
+						this.setCooldown(5);
+						return;
 					}
-					this.setCooldown(5);
-					return;
+					give.bind(this)(user);
 				}
-				if (!owners.includes(this.msg.author.id) && user.id === this.msg.author.id) {
-					if (selfErrorMsg) {
-						const msg = selfErrorMsg 
-							.replaceAll('?user?', this.msg.author.username)
-							.replaceAll('?emoji?', emoji)
-							.replaceAll('?blank?', this.config.emoji.blank)
-							.replaceAll('?error?', this.config.emoji.error);
-						this.send(msg);
-					} else {
-						this.errorMsg(", You cannot give this item to yourself!", 3000);
-					}
-					this.setCooldown(5);
-					return;
-				}
-				give.bind(this)(user);
-			}
-		}
-	}));
+			},
+		})
+	);
 }
 
 module.exports = commands;

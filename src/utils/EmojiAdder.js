@@ -3,11 +3,10 @@
  * Copyright (C) 2020 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
+ */
 
 module.exports = class EmojiAdder {
-
-	constructor (p, name, url) {
+	constructor(p, name, url) {
 		this.p = p;
 		this.name = name;
 		this.url = url;
@@ -17,10 +16,10 @@ module.exports = class EmojiAdder {
 		this.buffer = null;
 	}
 
-	async addEmoji (userId) {
+	async addEmoji(userId) {
 		if (this.success.has(userId)) return;
 		if (this.progress.has(userId)) return;
-		this.progress.add(userId)
+		this.progress.add(userId);
 
 		// Fetch guild id
 		let sql = `SELECT emoji_steal.guild FROM emoji_steal INNER JOIN user ON emoji_steal.uid = user.uid WHERE id = ${userId};`;
@@ -36,23 +35,26 @@ module.exports = class EmojiAdder {
 			if (!this.buffer) {
 				this.buffer = await this.p.DataResolver.urlToBufferString(this.url);
 			}
-			await this.p.client.createGuildEmoji(guildId,{name: this.name, image:this.buffer}, `Requested by ${userId}`);
+			await this.p.client.createGuildEmoji(
+				guildId,
+				{ name: this.name, image: this.buffer },
+				`Requested by ${userId}`
+			);
 		} catch (err) {
 			this.failure.add(userId);
 			this.progress.delete(userId);
-			throw err
-		} 
+			throw err;
+		}
 		this.success.add(userId);
 		this.progress.delete(userId);
 		return true;
 	}
 
 	get successCount() {
-		return this.success.size
+		return this.success.size;
 	}
 
-	get failureCount () {
-		return this.failure.size
+	get failureCount() {
+		return this.failure.size;
 	}
-
-}
+};

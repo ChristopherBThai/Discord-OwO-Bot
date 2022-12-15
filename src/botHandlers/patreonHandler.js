@@ -19,11 +19,11 @@ exports.request = async function (cookie) {
 		cowoncy: cowoncyList,
 		pet: petList,
 		customizedCommand: customizedList,
-		customCommand: commandList
-	}
-}
+		customCommand: commandList,
+	};
+};
 
-function getCowoncy (cookie) {
+function getCowoncy(cookie) {
 	return getUsers(
 		cookie,
 		'https://www.patreon.com/api/reward-items/159691/deliverables?include=member.user.null&filter[delivery_status]=not_delivered&fields[user]=full_name,social_connections&json-api-version=1.0&page[count]=100&page[size]=100',
@@ -31,7 +31,7 @@ function getCowoncy (cookie) {
 	);
 }
 
-function getPets (cookie) {
+function getPets(cookie) {
 	return getUsers(
 		cookie,
 		'https://www.patreon.com/api/reward-items/120005/deliverables?include=member.user.null&filter[delivery_status]=not_delivered&fields[user]=full_name,social_connections&json-api-version=1.0&page[count]=100&page[size]=100',
@@ -39,7 +39,7 @@ function getPets (cookie) {
 	);
 }
 
-function getCustomizedCommand (cookie) {
+function getCustomizedCommand(cookie) {
 	return getUsers(
 		cookie,
 		'https://www.patreon.com/api/reward-items/120006/deliverables?include=member.user.null&filter[delivery_status]=not_delivered&fields[user]=full_name,social_connections&json-api-version=1.0&page[count]=100&page[size]=100',
@@ -47,7 +47,7 @@ function getCustomizedCommand (cookie) {
 	);
 }
 
-function getCommand (cookie) {
+function getCommand(cookie) {
 	return getUsers(
 		cookie,
 		'https://www.patreon.com/api/reward-items/120008/deliverables?include=member.user.null&filter[delivery_status]=not_delivered&fields[user]=full_name,social_connections&json-api-version=1.0&page[count]=100&page[size]=100',
@@ -60,22 +60,22 @@ async function getUsers(cookie, url, list) {
 		url = url.replace('patreon.com', 'patreon.com/api');
 	}
 	try {
-		const { data } = await axios.get(url, { headers: { cookie }});
-		data.included?.forEach(item => {
+		const { data } = await axios.get(url, { headers: { cookie } });
+		data.included?.forEach((item) => {
 			if (item.type === 'user') {
 				const discord = item.attributes?.social_connections?.discord;
 				list.push({
 					name: item.attributes?.full_name,
-					discord: discord?.user_id
+					discord: discord?.user_id,
 				});
 			}
 		});
 
 		if (data.links.next) {
-			console.log("getting next page...");
+			console.log('getting next page...');
 			return getUsers(cookie, data.links.next, list);
 		}
-		return list
+		return list;
 	} catch (err) {
 		console.error(err);
 		return list;
@@ -194,4 +194,3 @@ async function requestRec(url){
 	return res;
 }
 */
-
