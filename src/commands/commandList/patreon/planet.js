@@ -87,7 +87,7 @@ module.exports = new CommandInterface({
 
 	group:["patreon"],
 
-	cooldown:15000,
+	cooldown:10000,
 
 	execute: async function(p){
 		if(p.args.length==0){
