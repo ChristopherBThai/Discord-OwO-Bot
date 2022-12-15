@@ -3,16 +3,17 @@
  * Copyright (C) 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
+ */
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const emoji = "<a:sun:965014532160380948>";
-const owners = ["460987842961866762"];
-const data = "sun";
+const emoji = '<a:sun:965014532160380948>';
+const owners = ['460987842961866762'];
+const data = 'sun';
 const ownerOnly = true;
 const giveAmount = 1;
-const desc = "I love you like the sun loves the moon, forever separated by thousands of miles for thousands of years.\nHe died every night just to let her breathe.\n\nThe sun and moon love each other without any hope of meeting ever.\n\nLive by the sun";
+const desc =
+	'I love you like the sun loves the moon, forever separated by thousands of miles for thousands of years.\nHe died every night just to let her breathe.\n\nThe sun and moon love each other without any hope of meeting ever.\n\nLive by the sun';
 const displayMsg = `, you currently have ?count? ${emoji} You are my Sun!`;
 const brokeMsg = `, you do not have any suns to give! >:c`;
 const giveMsg = `, you have been given 1 Live by the sun.
@@ -24,22 +25,21 @@ if (owners.slice(0, -1).length) {
 }
 
 module.exports = new CommandInterface({
+	alias: [data],
 
-	alias:[data],
-
-	args:"{@user}",
+	args: '{@user}',
 
 	desc: `${desc}\n\nThis command was created by ${ownersString}`,
 
-	example:[],
+	example: [],
 
-	related:[],
+	related: [],
 
-	permissions:["sendMessages"],
+	permissions: ['sendMessages'],
 
-	group:["patreon"],
+	group: ['patreon'],
 
-	cooldown:15000,
+	cooldown: 15000,
 
 	execute: async function () {
 		if (!this.args.length) {
@@ -50,45 +50,50 @@ module.exports = new CommandInterface({
 			if (!user) {
 				user = await this.fetch.getMember(this.msg.channel.guild, this.args[0]);
 				if (!user) {
-					this.errorMsg(", Invalid syntax! Please tag a user!", 3000);
+					this.errorMsg(', Invalid syntax! Please tag a user!', 3000);
 					this.setCooldown(5);
 					return;
 				}
 			}
 			if (!ownerOnly && user.id === this.msg.author.id) {
-				this.errorMsg(", You cannot give this item to yourself!", 3000);
+				this.errorMsg(', You cannot give this item to yourself!', 3000);
 				this.setCooldown(5);
 				return;
 			}
 			if (ownerOnly && !owners.includes(this.msg.author.id)) {
-				this.errorMsg(", only the owner of this command can give items!", 3000);
+				this.errorMsg(', only the owner of this command can give items!', 3000);
 				this.setCooldown(5);
 				return;
 			}
 			give.bind(this)(user);
 		}
-	}
+	},
 });
 
-async function display () {
-	let count = await this.redis.hget("data_" + this.msg.author.id, data);
-	const msg = displayMsg.replace('?count?', count || 0)
+async function display() {
+	let count = await this.redis.hget('data_' + this.msg.author.id, data);
+	const msg = displayMsg
+		.replace('?count?', count || 0)
 		.replace('?plural?', count > 1 ? 's' : '');
 	this.replyMsg(emoji, msg);
 }
 
-async function give (user) {
+async function give(user) {
 	if (!owners.includes(this.msg.author.id)) {
-		let result = await this.redis.hincrby("data_" + this.msg.author.id, data, -1);
+		let result = await this.redis.hincrby(
+			'data_' + this.msg.author.id,
+			data,
+			-1
+		);
 		// Error checking
 		if (result == null || result < 0) {
-			if (result<0) this.redis.hincrby("data_" + this.msg.author.id, data, 1);
+			if (result < 0) this.redis.hincrby('data_' + this.msg.author.id, data, 1);
 			this.errorMsg(brokeMsg, 3000);
 			this.setCooldown(5);
 			return;
 		}
 	}
 
-	await this.redis.hincrby("data_" + user.id, data, giveAmount);
-	this.send(`${emoji} **| ${user.username}**${giveMsg}`)
+	await this.redis.hincrby('data_' + user.id, data, giveAmount);
+	this.send(`${emoji} **| ${user.username}**${giveMsg}`);
 }

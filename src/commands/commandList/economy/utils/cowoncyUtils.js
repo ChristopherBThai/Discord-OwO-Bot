@@ -7,7 +7,7 @@
 
 const levels = require('../../../../utils/levels.js');
 
-exports.canGive = async function(sender, receiver, amount, con) {
+exports.canGive = async function (sender, receiver, amount, con) {
 	const senderLimit = await checkSender.bind(this)(sender, amount, con);
 	if (senderLimit.error) return senderLimit;
 
@@ -15,9 +15,9 @@ exports.canGive = async function(sender, receiver, amount, con) {
 	if (receiverLimit.error) return receiverLimit;
 
 	return {
-		sql: senderLimit.sql + receiverLimit.sql
-	}
-}
+		sql: senderLimit.sql + receiverLimit.sql,
+	};
+};
 
 async function checkSender(user, amount, con) {
 	let sql = `SELECT c.money, cl.send, cl.reset
@@ -28,8 +28,8 @@ async function checkSender(user, amount, con) {
 	let result = await con.query(sql);
 	if (!result[0] || result[0].money < amount) {
 		return {
-			error: ', you silly hooman! You don\'t have enough cowoncy!'
-		}
+			error: ", you silly hooman! You don't have enough cowoncy!",
+		};
 	}
 
 	const afterMid = this.dateUtil.afterMidnight(result[0].reset);
@@ -38,33 +38,39 @@ async function checkSender(user, amount, con) {
 	if (afterMid.after) {
 		if (amount > limit) {
 			return {
-				error: `, you can only send **${this.global.toFancyNum(limit)}** more cowoncy today!`
-			}
+				error: `, you can only send **${this.global.toFancyNum(
+					limit
+				)}** more cowoncy today!`,
+			};
 		}
 		return {
-			sql: `INSERT INTO cowoncy_limit (id, send, reset) VALUES (${user.id}, ${amount}, ${afterMid.sql}) ON DUPLICATE KEY UPDATE send = ${amount}, receive = 0, reset = ${afterMid.sql};`
-		}
+			sql: `INSERT INTO cowoncy_limit (id, send, reset) VALUES (${user.id}, ${amount}, ${afterMid.sql}) ON DUPLICATE KEY UPDATE send = ${amount}, receive = 0, reset = ${afterMid.sql};`,
+		};
 	}
 
 	if (result[0].send > limit) {
 		return {
-			error: `, you already hit your daily cowoncy give limit of: **${this.global.toFancyNum(result[0].send)}**`
-		}
+			error: `, you already hit your daily cowoncy give limit of: **${this.global.toFancyNum(
+				result[0].send
+			)}**`,
+		};
 	} else if (result[0].send + amount > limit) {
 		const diff = limit - result[0].send;
 		if (diff > 0) {
 			return {
-				error: `, you can only send **${this.global.toFancyNum(diff)}** more cowoncy today!`
-			}
+				error: `, you can only send **${this.global.toFancyNum(
+					diff
+				)}** more cowoncy today!`,
+			};
 		} else {
 			return {
-				error: `, you cannot send any more cowoncy today.`
-			}
+				error: `, you cannot send any more cowoncy today.`,
+			};
 		}
 	}
 	return {
-		sql: `UPDATE cowoncy_limit SET send = send + ${amount} WHERE id = ${user.id};`
-	}
+		sql: `UPDATE cowoncy_limit SET send = send + ${amount} WHERE id = ${user.id};`,
+	};
 }
 
 async function checkReceiver(user, amount, con) {
@@ -79,45 +85,57 @@ async function checkReceiver(user, amount, con) {
 	if (afterMid.after) {
 		if (amount > limit) {
 			return {
-				error: `, **${user.username}** can only receive **${this.global.toFancyNum(limit)}** more cowoncy today!`
-			}
+				error: `, **${
+					user.username
+				}** can only receive **${this.global.toFancyNum(
+					limit
+				)}** more cowoncy today!`,
+			};
 		}
 		return {
-			sql: `INSERT INTO cowoncy_limit (id, receive, reset) VALUES (${user.id}, ${amount}, ${afterMid.sql}) ON DUPLICATE KEY UPDATE send = 0, receive = ${amount}, reset = ${afterMid.sql};`
-		}
+			sql: `INSERT INTO cowoncy_limit (id, receive, reset) VALUES (${user.id}, ${amount}, ${afterMid.sql}) ON DUPLICATE KEY UPDATE send = 0, receive = ${amount}, reset = ${afterMid.sql};`,
+		};
 	}
 
 	if (result[0].receive > limit) {
 		return {
-			error: `, **${user.username}** has already received the daily receive limit of: **${this.global.toFancyNum(result[0].receive)}**`
-		}
+			error: `, **${
+				user.username
+			}** has already received the daily receive limit of: **${this.global.toFancyNum(
+				result[0].receive
+			)}**`,
+		};
 	} else if (result[0].receive + amount > limit) {
 		const diff = limit - result[0].receive;
 		if (diff > 0) {
 			return {
-				error: `, **${user.username}** can only receive **${this.global.toFancyNum(diff)}** more cowoncy today!`
-			}
+				error: `, **${
+					user.username
+				}** can only receive **${this.global.toFancyNum(
+					diff
+				)}** more cowoncy today!`,
+			};
 		} else {
 			return {
-				error: `, **${user.username}** cannot receive any more cowoncy today.`
-			}
+				error: `, **${user.username}** cannot receive any more cowoncy today.`,
+			};
 		}
 	}
 	return {
-		sql: `UPDATE cowoncy_limit SET receive = receive + ${amount} WHERE id = ${user.id};`
-	}
+		sql: `UPDATE cowoncy_limit SET receive = receive + ${amount} WHERE id = ${user.id};`,
+	};
 }
 
-const getUserLimits = exports.getUserLimits = async function(id) {
+const getUserLimits = (exports.getUserLimits = async function (id) {
 	const lvl = (await levels.getUserLevel(id)).level;
 	const tens = Math.floor(lvl / 10);
-	const limit = 50000 + (lvl * 14000) + (tens * 5000000);
+	const limit = 50000 + lvl * 14000 + tens * 5000000;
 
 	return {
 		send: limit,
-		receive: Math.ceil(limit * ((tens/2) + 1))
+		receive: Math.ceil(limit * (tens / 2 + 1)),
 	};
-}
+});
 
 /*
 for (let lvl = 1; lvl < 60; lvl++) {

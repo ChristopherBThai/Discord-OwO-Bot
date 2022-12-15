@@ -3,7 +3,7 @@
  * Copyright (C) 2021 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
+ */
 
 const surveyEmoji = '📝';
 
@@ -11,12 +11,14 @@ exports.handle = async function (data, ack) {
 	const user = data.member.user;
 	const uid = await this.global.getUid(user.id);
 
-	if (!await startSurvey.bind(this)(user, uid)) { return; }
+	if (!(await startSurvey.bind(this)(user, uid))) {
+		return;
+	}
 
 	await ack();
-}
+};
 
-async function startSurvey (user, uid) {
+async function startSurvey(user, uid) {
 	const con = await this.mysqlhandler.startTransaction();
 
 	try {
@@ -38,12 +40,12 @@ async function startSurvey (user, uid) {
 			sql = `INSERT IGNORE INTO user_survey (uid, sid) VALUES (${uid}, ${survey[0].sid})`;
 			await con.query(sql);
 
-		// User in a survey
+			// User in a survey
 		} else if (userSurvey.in_progress) {
 			con.rollback();
 			return false;
 
-		// User finished latest survey
+			// User finished latest survey
 		} else if (userSurvey.sid == survey[0].sid && userSurvey.is_done) {
 			con.rollback();
 			return false;
