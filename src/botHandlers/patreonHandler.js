@@ -1,9 +1,9 @@
 /*
- * OwO Bot for Discord
- * Copyright (C) 2022 Christopher Thai
+ * Official OwO Bot for Discord
+ * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
- */
+*/
 const axios = require('axios');
 
 exports.request = async function (cookie) {
@@ -20,8 +20,8 @@ exports.request = async function (cookie) {
 		pet: petList,
 		customizedCommand: customizedList,
 		customCommand: commandList
-	}
-}
+	};
+};
 
 function getCowoncy (cookie) {
 	return getUsers(
@@ -70,9 +70,8 @@ async function getUsers(cookie, url, list) {
 				});
 			}
 		});
-
 		if (data.links.next) {
-			console.log("getting next page...");
+			console.log('getting next page...');
 			return getUsers(cookie, data.links.next, list);
 		}
 		return list
@@ -80,7 +79,7 @@ async function getUsers(cookie, url, list) {
 		console.error(err);
 		return list;
 	}
-}
+};
 
 /*
 var url = require('url');

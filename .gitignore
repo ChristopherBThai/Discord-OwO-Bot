@@ -10,8 +10,10 @@ Session.vim
 # Temporary
 .netrwhist
 *~
+
 # Auto-generated tag files
 tags
+
 # Persistent undo
 [._]*.un~
 
@@ -20,5 +22,4 @@ node_modules/
 
 # log files
 .log
-
 .env

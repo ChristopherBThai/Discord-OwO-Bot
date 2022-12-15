@@ -1,19 +1,18 @@
 /*
- * OwO Bot for Discord
- * Copyright (C) 2022 Christopher Thai
+ * Official OwO Bot for Discord
+ * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
-
+*/
 exports.handle = function(interaction) {
 	switch (interaction.type) {
 		case 2:
-			handleCommand.bind(this)(interaction)
+			handleCommand.bind(this)(interaction);
 			break;
 		default:
 			break;
 	}
-}
+};
 
 function handleCommand(interaction) {
 	switch (interaction.data.type) {
@@ -28,7 +27,7 @@ function handleCommand(interaction) {
 async function handleSlash(interaction) {
 	ackTimer(interaction);
 	interaction.command = interaction.data.name;
-	interaction.author = interaction.member.user || interaction.user
+	interaction.author = interaction.member.user || interaction.user;
 	interaction.interaction = true;
 	interaction.acked = false;
 	interaction.options = getInteractionArgs(interaction);
@@ -63,8 +62,8 @@ function ackTimer(interaction) {
 		if (interaction.ignoreDefer || interaction.acknowledged) return;
 			interaction.defer()
 				.catch(err => {
-					console.error("Interaction defer failed.");
+					console.error('Interaction defer failed.');
 				});
 			interaction.acknowledged = true;
 	}, 2500);
-}
+};
