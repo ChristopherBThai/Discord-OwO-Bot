@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const BuffInterface = require('../BuffInterface');
 const WeaponInterface = require('../WeaponInterface');
 const Logs = require('../util/logUtil');
@@ -14,7 +14,8 @@ module.exports = class AttackUp extends BuffInterface {
 		this.name = 'Attack Up++';
 		this.debuff = false;
 		this.emoji = '<:attuppp:619405867548147712>';
-		this.statDesc = 'Increases all damage by **?%**. Cannot stack with other Attack Up++ buffs';
+		this.statDesc =
+			'Increases all damage by **?%**. Cannot stack with other Attack Up++ buffs';
 		this.qualityList = [[30, 40]];
 	}
 
@@ -33,7 +34,9 @@ module.exports = class AttackUp extends BuffInterface {
 		let logs = new Logs();
 		let bonus = damage[0] * (this.stats[0] / 100);
 		damage[1] += bonus;
-		logs.push(`[ATTUP++] ${animal.nickname} dealt ${Math.round(bonus)} bonus damage`);
+		logs.push(
+			`[ATTUP++] ${animal.nickname} dealt ${Math.round(bonus)} bonus damage`
+		);
 		return logs;
 	}
 };

@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const CommandInterface = require('../../CommandInterface');
 const badwords = require('../../../../../tokens/badwords');
 
@@ -19,9 +19,11 @@ module.exports = new CommandInterface({
 	half: 200,
 	six: 500,
 
-	execute: async function(p) {
+	execute: async function (p) {
 		if (p.args.length < 2) {
-			return p.errorMsg(', The correct command is `owo rename [animal] [name]`!');
+			return p.errorMsg(
+				', The correct command is `owo rename [animal] [name]`!'
+			);
 		}
 		let animal = p.args.shift();
 		let input = p.args.join(' ');
@@ -29,7 +31,7 @@ module.exports = new CommandInterface({
 		/* Validity check */
 		animal = p.global.validAnimal(animal);
 		if (!animal) {
-			return p.errorMsg(', I couldn\'t find that animal! D:');
+			return p.errorMsg(", I couldn't find that animal! D:");
 		}
 		if (input.length > 35) {
 			return p.errorMsg(', The nickname is too long!', 3000);
@@ -47,7 +49,14 @@ module.exports = new CommandInterface({
 		if (result.affectedRows == 0) {
 			p.errorMsg(', you do not own this pet!', 3000);
 		} else {
-			p.replyMsg('🌱', p.replaceMentions(`, you successfully named your pet **${(animal.uni) ? animal.uni : animal.value}** to **${name}**!`));
+			p.replyMsg(
+				'🌱',
+				p.replaceMentions(
+					`, you successfully named your pet **${
+						animal.uni ? animal.uni : animal.value
+					}** to **${name}**!`
+				)
+			);
 		}
-	}
+	},
 });

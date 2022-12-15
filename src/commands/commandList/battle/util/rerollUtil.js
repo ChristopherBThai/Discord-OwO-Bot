@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const weaponUtil = require('./weaponUtil');
 const passiveArray = ['passive', 'p'];
 const statArray = ['stat', 'stats', 's'];
@@ -13,25 +13,28 @@ const retryEmoji = '🔄';
 const rerollPrice = 100;
 const shardEmoji = '<:weaponshard:655902978712272917>';
 
-exports.reroll = async function(p) {
+exports.reroll = async function (p) {
 	// Parse argments
 	let args = parseArgs(p);
 	if (!args) return;
 	let { rrType, uwid } = args;
 
 	// Grab weapon
-	let weapon = await getWeapon(p,uwid);
+	let weapon = await getWeapon(p, uwid);
 	if (!weapon) return;
 
 	// Check if enough shards
 	if (!(await useShards(p))) {
-		p.errorMsg(`, you need ${rerollPrice} ${shardEmoji} Weapon Shards to reroll a weapon!`, 4000);
+		p.errorMsg(
+			`, you need ${rerollPrice} ${shardEmoji} Weapon Shards to reroll a weapon!`,
+			4000
+		);
 		return;
 	}
 
 	// Get rerolled weapon
 	let newWeapon = fetchNewWeapon(weapon, rrType);
-	
+
 	// Send message
 	await sendMessage(p, weapon, newWeapon, rrType);
 };
@@ -71,20 +74,26 @@ function parseArgs(p) {
 		rrType = 's';
 		uwid = p.args[1];
 	} else {
-		p.errorMsg(', invalid syntax! Please use the format: `owo w rr {weaponID} [passive|stat]`!', 5000);
+		p.errorMsg(
+			', invalid syntax! Please use the format: `owo w rr {weaponID} [passive|stat]`!',
+			5000
+		);
 		return;
 	}
 
 	/* Convert uwid into decimal */
 	uwid = weaponUtil.expandUWID(uwid);
 	if (!uwid) {
-		p.errorMsg(', invalid syntax! Please use the format: `owo w rr {weaponID} [passive|stat]`!', 5000);
+		p.errorMsg(
+			', invalid syntax! Please use the format: `owo w rr {weaponID} [passive|stat]`!',
+			5000
+		);
 		return;
 	}
 	return { rrType, uwid };
 }
 
-async function getWeapon(p,uwid) {
+async function getWeapon(p, uwid) {
 	/* Grab weapon from database */
 	let sql = `SELECT user.uid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat FROM user INNER JOIN user_weapon a ON user.uid = a.uid LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid WHERE a.uwid = ${uwid} AND user.id = ${p.msg.author.id};`;
 	let result = await p.query(sql);
@@ -102,16 +111,19 @@ async function getWeapon(p,uwid) {
 
 	/* If no weapon */
 	if (!weapon) {
-		p.errorMsg(', I could not find a weapon with that unique weapon id! Please use `owo weapon` for the weapon ID!', 4000);
+		p.errorMsg(
+			', I could not find a weapon with that unique weapon id! Please use `owo weapon` for the weapon ID!',
+			4000
+		);
 		return;
 	} else if (weapon.unsellable) {
-		p.errorMsg(', I can\'t reroll this weapon!', 4000);
+		p.errorMsg(", I can't reroll this weapon!", 4000);
 		return;
 	}
 	return weapon;
 }
 
-async function sendMessage(p,oldWeapon,newWeapon,rrType,msg) {
+async function sendMessage(p, oldWeapon, newWeapon, rrType, msg) {
 	let embed = createEmbed(p, oldWeapon, newWeapon);
 	if (!msg) {
 		/* send and construct reaction collector */
@@ -122,32 +134,44 @@ async function sendMessage(p,oldWeapon,newWeapon,rrType,msg) {
 	} else {
 		msg.edit({ embed });
 	}
-	let filter = (emoji, userID) => [yesEmoji, noEmoji, retryEmoji].includes(emoji.name) && p.msg.author.id == userID;
-	let collector = p.reactionCollector.create(msg, filter, { time: 900000, idle: 120000 });
-	collector.on('collect', async (emoji) => {
-			collector.stop('clicked');
-			if (emoji.name === yesEmoji) {
-				if (await applyChange(p, newWeapon)) {
-					embed.color = 65280;
-					msg.edit({ embed });
-				} else {
-					embed.color = 16711680;
-					msg.edit({ content: 'Failed to change weapon stats! Please contact Scuttler#0001', embed });
-				}
-			} else if (emoji.name === noEmoji) {
-				embed.color = 16711680;
-				msg.edit({ embed });
-			} else if (emoji.name === retryEmoji) {
-				if (!(await useShards(p))) {
-					embed.color = 16711680;
-					msg.edit({ content: `You don\'t have enough ${shardEmoji} Weapon Shards!`, embed });
-				} else {
-					newWeapon = fetchNewWeapon(oldWeapon, rrType);
-					sendMessage(p, oldWeapon, newWeapon, rrType, msg);
-				}
-			}
+	let filter = (emoji, userID) =>
+		[yesEmoji, noEmoji, retryEmoji].includes(emoji.name) &&
+		p.msg.author.id == userID;
+	let collector = p.reactionCollector.create(msg, filter, {
+		time: 900000,
+		idle: 120000,
 	});
-	collector.on('end', async function(reason) {
+	collector.on('collect', async (emoji) => {
+		collector.stop('clicked');
+		if (emoji.name === yesEmoji) {
+			if (await applyChange(p, newWeapon)) {
+				embed.color = 65280;
+				msg.edit({ embed });
+			} else {
+				embed.color = 16711680;
+				msg.edit({
+					content:
+						'Failed to change weapon stats! Please contact Scuttler#0001',
+					embed,
+				});
+			}
+		} else if (emoji.name === noEmoji) {
+			embed.color = 16711680;
+			msg.edit({ embed });
+		} else if (emoji.name === retryEmoji) {
+			if (!(await useShards(p))) {
+				embed.color = 16711680;
+				msg.edit({
+					content: `You don\'t have enough ${shardEmoji} Weapon Shards!`,
+					embed,
+				});
+			} else {
+				newWeapon = fetchNewWeapon(oldWeapon, rrType);
+				sendMessage(p, oldWeapon, newWeapon, rrType, msg);
+			}
+		}
+	});
+	collector.on('end', async function (reason) {
 		if (reason != 'clicked') {
 			embed.color = 6381923;
 			await msg.edit({ content: 'This message is now inactive', embed });
@@ -166,12 +190,16 @@ async function useShards(p) {
 	return false;
 }
 
-function fetchNewWeapon(weapon,type) {
+function fetchNewWeapon(weapon, type) {
 	/* Get new weapon */
 	let newWeapon;
 	if (type == 'p') newWeapon = weapon.rerollPassives();
 	else if (type == 's') newWeapon = weapon.rerollStats();
-	else p.errorMsg(', It seems like javascript broke.. This should never happen!', 3000);
+	else
+		p.errorMsg(
+			', It seems like javascript broke.. This should never happen!',
+			3000
+		);
 	newWeapon.uwid = weapon.uwid;
 	newWeapon.ruwid = weapon.ruwid;
 	for (let i in weapon.passives) {
@@ -184,18 +212,19 @@ function createEmbed(p, oldWeapon, newWeapon) {
 	const embed = {
 		author: {
 			name: `${p.msg.author.username} spent ${rerollPrice} Weapon Shards to reroll!`,
-			icon_url: p.msg.author.dynamicAvatarURL()
+			icon_url: p.msg.author.dynamicAvatarURL(),
 		},
 		footer: {
-			text: `${yesEmoji} to keep the changes | ${noEmoji} to discard the changes | ${retryEmoji} to try again`
+			text: `${yesEmoji} to keep the changes | ${noEmoji} to discard the changes | ${retryEmoji} to try again`,
 		},
 		color: p.config.embed_color,
-		fields:[
+		fields: [
 			parseDescription('OLD WEAPON', oldWeapon),
-			parseDescription('NEW WEAPON', newWeapon)
-		]
+			parseDescription('NEW WEAPON', newWeapon),
+		],
 	};
-	embed.fields[0].value += '\n‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗';
+	embed.fields[0].value +=
+		'\n‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗';
 	return embed;
 }
 
@@ -216,8 +245,8 @@ function parseDescription(title, weapon) {
 		let passive = weapon.passives[i];
 		desc += `\n${passive.emoji} **${passive.name}** - ${passive.desc}`;
 	}
-	return { 
+	return {
 		name: `${weapon.emoji} **${title}**`,
-		value: desc 
+		value: desc,
 	};
-};
+}

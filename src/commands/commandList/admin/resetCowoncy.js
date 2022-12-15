@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const CommandInterface = require('../../CommandInterface');
 const { stripIndents } = require('common-tags');
 
@@ -12,7 +12,7 @@ module.exports = new CommandInterface({
 	owner: true,
 	admin: true,
 
-	execute: async function(p) {
+	execute: async function (p) {
 		if (p.args.length <= 1) {
 			p.errorMsg(', Please include a reset reason', 3000);
 			return;
@@ -26,9 +26,12 @@ module.exports = new CommandInterface({
 			UPDATE cowoncy SET money = 0 WHERE id = ${p.args[0]};
 		`;
 		let result = await p.query(sql);
-		let cowoncy = (result[0][0]) ? result[0][0].money : undefined;
+		let cowoncy = result[0][0] ? result[0][0].money : undefined;
 		let warn = p.args.slice(1).join(' ');
-		let user = await p.sender.msgUser(p.args[0], `**⚠ |** Your cowoncy has been reset due to: **${warn}**`);
+		let user = await p.sender.msgUser(
+			p.args[0],
+			`**⚠ |** Your cowoncy has been reset due to: **${warn}**`
+		);
 		if (user && !user.dmError && cowoncy) {
 			p.send(stripIndents`
 				📨 **|** Successfully reset cowoncy for **${user.username}#${user.discriminator}**
@@ -43,5 +46,5 @@ module.exports = new CommandInterface({
 		} else {
 			p.send('⚠ **|** Failed to reset cowoncy');
 		}
-	}
+	},
 });

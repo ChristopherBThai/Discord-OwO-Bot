@@ -3,9 +3,9 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const mysql = require('mysql');
-const { MYSQL_HOST, MYSQL_USER, MYSQL_PASS } = process.env; 
+const { MYSQL_HOST, MYSQL_USER, MYSQL_PASS } = process.env;
 config = {
 	host: MYSQL_HOST,
 	user: MYSQL_USER,
@@ -14,7 +14,7 @@ config = {
 	supportBigNumbers: true,
 	multipleStatements: true,
 	charset: 'utf8mb4',
-	connectionLimit: 10
+	connectionLimit: 10,
 };
 const pool = mysql.createPool(config);
 /*

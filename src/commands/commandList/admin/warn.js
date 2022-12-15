@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const CommandInterface = require('../../CommandInterface');
 
 module.exports = new CommandInterface({
@@ -12,7 +12,7 @@ module.exports = new CommandInterface({
 	admin: true,
 	manager: true,
 
-	execute: async function(p) {
+	execute: async function (p) {
 		if (p.args.length <= 1) {
 			p.errorMsg(', Please include a warn reason', 3000);
 			return;
@@ -23,11 +23,16 @@ module.exports = new CommandInterface({
 			return;
 		}
 		let warn = p.args.slice(1).join(' ');
-		let user = await p.sender.msgUser(p.args[0], `**⚠ |** You received a warning from a moderator: **${warn}**`);
+		let user = await p.sender.msgUser(
+			p.args[0],
+			`**⚠ |** You received a warning from a moderator: **${warn}**`
+		);
 		if (user && !user.dmError) {
-			p.send(`📨 **|** Sent a warning to **${user.username}#${user.discriminator}**`);
+			p.send(
+				`📨 **|** Sent a warning to **${user.username}#${user.discriminator}**`
+			);
 		} else {
 			p.send('⚠ **|** Failed to send a warning for that user');
 		}
-	}
+	},
 });

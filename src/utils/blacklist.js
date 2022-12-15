@@ -3,9 +3,9 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const { stripIndents } = require('common-tags');
-const config = require('../data/config')
+const config = require('../data/config');
 const warningEmoji = '⚠️';
 
 exports.checkBot = function (msg) {

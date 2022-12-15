@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const CommandInterface = require('../../CommandInterface');
 const battleUtil = require('./util/battleUtil');
 const battleFriendUtil = require('./util/battleFriendUtil');
@@ -23,7 +23,7 @@ module.exports = new CommandInterface({
 	six: 500,
 	bot: true,
 
-	execute: async function(p) {
+	execute: async function (p) {
 		/* If its a friendly battle... */
 		if (p.global.isUser(p.args[0])) {
 			let id = p.args[0].match(/[0-9]+/)[0];
@@ -74,14 +74,21 @@ module.exports = new CommandInterface({
 			let logs = await battleUtil.calculateAll(p, battle);
 			await battleUtil.displayAllBattles(p, battle, logs, setting);
 
-		/* turn by turn */
+			/* turn by turn */
 		} else {
 			/* Display the first message */
 			let embed = await battleUtil.display(p, battle, undefined, setting);
 			let msg = await p.send(embed);
-			await battleUtil.reactionCollector(p, msg, battle, setting.auto, (setting.auto ? 'www' : undefined), setting);
+			await battleUtil.reactionCollector(
+				p,
+				msg,
+				battle,
+				setting.auto,
+				setting.auto ? 'www' : undefined,
+				setting
+			);
 		}
-	}
+	},
 });
 
 /* Change the display type */
@@ -90,15 +97,17 @@ async function changeType(p, type) {
 	let text = '';
 	if (type == 'text') {
 		sql = `INSERT INTO battle_type (uid,type) VALUES ((SELECT uid FROM user WHERE id = ${p.msg.author.id}),1) ON DUPLICATE KEY UPDATE type = 1`;
-		text = ", your battles will now display as **text**!";
+		text = ', your battles will now display as **text**!';
 	} else {
 		sql = `INSERT INTO battle_type (uid,type) VALUES ((SELECT uid FROM user WHERE id = ${p.msg.author.id}),0) ON DUPLICATE KEY UPDATE type = 0`;
-		text = ", your battles will now display as an **image**!";
+		text = ', your battles will now display as an **image**!';
 	}
 	try {
 		await p.query(sql);
-	} catch(error) {
-		await p.query(`INSERT IGNORE INTO user (id,count) VALUES (${p.msg.author.id},0);+sql`);
+	} catch (error) {
+		await p.query(
+			`INSERT IGNORE INTO user (id,count) VALUES (${p.msg.author.id},0);+sql`
+		);
 	}
 	p.replyMsg(battleEmoji, text);
 }
@@ -119,7 +128,7 @@ function parseSetting(query) {
 		//if (query[0].auto == 1) auto = false;
 		if (query[0].speed == 0) speed = 'instant';
 		else if (query[0].speed == 2) speed = 'lengthy';
-		if (query[0].display == 'text')	display = 'text';
+		if (query[0].display == 'text') display = 'text';
 		else if (query[0].display == 'compact') display = 'compact';
 		if (query[0].logs == 1) {
 			showLogs = true;
@@ -135,4 +144,4 @@ function parseSetting(query) {
 		instant = true;
 	}
 	return { auto, display, speed, instant, showLogs };
-};
+}

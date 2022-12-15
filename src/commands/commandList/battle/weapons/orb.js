@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const WeaponInterface = require('../WeaponInterface');
 
 module.exports = class Orb extends WeaponInterface {
@@ -18,10 +18,11 @@ module.exports = class Orb extends WeaponInterface {
 			'<:eorb:548783035168849930>',
 			'<:morb:548783162646462464>',
 			'<:lorb:548783162566901770>',
-			'<:forb:548783035244478474>'
+			'<:forb:548783035244478474>',
 		];
 		this.defaultEmoji = '<:orb:548783216379559966>';
-		this.statDesc = 'This weapon has no active ability, but comes with two passives!';
+		this.statDesc =
+			'This weapon has no active ability, but comes with two passives!';
 		this.availablePassives = 'all';
 		this.passiveCount = 2;
 		this.qualityList = [];

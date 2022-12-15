@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const { stripIndents } = require('common-tags');
 const mysql = require('../botHandlers/mysqlHandler');
 const levels = require('./levels');
@@ -42,15 +42,21 @@ setTimeout(async () => {
 }, 1000);
 */
 
-exports.distributeRewards = async function(msg) {
+exports.distributeRewards = async function (msg) {
 	// If bot does not have permission to send a message, ignore.
 	let perms = msg.channel.permissionsOf(global.getClient().user.id);
-	if (!perms.has('readMessages') || !perms.has('sendMessages') || !perms.has('attachFiles')) return;
+	if (
+		!perms.has('readMessages') ||
+		!perms.has('sendMessages') ||
+		!perms.has('attachFiles')
+	)
+		return;
 	let level = (await levels.getUserLevel(msg.author.id)).level;
 	let sql = `SELECT user.uid,user_level_rewards.rewardLvl FROM user LEFT JOIN user_level_rewards ON user.uid = user_level_rewards.uid WHERE id = ${msg.author.id};`;
 	sql += `SELECT levelup FROM guild_setting WHERE id = ${msg.channel.guild.id};`;
 	let result = await mysql.query(sql);
-	let uid, plevel = 0;
+	let uid,
+		plevel = 0;
 	let hasLevel = false;
 
 	// level up is disabled in the guild
@@ -90,7 +96,7 @@ exports.distributeRewards = async function(msg) {
 		if (!uuid || uuid == '') throw 'No uuid';
 		url = `${process.env.GEN_HOST}/levelup/${uuid}.png`;
 		buffer = await DataResolver.urlToBuffer(url);
-	} catch(e) {
+	} catch (e) {
 		return;
 	}
 
@@ -102,7 +108,7 @@ exports.distributeRewards = async function(msg) {
 	} else {
 		sql = `INSERT IGNORE INTO user_level_rewards (uid,rewardLvl) VALUES (${uid},${level});`;
 		result = await mysql.query(sql);
-		if(!result.affectedRows) return;
+		if (!result.affectedRows) return;
 	}
 
 	// Distribute rewards sql
@@ -111,11 +117,14 @@ exports.distributeRewards = async function(msg) {
 		INSERT INTO crate (uid,boxcount) VALUES (${uid},${weaponcrate}) ON DUPLICATE KEY UPDATE boxcount = boxcount + ${weaponcrate};
 		INSERT INTO lootbox(id,boxcount) VALUES (${msg.author.id},${lootbox}) ON DUPLICATE KEY UPDATE boxcount = boxcount + ${lootbox};
 	`;
-	
+
 	// Set up reply text
 	let text = `${levelupEmoji} **| ${msg.author.username}** leveled up!`;
-	if (level - plevel > 1) text += '\n<:blank:427371936482328596> **|** Extra rewards were added for missing levels';
-	if (!plevel) text += `\n${infoEmoji} **|** Level up messages can be disabled for the guild with \`owo level disabletext\``;
+	if (level - plevel > 1)
+		text +=
+			'\n<:blank:427371936482328596> **|** Extra rewards were added for missing levels';
+	if (!plevel)
+		text += `\n${infoEmoji} **|** Level up messages can be disabled for the guild with \`owo level disabletext\``;
 
 	// distribute and send
 	await mysql.query(sql);
@@ -134,37 +143,40 @@ async function generateImage(msg, reward) {
 	let avatarURL = msg.author.dynamicAvatarURL('png');
 	avatarURL = avatarURL.replace(/\?[a-zA-Z0-9=?&]+/gi, '');
 	let info = {
-		theme:{
-			background:background.id,
-			name_color:background.color,
+		theme: {
+			background: background.id,
+			name_color: background.color,
 		},
-		user:{
+		user: {
 			avatarURL,
-			name:msg.author.username,
+			name: msg.author.username,
 		},
-		level:reward.level,
-		rewards:[
+		level: reward.level,
+		rewards: [
 			{ img: 'cowoncy.png', text: '+' + global.toFancyNum(reward.cowoncy) },
 			{ img: 'lootbox.png', text: '+' + global.toFancyNum(reward.lootbox) },
 			{ img: 'crate.png', text: '+' + global.toFancyNum(reward.weaponcrate) },
-		]
+		],
 	};
 	info.password = GEN_PASS;
 	try {
 		return new Promise((resolve, reject) => {
-			let req = request({
-				method: 'POST',
-				uri: `${GEN_API_HOST}/levelupgen`,
-				json: true,
-				body: info
-			}, (error, res, body) => {
-				if (error) {
-					resolve('');
-					return;
+			let req = request(
+				{
+					method: 'POST',
+					uri: `${GEN_API_HOST}/levelupgen`,
+					json: true,
+					body: info,
+				},
+				(error, res, body) => {
+					if (error) {
+						resolve('');
+						return;
+					}
+					if (res.statusCode == 200) resolve(body);
+					else resolve('');
 				}
-				if (res.statusCode == 200) resolve(body);
-				else resolve('');
-			});
+			);
 		});
 	} catch (err) {
 		console.err(err);
@@ -173,8 +185,8 @@ async function generateImage(msg, reward) {
 }
 
 async function getBackground(user) {
-	let sql = `SELECT b.name_color,b.bid FROM user u INNER JOIN user_profile up ON u.uid = up.uid INNER JOIN backgrounds b ON up.bid = b.bid WHERE id = ${user.id};`
+	let sql = `SELECT b.name_color,b.bid FROM user u INNER JOIN user_profile up ON u.uid = up.uid INNER JOIN backgrounds b ON up.bid = b.bid WHERE id = ${user.id};`;
 	let result = await mysql.query(sql);
 	if (!result[0]) return { id: 1 };
 	return { id: result[0].bid, color: result[0].name_color };
-};
+}

@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const PassiveInterface = require('../PassiveInterface');
 
 /* +[5~20%] increase in hp*/
@@ -20,7 +20,7 @@ module.exports = class HealthPoint extends PassiveInterface {
 			'<:ehp:535290421740568577>',
 			'<:mhp:535290421769928716>',
 			'<:lhp:535290422147153930>',
-			'<:fhp:535290422306799616>'
+			'<:fhp:535290422306799616>',
 		];
 		this.statDesc = 'Increases your <:hp:531620120410456064>HP by **?%**';
 		this.qualityList = [[5, 20]];

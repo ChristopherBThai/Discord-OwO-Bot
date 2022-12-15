@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const CommandInterface = require('../../CommandInterface');
 const tada = '🎉';
 const gear = '⚙';
@@ -15,15 +15,18 @@ module.exports = new CommandInterface({
 	execute: async function (p) {
 		const list = await parseUsers(p);
 		p.send(list.success + '\n\n' + list.failed);
-	}
+	},
 });
 
-async function parseUsers (p) {
+async function parseUsers(p) {
 	let success = '';
 	let failed = '';
 	const lines = p.args.join(' ').split(/\n+/gi);
 	for (let line of lines) {
-		const args = line.replace(/[^ \d]/gi, ' ').trim().split(/\s+/gi);
+		const args = line
+			.replace(/[^ \d]/gi, ' ')
+			.trim()
+			.split(/\s+/gi);
 		try {
 			let result = await giveTicket(p, args[0], args[1], args[2]);
 			if (result) {
@@ -55,7 +58,7 @@ async function giveTicket(p, id, count = 1, type = 1) {
 
 	// Parse type
 	if (type && p.global.isInt(type)) type = parseInt(type);
-	if (!type || (type > 1 || type < 1)) {
+	if (!type || type > 1 || type < 1) {
 		p.errorMsg(`, wrong ticket type for ${id}`);
 		return;
 	}
@@ -76,13 +79,23 @@ async function giveTicket(p, id, count = 1, type = 1) {
 	const uid = await p.global.getUid(id);
 
 	// Query result
-	let sql = `INSERT INTO user_item (uid, name, count) VALUES (${uid}, '${type}', ${count}) ON DUPLICATE KEY update count = count + ${count};`
+	let sql = `INSERT INTO user_item (uid, name, count) VALUES (${uid}, '${type}', ${count}) ON DUPLICATE KEY update count = count + ${count};`;
 	let result = await p.query(sql);
 
 	// Send msgs
 	let user;
-	if (count > 0) user = await p.sender.msgUser(id, `${emoji} **|** Thank you! You received **${count} ${emoji} ${name}**!`);
-	else user = await p.sender.msgUser(id, `${emoji} **|** Sorry about that. You have lost **${Math.abs(count)} ${emoji} ${name}**.`);
+	if (count > 0)
+		user = await p.sender.msgUser(
+			id,
+			`${emoji} **|** Thank you! You received **${count} ${emoji} ${name}**!`
+		);
+	else
+		user = await p.sender.msgUser(
+			id,
+			`${emoji} **|** Sorry about that. You have lost **${Math.abs(
+				count
+			)} ${emoji} ${name}**.`
+		);
 	if (user && !user.dmError) return { user, count };
 	else await p.errorMsg(`, Failed to message user for ${id}`);
-};
+}

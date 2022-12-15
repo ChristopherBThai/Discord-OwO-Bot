@@ -3,12 +3,12 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const { stripIndents } = require('common-tags');
 let mysql, sender;
 
-exports.parsePatreon = function(query) {
-	if (!query||!query.patreonMonths) return null;
+exports.parsePatreon = function (query) {
+	if (!query || !query.patreonMonths) return null;
 
 	// parse variables
 	let months = query.patreonMonths;
@@ -19,7 +19,7 @@ exports.parsePatreon = function(query) {
 	let cowoncy = false;
 
 	// parse benefits
-	switch(type) {
+	switch (type) {
 		case 1:
 			animal = true;
 			break;
@@ -41,9 +41,9 @@ exports.parsePatreon = function(query) {
 	return { animal, cowoncy, expireDate };
 };
 
-exports.update = function(guild, oldMember, newMember) {
+exports.update = function (guild, oldMember, newMember) {
 	if (guild.id != '420104212895105044') return;
-	if(oldMember.roles.includes('449429399217897473')) {
+	if (oldMember.roles.includes('449429399217897473')) {
 		if (!newMember.roles.includes('449429399217897473')) {
 			lostDaily(newMember);
 		}
@@ -63,24 +63,30 @@ exports.update = function(guild, oldMember, newMember) {
 	}
 };
 
-exports.left = async function(guild, member) {
+exports.left = async function (guild, member) {
 	if (guild.id != '420104212895105044') return;
 	let sql = `UPDATE IGNORE user SET patreonDaily = 0, patreonAnimal = 0 WHERE id = ${member.id};`;
 	let result = await mysql.query(sql);
 	if (result.changedRows > 0) {
-		sender.msgUser(member.id, 'Just a heads up! Your Patreon benefits will not work if you leave the guild!');
+		sender.msgUser(
+			member.id,
+			'Just a heads up! Your Patreon benefits will not work if you leave the guild!'
+		);
 	}
 };
 
 function messageUser(user) {
-	sender.msgUser(user.id, stripIndents`
+	sender.msgUser(
+		user.id,
+		stripIndents`
 		Thank you for supporting owo bot! Every dollar counts and I appreciate your donation!! 
 		If you encounter any problems, let me know!
 		
 		
 		XOXO,
 		**Scuttler#0001**
-	`);
+	`
+	);
 }
 
 async function gainedDaily(user) {
@@ -96,13 +102,16 @@ async function gainedDaily(user) {
 async function lostDaily(user) {
 	let sql = `UPDATE IGNORE user SET patreonDaily = 0 WHERE id = ${user.id};`;
 	await mysql.query(sql);
-	sender.msgUser(user.id, stripIndents`
+	sender.msgUser(
+		user.id,
+		stripIndents`
 		Your patreon donation has expired! Thank you **so** much for supporting OwO bot! <3
 		
 		
 		XOXO,
 		**Scuttler#0001**
-	`);
+	`
+	);
 }
 
 async function gainedAnimal(user) {
@@ -118,20 +127,23 @@ async function gainedAnimal(user) {
 async function lostAnimal(user) {
 	let sql = `UPDATE IGNORE user SET patreonAnimal = 0 WHERE id = ${user.id};`;
 	await mysql.query(sql);
-	sender.msgUser(user.id, stripIndents`
+	sender.msgUser(
+		user.id,
+		stripIndents`
 		Your patreon donation has expired! Thank you **so** much for supporting OwO bot! <3
 		
 		
 		XOXO,
 		**Scuttler#0001**
-	`);
+	`
+	);
 }
 
-exports.checkPatreon = function(p, userID) {
+exports.checkPatreon = function (p, userID) {
 	p.pubsub.publish('checkPatreon', { userID });
 };
 
-exports.init = function(main) {
+exports.init = function (main) {
 	mysql = main.mysqlhandler;
 	sender = main.sender;
 };

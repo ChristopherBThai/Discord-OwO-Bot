@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const WeaponInterface = require('../WeaponInterface');
 const battleUtil = require('../util/battleUtil');
 const Logs = require('../util/logUtil');
@@ -20,7 +20,7 @@ module.exports = class FStaff extends WeaponInterface {
 			'<:efstaff:572663875711795200>',
 			'<:mfstaff:572663875888218114>',
 			'<:lfstaff:572663875904733186>',
-			'<:ffstaff:572663876110254090>'
+			'<:ffstaff:572663876110254090>',
 		];
 		this.defaultEmoji = '<:fstaff:572663875749675018>';
 		this.statDesc = `Deals **?%** of your ${WeaponInterface.magEmoji} MAG to a random enemy and applies **flame** for 3 turns`;
@@ -35,7 +35,8 @@ module.exports = class FStaff extends WeaponInterface {
 		if (me.stats.hp[0] <= 0) return;
 
 		/* No mana */
-		if (me.stats.wp[0] < this.manaCost) return this.attackPhysical(me, team, enemy);
+		if (me.stats.wp[0] < this.manaCost)
+			return this.attackPhysical(me, team, enemy);
 
 		/* Grab an enemy that I'm attacking */
 		let attacking = WeaponInterface.getAttacking(me, team, enemy);
@@ -43,7 +44,11 @@ module.exports = class FStaff extends WeaponInterface {
 		let logs = new Logs();
 
 		/* deplete weapon points*/
-		let mana = WeaponInterface.useMana(me, this.manaCost, me, { me, allies: team, enemies: enemy });
+		let mana = WeaponInterface.useMana(me, this.manaCost, me, {
+			me,
+			allies: team,
+			enemies: enemy,
+		});
 		let manaLogs = new Logs();
 		manaLogs.push(`[FSTAFF] ${me.nickname} used ${mana.amount} WP`, mana.logs);
 
@@ -51,10 +56,23 @@ module.exports = class FStaff extends WeaponInterface {
 		let damage = WeaponInterface.getDamage(me.stats.mag, this.stats[0] / 100);
 
 		/* Deal damage */
-		damage = WeaponInterface.inflictDamage(me, attacking, damage, WeaponInterface.MAGICAL, { me, allies: team, enemies: enemy });
+		damage = WeaponInterface.inflictDamage(
+			me,
+			attacking,
+			damage,
+			WeaponInterface.MAGICAL,
+			{ me, allies: team, enemies: enemy }
+		);
 		let buff = this.getBuffs(me)[0];
-		let buffLogs = buff.bind(attacking, 3, { me, allies: team, enemies: enemy });
-		logs.push(`[FSTAFF] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP and applied flame`, damage.logs);
+		let buffLogs = buff.bind(attacking, 3, {
+			me,
+			allies: team,
+			enemies: enemy,
+		});
+		logs.push(
+			`[FSTAFF] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP and applied flame`,
+			damage.logs
+		);
 		logs.addSubLogs(buffLogs);
 		logs.addSubLogs(manaLogs);
 		return logs;

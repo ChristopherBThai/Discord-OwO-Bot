@@ -3,38 +3,38 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const { stripIndents } = require('common-tags');
 const requireDir = require('require-dir');
 const WeaponInterface = require('../WeaponInterface');
 const alterWeapon = require('../../patreon/alterWeapon');
 const alterWeaponDisplay = require('../../patreon/alterWeaponDisplay');
 const prices = {
-	'Common': 100,
-	'Uncommon': 250,
-	'Rare': 400,
-	'Epic': 600,
-	'Mythical': 5000,
-	'Legendary': 15000,
-	'Fabled': 50000
+	Common: 100,
+	Uncommon: 250,
+	Rare: 400,
+	Epic: 600,
+	Mythical: 5000,
+	Legendary: 15000,
+	Fabled: 50000,
 };
 exports.shardPrices = {
-	'Common': 1,
-	'Uncommon': 3,
-	'Rare': 5,
-	'Epic': 25,
-	'Mythical': 300,
-	'Legendary': 1000,
-	'Fabled': 5000
+	Common: 1,
+	Uncommon: 3,
+	Rare: 5,
+	Epic: 25,
+	Mythical: 300,
+	Legendary: 1000,
+	Fabled: 5000,
 };
 const ranks = [
 	['cw', 'commonweapons', 'commonweapon'],
 	['uw', 'uncommonweapons', 'uncommonweapon'],
 	['rw', 'rareweapon', 'rareweapons'],
-    ['ew', 'epicweapons', 'epicweapon'],
+	['ew', 'epicweapons', 'epicweapon'],
 	['mw', 'mythicalweapons', 'mythicalweapon', 'mythicweapons', 'mythicweapon'],
-    ['lw', 'legendaryweapons', 'legendaryweapon'],
-	['fw', 'fabledweapons', 'fabledweapon', 'fableweapons', 'fableweapon']
+	['lw', 'legendaryweapons', 'legendaryweapon'],
+	['fw', 'fabledweapons', 'fabledweapon', 'fableweapons', 'fableweapon'],
 ];
 const weaponEmoji = '🗡';
 const weaponPerPage = 15;
@@ -54,7 +54,7 @@ setTimeout(() => {
 	}
 }, 0);
 
-const getRandomWeapon = exports.getRandomWeapon = function() {
+const getRandomWeapon = (exports.getRandomWeapon = function () {
 	/* Grab a random weapon */
 	let keys = Object.keys(availableWeapons);
 	let random = keys[Math.floor(Math.random() * keys.length)];
@@ -63,13 +63,15 @@ const getRandomWeapon = exports.getRandomWeapon = function() {
 	/* Initialize random stats */
 	weapon = new weapon();
 	return weapon;
-};
+});
 
-exports.getRandomWeapons = function(uid, count) {
+exports.getRandomWeapons = function (uid, count) {
 	let randomWeapons = [];
 	for (let i = 0; i < count; i++) {
 		let tempWeapon = getRandomWeapon();
-		let weaponSql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${uid ? uid : '?'},${tempWeapon.id},'${tempWeapon.sqlStat}',${tempWeapon.avgQuality});`;
+		let weaponSql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${
+			uid ? uid : '?'
+		},${tempWeapon.id},'${tempWeapon.sqlStat}',${tempWeapon.avgQuality});`;
 		let passiveSql = `INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES `;
 		for (let j = 0; j < tempWeapon.passives.length; j++) {
 			let tempPassive = tempWeapon.passives[j];
@@ -83,23 +85,29 @@ exports.getRandomWeapons = function(uid, count) {
 	return randomWeapons;
 };
 
-exports.getItems = async function(p) {
+exports.getItems = async function (p) {
 	let sql = `SELECT wid,count(uwid) AS count FROM user_weapon WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) GROUP BY wid`;
 	let result = await p.query(sql);
 	let items = {};
 	for (let i = 0; i < result.length; i++) {
 		let key = result[i].wid;
-		if (weapons[key]) items[key] = { id: (key + 100), count: result[i].count, emoji: weapons[key].getEmoji };
+		if (weapons[key])
+			items[key] = {
+				id: key + 100,
+				count: result[i].count,
+				emoji: weapons[key].getEmoji,
+			};
 	}
 	return items;
 };
 
-const parseWeapon = exports.parseWeapon = function(data) {
+const parseWeapon = (exports.parseWeapon = function (data) {
 	if (!data.parsed) {
 		/* Parse stats */
 		data.stat = data.stat.split(',');
 		if (data.stat[0] == '') data.stat = [];
-		for (let i = 0; i < data.stat.length; i++) data.stat[i] = parseInt(data.stat[i]);
+		for (let i = 0; i < data.stat.length; i++)
+			data.stat[i] = parseInt(data.stat[i]);
 
 		/* Grab all passives */
 		for (let i = 0; i < data.passives.length; i++) {
@@ -107,7 +115,7 @@ const parseWeapon = exports.parseWeapon = function(data) {
 			for (let j = 0; j < stats.length; j++) {
 				stats[j] = parseInt(stats[j]);
 			}
-			let passive = new (WeaponInterface.allPassives[data.passives[i].id])(stats);
+			let passive = new WeaponInterface.allPassives[data.passives[i].id](stats);
 			passive.pcount = data.passives[i].pcount;
 			data.passives[i] = passive;
 		}
@@ -116,15 +124,15 @@ const parseWeapon = exports.parseWeapon = function(data) {
 
 	/* Convert data to actual weapon data */
 	if (!weapons[data.id]) return;
-	let weapon = new (weapons[data.id])(data.passives,data.stat);
+	let weapon = new weapons[data.id](data.passives, data.stat);
 	weapon.uwid = data.uwid;
 	weapon.ruwid = data.ruwid;
 	weapon.pid = data.pid;
 	weapon.animal = data.animal;
 	return weapon;
-};
+});
 
-const parseWeaponQuery = exports.parseWeaponQuery = function(query) {
+const parseWeaponQuery = (exports.parseWeaponQuery = function (query) {
 	/* Group weapons by uwid and add their respective passives */
 	let weapons = {};
 	for (let i = 0; i < query.length; i++) {
@@ -139,25 +147,30 @@ const parseWeaponQuery = exports.parseWeaponQuery = function(query) {
 					stat: query[i].stat,
 					animal: {
 						name: query[i].name,
-						nickname: query[i].nickname
+						nickname: query[i].nickname,
 					},
-					passives: []
+					passives: [],
 				};
 			}
 			if (query[i].wpid) {
 				weapons[key].passives.push({
 					id: query[i].wpid,
 					pcount: query[i].pcount,
-					stat: query[i].pstat
+					stat: query[i].pstat,
 				});
 			}
 		}
 	}
 	return weapons;
-};
+});
 
 /* Displays weapons with multiple pages */
-const display = exports.display = async function(p, pageNum = 0, sort = 0, opt) {
+const display = (exports.display = async function (
+	p,
+	pageNum = 0,
+	sort = 0,
+	opt
+) {
 	if (!opt) opt = {};
 	let { users, msg, user } = opt;
 	if (!users) users = [];
@@ -176,12 +189,22 @@ const display = exports.display = async function(p, pageNum = 0, sort = 0, opt) 
 	await msg.addReaction(nextPageEmoji);
 	if (page.maxPage > 19) await msg.addReaction(fastForwardEmoji);
 	await msg.addReaction(sortEmoji);
-	let filter = (emoji, userID) => [sortEmoji, nextPageEmoji, prevPageEmoji, rewindEmoji, fastForwardEmoji].includes(emoji.name) && users.includes(userID);
-	let collector = p.reactionCollector.create(msg, filter, { time: 900000, idle: 120000 });
-	let handler = async function(emoji) {
+	let filter = (emoji, userID) =>
+		[
+			sortEmoji,
+			nextPageEmoji,
+			prevPageEmoji,
+			rewindEmoji,
+			fastForwardEmoji,
+		].includes(emoji.name) && users.includes(userID);
+	let collector = p.reactionCollector.create(msg, filter, {
+		time: 900000,
+		idle: 120000,
+	});
+	let handler = async function (emoji) {
 		try {
 			if (page) {
-			/* Save the animal's action */
+				/* Save the animal's action */
 				if (emoji.name === nextPageEmoji) {
 					if (pageNum + 1 < page.maxPage) pageNum++;
 					else pageNum = 0;
@@ -208,53 +231,58 @@ const display = exports.display = async function(p, pageNum = 0, sort = 0, opt) 
 					if (page) await msg.edit({ embed: page.embed });
 				}
 			}
-		} catch (err) {};
-	}
+		} catch (err) {}
+	};
 	collector.on('collect', handler);
-	collector.on('end', async function(collected) {
+	collector.on('end', async function (collected) {
 		if (page) {
 			page.embed.color = 6381923;
-			await msg.edit({ content: 'This message is now inactive', embed: page.embed });
+			await msg.edit({
+				content: 'This message is now inactive',
+				embed: page.embed,
+			});
 		}
 	});
-};
+});
 
 const declineEmoji = '👎';
 const acceptEmoji = '👍';
 
 /* Ask a user to display their weapon */
-exports.askDisplay = async function(p, id, opt = {}) {
+exports.askDisplay = async function (p, id, opt = {}) {
 	if (id == p.msg.author.id) {
 		display(p);
 		return;
 	}
 	if (id == p.client.user.id) {
-		p.errorMsg('... trust me. You don\'t want to see what I have.', 3000);
+		p.errorMsg("... trust me. You don't want to see what I have.", 3000);
 		return;
 	}
 	let user = p.getMention(id);
 	if (!user) {
-		p.errorMsg(', I couldn\'t find that user! :(', 3000);
+		p.errorMsg(", I couldn't find that user! :(", 3000);
 		return;
 	}
 	if (user.bot) {
-		p.errorMsg(', you dum dum! Bots don\'t carry weapons!', 3000);
+		p.errorMsg(", you dum dum! Bots don't carry weapons!", 3000);
 		return;
 	}
 	let embed = {
-		'author': {
-			'name': `${user.username}, ${p.msg.author.username} wants to see your weapons!`,
-			'icon_url': p.msg.author.avatarURL
+		author: {
+			name: `${user.username}, ${p.msg.author.username} wants to see your weapons!`,
+			icon_url: p.msg.author.avatarURL,
 		},
-		'description': 'Do you give permission for this user to view your weapons?',
-		'color': p.config.embed_color
+		description: 'Do you give permission for this user to view your weapons?',
+		color: p.config.embed_color,
 	};
 	let msg = await p.send({ embed });
 	await msg.addReaction(acceptEmoji);
 	await msg.addReaction(declineEmoji);
-	let filter = (emoji, userID) => (emoji.name === acceptEmoji || emoji.name === declineEmoji) && user.id === userID;
+	let filter = (emoji, userID) =>
+		(emoji.name === acceptEmoji || emoji.name === declineEmoji) &&
+		user.id === userID;
 	let collector = p.reactionCollector.create(msg, filter, { time: 60000 });
-	collector.on('collect', async emoji => {
+	collector.on('collect', async (emoji) => {
 		collector.stop('done');
 		if (emoji.name == declineEmoji) {
 			embed.color = 16711680;
@@ -262,11 +290,16 @@ exports.askDisplay = async function(p, id, opt = {}) {
 		} else {
 			try {
 				await msg.removeReactions();
-			} catch(e) {};
-			display(p, 0, 0, { users: [p.msg.author.id], msg,user: user, wid: opt.wid });
+			} catch (e) {}
+			display(p, 0, 0, {
+				users: [p.msg.author.id],
+				msg,
+				user: user,
+				wid: opt.wid,
+			});
 		}
 	});
-	collector.on('end', async function(reason) {
+	collector.on('end', async function (reason) {
 		if (reason != 'done') {
 			embed.color = 6381923;
 			await msg.edit({ content: 'This message is now inactive', embed });
@@ -275,7 +308,7 @@ exports.askDisplay = async function(p, id, opt = {}) {
 };
 
 /* Gets a single page */
-const getDisplayPage = async function(p, user, page, sort, opt = {}) {
+const getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	let { wid } = opt;
 	/* Query all weapons */
 	let sql = `SELECT temp.*,user_weapon_passive.wpid,user_weapon_passive.pcount,user_weapon_passive.stat as pstat
@@ -287,15 +320,12 @@ const getDisplayPage = async function(p, user, page, sort, opt = {}) {
 			WHERE
 				user.id = ${user.id} `;
 	if (wid) sql += `AND user_weapon.wid = ${wid} `;
-	sql += 		`ORDER BY `;
+	sql += `ORDER BY `;
 
-			if(sort === 1)
-				sql += 'user_weapon.avg DESC,';
-			else if(sort === 2)
-				sql += 'user_weapon.wid DESC, user_weapon.avg DESC,';
-			else if(sort === 3)
-				sql += 'user_weapon.pid DESC,';
-	sql += 			` user_weapon.uwid DESC
+	if (sort === 1) sql += 'user_weapon.avg DESC,';
+	else if (sort === 2) sql += 'user_weapon.wid DESC, user_weapon.avg DESC,';
+	else if (sort === 3) sql += 'user_weapon.pid DESC,';
+	sql += ` user_weapon.uwid DESC
 			LIMIT ${weaponPerPage}
 			OFFSET ${page * weaponPerPage}) temp
 		LEFT JOIN
@@ -311,14 +341,17 @@ const getDisplayPage = async function(p, user, page, sort, opt = {}) {
 
 	/* out of bounds or no weapon */
 	if (!result[0][0]) {
-		p.errorMsg(', you do not have any weapons, or the page is out of bounds', 3000);
+		p.errorMsg(
+			', you do not have any weapons, or the page is out of bounds',
+			3000
+		);
 		return;
 	}
 
 	/* Parse total weapon count */
 	let totalCount = result[1][0].count;
-	let nextPage = (((page + 1) * weaponPerPage) <= totalCount);
-	let prevPage = (page > 0);
+	let nextPage = (page + 1) * weaponPerPage <= totalCount;
+	let prevPage = page > 0;
 	let maxPage = Math.ceil(totalCount / weaponPerPage);
 
 	/* Parse all weapons */
@@ -335,7 +368,7 @@ const getDisplayPage = async function(p, user, page, sort, opt = {}) {
 	`;
 	let desc = '';
 	let fieldText;
-	let fields = []
+	let fields = [];
 	for (let key in user_weapons) {
 		let weapon = parseWeapon(user_weapons[key]);
 		if (weapon) {
@@ -348,20 +381,26 @@ const getDisplayPage = async function(p, user, page, sort, opt = {}) {
 			row += `\n\`${user_weapons[key].uwid}\` ${emoji} **${weapon.name}** | Quality: ${weapon.avgQuality}%`;
 			if (user_weapons[key].animal.name) {
 				let animal = p.global.validAnimal(user_weapons[key].animal.name);
-				row += p.replaceMentions(` | ${(animal.uni) ? animal.uni : animal.value} ${(user_weapons[key].animal.nickname) ? user_weapons[key].animal.nickname : ''}`);
+				row += p.replaceMentions(
+					` | ${animal.uni ? animal.uni : animal.value} ${
+						user_weapons[key].animal.nickname
+							? user_weapons[key].animal.nickname
+							: ''
+					}`
+				);
 			}
 			if (fieldText) {
 				if (fieldText.length + row.length >= 1024) {
 					fields.push({
 						name: p.config.emoji.blank,
-						value: fieldText
+						value: fieldText,
 					});
 					fieldText = row;
 				} else {
 					fieldText += row;
 				}
 			} else if (descHelp.length + desc.length + row.length >= 2048) {
-				fieldText = row
+				fieldText = row;
 			} else {
 				desc += row;
 			}
@@ -370,23 +409,23 @@ const getDisplayPage = async function(p, user, page, sort, opt = {}) {
 	if (fieldText) {
 		fields.push({
 			name: p.config.emoji.blank,
-			value: fieldText
+			value: fieldText,
 		});
 	}
 
 	/* Construct msg */
-	let title = `${user.username}'s ${(wid) ? weapons[wid].name : 'weapons'}`;
+	let title = `${user.username}'s ${wid ? weapons[wid].name : 'weapons'}`;
 	let embed = {
-		'author': {
-			'name': title,
-			'icon_url': user.avatarURL
+		author: {
+			name: title,
+			icon_url: user.avatarURL,
 		},
-		'description': descHelp + desc,
-		'color': p.config.embed_color,
-		'footer': {
-			'text': `Page ${page + 1}/${maxPage} | `
+		description: descHelp + desc,
+		color: p.config.embed_color,
+		footer: {
+			text: `Page ${page + 1}/${maxPage} | `,
 		},
-		fields
+		fields,
 	};
 	if (sort === 0) {
 		embed.footer.text += 'Sorting by id';
@@ -400,17 +439,19 @@ const getDisplayPage = async function(p, user, page, sort, opt = {}) {
 	embed = alterWeapon.alter(user.id, embed, {
 		page: page + 1,
 		descHelp: descHelp,
-		desc: desc
+		desc: desc,
 	});
 	return { sql, embed, totalCount, nextPage, prevPage, maxPage };
 };
 
-exports.describe = async function(p, uwid) {
+exports.describe = async function (p, uwid) {
 	uwid = expandUWID(uwid);
 
 	/* Check if valid */
 	if (!uwid) {
-		p.errorMsg(', I could not find a weapon with that unique weapon id! Please use `owo weapon` for the weapon ID!');
+		p.errorMsg(
+			', I could not find a weapon with that unique weapon id! Please use `owo weapon` for the weapon ID!'
+		);
 		return;
 	}
 
@@ -420,7 +461,9 @@ exports.describe = async function(p, uwid) {
 
 	/* Check if valid */
 	if (!result[0]) {
-		p.errorMsg(', I could not find a weapon with that unique weapon id! Please use `owo weapon` for the weapon ID!');
+		p.errorMsg(
+			', I could not find a weapon with that unique weapon id! Please use `owo weapon` for the weapon ID!'
+		);
 		return;
 	}
 
@@ -431,14 +474,17 @@ exports.describe = async function(p, uwid) {
 
 	/* If no weapon */
 	if (!weapon) {
-		p.errorMsg(', I could not find a weapon with that unique weapon id! Please use `owo weapon` for the weapon ID!');
+		p.errorMsg(
+			', I could not find a weapon with that unique weapon id! Please use `owo weapon` for the weapon ID!'
+		);
 		return;
 	}
 
 	/* Parse image url */
 	let url = weapon.emoji;
-	if (temp = url.match(/:[0-9]+>/)) {
-		temp = 'https://cdn.discordapp.com/emojis/' + temp[0].match(/[0-9]+/)[0] + '.';
+	if ((temp = url.match(/:[0-9]+>/))) {
+		temp =
+			'https://cdn.discordapp.com/emojis/' + temp[0].match(/[0-9]+/)[0] + '.';
 		if (url.match(/<a:/)) temp += 'gif';
 		else temp += 'png';
 		url = temp;
@@ -447,13 +493,15 @@ exports.describe = async function(p, uwid) {
 	// Grab user
 	let user = await p.fetch.getUser(result[0].id);
 	let username = 'A User';
-	if(user) username = user.username;
+	if (user) username = user.username;
 
 	/* Make description */
 	let desc = `**Name:** ${weapon.name}\n`;
 	desc += `**Owner:** ${username}\n`;
 	desc += `**ID:** \`${shortenUWID(uwid)}\`\n`;
-	desc += `**Sell Value:** ${weapon.unsellable ? 'UNSELLABLE' : prices[weapon.rank.name]}\n`;
+	desc += `**Sell Value:** ${
+		weapon.unsellable ? 'UNSELLABLE' : prices[weapon.rank.name]
+	}\n`;
 	desc += `**Quality:** ${weapon.rank.emoji} ${weapon.avgQuality}%\n`;
 	desc += `**WP Cost:** ${Math.ceil(weapon.manaCost)} <:wp:531620120976687114>`;
 	desc += `\n**Description:** ${weapon.desc}\n`;
@@ -472,26 +520,26 @@ exports.describe = async function(p, uwid) {
 
 	/* Construct embed */
 	let embed = {
-		'author': {
-			'name': `${username}'s ${weapon.name}`,
+		author: {
+			name: `${username}'s ${weapon.name}`,
 		},
-		'color': p.config.embed_color,
-		'thumbnail': {
-			'url': url
+		color: p.config.embed_color,
+		thumbnail: {
+			url: url,
 		},
-		'description': desc
+		description: desc,
 	};
 	if (user) {
 		embed.author.icon_url = user.avatarURL;
 		embed = alterWeaponDisplay.alter(user.id, embed, {
 			user,
-			weapon
+			weapon,
 		});
 	}
 	p.send({ embed });
 };
 
-exports.equip = async function(p, uwid, pet) {
+exports.equip = async function (p, uwid, pet) {
 	uwid = expandUWID(uwid);
 	if (!uwid) {
 		p.errorMsg(stripIndents`
@@ -520,7 +568,7 @@ exports.equip = async function(p, uwid, pet) {
 	let sql = `UPDATE IGNORE user_weapon SET pid = NULL WHERE
 			uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND
 			pid = ${pid} AND
-			(SELECT * FROM (SELECT uwid FROM user_weapon WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND uwid = ${uwid}) a) IS NOT NULL;`
+			(SELECT * FROM (SELECT uwid FROM user_weapon WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND uwid = ${uwid}) a) IS NOT NULL;`;
 	sql += `UPDATE IGNORE user_weapon SET
 			pid = ${pid}
 		WHERE
@@ -538,12 +586,19 @@ exports.equip = async function(p, uwid, pet) {
 		weapon = weapon[Object.keys(weapon)[0]];
 		weapon = this.parseWeapon(weapon);
 		if (weapon) {
-			p.replyMsg(weaponEmoji,p.replaceMentions(`, ${(animal.uni) ? animal.uni : animal.value} **${(nickname) ? nickname : animal.name}** is now wielding ${weapon.emoji} **${weapon.name}**!`));
+			p.replyMsg(
+				weaponEmoji,
+				p.replaceMentions(
+					`, ${animal.uni ? animal.uni : animal.value} **${
+						nickname ? nickname : animal.name
+					}** is now wielding ${weapon.emoji} **${weapon.name}**!`
+				)
+			);
 		} else {
 			p.errorMsg(', Could not find a weapon with that id!');
 		}
 
-	/* Already equipped */
+		/* Already equipped */
 	} else if (result[1].affectedRows > 0) {
 		let animal = p.global.validAnimal(result[2][0].name);
 		let nickname = result[2][0].nickname;
@@ -551,12 +606,19 @@ exports.equip = async function(p, uwid, pet) {
 		weapon = weapon[Object.keys(weapon)[0]];
 		weapon = this.parseWeapon(weapon);
 		if (weapon) {
-			p.replyMsg(weaponEmoji,p.replaceMentions(`, ${(animal.uni) ? animal.uni : animal.value} **${(nickname) ? nickname : animal.name}** is already wielding ${weapon.emoji} **${weapon.name}**!`));
+			p.replyMsg(
+				weaponEmoji,
+				p.replaceMentions(
+					`, ${animal.uni ? animal.uni : animal.value} **${
+						nickname ? nickname : animal.name
+					}** is already wielding ${weapon.emoji} **${weapon.name}**!`
+				)
+			);
 		} else {
 			p.errorMsg(', Could not find a weapon with that id!');
 		}
 
-	/* A Failure (like me!) */
+		/* A Failure (like me!) */
 	} else {
 		p.errorMsg(stripIndents`
 			, could not find that weapon or animal! The correct command is \`owo weapon {weaponID} {animal}\`
@@ -565,15 +627,15 @@ exports.equip = async function(p, uwid, pet) {
 	}
 };
 
-exports.unequip = async function(p, uwid) {
-	uwid  = expandUWID(uwid);
+exports.unequip = async function (p, uwid) {
+	uwid = expandUWID(uwid);
 	if (!uwid) {
 		p.errorMsg(', Could not find a weapon with that id!');
 		return;
 	}
 	let sql = `SELECT animal.name,animal.nickname,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal ON a.pid = animal.pid WHERE a.uwid = ${uwid} AND uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
 	sql += `UPDATE IGNORE user_weapon SET pid = NULL WHERE uwid = ${uwid} AND uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
-	let result =  await p.query(sql);
+	let result = await p.query(sql);
 
 	/* Success */
 	if (result[1].changedRows > 0) {
@@ -583,35 +645,45 @@ exports.unequip = async function(p, uwid) {
 		weapon = weapon[Object.keys(weapon)[0]];
 		weapon = this.parseWeapon(weapon);
 		if (weapon) {
-			p.replyMsg(weaponEmoji, p.replaceMentions(`, Unequipped ${weapon.emoji} **${weapon.name}** from ${(animal.uni) ? animal.uni : animal.value} **${(nickname) ? nickname : animal.name}**`));
+			p.replyMsg(
+				weaponEmoji,
+				p.replaceMentions(
+					`, Unequipped ${weapon.emoji} **${weapon.name}** from ${
+						animal.uni ? animal.uni : animal.value
+					} **${nickname ? nickname : animal.name}**`
+				)
+			);
 		} else {
 			p.errorMsg(', Could not find a weapon with that id!');
 		}
 
-	/* No body using weapon */
+		/* No body using weapon */
 	} else if (result[1].affectedRows > 0) {
 		let weapon = this.parseWeaponQuery(result[0]);
 		weapon = weapon[Object.keys(weapon)[0]];
 		weapon = this.parseWeapon(weapon);
 		if (weapon) {
-			p.replyMsg(weaponEmoji, `, No animal is using ${weapon.emoji} **${weapon.name}**`);
+			p.replyMsg(
+				weaponEmoji,
+				`, No animal is using ${weapon.emoji} **${weapon.name}**`
+			);
 		} else {
 			p.errorMsg(`, Could not find a weapon with that id!`);
 		}
 
-	/* Invalid */
+		/* Invalid */
 	} else {
 		p.errorMsg(', Could not find a weapon with that id!');
 	}
 };
 
 /* Sells a weapon */
-exports.sell = async function(p, uwid) {
+exports.sell = async function (p, uwid) {
 	/* Check if we're selling a rank */
 	uwid = uwid.toLowerCase();
 	for (let i = 0; i < ranks.length; i++) {
 		if (ranks[i].includes(uwid)) {
-			sellRank(p,i);
+			sellRank(p, i);
 			return;
 		}
 	}
@@ -627,7 +699,7 @@ exports.sell = async function(p, uwid) {
 			LEFT JOIN user_weapon a ON user.uid = a.uid
 			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
 			LEFT JOIN animal c ON a.pid = c.pid
-		WHERE user.id = ${p.msg.author.id} AND a.uwid = ${uwid};`
+		WHERE user.id = ${p.msg.author.id} AND a.uwid = ${uwid};`;
 	let result = await p.query(sql);
 
 	/* not a real weapon! */
@@ -687,13 +759,17 @@ exports.sell = async function(p, uwid) {
 	/* Give cowoncy */
 	sql = `UPDATE cowoncy SET money = money + ${price} WHERE id = ${p.msg.author.id}`;
 	result = await p.query(sql);
-	p.replyMsg(weaponEmoji, `, You sold a(n) **${weapon.rank.name} ${weapon.name}**  ${weapon.rank.emoji}${weapon.emoji} for **${price}** cowoncy!`);
+	p.replyMsg(
+		weaponEmoji,
+		`, You sold a(n) **${weapon.rank.name} ${weapon.name}**  ${weapon.rank.emoji}${weapon.emoji} for **${price}** cowoncy!`
+	);
 	p.logger.incr(`cowoncy`, price, { type: 'sell' }, p.msg);
 };
 
-const sellRank = exports.sellRank = async function(p, rankLoc) {
+const sellRank = (exports.sellRank = async function (p, rankLoc) {
 	// (min,max]
-	let min = 0, max = 0;
+	let min = 0,
+		max = 0;
 	for (let i = 0; i <= rankLoc; i++) {
 		let rank = WeaponInterface.ranks[i];
 		min = max;
@@ -707,7 +783,7 @@ const sellRank = exports.sellRank = async function(p, rankLoc) {
 		FROM user
 			LEFT JOIN user_weapon a ON user.uid = a.uid
 			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
-		WHERE user.id = ${p.msg.author.id} AND avg > ${min} AND avg <= ${max} AND a.pid IS NULL LIMIT 500;`
+		WHERE user.id = ${p.msg.author.id} AND avg > ${min} AND avg <= ${max} AND a.pid IS NULL LIMIT 500;`;
 	let result = await p.query(sql);
 
 	/* not a real weapon! */
@@ -768,27 +844,30 @@ const sellRank = exports.sellRank = async function(p, rankLoc) {
 	/* Give cowoncy */
 	sql = `UPDATE cowoncy SET money = money + ${price} WHERE id = ${p.msg.author.id}`;
 	result = await p.query(sql);
-	p.replyMsg(weaponEmoji, stripIndents`
+	p.replyMsg(
+		weaponEmoji,
+		stripIndents`
 		, You sold all your ${rank} weapons for **${price}** cowoncy!
 		${p.config.emoji.blank} **| Sold:** ${weapons.join('')}
-	`);
+	`
+	);
 	p.logger.incr(`cowoncy`, price, { type: 'sell' }, p.msg);
-};
+});
 
 /* Shorten a uwid to base36 */
-const shortenUWID = exports.shortenUWID = function(uwid) {
+const shortenUWID = (exports.shortenUWID = function (uwid) {
 	if (!uwid) return;
 	return uwid.toString(36).toUpperCase();
-};
+});
 
 /* expand base36 to decimal */
-const expandUWID = exports.expandUWID = function(euwid) {
+const expandUWID = (exports.expandUWID = function (euwid) {
 	if (!euwid) return;
 	euwid = euwid + '';
-	if (!(/^[a-zA-Z0-9]+$/.test(euwid))) return;
+	if (!/^[a-zA-Z0-9]+$/.test(euwid)) return;
 	return parseInt(euwid.toLowerCase(), 36);
-};
+});
 
-exports.getWID = function(id) {
+exports.getWID = function (id) {
 	return weapons[id];
 };

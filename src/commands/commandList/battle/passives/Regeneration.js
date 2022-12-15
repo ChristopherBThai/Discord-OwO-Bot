@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const PassiveInterface = require('../PassiveInterface');
 const WeaponInterface = require('../WeaponInterface');
 const Log = require('../util/logUtil');
@@ -20,18 +20,26 @@ module.exports = class Regeneration extends PassiveInterface {
 			'<:ehgen:621558017791623178>',
 			'<:mhgen:621558018366111744>',
 			'<:lhgen:621558018265579530>',
-			'<:fhgen:621558018286419979>'
+			'<:fhgen:621558018286419979>',
 		];
 		this.statDesc = `Heal **?%** of your max ${WeaponInterface.hpEmoji}HP after every turn`;
 		this.qualityList = [[5, 10]];
 	}
 
-	postTurn(animal, ally, enemy, action) {  
+	postTurn(animal, ally, enemy, action) {
 		if (animal.stats.hp[0] <= 0) return;
 		let logs = new Log();
-		let heal = (animal.stats.hp[1] + animal.stats.hp[3]) * (this.stats[0] / 100);
-		heal = WeaponInterface.heal(animal, heal, animal, { me: animal, allies: ally, enemies: enemy });
-		logs.push(`[REGEN] ${animal.nickname} heals for ${heal.amount} HP`, heal.logs);
+		let heal =
+			(animal.stats.hp[1] + animal.stats.hp[3]) * (this.stats[0] / 100);
+		heal = WeaponInterface.heal(animal, heal, animal, {
+			me: animal,
+			allies: ally,
+			enemies: enemy,
+		});
+		logs.push(
+			`[REGEN] ${animal.nickname} heals for ${heal.amount} HP`,
+			heal.logs
+		);
 		return logs;
 	}
 };

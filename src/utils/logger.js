@@ -3,24 +3,24 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 /***** Datadog *****/
 const request = require('request');
 const StatsD = require('node-dogstatsd').StatsD;
 const log = new StatsD();
 const { INFLUXDB_HOST, INFLUXDB_PASS } = process.env;
 
-exports.increment= function(name, tags) {
+exports.increment = function (name, tags) {
 	log.increment('owo.' + name, tags);
 };
 
-exports.decrement= function(name, tags) {
+exports.decrement = function (name, tags) {
 	log.decrement('owo.' + name, tags);
 };
 
-exports.value = function(name, amount, tags) {
+exports.value = function (name, amount, tags) {
 	if (amount > 0) log.incrementBy('owo.' + name, amount, tags);
-	else if(amount < 0) log.decrementBy('owo.' + name, Math.abs(amount), tags);
+	else if (amount < 0) log.decrementBy('owo.' + name, Math.abs(amount), tags);
 };
 
 /***** winston *****/
@@ -48,9 +48,9 @@ const sdc = new SDC({
 	host: 'localhost',
 	port: 9125,
 	prefix: 'owo',
-	socketTimeout: 5000
+	socketTimeout: 5000,
 });
-const incr = exports.incr = function (name, amount = 1, tags = {}, msg) {
+const incr = (exports.incr = function (name, amount = 1, tags = {}, msg) {
 	return;
 	if (amount < 0) {
 		decr(name, amount, tags, msg);
@@ -59,11 +59,11 @@ const incr = exports.incr = function (name, amount = 1, tags = {}, msg) {
 	if (msg) {
 		tags.user = msg.author.id;
 		tags.channel = msg.channel.id;
-		tags.guild = msg.channel.type==1 ? 'dm' : msg.channel.guild.id;
+		tags.guild = msg.channel.type == 1 ? 'dm' : msg.channel.guild.id;
 	}
 	sdc.increment(`${name}`, amount, tags);
-};
-const decr = exports.decr = function (name, amount = -1, tags = {}, msg) {
+});
+const decr = (exports.decr = function (name, amount = -1, tags = {}, msg) {
 	return;
 	if (amount > 0) {
 		incr(name, amount, tags, msg);
@@ -72,34 +72,37 @@ const decr = exports.decr = function (name, amount = -1, tags = {}, msg) {
 	if (msg) {
 		tags.user = msg.author.id;
 		tags.channel = msg.channel.id;
-		tags.guild = msg.channel.type==1 ? 'dm' : msg.channel.guild.id;
+		tags.guild = msg.channel.type == 1 ? 'dm' : msg.channel.guild.id;
 	}
 	sdc.decrement(`${name}`, amount, tags);
-};
+});
 // Only display this error once per 5 minutes
 let influxErrorShown = false;
-setTimeout(() => { 
-	influxErrorShown = false; 
+setTimeout(() => {
+	influxErrorShown = false;
 }, 5 * 60 * 60 * 1000);
 
-exports.command = function(command, msg) {
+exports.command = function (command, msg) {
 	const body = {
 		password: INFLUXDB_PASS,
 		command: command,
-		user: msg.author.id
+		user: msg.author.id,
 	};
-	request({
-		method: 'POST',
-		uri: `${INFLUXDB_HOST}/command`,
-		json: true,
-		body: body
-	}, function(err) {
-		if (err && !influxErrorShown) {
-			console.error('InfluxDB is inactive. Log upload will not work.');
-			influxErrorShown = true;
-			throw err;
+	request(
+		{
+			method: 'POST',
+			uri: `${INFLUXDB_HOST}/command`,
+			json: true,
+			body: body,
+		},
+		function (err) {
+			if (err && !influxErrorShown) {
+				console.error('InfluxDB is inactive. Log upload will not work.');
+				influxErrorShown = true;
+				throw err;
+			}
 		}
-	});
+	);
 };
 
 exports.logstash = function (command, p) {
@@ -108,56 +111,65 @@ exports.logstash = function (command, p) {
 		user: p.msg.author.id,
 		command: command,
 		text: p.msg.content,
-		guild: p.msg.channel.guild.id
+		guild: p.msg.channel.guild.id,
 	};
-	request({
-		method: 'POST',
-		uri: `${INFLUXDB_HOST}/metric`,
-		json: true,
-		body: body
-	}, function(err) {
-		if (err && !influxErrorShown) {
-			console.error('InfluxDB is inactive. Log upload will not work.');
-			influxErrorShown = true;
-			throw err;
+	request(
+		{
+			method: 'POST',
+			uri: `${INFLUXDB_HOST}/metric`,
+			json: true,
+			body: body,
+		},
+		function (err) {
+			if (err && !influxErrorShown) {
+				console.error('InfluxDB is inactive. Log upload will not work.');
+				influxErrorShown = true;
+				throw err;
+			}
 		}
-	});
+	);
 };
 
-exports.logstashBanned  = function (command, p) {
+exports.logstashBanned = function (command, p) {
 	const body = {
 		password: INFLUXDB_PASS,
 		user: p.msg.author.id,
 		bannedCommand: command,
 		text: p.msg.content,
-		guild: p.msg.channel.guild.id
+		guild: p.msg.channel.guild.id,
 	};
-	request({
-		method: 'POST',
-		uri: `${INFLUXDB_HOST}/metric`,
-		json: true,
-		body: body
-	}, function(err) {
-		if (err && !influxErrorShown) {
-			console.error('InfluxDB is inactive. Log upload will not work.');
-			influxErrorShown = true;
-			throw err;
+	request(
+		{
+			method: 'POST',
+			uri: `${INFLUXDB_HOST}/metric`,
+			json: true,
+			body: body,
+		},
+		function (err) {
+			if (err && !influxErrorShown) {
+				console.error('InfluxDB is inactive. Log upload will not work.');
+				influxErrorShown = true;
+				throw err;
+			}
 		}
-	});
+	);
 };
 
 exports.logstashCaptcha = function (metric) {
 	metric.password = INFLUXDB_PASS;
-	request({
-		method: 'POST',
-		uri: `${INFLUXDB_HOST}/captcha`,
-		json: true,
-		body: metric
-	}, function(err) {
-		if (err && !influxErrorShown) {
-			console.error('InfluxDB is inactive. Log upload will not work.');
-			influxErrorShown = true;
-			throw err;
+	request(
+		{
+			method: 'POST',
+			uri: `${INFLUXDB_HOST}/captcha`,
+			json: true,
+			body: metric,
+		},
+		function (err) {
+			if (err && !influxErrorShown) {
+				console.error('InfluxDB is inactive. Log upload will not work.');
+				influxErrorShown = true;
+				throw err;
+			}
 		}
-	});
+	);
 };

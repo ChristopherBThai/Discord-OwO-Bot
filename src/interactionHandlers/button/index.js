@@ -3,13 +3,13 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const axios = require('axios');
 const requireDir = require('require-dir');
 const dir = requireDir('./');
 
 class InteractionHandler {
-	constructor (main) {
+	constructor(main) {
 		this.listeners = {};
 		let filename = __filename.slice(__dirname.length + 1, -3);
 		for (let listener in dir) {
@@ -19,7 +19,7 @@ class InteractionHandler {
 		}
 	}
 
-	emit (name, data) {
+	emit(name, data) {
 		if (this.listeners[name]) {
 			const url = `https://discord.com/api/v8/interactions/${data.id}/${data.token}/callback`;
 			const ack = () => {
@@ -30,6 +30,6 @@ class InteractionHandler {
 		}
 		return false;
 	}
-};
+}
 
 module.exports = InteractionHandler;

@@ -17,7 +17,7 @@
 		"bad-words": "^3.0.3",
 		"bufferutil": "^4.0.1",
 		"canvas": "^2.6.1",
-    	"common-tags": "^1.8.2",
+		"common-tags": "^1.8.2",
 		"dblapi.js": "^2.4.0",
 		"dd-trace": "^0.31.4",
 		"dotenv": "^10.0.0",

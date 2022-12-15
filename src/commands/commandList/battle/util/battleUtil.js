@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const request = require('request');
 const dateUtil = require('../../../../utils/dateUtil');
 const global = require('../../../../utils/global');
@@ -24,7 +24,7 @@ const weapon = '🗡';
 exports.weapon = weapon;
 const numEmojis = ['1⃣', '2⃣', '3⃣'];
 
-function teamFilter (userId) {
+function teamFilter(userId) {
 	return `SELECT pt2.pgid FROM user u2
 		INNER JOIN pet_team pt2
 			ON pt2.uid = u2.uid
@@ -36,14 +36,17 @@ function teamFilter (userId) {
 }
 
 let minPgid = 0;
-mysql.con.query(`SELECT pgid FROM pet_team ORDER BY pgid ASC LIMIT 1`, (err, result) => {
-	if (err) throw err;
-	minPgid = result[0]?.pgid || 0;
-});
+mysql.con.query(
+	`SELECT pgid FROM pet_team ORDER BY pgid ASC LIMIT 1`,
+	(err, result) => {
+		if (err) throw err;
+		minPgid = result[0]?.pgid || 0;
+	}
+);
 
 /* ==================================== Grabs battle from sql ====================================  */
 /* Grabs existing battle */
-const getBattle = exports.getBattle = async function(p, setting) {
+const getBattle = (exports.getBattle = async function (p, setting) {
 	/* And our team */
 	let sql = `SELECT pet_team_battle.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat,cphp,cpwp,cehp,cewp,pet_team.streak,pet_team.highest_streak
 		FROM pet_team
@@ -92,9 +95,17 @@ const getBattle = exports.getBattle = async function(p, setting) {
 		parseSqlStats(eTeam, result[1][0].cehp, result[1][0].cewp);
 		parseSqlBuffs(pTeam, result[2], eTeam);
 		parseSqlBuffs(eTeam, result[2], pTeam);
-	} catch(err) {
+	} catch (err) {
 		console.error(err);
-		await finishBattle(null, p, null, 6381923, 'An error occured', false, false);
+		await finishBattle(
+			null,
+			p,
+			null,
+			6381923,
+			'An error occured',
+			false,
+			false
+		);
 		return;
 	}
 
@@ -109,28 +120,31 @@ const getBattle = exports.getBattle = async function(p, setting) {
 		name: result[0][0].tname,
 		streak: result[0][0].streak,
 		highestStreak: result[0][0].highest_streak,
-		team: pTeam
+		team: pTeam,
 	};
 	let enemy = {
 		pgid: epgid,
-		name: (censor && result[1][0].ptcensor == 1) ? 'Censored' : result[1][0].tname,
-		team: eTeam
+		name:
+			censor && result[1][0].ptcensor == 1 ? 'Censored' : result[1][0].tname,
+		team: eTeam,
 	};
 	let teams = { player, enemy };
 	return teams;
-};
+});
 
 /* Creates a brand new battle */
-exports.initBattle = async function(p, setting) { 
+exports.initBattle = async function (p, setting) {
 	/* Find random opponent */
 	let sql = `SELECT pgid AS count FROM pet_team ORDER BY pgid DESC LIMIT 1;SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id}`;
 	let count = await p.query(sql);
 	let pgid = count[1][0];
 	if (!pgid) {
-		p.errorMsg(', You don\'t have a team! Set one with `owo team add {animal}`!');
+		p.errorMsg(
+			", You don't have a team! Set one with `owo team add {animal}`!"
+		);
 		return;
 	}
-	pgid = pgid.pgid
+	pgid = pgid.pgid;
 	count = count[0];
 	if (!count[0]) throw 'battleUtil sql is broken';
 	count = minPgid + Math.floor(Math.random() * (count[0].count - minPgid));
@@ -178,12 +192,13 @@ exports.initBattle = async function(p, setting) {
 		name: result[1][0].tname,
 		streak: result[1][0].streak,
 		highestStreak: result[1][0].highest_streak,
-		team: pTeam
+		team: pTeam,
 	};
 	let enemy = {
 		pgid: epgid,
-		name: (censor && result[0][0].ptcensor == 1) ? 'Censored' : result[0][0].tname,
-		team: eTeam
+		name:
+			censor && result[0][0].ptcensor == 1 ? 'Censored' : result[0][0].tname,
+		team: eTeam,
 	};
 	let teams = { player, enemy };
 
@@ -208,14 +223,20 @@ exports.initBattle = async function(p, setting) {
 /* ==================================== battle display methods ====================================  */
 
 /* Generates a display for the current battle (image mode)*/
-const display = exports.display = async function(p, team, logs, { display, title, showLogs, logLink }) {
+const display = (exports.display = async function (
+	p,
+	team,
+	logs,
+	{ display, title, showLogs, logLink }
+) {
 	if (display == 'text') {
 		return displayText(p, team, logs, { title, showLogs, logLink });
 	} else if (display == 'compact') {
 		return displayCompact(p, team, logs, { title, showLogs, logLink });
 	}
 	let image = await battleImageUtil.generateImage(team);
-	if (!image || image == '') return displayCompact(p, team, logs, { title, showLogs, logLink });
+	if (!image || image == '')
+		return displayCompact(p, team, logs, { title, showLogs, logLink });
 	let logtext = '';
 	let pTeam = '';
 	for (let i = 0; i < team.player.team.length; i++) {
@@ -260,39 +281,49 @@ const display = exports.display = async function(p, team, logs, { display, title
 		eTeam += '\n';
 	}
 	let embed = {
-		'color': p.config.embed_color,
-		'author': {
-			'name': title ? title : p.msg.author.username + ' goes into battle!',
-			'icon_url': p.msg.author.avatarURL
+		color: p.config.embed_color,
+		author: {
+			name: title ? title : p.msg.author.username + ' goes into battle!',
+			icon_url: p.msg.author.avatarURL,
 		},
-		'fields': [{
-			'name': team.player.name ? team.player.name : 'Player team',
-			'value': pTeam,
-			'inline': true
+		fields: [
+			{
+				name: team.player.name ? team.player.name : 'Player team',
+				value: pTeam,
+				inline: true,
+			},
+			{
+				name: team.enemy.name ? team.enemy.name : 'Enemy team',
+				value: eTeam,
+				inline: true,
+			},
+		],
+		image: {
+			url: `${GEN_HOST}/image/${image}`,
 		},
-		{
-			'name': team.enemy.name ? team.enemy.name : 'Enemy team',
-			'value': eTeam,
-			'inline': true
-		}],
-		'image': {
-			'url': `${GEN_HOST}/image/${image}`
-		}
 	};
 	if (logLink) embed.description = `[Log Link](${logLink}`;
 	else if (showLogs) embed.description = parseLogs(logs);
 	return { embed };
-};
+});
 
 /* displays the battle as text */
-const displayText = exports.displayText = async function(p, team, logs, { title, showLogs, logLink }) {
+const displayText = (exports.displayText = async function (
+	p,
+	team,
+	logs,
+	{ title, showLogs, logLink }
+) {
 	let logtext = '';
 	let pTeam = [];
 	for (let i = 0; i < team.player.team.length; i++) {
 		let player = team.player.team[i];
 		let text = '';
 		text += animalDisplayText(player);
-		logtext += '\n' + (player.animal.uni ? player.animal.uni : player.animal.value) + ' ';
+		logtext +=
+			'\n' +
+			(player.animal.uni ? player.animal.uni : player.animal.value) +
+			' ';
 		if (logs && logs.player && logs.player[i]) {
 			logtext += logs.player[i];
 		} else {
@@ -305,7 +336,8 @@ const displayText = exports.displayText = async function(p, team, logs, { title,
 		let enemy = team.enemy.team[i];
 		let text = '';
 		text += animalDisplayText(enemy);
-		logtext += '\n' + (enemy.animal.uni ? enemy.animal.uni : enemy.animal.value) + ' ';
+		logtext +=
+			'\n' + (enemy.animal.uni ? enemy.animal.uni : enemy.animal.value) + ' ';
 		if (logs && logs.enemy && logs.enemy[i]) {
 			logtext += logs.enemy[i];
 		} else {
@@ -314,51 +346,56 @@ const displayText = exports.displayText = async function(p, team, logs, { title,
 		eTeam.push(text);
 	}
 	let embed = {
-		'color': p.config.embed_color,
-		'author': {
-			'name': title ? title : p.msg.author.username + ' goes into battle!',
-			'icon_url': p.msg.author.avatarURL
+		color: p.config.embed_color,
+		author: {
+			name: title ? title : p.msg.author.username + ' goes into battle!',
+			icon_url: p.msg.author.avatarURL,
 		},
-		'fields': []
-	}
+		fields: [],
+	};
 	if (pTeam.join('\n').length >= 1020 || eTeam.join('\n').length >= 1020) {
 		for (let i in pTeam) {
 			if (pTeam[i]) {
 				embed.fields.push({
-					'name': team.player.name ? team.player.name : 'Player Team',
-					'value': pTeam[i],
-					'inline': true
+					name: team.player.name ? team.player.name : 'Player Team',
+					value: pTeam[i],
+					inline: true,
 				});
 			}
 		}
 		for (let i in pTeam) {
 			if (eTeam[i]) {
 				embed.fields.push({
-					'name': team.enemy.name ? team.enemy.name : 'Enemy Team',
-					'value': eTeam[i],
-					'inline': true
+					name: team.enemy.name ? team.enemy.name : 'Enemy Team',
+					value: eTeam[i],
+					inline: true,
 				});
-			} 
+			}
 		}
 	} else {
 		embed.fields.push({
-			'name': team.player.name ? team.player.name : 'Player Team',
-			'value': pTeam.join('\n'),
-			'inline': true
+			name: team.player.name ? team.player.name : 'Player Team',
+			value: pTeam.join('\n'),
+			inline: true,
 		});
 		embed.fields.push({
-			'name': team.enemy.name ? team.enemy.name : 'Enemy Team',
-			'value': eTeam.join('\n'),
-			'inline': true
+			name: team.enemy.name ? team.enemy.name : 'Enemy Team',
+			value: eTeam.join('\n'),
+			inline: true,
 		});
 	}
 	if (logLink) embed.description = `[Log Link](${logLink})`;
 	else if (showLogs) embed.description = parseLogs(logs);
 	return { embed };
-};
+});
 
 /* displays the battle as compact mode*/
-const displayCompact = exports.displayCompact= async function(p, team, logs, { title, showLogs, logLink }) {
+const displayCompact = (exports.displayCompact = async function (
+	p,
+	team,
+	logs,
+	{ title, showLogs, logLink }
+) {
 	let pTeam = [];
 	for (let i = 0; i < team.player.team.length; i++) {
 		let player = team.player.team[i];
@@ -374,48 +411,55 @@ const displayCompact = exports.displayCompact= async function(p, team, logs, { t
 		eTeam.push(text);
 	}
 	let embed = {
-		'color': p.config.embed_color,
-		'author': {
-			'name': `${title ? title : p.msg.author.username} goes into battle!`,
-			'icon_url': p.msg.author.avatarURL
+		color: p.config.embed_color,
+		author: {
+			name: `${title ? title : p.msg.author.username} goes into battle!`,
+			icon_url: p.msg.author.avatarURL,
 		},
-		'fields': []
+		fields: [],
 	};
 	if (pTeam.join('\n').length >= 1020 || eTeam.join('\n').length >= 1020) {
 		for (let i in pTeam) {
 			embed.fields.push({
-				'name': team.player.name ? team.player.name : 'Player Team',
-				'value': pTeam[i],
-				'inline': true
+				name: team.player.name ? team.player.name : 'Player Team',
+				value: pTeam[i],
+				inline: true,
 			});
 		}
 		for (let i in pTeam) {
 			embed.fields.push({
-				'name': team.enemy.name ? team.enemy.name : 'Enemy Team',
-				'value': eTeam[i],
-				'inline': true
+				name: team.enemy.name ? team.enemy.name : 'Enemy Team',
+				value: eTeam[i],
+				inline: true,
 			});
 		}
 	} else {
 		embed.fields.push({
-			'name': team.player.name ? team.player.name : 'Player Team',
-			'value': pTeam.join('\n'),
-			'inline': true
+			name: team.player.name ? team.player.name : 'Player Team',
+			value: pTeam.join('\n'),
+			inline: true,
 		});
 		embed.fields.push({
-			'name': team.enemy.name ? team.enemy.name : 'Enemy Team',
-			'value': eTeam.join('\n'),
-			'inline': true
+			name: team.enemy.name ? team.enemy.name : 'Enemy Team',
+			value: eTeam.join('\n'),
+			inline: true,
 		});
 	}
 	if (logLink) embed.description = `[Log Link](${logLink})`;
 	else if (showLogs) embed.description = parseLogs(logs);
 	return { embed };
-};
+});
 
 /* ==================================== battle execution ====================================  */
 /* Creates a reaction collector and executes the turn */
-const reactionCollector = exports.reactionCollector = async function(p, msg, battle, auto, actions, setting) {
+const reactionCollector = (exports.reactionCollector = async function (
+	p,
+	msg,
+	battle,
+	auto,
+	actions,
+	setting
+) {
 	/* Parse team and first animal choice */
 	let team = battle.player.team;
 	let current = 0;
@@ -425,17 +469,25 @@ const reactionCollector = exports.reactionCollector = async function(p, msg, bat
 	}
 	/* If all animals are dead end it. */
 	if (!team[current]) {
-		await finishBattle(msg, p, battle, 6381923, 'An error occured', false, false);
+		await finishBattle(
+			msg,
+			p,
+			battle,
+			6381923,
+			'An error occured',
+			false,
+			false
+		);
 		return;
 	}
 
 	/* If user input includes actions in args */
 	if (actions) {
 		if (typeof actions === 'object') {
-			setTimeout(async function() {
+			setTimeout(async function () {
 				try {
 					await executeBattle(p, msg, actions, setting);
-				} catch(err) {
+				} catch (err) {
 					console.error(err);
 				}
 			}, 3000);
@@ -444,14 +496,14 @@ const reactionCollector = exports.reactionCollector = async function(p, msg, bat
 			if (actions.length >= team.length) {
 				action = {};
 				for (let i = 0; i < actions.length; i++) {
-					if (actions[i]=='w') action[i] = weapon;
+					if (actions[i] == 'w') action[i] = weapon;
 					else action[i] = attack;
 				}
 				action.auto = true;
-				setTimeout(async function() {
-					try { 
+				setTimeout(async function () {
+					try {
 						await executeBattle(p, msg, action, setting);
-					} catch(err) {
+					} catch (err) {
 						console.error(err);
 					}
 				}, 2000);
@@ -470,10 +522,12 @@ const reactionCollector = exports.reactionCollector = async function(p, msg, bat
 	let emojiReaction = await msg.react(emoji);
 
 	/* Construct reaction collector */
-	let filter = (reaction,user) => (reaction.emoji.name === attack || reaction.emoji.name === weapon) && user.id === p.msg.author.id;
+	let filter = (reaction, user) =>
+		(reaction.emoji.name === attack || reaction.emoji.name === weapon) &&
+		user.id === p.msg.author.id;
 	let collector = msg.createReactionCollector(filter, { time: 20000 });
 	let action = {};
-	collector.on('collect', async function(r) {
+	collector.on('collect', async function (r) {
 		/* Save the animal's action */
 		if (r.emoji.name === attack) action[current] = attack;
 		else action[current] = weapon;
@@ -490,7 +544,7 @@ const reactionCollector = exports.reactionCollector = async function(p, msg, bat
 			try {
 				await collector.stop();
 				await executeBattle(p, msg, action, setting);
-			} catch(err) {
+			} catch (err) {
 				console.error(err);
 			}
 		} else {
@@ -499,8 +553,8 @@ const reactionCollector = exports.reactionCollector = async function(p, msg, bat
 			emojiReaction = await msg.react(emoji);
 		}
 	});
-	collector.on('end', collected => {});
-};
+	collector.on('end', (collected) => {});
+});
 
 /* Executes a whole battle sequence */
 async function executeBattle(p, msg, action, setting) {
@@ -517,7 +571,10 @@ async function executeBattle(p, msg, action, setting) {
 	preTurn(battle.player.team, battle.enemy.team, action);
 	preTurn(battle.enemy.team, battle.player.team, eaction);
 	/* Execute actions */
-	let pLogs = executeTurn(battle.player.team, battle.enemy.team, { ally: action, enemy: eaction });
+	let pLogs = executeTurn(battle.player.team, battle.enemy.team, {
+		ally: action,
+		enemy: eaction,
+	});
 	let eLogs = [];
 	let logs = { player: pLogs, enemy: eLogs };
 	/* Post turn */
@@ -532,17 +589,47 @@ async function executeBattle(p, msg, action, setting) {
 
 	/* tie */
 	if (enemyWin && playerWin) {
-		await finishBattle(msg, p, battle, 6381923, 'It\'s a tie!', playerWin, enemyWin, null, setting);
+		await finishBattle(
+			msg,
+			p,
+			battle,
+			6381923,
+			"It's a tie!",
+			playerWin,
+			enemyWin,
+			null,
+			setting
+		);
 
-	/* enemy wins */
+		/* enemy wins */
 	} else if (enemyWin) {
-		await finishBattle(msg, p, battle, 16711680, 'You lost!', playerWin, enemyWin, null, setting);
+		await finishBattle(
+			msg,
+			p,
+			battle,
+			16711680,
+			'You lost!',
+			playerWin,
+			enemyWin,
+			null,
+			setting
+		);
 
-	/* player wins */
+		/* player wins */
 	} else if (playerWin) {
-		await finishBattle(msg, p, battle, 65280, 'You won!', playerWin, enemyWin, null, setting);
+		await finishBattle(
+			msg,
+			p,
+			battle,
+			65280,
+			'You won!',
+			playerWin,
+			enemyWin,
+			null,
+			setting
+		);
 
-	/* continue battle */
+		/* continue battle */
 	} else {
 		/* Save current state */
 		let cpstats = initSqlSaveStats(battle.player.team);
@@ -563,18 +650,33 @@ async function executeBattle(p, msg, action, setting) {
 		sql += sqlBuffs;
 		let result = await p.query(sql);
 		if (result[0].changedRows == 0) {
-			await finishBattle(null, p, null, 6381923, 'An error occured', false, false);
+			await finishBattle(
+				null,
+				p,
+				null,
+				6381923,
+				'An error occured',
+				false,
+				false
+			);
 			await msg.edit('It seems like the enemy team ran away...');
 			return;
 		}
 		let embed = await display(p, battle, logs, setting);
 		await msg.edit(embed);
-		await reactionCollector(p, msg, battle, setting.auto, (setting.auto ? 'www' : undefined), setting);
+		await reactionCollector(
+			p,
+			msg,
+			battle,
+			setting.auto,
+			setting.auto ? 'www' : undefined,
+			setting
+		);
 	}
 }
 
 /* Calculates all the steps required to finish the battle in recursion */
-const calculateAll = exports.calculateAll = function(p, battle, logs = []) {
+const calculateAll = (exports.calculateAll = function (p, battle, logs = []) {
 	/* check if the battle is finished */
 	let enemyWin = teamUtil.isDead(battle.player.team);
 	let playerWin = teamUtil.isDead(battle.enemy.team);
@@ -588,7 +690,7 @@ const calculateAll = exports.calculateAll = function(p, battle, logs = []) {
 			color = 16711680;
 			text = `You lost in ${logs.length} turns!`;
 
-		/* player wins */
+			/* player wins */
 		} else if (playerWin && !enemyWin) {
 			color = 65280;
 			text = `You won in ${logs.length} turns!`;
@@ -601,7 +703,12 @@ const calculateAll = exports.calculateAll = function(p, battle, logs = []) {
 
 	/* Battle is way too long */
 	if (logs.length >= 20) {
-		logs.push({ enemy: true, player: true, color: 6381923, text: 'Battle was too long! It\'s a tie!' });
+		logs.push({
+			enemy: true,
+			player: true,
+			color: 6381923,
+			text: "Battle was too long! It's a tie!",
+		});
 		return logs;
 	}
 
@@ -613,15 +720,26 @@ const calculateAll = exports.calculateAll = function(p, battle, logs = []) {
 	/* Decide enemy actions */
 	let eaction = [weapon, weapon, weapon];
 	/* Pre turn */
-	battleLogs = battleLogs.concat(preTurn(battle.player.team, battle.enemy.team, [weapon, weapon, weapon]));
-	battleLogs = battleLogs.concat(preTurn(battle.enemy.team, battle.player.team, eaction));
+	battleLogs = battleLogs.concat(
+		preTurn(battle.player.team, battle.enemy.team, [weapon, weapon, weapon])
+	);
+	battleLogs = battleLogs.concat(
+		preTurn(battle.enemy.team, battle.player.team, eaction)
+	);
 	/* Execute actions */
-	battleLogs = battleLogs.concat(executeTurn(battle.player.team, battle.enemy.team, { 
-		ally: [weapon, weapon, weapon], enemy: eaction 
-	}));
+	battleLogs = battleLogs.concat(
+		executeTurn(battle.player.team, battle.enemy.team, {
+			ally: [weapon, weapon, weapon],
+			enemy: eaction,
+		})
+	);
 	/* Post turn */
-	battleLogs = battleLogs.concat(postTurn(battle.player.team, battle.enemy.team, [weapon, weapon, weapon]));
-	battleLogs = battleLogs.concat(postTurn(battle.enemy.team, battle.player.team, eaction));
+	battleLogs = battleLogs.concat(
+		postTurn(battle.player.team, battle.enemy.team, [weapon, weapon, weapon])
+	);
+	battleLogs = battleLogs.concat(
+		postTurn(battle.enemy.team, battle.player.team, eaction)
+	);
 	/* Remove marked buffs */
 	removeBuffs(battle.player.team, battle.enemy.team);
 
@@ -632,10 +750,10 @@ const calculateAll = exports.calculateAll = function(p, battle, logs = []) {
 
 	/* recursive call */
 	return calculateAll(p, battle, logs);
-};
+});
 
 /* Displays all the battle results according to setting */
-exports.displayAllBattles = async function(p, battle, logs, setting) {
+exports.displayAllBattles = async function (p, battle, logs, setting) {
 	let endResult = logs[logs.length - 1];
 	let logLink;
 	if (setting.showLogs == 'link') {
@@ -651,12 +769,28 @@ exports.displayAllBattles = async function(p, battle, logs, setting) {
 		}
 		if (setting.friendlyBattle) {
 			await finishFriendlyBattle(
-					null, p, battle, endResult.color, endResult.text, endResult.player, endResult.enemy, battleLogs, setting
-				).catch(console.error);
+				null,
+				p,
+				battle,
+				endResult.color,
+				endResult.text,
+				endResult.player,
+				endResult.enemy,
+				battleLogs,
+				setting
+			).catch(console.error);
 		} else {
 			await finishBattle(
-					null, p, battle, endResult.color, endResult.text, endResult.player, endResult.enemy, battleLogs, setting
-				);
+				null,
+				p,
+				battle,
+				endResult.color,
+				endResult.text,
+				endResult.player,
+				endResult.enemy,
+				battleLogs,
+				setting
+			);
 		}
 		return;
 	}
@@ -667,7 +801,17 @@ exports.displayAllBattles = async function(p, battle, logs, setting) {
 	/* we should distribute the rewards first */
 	setting.noMsg = true;
 	if (!setting.friendlyBattle) {
-		await finishBattle(null, p, battle, endResult.color, endResult.text, endResult.player, endResult.enemy, null, setting);
+		await finishBattle(
+			null,
+			p,
+			battle,
+			endResult.color,
+			endResult.text,
+			endResult.player,
+			endResult.enemy,
+			null,
+			setting
+		);
 	}
 	setting.noMsg = false;
 	setting.noReward = true;
@@ -691,14 +835,14 @@ exports.displayAllBattles = async function(p, battle, logs, setting) {
 	updateTeamStats(battle.enemy.team, 100);
 	updatePreviousStats(battle);
 	let embed = await display(p, battle, undefined, setting);
-	embed.embed.footer = { 'text': 'Turn 0/' + (logs.length - 1) };
+	embed.embed.footer = { text: 'Turn 0/' + (logs.length - 1) };
 	embed.embed = await alterBattle.alter(p, p.msg.author, embed.embed);
 	let msg = await p.send(embed);
 
 	/* Update the message for each log in log timeline */
 	const gap = 2000;
 	let i = 0;
-	let msgEdit = async function() {
+	let msgEdit = async function () {
 		let currentLog = logs[logTimeline[i]];
 		let player = currentLog.player;
 		let enemy = currentLog.enemy;
@@ -707,16 +851,34 @@ exports.displayAllBattles = async function(p, battle, logs, setting) {
 		if (i == logTimeline.length - 1) {
 			if (setting.friendlyBattle) {
 				await finishFriendlyBattle(
-					msg, p, battle, endResult.color, endResult.text, endResult.player, endResult.enemy, null, setting
+					msg,
+					p,
+					battle,
+					endResult.color,
+					endResult.text,
+					endResult.player,
+					endResult.enemy,
+					null,
+					setting
 				).catch(console.error);
 			} else {
 				await finishBattle(
-					msg, p, battle, endResult.color, endResult.text, endResult.player, endResult.enemy, null, setting
+					msg,
+					p,
+					battle,
+					endResult.color,
+					endResult.text,
+					endResult.player,
+					endResult.enemy,
+					null,
+					setting
 				).catch(console.error);
 			}
 		} else {
 			let embed = await display(p, battle, undefined, setting);
-			embed.embed.footer = { 'text': 'Turn ' + (logTimeline[i] + 1) + '/' + (logs.length - 1) };
+			embed.embed.footer = {
+				text: 'Turn ' + (logTimeline[i] + 1) + '/' + (logs.length - 1),
+			};
 			await msg.edit(embed);
 			i++;
 			setTimeout(msgEdit, gap);
@@ -767,7 +929,11 @@ function initSqlSaveBuffs(team) {
 			);
 		}
 	}
-	return result.length == 0 ? '' : `INSERT INTO pet_team_battle_buff (pgid,pid,bfid,duration,qualities,pfrom) VALUES ${result.join(",")} ON DUPLICATE KEY UPDATE duration=VALUES(duration),qualities=VALUES(qualities);`;
+	return result.length == 0
+		? ''
+		: `INSERT INTO pet_team_battle_buff (pgid,pid,bfid,duration,qualities,pfrom) VALUES ${result.join(
+				','
+		  )} ON DUPLICATE KEY UPDATE duration=VALUES(duration),qualities=VALUES(qualities);`;
 }
 
 /* Parses string from sql */
@@ -790,7 +956,7 @@ function parseSqlBuffs(team, buffs, otherTeam) {
 			if (buffs[j].pid == animal.pid) {
 				let buff = allBuffs[buffs[j].bfid];
 				if (buff) {
-					let qualities = buffs[j].qualities.split(',').map(x => parseInt(x));
+					let qualities = buffs[j].qualities.split(',').map((x) => parseInt(x));
 					if (!buffs[j].qualities || buffs[j].qualities == '') qualities = [];
 					owner = null;
 					for (let k in team) {
@@ -813,22 +979,27 @@ function parseSqlBuffs(team, buffs, otherTeam) {
 function preTurn(team, enemy, action) {
 	let logs = [];
 	for (let i in team) {
-		let animal= team[i];
-		check = WeaponInterface.canAttack(animal,team,enemy,action);
+		let animal = team[i];
+		check = WeaponInterface.canAttack(animal, team, enemy, action);
 		animal.disabled = check;
 		for (let j in animal.buffs) {
 			let log = animal.buffs[j].preTurn(animal, team, enemy, action[i]);
-			if(log) logs = logs.concat(log.logs);
+			if (log) logs = logs.concat(log.logs);
 		}
 		for (let j in animal.debuffs) {
 			let log = animal.debuffs[j].preTurn(animal, team, enemy, action[i]);
-			if(log) logs = logs.concat(log.logs);
+			if (log) logs = logs.concat(log.logs);
 		}
 		if (animal.weapon) {
 			let log = animal.weapon.preTurn(animal, team, enemy, action[i]);
 			if (log) logs = logs.concat(log.logs);
 			for (let j in animal.weapon.passives) {
-				let log2 = animal.weapon.passives[j].preTurn(animal, team, enemy, action[i]);
+				let log2 = animal.weapon.passives[j].preTurn(
+					animal,
+					team,
+					enemy,
+					action[i]
+				);
 				if (log2) logs = logs.concat(log2.logs);
 			}
 		}
@@ -863,16 +1034,17 @@ function executeTurn(team, enemy, action) {
 		if (animal) {
 			// Animal is not allowed to attack
 			if (animal.disabled && !animal.disabled.canAttack) {
-				if (animal.disabled.logs && animal.disabled.logs.logs.length > 0) { 
+				if (animal.disabled.logs && animal.disabled.logs.logs.length > 0) {
 					logs = logs.concat(animal.disabled.logs.logs);
 				}
 
-			// Animal has a weapon
+				// Animal has a weapon
 			} else if (animal.weapon) {
-				if (tempAction == weapon) log = animal.weapon.attackWeapon(animal, tempAlly, tempEnemy);
+				if (tempAction == weapon)
+					log = animal.weapon.attackWeapon(animal, tempAlly, tempEnemy);
 				else log = animal.weapon.attackPhysical(animal, tempAlly, tempEnemy);
 
-			// Animal has no weapon
+				// Animal has no weapon
 			} else {
 				log = WeaponInterface.basicAttack(animal, tempAlly, tempEnemy);
 			}
@@ -885,26 +1057,31 @@ function executeTurn(team, enemy, action) {
 }
 
 /* Do stuff after the turn ends (usually for buffs) */
-function postTurn(team,enemy,action){
+function postTurn(team, enemy, action) {
 	let logs = [];
-	for(let i in team){
-		let animal= team[i];
+	for (let i in team) {
+		let animal = team[i];
 		let j = animal.buffs.length;
-		while(j--){
-			let log = animal.buffs[j].postTurn(animal,team,enemy,action[i]);
-			if(log) logs = logs.concat(log.logs);
+		while (j--) {
+			let log = animal.buffs[j].postTurn(animal, team, enemy, action[i]);
+			if (log) logs = logs.concat(log.logs);
 		}
 		j = animal.debuffs.length;
-		while(j--){
-			let log = animal.debuffs[j].postTurn(animal,team,enemy,action[i]);
-			if(log) logs = logs.concat(log.logs);
+		while (j--) {
+			let log = animal.debuffs[j].postTurn(animal, team, enemy, action[i]);
+			if (log) logs = logs.concat(log.logs);
 		}
-		if(animal.weapon){
-			let log = animal.weapon.postTurn(animal,team,enemy,action[i]);
-			if(log) logs = logs.concat(log.logs);
-			for(let j in animal.weapon.passives){
-				let log2 = animal.weapon.passives[j].postTurn(animal,team,enemy,action[i]);
-				if(log2) logs = logs.concat(log2.logs);
+		if (animal.weapon) {
+			let log = animal.weapon.postTurn(animal, team, enemy, action[i]);
+			if (log) logs = logs.concat(log.logs);
+			for (let j in animal.weapon.passives) {
+				let log2 = animal.weapon.passives[j].postTurn(
+					animal,
+					team,
+					enemy,
+					action[i]
+				);
+				if (log2) logs = logs.concat(log2.logs);
 			}
 		}
 	}
@@ -915,7 +1092,7 @@ function postTurn(team,enemy,action){
 /* strip buffs after turn fully processed */
 function removeBuffs(team, enemy) {
 	for (let i in team) {
-		let animal= team[i];
+		let animal = team[i];
 		let j = animal.buffs.length;
 		while (j--) {
 			if (animal.buffs[j].markedForDeath) {
@@ -930,7 +1107,7 @@ function removeBuffs(team, enemy) {
 		}
 	}
 	for (let i in enemy) {
-		let animal= enemy[i];
+		let animal = enemy[i];
 		let j = animal.buffs.length;
 		while (j--) {
 			if (animal.buffs[j].markedForDeath) {
@@ -947,28 +1124,51 @@ function removeBuffs(team, enemy) {
 }
 
 /* finish battle */
-async function finishBattle(msg, p, battle, color, text, playerWin, enemyWin, logs, setting) {
+async function finishBattle(
+	msg,
+	p,
+	battle,
+	color,
+	text,
+	playerWin,
+	enemyWin,
+	logs,
+	setting
+) {
 	/* Check if the battle is still active and if the player should receive rewards */
 	let sql = '';
-	if (!battle) sql = `UPDATE pet_team_battle SET active = 0 WHERE active = 1 and pgid = (${teamFilter(p.msg.author.id)});`;
-	else if (!setting.instant) sql = `UPDATE pet_team_battle SET active = 0 WHERE active = 1 and pgid = ${battle.player.pgid};`;
-	sql +=  `SELECT * FROM user INNER JOIN crate ON user.uid = crate.uid WHERE id = ${p.msg.author.id};`;
-	sql += `DELETE FROM pet_team_battle_buff WHERE pgid = (${teamFilter(p.msg.author.id)});`;
+	if (!battle)
+		sql = `UPDATE pet_team_battle SET active = 0 WHERE active = 1 and pgid = (${teamFilter(
+			p.msg.author.id
+		)});`;
+	else if (!setting.instant)
+		sql = `UPDATE pet_team_battle SET active = 0 WHERE active = 1 and pgid = ${battle.player.pgid};`;
+	sql += `SELECT * FROM user INNER JOIN crate ON user.uid = crate.uid WHERE id = ${p.msg.author.id};`;
+	sql += `DELETE FROM pet_team_battle_buff WHERE pgid = (${teamFilter(
+		p.msg.author.id
+	)});`;
 	let result = await p.query(sql);
 	if ((!setting || !setting.instant) && result[0].changedRows == 0) return;
 	let crate = undefined;
 	/* Calculate and distribute xp */
 	let pXP, eXP;
 	if (battle && (!setting || !setting.noReward || !setting.noMsg)) {
-		pXP = calculateXP({ team: battle.player, win: playerWin }, { team: battle.enemy, win: enemyWin }, battle.player.streak);
-		eXP = calculateXP({ team: battle.enemy, win: enemyWin }, { team: battle.player, win: playerWin });
+		pXP = calculateXP(
+			{ team: battle.player, win: playerWin },
+			{ team: battle.enemy, win: enemyWin },
+			battle.player.streak
+		);
+		eXP = calculateXP(
+			{ team: battle.enemy, win: enemyWin },
+			{ team: battle.player, win: playerWin }
+		);
 	}
 
 	/* Don't distribute reward if it says not to */
-	if (!setting|| !setting.noReward) {
+	if (!setting || !setting.noReward) {
 		/* Decide if user receives a crate */
-		let crateQuery = (setting && setting.instant) ? result[0][0] : result[1][0];
-		crate = dateUtil.afterMidnight((crateQuery) ? crateQuery.claim : undefined);
+		let crateQuery = setting && setting.instant ? result[0][0] : result[1][0];
+		crate = dateUtil.afterMidnight(crateQuery ? crateQuery.claim : undefined);
 		if (!crateQuery || crateQuery.claimcount < 3 || crate.after) {
 			crate = crateUtil.crateFromBattle(p, crateQuery, crate);
 			if (crate.sql) await p.query(crate.sql);
@@ -995,9 +1195,11 @@ async function finishBattle(msg, p, battle, color, text, playerWin, enemyWin, lo
 			if (pXP.resetStreak) {
 				text += `! You lost your streak of ${battle.player.streak} wins...`;
 				opt.streak = battle.player.streak;
-			} else if(pXP.addStreak) {
+			} else if (pXP.addStreak) {
 				if (pXP.bonus) {
-					text += ` + ${pXP.bonus} bonus xp! Streak: ${battle.player.streak + 1}`;
+					text += ` + ${pXP.bonus} bonus xp! Streak: ${
+						battle.player.streak + 1
+					}`;
 					opt.xp += ` + ${pXP.bonus}`;
 				} else {
 					text += `! Streak: ${battle.player.streak + 1}`;
@@ -1021,7 +1223,17 @@ async function finishBattle(msg, p, battle, color, text, playerWin, enemyWin, lo
 }
 
 /* finish friendly battle */
-async function finishFriendlyBattle(msg, p, battle, color, text, playerWin, enemyWin, logs, setting) {
+async function finishFriendlyBattle(
+	msg,
+	p,
+	battle,
+	color,
+	text,
+	playerWin,
+	enemyWin,
+	logs,
+	setting
+) {
 	/* Send result message */
 	let embed = await display(p, battle, logs, setting);
 	embed.embed.color = color;
@@ -1032,18 +1244,18 @@ async function finishFriendlyBattle(msg, p, battle, color, text, playerWin, enem
 }
 
 /* Calculate xp depending on win/loss/tie */
-function calculateXP(team,enemy,currentStreak=0){
+function calculateXP(team, enemy, currentStreak = 0) {
 	/* Find the avg level diff for xp multipliers */
 	let playeravg = 0;
-	for(let i in team.team.team) playeravg += team.team.team[i].stats.lvl;
+	for (let i in team.team.team) playeravg += team.team.team[i].stats.lvl;
 	playeravg /= team.team.team.length;
 
 	let enemyavg = 0;
-	for(let i in enemy.team.team) enemyavg += enemy.team.team[i].stats.lvl;
+	for (let i in enemy.team.team) enemyavg += enemy.team.team[i].stats.lvl;
 	enemyavg /= enemy.team.team.length;
 
 	let lvlDiff = enemyavg - playeravg;
-	if(lvlDiff<0) lvlDiff = 0;
+	if (lvlDiff < 0) lvlDiff = 0;
 
 	/* Calculate xp and streak */
 	/* lose */
@@ -1056,7 +1268,7 @@ function calculateXP(team,enemy,currentStreak=0){
 		resetStreak = false;
 		addStreak = false;
 		xp = 100;
-	/* win */
+		/* win */
 	} else if (team.win) {
 		resetStreak = false;
 		addStreak = true;
@@ -1073,8 +1285,10 @@ function calculateXP(team,enemy,currentStreak=0){
 function bonusXP(streak) {
 	let bonus = 0;
 	if (streak % 1000 === 0) bonus = 25 * (Math.sqrt(streak / 100) * 100 + 500);
-	else if (streak % 500 === 0) bonus = 10 * (Math.sqrt(streak / 100) * 100 + 500);
-	else if (streak % 100 === 0) bonus = 5 * (Math.sqrt(streak / 100) * 100 + 500);
+	else if (streak % 500 === 0)
+		bonus = 10 * (Math.sqrt(streak / 100) * 100 + 500);
+	else if (streak % 100 === 0)
+		bonus = 5 * (Math.sqrt(streak / 100) * 100 + 500);
 	else if (streak % 50 === 0) bonus = 3 * (Math.sqrt(streak / 100) * 100 + 500);
 	else if (streak % 10 === 0) bonus = Math.sqrt(streak / 100) * 100 + 500;
 	else bonus = 0;
@@ -1096,9 +1310,11 @@ for (let i = 35000; i <= 40000; i += 10) {
 */
 
 /* Returns if the player is in battle or not */
-exports.inBattle = async function(p) {
-	let sql = `SELECT pgid FROM pet_team_battle WHERE pgid = (${teamFilter(p.msg.author.id)}) AND active = 1;`;
-	return ((await p.query(sql))[0]);
+exports.inBattle = async function (p) {
+	let sql = `SELECT pgid FROM pet_team_battle WHERE pgid = (${teamFilter(
+		p.msg.author.id
+	)}) AND active = 1;`;
+	return (await p.query(sql))[0];
 };
 
 /* converts animal info to readable string */
@@ -1167,8 +1383,10 @@ function updateTeamStats(team, stats) {
 	if (Number.isFinite(stats)) percent = stats / 100;
 	for (let i = 0; i < team.length; i++) {
 		if (percent) {
-			team[i].stats.hp[0] = (team[i].stats.hp[1] + team[i].stats.hp[3]) * percent;
-			team[i].stats.wp[0] = (team[i].stats.wp[1] + team[i].stats.wp[3]) * percent;
+			team[i].stats.hp[0] =
+				(team[i].stats.hp[1] + team[i].stats.hp[3]) * percent;
+			team[i].stats.wp[0] =
+				(team[i].stats.wp[1] + team[i].stats.wp[3]) * percent;
 			team[i].buffs = [];
 		} else {
 			team[i].stats.hp = stats[i].hp;
@@ -1187,7 +1405,7 @@ function saveStates(battle) {
 			info,
 			hp: battle.player.team[i].stats.hp.slice(),
 			wp: battle.player.team[i].stats.wp.slice(),
-			buffs: []
+			buffs: [],
 		};
 		for (let j in battle.player.team[i].buffs) {
 			result.buffs.push({ emoji: battle.player.team[i].buffs[j].emoji });
@@ -1201,7 +1419,7 @@ function saveStates(battle) {
 			info,
 			hp: battle.enemy.team[i].stats.hp.slice(),
 			wp: battle.enemy.team[i].stats.wp.slice(),
-			buffs: []
+			buffs: [],
 		};
 		for (let j in battle.enemy.team[i].buffs) {
 			result.buffs.push({ emoji: battle.enemy.team[i].buffs[j].emoji });
@@ -1218,7 +1436,7 @@ function parseAnimalInfo(animal) {
 }
 
 /* Updates the previous hp/wp */
-function updatePreviousStats(battle){
+function updatePreviousStats(battle) {
 	for (let i in battle.player.team) {
 		battle.player.team[i].stats.hp[2] = battle.player.team[i].stats.hp[0];
 		battle.player.team[i].stats.wp[2] = battle.player.team[i].stats.wp[0];
@@ -1234,15 +1452,15 @@ function parseLogs(logs) {
 	let text = '```ini\n';
 	let over = false;
 	for (let i in logs) {
-			for (let j in logs[i]) {
-				if (text.length < 1950) {
-					text += logs[i][j] + '\n';
-				} else if (!over) {
-					text += '\n; Log is too long...';
-					over = true;
-				}
+		for (let j in logs[i]) {
+			if (text.length < 1950) {
+				text += logs[i][j] + '\n';
+			} else if (!over) {
+				text += '\n; Log is too long...';
+				over = true;
 			}
-			text += '\n';
+		}
+		text += '\n';
 	}
 	text += '```';
 	return text;
@@ -1253,21 +1471,24 @@ async function createLogUUID(logs) {
 	let info = { logs, password: GEN_PASS };
 	try {
 		return new Promise((resolve, reject) => {
-			let req = request({
-				method: 'POST',
-				uri: `${GEN_API_HOST}/savelog`,
-				json: true,
-				body: info
-			}, (error, res, body) => {
-				if (error) {
-					resolve('');
-					return;
+			let req = request(
+				{
+					method: 'POST',
+					uri: `${GEN_API_HOST}/savelog`,
+					json: true,
+					body: info,
+				},
+				(error, res, body) => {
+					if (error) {
+						resolve('');
+						return;
+					}
+					if (res.statusCode == 200) resolve(body);
+					else resolve('');
 				}
-				if (res.statusCode == 200) resolve(body);
-				else resolve('');
-			});
+			);
 		});
 	} catch (err) {
 		return;
 	}
-};
+}

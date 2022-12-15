@@ -3,7 +3,7 @@
  * Copyright (C) 2019 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
+ */
 
 const blank = '<:blank:427371936482328596>';
 const gems = require('../../../data/gems.json').gems;
@@ -11,14 +11,14 @@ const emojis = {
 	box: '<:box:427352600476647425>',
 	crate: '<:crate:523771259302182922>',
 	wallpaper: '🖼️',
-	photo: '🖼'
-}
+	photo: '🖼',
+};
 for (let i in gems) {
 	emojis[i] = gems[i].emoji;
 }
 
-exports.alter = function(p, text, info) {
-	switch(p.msg.author.id){
+exports.alter = function (p, text, info) {
+	switch (p.msg.author.id) {
 		case '658299153042112512':
 			return grace(text);
 		case '456598711590715403':
@@ -34,7 +34,7 @@ exports.alter = function(p, text, info) {
 		default:
 			return text;
 	}
-}
+};
 
 function grace(text) {
 	let newEmojis = {
@@ -65,73 +65,72 @@ function grace(text) {
 		box: '<:Lootbox:691662873574768711>',
 		crate: '<:WeaponCrate:691662214070796328>',
 		wallpaper: '<:Background:686845466582974470>',
-		photo: '<:photo:792918613194440724>'
-	}
+		photo: '<:photo:792918613194440724>',
+	};
 	for (let i in newEmojis) {
 		text = text.replace(emojis[i], newEmojis[i]);
 	}
 	text = text.split('\n');
-	text[0] = '𝔊𝔯𝔞𝔠𝔢\'𝔰 𝔇𝔦𝔤𝔦 𝔖𝔲𝔭𝔭𝔩𝔦𝔢𝔰';
+	text[0] = "𝔊𝔯𝔞𝔠𝔢'𝔰 𝔇𝔦𝔤𝔦 𝔖𝔲𝔭𝔭𝔩𝔦𝔢𝔰";
 	text = text.join('\n');
 
 	return text;
 }
 
-function lexx (p, info) {
+function lexx(p, info) {
 	const embed = {
 		color: p.config.embed_color,
-		description: `**${info.user.username}'s inv of Rings, Tickets, Gems & Weapons**\n${info.inv}`
-	}
-	return { embed }
+		description: `**${info.user.username}'s inv of Rings, Tickets, Gems & Weapons**\n${info.inv}`,
+	};
+	return { embed };
 }
 
-function lIlIIIll (p, info) {
+function lIlIIIll(p, info) {
 	const embed = {
 		color: 1,
 		image: {
-			url: "https://cdn.discordapp.com/attachments/787404412335161354/889274811908513842/output-onlinegiftools_34.gif"
+			url: 'https://cdn.discordapp.com/attachments/787404412335161354/889274811908513842/output-onlinegiftools_34.gif',
 		},
-		description: `**====== ${info.user.username}'s Inventory ======**\n${info.inv}`
-	}
-	return { embed }
+		description: `**====== ${info.user.username}'s Inventory ======**\n${info.inv}`,
+	};
+	return { embed };
 }
 
-function estee (p, info) {
+function estee(p, info) {
 	const embed = {
 		color: p.config.embed_color,
 		author: {
-			name: "꧁•⊹٭𝙴𝚜𝚝𝚎𝚎'𝚜 𝚂𝚎𝚌𝚛𝚎𝚝 𝚃𝚛𝚎𝚊𝚜𝚞𝚛𝚎𝚜٭⊹•꧂"
+			name: "꧁•⊹٭𝙴𝚜𝚝𝚎𝚎'𝚜 𝚂𝚎𝚌𝚛𝚎𝚝 𝚃𝚛𝚎𝚊𝚜𝚞𝚛𝚎𝚜٭⊹•꧂",
 		},
 		image: {
-			url: "https://i.imgur.com/eK7F8Gv.gif"
+			url: 'https://i.imgur.com/eK7F8Gv.gif',
 		},
-		description: info.inv
-	}
-	return { embed }
+		description: info.inv,
+	};
+	return { embed };
 }
 
-function rosie (p, info) {
-	
+function rosie(p, info) {
 	const embed = {
 		color: 1,
 		author: {
-			name: "❀ 𝐑𝐨𝐬𝐢𝐞𝐬 𝐅𝐥𝐨𝐰𝐞𝐫 𝐈𝐧𝐯𝐞𝐧𝐭𝐨𝐫𝐲 ❀"
+			name: '❀ 𝐑𝐨𝐬𝐢𝐞𝐬 𝐅𝐥𝐨𝐰𝐞𝐫 𝐈𝐧𝐯𝐞𝐧𝐭𝐨𝐫𝐲 ❀',
 		},
 		image: {
-			url: "https://cdn.discordapp.com/attachments/915122067865751562/976038270255378512/3A85D5FA-B90D-40B5-AB5F-C7EEBCDCB4C1.gif"
+			url: 'https://cdn.discordapp.com/attachments/915122067865751562/976038270255378512/3A85D5FA-B90D-40B5-AB5F-C7EEBCDCB4C1.gif',
 		},
-		description: info.inv
-	}
-	return { embed }
+		description: info.inv,
+	};
+	return { embed };
 }
 
-function dadada (p, info) {
+function dadada(p, info) {
 	const embed = {
 		color: 1,
 		image: {
-			url: "https://cdn.discordapp.com/attachments/961392039482753064/1004148773582295070/DA43901A-C66C-460A-AC6F-9DF885F253AB.gif"
+			url: 'https://cdn.discordapp.com/attachments/961392039482753064/1004148773582295070/DA43901A-C66C-460A-AC6F-9DF885F253AB.gif',
 		},
-		description: `**<a:heart:1016125455511851068> 𝔻𝕒𝕕𝕒’𝕤 𝕚𝕟𝕧𝕖𝕟𝕥𝕠𝕣𝕪 <a:heart:1016125455511851068>**\n${info.inv}`
-	}
-	return { embed }
+		description: `**<a:heart:1016125455511851068> 𝔻𝕒𝕕𝕒’𝕤 𝕚𝕟𝕧𝕖𝕟𝕥𝕠𝕣𝕪 <a:heart:1016125455511851068>**\n${info.inv}`,
+	};
+	return { embed };
 }

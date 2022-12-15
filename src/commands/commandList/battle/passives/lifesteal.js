@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const PassiveInterface = require('../PassiveInterface');
 const WeaponInterface = require('../WeaponInterface');
 const Log = require('../util/logUtil');
@@ -22,9 +22,10 @@ module.exports = class Lifesteal extends PassiveInterface {
 			'<:elifesteal:548729398644178944>',
 			'<:mlifesteal:548729400078893057>',
 			'<:llifesteal:548729400447729664>',
-			'<:flifesteal:548729400473026560>'
+			'<:flifesteal:548729400473026560>',
 		];
-		this.statDesc = 'All damage you deal heals you for **?%** of the damage dealt!';
+		this.statDesc =
+			'All damage you deal heals you for **?%** of the damage dealt!';
 		this.qualityList = [[15, 35]];
 	}
 
@@ -32,9 +33,15 @@ module.exports = class Lifesteal extends PassiveInterface {
 		if (tags.lifesteal || tags.kamikaze || animal.stats.hp[0] <= 0) return;
 		let logs = new Log();
 		let totalDamage = damage.reduce((a, b) => a + b, 0);
-		let heal = totalDamage*this.stats[0] / 100;
-		heal = WeaponInterface.heal(animal, heal, animal, { ...tags, lifesteal: true });
-		logs.push(`[LIFESTEAL] ${animal.nickname} heals for ${heal.amount} HP`, heal.logs);
+		let heal = (totalDamage * this.stats[0]) / 100;
+		heal = WeaponInterface.heal(animal, heal, animal, {
+			...tags,
+			lifesteal: true,
+		});
+		logs.push(
+			`[LIFESTEAL] ${animal.nickname} heals for ${heal.amount} HP`,
+			heal.logs
+		);
 		return logs;
 	}
 };

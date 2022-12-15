@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const CommandInterface = require('../../CommandInterface');
 
 module.exports = new CommandInterface({
@@ -18,7 +18,7 @@ module.exports = new CommandInterface({
 	half: 80,
 	six: 500,
 
-	execute: async function(p) {
+	execute: async function (p) {
 		const author = p.opt?.author || p.msg.author;
 		let sql = `SELECT u1.id as user1,u2.id as user2 FROM user_battle
 				LEFT JOIN user u1 ON user_battle.user1 = u1.uid
@@ -45,6 +45,9 @@ module.exports = new CommandInterface({
 		else user = user.user1;
 		user = await p.fetch.getUser(user);
 		if (!user) user = 'an opponent';
-		p.replyMsg('⚔', `, You have declined your battle with **${user.username}**`);
-	}
+		p.replyMsg(
+			'⚔',
+			`, You have declined your battle with **${user.username}**`
+		);
+	},
 });

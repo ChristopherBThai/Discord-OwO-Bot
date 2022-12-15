@@ -3,9 +3,14 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const CommandInterface = require('../../CommandInterface');
-const dateOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+const dateOptions = {
+	weekday: 'short',
+	year: 'numeric',
+	month: 'short',
+	day: 'numeric',
+};
 const perPage = 20;
 const nextPageEmoji = '➡';
 const prevPageEmoji = '⬅';
@@ -17,7 +22,7 @@ module.exports = new CommandInterface({
 	admin: true,
 	manager: true,
 
-	execute: function(p) {
+	execute: function (p) {
 		if (p.args[0] == 'to') {
 			transactionTo(p);
 		} else if (p.args[0] == 'from') {
@@ -27,7 +32,7 @@ module.exports = new CommandInterface({
 		} else {
 			p.errorMsg(', Invalid syntax!');
 		}
-	}
+	},
 });
 
 async function transactionTo(p) {
@@ -46,7 +51,7 @@ async function transactionFrom(p) {
 		p.errorMsg(', invalid id');
 		return;
 	}
-	let query = `sender = ${id}`
+	let query = `sender = ${id}`;
 	displayTransactions(p, id, query);
 }
 
@@ -76,9 +81,14 @@ async function displayTransactions(p, id, query) {
 	let msg = await p.send(embed);
 	await msg.addReaction(prevPageEmoji);
 	await msg.addReaction(nextPageEmoji);
-	let filter = (emoji,userID) => [nextPageEmoji, prevPageEmoji].includes(emoji.name) && userID == p.msg.author.id;
-	let collector = p.reactionCollector.create(msg, filter, { time: 900000, idle: 120000 });
-	collector.on('collect', async function(emoji) {
+	let filter = (emoji, userID) =>
+		[nextPageEmoji, prevPageEmoji].includes(emoji.name) &&
+		userID == p.msg.author.id;
+	let collector = p.reactionCollector.create(msg, filter, {
+		time: 900000,
+		idle: 120000,
+	});
+	collector.on('collect', async function (emoji) {
 		if (emoji.name == nextPageEmoji) {
 			if (page + 1 < maxPage) page++;
 			else page = 0;
@@ -91,40 +101,51 @@ async function displayTransactions(p, id, query) {
 			msg.edit(embed);
 		}
 	});
-	collector.on('end', async function(collected) {
+	collector.on('end', async function (collected) {
 		embed.embed.color = 6381923;
-		await msg.edit({ content: 'This message is now inactive', embed: embed.embed });
+		await msg.edit({
+			content: 'This message is now inactive',
+			embed: embed.embed,
+		});
 	});
 }
 
 async function getPage(p, user, page, maxPage) {
 	let desc = '';
-	let sql = `SELECT * FROM transaction WHERE ${user.query} ORDER BY tid DESC LIMIT ${perPage} OFFSET ${page * perPage};`;
+	let sql = `SELECT * FROM transaction WHERE ${
+		user.query
+	} ORDER BY tid DESC LIMIT ${perPage} OFFSET ${page * perPage};`;
 	let result = await p.query(sql);
 	for (let i in result) {
 		let row = result[i];
 		if (row.sender == user.id) {
-			desc += `__**\`${row.sender}\`**__ \`-> ${row.reciever} | ${toDate(row.time)} | ${p.global.toFancyNum(row.amount)}\`\n`;
+			desc += `__**\`${row.sender}\`**__ \`-> ${row.reciever} | ${toDate(
+				row.time
+			)} | ${p.global.toFancyNum(row.amount)}\`\n`;
 		} else if (row.reciever == user.id) {
-			desc += `\`${row.sender} ->\` __**\`${row.reciever}\`**__ \`| ${toDate(row.time)} | ${p.global.toFancyNum(row.amount)}\`\n`;
+			desc += `\`${row.sender} ->\` __**\`${row.reciever}\`**__ \`| ${toDate(
+				row.time
+			)} | ${p.global.toFancyNum(row.amount)}\`\n`;
 		} else {
-			desc += `\`${row.sender} -> ${row.reciever} | ${toDate(row.time)} | ${p.global.toFancyNum(row.amount)}\`\n`;
+			desc += `\`${row.sender} -> ${row.reciever} | ${toDate(
+				row.time
+			)} | ${p.global.toFancyNum(row.amount)}\`\n`;
 		}
 	}
 	let embed = {
-		'author': {
-			'name': `Transactions for ${user.username}`,
-			'icon_url': user.avatar
+		author: {
+			name: `Transactions for ${user.username}`,
+			icon_url: user.avatar,
 		},
-		'description': desc,
-		'color': p.config.embed_color,
-		'footer': {
-			'text': `Page ${page + 1}/${maxPage}`
-		}
+		description: desc,
+		color: p.config.embed_color,
+		footer: {
+			text: `Page ${page + 1}/${maxPage}`,
+		},
 	};
 	return { embed };
 }
 
 function toDate(date) {
-	return (new Date(date)).toLocaleDateString('default', dateOptions);
-};
+	return new Date(date).toLocaleDateString('default', dateOptions);
+}

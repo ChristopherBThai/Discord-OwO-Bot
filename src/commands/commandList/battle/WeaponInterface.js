@@ -3,26 +3,26 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const PassiveInterface = require('./PassiveInterface');
 const Logs = require('./util/logUtil');
 const requireDir = require('require-dir');
 const ranks = [
-	[0.20, 'Common', '<:common:416520037713838081>'],
-	[0.20, 'Uncommon', '<:uncommon:416520056269176842>'],
-	[0.20, 'Rare', '<:rare:416520066629107712>'],
-	[0.20, 'Epic', '<:epic:416520722987614208>'],
+	[0.2, 'Common', '<:common:416520037713838081>'],
+	[0.2, 'Uncommon', '<:uncommon:416520056269176842>'],
+	[0.2, 'Rare', '<:rare:416520066629107712>'],
+	[0.2, 'Epic', '<:epic:416520722987614208>'],
 	[0.14, 'Mythical', '<:mythic:416520808501084162>'],
 	[0.05, 'Legendary', '<a:legendary:417955061801680909>'],
-	[0.01, 'Fabled', '<a:fabled:438857004493307907>']
+	[0.01, 'Fabled', '<a:fabled:438857004493307907>'],
 ];
 
 module.exports = class WeaponInterface {
 	/* Constructor */
-	constructor(cpassives,qualities,noCreate) {
+	constructor(cpassives, qualities, noCreate) {
 		this.init();
 		if (this.availablePassives === 'all') {
-			this.availablePassives=[];
+			this.availablePassives = [];
 			for (let i in passives) {
 				if (!passives[i].disabled) this.availablePassives.push(i);
 			}
@@ -58,7 +58,7 @@ module.exports = class WeaponInterface {
 		if (cpassives.length > 0) {
 			let totalQualities = qualities.reduce((a, b) => a + b, 0);
 			let qualityCount = qualities.length;
-			for (let i = 0; i < cpassives.length;i++) {
+			for (let i = 0; i < cpassives.length; i++) {
 				totalQualities += cpassives[i].qualities.reduce((a, b) => a + b, 0);
 				qualityCount += cpassives[i].qualities.length;
 			}
@@ -74,7 +74,7 @@ module.exports = class WeaponInterface {
 		for (let i = 0; i < ranks.length; i++) {
 			rank += ranks[i][0];
 			if (avgQuality / 100 <= rank) {
-				rank =  ranks[i];
+				rank = ranks[i];
 				i = ranks.length;
 			} else if (i == ranks.length - 1) {
 				rank = ranks[0];
@@ -82,7 +82,7 @@ module.exports = class WeaponInterface {
 		}
 		rank = {
 			name: rank[1],
-			emoji: rank[2]
+			emoji: rank[2],
 		};
 
 		/* Construct desc */
@@ -90,7 +90,8 @@ module.exports = class WeaponInterface {
 		for (let i = 0; i < stats.length; i++) {
 			desc = desc.replace('?', stats[i]);
 		}
-		this.weaponQuality = qualities.reduce((a, b) => a + b, 0) / qualities.length;
+		this.weaponQuality =
+			qualities.reduce((a, b) => a + b, 0) / qualities.length;
 		this.qualities = qualities;
 		this.sqlStat = qualities.join(',');
 		this.avgQuality = avgQuality;
@@ -117,7 +118,8 @@ module.exports = class WeaponInterface {
 			let rand = Math.floor(Math.random() * this.availablePassives.length);
 			let passive = this.availablePassives[rand];
 			passive = passives[passive];
-			if (!passive) throw `Could not get passive[${this.availablePassives[rand]}] for weapon[${this.id}]`;
+			if (!passive)
+				throw `Could not get passive[${this.availablePassives[rand]}] for weapon[${this.id}]`;
 			randPassives.push(new passive());
 		}
 		return randPassives;
@@ -134,7 +136,8 @@ module.exports = class WeaponInterface {
 
 	/* Converts qualities to stats */
 	toStats(qualities) {
-		if (qualities.length != this.qualityList.length) throw `Array size does not match in toStats. Weapon id:${this.id}`;
+		if (qualities.length != this.qualityList.length)
+			throw `Array size does not match in toStats. Weapon id:${this.id}`;
 		let stats = [];
 		for (let i = 0; i < qualities.length; i++) {
 			let quality = qualities[i];
@@ -157,7 +160,9 @@ module.exports = class WeaponInterface {
 			for (let i in this.buffList) {
 				let buff = buffs[this.buffList[i]];
 				let buffQualityLength = buff.getQualityList.length;
-				buffClasses.push(new buff(from, this.qualities.slice(index, index + buffQualityLength)));
+				buffClasses.push(
+					new buff(from, this.qualities.slice(index, index + buffQualityLength))
+				);
 				index += buffQualityLength;
 			}
 		}
@@ -192,8 +197,8 @@ module.exports = class WeaponInterface {
 		return { amount: Math.round(amount), logs };
 	}
 
-	preTurn(animal, ally, enemy, action) {};
-	postTurn(animal, ally, enemy, action) {};
+	preTurn(animal, ally, enemy, action) {}
+	postTurn(animal, ally, enemy, action) {}
 
 	/* Basic attack when animal has no weapon */
 	static basicAttack(me, team, enemy) {
@@ -208,8 +213,17 @@ module.exports = class WeaponInterface {
 		let damage = WeaponInterface.getDamage(me.stats.att);
 
 		/* Deal damage */
-		damage = WeaponInterface.inflictDamage(me, attacking, damage, WeaponInterface.PHYSICAL, { me, allies: team, enemies: enemy });
-		logs.push(`[PHYS] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
+		damage = WeaponInterface.inflictDamage(
+			me,
+			attacking,
+			damage,
+			WeaponInterface.PHYSICAL,
+			{ me, allies: team, enemies: enemy }
+		);
+		logs.push(
+			`[PHYS] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`,
+			damage.logs
+		);
 		return logs;
 	}
 
@@ -220,7 +234,13 @@ module.exports = class WeaponInterface {
 		for (let i in enemy) {
 			if (enemy[i].stats.hp[0] > 0) {
 				for (let j in enemy[i].buffs) {
-					attacking = enemy[i].buffs[j].enemyChooseAttack(enemy[i], me, attacking, team, enemy);
+					attacking = enemy[i].buffs[j].enemyChooseAttack(
+						enemy[i],
+						me,
+						attacking,
+						team,
+						enemy
+					);
 				}
 			}
 		}
@@ -229,21 +249,29 @@ module.exports = class WeaponInterface {
 
 	/* Calculate the damage output (Either mag or att) */
 	static getDamage(stat, multiplier = 1) {
-		return Math.round((multiplier * (stat[0] + stat[1])) + (Math.random() * 100 - 50));
+		return Math.round(
+			multiplier * (stat[0] + stat[1]) + (Math.random() * 100 - 50)
+		);
 	}
 
 	/* Get mixed damage */
 	static getMixedDamage(stat1, percent1, stat2, percent2) {
-		return Math.round(((stat1[0] + stat1[1]) * percent1) + ((stat2[0] + stat2[1]) * percent2) + (Math.random() * 100 - 50));
+		return Math.round(
+			(stat1[0] + stat1[1]) * percent1 +
+				(stat2[0] + stat2[1]) * percent2 +
+				(Math.random() * 100 - 50)
+		);
 	}
 
 	/* Deals damage to an opponent */
 	static inflictDamage(attacker, attackee, damage, type, tags = {}) {
 		let totalDamage = 0;
 		if (type == WeaponInterface.PHYSICAL) {
-			totalDamage = damage * (1 - WeaponInterface.resToPercent(attackee.stats.pr));
+			totalDamage =
+				damage * (1 - WeaponInterface.resToPercent(attackee.stats.pr));
 		} else if (type == WeaponInterface.MAGICAL) {
-			totalDamage = damage * (1 - WeaponInterface.resToPercent(attackee.stats.mr));
+			totalDamage =
+				damage * (1 - WeaponInterface.resToPercent(attackee.stats.mr));
 		} else if (type == WeaponInterface.TRUE) {
 			totalDamage = damage;
 		} else {
@@ -256,40 +284,92 @@ module.exports = class WeaponInterface {
 		/* Bonus damage calculation */
 		/* Event for attackee */
 		for (let i in attackee.buffs) {
-			subLogs.push(attackee.buffs[i].attacked(attackee, attacker, totalDamage, type, tags));
+			subLogs.push(
+				attackee.buffs[i].attacked(attackee, attacker, totalDamage, type, tags)
+			);
 		}
 		if (attackee.weapon) {
 			for (let i in attackee.weapon.passives) {
-				subLogs.push(attackee.weapon.passives[i].attacked(attackee, attacker, totalDamage, type, tags));
+				subLogs.push(
+					attackee.weapon.passives[i].attacked(
+						attackee,
+						attacker,
+						totalDamage,
+						type,
+						tags
+					)
+				);
 			}
 		}
 		/* Event for attacker */
 		for (let i in attacker.buffs) {
-			subLogs.push(attacker.buffs[i].attack(attacker, attackee, totalDamage, type, tags));
+			subLogs.push(
+				attacker.buffs[i].attack(attacker, attackee, totalDamage, type, tags)
+			);
 		}
 		if (attacker.weapon) {
 			for (let i in attacker.weapon.passives) {
-				subLogs.push(attacker.weapon.passives[i].attack(attacker, attackee, totalDamage, type, tags));
+				subLogs.push(
+					attacker.weapon.passives[i].attack(
+						attacker,
+						attackee,
+						totalDamage,
+						type,
+						tags
+					)
+				);
 			}
 		}
 
 		/* After bonus damage calculation */
 		/* Event for attackee */
 		for (let i in attackee.buffs) {
-			subLogs.push(attackee.buffs[i].postAttacked(attackee, attacker, totalDamage, type, tags));
+			subLogs.push(
+				attackee.buffs[i].postAttacked(
+					attackee,
+					attacker,
+					totalDamage,
+					type,
+					tags
+				)
+			);
 		}
 		if (attackee.weapon) {
 			for (let i in attackee.weapon.passives) {
-				subLogs.push(attackee.weapon.passives[i].postAttacked(attackee, attacker, totalDamage, type, tags));
+				subLogs.push(
+					attackee.weapon.passives[i].postAttacked(
+						attackee,
+						attacker,
+						totalDamage,
+						type,
+						tags
+					)
+				);
 			}
 		}
 		/* Event for attacker */
 		for (let i in attacker.buffs) {
-			subLogs.push(attacker.buffs[i].postAttack(attacker, attackee, totalDamage, type, tags));
+			subLogs.push(
+				attacker.buffs[i].postAttack(
+					attacker,
+					attackee,
+					totalDamage,
+					type,
+					tags
+				)
+			);
 		}
 		if (attacker.weapon) {
 			for (let i in attacker.weapon.passives) {
-				subLogs.push(attacker.weapon.passives[i].postAttack(attacker, attackee, totalDamage, type, tags));
+				subLogs.push(
+					attacker.weapon.passives[i].postAttack(
+						attacker,
+						attackee,
+						totalDamage,
+						type,
+						tags
+					)
+				);
 			}
 		}
 		totalDamage = totalDamage.reduce((a, b) => a + b, 0);
@@ -345,7 +425,9 @@ module.exports = class WeaponInterface {
 		}
 		if (me.weapon) {
 			for (let i in me.weapon.passives) {
-				subLogs.push(me.weapon.passives[i].postHealed(me, from, totalHeal, tags));
+				subLogs.push(
+					me.weapon.passives[i].postHealed(me, from, totalHeal, tags)
+				);
 			}
 		}
 		/* Event for from*/
@@ -354,7 +436,9 @@ module.exports = class WeaponInterface {
 		}
 		if (from.weapon) {
 			for (let i in from.weapon.passives) {
-				subLogs.push(from.weapon.passives[i].postHeal(me, from, totalHeal, tags));
+				subLogs.push(
+					from.weapon.passives[i].postHeal(me, from, totalHeal, tags)
+				);
 			}
 		}
 		totalHeal = totalHeal.reduce((a, b) => a + b, 0);
@@ -401,7 +485,7 @@ module.exports = class WeaponInterface {
 			let over = me.stats.wp[0] + total.reduce((a, b) => a + b) - max;
 			if (total[1] >= over) {
 				total[1] -= over;
-			} else{
+			} else {
 				over -= total[1];
 				total[1] = 0;
 				total[0] -= over;
@@ -415,7 +499,9 @@ module.exports = class WeaponInterface {
 		}
 		if (me.weapon) {
 			for (let i in me.weapon.passives) {
-				subLogs.push(me.weapon.passives[i].postReplenished(me, from, total, tags));
+				subLogs.push(
+					me.weapon.passives[i].postReplenished(me, from, total, tags)
+				);
 			}
 		}
 		/* Event for from*/
@@ -424,11 +510,13 @@ module.exports = class WeaponInterface {
 		}
 		if (from.weapon) {
 			for (let i in from.weapon.passives) {
-				subLogs.push(from.weapon.passives[i].postReplenish(me, from, total, tags));
+				subLogs.push(
+					from.weapon.passives[i].postReplenish(me, from, total, tags)
+				);
 			}
 		}
 		total = total.reduce((a, b) => a + b, 0);
-		if (total < 0) total= 0;
+		if (total < 0) total = 0;
 		me.stats.wp[0] += total;
 		if (me.stats.wp[0] > max) {
 			total -= me.stats.wp[0] - max;
@@ -479,7 +567,11 @@ module.exports = class WeaponInterface {
 		let lowest = undefined;
 		for (let i = 0; i < team.length; i++) {
 			if (team[i].stats.hp[0] > 0) {
-				if (!lowest || lowest.stats.hp[0] / (lowest.stats.hp[1] + lowest.stats.hp[3]) > team[i].stats.hp[0] / (team[i].stats.hp[1] + team[i].stats.hp[3])) {
+				if (
+					!lowest ||
+					lowest.stats.hp[0] / (lowest.stats.hp[1] + lowest.stats.hp[3]) >
+						team[i].stats.hp[0] / (team[i].stats.hp[1] + team[i].stats.hp[3])
+				) {
 					lowest = team[i];
 				}
 			}
@@ -492,7 +584,11 @@ module.exports = class WeaponInterface {
 		let lowest = undefined;
 		for (let i = 0; i < team.length; i++) {
 			if (team[i].stats.hp[0] > 0) {
-				if (!lowest || lowest.stats.wp[0] / (lowest.stats.wp[1] + lowest.stats.wp[3]) > team[i].stats.wp[0] / (team[i].stats.wp[1] + team[i].stats.wp[3])) {
+				if (
+					!lowest ||
+					lowest.stats.wp[0] / (lowest.stats.wp[1] + lowest.stats.wp[3]) >
+						team[i].stats.wp[0] / (team[i].stats.wp[1] + team[i].stats.wp[3])
+				) {
 					lowest = team[i];
 				}
 			}
@@ -527,11 +623,21 @@ module.exports = class WeaponInterface {
 		result.result = result.alive;
 		let subLogs = new Logs();
 		for (let i in animal.buffs) {
-			subLogs.push(animal.buffs[i].canAttack(animal, ally, enemy, action, result));
+			subLogs.push(
+				animal.buffs[i].canAttack(animal, ally, enemy, action, result)
+			);
 		}
 		if (animal.weapon) {
 			for (let i in animal.weapon.passives) {
-				subLogs.push(animal.weapon.passives[i].canAttack(animal, ally, enemy, action, result));
+				subLogs.push(
+					animal.weapon.passives[i].canAttack(
+						animal,
+						ally,
+						enemy,
+						action,
+						result
+					)
+				);
 			}
 		}
 		result = result.result;
@@ -541,7 +647,7 @@ module.exports = class WeaponInterface {
 	/* Convert resistance to percent */
 	static resToPercent(res) {
 		res = res[0] + res[1];
-		res = (res / (100 + res)) * .8;
+		res = (res / (100 + res)) * 0.8;
 		return res;
 	}
 
@@ -551,23 +657,57 @@ module.exports = class WeaponInterface {
 		return Math.round(res * 100) + '%';
 	}
 
-	static get allPassives(){ return passives };
-	static get allBuffs(){ return buffs };
-	static get weapons(){ return weapons };
-	static get PHYSICAL(){ return 'p' };
-	static get MAGICAL(){ return 'm' };
-	static get TRUE(){ return 't' };
-	static get ranks(){ return ranks };
-	static get strEmoji(){ return '<:att:531616155450998794>' };
-	static get magEmoji(){ return '<:mag:531616156231139338>' };
-	static get hpEmoji(){ return '<:hp:531620120410456064>' };
-	static get wpEmoji(){ return '<:wp:531620120976687114>' };
-	static get getID(){ return new this(null, null, true).id };
-	static get disabled(){ return new this(null, null, true).disabled };
-	static get getName(){ return new this(null, null, true).name };
-	static get unsellable(){ return new this(null, null, true).unsellable };
-	static get getDesc(){ return new this(null, null, true).basicDesc };
-	static get getEmoji(){ return new this(null, null, true).defaultEmoji };
+	static get allPassives() {
+		return passives;
+	}
+	static get allBuffs() {
+		return buffs;
+	}
+	static get weapons() {
+		return weapons;
+	}
+	static get PHYSICAL() {
+		return 'p';
+	}
+	static get MAGICAL() {
+		return 'm';
+	}
+	static get TRUE() {
+		return 't';
+	}
+	static get ranks() {
+		return ranks;
+	}
+	static get strEmoji() {
+		return '<:att:531616155450998794>';
+	}
+	static get magEmoji() {
+		return '<:mag:531616156231139338>';
+	}
+	static get hpEmoji() {
+		return '<:hp:531620120410456064>';
+	}
+	static get wpEmoji() {
+		return '<:wp:531620120976687114>';
+	}
+	static get getID() {
+		return new this(null, null, true).id;
+	}
+	static get disabled() {
+		return new this(null, null, true).disabled;
+	}
+	static get getName() {
+		return new this(null, null, true).name;
+	}
+	static get unsellable() {
+		return new this(null, null, true).unsellable;
+	}
+	static get getDesc() {
+		return new this(null, null, true).basicDesc;
+	}
+	static get getEmoji() {
+		return new this(null, null, true).defaultEmoji;
+	}
 };
 
 const passiveDir = requireDir('./passives');
@@ -587,4 +727,4 @@ const weapons = {};
 for (let key in weaponDir) {
 	let weapon = weaponDir[key];
 	weapons[weapon.getID] = weapon;
-};
+}

@@ -3,8 +3,8 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
-const CommandInterface = require ('../../CommandInterface');
+ */
+const CommandInterface = require('../../CommandInterface');
 const user_emote = require('../emotes/user_emote');
 const petUtil = require('./util/petUtil');
 
@@ -20,7 +20,7 @@ module.exports = new CommandInterface({
 	half: 200,
 	six: 600,
 
-	execute: async function(p) {
+	execute: async function (p) {
 		/* Is this a pat action? */
 		if (p.global.isUser(p.args[0])) {
 			p.command = 'pat';
@@ -34,5 +34,5 @@ module.exports = new CommandInterface({
 		let animals = await petUtil.getAnimals(p);
 		let embed = petUtil.getDisplay(p, animals);
 		await p.send(embed);
-	}
+	},
 });

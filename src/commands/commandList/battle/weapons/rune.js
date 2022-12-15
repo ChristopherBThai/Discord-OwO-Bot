@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const { stripIndents } = require('common-tags');
 const WeaponInterface = require('../WeaponInterface');
 const Logs = require('../util/logUtil');
@@ -24,7 +24,7 @@ module.exports = class Rune extends WeaponInterface {
 			'<:erune:543662986393419787>',
 			'<:mrune:543662986749804544>',
 			'<:lrune:543662986837884928>',
-			'<:frune:543662986753998874>'
+			'<:frune:543662986753998874>',
 		];
 		this.defaultEmoji = '<:rune:543662986431037481>';
 		this.statDesc = stripIndents`
@@ -62,11 +62,25 @@ module.exports = class Rune extends WeaponInterface {
 		let logs = new Logs();
 
 		/* Calculate damage */
-		let damage = WeaponInterface.getMixedDamage(me.stats.att, .65 ,me.stats.mag, .65);
+		let damage = WeaponInterface.getMixedDamage(
+			me.stats.att,
+			0.65,
+			me.stats.mag,
+			0.65
+		);
 
 		/* Deal damage */
-		damage = WeaponInterface.inflictDamage(me, attacking, damage, WeaponInterface.TRUE, { me, allies: team, enemies: enemy });
-		logs.push(`[RUNE] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`, damage.logs);
+		damage = WeaponInterface.inflictDamage(
+			me,
+			attacking,
+			damage,
+			WeaponInterface.TRUE,
+			{ me, allies: team, enemies: enemy }
+		);
+		logs.push(
+			`[RUNE] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`,
+			damage.logs
+		);
 		return logs;
 	}
 };

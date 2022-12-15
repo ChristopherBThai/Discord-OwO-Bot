@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const PassiveInterface = require('../PassiveInterface');
 
 /* +[5~20%] increase in physical resistance*/
@@ -20,7 +20,7 @@ module.exports = class PhysicalResistance extends PassiveInterface {
 			'<:epr:535290422738681884>',
 			'<:mpr:535290422910779411>',
 			'<:lpr:535290422554001410>',
-			'<:fpr:535290422793338880>'
+			'<:fpr:535290422793338880>',
 		];
 		this.statDesc = 'Increases your <:pr:531616156222488606>PR by **?%**';
 		this.qualityList = [[15, 35]];

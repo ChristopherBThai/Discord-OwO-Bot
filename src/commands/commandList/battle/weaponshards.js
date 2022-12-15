@@ -3,17 +3,33 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const CommandInterface = require('../../CommandInterface.js');
 const { stripIndents } = require('common-tags');
 const ranks = [
 	['common', 'cw', 'commonweapons', 'commonweapon'],
 	['uncommon', 'uw', 'uncommonweapons', 'uncommonweapon'],
 	['rare', 'rw', 'rareweapon', 'rareweapons'],
-    ['epic', 'ew', 'epicweapons', 'epicweapon'],
-	['mythic', 'mythical', 'mw', 'mythicalweapons', 'mythicalweapon', 'mythicweapons', 'mythicweapon'],
-    ['legendary', 'lw', 'legendaryweapons', 'legendaryweapon'],
-	['fabled',' fable', 'fw', 'fabledweapons', 'fabledweapon', 'fableweapons', 'fableweapon']
+	['epic', 'ew', 'epicweapons', 'epicweapon'],
+	[
+		'mythic',
+		'mythical',
+		'mw',
+		'mythicalweapons',
+		'mythicalweapon',
+		'mythicweapons',
+		'mythicweapon',
+	],
+	['legendary', 'lw', 'legendaryweapons', 'legendaryweapon'],
+	[
+		'fabled',
+		' fable',
+		'fw',
+		'fabledweapons',
+		'fabledweapon',
+		'fableweapons',
+		'fableweapon',
+	],
 ];
 const shardEmoji = '<:weaponshard:655902978712272917>';
 const dismantleEmoji = '🔨';
@@ -33,7 +49,7 @@ module.exports = new CommandInterface({
 	six: 500,
 	bot: true,
 
-	execute: async function(p) {
+	execute: async function (p) {
 		if (!p.args.length) {
 			await displayWeaponShards(p);
 		} else {
@@ -46,7 +62,7 @@ module.exports = new CommandInterface({
 			}
 			await dismantleId(p, arg);
 		}
-	}
+	},
 });
 
 async function displayWeaponShards(p) {
@@ -60,7 +76,8 @@ async function displayWeaponShards(p) {
 
 async function dismantleRank(p, rankLoc) {
 	// (min,max]
-	let min = 0, max = 0;
+	let min = 0,
+		max = 0;
 	for (let i = 0; i <= rankLoc; i++) {
 		let rank = WeaponInterface.ranks[i];
 		min = max;
@@ -74,7 +91,7 @@ async function dismantleRank(p, rankLoc) {
 		FROM user
 			LEFT JOIN user_weapon a ON user.uid = a.uid
 			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
-		WHERE user.id = ${p.msg.author.id} AND avg > ${min} AND avg <= ${max} AND a.pid IS NULL LIMIT 500;`
+		WHERE user.id = ${p.msg.author.id} AND avg > ${min} AND avg <= ${max} AND a.pid IS NULL LIMIT 500;`;
 	let result = await p.query(sql);
 
 	/* not a real weapon! */
@@ -88,7 +105,11 @@ async function dismantleRank(p, rankLoc) {
 	let weapons = [];
 	let weaponsSQL = [];
 	let price = weaponUtil.shardPrices[WeaponInterface.ranks[rankLoc][1]];
-	let rank = WeaponInterface.ranks[rankLoc][2] + ' ** ' + WeaponInterface.ranks[rankLoc][1] + '**';
+	let rank =
+		WeaponInterface.ranks[rankLoc][2] +
+		' ** ' +
+		WeaponInterface.ranks[rankLoc][1] +
+		'**';
 	for (let key in weapon) {
 		let tempWeapon = weaponUtil.parseWeapon(weapon[key]);
 		if (!tempWeapon.unsellable) {
@@ -129,10 +150,13 @@ async function dismantleRank(p, rankLoc) {
 	price *= result[1].affectedRows;
 	sql = `INSERT INTO shards (uid,count) VALUES (${uid},${price}) ON DUPLICATE KEY UPDATE count = count + ${price};`;
 	result = await p.query(sql);
-	p.replyMsg(dismantleEmoji, stripIndents`
+	p.replyMsg(
+		dismantleEmoji,
+		stripIndents`
 		, You dismantled all of your ${rank} weapons for **${price}** ${shardEmoji} WeaponShards!
 		${p.config.emoji.blank} **| Dismantled:** ${weapons.join('')}
-	`);
+	`
+	);
 	p.logger.incr('shards', price, { type: 'dismantle' }, p.msg);
 }
 
@@ -149,7 +173,7 @@ async function dismantleId(p, uwid) {
 			LEFT JOIN user_weapon a ON user.uid = a.uid
 			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
 			LEFT JOIN animal c ON a.pid = c.pid
-		WHERE user.id = ${p.msg.author.id} AND a.uwid = ${uwid};`
+		WHERE user.id = ${p.msg.author.id} AND a.uwid = ${uwid};`;
 	let result = await p.query(sql);
 
 	/* not a real weapon! */
@@ -209,6 +233,13 @@ async function dismantleId(p, uwid) {
 	/* Give shards*/
 	sql = `INSERT INTO shards (uid,count) VALUES (${uid},${price}) ON DUPLICATE KEY UPDATE count = count + ${price};`;
 	result = await p.query(sql);
-	p.replyMsg(dismantleEmoji, `, You dismantled a(n) **${weapon.rank.name} ${weapon.name}**  ${weapon.rank.emoji}${weapon.emoji} for **${p.global.toFancyNum(price)}** ${shardEmoji} Weapon Shard${price == 1 ? '' : 's'}!`);
+	p.replyMsg(
+		dismantleEmoji,
+		`, You dismantled a(n) **${weapon.rank.name} ${weapon.name}**  ${
+			weapon.rank.emoji
+		}${weapon.emoji} for **${p.global.toFancyNum(
+			price
+		)}** ${shardEmoji} Weapon Shard${price == 1 ? '' : 's'}!`
+	);
 	p.logger.incr('shards', price, { type: 'dismantle' }, p.msg);
-};
+}

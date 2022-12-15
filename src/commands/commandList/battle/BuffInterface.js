@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 module.exports = class BuffInterface {
 	/* Constructor */
 	constructor(from, qualities, duration, noCreate) {
@@ -45,7 +45,10 @@ module.exports = class BuffInterface {
 
 	/* Converts qualities into stats */
 	toStats(qualities) {
-		if (qualities.length != this.qualityList.length) throw new Error(`Array size does not match in toStats. Buff id: ${this.id}`);
+		if (qualities.length != this.qualityList.length)
+			throw new Error(
+				`Array size does not match in toStats. Buff id: ${this.id}`
+			);
 		let stats = [];
 		for (let i = 0; i < qualities.length; i++) {
 			let quality = qualities[i];
@@ -68,42 +71,47 @@ module.exports = class BuffInterface {
 	}
 
 	/* If the buff owner is attacking*/
-	attack(animal, attackee, damage, type, last) {};
+	attack(animal, attackee, damage, type, last) {}
 	/* If the buff owner is attacked */
-	attacked(animal, attacker, damage, type, last) {};
+	attacked(animal, attacker, damage, type, last) {}
 	/* If the buff owner is healing */
-	heal(animal, healer, amount, tag) {};
+	heal(animal, healer, amount, tag) {}
 	/* If the buff owner is healed */
-	healed(animal, healer, amount, tag) {};
+	healed(animal, healer, amount, tag) {}
 	/* If the passive owner is replenishing */
-	replenish(animal, healer, amount, tag) {};
+	replenish(animal, healer, amount, tag) {}
 	/* If the passive owner is replenished */
-	replenished(animal, healer, amount, tag) {};
+	replenished(animal, healer, amount, tag) {}
 	/* If the buff owner is attacking (after bonus damage) */
-	postAttack(animal, attackee, damage, type, last) {};
+	postAttack(animal, attackee, damage, type, last) {}
 	/* If the buff owner is attacked (after bonus damage) */
-	postAttacked(animal, attacker, damage, type, last) {};
+	postAttacked(animal, attacker, damage, type, last) {}
 	/* If the buff owner is healing(after bonus heal) */
-	postHeal(animal, healer, amount, tag) {};
+	postHeal(animal, healer, amount, tag) {}
 	/* If the buff owner is healed (after bonus heal) */
-	postHealed(animal, healer, amount, tag) {};
+	postHealed(animal, healer, amount, tag) {}
 	/* If the passive owner is replenishing (after bonus heal) */
-	postReplenish(animal, healer, amount, tag) {};
+	postReplenish(animal, healer, amount, tag) {}
 	/* If the passive owner is replenished (after bonus heal) */
-	postReplenished(animal, healer, amount, tag) {};
+	postReplenished(animal, healer, amount, tag) {}
 
 	/* when an enemy chooses an opponent */
-	enemyChooseAttack(animal, attacker, attackee, ally, enemy) { return attackee };
+	enemyChooseAttack(animal, attacker, attackee, ally, enemy) {
+		return attackee;
+	}
 
 	/* If the passive owner is allowed to attack */
-	canAttack(me, ally, enemy, action, result) {};
+	canAttack(me, ally, enemy, action, result) {}
 
 	/* End of turn. Descrease duration by one */
 	postTurn(animal, ally, enemy, action) {
 		this.duration -= 1;
 		if (this.duration <= 0) {
 			for (let i = 0; i < animal.buffs.length; i++) {
-				if (animal.buffs[i].id == this.id && animal.buffs[i].from.pid == this.from.pid) {
+				if (
+					animal.buffs[i].id == this.id &&
+					animal.buffs[i].from.pid == this.from.pid
+				) {
 					animal.buffs[i].markedForDeath = true;
 				}
 			}
@@ -111,8 +119,12 @@ module.exports = class BuffInterface {
 		if (this.justCreated) this.justCreated = false;
 	}
 
-	preTurn(animal, ally, enemy, action) {};
+	preTurn(animal, ally, enemy, action) {}
 
-	static get getID(){ return new this(null, null, null, true).id };
-	static get getQualityList(){ return new this(null, null, null, true).qualityList };
+	static get getID() {
+		return new this(null, null, null, true).id;
+	}
+	static get getQualityList() {
+		return new this(null, null, null, true).qualityList;
+	}
 };

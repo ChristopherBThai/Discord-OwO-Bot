@@ -3,13 +3,24 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const EventEmitter = require('eventemitter3');
 
 class PagedMessage extends EventEmitter {
-	constructor (p, getEmbed, maxPage, { 
-		startingPage = 0, time, idle, allowEveryone, allowedUsers, additionalFilter, additionalButtons = [] 
-	}) {
+	constructor(
+		p,
+		getEmbed,
+		maxPage,
+		{
+			startingPage = 0,
+			time,
+			idle,
+			allowEveryone,
+			allowedUsers,
+			additionalFilter,
+			additionalButtons = [],
+		}
+	) {
 		super();
 		this.p = p;
 		this.getEmbed = getEmbed;
@@ -23,7 +34,7 @@ class PagedMessage extends EventEmitter {
 		this.sendMsg(time, idle);
 	}
 
-	async sendMsg (time, idle) {
+	async sendMsg(time, idle) {
 		const embed = await this.getEmbed(this.currentPage, this.maxPage);
 		this.components = [
 			{
@@ -33,25 +44,31 @@ class PagedMessage extends EventEmitter {
 						type: 2,
 						label: '<',
 						style: 1,
-						custom_id: 'prev'
+						custom_id: 'prev',
 					},
 					{
 						type: 2,
 						label: '>',
 						style: 1,
-						custom_id: 'next'
-					}
-				]
-			}
+						custom_id: 'next',
+					},
+				],
+			},
 		];
-		this.additionalButtons.forEach(button => {
+		this.additionalButtons.forEach((button) => {
 			this.components[0].components.push(button);
 		});
 		this.msg = await this.p.send({ embed, components: this.components });
 		const componentIds = ['next', 'prev'];
 		const userIds = this.allowedUsers || [this.p.msg.author.id];
-		const filter = (componentName, user) => this.additionalFilter(componentName, user) || (componentIds.includes(componentName) && (this.allowEveryone || userIds.includes(user.id)));
-		this.collector = this.p.interactionCollector.create(this.msg, filter, { time, idle });
+		const filter = (componentName, user) =>
+			this.additionalFilter(componentName, user) ||
+			(componentIds.includes(componentName) &&
+				(this.allowEveryone || userIds.includes(user.id)));
+		this.collector = this.p.interactionCollector.create(this.msg, filter, {
+			time,
+			idle,
+		});
 		this.collector.on('collect', async (component, user, ack) => {
 			if (component == 'next') {
 				this.currentPage++;
@@ -64,7 +81,10 @@ class PagedMessage extends EventEmitter {
 				const embed = await this.getEmbed(this.currentPage, this.maxPage);
 				ack({ embed, components: this.components });
 			} else {
-				this.emit('button', component, user, ack, { currentPage: this.currentPage, maxPage: this.maxPage });
+				this.emit('button', component, user, ack, {
+					currentPage: this.currentPage,
+					maxPage: this.maxPage,
+				});
 			}
 		});
 		this.collector.on('end', async (reason) => {
@@ -73,14 +93,14 @@ class PagedMessage extends EventEmitter {
 			disableComponents(this.components);
 			embed.color = 6381923;
 			await this.msg.edit({
-				content:'This message is now inactive.',
+				content: 'This message is now inactive.',
 				embed,
-				components: this.components
+				components: this.components,
 			});
 			this.emit('end', reason);
 		});
 	}
-};
+}
 
 function disableComponents(components) {
 	for (let i in components) {
@@ -91,6 +111,6 @@ function disableComponents(components) {
 			disableComponents(component.components);
 		}
 	}
-};
+}
 
 module.exports = PagedMessage;

@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const PassiveInterface = require('../PassiveInterface');
 
 /* +[5~20%] increase in wp*/
@@ -20,7 +20,7 @@ module.exports = class WeaponPoint extends PassiveInterface {
 			'<:ewp:535290421593636874>',
 			'<:mwp:535290421807415297>',
 			'<:lwp:535290421887369216>',
-			'<:fwp:535290421237252107>'
+			'<:fwp:535290421237252107>',
 		];
 		this.statDesc = 'Increases your <:wp:531620120976687114>WP by **?%**';
 		this.qualityList = [[10, 30]];

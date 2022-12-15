@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const { stripIndents } = require('common-tags');
 const CommandInterface = require('../../CommandInterface');
 const crate = '<:crate:523771259302182922>';
@@ -24,25 +24,25 @@ module.exports = new CommandInterface({
 	half: 100,
 	six: 500,
 
-	execute: async function(p) {
+	execute: async function (p) {
 		if (p.args.length > 0 && p.global.isInt(p.args[0])) {
-			await openCrate(p,parseInt(p.args[0]));
+			await openCrate(p, parseInt(p.args[0]));
 		} else if (p.options.count) {
-			await openCrate(p,parseInt(p.options.count));
+			await openCrate(p, parseInt(p.options.count));
 		} else if (p.args.length > 0 && p.args[0].toLowerCase() == 'all') {
 			let sql = `SELECT boxcount FROM crate INNER JOIN user ON crate.uid = user.uid WHERE id = ${p.msg.author.id};`;
 			let result = await p.query(sql);
 			if (!result || result[0].boxcount <= 0) {
-				p.errorMsg(', you don\'t have any more weapon crates!');
+				p.errorMsg(", you don't have any more weapon crates!");
 				return;
 			}
 			let boxcount = result[0].boxcount;
 			if (boxcount > maxBoxes) boxcount = maxBoxes;
-			await openCrate(p,boxcount);
+			await openCrate(p, boxcount);
 		} else {
 			await openCrate(p);
 		}
-	}
+	},
 });
 
 async function openCrate(p, count = 1) {
@@ -59,7 +59,7 @@ async function openCrate(p, count = 1) {
 	sql += `SELECT uid FROM user WHERE id = ${p.msg.author.id};`;
 	let result = await p.query(sql);
 	if (result[0].changedRows == 0 || !result[1][0]) {
-		p.errorMsg(', You don\'t have any weapon crates!', 3000);
+		p.errorMsg(", You don't have any weapon crates!", 3000);
 		return;
 	}
 	let uid = result[1][0].uid;
@@ -73,7 +73,9 @@ async function openCrate(p, count = 1) {
 		result = await p.query(weapon.weaponSql);
 		let uwid = result.insertId;
 		if (!uwid) {
-			p.errorMsg(', Uh oh. Something went wrong! The weapon passive could not be applied');
+			p.errorMsg(
+				', Uh oh. Something went wrong! The weapon passive could not be applied'
+			);
 			console.error(`Unable to add weapon passive to: ${uwid}`);
 		} else {
 			weapon.uwid = uwid;
@@ -95,7 +97,9 @@ async function openCrate(p, count = 1) {
 		`;
 		text2 = stripIndents`
 			${weapon.emoji} **| ${p.msg.author.username}** opens a weapon crate
-			${crateOpen} **|** and finds a \`${weaponUtil.shortenUWID(weapon.uwid)}\` ${weapon.rank.emoji} ${weapon.emoji}
+			${crateOpen} **|** and finds a \`${weaponUtil.shortenUWID(weapon.uwid)}\` ${
+			weapon.rank.emoji
+		} ${weapon.emoji}
 		`;
 		for (let i = 0; i < weapon.passives.length; i++) {
 			text2 += ' ' + weapon.passives[i].emoji;
@@ -121,5 +125,7 @@ async function openCrate(p, count = 1) {
 
 	/* Send and edit message */
 	let message = await p.send(text1);
-	setTimeout(function(){ message.edit(text2) }, 3000);
-};
+	setTimeout(function () {
+		message.edit(text2);
+	}, 3000);
+}

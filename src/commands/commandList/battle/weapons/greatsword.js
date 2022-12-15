@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const WeaponInterface = require('../WeaponInterface');
 const Logs = require('../util/logUtil');
 
@@ -19,7 +19,7 @@ module.exports = class GreatSword extends WeaponInterface {
 			'<:egreatsword:535279248991191081>',
 			'<:mgreatsword:535279249125539858>',
 			'<:lgreatsword:535279249058168852>',
-			'<:fgreatsword:535279248923951116>'
+			'<:fgreatsword:535279248923951116>',
 		];
 		this.defaultEmoji = '<:greatsword:538196865129250817>';
 		this.statDesc = `Deals **?%** of your ${WeaponInterface.strEmoji}STR to all opponents`;
@@ -33,11 +33,16 @@ module.exports = class GreatSword extends WeaponInterface {
 		if (me.stats.hp[0] <= 0) return;
 
 		/* No mana */
-		if(me.stats.wp[0] < this.manaCost) return this.attackPhysical(me, team, enemy);
+		if (me.stats.wp[0] < this.manaCost)
+			return this.attackPhysical(me, team, enemy);
 		let logs = new Logs();
 
 		/* deplete weapon points*/
-		let mana = WeaponInterface.useMana(me, this.manaCost, me, { me, allies: team, enemies: enemy });
+		let mana = WeaponInterface.useMana(me, this.manaCost, me, {
+			me,
+			allies: team,
+			enemies: enemy,
+		});
 		let manaLogs = new Logs();
 		manaLogs.push(`[GSWORD] ${me.nickname} used ${mana.amount} WP`, mana.logs);
 
@@ -49,17 +54,23 @@ module.exports = class GreatSword extends WeaponInterface {
 		let subLogs = new Logs();
 		for (let i = 0; i < enemy.length; i++) {
 			if (enemy[i].stats.hp[0] > 0) {
-				let dmg = WeaponInterface.inflictDamage(me, enemy[i], damage, WeaponInterface.PHYSICAL, {
-					me, 
-					allies: team, 
-					enemies: enemy
-				});
+				let dmg = WeaponInterface.inflictDamage(
+					me,
+					enemy[i],
+					damage,
+					WeaponInterface.PHYSICAL,
+					{
+						me,
+						allies: team,
+						enemies: enemy,
+					}
+				);
 				logText += `${enemy[i].nickname} -${dmg.amount} | `;
 				subLogs.push(dmg.logs);
 			}
 		}
 		logText = logText.slice(0, -2) + 'HP';
-		logs.push(logText,subLogs);
+		logs.push(logText, subLogs);
 		logs.addSubLogs(manaLogs);
 		return logs;
 	}

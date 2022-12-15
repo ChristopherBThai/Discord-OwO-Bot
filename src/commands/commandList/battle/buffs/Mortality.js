@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const BuffInterface = require('../BuffInterface');
 const WeaponInterface = require('../WeaponInterface');
 const Logs = require('../util/logUtil');
@@ -19,7 +19,7 @@ module.exports = class Mortality extends BuffInterface {
 	}
 
 	// Override
-	bind(animal, duration,tags) {
+	bind(animal, duration, tags) {
 		for (let i in animal.buffs) {
 			if (animal.buffs[i].id == this.id) {
 				animal.buffs[i].duration += duration;
@@ -29,7 +29,7 @@ module.exports = class Mortality extends BuffInterface {
 		super.bind(animal, duration, tags);
 	}
 
-	postHealed(animal, healer, amount, tag){
+	postHealed(animal, healer, amount, tag) {
 		let logs = new Logs();
 		let dec = amount[0] * (this.stats[0] / 100);
 		amount[1] -= dec;

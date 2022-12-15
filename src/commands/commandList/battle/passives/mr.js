@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const PassiveInterface = require('../PassiveInterface');
 
 /* +[5~20%] increase in magical resistance*/
@@ -20,7 +20,7 @@ module.exports = class MagicalResistance extends PassiveInterface {
 			'<:emr:535290422226845697>',
 			'<:mmr:535290422243622913>',
 			'<:lmr:535290422688219146>',
-			'<:fmr:535290422252273675>'
+			'<:fmr:535290422252273675>',
 		];
 		this.statDesc = 'Increases your <:mr:531616156226945024>MR by **?%**';
 		this.qualityList = [[15, 35]];

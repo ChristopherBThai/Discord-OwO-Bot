@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const CommandInterface = require('../../CommandInterface');
 const animalUtil = require('./util/animalUtil');
 const teamUtil = require('./util/teamUtil');
@@ -11,7 +11,7 @@ const battleUtil = require('./util/battleUtil');
 
 module.exports = new CommandInterface({
 	alias: ['ab', 'acceptbattle'],
-	args:'[bet]',
+	args: '[bet]',
 	desc: 'Accept a battle request! If a bet was added, you will have to add the amount to accept it in addition to the battle.',
 	example: [''],
 	related: ['owo battle'],
@@ -21,7 +21,7 @@ module.exports = new CommandInterface({
 	half: 80,
 	six: 500,
 
-	execute: async function(p) {
+	execute: async function (p) {
 		const author = p.opt?.author || p.msg.author;
 		let sql = `SELECT (SELECT id FROM user WHERE uid = sender) AS sender,bet,flags,channel
 			FROM user_battle JOIN
@@ -46,8 +46,11 @@ module.exports = new CommandInterface({
 			p.errorMsg(', You do not have any pending battles!', 3000);
 			return;
 		}
-		if(result[0][0].channel != p.msg.channel.id) {
-			p.errorMsg(', You can only accept battle requests from the same channel!', 3000);
+		if (result[0][0].channel != p.msg.channel.id) {
+			p.errorMsg(
+				', You can only accept battle requests from the same channel!',
+				3000
+			);
 			return;
 		}
 
@@ -111,13 +114,15 @@ module.exports = new CommandInterface({
 			sql = `UPDATE cowoncy c
 				SET c.money = c.money - ${bet}
 				WHERE c.id IN (${author.id},${sender.id}) AND
-					(SELECT * FROM (SELECT COUNT(id) FROM cowoncy c2 WHERE c2.id IN (${author.id},${sender.id}) AND c2.money >= ${bet}) c3) >= 2`
+					(SELECT * FROM (SELECT COUNT(id) FROM cowoncy c2 WHERE c2.id IN (${author.id},${sender.id}) AND c2.money >= ${bet}) c3) >= 2`;
 			result = await p.query(sql);
 			if (result.changedRows < 2) {
-				p.errorMsg(', looks like someone doesn\'t have enough money!', 3000);
+				p.errorMsg(", looks like someone doesn't have enough money!", 3000);
 				return;
 			}
-			sql = `UPDATE cowoncy SET money = money + ${bet * 2} WHERE id = ${winner.id}; ${winSql}`
+			sql = `UPDATE cowoncy SET money = money + ${bet * 2} WHERE id = ${
+				winner.id
+			}; ${winSql}`;
 			await p.query(sql);
 			p.neo4j.battle(p.msg, winner, loser, bet);
 		} else {
@@ -131,14 +136,14 @@ module.exports = new CommandInterface({
 			speed: flags.log ? 'instant' : 'short',
 			instant: flags.log ? true : false,
 			title: `${author.username} vs ${sender.username}`,
-			showLogs: flags.link ? 'link' : flags.log ? true : false
+			showLogs: flags.link ? 'link' : flags.log ? true : false,
 		};
 		if (sender && sender.id != author.id) {
 			p.quest('friendlyBattle', 1, author);
 			p.quest('friendlyBattleBy', 1, sender);
 		}
 		await battleUtil.displayAllBattles(p, teams, logs, setting);
-	}
+	},
 });
 
 /* user1 should be challengee, user2 is challenger */
@@ -156,7 +161,7 @@ async function parseTeams(p, user, sender, flags) {
 				LEFT JOIN pet_team_active pt_act
 					ON pt2.pgid = pt_act.pgid
 			WHERE u2.id = ${user.id}
-			ORDER BY pt_act.pgid ${user.id === sender.id ? 'ASC': 'DESC'}, pt2.pgid ASC
+			ORDER BY pt_act.pgid ${user.id === sender.id ? 'ASC' : 'DESC'}, pt2.pgid ASC
 			LIMIT 1)
 		ORDER BY pos ASC;`;
 	sql += `SELECT pet_team.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
@@ -189,12 +194,12 @@ async function parseTeams(p, user, sender, flags) {
 	let player = {
 		username: user.username,
 		name: result[0][0].tname,
-		team: pTeam
+		team: pTeam,
 	};
 	let enemy = {
 		username: sender.username,
 		name: result[1][0].tname,
-		team: eTeam
+		team: eTeam,
 	};
 	return { player, enemy };
 }
@@ -215,4 +220,4 @@ function parseFlags(flags) {
 		}
 	}
 	return result;
-};
+}

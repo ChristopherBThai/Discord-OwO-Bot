@@ -3,13 +3,13 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const teamUtil = require('./teamUtil');
 const animalUtil = require('./animalUtil');
 const WeaponInterface = require('../WeaponInterface');
 
 /* get and parse animals from the database */
-exports.getAnimals = async function(p) {
+exports.getAnimals = async function (p) {
 	/* Query animals and weapons */
 	let sql = `SELECT animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
 		FROM animal
@@ -27,14 +27,14 @@ exports.getAnimals = async function(p) {
 };
 
 /* Construct embed message */
-exports.getDisplay = function(p, animals) {
+exports.getDisplay = function (p, animals) {
 	let embed = {
-		'author': {
-			'name': `${p.msg.author.username}'s pets`,
-			'icon_url': p.msg.author.avatarURL
+		author: {
+			name: `${p.msg.author.username}'s pets`,
+			icon_url: p.msg.author.avatarURL,
 		},
-		'color': p.config.embed_color,
-		'fields': []
+		color: p.config.embed_color,
+		fields: [],
 	};
 	let letterCount = embed.author.name.length;
 	for (let i in animals) {
@@ -53,10 +53,20 @@ exports.getDisplay = function(p, animals) {
 		tempDigit = Math.log10(animal.stats.mr[0] + animal.stats.mr[1]) + 1;
 		if (tempDigit > digits) digits = tempDigit;
 		digits = Math.trunc(digits);
-		let hp = ('' + Math.ceil(animal.stats.hp[1] + animal.stats.hp[3])).padStart(digits, '0');
-		let wp = ('' + Math.ceil(animal.stats.wp[1] + animal.stats.wp[3])).padStart(digits, '0');
-		let att = ('' + Math.ceil(animal.stats.att[0] + animal.stats.att[1])).padStart(digits, '0');
-		let mag = ('' + Math.ceil(animal.stats.mag[0] + animal.stats.mag[1])).padStart(digits, '0');
+		let hp = ('' + Math.ceil(animal.stats.hp[1] + animal.stats.hp[3])).padStart(
+			digits,
+			'0'
+		);
+		let wp = ('' + Math.ceil(animal.stats.wp[1] + animal.stats.wp[3])).padStart(
+			digits,
+			'0'
+		);
+		let att = (
+			'' + Math.ceil(animal.stats.att[0] + animal.stats.att[1])
+		).padStart(digits, '0');
+		let mag = (
+			'' + Math.ceil(animal.stats.mag[0] + animal.stats.mag[1])
+		).padStart(digits, '0');
 		let pr = WeaponInterface.resToPrettyPercent(animal.stats.pr);
 		let mr = WeaponInterface.resToPrettyPercent(animal.stats.mr);
 		let stats = `<:hp:531620120410456064> \`${hp}\` <:wp:531620120976687114> \`${wp}\`\n<:att:531616155450998794> \`${att}\` <:mag:531616156231139338> \`${mag}\`\n<:pr:531616156222488606> \`${pr}\` <:mr:531616156226945024> \`${mr}\``;
@@ -70,9 +80,18 @@ exports.getDisplay = function(p, animals) {
 			weaponText += `${weapon.avgQuality}%`;
 		}
 		let field = {
-			'name': (animal.animal.uni ? animal.animal.uni : animal.animal.value) + ' ' + p.replaceMentions((animal.nickname ? animal.nickname : animal.animal.name)),
-			'value': `Lvl.${animal.stats.lvl} \`[${p.global.toFancyNum(animal.stats.xp[0])}/${p.global.toFancyNum(animal.stats.xp[1])}]\`\n${stats}\n${weaponText}`,
-			'inline': true
+			name:
+				(animal.animal.uni ? animal.animal.uni : animal.animal.value) +
+				' ' +
+				p.replaceMentions(
+					animal.nickname ? animal.nickname : animal.animal.name
+				),
+			value: `Lvl.${animal.stats.lvl} \`[${p.global.toFancyNum(
+				animal.stats.xp[0]
+			)}/${p.global.toFancyNum(
+				animal.stats.xp[1]
+			)}]\`\n${stats}\n${weaponText}`,
+			inline: true,
 		};
 
 		/* Discord embed char limit */

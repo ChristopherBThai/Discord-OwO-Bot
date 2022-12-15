@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const CommandInterface = require('../../CommandInterface');
 const { stripIndents } = require('common-tags');
 const teamUtil = require('./util/teamUtil');
@@ -26,18 +26,18 @@ module.exports = new CommandInterface({
 	half: 80,
 	six: 500,
 
-	execute: async function(p) {
+	execute: async function (p) {
 		if (p.args.length < 1) {
 			displayTeams(p);
 		} else if (p.global.isInt(p.args[0])) {
-			setTeam(p, + p.args[0]);
+			setTeam(p, +p.args[0]);
 		} else {
 			p.errorMsg(', the correct syntax is `owo setteam {teamNumber}`', 3000);
 		}
-	}
+	},
 });
 
-async function displayTeams (p) {
+async function displayTeams(p) {
 	// Fetch all teams and weapons
 	let sql = `SELECT pet_team.pgid,tname,pos,name,nickname,animal.pid,xp,pet_team.streak,highest_streak
 		FROM user
@@ -61,7 +61,7 @@ async function displayTeams (p) {
 				ON pta.pid = a.pid
 			LEFT JOIN user_weapon_passive b
 				ON a.uwid = b.uwid
-		WHERE u.id = ${p.msg.author.id};`
+		WHERE u.id = ${p.msg.author.id};`;
 	sql += `SELECT pet_team.pgid, pet_team_active.pgid AS active FROM user
 		INNER JOIN pet_team
 			ON user.uid = pet_team.uid
@@ -99,7 +99,10 @@ async function displayTeams (p) {
 	let activeTeam = 0;
 	const teamsOrder = {};
 	if (!result[2].length) {
-		p.errorMsg(', you don\'t have a team! Create one with `owo team add {animalName}`!', 5000);
+		p.errorMsg(
+			", you don't have a team! Create one with `owo team add {animalName}`!",
+			5000
+		);
 		return;
 	}
 	// Find current active team
@@ -116,13 +119,16 @@ async function displayTeams (p) {
 		const other = {
 			streak: team.animals[0].streak,
 			highest_streak: team.animals[0].highest_streak,
-			tname: team.animals[0].tname || 'team'
+			tname: team.animals[0].tname || 'team',
 		};
 		team = teamUtil.parseTeam(p, team.animals, team.weapons);
 		const embed = teamUtil.createTeamEmbed(p, team, other);
 		const teamOrder = teamsOrder[pgid];
 		if (teamOrder == null) {
-			p.errorMsg(', I couldn\'t parse your team... something went terribly wrong!', 3000);
+			p.errorMsg(
+				", I couldn't parse your team... something went terribly wrong!",
+				3000
+			);
 			return;
 		}
 		teams[teamOrder] = embed;
@@ -132,28 +138,30 @@ async function displayTeams (p) {
 	for (let i = 0; i < maxTeams; i++) {
 		if (!teams[i]) {
 			teams[i] = {
-				'author': {
-					'name': `${p.msg.author.username}'s team`,
-					'icon_url': p.msg.author.avatarURL
+				author: {
+					name: `${p.msg.author.username}'s team`,
+					icon_url: p.msg.author.avatarURL,
 				},
-				'description': stripIndents`
+				description: stripIndents`
 					\`owo team add {animal} {pos}\` Add an animal to your team
 					\`owo team remove {pos}\` Removes an animal from your team
 					\`owo team rename {name}\` Renames your team
 					\`owo rename {animal} {name}\` Rename an animal
 					\`owo setteam {teamNum}\` to set multiple teams
 				`,
-				'color': p.config.embed_color,
-				'footer': {
-					'text': `Current Streak: 0 | Highest Streak: 0 | Page ${i + 1}/${maxTeams}`
+				color: p.config.embed_color,
+				footer: {
+					text: `Current Streak: 0 | Highest Streak: 0 | Page ${
+						i + 1
+					}/${maxTeams}`,
 				},
-				fields: []
+				fields: [],
 			};
 			for (let j = 1; j <= 3; j++) {
 				teams[i].fields.push({
 					name: 'none',
 					value: '*`owo team add {animal} ' + j + '`*',
-					inline: true
+					inline: true,
 				});
 			}
 		} else {
@@ -166,32 +174,41 @@ async function displayTeams (p) {
 	const createEmbed = (curr) => {
 		return teams[curr];
 	};
-	const additionalButtons = [{
-		type: 2,
-		style: 1,
-		custom_id: 'star',
-		emoji: {
-			id: null,
-			name: starEmoji 
-		}
-	}];
-	const additionalFilter = (componentName, user) => componentName === 'star' && user.id == p.msg.author.id;
-	const pagedMsg = new p.PagedMessage(
-		p,
-		createEmbed,
-		teams.length - 1,
-		{ startingPage: activeTeam, idle: 120000, additionalFilter, additionalButtons }
-	);
-	pagedMsg.on('button', async (component, user, ack, { currentPage, maxPage }) => {
-		if (component === 'star') {
-			await setTeam(p, currentPage + 1, true);
-			for (let i in teams) {
-				teams[i].footer.text = teams[i].footer.text.replace(` ${starEmoji}`, '');
-			}
-			teams[currentPage].footer.text += ` ${starEmoji}`;
-			await ack({ embed: teams[currentPage] });
-		}
+	const additionalButtons = [
+		{
+			type: 2,
+			style: 1,
+			custom_id: 'star',
+			emoji: {
+				id: null,
+				name: starEmoji,
+			},
+		},
+	];
+	const additionalFilter = (componentName, user) =>
+		componentName === 'star' && user.id == p.msg.author.id;
+	const pagedMsg = new p.PagedMessage(p, createEmbed, teams.length - 1, {
+		startingPage: activeTeam,
+		idle: 120000,
+		additionalFilter,
+		additionalButtons,
 	});
+	pagedMsg.on(
+		'button',
+		async (component, user, ack, { currentPage, maxPage }) => {
+			if (component === 'star') {
+				await setTeam(p, currentPage + 1, true);
+				for (let i in teams) {
+					teams[i].footer.text = teams[i].footer.text.replace(
+						` ${starEmoji}`,
+						''
+					);
+				}
+				teams[currentPage].footer.text += ` ${starEmoji}`;
+				await ack({ embed: teams[currentPage] });
+			}
+		}
+	);
 }
 
 async function setTeam(p, teamNum, dontDisplay) {
@@ -202,20 +219,28 @@ async function setTeam(p, teamNum, dontDisplay) {
 	}
 
 	// You cant change teams if in battle
-	if ((await battleUtil.inBattle(p))) {
-		p.errorMsg(', You cannot change your team while you\'re in battle! Please finish your `owo battle`!', 3000);
+	if (await battleUtil.inBattle(p)) {
+		p.errorMsg(
+			", You cannot change your team while you're in battle! Please finish your `owo battle`!",
+			3000
+		);
 		return;
-	} else if((await battleFriendUtil.inBattle(p))) {
-		p.errorMsg(', You cannot change your team while you have a pending battle! Use `owo db` to decline', 3000);
+	} else if (await battleFriendUtil.inBattle(p)) {
+		p.errorMsg(
+			', You cannot change your team while you have a pending battle! Use `owo db` to decline',
+			3000
+		);
 		return;
 	}
 
 	// Fetch uid and pgid
 	let sql = `SELECT uid FROM user WHERE id = ${p.msg.author.id};
-		SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${p.msg.author.id} ORDER BY pgid LIMIT 1 OFFSET ${teamNum-1}`;
+		SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${
+			p.msg.author.id
+		} ORDER BY pgid LIMIT 1 OFFSET ${teamNum - 1}`;
 	let result = await p.query(sql);
 	if (!result[0]) {
-		p.errorMsg(', you don\'t have any animals! Get some with `owo hunt`!', 3000);
+		p.errorMsg(", you don't have any animals! Get some with `owo hunt`!", 3000);
 		return;
 	}
 	let pgid = result[1][0];
@@ -233,4 +258,4 @@ async function setTeam(p, teamNum, dontDisplay) {
 	sql = `INSERT INTO pet_team_active (uid,pgid) VALUES (${uid},${pgid}) ON DUPLICATE KEY UPDATE pgid = ${pgid};`;
 	await p.query(sql);
 	if (!dontDisplay) displayTeams(p);
-};
+}

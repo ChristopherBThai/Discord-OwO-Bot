@@ -3,9 +3,9 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const requireDir = require('require-dir');
-const dir = requireDir('./commandList', { recurse:true });
+const dir = requireDir('./commandList', { recurse: true });
 const CommandInterface = require('./CommandInterface');
 const commands = {};
 const adminCommands = {};
@@ -14,17 +14,19 @@ const mcommands = {};
 const commandGroups = {};
 
 class Command {
-	constructor (main) {
+	constructor(main) {
 		this.main = main;
 		this.prefix = main.prefix;
 		initCommands();
 		this.commands = commands;
 	}
 
-	async execute (msg, raw) {
+	async execute(msg, raw) {
 		// Parse content info
 		let args = await checkPrefix(this.main, msg);
-		const containsPoints = msg.content.toLowerCase().includes('owo') || msg.content.toLowerCase().includes('uwu');
+		const containsPoints =
+			msg.content.toLowerCase().includes('owo') ||
+			msg.content.toLowerCase().includes('uwu');
 		if (!args) {
 			//if user said owo/uwu
 			if (containsPoints) {
@@ -39,14 +41,14 @@ class Command {
 		//  Check if that command exists
 		if (!commands[command]) {
 			if (containsPoints) {
-				executeCommand(this.main,initParam(msg, 'points', [], this.main));
+				executeCommand(this.main, initParam(msg, 'points', [], this.main));
 			}
 			return;
 		}
 
 		// Make sure user accepts rules first
 		if (!(await acceptedRules(this.main, msg))) {
-			executeCommand(this.main,initParam(msg, 'rule', [], this.main));
+			executeCommand(this.main, initParam(msg, 'rule', [], this.main));
 			return;
 		}
 
@@ -57,10 +59,10 @@ class Command {
 		this.checkRaw(raw);
 
 		// Execute the command
-		await executeCommand(this.main,param);
+		await executeCommand(this.main, param);
 	}
 
-	async executeInteraction (interaction) {
+	async executeInteraction(interaction) {
 		//Get command name
 		let command = interaction.command.toLowerCase();
 
@@ -77,7 +79,7 @@ class Command {
 		await executeCommand(this.main, param);
 	}
 
-	executeAdmin (msg) {
+	executeAdmin(msg) {
 		if (msg.content.toLowerCase().indexOf(this.prefix) !== 0) {
 			return false;
 		}
@@ -92,13 +94,26 @@ class Command {
 			adminCommands[command].execute(param);
 			return true;
 		} else if (this.main.config.modChannels.includes(msg.channel.id)) {
-			if (commandObj.admin && this.main.config.role.admin.find(id => msg.member?.roles.includes(id))) {
+			if (
+				commandObj.admin &&
+				this.main.config.role.admin.find((id) => msg.member?.roles.includes(id))
+			) {
 				adminCommands[command].execute(param);
 				return true;
-			} else if (commandObj.manager && this.main.config.role.manager.find(id => msg.member?.roles.includes(id))) {
+			} else if (
+				commandObj.manager &&
+				this.main.config.role.manager.find((id) =>
+					msg.member?.roles.includes(id)
+				)
+			) {
 				adminCommands[command].execute(param);
 				return true;
-			} else if (commandObj.helper && this.main.config.role.helper.find(id => msg.member?.roles.includes(id))) {
+			} else if (
+				commandObj.helper &&
+				this.main.config.role.helper.find((id) =>
+					msg.member?.roles.includes(id)
+				)
+			) {
 				adminCommands[command].execute(param);
 				return true;
 			}
@@ -106,17 +121,22 @@ class Command {
 		return false;
 	}
 
-	checkRaw (raw) {
+	checkRaw(raw) {
 		if (raw?.author) {
 			this.updateUser(raw.author);
 		}
-		raw?.mentions?.forEach(user => this.updateUser(user));
+		raw?.mentions?.forEach((user) => this.updateUser(user));
 	}
 
-	updateUser (rawUser) {
+	updateUser(rawUser) {
 		const user = this.main.bot.users.get(rawUser.id);
 		let update = false;
-		if (user && (user.username !== rawUser.username || user.avatar !== rawUser.avatar || user.discriminator !== rawUser.discriminator)) {
+		if (
+			user &&
+			(user.username !== rawUser.username ||
+				user.avatar !== rawUser.avatar ||
+				user.discriminator !== rawUser.discriminator)
+		) {
 			update = true;
 		}
 		if (!user || update) {
@@ -125,13 +145,13 @@ class Command {
 	}
 }
 
-async function executeCommand(main, p){
+async function executeCommand(main, p) {
 	let { ban, cooldown, logger } = main;
 
 	// Check if the command/user/channel is banned
 	if (!(await ban.check(p, p.commandAlias))) return;
 
-	// Check for cooldowns 
+	// Check for cooldowns
 	if (!(await cooldown.check(p, p.commandAlias))) return;
 
 	// Execute command
@@ -146,8 +166,8 @@ async function executeCommand(main, p){
  * Reads and initializes the commands
  * Will sort them by type and aliases
  */
-function initCommands(){
-	let groupCommand = function(command, name) {
+function initCommands() {
+	let groupCommand = function (command, name) {
 		let groups = command.group;
 		if (groups && groups.length) {
 			for (let i in groups) {
@@ -159,9 +179,9 @@ function initCommands(){
 			if (!commandGroups['undefined']) commandGroups['undefined'] = [];
 			commandGroups['undefined'].push(name);
 		}
-	}
+	};
 
-	let addCommand = function(command){
+	let addCommand = function (command) {
 		if (command.owner || command.admin || command.manager || command.helper) {
 			return addAdminCommand(command);
 		}
@@ -172,14 +192,14 @@ function initCommands(){
 				commands[alias[i]] = command;
 				if (command.distinctAlias) {
 					aliasToCommand[alias[i]] = alias[i];
-					groupCommand(command,alias[i]);
+					groupCommand(command, alias[i]);
 					mcommands[alias[i]] = {
-						botcheck:command.bot,
-						cd:command.cooldown,
-						ban:12,
-						half:command.half,
-						six:command.six,
-						group:command.group
+						botcheck: command.bot,
+						cd: command.cooldown,
+						ban: 12,
+						half: command.half,
+						six: command.six,
+						group: command.group,
 					};
 				} else {
 					aliasToCommand[alias[i]] = name;
@@ -194,24 +214,24 @@ function initCommands(){
 				ban: 12,
 				half: command.half,
 				six: command.six,
-				group: command.group
+				group: command.group,
 			};
 		}
-	}
+	};
 
-	let addAdminCommand = function(command) {
+	let addAdminCommand = function (command) {
 		let alias = command.alias;
 		if (alias) {
 			for (let i = 0; i < alias.length; i++) {
-				return adminCommands[alias[i]] = command;
+				return (adminCommands[alias[i]] = command);
 			}
 		}
-	}
+	};
 	for (let key in dir) {
 		if (dir[key] instanceof CommandInterface) {
 			addCommand(dir[key]);
 		} else if (Array.isArray(dir[key])) {
-			dir[key].forEach(val => {
+			dir[key].forEach((val) => {
 				if (val instanceof CommandInterface) {
 					addCommand(val);
 				}
@@ -221,7 +241,7 @@ function initCommands(){
 				if (dir[key][key2] instanceof CommandInterface) {
 					addCommand(dir[key][key2]);
 				} else if (Array.isArray(dir[key][key2])) {
-					dir[key][key2].forEach(val => {
+					dir[key][key2].forEach((val) => {
 						if (val instanceof CommandInterface) {
 							addCommand(val);
 						}
@@ -230,53 +250,57 @@ function initCommands(){
 			}
 		}
 	}
-};
+}
 
 /**
  * Initializes the resources/utilities required for each command
  */
 function initParam(msg, command, args, main) {
 	let param = {
-		'msg': msg,
-		'options': msg.options || {},
-		'args': args,
-		'command': command,
-		'client': main.bot,
-		'dbl': main.dbl,
-		'mysql': main.mysql,
-		'con': main.mysql.con,
-		'startTransaction': main.mysqlhandler.startTransaction,
-		'redis': main.redis,
-		'query': main.query,
-		'send': main.sender.send(msg),
-		'replyMsg': main.sender.reply(msg),
-		'errorMsg': main.sender.error(main.config.emoji.invalid, msg),
-		'sender': main.sender,
-		'macro': main.macro,
-		'global': main.global,
-		'aliasToCommand': aliasToCommand,
-		'commandAlias': aliasToCommand[command],
-		'commands': commands,
-		'mcommands': mcommands,
-		'commandGroups': commandGroups,
-		'logger': main.logger,
-		'log': main.logger.log,
-		'config': main.config,
-		'fetch': main.fetch,
-		'pubsub': main.pubsub,
-		'DataResolver': main.DataResolver,
-		'EmojiAdder': main.EmojiAdder,
-		'quest': function(questName, count,extra){ main.questHandler.increment(msg, questName, count, extra).catch(console.error) },
-		'reactionCollector': main.reactionCollector,
-		'interactionCollector': main.interactionCollector,
-		'PagedMessage': main.PagedMessage,
-		'dateUtil': main.dateUtil,
-		'neo4j': main.neo4j
+		msg: msg,
+		options: msg.options || {},
+		args: args,
+		command: command,
+		client: main.bot,
+		dbl: main.dbl,
+		mysql: main.mysql,
+		con: main.mysql.con,
+		startTransaction: main.mysqlhandler.startTransaction,
+		redis: main.redis,
+		query: main.query,
+		send: main.sender.send(msg),
+		replyMsg: main.sender.reply(msg),
+		errorMsg: main.sender.error(main.config.emoji.invalid, msg),
+		sender: main.sender,
+		macro: main.macro,
+		global: main.global,
+		aliasToCommand: aliasToCommand,
+		commandAlias: aliasToCommand[command],
+		commands: commands,
+		mcommands: mcommands,
+		commandGroups: commandGroups,
+		logger: main.logger,
+		log: main.logger.log,
+		config: main.config,
+		fetch: main.fetch,
+		pubsub: main.pubsub,
+		DataResolver: main.DataResolver,
+		EmojiAdder: main.EmojiAdder,
+		quest: function (questName, count, extra) {
+			main.questHandler
+				.increment(msg, questName, count, extra)
+				.catch(console.error);
+		},
+		reactionCollector: main.reactionCollector,
+		interactionCollector: main.interactionCollector,
+		PagedMessage: main.PagedMessage,
+		dateUtil: main.dateUtil,
+		neo4j: main.neo4j,
 	};
-	param.setCooldown = function(cooldown) {
+	param.setCooldown = function (cooldown) {
 		main.cooldown.setCooldown(param, aliasToCommand[command], cooldown);
-	}
-	param.getMention = function(id) {
+	};
+	param.getMention = function (id) {
 		if (!id) return;
 		id = id.match(/[0-9]+/);
 		if (!id) return;
@@ -287,14 +311,14 @@ function initParam(msg, command, args, main) {
 				return tempUser;
 			}
 		}
-	}
-	param.getRole = function(id) {
+	};
+	param.getRole = function (id) {
 		id = id.match(/[0-9]+/);
 		if (!id) return;
 		id = id[0];
 		return param.msg.channel.guild.roles.get(id);
-	}
-	param.replaceMentions = function(text) {
+	};
+	param.replaceMentions = function (text) {
 		if (!text) return;
 		let userMentions = text.match(/<@!?\d+>/g);
 		let roleMentions = text.match(/<@&\d+>/g);
@@ -309,7 +333,7 @@ function initParam(msg, command, args, main) {
 			if (role) text = text.replace(mention, '@' + role.name);
 		}
 		return text;
-	}
+	};
 	return param;
 }
 
@@ -328,8 +352,14 @@ async function checkPrefix(main, msg) {
 	}
 
 	// check with custom prefix
-	if (msg.channel.guild.prefix && content.startsWith(msg.channel.guild.prefix)) {
-		return msg.content.slice(msg.channel.guild.prefix.length).trim().split(/ +/g);
+	if (
+		msg.channel.guild.prefix &&
+		content.startsWith(msg.channel.guild.prefix)
+	) {
+		return msg.content
+			.slice(msg.channel.guild.prefix.length)
+			.trim()
+			.split(/ +/g);
 	}
 }
 
@@ -340,6 +370,6 @@ async function acceptedRules(main, msg) {
 		msg.author.acceptedRules = !!result[0];
 	}
 	return msg.author.acceptedRules;
-};
+}
 
 module.exports = Command;

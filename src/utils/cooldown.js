@@ -3,13 +3,13 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const cooldown = {};
 const lock = {};
 const timerEmoji = '⏱';
 let macro;
 
-exports.check = async function(p, command) {
+exports.check = async function (p, command) {
 	let key = `cd_${command}_${p.msg.author.id}`;
 
 	// On cooldown
@@ -25,9 +25,9 @@ exports.check = async function(p, command) {
 	try {
 		// Fetch last used time
 		let ccd = await redis.hgetall(key);
-		if (!ccd) ccd = { 'command': command, 'lasttime': new Date('January 1,2018') };
+		if (!ccd) ccd = { command: command, lasttime: new Date('January 1,2018') };
 
-		// Calculate time difference 
+		// Calculate time difference
 		now = new Date();
 		ccd.lasttime = new Date(ccd.lasttime);
 		diff = now - ccd.lasttime;
@@ -37,13 +37,18 @@ exports.check = async function(p, command) {
 			if (command == 'points') {
 				if (diff > -600000) {
 					ccd.lasttime = new Date(ccd.lasttime.getTime() + 8000);
-					await redis.hmset(key,ccd);
+					await redis.hmset(key, ccd);
 					await redis.expire(key);
 				}
 				now = false;
 			} else {
 				let { timerText, time } = parseTimer(mcommands[ccd.command].cd - diff);
-				await p.replyMsg(`${timerEmoji}! Please wait ${timerText} and try again!`, time, null, { ephemeral: true });
+				await p.replyMsg(
+					`${timerEmoji}! Please wait ${timerText} and try again!`,
+					time,
+					null,
+					{ ephemeral: true }
+				);
 				cooldown[key] = true;
 				setTimeout(() => {
 					delete cooldown[key];
@@ -51,13 +56,13 @@ exports.check = async function(p, command) {
 				now = false;
 			}
 
-		// Check for macros/bots
+			// Check for macros/bots
 		} else {
 			ccd.lasttime = now;
-			await redis.hmset(key,ccd);
+			await redis.hmset(key, ccd);
 			await redis.expire(key);
 		}
-	} catch(e) {
+	} catch (e) {
 		console.error('cooldown.js check command');
 		console.error(e);
 		return;
@@ -68,7 +73,7 @@ exports.check = async function(p, command) {
 
 	// Everything was a success, lets check for macro/botting
 	if (now) {
-		let valid = !!await macro.check(p, command, { diff, now });
+		let valid = !!(await macro.check(p, command, { diff, now }));
 		if (!valid && command == 'points') {
 			await setCooldown(p, command, 600);
 		} else if (!valid) {
@@ -84,20 +89,24 @@ function parseTimer(diff) {
 	if (time < 1000) time = 1000;
 	let mspercent = Math.trunc(((diff % 1000) / 1000) * 100);
 	diff = Math.trunc(diff / 1000);
-	let min = Math.trunc(diff / 60)
+	let min = Math.trunc(diff / 60);
 	let sec = diff % 60;
-	let timerText = `**${((min > 0) ? (min + 'm ') : '') + sec}. ${mspercent}s**`;
+	let timerText = `**${(min > 0 ? min + 'm ' : '') + sec}. ${mspercent}s**`;
 	return { min, sec, timerText, time };
 }
 
-const setCooldown = exports.setCooldown = async function(p, command, cooldown = 0) {
+const setCooldown = (exports.setCooldown = async function (
+	p,
+	command,
+	cooldown = 0
+) {
 	let key = `cd_${command}_${p.msg.author.id}`;
 	let commandCooldown = p.commands[p.commandAlias].cooldown;
-	let past = new Date(Date.now() + (cooldown * 1000) - commandCooldown);
+	let past = new Date(Date.now() + cooldown * 1000 - commandCooldown);
 	await p.redis.hmset(key, { lasttime: past });
 	await p.redis.expire(key);
-};
+});
 
-exports.setMacro = function(m) {
+exports.setMacro = function (m) {
 	macro = m;
 };

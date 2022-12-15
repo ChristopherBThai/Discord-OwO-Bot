@@ -3,8 +3,8 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
-require('dotenv').config()
+ */
+require('dotenv').config();
 
 // Config file
 const config = require('./src/data/config');
@@ -36,7 +36,9 @@ let clusters = 60;
 			lastShardID = 1;
 			clusters = 2;
 		}
-		console.log(`Creating shards ${firstShardID} ~ ${lastShardID} out of ${shards} total shards!`);
+		console.log(
+			`Creating shards ${firstShardID} ~ ${lastShardID} out of ${shards} total shards!`
+		);
 
 		// Start sharder
 		const sharder = new Sharder(`Bot ${BOT_TOKEN}`, config.sharder.path, {
@@ -46,9 +48,9 @@ let clusters = 60;
 			shards,
 			clusters,
 			firstShardID,
-			lastShardID
+			lastShardID,
 		});
-	} catch(e) {
+	} catch (e) {
 		console.error('Failed to start eris sharder');
 		return console.error(e);
 	}

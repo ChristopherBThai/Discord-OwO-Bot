@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const PassiveInterface = require('../PassiveInterface');
 const WeaponInterface = require('../WeaponInterface');
 const Log = require('../util/logUtil');
@@ -20,7 +20,7 @@ module.exports = class Energize extends PassiveInterface {
 			'<:ewgen:621558018365980712>',
 			'<:mwgen:621558018500329482>',
 			'<:lwgen:621558018017853441>',
-			'<:fwgen:621558018424700948>'
+			'<:fwgen:621558018424700948>',
 		];
 		this.statDesc = `Replenish **?** ${WeaponInterface.wpEmoji}WP after every turn`;
 		this.qualityList = [[20, 40]];
@@ -31,8 +31,15 @@ module.exports = class Energize extends PassiveInterface {
 		if (animal.stats.wp[0] >= animal.stats.wp[1] + animal.stats.wp[3]) return;
 		let logs = new Log();
 		let replenish = this.stats[0];
-		replenish = WeaponInterface.replenish(animal, replenish, animal, { me: animal, allies: ally, enemies: enemy });
-		logs.push(`[ENERG] ${animal.nickname} replenished ${replenish.amount} WP`, replenish.logs);
+		replenish = WeaponInterface.replenish(animal, replenish, animal, {
+			me: animal,
+			allies: ally,
+			enemies: enemy,
+		});
+		logs.push(
+			`[ENERG] ${animal.nickname} replenished ${replenish.amount} WP`,
+			replenish.logs
+		);
 		return logs;
 	}
 };

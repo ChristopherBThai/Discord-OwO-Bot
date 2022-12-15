@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const CommandInterface = require('../../CommandInterface');
 
 module.exports = new CommandInterface({
@@ -11,9 +11,10 @@ module.exports = new CommandInterface({
 	owner: true,
 	admin: true,
 
-	execute: async function() {
+	execute: async function () {
 		const enableCaptcha = this.command === 'enablecaptcha';
-		let changeLink = true, changeImage = true;
+		let changeLink = true,
+			changeImage = true;
 		if (this.args[0] === 'link') {
 			changeImage = false;
 		} else if (this.args[0] === 'image') {
@@ -29,17 +30,29 @@ module.exports = new CommandInterface({
 		} else if (changeLink) {
 			this.macro.setCaptchaLink(enableCaptcha);
 			if (enableCaptcha) {
-				this.replyMsg(this.config.emoji.gear, ', I **enabled** `link` captchas');
+				this.replyMsg(
+					this.config.emoji.gear,
+					', I **enabled** `link` captchas'
+				);
 			} else {
-				this.replyMsg(this.config.emoji.gear, ', I **disabled** `link` captchas');
+				this.replyMsg(
+					this.config.emoji.gear,
+					', I **disabled** `link` captchas'
+				);
 			}
 		} else if (changeImage) {
 			this.macro.setCaptchaImage(enableCaptcha);
 			if (enableCaptcha) {
-				this.replyMsg(this.config.emoji.gear, ', I **enabled** `image` captchas');
+				this.replyMsg(
+					this.config.emoji.gear,
+					', I **enabled** `image` captchas'
+				);
 			} else {
-				this.replyMsg(this.config.emoji.gear, ', I **disabled** `image` captchas');
+				this.replyMsg(
+					this.config.emoji.gear,
+					', I **disabled** `image` captchas'
+				);
 			}
 		}
-	}
+	},
 });

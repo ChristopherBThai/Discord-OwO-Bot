@@ -3,18 +3,18 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const { stripIndents } = require('common-tags');
 const teamUtil = require('./teamUtil');
 const animalUtil = require('./animalUtil');
 const ab = require('../ab');
 const db = require('../db');
 
-exports.challenge = async function(p, opponent, bet = 0) {
+exports.challenge = async function (p, opponent, bet = 0) {
 	let id = opponent.id;
 	let user1 = p.msg.author.id;
 	let user2 = opponent.id;
-	if (p.msg.author.id>opponent.id){
+	if (p.msg.author.id > opponent.id) {
 		user1 = opponent.id;
 		user2 = p.msg.author.id;
 	}
@@ -66,16 +66,16 @@ exports.challenge = async function(p, opponent, bet = 0) {
 
 	/* Error check for teams */
 	if (!result[0][0]) {
-		p.errorMsg(', The opponent doesn\'t have a team!', 3000);
+		p.errorMsg(", The opponent doesn't have a team!", 3000);
 		return;
 	} else if (!result[1][0]) {
-		p.errorMsg(', You don\'t have a team!', 3000);
+		p.errorMsg(", You don't have a team!", 3000);
 		return;
 	} else if (!result[2][0] || result[2][0].money < bet) {
-		p.errorMsg(', You don\'t have enough cowoncy!', 3000);
+		p.errorMsg(", You don't have enough cowoncy!", 3000);
 		return;
 	} else if (!result[3][0] || result[3][0].money < bet) {
-		p.errorMsg(', The opponent doesn\'t have enough cowoncy!', 3000);
+		p.errorMsg(", The opponent doesn't have enough cowoncy!", 3000);
 		return;
 	} else if (result[4][0]) {
 		p.errorMsg(', There is already a pending battle!', 3000);
@@ -87,17 +87,17 @@ exports.challenge = async function(p, opponent, bet = 0) {
 	for (let i in pTeam) animalUtil.stats(pTeam[i]);
 	let eTeam = teamUtil.parseTeam(p, result[0], result[0]);
 	for (let i in eTeam) animalUtil.stats(eTeam[i]);
-	let player = { 
+	let player = {
 		username: p.msg.author.username,
 		id: p.msg.author.id,
 		name: result[1][0].tname,
-		team: pTeam
+		team: pTeam,
 	};
 	let enemy = {
 		username: opponent.username,
 		id: opponent.id,
 		name: result[0][0].tname,
-		team: eTeam
+		team: eTeam,
 	};
 	let stats = {};
 	stats.tie = result[5][0] ? result[5][0].tie : 0;
@@ -123,21 +123,23 @@ exports.challenge = async function(p, opponent, bet = 0) {
 					type: 2,
 					label: 'Accept',
 					style: 3,
-					custom_id: 'battle_accept'
+					custom_id: 'battle_accept',
 				},
 				{
 					type: 2,
 					label: 'Decline',
 					style: 4,
-					custom_id: 'battle_decline'
-				}
-			]
-		}
+					custom_id: 'battle_decline',
+				},
+			],
+		},
 	];
 	const msg = await p.send(content);
-	
+
 	/* create interaction collector */
-	let filter = (componentName, user) => ['battle_accept', 'battle_decline'].includes(componentName) && [p.msg.author.id, opponent.id].includes(user.id);
+	let filter = (componentName, user) =>
+		['battle_accept', 'battle_decline'].includes(componentName) &&
+		[p.msg.author.id, opponent.id].includes(user.id);
 	let collector = p.interactionCollector.create(msg, filter, { time: 900000 });
 	collector.on('collect', async (component, user, ack, err) => {
 		content.components[0].components[0].disabled = true;
@@ -149,14 +151,16 @@ exports.challenge = async function(p, opponent, bet = 0) {
 				collector.stop('done');
 				p.command = 'ab';
 				p.opt = {
-					author: opponent 
-				}
+					author: opponent,
+				};
 				ab.execute(p);
 			} else {
 				p.opt = {
-					author: p.msg.author 
+					author: p.msg.author,
 				};
-				err(`${p.config.emoji.error} **|** The opponent must accept the battle.`);
+				err(
+					`${p.config.emoji.error} **|** The opponent must accept the battle.`
+				);
 				return;
 			}
 		} else {
@@ -166,11 +170,11 @@ exports.challenge = async function(p, opponent, bet = 0) {
 			p.command = 'db';
 			if (user.id === opponent.id) {
 				p.opt = {
-					author: opponent 
+					author: opponent,
 				};
 			} else {
 				p.opt = {
-					author: p.msg.author 
+					author: p.msg.author,
 				};
 			}
 			db.execute(p);
@@ -190,7 +194,7 @@ exports.challenge = async function(p, opponent, bet = 0) {
 			console.error(`[${msg.id}] Could not edit message`);
 		}
 	});
-}
+};
 
 function toEmbedRequest(p, stats, bet, sender, receiver, flags) {
 	let text = [];
@@ -246,63 +250,82 @@ function toEmbedRequest(p, stats, bet, sender, receiver, flags) {
 	let embed = {
 		author: {
 			name: `${receiver.username}, ${sender.username} challenges you to a duel!`,
-			icon_url: p.msg.author.avatarURL
+			icon_url: p.msg.author.avatarURL,
 		},
 		description: stripIndents`
 			${flagText + acceptText}
 			\`owo db\` to decline the battle!
 		`,
 		color: p.config.embed_color,
-		footer:{
-			text: 'This challenge will expire in 10 minutes'
+		footer: {
+			text: 'This challenge will expire in 10 minutes',
 		},
-		timestamp: new Date()
+		timestamp: new Date(),
 	};
 	if (text.join('\n').length > 1024 || text2.join('\n').length > 1024) {
 		embed.fields = [];
 		for (let i in text) {
 			embed.fields.push({
-				name: (sender.name ? sender.name : sender.username + '\'s Team') + (sender.id == receiver.id ? '' : ' | ' + (stats[sender.id] ? stats[sender.id] : 0) + ' wins'),
+				name:
+					(sender.name ? sender.name : sender.username + "'s Team") +
+					(sender.id == receiver.id
+						? ''
+						: ' | ' + (stats[sender.id] ? stats[sender.id] : 0) + ' wins'),
 				value: text[i],
-				inline:true
+				inline: true,
 			});
 		}
 		for (let i in text2) {
 			embed.fields.push({
-				name: (receiver.name ? receiver.name : receiver.username + '\'s Team') + (sender.id == receiver.id ? '' : ' | ' + (stats[receiver.id] ? stats[receiver.id] : 0) + ' wins'),
+				name:
+					(receiver.name ? receiver.name : receiver.username + "'s Team") +
+					(sender.id == receiver.id
+						? ''
+						: ' | ' + (stats[receiver.id] ? stats[receiver.id] : 0) + ' wins'),
 				value: text2[i],
-				inline: true
+				inline: true,
 			});
 		}
 	} else {
-		embed.fields = [{
-			name: (sender.name ? sender.name : sender.username + '\'s Team') + (sender.id == receiver.id ? '' : ' | ' + (stats[sender.id] ? stats[sender.id] : 0) + ' wins'),
-			value: text.join('\n'),
-			inline: true
-		},
-		{
-			name: (receiver.name ? receiver.name : receiver.username + '\'s Team') + (sender.id == receiver.id ? '' : ' | ' + (stats[receiver.id] ? stats[receiver.id] : 0) + ' wins'),
-			value: text2.join('\n'),
-			inline: true
-		}];
+		embed.fields = [
+			{
+				name:
+					(sender.name ? sender.name : sender.username + "'s Team") +
+					(sender.id == receiver.id
+						? ''
+						: ' | ' + (stats[sender.id] ? stats[sender.id] : 0) + ' wins'),
+				value: text.join('\n'),
+				inline: true,
+			},
+			{
+				name:
+					(receiver.name ? receiver.name : receiver.username + "'s Team") +
+					(sender.id == receiver.id
+						? ''
+						: ' | ' + (stats[receiver.id] ? stats[receiver.id] : 0) + ' wins'),
+				value: text2.join('\n'),
+				inline: true,
+			},
+		];
 	}
 	let content = `<@${receiver.id}>`;
 	return { content, embed };
 }
 
-exports.inBattle = async function(p) {
+exports.inBattle = async function (p) {
 	let sql = `SELECT * FROM user_battle WHERE (
 			user1 = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) OR
 			user2 = (SELECT uid FROM user WHERE id = ${p.msg.author.id})
-		) AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 10;`
+		) AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 10;`;
 	let result = await p.query(sql);
 	return result[0];
 };
 
-function parseFlags(p ,flags) {
+function parseFlags(p, flags) {
 	let result = [];
 	let usedFlags = [];
-	flags = flags.join('')
+	flags = flags
+		.join('')
 		.replace(/[=:]/gi, '')
 		.replace(/[,]/gi, '-')
 		.toLowerCase()
@@ -320,7 +343,7 @@ function parseFlags(p ,flags) {
 function parseFlag(p, flag) {
 	if (flag.startsWith('display')) {
 		flag = flag.replace('display', '');
-		switch(flag) {
+		switch (flag) {
 			case 'text':
 				return { flag: 'display', res: 'text' };
 				break;
@@ -334,17 +357,15 @@ function parseFlag(p, flag) {
 				return undefined;
 		}
 	} else if (flag.startsWith('log')) {
-		flag = flag.replace('logs', '')
-			.replace('log', '');
-			switch(flag) {
-				case 'link':
-					return { flag: 'log', res: 'link' };
-				default:
-					return { flag: 'log', res: 'log' };
-			}
+		flag = flag.replace('logs', '').replace('log', '');
+		switch (flag) {
+			case 'link':
+				return { flag: 'log', res: 'link' };
+			default:
+				return { flag: 'log', res: 'log' };
+		}
 	} else if (flag.startsWith('lvl') || flag.startsWith('level')) {
-		flag = flag.replace('level', '')
-			.replace('lvl', '');
+		flag = flag.replace('level', '').replace('lvl', '');
 		if (p.global.isInt(flag)) {
 			flag = parseInt(flag);
 			if (flag < 1) flag = 1;
@@ -355,4 +376,4 @@ function parseFlag(p, flag) {
 		}
 	}
 	return undefined;
-};
+}

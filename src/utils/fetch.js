@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 class Fetch {
 	constructor(main) {
 		this.main = main;
@@ -19,7 +19,7 @@ class Fetch {
 		if (!user) {
 			try {
 				user = await this.bot.getRESTUser(userID);
-			} catch(e) {
+			} catch (e) {
 				return;
 			}
 			if (user && cache) {
@@ -43,13 +43,13 @@ class Fetch {
 		} else {
 			try {
 				member = await guild.getRESTMember(userID);
-			} catch(e) {
+			} catch (e) {
 				return;
 			}
 			if (!member.id) member.id = member.user.id;
 			if (!member.status) member.status = member.user.presence?.status;
 			if (member && cache) {
-				guild.members.add(member,guild,false);
+				guild.members.add(member, guild, false);
 			}
 		}
 		return member;
@@ -61,7 +61,7 @@ class Fetch {
 		if (!guild) {
 			try {
 				guild = await this.bot.getRESTGuild(guildID);
-			} catch(e) {
+			} catch (e) {
 				return;
 			}
 			if (guild && cache) {
@@ -70,6 +70,6 @@ class Fetch {
 		}
 		return guild;
 	}
-};
+}
 
 module.exports = Fetch;

@@ -3,33 +3,31 @@
  * Copyright (C) 2021 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
+ */
 
 const CommandInterface = require('../../CommandInterface.js');
 
 module.exports = new CommandInterface({
+	alias: ['duwasvivu'],
 
-	alias:["duwasvivu"],
+	args: '',
 
-	args:"",
+	desc: 'This command was created by ?666840617380478977?',
 
-	desc:"This command was created by ?666840617380478977?",
+	example: [],
 
-	example:[],
+	related: [],
 
-	related:[],
+	permissions: ['sendMessages'],
 
-	permissions:["sendMessages"],
+	group: ['patreon'],
 
-	group:["patreon"],
+	cooldown: 10000,
+	half: 80,
+	six: 400,
+	bot: false,
 
-	cooldown:10000,
-	half:80,
-	six:400,
-	bot:false,
-
-	execute: async function(p){
+	execute: async function (p) {
 		p.send("Hi i'm duwas");
-	}
+	},
 });
-

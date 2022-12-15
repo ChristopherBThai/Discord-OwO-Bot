@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const CommandInterface = require('../../CommandInterface');
 const ban = require('../../../utils/ban');
 
@@ -12,7 +12,7 @@ module.exports = new CommandInterface({
 	owner: true,
 	admin: true,
 
-	execute: async function(p){
+	execute: async function (p) {
 		// Check if enough arguments
 		if (p.args.length < 2) {
 			p.errorMsg(', Invalid arguments!');
@@ -34,5 +34,5 @@ module.exports = new CommandInterface({
 			return;
 		}
 		await ban.liftCommand(p, user, command);
-	}
+	},
 });

@@ -3,10 +3,10 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const WeaponInterface = require('../WeaponInterface');
 
-exports.stats = function(animal,flags) {
+exports.stats = function (animal, flags) {
 	/* Parse animal stats */
 	let lvl = this.toLvl(animal.xp);
 	if (flags && flags.level) lvl.lvl = flags.level;
@@ -26,13 +26,13 @@ exports.stats = function(animal,flags) {
 	animal.stats = stats;
 };
 
-exports.weaponStats = function(stats, weapon) {
+exports.weaponStats = function (stats, weapon) {
 	/* Add Bonus Stats */
 	if (weapon) weapon.alterStats(stats);
 };
 
 /* Parse animal stats based on level */
-exports.parseStats = function(animal,lvl) {
+exports.parseStats = function (animal, lvl) {
 	let stats = {};
 	let baseHp = 500 + lvl * (animal.hpr * 2);
 	stats.hp = [baseHp, baseHp, baseHp, 0];
@@ -50,7 +50,7 @@ exports.parseStats = function(animal,lvl) {
 };
 
 /* Converts xp to lvl */
-exports.toLvl = function(xp) {
+exports.toLvl = function (xp) {
 	let lvl = 1;
 	while (xp >= getXP(lvl)) {
 		xp -= getXP(lvl);
@@ -65,13 +65,13 @@ function getXP(lvl) {
 }
 
 /* Returns sql for giving xp to animal */
-exports.giveXP = function(pid, xp) {
+exports.giveXP = function (pid, xp) {
 	let sql = `UPDATE IGNORE animal SET xp = xp + ${xp} WHERE pid = ${pid};`;
 	return sql;
 };
 
 const barLength = 24;
-exports.bar = function(stats) {
+exports.bar = function (stats) {
 	bar = '';
 	let hp = stats.hp[0] / (stats.hp[1] + stats.hp[3]);
 	hp = Math.ceil(barLength * hp);

@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const PassiveInterface = require('../PassiveInterface');
 
 /* +[5~20%] increase in strength */
@@ -20,7 +20,7 @@ module.exports = class Strength extends PassiveInterface {
 			'<:eatt:535290419722977280>',
 			'<:matt:535290420150665216>',
 			'<:latt:535290420029030400>',
-			'<:fatt:535290419903463436>'
+			'<:fatt:535290419903463436>',
 		];
 		this.statDesc = 'Increases your <:att:531616155450998794>STR by **?%**';
 		this.qualityList = [[5, 20]];

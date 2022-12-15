@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const PassiveInterface = require('../PassiveInterface');
 const WeaponInterface = require('../WeaponInterface');
 const Log = require('../util/logUtil');
@@ -22,7 +22,7 @@ module.exports = class Thorns extends PassiveInterface {
 			'<:ethorns:548729400632410122>',
 			'<:mthorns:548729400607113216>',
 			'<:lthorns:548729400649187338>',
-			'<:fthorns:548729400468963329>'
+			'<:fthorns:548729400468963329>',
 		];
 		this.statDesc = 'Reflect **?**% of the damage dealt to you as true damage';
 		this.qualityList = [[15, 35]];
@@ -31,11 +31,20 @@ module.exports = class Thorns extends PassiveInterface {
 	postAttacked(animal, attacker, damage, type, tags) {
 		/* Ignore if tags.thorns flag is true */
 		if (tags.thorns) return;
-		let totalDamage = damage.reduce((a, b) => a + b, 0) * this.stats[0] / 100;
+		let totalDamage = (damage.reduce((a, b) => a + b, 0) * this.stats[0]) / 100;
 		if (totalDamage < 1) return;
 		let logs = new Log();
-		let dmg = WeaponInterface.inflictDamage(animal, attacker, totalDamage, WeaponInterface.TRUE, { ...tags, thorns: true });
-		logs.push(`[THORNS] ${animal.nickname} damaged ${attacker.nickname} for ${dmg.amount} HP`, dmg.logs);
+		let dmg = WeaponInterface.inflictDamage(
+			animal,
+			attacker,
+			totalDamage,
+			WeaponInterface.TRUE,
+			{ ...tags, thorns: true }
+		);
+		logs.push(
+			`[THORNS] ${animal.nickname} damaged ${attacker.nickname} for ${dmg.amount} HP`,
+			dmg.logs
+		);
 		return logs;
 	}
 };

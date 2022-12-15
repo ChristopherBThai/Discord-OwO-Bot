@@ -3,9 +3,14 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const CommandInterface = require('../../CommandInterface');
-const dateOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+const dateOptions = {
+	weekday: 'short',
+	year: 'numeric',
+	month: 'short',
+	day: 'numeric',
+};
 const perPage = 15;
 const nextPageEmoji = '➡';
 const prevPageEmoji = '⬅';
@@ -17,15 +22,18 @@ module.exports = new CommandInterface({
 	admin: true,
 	manager: true,
 
-	execute: async function(p) {
+	execute: async function (p) {
 		if (p.args.length > 2) await banList(p);
 		else await displayList(p);
-	}
+	},
 });
 
 async function banList(p) {
 	if (p.args[0] != 'ban') {
-		p.errorMsg(', Invalid syntax! The correct use is `owo prayto ban {id} {minPrayCount}`', 4000);
+		p.errorMsg(
+			', Invalid syntax! The correct use is `owo prayto ban {id} {minPrayCount}`',
+			4000
+		);
 		return;
 	}
 	let userid = p.args[1];
@@ -48,34 +56,46 @@ async function banList(p) {
 		return;
 	}
 	let bans = [userid];
-	for (let i in result) { 
+	for (let i in result) {
 		bans.push(result[i].sender);
 	}
 	let count = bans.length;
-	const bansSql = "(" + bans.join(",99999),(") + ",99999)";
+	const bansSql = '(' + bans.join(',99999),(') + ',99999)';
 	sql = `INSERT IGNORE INTO timeout (id,penalty) VALUES ${bansSql} ON DUPLICATE KEY UPDATE penalty = 99999;`;
 	await p.query(sql);
 	if (user) {
 		try {
-			await (await user.getDMChannel()).createMessage('Your accounts has been banned for abusing pray/curse');
-		} catch(e) {
-			p.replyMsg(banEmoji, `, **${username}** and ${count - 1} users have been banned, I couldn't DM them`);
+			await (
+				await user.getDMChannel()
+			).createMessage('Your accounts has been banned for abusing pray/curse');
+		} catch (e) {
+			p.replyMsg(
+				banEmoji,
+				`, **${username}** and ${
+					count - 1
+				} users have been banned, I couldn't DM them`
+			);
 			return;
 		}
 	}
 	let userList = '';
 	for (let i in bans) {
 		userList += bans[i] + ', ';
-		if ( !((parseInt(i) + 1) % 10) && i + 1 != bans.length) {
+		if (!((parseInt(i) + 1) % 10) && i + 1 != bans.length) {
 			userList += '\n';
 		}
 	}
-	userList = userList.slice(0, -2); 
+	userList = userList.slice(0, -2);
 	const userListBuffer = Buffer.from(userList, 'utf8');
-	p.replyMsg(banEmoji, `, **${username}** and ${count - 1} users have been banned`, null, { 
-		file: userListBuffer, 
-		name: 'list.txt' 
-	});
+	p.replyMsg(
+		banEmoji,
+		`, **${username}** and ${count - 1} users have been banned`,
+		null,
+		{
+			file: userListBuffer,
+			name: 'list.txt',
+		}
+	);
 }
 
 async function displayList(p) {
@@ -99,9 +119,14 @@ async function displayList(p) {
 	let msg = await p.send(embed);
 	await msg.addReaction(prevPageEmoji);
 	await msg.addReaction(nextPageEmoji);
-	let filter = (emoji,userID) => [nextPageEmoji, prevPageEmoji].includes(emoji.name) && userID == p.msg.author.id;
-	let collector = p.reactionCollector.create(msg, filter, { time: 900000, idle: 120000 });
-	collector.on('collect', async function(emoji) {
+	let filter = (emoji, userID) =>
+		[nextPageEmoji, prevPageEmoji].includes(emoji.name) &&
+		userID == p.msg.author.id;
+	let collector = p.reactionCollector.create(msg, filter, {
+		time: 900000,
+		idle: 120000,
+	});
+	collector.on('collect', async function (emoji) {
 		if (emoji.name == nextPageEmoji) {
 			if (page + 1 < maxPage) page++;
 			else page = 0;
@@ -109,39 +134,46 @@ async function displayList(p) {
 			msg.edit(embed);
 		} else if (emoji.name === prevPageEmoji) {
 			if (page > 0) page--;
-			else page = maxPage-1;
+			else page = maxPage - 1;
 			embed = await getPage(p, opt, page, maxPage);
 			msg.edit(embed);
 		}
 	});
-	collector.on('end', async function(collected) {
+	collector.on('end', async function (collected) {
 		embed.embed.color = 6381923;
-		await msg.edit({ content: 'This message is now inactive', embed: embed.embed });
+		await msg.edit({
+			content: 'This message is now inactive',
+			embed: embed.embed,
+		});
 	});
 }
 
 async function getPage(p, user, page, maxPage) {
-	let  desc = '';
-	let sql = `SELECT * FROM user_pray WHERE receiver = ${user.id} LIMIT ${perPage} OFFSET ${page * perPage};`;
+	let desc = '';
+	let sql = `SELECT * FROM user_pray WHERE receiver = ${
+		user.id
+	} LIMIT ${perPage} OFFSET ${page * perPage};`;
 	let result = await p.query(sql);
 	for (let i in result) {
 		let prayer = result[i];
-		desc += `\`${prayer.sender}\` | \`${prayer.count}\` | \`${toDate(prayer.latest)}\`\n`;
+		desc += `\`${prayer.sender}\` | \`${prayer.count}\` | \`${toDate(
+			prayer.latest
+		)}\`\n`;
 	}
 	let embed = {
-		'author': {
-			'name': `List of users who prayed to ${user.username}`,
-			'icon_url': user.avatar
+		author: {
+			name: `List of users who prayed to ${user.username}`,
+			icon_url: user.avatar,
 		},
-		'description': desc,
-		'color': p.config.embed_color,
-		'footer': {
-			'text': `Page ${page + 1}/${maxPage}`
-		}
+		description: desc,
+		color: p.config.embed_color,
+		footer: {
+			text: `Page ${page + 1}/${maxPage}`,
+		},
 	};
 	return { embed };
 }
 
 function toDate(date) {
-	return (new Date(date)).toLocaleDateString('default', dateOptions);
-};
+	return new Date(date).toLocaleDateString('default', dateOptions);
+}

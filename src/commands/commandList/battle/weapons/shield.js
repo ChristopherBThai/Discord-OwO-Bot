@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const WeaponInterface = require('../WeaponInterface');
 const battleUtil = require('../util/battleUtil');
 const Logs = require('../util/logUtil');
@@ -11,7 +11,7 @@ const Logs = require('../util/logUtil');
 module.exports = class Shield extends WeaponInterface {
 	init() {
 		this.id = 5;
-		this.name = 'Defender\'s Aegis';
+		this.name = "Defender's Aegis";
 		this.basicDesc = '';
 		this.emojis = [
 			'<:cshield:546552025828163585>',
@@ -20,7 +20,7 @@ module.exports = class Shield extends WeaponInterface {
 			'<:eshield:546552026088210434>',
 			'<:mshield:546552083621609482>',
 			'<:lshield:546552083353174026>',
-			'<:fshield:546552026084016149>'
+			'<:fshield:546552026084016149>',
 		];
 		this.defaultEmoji = '<:shield:546552900986601493>';
 		this.statDesc = 'Adds a **taunt** buff to your animal for 2 turns';
@@ -32,7 +32,7 @@ module.exports = class Shield extends WeaponInterface {
 	}
 
 	preTurn(animal, ally, enemy, action) {
-		if(action != battleUtil.weapon) return;
+		if (action != battleUtil.weapon) return;
 		if (animal.disabled && !animal.disabled.canAttack) return;
 
 		/* If dead */
@@ -49,19 +49,30 @@ module.exports = class Shield extends WeaponInterface {
 
 		/* Grab buff and bind it to our animal */
 		let buff = this.getBuffs(animal)[0];
-		let buffLogs = buff.bind(animal, 2, { me: animal, allies: ally, enemies: enemy });
+		let buffLogs = buff.bind(animal, 2, {
+			me: animal,
+			allies: ally,
+			enemies: enemy,
+		});
 		logs.push(`[AEGIS] ${animal.nickname} used taunt`);
 
 		/* deplete weapon points*/
-		let mana = WeaponInterface.useMana(animal, this.manaCost, animal, { me: animal, allies: ally, enemies: enemy });
+		let mana = WeaponInterface.useMana(animal, this.manaCost, animal, {
+			me: animal,
+			allies: ally,
+			enemies: enemy,
+		});
 		let manaLogs = new Logs();
-		manaLogs.push(`[AEGIS] ${animal.nickname} used ${mana.amount} WP`, mana.logs);
+		manaLogs.push(
+			`[AEGIS] ${animal.nickname} used ${mana.amount} WP`,
+			mana.logs
+		);
 		logs.addSubLogs(buffLogs);
 		logs.addSubLogs(manaLogs);
 		return logs;
 	}
 
-	attackWeapon(me, team, enemy){
+	attackWeapon(me, team, enemy) {
 		/* Don't attack if we used an ability */
 		for (let i in me.buffs) {
 			if (me.buffs[i].id == this.buffList[0] && me.buffs[i].justCreated) return;

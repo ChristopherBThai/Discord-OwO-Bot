@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const PassiveInterface = require('../PassiveInterface');
 const WeaponInterface = require('../WeaponInterface');
 const Log = require('../util/logUtil');
@@ -20,7 +20,7 @@ module.exports = class ManaTap extends PassiveInterface {
 			'<:emanatap:562175424814120970>',
 			'<:mmanatap:562175424918978580>',
 			'<:lmanatap:562175425175093279>',
-			'<:fmanatap:562175424403079199>'
+			'<:fmanatap:562175424403079199>',
 		];
 		this.statDesc = `All damage you deal replenishes your ${WeaponInterface.wpEmoji} WP for **?%** of the damage dealt!`;
 		this.qualityList = [[15, 30]];
@@ -29,9 +29,12 @@ module.exports = class ManaTap extends PassiveInterface {
 	postAttack(animal, attackee, damage, type, tags) {
 		let logs = new Log();
 		let totalDamage = damage.reduce((a, b) => a + b, 0);
-		let mana = totalDamage * this.stats[0] / 100;
+		let mana = (totalDamage * this.stats[0]) / 100;
 		mana = WeaponInterface.replenish(animal, mana, animal, tags);
-		logs.push(`[MTAP] ${animal.nickname} replenished ${mana.amount} WP`, mana.logs);
+		logs.push(
+			`[MTAP] ${animal.nickname} replenished ${mana.amount} WP`,
+			mana.logs
+		);
 		return logs;
 	}
 };

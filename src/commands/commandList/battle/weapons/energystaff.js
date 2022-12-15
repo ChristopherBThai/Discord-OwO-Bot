@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const WeaponInterface = require('../WeaponInterface');
 const Logs = require('../util/logUtil');
 
@@ -19,7 +19,7 @@ module.exports = class EnergyStaff extends WeaponInterface {
 			'<:eestaff:572983470360363018>',
 			'<:mestaff:572984069915279380>',
 			'<:lestaff:572984070007423006>',
-			'<:festaff:572984069512757249>'
+			'<:festaff:572984069512757249>',
 		];
 		this.defaultEmoji = '<:estaff:572983470465220608>';
 		this.statDesc = `Sends a wave of energy and deals **?%** of your ${WeaponInterface.magEmoji}MAG to all opponents`;
@@ -33,11 +33,16 @@ module.exports = class EnergyStaff extends WeaponInterface {
 		if (me.stats.hp[0] <= 0) return;
 
 		/* No mana */
-		if (me.stats.wp[0] < this.manaCost) return this.attackPhysical(me, team, enemy);
+		if (me.stats.wp[0] < this.manaCost)
+			return this.attackPhysical(me, team, enemy);
 		let logs = new Logs();
 
 		/* deplete weapon points*/
-		let mana = WeaponInterface.useMana(me, this.manaCost, me, { me, allies: team, enemies: enemy });
+		let mana = WeaponInterface.useMana(me, this.manaCost, me, {
+			me,
+			allies: team,
+			enemies: enemy,
+		});
 		let manaLogs = new Logs();
 		manaLogs.push(`[ESTAFF] ${me.nickname} used ${mana.amount} WP`, mana.logs);
 
@@ -49,7 +54,13 @@ module.exports = class EnergyStaff extends WeaponInterface {
 		let subLogs = new Logs();
 		for (let i = 0; i < enemy.length; i++) {
 			if (enemy[i].stats.hp[0] > 0) {
-				let dmg = WeaponInterface.inflictDamage(me, enemy[i], damage, WeaponInterface.MAGICAL, { me, allies: team, enemies: enemy });
+				let dmg = WeaponInterface.inflictDamage(
+					me,
+					enemy[i],
+					damage,
+					WeaponInterface.MAGICAL,
+					{ me, allies: team, enemies: enemy }
+				);
 				logText += `${enemy[i].nickname} -${dmg.amount} | `;
 				subLogs.push(dmg.logs);
 			}

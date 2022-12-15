@@ -3,14 +3,14 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const redis = require('../../../../utils/redis');
 const WeaponInterface = require('../WeaponInterface');
 const weaponUtil = require('./weaponUtil');
 const dateUtil = require('../../../../utils/dateUtil');
 const cartEmoji = '🛒';
-const crateId = exports.crateId = 100;
-const cratePrice = exports.cratePrice = 40;
+const crateId = (exports.crateId = 100);
+const cratePrice = (exports.cratePrice = 40);
 const crateEmoji = '<:crate:523771259302182922>';
 const shardEmoji = '<:weaponshard:655902978712272917>';
 const weaponCount = 10;
@@ -23,14 +23,17 @@ for (let i in weaponUtil.shardPrices) {
 }
 const qualityAvg = 70; // must be greater than 50
 const maxQuality = 100;
-const minQuality = (qualityAvg * 2) - maxQuality;
+const minQuality = qualityAvg * 2 - maxQuality;
 
-const getDailyWeapons = exports.getDailyWeapons = async function(p) {
+const getDailyWeapons = (exports.getDailyWeapons = async function (p) {
 	let dailyWeapons = [];
 	let weapons = await redis.hgetall(redisKey);
 	let weaponKeys = Object.keys(weapons);
-	let weaponKeyResults = weaponKeys.map(id => id + '' + p.msg.author.id);
-	weaponKeyResults = await redis.hmget(redisKey + 'Purchased', weaponKeyResults);
+	let weaponKeyResults = weaponKeys.map((id) => id + '' + p.msg.author.id);
+	weaponKeyResults = await redis.hmget(
+		redisKey + 'Purchased',
+		weaponKeyResults
+	);
 	let purchased = {};
 	for (let i in weaponKeys) {
 		purchased[weaponKeys[i]] = weaponKeyResults[i];
@@ -52,23 +55,26 @@ const getDailyWeapons = exports.getDailyWeapons = async function(p) {
 		dailyWeapons.push(weapon);
 	}
 	return dailyWeapons;
-};
+});
 
-exports.resetDailyWeapons = async function() {
+exports.resetDailyWeapons = async function () {
 	let jsonWeapons = {};
 	for (let i = 101; i < 101 + weaponCount; i++) {
 		let weapon = weaponUtil.getRandomWeapon();
 		let wid = weapon.id;
 		let qualities = weapon.qualities;
 		for (let j in qualities) {
-			qualities[j] = Math.floor(Math.random() * (maxQuality - minQuality + 1)) + minQuality;
+			qualities[j] =
+				Math.floor(Math.random() * (maxQuality - minQuality + 1)) + minQuality;
 		}
 		let passives = [];
 		for (let j in weapon.passives) {
 			let qualities = weapon.passives[j].qualities;
 			let wpid = weapon.passives[j].id;
 			for (let k in qualities) {
-				qualities[k] = Math.floor(Math.random() * (maxQuality - minQuality + 1)) + minQuality;
+				qualities[k] =
+					Math.floor(Math.random() * (maxQuality - minQuality + 1)) +
+					minQuality;
 			}
 			passives.push({ wpid, qualities });
 		}
@@ -79,27 +85,32 @@ exports.resetDailyWeapons = async function() {
 	await redis.hmset(redisKey, jsonWeapons);
 };
 
-exports.buy = async function(p, id) {
+exports.buy = async function (p, id) {
 	// Purchase weapon crate
 	if (id === crateId) {
 		if (await useShards(p, cratePrice)) {
-			try { 
+			try {
 				let sql = `INSERT INTO crate(uid,cratetype,boxcount,claimcount,claim) VALUES ((SELECT uid FROM user WHERE id = ${p.msg.author.id}),0,1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;`;
 				await p.query(sql);
-			} catch(err) {
+			} catch (err) {
 				console.error(err);
 				p.errorMsg('Failed to add a Weapon Crate to your inventory');
 				return;
 			}
-			p.replyMsg(cartEmoji, `, you purchased a **${crateEmoji} Weapon Crate** for **${cratePrice} ${shardEmoji} Weapon Shards**`);
+			p.replyMsg(
+				cartEmoji,
+				`, you purchased a **${crateEmoji} Weapon Crate** for **${cratePrice} ${shardEmoji} Weapon Shards**`
+			);
 		} else {
-			p.errorMsg(', You don\'t have enough Weapon Shards!', 3000);
+			p.errorMsg(", You don't have enough Weapon Shards!", 3000);
 		}
 		return;
 	}
 
 	// Check if purchased already
-	let purchased = await redis.hmget(redisKey + 'Purchased', [id + '' + p.msg.author.id]);
+	let purchased = await redis.hmget(redisKey + 'Purchased', [
+		id + '' + p.msg.author.id,
+	]);
 	if (!!purchased[0]) {
 		p.errorMsg(', You already purchased this weapon, silly!', 3000);
 		return;
@@ -120,11 +131,11 @@ exports.buy = async function(p, id) {
 		passives.push(passive);
 	}
 	let weapon = WeaponInterface.weapons[weaponJson.wid];
-	weapon = new weapon(passives,weaponJson.qualities);
+	weapon = new weapon(passives, weaponJson.qualities);
 	weapon.shopID = id;
 	weapon.shardPrice = markupPrices[weapon.rank.name];
 	if (!(await useShards(p, weapon.shardPrice))) {
-		p.errorMsg(', You don\'t have enough Weapon Shards!', 3000);
+		p.errorMsg(", You don't have enough Weapon Shards!", 3000);
 		return;
 	}
 	let weaponEmojis = weapon.emoji;
@@ -134,14 +145,14 @@ exports.buy = async function(p, id) {
 		let uwid = result.insertId;
 		weaponEmojis = '`' + weaponUtil.shortenUWID(uwid) + '` ' + weaponEmojis;
 		let passiveSql = `INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES `;
-		for (let i = 0; i < weapon.passives.length; i++){
+		for (let i = 0; i < weapon.passives.length; i++) {
 			let tempPassive = weapon.passives[i];
 			weaponEmojis += tempPassive.emoji;
 			passiveSql += `(${uwid},${i},${tempPassive.id},'${tempPassive.sqlStat}'),`;
 		}
 		passiveSql = `${passiveSql.slice(0, -1)};`;
 		await p.query(passiveSql);
-	} catch(err) {
+	} catch (err) {
 		console.error(err);
 		p.errorMsg(', I failed to add the weapon to your inventory :(');
 		return;
@@ -149,7 +160,10 @@ exports.buy = async function(p, id) {
 	let redisValue = {};
 	redisValue[id + '' + p.msg.author.id] = true;
 	await redis.hmset(redisKey + 'Purchased', redisValue);
-	await p.replyMsg(cartEmoji, `, you purchased ${weaponEmojis} for **${weapon.shardPrice} ${shardEmoji} Weapon Shards**!`);
+	await p.replyMsg(
+		cartEmoji,
+		`, you purchased ${weaponEmojis} for **${weapon.shardPrice} ${shardEmoji} Weapon Shards**!`
+	);
 };
 
 async function useShards(p, count) {
@@ -163,16 +177,21 @@ async function useShards(p, count) {
 	return false;
 }
 
-exports.displayShop = async function(p) {
+exports.displayShop = async function (p) {
 	let weapons = await getDailyWeapons(p);
 	let currentPage = 0;
 	let embed = createEmbed(p, weapons, currentPage);
 	let msg = await p.send({ embed });
 	await msg.addReaction(prevPageEmoji);
 	await msg.addReaction(nextPageEmoji);
-	let filter = (emoji, userID) => [nextPageEmoji, prevPageEmoji].includes(emoji.name) && userID == p.msg.author.id;
-	let collector = p.reactionCollector.create(msg, filter, { time: 900000, idle: 120000 });
-	collector.on('collect', async function(emoji) {
+	let filter = (emoji, userID) =>
+		[nextPageEmoji, prevPageEmoji].includes(emoji.name) &&
+		userID == p.msg.author.id;
+	let collector = p.reactionCollector.create(msg, filter, {
+		time: 900000,
+		idle: 120000,
+	});
+	collector.on('collect', async function (emoji) {
 		if (emoji.name === nextPageEmoji) {
 			if (currentPage + 1 < weapons.length) currentPage++;
 			else currentPage = 0;
@@ -183,18 +202,19 @@ exports.displayShop = async function(p) {
 		embed = createEmbed(p, weapons, currentPage);
 		await msg.edit({ embed });
 	});
-	collector.on('end', async function(collected) {
+	collector.on('end', async function (collected) {
 		embed.color = 6381923;
 		await msg.edit({ content: 'This message is now inactive', embed });
 	});
 };
 
-function createEmbed(p, weapons, page){
+function createEmbed(p, weapons, page) {
 	let weapon = weapons[page];
 	/* Parse image url */
 	let url = weapon.emoji;
-	if (temp = url.match(/:[0-9]+>/)) {
-		temp = 'https://cdn.discordapp.com/emojis/' + temp[0].match(/[0-9]+/)[0] + '.';
+	if ((temp = url.match(/:[0-9]+>/))) {
+		temp =
+			'https://cdn.discordapp.com/emojis/' + temp[0].match(/[0-9]+/)[0] + '.';
 		if (url.match(/<a:/)) temp += 'gif';
 		else temp += 'png';
 		url = temp;
@@ -226,18 +246,20 @@ function createEmbed(p, weapons, page){
 	let timeUntil = dateUtil.afterMidnight();
 
 	/* Construct embed */
-	return embed = {
-		'author': {
-			'name': 'Today\'s Available Weapons',
-			'icon_url': p.msg.author.avatarURL
+	return (embed = {
+		author: {
+			name: "Today's Available Weapons",
+			icon_url: p.msg.author.avatarURL,
 		},
-		'color': p.config.embed_color,
-		'thumbnail': {
-			'url': url
+		color: p.config.embed_color,
+		thumbnail: {
+			url: url,
 		},
-		'description': desc,
-		'footer': {
-			'text': `Page ${page + 1}/${weapons.length} | Resets in: ${timeUntil.hours}H ${timeUntil.minutes}M ${timeUntil.seconds}S`
-		}
-	};
-};
+		description: desc,
+		footer: {
+			text: `Page ${page + 1}/${weapons.length} | Resets in: ${
+				timeUntil.hours
+			}H ${timeUntil.minutes}M ${timeUntil.seconds}S`,
+		},
+	});
+}

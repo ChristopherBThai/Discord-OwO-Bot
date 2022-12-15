@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const PassiveInterface = require('../PassiveInterface');
 
 /* +[5~20%] increase in magic*/
@@ -20,7 +20,7 @@ module.exports = class Magic extends PassiveInterface {
 			'<:emag:535290422940139520>',
 			'<:mmag:535290422923231247>',
 			'<:lmag:535290422893871114>',
-			'<:fmag:535290422852059138>'
+			'<:fmag:535290422852059138>',
 		];
 		this.statDesc = 'Increases your <:mag:531616156231139338>MAG by **?%**';
 		this.qualityList = [[5, 20]];

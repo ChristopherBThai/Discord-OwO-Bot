@@ -3,8 +3,8 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
-exports.handle = function(interaction) {
+ */
+exports.handle = function (interaction) {
 	switch (interaction.type) {
 		case 2:
 			handleCommand.bind(this)(interaction);
@@ -38,11 +38,13 @@ async function handleSlash(interaction) {
 function getInteractionArgs(interaction) {
 	// console.log(interaction.data.options);
 	const result = {};
-	interaction.data.options?.forEach(option => {
-		switch(option.type) {
+	interaction.data.options?.forEach((option) => {
+		switch (option.type) {
 			// User
 			case 6:
-				result[option.name] = interaction.data.resolved.members.get(option.value);
+				result[option.name] = interaction.data.resolved.members.get(
+					option.value
+				);
 				break;
 			// Sub command
 			case 2:
@@ -60,10 +62,9 @@ function getInteractionArgs(interaction) {
 function ackTimer(interaction) {
 	setTimeout(() => {
 		if (interaction.ignoreDefer || interaction.acknowledged) return;
-			interaction.defer()
-				.catch(err => {
-					console.error('Interaction defer failed.');
-				});
-			interaction.acknowledged = true;
+		interaction.defer().catch((err) => {
+			console.error('Interaction defer failed.');
+		});
+		interaction.acknowledged = true;
 	}, 2500);
-};
+}

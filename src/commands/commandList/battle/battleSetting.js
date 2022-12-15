@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const CommandInterface = require('../../CommandInterface');
 
 module.exports = new CommandInterface({
@@ -18,10 +18,10 @@ module.exports = new CommandInterface({
 	half: 80,
 	six: 500,
 
-	execute: async function(p) {
+	execute: async function (p) {
 		if (p.args.length == 0) await display(p);
 		else await changeSettings(p);
-	}
+	},
 });
 
 async function display(p) {
@@ -35,12 +35,12 @@ async function display(p) {
 	if (settings.showLogs || !settings.auto) text += '~~';
 	text += `\n**Logs = ** \`${settings.showLogs}\``;
 	let embed = {
-		'color': p.config.embed_color,
-		'author': {
-			'name': `${p.msg.author.username}'s battle settings`,
-			'icon_url': p.msg.author.avatarURL
+		color: p.config.embed_color,
+		author: {
+			name: `${p.msg.author.username}'s battle settings`,
+			icon_url: p.msg.author.avatarURL,
 		},
-		'description': text
+		description: text,
 	};
 	p.send({ embed });
 }
@@ -50,7 +50,9 @@ async function changeSettings(p) {
 	args = args.toLowerCase();
 	args = args.split('=');
 	if (args.length != 2) {
-		p.errorMsg(', The correct command is `owo battlesetting {settingName=setting}`');
+		p.errorMsg(
+			', The correct command is `owo battlesetting {settingName=setting}`'
+		);
 		return;
 	}
 	let field = '';
@@ -69,13 +71,15 @@ async function changeSettings(p) {
 	}else*/ if (args[0] == 'display') {
 		field = 'display';
 		if (args[1] == 'image') {
-			setting = '\'image\'';
+			setting = "'image'";
 		} else if (args[1] == 'text') {
-			setting = '\'text\'';
+			setting = "'text'";
 		} else if (args[1] == 'compact') {
-			setting = '\'compact\'';
+			setting = "'compact'";
 		} else {
-			p.errorMsg(', the display settings can only be `image`, `compact`, or `text`!');
+			p.errorMsg(
+				', the display settings can only be `image`, `compact`, or `text`!'
+			);
 			return;
 		}
 	} else if (args[0] == 'speed') {
@@ -87,7 +91,9 @@ async function changeSettings(p) {
 		} else if (args[1] == '2' || args[1] == 'lengthy') {
 			setting = 2;
 		} else {
-			p.errorMsg(', the speed settings can only be `instant`, `short`, or `lengthy`!');
+			p.errorMsg(
+				', the speed settings can only be `instant`, `short`, or `lengthy`!'
+			);
 			return;
 		}
 	} else if (args[0] == 'log' || args[0] == 'logs') {
@@ -103,7 +109,9 @@ async function changeSettings(p) {
 			return;
 		}
 	} else {
-		p.errorMsg(', the display settings can only be `logs`, `display`, or `speed`!');
+		p.errorMsg(
+			', the display settings can only be `logs`, `display`, or `speed`!'
+		);
 		return;
 	}
 	let sql = `INSERT IGNORE INTO battle_settings (uid,${field}) VALUES
@@ -126,7 +134,7 @@ function parseSettings(query) {
 	let logs = false;
 	if (query[0]) {
 		//if(query[0].auto==1)
-			//auto = false;
+		//auto = false;
 		if (query[0].display == 'text') display = 'text';
 		else if (query[0].display == 'compact') display = 'compact';
 		else if (query[0].display == 'log') display = 'log';
@@ -136,4 +144,4 @@ function parseSettings(query) {
 		else if (query[0].logs == 2) logs = 'link';
 	}
 	return { auto, display, speed, showLogs: logs };
-};
+}

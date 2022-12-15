@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const PassiveInterface = require('../PassiveInterface');
 const WeaponInterface = require('../WeaponInterface');
 const Log = require('../util/logUtil');
@@ -20,24 +20,38 @@ module.exports = class Discharge extends PassiveInterface {
 			'<:edischarge:572285187044671489>',
 			'<:mdischarge:572285187048734722>',
 			'<:ldischarge:572285187023699988>',
-			'<:fdischarge:572285187002466364>'
+			'<:fdischarge:572285187002466364>',
 		];
-		this.statDesc = 'When WP is replenished, deal **?%** of the replenished amount to a random enemy as MAG damage';
+		this.statDesc =
+			'When WP is replenished, deal **?%** of the replenished amount to a random enemy as MAG damage';
 		this.qualityList = [[100, 140]];
 	}
 
 	postReplenished(animal, from, amount, tags) {
 		/* Ignore if tags.thorns flag is true */
 		if (tags.discharge) return;
-		let totalDamage = amount.reduce((a, b) => a + b, 0) * this.stats[0] / 100;
+		let totalDamage = (amount.reduce((a, b) => a + b, 0) * this.stats[0]) / 100;
 		if (totalDamage < 1) return;
 		let logs = new Log();
 
 		/* Grab an enemy that I'm attacking */
-		let attacking = WeaponInterface.getAttacking(animal, tags.allies, tags.enemies);
+		let attacking = WeaponInterface.getAttacking(
+			animal,
+			tags.allies,
+			tags.enemies
+		);
 		if (!attacking) return;
-		let dmg = WeaponInterface.inflictDamage(animal, attacking, totalDamage, WeaponInterface.MAGICAL, { ...tags, discharge: true });
-		logs.push(`[DISCH] ${animal.nickname} damaged ${attacking.nickname} for ${dmg.amount} HP`, dmg.logs);
+		let dmg = WeaponInterface.inflictDamage(
+			animal,
+			attacking,
+			totalDamage,
+			WeaponInterface.MAGICAL,
+			{ ...tags, discharge: true }
+		);
+		logs.push(
+			`[DISCH] ${animal.nickname} damaged ${attacking.nickname} for ${dmg.amount} HP`,
+			dmg.logs
+		);
 		return logs;
 	}
 };

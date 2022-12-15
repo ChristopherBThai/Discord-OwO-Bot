@@ -3,11 +3,11 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const User = require('../../node_modules/eris/lib/structures/User');
 const axios = require('axios');
 
-exports.handle = function(packet, id) {
+exports.handle = function (packet, id) {
 	if (packet.t === 'INTERACTION_CREATE') {
 		switch (packet.d.type) {
 			case 2:
@@ -21,7 +21,7 @@ exports.handle = function(packet, id) {
 	}
 };
 
-function handleApplicationCommand (packet) {
+function handleApplicationCommand(packet) {
 	const interaction = new Interaction(this.bot, packet.d);
 	switch (packet.d.data.type) {
 		// Slash commands
@@ -36,14 +36,15 @@ function handleApplicationCommand (packet) {
 }
 
 function handleMessageComponent(packet) {
-	this.interactionHandlers.buttons.emit(packet.d.data.custom_id, packet.d) || this.interactionCollector.interact(packet.d);
+	this.interactionHandlers.buttons.emit(packet.d.data.custom_id, packet.d) ||
+		this.interactionCollector.interact(packet.d);
 }
 
 class Interaction {
-	constructor (bot, data) {
+	constructor(bot, data) {
 		this.interaction = true;
 		this.command = data.data.name;
-		this.id = data.id
+		this.id = data.id;
 		this.channel = bot.getChannel(data.channel_id) || { id: data.channel_id };
 		const author = data.member.user;
 		if (author.discriminator !== '0000') {
@@ -54,7 +55,10 @@ class Interaction {
 		if (this.channel.guild) {
 			if (data.member) {
 				data.member.id = this.author.id;
-				this.member = this.channel.guild.members.update(data.member, this.channel.guild);
+				this.member = this.channel.guild.members.update(
+					data.member,
+					this.channel.guild
+				);
 			} else if (this.channel.guild.members.has(this.author.id)) {
 				this.member = this.channel.guild.members.get(this.author.id);
 			} else {
@@ -76,17 +80,17 @@ class Interaction {
 		this.args = [];
 	}
 
-	async createMessage (content, file, del) {
+	async createMessage(content, file, del) {
 		const msg = await axios.post(this.url, {
 			type: 4,
-			data: content
+			data: content,
 		});
 	}
 
-	async createMessage (del) {
+	async createMessage(del) {
 		if (del) {
-			setTimeout(() => { 
-				axios.delete(this.followUpUrl) 
+			setTimeout(() => {
+				axios.delete(this.followUpUrl);
 			}, del);
 		}
 		return {
@@ -97,11 +101,11 @@ class Interaction {
 					content = { content };
 				}
 				if (content.embed) {
-					content.embeds = [ content.embed ];
+					content.embeds = [content.embed];
 					delete content.embed;
 				}
 				return axios.patch(this.followUpUrl, content);
-			}
+			},
 		};
 	}
-};
+}

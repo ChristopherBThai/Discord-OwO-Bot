@@ -3,7 +3,7 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const CommandInterface = require('../../CommandInterface');
 const teams = require('./teams');
 const global = require('../../../utils/global');
@@ -23,7 +23,7 @@ module.exports = new CommandInterface({
 	half: 80,
 	six: 500,
 
-	execute: async function(p) {
+	execute: async function (p) {
 		/* Parse sub command */
 		const subcommand = p.args[0];
 		if (subcommand != undefined) subcommand = subcommand.toLowerCase();
@@ -33,32 +33,58 @@ module.exports = new CommandInterface({
 			p.args = [];
 			await teams.execute(p);
 
-		/* Add a new team member */
-		} else if (subcommand == 'set' || subcommand == 's' || subcommand == 'add' || subcommand == 'a' || subcommand == 'replace') {
+			/* Add a new team member */
+		} else if (
+			subcommand == 'set' ||
+			subcommand == 's' ||
+			subcommand == 'add' ||
+			subcommand == 'a' ||
+			subcommand == 'replace'
+		) {
 			/* No changing while in battle */
-			if ((await battleUtil.inBattle(p))) {
-				p.errorMsg(', You cannot change your team while you\'re in battle! Please finish your `owo battle`!', 3000);
-			} else if ((await battleFriendUtil.inBattle(p))) {
-				p.errorMsg(', You cannot change your team while you have a pending battle! Use `owo db` to decline', 3000);
+			if (await battleUtil.inBattle(p)) {
+				p.errorMsg(
+					", You cannot change your team while you're in battle! Please finish your `owo battle`!",
+					3000
+				);
+			} else if (await battleFriendUtil.inBattle(p)) {
+				p.errorMsg(
+					', You cannot change your team while you have a pending battle! Use `owo db` to decline',
+					3000
+				);
 			} else {
 				await add(p);
 			}
 
-		/* Remove a team member */
-		} else if (subcommand == 'remove' || subcommand == 'delete' || subcommand == 'd') {
+			/* Remove a team member */
+		} else if (
+			subcommand == 'remove' ||
+			subcommand == 'delete' ||
+			subcommand == 'd'
+		) {
 			/* No changing while in battle */
-			if ((await battleUtil.inBattle(p))) {
-				p.errorMsg(', You cannot change your team while you\'re in battle! Please finish your `owo battle`!', 3000);
-			} else if ((await battleFriendUtil.inBattle(p))) {
-				p.errorMsg(', You cannot change your team while you have a pending battle! Use `owo db` to decline', 3000);
+			if (await battleUtil.inBattle(p)) {
+				p.errorMsg(
+					", You cannot change your team while you're in battle! Please finish your `owo battle`!",
+					3000
+				);
+			} else if (await battleFriendUtil.inBattle(p)) {
+				p.errorMsg(
+					', You cannot change your team while you have a pending battle! Use `owo db` to decline',
+					3000
+				);
 			} else {
 				await remove(p);
 			}
 
-		/* Rename the team */
-		} else if (subcommand == 'rename' || subcommand == 'r' || subcommand == 'name') {
+			/* Rename the team */
+		} else if (
+			subcommand == 'rename' ||
+			subcommand == 'r' ||
+			subcommand == 'name'
+		) {
 			await rename(p);
-		}
+		} else p.errorMsg(', wrong subcommand! Please check `owo help team`', 3000);
 
 		/* If they need help
 		else if(subcommand=="help"){
@@ -68,14 +94,13 @@ module.exports = new CommandInterface({
 		*/
 
 		/* No command */
-		else p.errorMsg(', wrong subcommand! Please check `owo help team`', 3000);
-	}
+	},
 });
 
 async function displayTeam(p) {
 	try {
 		await teamUtil.displayTeam(p);
-	} catch(err) {
+	} catch (err) {
 		console.error(err);
 		p.errorMsg(', something went wrong... Try again!', 5000);
 	}
@@ -88,14 +113,17 @@ async function displayTeam(p) {
 async function add(p) {
 	/* Check if valid # of args */
 	if (p.args.length <= 1) {
-		p.errorMsg(', the correct command is `owo team add {animal} {position}`!', 5000);
+		p.errorMsg(
+			', the correct command is `owo team add {animal} {position}`!',
+			5000
+		);
 		return;
 	}
 
 	/* Check if animal is valid */
 	const animal = p.args[1];
 	animal = p.global.validAnimal(animal);
-	if (!animal){
+	if (!animal) {
 		p.errorMsg(', I could not find this animal!', 3000);
 		return;
 	}
@@ -108,7 +136,7 @@ async function add(p) {
 	}
 	try {
 		await teamUtil.addMember(p, animal, pos);
-	} catch(err) {
+	} catch (err) {
 		console.error(err);
 		p.errorMsg(', something went wrong... Try again!', 5000);
 	}
@@ -120,7 +148,10 @@ async function add(p) {
 async function remove(p) {
 	/* Check if valid # of args */
 	if (p.args.length < 2) {
-		p.errorMsg(', the correct command is `owo team remove {animal|position}`!', 5000);
+		p.errorMsg(
+			', the correct command is `owo team remove {animal|position}`!',
+			5000
+		);
 		return;
 	}
 
@@ -137,12 +168,12 @@ async function remove(p) {
 			p.errorMsg(', I could not find this animal!', 3000);
 			return;
 		} else {
-			remove = remove.value
+			remove = remove.value;
 		}
 	}
 	try {
 		await teamUtil.removeMember(p, remove);
-	} catch(err) {
+	} catch (err) {
 		console.error(err);
 		p.errorMsg(', something went wrong... Try again!', 5000);
 	}
@@ -162,8 +193,8 @@ async function rename(p) {
 	const name = p.args.slice(1).join(' ');
 	try {
 		await teamUtil.renameTeam(p, name);
-	} catch(err) {
+	} catch (err) {
 		console.error(err);
 		p.errorMsg(', something went wrong... Try again!', 5000);
 	}
-};
+}

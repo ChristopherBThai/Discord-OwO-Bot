@@ -3,16 +3,16 @@
  * Copyright (C) 2018 - 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-*/
+ */
 const redis = require('redis');
 const { REDIS_HOST, REDIS_PASS } = process.env;
 const sub = redis.createClient({
-  host: REDIS_HOST,
-  password: REDIS_PASS
+	host: REDIS_HOST,
+	password: REDIS_PASS,
 });
 const pub = redis.createClient({
-  host: REDIS_HOST,
-  password: REDIS_PASS
+	host: REDIS_HOST,
+	password: REDIS_PASS,
 });
 const requireDir = require('require-dir');
 const dir = requireDir('./pubsubHandlers');
@@ -28,7 +28,7 @@ class PubSub {
 		// Redirect messages to handlers
 		sub.on('message', (channel, message) => {
 			if (this.channels[channel]) {
-				this.channels[channel].handle(main,message);
+				this.channels[channel].handle(main, message);
 			}
 		});
 
@@ -40,6 +40,6 @@ class PubSub {
 		if (typeof message == 'object') message = JSON.stringify(message);
 		return await pub.publish(channel, message);
 	}
-};
+}
 
 module.exports = PubSub;
