@@ -1,22 +1,4 @@
 {
-  "fear": {
-    "alias": ["nommy"],
-    "dataOverride": "fear2",
-    "emoji": "<a:fear:978025301013594162>",
-    "owners": ["486604819545587723"],
-    "fullControl": true,
-    "ownerOnly": true,
-    "dailyOnly": false,
-    "giveAmount": 1,
-    "description": "What do you fear?\n\n fears can alarming, but we all overcome them... unless it's me noming you \n\n\"I'd nom you if I could\"",
-    "displayMsg": "?emoji? **| ?user?**, you have overcome ?count? fear?plural? ?emoji?",
-    "brokeMsg": ", you do not have any Fears! >:c",
-    "giveMsg": "?emoji? **| ?giver?** says thank you for all the kindness <a:nommy:978025301189750814>, *nom nom*, ?receiver? has been sent one fear.",
-    "hasMerge": false,
-    "mergeNeeded": 3,
-    "mergeEmoji": "",
-    "mergeMsg": ""
-  },
   "bear": {
     "alias": [],
     "emoji": "<a:bear:882178441208807444>",
