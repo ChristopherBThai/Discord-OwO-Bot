@@ -412,7 +412,7 @@ var getDisplayPage = async function (p, user, page, sort, opt = {}) {
 				} else {
 					fieldText += row;
 				}
-			} else if (descHelp.length + desc.length + row.length >= 2048) {
+			} else if (descHelp.length + desc.length + row.length >= 4096) {
 				fieldText = row;
 			} else {
 				desc += row;
