@@ -3,30 +3,31 @@
  * Copyright (C) 2019 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
- */
+  */
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const crate = '<:crate:523771259302182922>';
-const crateShake = '<a:crateshake:523771259172028420>';
-const crateOpen = '<a:crateopen:523771437408845852>';
+const crate = "<:crate:523771259302182922>";
+const crateShake = "<a:crateshake:523771259172028420>";
+const crateOpen = "<a:crateopen:523771437408845852>";
 const weaponUtil = require('./util/weaponUtil.js');
 const maxBoxes = 50;
 
 module.exports = new CommandInterface({
-	alias: ['crate', 'weaponcrate', 'wc'],
 
-	args: '{count}',
+	alias: ["crate", "weaponcrate", "wc"],
 
-	desc: 'Opens a crate to find weapons!',
+	args: "{count}",
+
+	desc: "Opens a crate to find weapons!",
 
 	example: [],
 
-	related: ['owo weapon', 'owo battle'],
+	related: ["owo weapon", "owo battle"],
 
-	permissions: ['sendMessages'],
+	permissions: ["sendMessages"],
 
-	group: ['animals'],
+	group: ["animals"],
 
 	cooldown: 5000,
 	half: 100,
@@ -37,7 +38,7 @@ module.exports = new CommandInterface({
 			await openCrate(p, parseInt(p.args[0]));
 		} else if (p.options.count) {
 			await openCrate(p, parseInt(p.options.count));
-		} else if (p.args.length > 0 && p.args[0].toLowerCase() == 'all') {
+		} else if (p.args.length > 0 && p.args[0].toLowerCase() == "all") {
 			let sql = `SELECT boxcount FROM crate INNER JOIN user ON crate.uid = user.uid WHERE id = ${p.msg.author.id};`;
 			let result = await p.query(sql);
 			if (!result || result[0].boxcount <= 0) {
@@ -50,12 +51,13 @@ module.exports = new CommandInterface({
 		} else {
 			await openCrate(p);
 		}
-	},
-});
+
+	}
+})
 
 async function openCrate(p, count = 1) {
 	if (count <= 0) {
-		p.errorMsg(', you must open more than one crate silly!', 3000);
+		p.errorMsg(", you must open more than one crate silly!", 3000);
 		return;
 	}
 	if (count > maxBoxes) {
@@ -74,7 +76,7 @@ async function openCrate(p, count = 1) {
 
 	let uid = result[1][0].uid;
 	if (!uid) {
-		p.errorMsg(', It looks like something went wrong...', 3000);
+		p.errorMsg(", It looks like something went wrong...", 3000);
 		return;
 	}
 
@@ -85,15 +87,23 @@ async function openCrate(p, count = 1) {
 		result = await p.query(weapon.weaponSql);
 		let uwid = result.insertId;
 		if (!uwid) {
-			p.errorMsg(
-				', Uh oh. Something went wrong! The weapon passive could not be applied'
-			);
-			console.error('Unable to add weapon passive to: ' + uwid);
+			p.errorMsg(", Uh oh. Something went wrong! The weapon passive could not be applied");
+			console.error("Unable to add weapon passive to: " + uwid);
+			return;
 		} else {
 			weapon.uwid = uwid;
 			let uwidList = [];
-			for (let j = 0; j < weapon.passives.length; j++) uwidList.push(uwid);
-			await p.query(weapon.passiveSql, uwidList);
+			for (let j = 0; j < weapon.passives.length; j++)
+				uwidList.push(uwid);
+			try {
+				await p.query(weapon.passiveSql, uwidList);
+			} catch (e) {
+				// query failed, delete weapon that was already inserted above
+				// crate is still lost but there's no way to give it back unless the exact count is queried before
+				await p.query("DELETE FROM user_weapon WHERE uwid = " + uwid + ";");
+				p.errorMsg(", Uh oh. Something went wrong!");
+				return;
+			}
 		}
 	}
 
@@ -101,61 +111,26 @@ async function openCrate(p, count = 1) {
 	let text1, text2;
 	if (count == 1) {
 		let weapon = weaponsList[0];
-		text1 =
-			p.config.emoji.blank +
-			' **| ' +
-			p.msg.author.username +
-			'** opens a weapon crate\n' +
-			crateShake +
-			' **|** and finds a ...';
-		text2 =
-			weapon.emoji +
-			' **| ' +
-			p.msg.author.username +
-			'** opens a weapon crate\n' +
-			crateOpen +
-			' **|** and finds a `' +
-			weaponUtil.shortenUWID(weapon.uwid) +
-			'` ' +
-			weapon.rank.emoji +
-			' ' +
-			weapon.emoji;
+		text1 = p.config.emoji.blank + " **| " + p.msg.author.username + "** opens a weapon crate\n" + crateShake + " **|** and finds a ...";
+		text2 = weapon.emoji + " **| " + p.msg.author.username + "** opens a weapon crate\n" + crateOpen + " **|** and finds a `" + weaponUtil.shortenUWID(weapon.uwid) + "` " + weapon.rank.emoji + " " + weapon.emoji;
 		for (var i = 0; i < weapon.passives.length; i++) {
-			text2 += ' ' + weapon.passives[i].emoji;
+			text2 += " " + weapon.passives[i].emoji;
 		}
-		text2 += ' ' + weapon.avgQuality + '%';
+		text2 += " " + weapon.avgQuality + "%";
 	} else {
 		weaponsList.sort((a, b) => {
 			return b.avgQuality - a.avgQuality;
 		});
-		let allWeaponEmojis = '';
+		let allWeaponEmojis = "";
 		for (let i in weaponsList) {
 			allWeaponEmojis += weaponsList[i].emoji;
 		}
-		text1 =
-			p.config.emoji.blank +
-			' **| ' +
-			p.msg.author.username +
-			'** opens ' +
-			count +
-			' weapon crates\n' +
-			crateShake +
-			' **|** and finds...';
-		text2 =
-			p.config.emoji.blank +
-			' **| ' +
-			p.msg.author.username +
-			'** opens ' +
-			count +
-			' weapon crates\n' +
-			crateOpen +
-			' **|** and finds: ' +
-			allWeaponEmojis;
+		text1 = p.config.emoji.blank + " **| " + p.msg.author.username + "** opens " + count + " weapon crates\n" + crateShake + " **|** and finds...";
+		text2 = p.config.emoji.blank + " **| " + p.msg.author.username + "** opens " + count + " weapon crates\n" + crateOpen + " **|** and finds: " + allWeaponEmojis;
 	}
 
 	/* Send and edit message */
 	let message = await p.send(text1);
-	setTimeout(function () {
-		message.edit(text2);
-	}, 3000);
+	setTimeout(function () { message.edit(text2) }, 3000);
+
 }
