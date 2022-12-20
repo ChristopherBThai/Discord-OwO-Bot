@@ -40,7 +40,16 @@ module.exports = new CommandInterface({
 			} else if (this.global.isUser(this.args[i]) && !id) {
 				id = this.args[i].match(/[0-9]+/)[0];
 			} else {
-				invalid = true;
+				let value = args[i];
+				if (/[kK]/.test(value) && !amount) {
+					value = value.replace(/[kK]/, "");
+					amount = parseInt(value) * 1000;
+				} else if (/[mM]/.test(value && !amount)) {
+					value = value.replace(/[mM]/, "");
+					amount = parseInt(value) * 1000000;
+				} else {
+					invalid = true;
+				}
 			}
 		}
 
