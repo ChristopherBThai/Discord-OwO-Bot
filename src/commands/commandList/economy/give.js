@@ -40,7 +40,7 @@ module.exports = new CommandInterface({
 			} else if (this.global.isUser(this.args[i]) && !id) {
 				id = this.args[i].match(/[0-9]+/)[0];
 			} else {
-				let value = args[i];
+				let value = this.args[i];
 				if (/[kK]/.test(value) && !amount) {
 					value = value.replace(/[kK]/, "");
 					amount = parseInt(value) * 1000;
