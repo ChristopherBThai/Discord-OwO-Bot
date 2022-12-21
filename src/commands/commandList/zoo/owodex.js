@@ -8,7 +8,6 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const ranks = {};
-const animals = require('../../../../../tokens/owo-animals.json');
 
 module.exports = new CommandInterface({
 	alias: ['owodex', 'od', 'dex', 'd'],
@@ -70,7 +69,7 @@ module.exports = new CommandInterface({
 			emoji = temp;
 		} else emoji = undefined;
 
-		let rankEmoji = animals.ranks[animal.rank];
+		let rankEmoji = p.animals.ranks[animal.rank];
 		let points = animal.points;
 		let sell = '???';
 		if (result[0][0].sellcount > 0)

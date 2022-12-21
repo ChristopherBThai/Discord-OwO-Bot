@@ -7,7 +7,6 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const animals = require('../../../../../tokens/owo-animals.json');
 const global = require('../../../utils/global.js');
 const dateUtil = require('../../../utils/dateUtil.js');
 const gemUtil = require('./gemUtil.js');
@@ -66,7 +65,7 @@ module.exports = new CommandInterface({
 			msg.author.id +
 			' AND activecount > 0;';
 		let result = await p.query(sql);
-		if (result[0][0] == undefined || result[0][0].money < animals.rollprice) {
+		if (result[0][0] == undefined || result[0][0].money < this.animals.rollprice) {
 			p.errorMsg(", You don't have enough cowoncy!", 3000);
 		} else {
 			//Sort gem benefits

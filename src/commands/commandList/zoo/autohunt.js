@@ -15,7 +15,6 @@ const letters = 'abcdefghijklmnopqrstuvwxyz';
 const botrank =
 	'SELECT (COUNT(*)) AS rank, (SELECT COUNT(*) FROM autohunt) AS total FROM autohunt WHERE autohunt.total >= (SELECT autohunt.total FROM autohunt WHERE id = ';
 const logger = require('../../../utils/logger.js');
-const animals = require('../../../../../tokens/owo-animals.json');
 const parse = require('parse-duration');
 
 module.exports = new CommandInterface({
@@ -140,11 +139,11 @@ async function claim(p, msg, con, query, bot) {
 	for (let animal in total) {
 		let animalString =
 			animal + animalUtil.toSmallNum(total[animal].count, digits) + '  ';
-		let animalLoc = animals.order.indexOf(total[animal].rank);
+		let animalLoc = p.animals.order.indexOf(total[animal].rank);
 		if (animalLoc || animalLoc === 0) {
 			if (!tempText[animalLoc])
 				tempText[animalLoc] =
-					' \n' + animals.ranks[animals.order[animalLoc]] + ' **|**';
+					' \n' + p.animals.ranks[p.animals.order[animalLoc]] + ' **|**';
 			tempText[animalLoc] += ' ' + animalString;
 		}
 		count++;

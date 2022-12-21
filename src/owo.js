@@ -60,10 +60,17 @@ class OwO extends Base {
 		this.mysqlhandler = require('./botHandlers/mysqlHandler.js');
 		this.query = this.mysqlhandler.query;
 
+		try {
+			this.animals = require('./../../tokens/owo-animals.json');
+		} catch (err) {
+			console.error('Could not find owo-animals.json, attempting to use ./secret file...');
+			this.animals = require('../secret/owo-animals.json');
+			console.log('Found owo-animals.json file in secret folder!');
+		}
+
 		// Global helper methods
 		this.global = require('./utils/global.js');
-		this.global.client(this.bot);
-		this.global.con(this.mysql.con);
+		this.global.init(this);
 
 		// Message sender helper methods
 		this.sender = require('./utils/sender.js');
@@ -73,7 +80,13 @@ class OwO extends Base {
 		this.dateUtil = require('./utils/dateUtil.js');
 
 		// Hidden macro detection file
-		this.macro = require('./../../tokens/macro.js');
+		try {
+			this.macro = require('./../../tokens/macro.js');
+		} catch (err) {
+			console.error('Could not find macro.js, attempting to use ./secret file...');
+			this.macro = require('../secret/macro.js');
+			console.log('Found macro.js file in secret folder!');
+		}
 		this.macro.bind(this, require('merge-images'), require('canvas'));
 		this.cooldown.setMacro(this.macro);
 
@@ -98,6 +111,14 @@ class OwO extends Base {
 		// Helper for patreon benefits
 		this.patreon = require('./utils/patreon.js');
 		this.patreon.init(this);
+
+		try {
+			this.badwords = require('./../../tokens/badwords.json');
+		} catch (err) {
+			console.error('Could not find badwords.json, attempting to use ./secret file...');
+			this.badwords = require('../secret/badwords.json');
+			console.log('Found badwords.json file in secret folder!');
+		}
 
 		// Create commands
 		this.command = new (require('./commands/command.js'))(this);

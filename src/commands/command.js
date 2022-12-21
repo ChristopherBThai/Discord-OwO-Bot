@@ -264,6 +264,7 @@ function initParam(msg, command, args, main) {
 		args: args,
 		command: command,
 		client: main.bot,
+		animals: main.animals,
 		dbl: main.dbl,
 		mysql: main.mysql,
 		con: main.mysql.con,
@@ -288,6 +289,7 @@ function initParam(msg, command, args, main) {
 		pubsub: main.pubsub,
 		DataResolver: main.DataResolver,
 		EmojiAdder: main.EmojiAdder,
+		EmojiAdder: main.badwords,
 		quest: function (questName, count, extra) {
 			main.questHandler
 				.increment(msg, questName, count, extra)

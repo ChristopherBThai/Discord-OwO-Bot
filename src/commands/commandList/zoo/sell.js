@@ -8,9 +8,16 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const ranks = {};
-const animals = require('../../../../../tokens/owo-animals.json');
 const weaponUtil = require('../battle/util/weaponUtil.js');
 const ringUtil = require('../social/util/ringUtil.js');
+let animals;
+try {
+	animals = require('../../../../../tokens/owo-animals.json');
+} catch (err) {
+	console.error('Could not find owo-animals.json, attempting to use ./secret file...');
+	animals = require('../../../../secret/owo-animals.json');
+	console.log('Found owo-animals.json file in secret folder!');
+}
 
 module.exports = new CommandInterface({
 	alias: ['sell'],
