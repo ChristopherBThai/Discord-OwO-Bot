@@ -11,17 +11,24 @@ const nextPageEmoji = '➡️';
 const prevPageEmoji = '⬅️';
 const animalUtil = require('./animalUtil.js');
 const alterZoo = require('../patreon/alterZoo.js');
-var animals = require('../../../../../tokens/owo-animals.json');
-var patreon = '';
-var cpatreon = '';
-var secret = '';
-var secret2 = '';
-var secret3 = '';
-var secret4 = '';
-var secret5 = '';
-var secret6 = '';
-var secret7 = '';
-var display = '';
+let animals;
+try {
+	animals = require('../../../../../tokens/owo-animals.json');
+} catch (err) {
+	console.error('Could not find owo-animals.json, attempting to use ./secret file...');
+	animals = require('../../../../secret/owo-animals.json');
+	console.log('Found owo-animals.json file in secret folder!');
+}
+let patreon = '';
+let cpatreon = '';
+let secret = '';
+let secret2 = '';
+let secret3 = '';
+let secret4 = '';
+let secret5 = '';
+let secret6 = '';
+let secret7 = '';
+let display = '';
 initDisplay();
 
 module.exports = new CommandInterface({

@@ -7,8 +7,6 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const badwords = require('../../../../../tokens/badwords.json');
-
 module.exports = new CommandInterface({
 	alias: ['rename'],
 

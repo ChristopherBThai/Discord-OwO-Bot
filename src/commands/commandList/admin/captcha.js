@@ -7,7 +7,12 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const captcha = require('../../../../../tokens/captcha.js');
+let captcha;
+try {
+	captcha = require('../../../../../tokens/captcha.js');
+} catch (err) {
+	console.error('Could not find captcha.js admin captcha command will not work');
+}
 
 module.exports = new CommandInterface({
 	alias: ['captcha'],

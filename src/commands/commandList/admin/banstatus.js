@@ -7,8 +7,6 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const macro = require('../../../../../tokens/macro.js');
-
 module.exports = new CommandInterface({
 	alias: ['banstatus'],
 
@@ -26,7 +24,7 @@ module.exports = new CommandInterface({
 		let user = await p.fetch.getUser(userid);
 		let username = user ? user.username : userid;
 
-		let info = await macro.fetchBanInfo(userid, username);
+		let info = await p.macro.fetchBanInfo(userid, username);
 
 		p.send(info);
 	},

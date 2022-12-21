@@ -1,8 +1,14 @@
 const redis = require('./redis.js');
 const logger = require('./logger.js');
 const levelRewards = require('./levelRewards.js');
-var macro;
-macro = require('../../../tokens/macro.js');
+let macro;
+try {
+	macro = require('../../../tokens/macro.js');
+} catch (err) {
+	console.error('Could not find macro.js, attempting to use ./secret file...');
+	macro = require('../../secret/macro.js');
+	console.log('Found macro.js file in secret folder!');
+}
 const minXP = 10,
 	maxXP = 15,
 	dailyLimit = 3000;

@@ -5,6 +5,14 @@
  * For more information, see README.md and LICENSE
  */
 require('dotenv').config();
+if (!process.env.BOT_TOKEN) {
+	console.error('Bot token not found in ~/.env file. Checking secret file instead...');
+	require('dotenv').config({ path: './secret/env' })
+	if (!process.env.BOT_TOKEN) {
+		console.error('No bot token found. Please edit ./secret/env file and add your token');
+		return;
+	}
+}
 
 // Config file
 const config = require('./src/data/config.json');

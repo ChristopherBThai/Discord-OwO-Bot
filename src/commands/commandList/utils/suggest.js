@@ -8,7 +8,6 @@
 const CommandInterface = require('../../CommandInterface.js');
 const ban = require('../../../utils/ban.js');
 const config = require('../../../data/config.json');
-const badwords = require('../../../../../tokens/badwords.json');
 
 const feedbackChannel = '519778148888346635';
 const supportGuild = '420104212895105044';
@@ -159,13 +158,13 @@ async function suggest(message) {
 async function confirmSuggestion(message) {
 	// Check for banned words
 	const temp = message.replace(/\s/gi, '').toLowerCase();
-	for (let i in badwords) {
-		if (temp.indexOf(badwords[i]) >= 0) {
+	for (let i in this.badwords) {
+		if (temp.indexOf(this.badwords[i]) >= 0) {
 			await ban.banCommand(
 				this,
 				this.msg.author,
 				this.commandAlias,
-				`Your suggestion did not seem appropriate\n${this.config.emoji.blank} **| Your suggestion:** ${message}\n${this.config.emoji.blank} **| Bad word:** ${badwords[i]}`
+				`Your suggestion did not seem appropriate\n${this.config.emoji.blank} **| Your suggestion:** ${message}\n${this.config.emoji.blank} **| Bad word:** ${this.badwords[i]}`
 			);
 			return false;
 		}
