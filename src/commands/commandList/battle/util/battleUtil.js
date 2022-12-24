@@ -241,6 +241,7 @@ var display = (exports.display = async function (
 	logs,
 	{ display, title, showLogs, logLink }
 ) {
+	display = alterBattle.overrideDisplay(p, display);
 	if (display == 'text')
 		return displayText(p, team, logs, { title, showLogs, logLink });
 	else if (display == 'compact')
@@ -834,7 +835,7 @@ exports.displayAllBattles = async function (p, battle, logs, setting) {
 	updatePreviousStats(battle);
 	let embed = await display(p, battle, undefined, setting);
 	embed.embed.footer = { text: 'Turn 0/' + (logs.length - 1) };
-	embed.embed = await alterBattle.alter(p, p.msg.author, embed.embed);
+	embed.embed = await alterBattle.alter(p, p.msg.author, embed.embed, null, setting);
 	let msg = await p.send(embed);
 
 	/* Update the message for each log in log timeline */
@@ -1217,7 +1218,7 @@ async function finishBattle(
 			}
 		} else text += '!';
 		embed.embed.footer = { text };
-		embed.embed = await alterBattle.alter(p, p.msg.author, embed.embed, opt);
+		embed.embed = await alterBattle.alter(p, p.msg.author, embed.embed, opt, setting);
 		if (msg) await msg.edit(embed);
 		else await p.send(embed);
 	}
@@ -1242,7 +1243,7 @@ async function finishFriendlyBattle(
 	let embed = await display(p, battle, logs, setting);
 	embed.embed.color = color;
 	embed.embed.footer = { text };
-	embed.embed = await alterBattle.alter(p, p.msg.author, embed.embed);
+	embed.embed = await alterBattle.alter(p, p.msg.author, embed.embed, null, setting);
 	if (msg) await msg.edit(embed);
 	else await p.send(embed);
 }

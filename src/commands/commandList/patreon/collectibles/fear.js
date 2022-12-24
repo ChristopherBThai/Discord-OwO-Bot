@@ -15,7 +15,7 @@ class Fear extends Collectible {
 		this.alias = ['nommy'];
 		this.dataOverride = 'fear2';
 		this.emoji = '<a:fear:978025301013594162>';
-		this.owners = ['486604819545587723', '184587051943985152'];
+		this.owners = ['486604819545587723'];
 		this.fullControl = true;
 		this.ownerOnly = true;
 		this.giveAmount = 1;
