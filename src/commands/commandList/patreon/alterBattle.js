@@ -6,9 +6,17 @@
  */
 
 const blank = '<:blank:427371936482328596>';
-exports.alter = async function (p, user, text, type) {
+exports.alter = async function (p, user, text, type, setting) {
 	const result = await checkDb(p, user.id, text, type);
 	if (result) return result;
+	switch (p.msg.channel.id) {
+		case '1054101525191995502':
+			return quincey(text, type, setting);
+		case '1056148694480715886':
+			return quincey(text, type, setting);
+		case '1056148656572596264':
+			return quincey(text, type, setting);
+	}
 	switch (user.id) {
 		case '176046069954641921':
 			return crown(text, type);
@@ -68,6 +76,18 @@ exports.alter = async function (p, user, text, type) {
 			return text;
 	}
 };
+
+exports.overrideDisplay = function(p, display) {
+	switch (p.msg.channel.id) {
+		case '1054101525191995502':
+			return 'compact';
+		case '1056148694480715886':
+			return 'compact';
+		case '1056148656572596264':
+			return 'compact';
+	}
+	return display
+}
 
 async function checkDb(p, id, text, info) {
 	if (!info) return;
@@ -899,5 +919,16 @@ function estee(text, opt) {
 			}
 			break;
 	}
+	return text;
+}
+
+function quincey(text, opt, { friendlyBattle }) {
+	if (!friendlyBattle) {
+		return text;
+	}
+	text.image = {
+		url: 'https://media.discordapp.net/attachments/1051442610595708960/1054065287395291186/ezgif-4-fc0dd870e6.gif'
+	}
+	text.color = 2201331;
 	return text;
 }

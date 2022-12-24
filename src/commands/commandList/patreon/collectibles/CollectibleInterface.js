@@ -10,7 +10,7 @@ class Collectible {
 		// Name of collectible
 		this.key;
 		// Command alias
-		this.alias;
+		this.alias = [];
 		// Override database key
 		this.dataOverride;
 		// Emoji for collectible
@@ -112,12 +112,27 @@ class Collectible {
 			);
 		}
 
-		let msg = this.getDisplayMsg(p, { count, mergeCount, receiveDate });
+		let msg = await this.getDisplayMsg(p, { count, mergeCount, receiveDate });
 		p.send(msg);
 	}
 
-	getDisplayMsg(p, { count, mergeCount, receiveDate }) {
-		if (!mergeCount) {
+	async getDisplayMsg(p, { count, mergeCount, receiveDate }, msgOverride) {
+		if (msgOverride) {
+			return msgOverride
+				.replaceAll('?displayMsg?', this.displayMsg)
+				.replaceAll('?count?', count || 0)
+				.replaceAll('?mergeCount?', mergeCount || 0)
+				.replaceAll('?plural?', count > 1 ? 's' : '')
+				.replaceAll(
+					'?pluralName?',
+					count > 1 ? this.pluralName : this.singleName
+				)
+				.replaceAll('?mergePlural?', mergeCount > 1 ? 's' : '')
+				.replaceAll('?emoji?', this.emoji)
+				.replaceAll('?mergeEmoji?', this.mergeEmoji)
+				.replaceAll('?blank?', p.config.emoji.blank)
+				.replaceAll('?user?', p.msg.author.username);
+		} else if (!mergeCount) {
 			if (!count && this.displayNoneMsg) {
 				return this.displayNoneMsg
 					.replaceAll('?count?', count || 0)
@@ -128,6 +143,7 @@ class Collectible {
 					)
 					.replaceAll('?emoji?', this.emoji)
 					.replaceAll('?date?', receiveDate)
+					.replaceAll('?blank?', p.config.emoji.blank)
 					.replaceAll('?user?', p.msg.author.username);
 			} else {
 				return this.displayMsg
@@ -139,6 +155,7 @@ class Collectible {
 					)
 					.replaceAll('?emoji?', this.emoji)
 					.replaceAll('?date?', receiveDate)
+					.replaceAll('?blank?', p.config.emoji.blank)
 					.replaceAll('?user?', p.msg.author.username);
 			}
 		} else {
@@ -153,6 +170,7 @@ class Collectible {
 				)
 				.replaceAll('?mergePlural?', mergeCount > 1 ? 's' : '')
 				.replaceAll('?emoji?', this.emoji)
+				.replaceAll('?blank?', p.config.emoji.blank)
 				.replaceAll('?mergeEmoji?', this.mergeEmoji)
 				.replaceAll('?user?', p.msg.author.username);
 		}
@@ -238,7 +256,7 @@ class Collectible {
 			}
 			return false;
 		}
-		await redis.hset(`data_${msg.author.id}`, `${data}_reset`, afterMid.now);
+		await redis.hset(`data_${msg.author.id}`, `${this.data}_reset`, afterMid.now);
 		return true;
 	}
 
