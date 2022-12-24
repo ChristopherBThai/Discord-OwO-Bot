@@ -289,7 +289,7 @@ function initParam(msg, command, args, main) {
 		pubsub: main.pubsub,
 		DataResolver: main.DataResolver,
 		EmojiAdder: main.EmojiAdder,
-		EmojiAdder: main.badwords,
+		badwords: main.badwords,
 		quest: function (questName, count, extra) {
 			main.questHandler
 				.increment(msg, questName, count, extra)
