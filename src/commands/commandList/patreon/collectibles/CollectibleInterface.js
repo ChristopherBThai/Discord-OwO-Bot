@@ -56,6 +56,10 @@ class Collectible {
 		this.mergeMsg;
 		// Display msg for when user has merged items
 		this.mergeDisplayMsg;
+		// Plural noun for merge
+		this.mergePluralName;
+		// Singular noun for merge
+		this.mergeSingleName;
 
 		// User can manual merge
 		this.hasManualMerge = false;
@@ -128,6 +132,10 @@ class Collectible {
 					'?pluralName?',
 					count > 1 ? this.pluralName : this.singleName
 				)
+				.replaceAll(
+					'?mergePluralName?',
+					mergeCount > 1 ? this.mergePluralName : this.mergeSingleName
+				)
 				.replaceAll('?mergePlural?', mergeCount > 1 ? 's' : '')
 				.replaceAll('?emoji?', this.emoji)
 				.replaceAll('?blank?', p.config.emoji.blank)
@@ -140,6 +148,10 @@ class Collectible {
 					.replaceAll(
 						'?pluralName?',
 						count > 1 ? this.pluralName : this.singleName
+					)
+					.replaceAll(
+						'?mergePluralName?',
+						mergeCount > 1 ? this.mergePluralName : this.mergeSingleName
 					)
 					.replaceAll('?emoji?', this.emoji)
 					.replaceAll('?mergeCount?', mergeCount || 0)
@@ -154,6 +166,10 @@ class Collectible {
 					.replaceAll(
 						'?pluralName?',
 						count > 1 ? this.pluralName : this.singleName
+					)
+					.replaceAll(
+						'?mergePluralName?',
+						mergeCount > 1 ? this.mergePluralName : this.mergeSingleName
 					)
 					.replaceAll('?emoji?', this.emoji)
 					.replaceAll('?mergeCount?', mergeCount || 0)
@@ -171,6 +187,10 @@ class Collectible {
 				.replaceAll(
 					'?pluralName?',
 					count > 1 ? this.pluralName : this.singleName
+				)
+				.replaceAll(
+					'?mergePluralName?',
+					mergeCount > 1 ? this.mergePluralName : this.mergeSingleName
 				)
 				.replaceAll('?mergePlural?', mergeCount > 1 ? 's' : '')
 				.replaceAll('?emoji?', this.emoji)
