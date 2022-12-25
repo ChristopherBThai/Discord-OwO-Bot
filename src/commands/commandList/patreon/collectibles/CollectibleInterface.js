@@ -72,7 +72,7 @@ class Collectible {
 		// Precent chance to fail giving item
 		this.failChance;
 		// Message when fails
-		this.failMessage;
+		this.failMsg;
 
 		// Track when items are given
 		this.trackDate = false;
@@ -122,6 +122,7 @@ class Collectible {
 				.replaceAll('?displayMsg?', this.displayMsg)
 				.replaceAll('?count?', count || 0)
 				.replaceAll('?mergeCount?', mergeCount || 0)
+				.replaceAll('?mergeEmoji?', this.mergeEmoji)
 				.replaceAll('?plural?', count > 1 ? 's' : '')
 				.replaceAll(
 					'?pluralName?',
@@ -129,7 +130,6 @@ class Collectible {
 				)
 				.replaceAll('?mergePlural?', mergeCount > 1 ? 's' : '')
 				.replaceAll('?emoji?', this.emoji)
-				.replaceAll('?mergeEmoji?', this.mergeEmoji)
 				.replaceAll('?blank?', p.config.emoji.blank)
 				.replaceAll('?user?', p.msg.author.username);
 		} else if (!mergeCount) {
@@ -142,6 +142,8 @@ class Collectible {
 						count > 1 ? this.pluralName : this.singleName
 					)
 					.replaceAll('?emoji?', this.emoji)
+					.replaceAll('?mergeCount?', mergeCount || 0)
+					.replaceAll('?mergeEmoji?', this.mergeEmoji)
 					.replaceAll('?date?', receiveDate)
 					.replaceAll('?blank?', p.config.emoji.blank)
 					.replaceAll('?user?', p.msg.author.username);
@@ -154,12 +156,14 @@ class Collectible {
 						count > 1 ? this.pluralName : this.singleName
 					)
 					.replaceAll('?emoji?', this.emoji)
+					.replaceAll('?mergeCount?', mergeCount || 0)
+					.replaceAll('?mergeEmoji?', this.mergeEmoji)
 					.replaceAll('?date?', receiveDate)
 					.replaceAll('?blank?', p.config.emoji.blank)
 					.replaceAll('?user?', p.msg.author.username);
 			}
 		} else {
-			return this.mergeDisplayMsg
+			return (this.mergeDisplayMsg || this.displayMsg)
 				.replaceAll('?displayMsg?', this.displayMsg)
 				.replaceAll('?count?', count || 0)
 				.replaceAll('?mergeCount?', mergeCount || 0)
@@ -176,7 +180,8 @@ class Collectible {
 		}
 	}
 
-	async give(p, user) {
+	async give(p, user, dataOverride) {
+		const data = dataOverride || this.data;
 		if (!this.owners.includes(p.msg.author.id)) {
 			if (this.dailyOnly && !(await this.checkDaily(p, user))) {
 				return;
@@ -205,36 +210,49 @@ class Collectible {
 			}
 		}
 
-		if (this.checkFailed(p, user)) return;
+		if (await this.checkFailed(p, user)) return;
 
 		let result = await p.redis.hincrby(
 			`data_${user.id}`,
-			this.data,
+			data,
 			this.giveAmount
 		);
 		if (this.trackDate) {
-			await p.redis.hset(`data_${user.id}`, `${this.data}_time`, Date.now());
+			await p.redis.hset(`data_${user.id}`, `${data}_time`, Date.now());
 		}
+		
+		const msg = await this.getGiveMsg(p, result, user);
+		p.send(msg);
+	}
+
+	async getGiveMsg(p, result, user, msgOverride) {
 		let selectedGiveMsg = this.giveMsg;
 		if (Array.isArray(this.giveMsg)) {
 			selectedGiveMsg =
 				this.giveMsg[Math.floor(Math.random() * this.giveMsg.length)];
 		}
-		if (this.hasMerge && (result % this.mergeNeeded) - this.giveAmount < 0) {
-			const msg = this.mergeMsg
+		if (msgOverride) {
+			return msgOverride
 				.replaceAll('?giveMsg?', selectedGiveMsg)
 				.replaceAll('?giver?', p.msg.author.username)
 				.replaceAll('?receiver?', user.username)
 				.replaceAll('?emoji?', this.emoji)
 				.replaceAll('?blank?', p.config.emoji.blank)
 				.replaceAll('?mergeEmoji?', this.mergeEmoji);
-			p.send(msg);
-		} else {
-			const msg = selectedGiveMsg
+		} else if (this.hasMerge && (result % this.mergeNeeded) - this.giveAmount < 0) {
+			return this.mergeMsg
+				.replaceAll('?giveMsg?', selectedGiveMsg)
 				.replaceAll('?giver?', p.msg.author.username)
 				.replaceAll('?receiver?', user.username)
+				.replaceAll('?emoji?', this.emoji)
+				.replaceAll('?blank?', p.config.emoji.blank)
+				.replaceAll('?mergeEmoji?', this.mergeEmoji);
+		} else {
+			return selectedGiveMsg
+				.replaceAll('?giver?', p.msg.author.username)
+				.replaceAll('?receiver?', user.username)
+				.replaceAll('?blank?', p.config.emoji.blank)
 				.replaceAll('?emoji?', this.emoji);
-			p.send(msg);
 		}
 	}
 
@@ -260,19 +278,23 @@ class Collectible {
 		return true;
 	}
 
-	checkFailed(p, user) {
-		const { msg } = p;
+	async checkFailed(p, user) {
 		if (typeof this.failChance !== 'number' || this.failChance <= 0)
 			return false;
 		if (Math.random() <= this.failChance) {
-			const msg = this.failMessage
-				.replaceAll('?giver?', msg.author.username)
-				.replaceAll('?receiver?', user.username)
-				.replaceAll('?emoji?', this.emoji);
+			const msg = await this.getFailMsg(p, user);
 			p.send(msg);
 			return true;
 		}
 		return false;
+	}
+
+	async getFailMsg(p, user, msgOverride) {
+		const msg = msgOverride || this.failMsg;
+		return msg
+			.replaceAll('?giver?', p.msg.author.username)
+			.replaceAll('?receiver?', user.username)
+			.replaceAll('?emoji?', this.emoji);
 	}
 
 	async reset(p) {

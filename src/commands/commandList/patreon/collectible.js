@@ -61,7 +61,7 @@ for (let dataName in collectibles) {
 			`${data}_time`
 		);
 		receiveDate = receiveDate
-			? new Date(+receiveDate).toLocaleDateString()
+			? this.global.toDiscordTimestamp(receiveDate)
 			: 'never';
 
 		let mergeCount = 0;
