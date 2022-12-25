@@ -65,7 +65,10 @@ module.exports = new CommandInterface({
 			msg.author.id +
 			' AND activecount > 0;';
 		let result = await p.query(sql);
-		if (result[0][0] == undefined || result[0][0].money < this.animals.rollprice) {
+		if (
+			result[0][0] == undefined ||
+			result[0][0].money < this.animals.rollprice
+		) {
 			p.errorMsg(", You don't have enough cowoncy!", 3000);
 		} else {
 			//Sort gem benefits

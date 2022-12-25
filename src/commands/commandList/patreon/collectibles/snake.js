@@ -18,7 +18,8 @@ class Snake extends Collectible {
 		this.ownerOnly = false;
 		this.giveAmount = 2;
 		this.description = 'Give snakes to someone!';
-		this.displayMsg = '?emoji? **| ?user?**, you currently have ?count? snake?plural?!';
+		this.displayMsg =
+			'?emoji? **| ?user?**, you currently have ?count? snake?plural?!';
 		this.brokeMsg = ', you do not have any snakes! >:c';
 		this.giveMsg = '?emoji? **| ?receiver?**, ?giver? gave you 2 snakes!';
 

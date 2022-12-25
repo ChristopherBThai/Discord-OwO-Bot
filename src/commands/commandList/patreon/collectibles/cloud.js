@@ -7,9 +7,6 @@
 
 const Collectible = require('./CollectibleInterface.js');
 
-
-
-
 class Cloud extends Collectible {
 	constructor() {
 		super();
@@ -20,17 +17,21 @@ class Cloud extends Collectible {
 		this.fullControl = true;
 		this.ownerOnly = true;
 		this.giveAmount = 1;
-		this.description = 'Soft mist of cotton gentle and sweet,  combine me with thunder and I\'ll be your worst nightmare.';
-		this.displayMsg = '?emoji? **| ?user?**, your sky has **?count?** fluffy clouds ?emoji?'
-										+ '\n?mergeEmoji? **|** You’ve had **?mergeCount?** storms come your way! <:thunder:1056432512953491526>';
+		this.description =
+			"Soft mist of cotton gentle and sweet,  combine me with thunder and I'll be your worst nightmare.";
+		this.displayMsg =
+			'?emoji? **| ?user?**, your sky has **?count?** fluffy clouds ?emoji?' +
+			'\n?mergeEmoji? **|** You’ve had **?mergeCount?** storms come your way! <:thunder:1056432512953491526>';
 		this.brokeMsg = ', you do not have any clouds to give! >:c';
-		this.giveMsg = '?emoji? **| ?receiver?**, have this soft fluffy ?emoji? cloud'
+		this.giveMsg =
+			'?emoji? **| ?receiver?**, have this soft fluffy ?emoji? cloud';
 
 		this.failChance = 0.2;
-		this.failMsg = '<:thunder:1056432512953491526> **|** Oh no **?receiver?**! You have been struck by <:thunder:1056432512953491526> thunder!'
+		this.failMsg =
+			'<:thunder:1056432512953491526> **|** Oh no **?receiver?**! You have been struck by <:thunder:1056432512953491526> thunder!';
 
 		this.hasManualMerge = true;
-		this.manualMergeData = "cloud_storm";
+		this.manualMergeData = 'cloud_storm';
 		this.manualMergeCommands = [];
 		this.mergeNeeded = 1;
 		this.mergeEmoji = '<:storm:1056432511246405713>';
@@ -40,16 +41,17 @@ class Cloud extends Collectible {
 	}
 
 	async getFailMsg(p, user) {
-		let count = await p.redis.hget(`data_${p.msg.author.id}`, this.data) || 0;
+		let count = (await p.redis.hget(`data_${p.msg.author.id}`, this.data)) || 0;
 		if (count <= 0) {
 			return super.getFailMsg(p, user);
 		}
 		await p.redis.hincrby(`data_${p.msg.author.id}`, this.data, -1);
 		await p.redis.hincrby(`data_${p.msg.author.id}`, this.manualMergeData, 1);
-		const msg = this.failMsg + '\n<:storm:1056432511246405713> **|** You now have **1** storm coming your way!';
+		const msg =
+			this.failMsg +
+			'\n<:storm:1056432511246405713> **|** You now have **1** storm coming your way!';
 		return super.getFailMsg(p, user, msg);
 	}
-
 }
 
 module.exports = new Cloud();

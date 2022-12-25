@@ -77,7 +77,7 @@ exports.alter = async function (p, user, text, type, setting) {
 	}
 };
 
-exports.overrideDisplay = function(p, display) {
+exports.overrideDisplay = function (p, display) {
 	switch (p.msg.channel.id) {
 		case '1054101525191995502':
 			return 'compact';
@@ -86,8 +86,8 @@ exports.overrideDisplay = function(p, display) {
 		case '1056148656572596264':
 			return 'compact';
 	}
-	return display
-}
+	return display;
+};
 
 async function checkDb(p, id, text, info) {
 	if (!info) return;
@@ -927,8 +927,8 @@ function quincey(text, opt, { friendlyBattle }) {
 		return text;
 	}
 	text.image = {
-		url: 'https://media.discordapp.net/attachments/1051442610595708960/1054065287395291186/ezgif-4-fc0dd870e6.gif'
-	}
+		url: 'https://media.discordapp.net/attachments/1051442610595708960/1054065287395291186/ezgif-4-fc0dd870e6.gif',
+	};
 	text.color = 2201331;
 	return text;
 }

@@ -17,8 +17,9 @@ class Vert extends Collectible {
 		this.fullControl = false;
 		this.ownerOnly = true;
 		this.giveAmount = 1;
-		this.description = 'Send a vert to someone!'
-		this.displayMsg = '?emoji? **| ?user?**, you currently have ?count? Vert?plural?!';
+		this.description = 'Send a vert to someone!';
+		this.displayMsg =
+			'?emoji? **| ?user?**, you currently have ?count? Vert?plural?!';
 		this.brokeMsg = ', you do not have any Verts! >:c';
 		this.giveMsg = '?emoji? **| ?receiver?**, ?giver? gave you 1 Vert!';
 
