@@ -15,6 +15,7 @@ exports.afterMidnight = function (date) {
 	let now = new Date();
 	let sqlNow = toMySQL(now);
 	let midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	const nextMidnight = new Date(midnight.valueOf() + 86400000 );
 
 	/* Calculate time until midnight */
 	let temp = Math.trunc((midnight - now + 86400000) / 1000);
@@ -35,6 +36,7 @@ exports.afterMidnight = function (date) {
 			hours: hours,
 			days: days,
 			sql: sqlNow,
+			midnight: nextMidnight,
 			now,
 		};
 
@@ -51,6 +53,7 @@ exports.afterMidnight = function (date) {
 			hours: hours,
 			days: days,
 			sql: sqlNow,
+			midnight: nextMidnight,
 			now,
 		};
 	/* Within 1 day */ else if (diff <= 172810000)
@@ -63,6 +66,7 @@ exports.afterMidnight = function (date) {
 			hours: hours,
 			days: days,
 			sql: sqlNow,
+			midnight: nextMidnight,
 			now,
 		};
 	/* Over 1 full day */ else
@@ -75,6 +79,7 @@ exports.afterMidnight = function (date) {
 			hours: hours,
 			days: days,
 			sql: sqlNow,
+			midnight: nextMidnight,
 			now,
 		};
 };

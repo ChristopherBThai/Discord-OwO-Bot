@@ -45,7 +45,7 @@ var totalShards, sharders;
  * @param {string}	value - value to check if integer
  *
  */
-exports.isInt = function (value) {
+const isInt = exports.isInt = function (value) {
 	return (
 		!isNaN(value) &&
 		parseInt(Number(value)) == value &&
@@ -342,3 +342,10 @@ exports.replacer = function (text, replacer) {
 	}
 	return text;
 };
+
+exports.toDiscordTimestamp = function (date) {
+	if (typeof date === 'number' || isInt(date)) {
+		return `<t:${Math.trunc((+date) / 1000)}:R>`;
+	}
+	return `<t:${Math.trunc(date.valueOf() / 1000)}:R>`;
+}

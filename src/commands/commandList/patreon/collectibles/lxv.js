@@ -64,8 +64,8 @@ class Lxv extends Collectible {
 	}
 
 	async manualMerge(p) {
-		return await p.redis.hdel(`data_${p.msg.author.id}`, `${this.data}_reset`);
 		const { redis, msg, config } = p;
+		let reset = await redis.hget(`data_${msg.author.id}`, `${this.data}_reset`);
 		let afterMid = p.dateUtil.afterMidnight(reset);
 		if (!afterMid.after) {
 			p.errorMsg(', Please come back tomorrow! Hedge is asleep.');
@@ -75,8 +75,8 @@ class Lxv extends Collectible {
 		if (Math.random() < .3) {
 			super.manualMerge(p);
 		} else {
-			p.send(`${this.emoji} **|** ${p.msg.author.username}** pats the hedge. But it seems to have made them mad...` +
-				'\n<:826054135518199818:1055044683396562984> | They are very angry now. Mind your fingers!');
+			p.send(`${this.emoji} **| ${p.msg.author.username}** pats the hedge. But it seems to have made them mad...` +
+				'\n<:826054135518199818:1055044683396562984> **|** They are very angry now. Mind your fingers!');
 		}
 	}
 

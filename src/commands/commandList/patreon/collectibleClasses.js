@@ -24,7 +24,7 @@ function addCommand(coll) {
 		new CommandInterface({
 			alias: [coll.key, ...coll.alias],
 			args: '{@user}',
-			desc: `${coll.description}\n\nThis command was created by ${coll.ownerString}`,
+			desc: `${coll.description}\n\nThis command was created by ${coll.ownersString}`,
 			example: [],
 			related: [],
 			permissions: ['sendMessages'],

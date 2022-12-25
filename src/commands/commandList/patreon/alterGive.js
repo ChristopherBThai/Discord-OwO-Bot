@@ -28,6 +28,8 @@ function checkReceive(p, text, info) {
 	switch (info.to.id) {
 		case '816005571575808000':
 			return jayyy(p, info);
+		case '605994815317999635':
+			return rhine(p, info);
 		default:
 			return text;
 	}
@@ -48,16 +50,29 @@ function lexx(p, info) {
 }
 
 function rhine(p, info) {
-	const embed = {
-		color: 16758232,
-		image: {
-			url: 'https://media.discordapp.net/attachments/886547029478768640/963001595472261140/ezgif-3-1f6690830d.gif',
-		},
-		description:
-			`💬 **|** **${info.from.username}** says: "Save money and money will save you."` +
-			`\n💵 **|** sent **${info.amount} cowoncy**` +
-			`\n🌸 **|** to **${info.to.username}**`,
-	};
+	let embed;
+	if (info.receiver) {
+		embed = {
+			color: 16758235,
+			image: {
+				url: 'https://media.discordapp.net/attachments/886547029478768640/886547111515136030/rich.gif',
+			},
+			description:
+				`🌸 | "Thank you so much, **${info.from.username}**!` +
+				`\n👛 | **${info.to.username}** has received **${info.amount} cowoncy**!`
+		};
+	} else {
+		embed = {
+			color: 16758232,
+			image: {
+				url: 'https://media.discordapp.net/attachments/886547029478768640/963001595472261140/ezgif-3-1f6690830d.gif',
+			},
+			description:
+				`💬 **|** **${info.from.username}** says: "Save money and money will save you."` +
+				`\n💵 **|** sent **${info.amount} cowoncy**` +
+				`\n🌸 **|** to **${info.to.username}**`,
+		};
+	}
 	return { embed };
 }
 
