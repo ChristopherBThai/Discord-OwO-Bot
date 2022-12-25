@@ -282,7 +282,7 @@ async function doubleCheckMarriage(p, afterMid, marriage) {
 		}
 	}
 	p.send(
-		`**⏱ |** Nu! **${p.msg.author.username}**! You need to wait **${afterMid.hours}H ${afterMid.minutes}M ${afterMid.seconds}S** ${p.global.toDiscordTimestamp(afterMid.midnight)}`
+		`**⏱ |** Nu! **${p.msg.author.username}**! You need to wait **${afterMid.hours}H ${afterMid.minutes}M ${afterMid.seconds}S**`
 	);
 }
 

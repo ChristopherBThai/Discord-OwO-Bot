@@ -220,7 +220,7 @@ class Collectible {
 		if (this.trackDate) {
 			await p.redis.hset(`data_${user.id}`, `${data}_time`, Date.now());
 		}
-		
+
 		const msg = await this.getGiveMsg(p, result, user);
 		p.send(msg);
 	}
@@ -239,7 +239,10 @@ class Collectible {
 				.replaceAll('?emoji?', this.emoji)
 				.replaceAll('?blank?', p.config.emoji.blank)
 				.replaceAll('?mergeEmoji?', this.mergeEmoji);
-		} else if (this.hasMerge && (result % this.mergeNeeded) - this.giveAmount < 0) {
+		} else if (
+			this.hasMerge &&
+			(result % this.mergeNeeded) - this.giveAmount < 0
+		) {
 			return this.mergeMsg
 				.replaceAll('?giveMsg?', selectedGiveMsg)
 				.replaceAll('?giver?', p.msg.author.username)
@@ -274,7 +277,11 @@ class Collectible {
 			}
 			return false;
 		}
-		await redis.hset(`data_${msg.author.id}`, `${this.data}_reset`, afterMid.now);
+		await redis.hset(
+			`data_${msg.author.id}`,
+			`${this.data}_reset`,
+			afterMid.now
+		);
 		return true;
 	}
 

@@ -59,7 +59,7 @@ function rhine(p, info) {
 			},
 			description:
 				`🌸 | "Thank you so much, **${info.from.username}**!` +
-				`\n👛 | **${info.to.username}** has received **${info.amount} cowoncy**!`
+				`\n👛 | **${info.to.username}** has received **${info.amount} cowoncy**!`,
 		};
 	} else {
 		embed = {

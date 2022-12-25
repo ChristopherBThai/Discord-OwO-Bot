@@ -15,7 +15,7 @@ exports.afterMidnight = function (date) {
 	let now = new Date();
 	let sqlNow = toMySQL(now);
 	let midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-	const nextMidnight = new Date(midnight.valueOf() + 86400000 );
+	const nextMidnight = new Date(midnight.valueOf() + 86400000);
 
 	/* Calculate time until midnight */
 	let temp = Math.trunc((midnight - now + 86400000) / 1000);

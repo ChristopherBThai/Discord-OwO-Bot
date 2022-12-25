@@ -23,8 +23,7 @@ exports.handle = async function (msg, raw) {
 	if (msg.author.bot) {
 		return;
 	} else if (
-
-	/* Ignore guilds if in debug mode */
+		/* Ignore guilds if in debug mode */
 		this.debug &&
 		msg.channel.guild &&
 		!whitelist.includes(msg.channel.guild.id)
