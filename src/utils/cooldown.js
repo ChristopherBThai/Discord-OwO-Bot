@@ -50,7 +50,7 @@ exports.check = async function (p, command) {
 				cooldown[key] = true;
 				setTimeout(() => {
 					delete cooldown[key];
-				}, time - 1);
+				}, +time - 1);
 				now = false;
 			}
 
