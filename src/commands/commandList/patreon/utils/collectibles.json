@@ -722,6 +722,7 @@
 		"fullControl": true,
 		"ownerOnly": true,
 		"trackDate": true,
+		"multiGive": true,
 		"giveAmount": 1,
 		"description": "Exclusive collectible created for the OBW community on the collaboration with amazing OwO Bot Wiki discord members.\n\nSpecial thanks to Sliverme, Frosty_, Pandaddy, tinsetia, StunDra, Blue, Max Verstappen fan, dayang🌷, greywolf, jean., Amada, Mal., Radiohead, Xctroy, NarutoUzumaki, theraremixedchick, Ajea, ibot, Mrukia and everyone else who contributed",
 		"displayMsg": "?emoji? **| ?user?**, You have received token of appreciation ?count? time?plural? from OBW, most recent one being ?date?. ?emoji?",

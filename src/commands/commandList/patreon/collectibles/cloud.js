@@ -13,7 +13,7 @@ class Cloud extends Collectible {
 
 		this.key = 'cloud';
 		this.emoji = '<:cloud:1056432510101364777>';
-		this.owners = ['692146302284202134', '184587051943985152'];
+		this.owners = ['692146302284202134', '460987842961866762'];
 		this.fullControl = true;
 		this.ownerOnly = true;
 		this.giveAmount = 1;
@@ -41,12 +41,12 @@ class Cloud extends Collectible {
 	}
 
 	async getFailMsg(p, user) {
-		let count = (await p.redis.hget(`data_${p.msg.author.id}`, this.data)) || 0;
+		let count = (await p.redis.hget(`data_${user.id}`, this.data)) || 0;
 		if (count <= 0) {
 			return super.getFailMsg(p, user);
 		}
-		await p.redis.hincrby(`data_${p.msg.author.id}`, this.data, -1);
-		await p.redis.hincrby(`data_${p.msg.author.id}`, this.manualMergeData, 1);
+		await p.redis.hincrby(`data_${user.id}`, this.data, -1);
+		await p.redis.hincrby(`data_${user.id}`, this.manualMergeData, 1);
 		const msg =
 			this.failMsg +
 			'\n<:storm:1056432511246405713> **|** You now have **1** storm coming your way!';

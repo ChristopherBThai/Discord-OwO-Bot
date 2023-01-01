@@ -50,6 +50,7 @@ for (let dataName in collectibles) {
 		failChance,
 		failMessage,
 		trackDate,
+		multiGive,
 	} = collectibles[dataName];
 	const ownerString = getOwnerString(owners);
 	const data = dataOverride || dataName;
@@ -139,7 +140,6 @@ for (let dataName in collectibles) {
 
 		if (checkFailed.bind(this)(user)) return;
 
-		let result = await this.redis.hincrby(`data_${user.id}`, data, giveAmount);
 		if (trackDate) {
 			await this.redis.hset(`data_${user.id}`, `${data}_time`, Date.now());
 		}
@@ -147,22 +147,51 @@ for (let dataName in collectibles) {
 		if (Array.isArray(giveMsg)) {
 			selectedGiveMsg = giveMsg[Math.floor(Math.random() * giveMsg.length)];
 		}
-		if (hasMerge && (result % mergeNeeded) - giveAmount < 0) {
-			const msg = mergeMsg
-				.replaceAll('?giveMsg?', selectedGiveMsg)
-				.replaceAll('?giver?', this.msg.author.username)
-				.replaceAll('?receiver?', user.username)
-				.replaceAll('?emoji?', emoji)
-				.replaceAll('?blank?', this.config.emoji.blank)
-				.replaceAll('?mergeEmoji?', mergeEmoji);
-			this.send(msg);
-		} else {
-			const msg = selectedGiveMsg
-				.replaceAll('?giver?', this.msg.author.username)
-				.replaceAll('?receiver?', user.username)
-				.replaceAll('?emoji?', emoji);
-			this.send(msg);
+
+		const users = [user];
+		if (multiGive) {
+			for (let i = 1; i < Math.min(25, this.args.length); i++) {
+				let user = this.getMention(this.args[i]);
+				if (!user) {
+					user = await this.fetch.getMember(
+						this.msg.channel.guild,
+						this.args[i]
+					);
+					if (!user) {
+						this.errorMsg(', invalid user: `' + this.args[i] + '`', 3000);
+					}
+				}
+				if (user) {
+					users.push(user);
+				}
+			}
 		}
+
+		let msg = '';
+		for (let i in users) {
+			let user = users[i];
+			let result = await this.redis.hincrby(
+				`data_${user.id}`,
+				data,
+				giveAmount
+			);
+			if (hasMerge && (result % mergeNeeded) - giveAmount < 0) {
+				msg += mergeMsg
+					.replaceAll('?giveMsg?', selectedGiveMsg)
+					.replaceAll('?giver?', this.msg.author.username)
+					.replaceAll('?receiver?', user.username)
+					.replaceAll('?emoji?', emoji)
+					.replaceAll('?blank?', this.config.emoji.blank)
+					.replaceAll('?mergeEmoji?', mergeEmoji);
+			} else {
+				msg += selectedGiveMsg
+					.replaceAll('?giver?', this.msg.author.username)
+					.replaceAll('?receiver?', user.username)
+					.replaceAll('?emoji?', emoji);
+			}
+			msg += '\n';
+		}
+		this.send(msg);
 	};
 
 	const checkFailed = function (user) {
