@@ -15,30 +15,33 @@ class Kitty extends Collectible {
 		this.dataOverride = 'kitty1';
 		this.data2 = 'kitty2';
 		this.emoji = '<:skitty:1056483633784963102>';
-		this.owners = ['460987842961866762', '777641801212493826']
-		this.pluralName = "kitties";
-		this.singleName = "kitty";
+		this.owners = ['460987842961866762', '777641801212493826'];
+		this.pluralName = 'kitties';
+		this.singleName = 'kitty';
 		this.fullControl = true;
 		this.ownerOnly = true;
 		this.giveAmount = 1;
-		this.description = 'A litte sweet cuddly fur ball to snuggle up with.'
-										 + '\nCollect the pair of kitties for a surprise.'
-										 + '\nHermes & Estees pair of troublemakers.';
+		this.description =
+			'A litte sweet cuddly fur ball to snuggle up with.' +
+			'\nCollect the pair of kitties for a surprise.' +
+			'\nHermes & Estees pair of troublemakers.';
 		this.displayMsg =
 			'?emoji? **|** ?count? Estee ?pluralName?' +
 			'\n<:hkitty:1056483630790230076> **|** ?count2? Hermes ?pluralName2?' +
-			'\n<:hnekitty:1056483632144990249> **|** ?mergeCount? HNE ?mergePluralName?';
+			'\n<:hnekitty:1056483632144990249> **|** ?mergeCount? Hermestee ?mergePluralName?';
 		this.brokeMsg = ', you do not have any kitties to give! >:c';
-		this.giveMsg = '?emoji? **| ?receiver?**, You have been given one kitty, meow';
+		this.giveMsg =
+			'?emoji? **| ?receiver?**, You have been given one kitty, meow';
 
 		this.hasManualMerge = true;
 		this.manualMergeData = 'kitty_hne';
 		this.manualMergeCommands = ['merge'];
-		this.mergePluralName = "kitties";
-		this.mergeSingleName = "kitty";
+		this.mergePluralName = 'kitties';
+		this.mergeSingleName = 'kitty';
 		this.mergeNeeded = 1;
 		this.mergeEmoji = '<:hnekitty:1056483632144990249>';
-		this.mergeMsg = '?mergeEmoji? | ?user?, your Estee and Hermes kitty merged to make an HNE kitty!';
+		this.mergeMsg =
+			'?mergeEmoji? | ?user?, your Estee and Hermes kitty merged to make an Hermestee kitty!';
 
 		this.init();
 	}
@@ -47,7 +50,10 @@ class Kitty extends Collectible {
 		let count2 = await p.redis.hget(`data_${p.msg.author.id}`, this.data2);
 		const msgOverride = this.displayMsg
 			.replaceAll('?count2?', count2 || 0)
-			.replaceAll('?pluralName2?', count2 > 1 ? this.pluralName : this.singleName);
+			.replaceAll(
+				'?pluralName2?',
+				count2 > 1 ? this.pluralName : this.singleName
+			);
 		return super.getDisplayMsg(p, args, msgOverride);
 	}
 
@@ -64,7 +70,12 @@ class Kitty extends Collectible {
 		if (p.msg.author.id === this.owners[0]) {
 			return super.getGiveMsg(p, result, user, this.giveMsg);
 		} else if (p.msg.author.id === this.owners[1]) {
-			return super.getGiveMsg(p, result, user, this.giveMsg.replaceAll('?emoji?', '<:hkitty:1056483630790230076>'));
+			return super.getGiveMsg(
+				p,
+				result,
+				user,
+				this.giveMsg.replaceAll('?emoji?', '<:hkitty:1056483630790230076>')
+			);
 		}
 		return super.getGiveMsg(p, result, user);
 	}

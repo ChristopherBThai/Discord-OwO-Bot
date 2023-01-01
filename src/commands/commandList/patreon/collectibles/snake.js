@@ -13,7 +13,7 @@ class Snake extends Collectible {
 
 		this.key = 'snake';
 		this.emoji = '<:_snake:889369004660109363>';
-		this.owners = ['384202884553768961'];
+		this.owners = ['380822909813391360', '384202884553768961'];
 		this.fullControl = true;
 		this.ownerOnly = false;
 		this.giveAmount = 2;

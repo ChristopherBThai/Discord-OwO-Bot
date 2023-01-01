@@ -55,10 +55,10 @@ function rhine(p, info) {
 		embed = {
 			color: 16758235,
 			image: {
-				url: 'https://media.discordapp.net/attachments/886547029478768640/886547111515136030/rich.gif',
+				url: 'https://media.discordapp.net/attachments/886547029478768640/963001595472261140/ezgif-3-1f6690830d.gif',
 			},
 			description:
-				`🌸 | "Thank you so much, **${info.from.username}**!` +
+				`🌸 | "Thank you so much, **${info.from.username}**!"` +
 				`\n👛 | **${info.to.username}** has received **${info.amount} cowoncy**!`,
 		};
 	} else {

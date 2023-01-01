@@ -12,6 +12,7 @@ class Lxv extends Collectible {
 		super();
 
 		this.key = 'lxv';
+		this.dataOverride = 'lxv2';
 		this.emoji = '<:822377757958340640:1055044682423484416>';
 		this.owners = ['412812867348463636'];
 		this.fullControl = true;
@@ -49,26 +50,25 @@ class Lxv extends Collectible {
 				msg =
 					"<:846997443278274610:1055044684382208010> **| ?user?**, you currently have ?count? ?emoji? lxv. Don't forget to take care of them!\n<:1039236830022868992:1055044688979185664> **|** Hedge has collected ?mergeCount? **lovesick** for you!";
 			} else {
-				msg =
-					"<:846997478246318080:1055044685153972225> **| ?user?**, you currently have ?count? ?emoji? lxv. One of them ran away because you didn't take care of it...\n<:1039236830022868992:1055044688979185664> **|** Hedge has collected ?mergeCount? **lovesick** for you!";
-				await p.redis.hset(
-					`data_${p.msg.author.id}`,
-					`${this.data}_reset`,
-					afterMid.now
-				);
-				const result = await p.redis.hincrby(
-					`data_${p.msg.author.id}`,
-					this.manualMergeData,
-					-1
-				);
-				args.mergeCount -= 1;
-				if (result < 0) {
-					await p.redis.hset(
+				if (args.mergeCount > 0) {
+					const result = await p.redis.hincrby(
 						`data_${p.msg.author.id}`,
 						this.manualMergeData,
-						0
+						-1
 					);
-					args.mergeCount = 0;
+					args.mergeCount -= 1;
+					await p.redis.hset(
+						`data_${p.msg.author.id}`,
+						`${this.data}_reset`,
+						afterMid.now
+					);
+					msg =
+						"<:846997478246318080:1055044685153972225> **| ?user?**, you currently have ?count? ?emoji? lxv. One of them ran away because you didn't take care of it..." +
+						'\n<:1039236830022868992:1055044688979185664> **|** Hedge has collected ?mergeCount? **lovesick** for you!';
+				} else {
+					msg =
+						'<:846997443278274610:1055044684382208010> **| ?user?**, you currently have ?count? ?emoji? lxv.' +
+						'\n<:1039236830022868992:1055044688979185664> **|** Hedge has collected ?mergeCount? **lovesick** for you!';
 				}
 			}
 		}
@@ -77,18 +77,34 @@ class Lxv extends Collectible {
 
 	async manualMerge(p) {
 		const { redis, msg, config } = p;
-		let reset = await redis.hget(`data_${msg.author.id}`, `${this.data}_reset`);
-		let afterMid = p.dateUtil.afterMidnight(reset);
-		if (!afterMid.after) {
-			p.errorMsg(', Please come back tomorrow! Hedge is asleep.');
+		let count = (await p.redis.hget(`data_${p.msg.author.id}`, this.data)) || 0;
+		if (!count) {
+			p.errorMsg(', You need at least one lxv to pet the hedge!');
 			return;
 		}
-		await redis.hset(
-			`data_${msg.author.id}`,
-			`${this.data}_reset`,
-			afterMid.now
-		);
-		if (Math.random() < 0.3) {
+
+		if (!this.owners.includes(p.msg.author.id)) {
+			let reset = await redis.hget(
+				`data_${msg.author.id}`,
+				`${this.data}_reset`
+			);
+			let afterMid = p.dateUtil.afterMidnight(reset);
+			if (!afterMid.after) {
+				p.errorMsg(', Please come back tomorrow! Hedge is asleep.');
+				return;
+			}
+			await redis.hset(
+				`data_${msg.author.id}`,
+				`${this.data}_reset`,
+				afterMid.now
+			);
+		} else {
+			super.manualMerge(p);
+			p.setCooldown(10);
+			return;
+		}
+
+		if (Math.random() < 0.05) {
 			super.manualMerge(p);
 		} else {
 			p.send(
