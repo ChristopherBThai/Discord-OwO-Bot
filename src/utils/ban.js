@@ -78,13 +78,9 @@ exports.check = async function (p, command) {
 		setTimeout(() => {
 			delete cooldown[author + command];
 		}, 10000);
-		if (command != 'points')
-			await p.errorMsg(", you're banned from this command! >:c", 3000);
+		if (command != 'points') await p.errorMsg(", you're banned from this command! >:c", 3000);
 		p.logger.logstashBanned(p.commandAlias, p);
-	} else if (
-		!result[0][0] ||
-		['points', 'disable', 'enable'].includes(command)
-	) {
+	} else if (!result[0][0] || ['points', 'disable', 'enable'].includes(command)) {
 		// Success
 		return true;
 	} else {
@@ -93,8 +89,7 @@ exports.check = async function (p, command) {
 		setTimeout(() => {
 			delete cooldown[p.msg.author.id + command];
 		}, 30000);
-		if (command != 'points')
-			await p.errorMsg(', that command is disabled on this channel!', 3000);
+		if (command != 'points') await p.errorMsg(', that command is disabled on this channel!', 3000);
 	}
 };
 
@@ -168,10 +163,7 @@ exports.liftCommand = async function (p, user, command) {
 			await (
 				await user.getDMChannel()
 			).createMessage(
-				liftEmoji +
-					' **|** An admin has lifted your ban from the `' +
-					command +
-					'` command!'
+				liftEmoji + ' **|** An admin has lifted your ban from the `' + command + '` command!'
 			);
 		} catch (err) {
 			await p.send(

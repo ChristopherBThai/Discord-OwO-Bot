@@ -237,15 +237,10 @@ exports.renameTeam = async function (p, teamName) {
 	if (result.affectedRows > 0) {
 		p.replyMsg(
 			battleEmoji,
-			p.replaceMentions(
-				`, You successfully changed your team name to: **${name}**`
-			)
+			p.replaceMentions(`, You successfully changed your team name to: **${name}**`)
 		);
 	} else {
-		p.errorMsg(
-			", You don't have a team! Please set one with `owo team add {animal}`",
-			5000
-		);
+		p.errorMsg(", You don't have a team! Please set one with `owo team add {animal}`", 5000);
 	}
 };
 
@@ -289,11 +284,7 @@ const getTeam = (exports.getTeam = async function (p) {
 	return await p.query(sql);
 });
 
-const createTeamEmbed = (exports.createTeamEmbed = function (
-	p,
-	team,
-	other = {}
-) {
+const createTeamEmbed = (exports.createTeamEmbed = function (p, team, other = {}) {
 	/* Parse query */
 	let digits = 1;
 	for (let i in team) {
@@ -321,24 +312,15 @@ const createTeamEmbed = (exports.createTeamEmbed = function (
 		let title = `[${i}] `;
 		let body = '';
 		let animal;
-		for (var j = 0; j < team.length; j++)
-			if (team[j].pos == i) animal = team[j];
+		for (var j = 0; j < team.length; j++) if (team[j].pos == i) animal = team[j];
 		if (!animal) {
 			title += 'none';
 			body = '*`owo team add {animal} ' + i + '`*';
 		} else {
-			let hp = (
-				'' + Math.ceil(animal.stats.hp[1] + animal.stats.hp[3])
-			).padStart(digits, '0');
-			let wp = (
-				'' + Math.ceil(animal.stats.wp[1] + animal.stats.wp[3])
-			).padStart(digits, '0');
-			let att = (
-				'' + Math.ceil(animal.stats.att[0] + animal.stats.att[1])
-			).padStart(digits, '0');
-			let mag = (
-				'' + Math.ceil(animal.stats.mag[0] + animal.stats.mag[1])
-			).padStart(digits, '0');
+			let hp = ('' + Math.ceil(animal.stats.hp[1] + animal.stats.hp[3])).padStart(digits, '0');
+			let wp = ('' + Math.ceil(animal.stats.wp[1] + animal.stats.wp[3])).padStart(digits, '0');
+			let att = ('' + Math.ceil(animal.stats.att[0] + animal.stats.att[1])).padStart(digits, '0');
+			let mag = ('' + Math.ceil(animal.stats.mag[0] + animal.stats.mag[1])).padStart(digits, '0');
 			let pr = WeaponInterface.resToPrettyPercent(animal.stats.pr);
 			let mr = WeaponInterface.resToPrettyPercent(animal.stats.mr);
 			title += p.replaceMentions(
@@ -391,8 +373,7 @@ function parseTeam(p, animals, weapons, censor = false) {
 		if (!used.includes(animal.pid)) {
 			used.push(animal.pid);
 			let animalObj = p.global.validAnimal(animal.name);
-			let nickname =
-				censor && animal.acensor == 1 ? 'Censored' : animal.nickname;
+			let nickname = censor && animal.acensor == 1 ? 'Censored' : animal.nickname;
 			if (!nickname) nickname = animalObj.name;
 			result.push({
 				pid: animal.pid,
@@ -416,8 +397,7 @@ function parseTeam(p, animals, weapons, censor = false) {
 		for (var key in weps) {
 			let pid = weps[key].pid;
 			for (var i = 0; i < result.length; i++)
-				if (result[i].pid == pid)
-					result[i].weapon = weaponUtil.parseWeapon(weps[key]);
+				if (result[i].pid == pid) result[i].weapon = weaponUtil.parseWeapon(weps[key]);
 		}
 	}
 
@@ -453,9 +433,7 @@ exports.giveXP = async function (p, team, xp) {
 		let lvl = team.team[i].stats.lvl;
 		if (lvl < highestLvl) mult = 2 + (highestLvl - lvl) / 10;
 		if (mult > 10) mult = 10;
-		cases += ` WHEN animal.pid = ${team.team[i].pid} THEN ${Math.round(
-			total * mult
-		)}`;
+		cases += ` WHEN animal.pid = ${team.team[i].pid} THEN ${Math.round(total * mult)}`;
 	}
 
 	let sql = '';
@@ -476,8 +454,7 @@ exports.giveXP = async function (p, team, xp) {
 
 	if (addStreak)
 		sql += `UPDATE pet_team SET highest_streak = IF(streak+1>highest_streak,streak+1,highest_streak), streak = streak + 1 WHERE pgid = ${team.pgid};`;
-	if (resetStreak)
-		sql += `UPDATE pet_team SET streak = 0 WHERE pgid = ${team.pgid};`;
+	if (resetStreak) sql += `UPDATE pet_team SET streak = 0 WHERE pgid = ${team.pgid};`;
 
 	return await p.query(sql);
 };

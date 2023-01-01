@@ -58,10 +58,7 @@ module.exports = new CommandInterface({
 		}
 
 		if (result[0][0].channel != p.msg.channel.id) {
-			p.errorMsg(
-				', You can only accept battle requests from the same channel!',
-				3000
-			);
+			p.errorMsg(', You can only accept battle requests from the same channel!', 3000);
 			return;
 		}
 
@@ -132,9 +129,7 @@ module.exports = new CommandInterface({
 				p.errorMsg(", looks like someone doesn't have enough money!", 3000);
 				return;
 			}
-			sql = `UPDATE cowoncy SET money = money + ${bet * 2} WHERE id = ${
-				winner.id
-			}; ${winSql}`;
+			sql = `UPDATE cowoncy SET money = money + ${bet * 2} WHERE id = ${winner.id}; ${winSql}`;
 			await p.query(sql);
 			p.neo4j.battle(p.msg, winner, loser, bet);
 		} else await p.query(winSql);

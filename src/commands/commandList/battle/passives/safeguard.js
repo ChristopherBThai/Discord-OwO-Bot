@@ -44,10 +44,7 @@ module.exports = class Safeguard extends PassiveInterface {
 		});
 		damage[1] -= mana.amount;
 
-		logs.push(
-			`[SGUARD] ${animal.nickname} used mana to negate ${mana.amount} damage`,
-			mana.logs
-		);
+		logs.push(`[SGUARD] ${animal.nickname} used mana to negate ${mana.amount} damage`, mana.logs);
 
 		return logs;
 	}

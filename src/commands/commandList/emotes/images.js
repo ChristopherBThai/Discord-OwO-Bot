@@ -46,10 +46,7 @@ module.exports = new CommandInterface({
 				p.send('**🚫 |** nsfw channels only! >:c', 3000);
 				return;
 			} else if (p.command == 'gif') {
-				p.send(
-					'**🚫 |** Sorry! I only have pics of nsfw! Please use `owo pic nsfw`',
-					3000
-				);
+				p.send('**🚫 |** Sorry! I only have pics of nsfw! Please use `owo pic nsfw`', 3000);
 				return;
 			}
 			nsfw = true;

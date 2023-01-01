@@ -65,10 +65,7 @@ module.exports = new CommandInterface({
 			msg.author.id +
 			' AND activecount > 0;';
 		let result = await p.query(sql);
-		if (
-			result[0][0] == undefined ||
-			result[0][0].money < this.animals.rollprice
-		) {
+		if (result[0][0] == undefined || result[0][0].money < this.animals.rollprice) {
 			p.errorMsg(", You don't have enough cowoncy!", 3000);
 		} else {
 			//Sort gem benefits
@@ -107,9 +104,7 @@ module.exports = new CommandInterface({
 			}
 
 			//Get Lootbox
-			let lbReset = dateUtil.afterMidnight(
-				result[2][0] ? result[2][0].claim : undefined
-			);
+			let lbReset = dateUtil.afterMidnight(result[2][0] ? result[2][0].claim : undefined);
 			let lootbox;
 			if (!result[2][0] || result[2][0].claimcount < 3 || lbReset.after) {
 				lootbox = getLootbox(p, result[2][0], lbReset);
@@ -134,12 +129,7 @@ module.exports = new CommandInterface({
 			p.logger.decr(`cowoncy`, -5, { type: 'hunt' }, p.msg);
 			for (let i in animal.animal) {
 				let tempAnimal = p.global.validAnimal(animal.animal[i][1]);
-				p.logger.incr(
-					`animal`,
-					1,
-					{ rank: tempAnimal.rank, name: tempAnimal.name },
-					p.msg
-				);
+				p.logger.incr(`animal`, 1, { rank: tempAnimal.rank, name: tempAnimal.name }, p.msg);
 				p.logger.incr(`zoo`, tempAnimal.points, {}, p.msg);
 			}
 			p.quest('hunt');
@@ -232,11 +222,7 @@ function getAnimals(p, result, gems, uid) {
 			typeCount[key] +
 			';';
 	}
-	sql +=
-		insertCount +
-		'UPDATE cowoncy SET money = money - 5 WHERE id = ' +
-		p.msg.author.id +
-		';';
+	sql += insertCount + 'UPDATE cowoncy SET money = money - 5 WHERE id = ' + p.msg.author.id + ';';
 
 	/* Construct sql statements for gem usage */
 	let huntingActive = false;
@@ -271,9 +257,7 @@ function getAnimals(p, result, gems, uid) {
 	if (gems['Lucky']) {
 		// make lucky gems last twice as long if you're running all 3 gems
 		let luckySubtract =
-			huntingActive && empoweringActive
-				? Math.trunc(animal.length / 2)
-				: animal.length;
+			huntingActive && empoweringActive ? Math.trunc(animal.length / 2) : animal.length;
 
 		sql +=
 			'UPDATE user_gem SET activecount = GREATEST(activecount - ' +
@@ -311,12 +295,10 @@ function getAnimals(p, result, gems, uid) {
 					? Math.trunc(animal.length / 2)
 					: animal.length);
 			if (remaining < 0) remaining = 0;
-			gemText +=
-				gems[i].emoji + '`[' + remaining + '/' + gems[i].length + ']` ';
+			gemText += gems[i].emoji + '`[' + remaining + '/' + gems[i].length + ']` ';
 		}
 		text += gemText + ' !\n**<:blank:427371936482328596> |** You found: ';
-		for (let i = 1; i < animal.length; i++)
-			animalText += ' ' + global.unicodeAnimal(animal[i][1]);
+		for (let i = 1; i < animal.length; i++) animalText += ' ' + global.unicodeAnimal(animal[i][1]);
 		text += animalText;
 	}
 

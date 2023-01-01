@@ -64,11 +64,7 @@ module.exports = new CommandInterface({
 			else await add(p);
 
 			/* Remove a team member */
-		} else if (
-			subcommand == 'remove' ||
-			subcommand == 'delete' ||
-			subcommand == 'd'
-		) {
+		} else if (subcommand == 'remove' || subcommand == 'delete' || subcommand == 'd') {
 			/* No changing while in battle */
 			if (await battleUtil.inBattle(p))
 				p.errorMsg(
@@ -83,20 +79,14 @@ module.exports = new CommandInterface({
 			else await remove(p);
 
 			/* Rename the team */
-		} else if (
-			subcommand == 'rename' ||
-			subcommand == 'r' ||
-			subcommand == 'name'
-		)
-			await rename(p);
+		} else if (subcommand == 'rename' || subcommand == 'r' || subcommand == 'name') await rename(p);
 		/* If they need help
 		else if(subcommand=="help"){
 			p.help = true;
 			p.hcommand = "team";
 		}
 		*/
-		/* No command */ else
-			p.errorMsg(', wrong subcommand! Please check `owo help team`', 3000);
+		/* No command */ else p.errorMsg(', wrong subcommand! Please check `owo help team`', 3000);
 	},
 });
 
@@ -116,10 +106,7 @@ async function displayTeam(p) {
 async function add(p) {
 	/* Check if valid # of args */
 	if (p.args.length <= 1) {
-		p.errorMsg(
-			', the correct command is `owo team add {animal} {position}`!',
-			5000
-		);
+		p.errorMsg(', the correct command is `owo team add {animal} {position}`!', 5000);
 		return;
 	}
 
@@ -152,10 +139,7 @@ async function add(p) {
 async function remove(p) {
 	/* Check if valid # of args */
 	if (p.args.length < 2) {
-		p.errorMsg(
-			', the correct command is `owo team remove {animal|position}`!',
-			5000
-		);
+		p.errorMsg(', the correct command is `owo team remove {animal|position}`!', 5000);
 		return;
 	}
 

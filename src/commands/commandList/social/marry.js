@@ -138,8 +138,7 @@ async function propose(p, user, ringId) {
 
 	/* Insert proposal to the database */
 	sql = `INSERT INTO propose (sender,receiver,rid) VALUES (${p.msg.author.id},${user.id},${ringId});`;
-	if (result[1].length < 1)
-		sql += `INSERT IGNORE INTO user (id,count) VALUES (${user.id},0);`;
+	if (result[1].length < 1) sql += `INSERT IGNORE INTO user (id,count) VALUES (${user.id},0);`;
 	result = await p.query(sql);
 
 	/* send proposal message to discord */
@@ -159,12 +158,7 @@ async function propose(p, user, ringId) {
 		color: p.config.embed_color,
 		author: {
 			name:
-				p.msg.author.username +
-				' has proposed to ' +
-				user.username +
-				' with a ' +
-				ring.name +
-				'!',
+				p.msg.author.username + ' has proposed to ' + user.username + ' with a ' + ring.name + '!',
 			icon_url: p.msg.author.avatarURL,
 		},
 		timestamp: new Date(),
@@ -190,15 +184,10 @@ async function upgradeRing(p, user, ringId, result, ringResult) {
 		p.errorMsg(', you or your friend is already married!');
 		return;
 	} else if (ringResult.length < 1) {
-		p.errorMsg(
-			", you cannot upgrade your ring if you don't have it silly!",
-			3000
-		);
+		p.errorMsg(", you cannot upgrade your ring if you don't have it silly!", 3000);
 		return;
 	} else if (ringId == result.rid) {
-		p.errorMsg(
-			', you silly. You are already using a ring with the same rarity!'
-		);
+		p.errorMsg(', you silly. You are already using a ring with the same rarity!');
 		return;
 	}
 
@@ -246,8 +235,7 @@ async function upgradeRing(p, user, ringId, result, ringResult) {
 			let iresult = await p.query(sql);
 			if (iresult.changedRows < 1) {
 				embed.description =
-					embed.description +
-					"\n\n🚫 I don't see the ring in your inventory... 😏";
+					embed.description + "\n\n🚫 I don't see the ring in your inventory... 😏";
 				msg.edit({ embed });
 				return;
 			}
@@ -258,18 +246,14 @@ async function upgradeRing(p, user, ringId, result, ringResult) {
 			if (iresult.changedRows < 1) {
 				sql = `UPDATE user_ring INNER JOIN user ON user_ring.uid = user.uid SET rcount = rcount + 1 WHERE id = ${p.msg.author.id} AND rid = ${ringId};`;
 				p.query(sql);
-				embed.description =
-					embed.description + '\n\n🚫 You are currently not married...';
+				embed.description = embed.description + '\n\n🚫 You are currently not married...';
 				msg.edit({ embed });
 				return;
 			}
 
 			// Update message
 			embed.description =
-				embed.description +
-				'\n\n' +
-				newRing.emoji +
-				' You decided to change the ring!';
+				embed.description + '\n\n' + newRing.emoji + ' You decided to change the ring!';
 			embed.thumbnail.url =
 				'https://cdn.discordapp.com/emojis/' +
 				newRing.emoji.match(/[0-9]+/)[0] +
@@ -279,10 +263,7 @@ async function upgradeRing(p, user, ringId, result, ringResult) {
 		} else {
 			embed.color = 6381923;
 			embed.description =
-				embed.description +
-				'\n\n' +
-				currentRing.emoji +
-				' You decided not to upgrade';
+				embed.description + '\n\n' + currentRing.emoji + ' You decided not to upgrade';
 			msg.edit({ embed });
 		}
 	});
@@ -330,10 +311,7 @@ async function display(p) {
 		},
 		description:
 			'Married since **' +
-			new Date(result[0].marriedDate).toLocaleDateString(
-				'default',
-				dateOptions
-			) +
+			new Date(result[0].marriedDate).toLocaleDateString('default', dateOptions) +
 			'** (**' +
 			result[0].days +
 			' days**)\nYou have claimed **' +
@@ -355,10 +333,7 @@ async function display(p) {
 	embed = alterMarry.alter(p, embed, {
 		user: p.msg.author,
 		so: so,
-		marriedSince: new Date(result[0].marriedDate).toLocaleDateString(
-			'default',
-			dateOptions
-		),
+		marriedSince: new Date(result[0].marriedDate).toLocaleDateString('default', dateOptions),
 		marriedDays: result[0].days,
 		marriedClaims: result[0].dailies,
 	});

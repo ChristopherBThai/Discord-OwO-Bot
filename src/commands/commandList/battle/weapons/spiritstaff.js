@@ -38,8 +38,7 @@ module.exports = class SpiritStaff extends WeaponInterface {
 		if (me.stats.hp[0] <= 0) return;
 
 		/* No mana */
-		if (me.stats.wp[0] < this.manaCost)
-			return this.attackPhysical(me, team, enemy);
+		if (me.stats.wp[0] < this.manaCost) return this.attackPhysical(me, team, enemy);
 
 		let logs = new Logs();
 

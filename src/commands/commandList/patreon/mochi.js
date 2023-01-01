@@ -72,9 +72,7 @@ module.exports = new CommandInterface({
 
 async function display() {
 	let count = await this.redis.hget('data_' + this.msg.author.id, data);
-	const msg = displayMsg
-		.replace('?count?', count || 0)
-		.replace('?plural?', count > 1 ? 's' : '');
+	const msg = displayMsg.replace('?count?', count || 0).replace('?plural?', count > 1 ? 's' : '');
 	this.replyMsg(emoji, msg);
 }
 
@@ -83,11 +81,7 @@ async function give(user) {
 		if (dailyOnly && !(await checkDaily.bind(this)())) {
 			return;
 		}
-		let result = await this.redis.hincrby(
-			'data_' + this.msg.author.id,
-			data,
-			-1
-		);
+		let result = await this.redis.hincrby('data_' + this.msg.author.id, data, -1);
 		// Error checking
 		if (result == null || result < 0) {
 			if (result < 0) this.redis.hincrby('data_' + this.msg.author.id, data, 1);
@@ -102,19 +96,12 @@ async function give(user) {
 }
 
 async function checkDaily() {
-	let reset = await this.redis.hget(
-		'data_' + this.msg.author.id,
-		data + '_reset'
-	);
+	let reset = await this.redis.hget('data_' + this.msg.author.id, data + '_reset');
 	let afterMid = this.dateUtil.afterMidnight(reset);
 	if (!afterMid.after) {
 		this.errorMsg(', you can only send this item once per day.', 3000);
 		return false;
 	}
-	await this.redis.hset(
-		'data_' + this.msg.author.id,
-		data + '_reset',
-		afterMid.now
-	);
+	await this.redis.hset('data_' + this.msg.author.id, data + '_reset', afterMid.now);
 	return true;
 }

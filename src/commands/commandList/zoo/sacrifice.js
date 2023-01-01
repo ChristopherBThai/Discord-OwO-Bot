@@ -50,19 +50,13 @@ module.exports = new CommandInterface({
 			return;
 
 			/* if arg0 is a count */
-		} else if (
-			args.length == 2 &&
-			(global.isInt(args[0]) || args[0].toLowerCase() == 'all')
-		) {
+		} else if (args.length == 2 && (global.isInt(args[0]) || args[0].toLowerCase() == 'all')) {
 			if (args[0].toLowerCase() != 'all') count = parseInt(args[0]);
 			else count = 'all';
 			name = args[1];
 
 			/* if arg1 is a count (or not) */
-		} else if (
-			args.length == 2 &&
-			(global.isInt(args[1]) || args[1].toLowerCase() == 'all')
-		) {
+		} else if (args.length == 2 && (global.isInt(args[1]) || args[1].toLowerCase() == 'all')) {
 			if (args[1].toLowerCase() != 'all') count = parseInt(args[1]);
 			else count = 'all';
 			name = args[0];
@@ -95,8 +89,7 @@ module.exports = new CommandInterface({
 
 			//if its an animal...
 		} else if ((animal = global.validAnimal(name))) {
-			if (args.length < 3)
-				await sellAnimal(p, msg, con, animal, count, p.send, global);
+			if (args.length < 3) await sellAnimal(p, msg, con, animal, count, p.send, global);
 			else
 				p.errorMsg(
 					', The correct syntax for sacrificing ranks is `owo sacrifice {animal} {count}`!',
@@ -106,10 +99,7 @@ module.exports = new CommandInterface({
 			//if rank...
 		} else if ((rank = global.validRank(name))) {
 			if (args.length != 1)
-				p.errorMsg(
-					', The correct syntax for sacrificing ranks is `owo sacrifice {rank}`!',
-					3000
-				);
+				p.errorMsg(', The correct syntax for sacrificing ranks is `owo sacrifice {rank}`!', 3000);
 			else sellRank(p, msg, con, rank, p.send, global);
 
 			//if neither...
@@ -123,9 +113,7 @@ async function sellAnimal(p, msg, con, animal, count, send, global) {
 	let sql = `SELECT * FROM autohunt WHERE id = ${msg.author.id};`;
 	let result = await p.query(sql);
 	if (!result[0])
-		await p.query(
-			`INSERT IGNORE INTO autohunt (id,essence) VALUES (${msg.author.id},0);`
-		);
+		await p.query(`INSERT IGNORE INTO autohunt (id,essence) VALUES (${msg.author.id},0);`);
 
 	if (count != 'all' && count <= 0) {
 		send('**🚫 |** You need to sacrifice more than 1 silly~', 3000);
@@ -133,11 +121,7 @@ async function sellAnimal(p, msg, con, animal, count, send, global) {
 	}
 
 	sql =
-		'SELECT count FROM animal WHERE id = ' +
-		msg.author.id +
-		" AND name = '" +
-		animal.value +
-		"';";
+		'SELECT count FROM animal WHERE id = ' + msg.author.id + " AND name = '" + animal.value + "';";
 	if (count == 'all') {
 		sql += `UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id INNER JOIN (SELECT count FROM animal WHERE id = ${msg.author.id} AND name = '${animal.value}') AS sum SET essence = essence + (sum.count*${animal.essence}), autohunt.total = autohunt.total + (sum.count*${animal.essence}), saccount = saccount + animal.count, animal.count = 0 WHERE animal.id = ${msg.author.id} AND name = '${animal.value}' AND animal.count > 0;`;
 	} else {
@@ -153,12 +137,7 @@ async function sellAnimal(p, msg, con, animal, count, send, global) {
 
 	if (count == 'all') {
 		if (!result[0][0] || result[0][0].count <= 0) {
-			send(
-				'**🚫 | ' +
-					msg.author.username +
-					"**, You don't have enough animals! >:c",
-				3000
-			);
+			send('**🚫 | ' + msg.author.username + "**, You don't have enough animals! >:c", 3000);
 		} else {
 			count = result[0][0].count;
 			send(
@@ -174,12 +153,7 @@ async function sellAnimal(p, msg, con, animal, count, send, global) {
 					global.toFancyNum(count * animal.essence) +
 					'**'
 			);
-			p.logger.incr(
-				`essence`,
-				count * animal.essence,
-				{ type: 'sacrifice' },
-				p.msg
-			);
+			p.logger.incr(`essence`, count * animal.essence, { type: 'sacrifice' }, p.msg);
 		}
 	} else if (result[1] && result[1].affectedRows > 0) {
 		send(
@@ -195,17 +169,10 @@ async function sellAnimal(p, msg, con, animal, count, send, global) {
 				global.toFancyNum(count * animal.essence) +
 				'**'
 		);
-		p.logger.incr(
-			`essence`,
-			count * animal.essence,
-			{ type: 'sacrifice' },
-			p.msg
-		);
+		p.logger.incr(`essence`, count * animal.essence, { type: 'sacrifice' }, p.msg);
 	} else {
 		send(
-			'**🚫 | ' +
-				msg.author.username +
-				"**, You can't sacrifice more than you have silly! >:c",
+			'**🚫 | ' + msg.author.username + "**, You can't sacrifice more than you have silly! >:c",
 			3000
 		);
 	}
@@ -215,9 +182,7 @@ async function sellRank(p, msg, con, rank, send, global) {
 	let sql = `SELECT * FROM autohunt WHERE id = ${msg.author.id};`;
 	let result = await p.query(sql);
 	if (!result[0])
-		await p.query(
-			`INSERT IGNORE INTO autohunt (id,essence) VALUES (${msg.author.id},0);`
-		);
+		await p.query(`INSERT IGNORE INTO autohunt (id,essence) VALUES (${msg.author.id},0);`);
 
 	let animals = "('" + rank.animals.join("','") + "')";
 	let points =
@@ -228,11 +193,7 @@ async function sellRank(p, msg, con, rank, send, global) {
 		')';
 	//sql = "SELECT COALESCE(SUM(count),0) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
 	sql =
-		'SELECT name,count FROM animal WHERE id = ' +
-		msg.author.id +
-		' AND name IN ' +
-		animals +
-		';';
+		'SELECT name,count FROM animal WHERE id = ' + msg.author.id + ' AND name IN ' + animals + ';';
 	sql +=
 		'UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id INNER JOIN ' +
 		points +
@@ -248,12 +209,7 @@ async function sellRank(p, msg, con, rank, send, global) {
 
 	result = await p.query(sql);
 	if (result[1].affectedRows <= 0) {
-		send(
-			'**🚫 | ' +
-				msg.author.username +
-				"**, You don't have enough animals! >:c",
-			3000
-		);
+		send('**🚫 | ' + msg.author.username + "**, You don't have enough animals! >:c", 3000);
 	} else {
 		count = 0;
 		for (let i in result[0]) count += result[0][i].count;
@@ -273,12 +229,7 @@ async function sellRank(p, msg, con, rank, send, global) {
 
 		for (let i in result[0]) {
 			let tempAnimal = p.global.validAnimal(result[0][i].name);
-			p.logger.incr(
-				`essence`,
-				count * rank.essence,
-				{ type: 'sacrifice' },
-				p.msg
-			);
+			p.logger.incr(`essence`, count * rank.essence, { type: 'sacrifice' }, p.msg);
 		}
 	}
 }
@@ -287,9 +238,7 @@ async function sellRanks(p, msg, con, ranks, send, global, p) {
 	let sql = `SELECT * FROM autohunt WHERE id = ${msg.author.id};`;
 	let result = await p.query(sql);
 	if (!result[0])
-		await p.query(
-			`INSERT IGNORE INTO autohunt (id,essence) VALUES (${msg.author.id},0);`
-		);
+		await p.query(`INSERT IGNORE INTO autohunt (id,essence) VALUES (${msg.author.id},0);`);
 
 	sql = '';
 	for (i in ranks) {
@@ -303,11 +252,7 @@ async function sellRanks(p, msg, con, ranks, send, global, p) {
 			')';
 		//sql += "SELECT COALESCE(SUM(count),0) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
 		sql +=
-			'SELECT name,count FROM animal WHERE id = ' +
-			msg.author.id +
-			' AND name IN ' +
-			animals +
-			';';
+			'SELECT name,count FROM animal WHERE id = ' + msg.author.id + ' AND name IN ' + animals + ';';
 		sql +=
 			'UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id INNER JOIN ' +
 			points +
@@ -357,20 +302,9 @@ async function sellRanks(p, msg, con, ranks, send, global, p) {
 			for (let j in result[count * 2]) {
 				let temp = result[count * 2][j];
 				let tempAnimal = p.global.validAnimal(temp.name);
-				p.logger.incr(
-					`essence`,
-					temp.count * rank.essence,
-					{ type: 'sacrifice' },
-					p.msg
-				);
+				p.logger.incr(`essence`, temp.count * rank.essence, { type: 'sacrifice' }, p.msg);
 			}
 			count++;
 		}
-	} else
-		send(
-			'**🚫 | ' +
-				msg.author.username +
-				"**, You don't have enough animals! >:c",
-			3000
-		);
+	} else send('**🚫 | ' + msg.author.username + "**, You don't have enough animals! >:c", 3000);
 }

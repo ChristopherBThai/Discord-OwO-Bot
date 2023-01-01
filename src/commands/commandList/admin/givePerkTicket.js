@@ -95,9 +95,7 @@ async function giveTicket(p, id, count = 1, type = 1) {
 	else
 		user = await p.sender.msgUser(
 			id,
-			`${emoji} **|** Sorry about that. You have lost **${Math.abs(
-				count
-			)} ${emoji} ${name}**.`
+			`${emoji} **|** Sorry about that. You have lost **${Math.abs(count)} ${emoji} ${name}**.`
 		);
 
 	if (user && !user.dmError) return { user, count };

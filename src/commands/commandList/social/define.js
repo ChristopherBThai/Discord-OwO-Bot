@@ -98,8 +98,7 @@ async function display(p, pages) {
 	await msg.addReaction(nextPageEmoji);
 
 	let filter = (emoji, userID) =>
-		(emoji.name === nextPageEmoji || emoji.name === prevPageEmoji) &&
-		userID === p.msg.author.id;
+		(emoji.name === nextPageEmoji || emoji.name === prevPageEmoji) && userID === p.msg.author.id;
 	let collector = p.reactionCollector.create(msg, filter, {
 		time: 900000,
 		idle: 120000,

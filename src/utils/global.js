@@ -25,9 +25,7 @@ let goodwords;
 try {
 	goodwords = require('../../../tokens/goodwords.json');
 } catch (err) {
-	console.error(
-		'Could not find goodwords.json, attempting to use ./secret file...'
-	);
+	console.error('Could not find goodwords.json, attempting to use ./secret file...');
 	goodwords = require('../../secret/goodwords.json');
 	console.log('Found goodwords.json file in secret folder!');
 }
@@ -48,11 +46,7 @@ var totalShards, sharders;
  *
  */
 const isInt = (exports.isInt = function (value) {
-	return (
-		!isNaN(value) &&
-		parseInt(Number(value)) == value &&
-		!isNaN(parseInt(value, 10))
-	);
+	return !isNaN(value) && parseInt(Number(value)) == value && !isNaN(parseInt(value, 10));
 });
 
 /**

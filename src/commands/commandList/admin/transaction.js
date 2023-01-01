@@ -98,8 +98,7 @@ async function displayTransactions(p, id, query) {
 	await msg.addReaction(prevPageEmoji);
 	await msg.addReaction(nextPageEmoji);
 	let filter = (emoji, userID) =>
-		[nextPageEmoji, prevPageEmoji].includes(emoji.name) &&
-		userID == p.msg.author.id;
+		[nextPageEmoji, prevPageEmoji].includes(emoji.name) && userID == p.msg.author.id;
 	let collector = p.reactionCollector.create(msg, filter, {
 		time: 900000,
 		idle: 120000,
@@ -144,9 +143,9 @@ async function getPage(p, user, page, maxPage) {
 				row.time
 			)} | ${p.global.toFancyNum(row.amount)}\`\n`;
 		else
-			desc += `\`${row.sender} -> ${row.reciever} | ${toDate(
-				row.time
-			)} | ${p.global.toFancyNum(row.amount)}\`\n`;
+			desc += `\`${row.sender} -> ${row.reciever} | ${toDate(row.time)} | ${p.global.toFancyNum(
+				row.amount
+			)}\`\n`;
 	}
 	let embed = {
 		author: {

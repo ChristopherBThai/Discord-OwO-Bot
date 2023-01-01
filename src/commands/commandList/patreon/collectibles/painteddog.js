@@ -23,8 +23,7 @@ class PaintedDog extends Collectible {
 			'\nAfrican wild dog is an endangered species, with estimates that only about 3,000 to 5,500 remain.' +
 			'\nAn endangered species is a species that is very likely to become extinct in the near future.' +
 			'\nIt is the largest wild canine in Africa.';
-		this.displayMsg =
-			'?emoji? **| ?user?**, you currently have ?count? Painted Dog?plural?!';
+		this.displayMsg = '?emoji? **| ?user?**, you currently have ?count? Painted Dog?plural?!';
 		this.brokeMsg = ', you do not have any painted dogs! >:c';
 		this.giveMsg = '?emoji? **| ?receiver?**, ?giver? gave you 1 Painted Dog!';
 

@@ -100,13 +100,8 @@ async function give(user) {
 		if (dailyOnly && !(await checkDaily.bind(this)())) {
 			return;
 		}
-		let result = await this.redis.hincrby(
-			'data_' + this.msg.author.id,
-			data,
-			-1
-		);
-		const refund =
-			+result < 0 || (hasMerge && (+result + 1) % mergeNeeded <= 0);
+		let result = await this.redis.hincrby('data_' + this.msg.author.id, data, -1);
+		const refund = +result < 0 || (hasMerge && (+result + 1) % mergeNeeded <= 0);
 		if (result == null || refund) {
 			if (refund) this.redis.hincrby('data_' + this.msg.author.id, data, 1);
 			this.errorMsg(brokeMsg, 3000);
@@ -124,19 +119,12 @@ async function give(user) {
 }
 
 async function checkDaily() {
-	let reset = await this.redis.hget(
-		'data_' + this.msg.author.id,
-		data + '_reset'
-	);
+	let reset = await this.redis.hget('data_' + this.msg.author.id, data + '_reset');
 	let afterMid = this.dateUtil.afterMidnight(reset);
 	if (!afterMid.after) {
 		this.errorMsg(', you can only send this item once per day.', 3000);
 		return false;
 	}
-	await this.redis.hset(
-		'data_' + this.msg.author.id,
-		data + '_reset',
-		afterMid.now
-	);
+	await this.redis.hset('data_' + this.msg.author.id, data + '_reset', afterMid.now);
 	return true;
 }

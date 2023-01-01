@@ -46,8 +46,7 @@ module.exports = new CommandInterface({
 	execute: function (p) {
 		var sides = 6;
 		if (p.command == 'd20') sides = 20;
-		if (p.args.length > 0 && p.global.isInt(p.args[0]))
-			sides = parseInt(p.args[0]);
+		if (p.args.length > 0 && p.global.isInt(p.args[0])) sides = parseInt(p.args[0]);
 
 		let result = Math.ceil(sides * Math.random());
 		result =
@@ -57,13 +56,6 @@ module.exports = new CommandInterface({
 			result +
 			'**!';
 
-		p.send(
-			'**🎲 | ' +
-				p.msg.author.username +
-				'** rolls a ' +
-				sides +
-				'-sided die.\n' +
-				result
-		);
+		p.send('**🎲 | ' + p.msg.author.username + '** rolls a ' + sides + '-sided die.\n' + result);
 	},
 });

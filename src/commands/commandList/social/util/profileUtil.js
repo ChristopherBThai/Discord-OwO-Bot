@@ -233,20 +233,14 @@ var displayProfile = (exports.displayProfile = async function (p, user) {
 exports.editBackground = async function (p) {
 	// Arg check
 	if (p.args.length < 3) {
-		p.errorMsg(
-			', the correct command is `owo profile set wallpaper {wallpaperID}`',
-			3000
-		);
+		p.errorMsg(', the correct command is `owo profile set wallpaper {wallpaperID}`', 3000);
 		return;
 	}
 
 	// parse bid
 	let bid = p.args[2];
 	if (!p.global.isInt(bid)) {
-		p.errorMsg(
-			', the correct command is `owo profile set wallpaper {wallpaperID}`',
-			3000
-		);
+		p.errorMsg(', the correct command is `owo profile set wallpaper {wallpaperID}`', 3000);
 		return;
 	}
 	bid = parseInt(bid) - offsetID;
@@ -255,10 +249,7 @@ exports.editBackground = async function (p) {
 	let sql = `SELECT u.uid,b.* FROM user u INNER JOIN user_backgrounds ub ON u.uid = ub.uid INNER JOIN backgrounds b ON ub.bid = b.bid WHERE u.id = ${p.msg.author.id} AND ub.bid = ${bid}`;
 	let result = await p.query(sql);
 	if (!result[0]) {
-		p.errorMsg(
-			", You don't have a wallpaper with this id! Please buy one from `owo shop`!",
-			3000
-		);
+		p.errorMsg(", You don't have a wallpaper with this id! Please buy one from `owo shop`!", 3000);
 		return;
 	}
 
@@ -270,10 +261,7 @@ exports.editBackground = async function (p) {
 
 exports.editAbout = async function (p) {
 	if (p.args.length < 3) {
-		p.errorMsg(
-			', Invalid arguments! Please use `owo profile set about {text}`',
-			6000
-		);
+		p.errorMsg(', Invalid arguments! Please use `owo profile set about {text}`', 6000);
 		return;
 	}
 
@@ -293,10 +281,7 @@ exports.editAbout = async function (p) {
 
 exports.editTitle = async function (p) {
 	if (p.args.length < 3) {
-		p.errorMsg(
-			', Invalid arguments! Please use `owo profile set title {text}`',
-			6000
-		);
+		p.errorMsg(', Invalid arguments! Please use `owo profile set title {text}`', 6000);
 		return;
 	}
 
@@ -316,10 +301,7 @@ exports.editTitle = async function (p) {
 
 exports.editAccent = async function (p) {
 	if (p.args.length < 3) {
-		p.errorMsg(
-			', Invalid arguments! Please use `owo profile set accent {#rgb}`',
-			6000
-		);
+		p.errorMsg(', Invalid arguments! Please use `owo profile set accent {#rgb}`', 6000);
 		return;
 	}
 
@@ -329,18 +311,12 @@ exports.editAccent = async function (p) {
 		.replace(/[#, ]+/gi, '')
 		.toLowerCase();
 	if (rgb.length != 6) {
-		p.errorMsg(
-			', Invalid RGB! The correct format should look like `#FFFFFF`',
-			6000
-		);
+		p.errorMsg(', Invalid RGB! The correct format should look like `#FFFFFF`', 6000);
 		return;
 	}
 	rgb = parseRGB(rgb);
 	if (!rgb) {
-		p.errorMsg(
-			', Invalid RGB! The correct format should look like `#FFFFFF`',
-			6000
-		);
+		p.errorMsg(', Invalid RGB! The correct format should look like `#FFFFFF`', 6000);
 		return;
 	}
 
@@ -356,10 +332,7 @@ exports.editAccent = async function (p) {
 
 exports.editAccent2 = async function (p) {
 	if (p.args.length < 3) {
-		p.errorMsg(
-			', Invalid arguments! Please use `owo profile set accent2 {#rgb}`',
-			6000
-		);
+		p.errorMsg(', Invalid arguments! Please use `owo profile set accent2 {#rgb}`', 6000);
 		return;
 	}
 
@@ -369,18 +342,12 @@ exports.editAccent2 = async function (p) {
 		.replace(/[#, ]+/gi, '')
 		.toLowerCase();
 	if (rgb.length != 6) {
-		p.errorMsg(
-			', Invalid RGB! The correct format should look like `#FFFFFF`',
-			6000
-		);
+		p.errorMsg(', Invalid RGB! The correct format should look like `#FFFFFF`', 6000);
 		return;
 	}
 	rgb = parseRGB(rgb);
 	if (!rgb) {
-		p.errorMsg(
-			', Invalid RGB! The correct format should look like `#FFFFFF`',
-			6000
-		);
+		p.errorMsg(', Invalid RGB! The correct format should look like `#FFFFFF`', 6000);
 		return;
 	}
 

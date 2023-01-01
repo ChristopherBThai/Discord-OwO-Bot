@@ -13,10 +13,7 @@ const sold = '💰';
 exports.buy = async function (p, id) {
 	let ring = rings[id];
 	if (!ring) {
-		p.errorMsg(
-			', that item does not exist! Please choose one from `owo shop`!',
-			3000
-		);
+		p.errorMsg(', that item does not exist! Please choose one from `owo shop`!', 3000);
 		return;
 	}
 
@@ -33,20 +30,16 @@ exports.buy = async function (p, id) {
 		await p.query(sql);
 	} catch (e) {
 		if (e.code == 'ER_BAD_NULL_ERROR')
-			await p.query(
-				`INSERT INTO user (id,count) VALUES (${p.msg.author.id},0); ` + sql
-			);
+			await p.query(`INSERT INTO user (id,count) VALUES (${p.msg.author.id},0); ` + sql);
 		else console.error(e);
 	}
 
 	// TODO neo4j
 	p.logger.decr(`cowoncy`, -1 * ring.price, { type: 'ring' }, p.msg);
 	let an = p.global.isVowel(ring.name) ? 'n' : '';
-	let text = `${cart} **| ${p.msg.author.username}**, you bought a${an} ${
-		ring.emoji
-	} **${ring.name}** for **${p.global.toFancyNum(ring.price)}** ${
-		p.config.emoji.cowoncy
-	}!`;
+	let text = `${cart} **| ${p.msg.author.username}**, you bought a${an} ${ring.emoji} **${
+		ring.name
+	}** for **${p.global.toFancyNum(ring.price)}** ${p.config.emoji.cowoncy}!`;
 	text = alterBuy.alter(p, text, {
 		type: 'ring',
 		an,

@@ -58,9 +58,7 @@ async function give(p, con, msg, args, global, send) {
 		';';
 	let result = await p.query(sql);
 
-	let afterMid = dateUtil.afterMidnight(
-		result[0] ? result[0].cookieTime : undefined
-	);
+	let afterMid = dateUtil.afterMidnight(result[0] ? result[0].cookieTime : undefined);
 
 	if (afterMid && !afterMid.after) {
 		p.errorMsg(
@@ -80,9 +78,7 @@ async function give(p, con, msg, args, global, send) {
 		'INSERT INTO rep (id,count) VALUES (' +
 		user.id +
 		',1) ON DUPLICATE KEY UPDATE count = count + 1;';
-	if (!result[0])
-		sql +=
-			'INSERT IGNORE INTO user (id,count) VALUES (' + p.msg.author.id + ',0);';
+	if (!result[0]) sql += 'INSERT IGNORE INTO user (id,count) VALUES (' + p.msg.author.id + ',0);';
 	sql +=
 		'INSERT INTO timers (uid,cookieTime) VALUES ((SELECT uid FROM user WHERE id = ' +
 		p.msg.author.id +
@@ -114,9 +110,7 @@ async function display(p) {
 		p.msg.author.id +
 		';';
 	let result = await p.query(sql);
-	let afterMid = dateUtil.afterMidnight(
-		result[0] ? result[0].cookieTime : undefined
-	);
+	let afterMid = dateUtil.afterMidnight(result[0] ? result[0].cookieTime : undefined);
 
 	let count = 0;
 	if (result[0] && result[0].count) count = result[0].count;

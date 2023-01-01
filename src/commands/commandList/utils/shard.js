@@ -73,8 +73,7 @@ module.exports = new CommandInterface({
 			if (i == shardID) text = text.replace(/\s/gi, '-');
 			else {
 				let diff = new Date() - new Date(shard?.updatedOn);
-				if (diff > maxDiff || offline)
-					text = `${id} ${cluster} OFFLINE OR LAGGING`;
+				if (diff > maxDiff || offline) text = `${id} ${cluster} OFFLINE OR LAGGING`;
 			}
 			shards.push(text);
 		}
@@ -88,8 +87,7 @@ module.exports = new CommandInterface({
 		await msg.addReaction(nextPageEmoji);
 
 		let filter = (emoji, userID) =>
-			[nextPageEmoji, prevPageEmoji].includes(emoji.name) &&
-			p.msg.author.id == userID;
+			[nextPageEmoji, prevPageEmoji].includes(emoji.name) && p.msg.author.id == userID;
 		let collector = p.reactionCollector.create(msg, filter, {
 			time: 900000,
 			idle: 120000,
@@ -120,11 +118,7 @@ module.exports = new CommandInterface({
 
 function getPage(p, currentPage, shards, shardID) {
 	let desc = `\`\`\`\n[ID]  cluster ping uptime        status\n`;
-	for (
-		let i = currentPage * perPage;
-		i < perPage + currentPage * perPage;
-		i++
-	) {
+	for (let i = currentPage * perPage; i < perPage + currentPage * perPage; i++) {
 		if (shards[i]) desc += shards[i] + '\n';
 	}
 	desc += '```';
@@ -136,8 +130,7 @@ function getPage(p, currentPage, shards, shardID) {
 		description: desc,
 		color: p.config.embed_color,
 		footer: {
-			text:
-				'Page ' + (currentPage + 1) + '/' + Math.ceil(shards.length / perPage),
+			text: 'Page ' + (currentPage + 1) + '/' + Math.ceil(shards.length / perPage),
 		},
 	};
 

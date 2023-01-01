@@ -88,10 +88,7 @@ module.exports = new CommandInterface({
 				];
 				p.replyMsg(
 					ring.emoji,
-					' and **' +
-						sender.username +
-						'** are now married! Congratulations!! ' +
-						heart.join(' ')
+					' and **' + sender.username + '** are now married! Congratulations!! ' + heart.join(' ')
 				);
 			}
 		} else {

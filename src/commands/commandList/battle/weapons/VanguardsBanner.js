@@ -79,10 +79,7 @@ module.exports = class VanguardsBanner extends WeaponInterface {
 			// Remove old buff
 			if (oldBuffId) {
 				for (let j in ally[i].buffs) {
-					if (
-						ally[i].buffs[j].from.pid == animal.pid &&
-						ally[i].buffs[j].id == oldBuffId
-					) {
+					if (ally[i].buffs[j].from.pid == animal.pid && ally[i].buffs[j].id == oldBuffId) {
 						ally[i].buffs[j].postTurn(ally[i], ally, enemy, action);
 					}
 				}
@@ -90,9 +87,7 @@ module.exports = class VanguardsBanner extends WeaponInterface {
 
 			// Add new buff
 			let buff = this.getBuffs(animal)[newBuff];
-			buffLogs.push(
-				buff.bind(ally[i], 3, { me: ally[i], allies: ally, enemies: enemy })
-			);
+			buffLogs.push(buff.bind(ally[i], 3, { me: ally[i], allies: ally, enemies: enemy }));
 		}
 		logs.push(`[VBAN] ${animal.nickname} applied ${newBuffName} to all allies`);
 
@@ -103,10 +98,7 @@ module.exports = class VanguardsBanner extends WeaponInterface {
 			enemies: enemy,
 		});
 		let manaLogs = new Logs();
-		manaLogs.push(
-			`[VBAN] ${animal.nickname} used ${mana.amount} WP`,
-			mana.logs
-		);
+		manaLogs.push(`[VBAN] ${animal.nickname} used ${mana.amount} WP`, mana.logs);
 
 		logs.addSubLogs(buffLogs);
 		logs.addSubLogs(manaLogs);
@@ -118,11 +110,7 @@ module.exports = class VanguardsBanner extends WeaponInterface {
 		/* Don't attack if we used an ability */
 		for (let i in me.buffs) {
 			let buff = me.buffs[i];
-			if (
-				this.buffList.includes(buff.id) &&
-				buff.from.pid == me.pid &&
-				buff.justCreated
-			) {
+			if (this.buffList.includes(buff.id) && buff.from.pid == me.pid && buff.justCreated) {
 				return;
 			}
 		}

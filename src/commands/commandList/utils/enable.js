@@ -32,26 +32,19 @@ module.exports = new CommandInterface({
 	execute: async function (p) {
 		/* Checks if the user has permission */
 		if (!p.msg.member.permissions.has('manageChannels')) {
-			p.send(
-				'**🚫 | ' + p.msg.author.username + '**, You are not an admin!',
-				3000
-			);
+			p.send('**🚫 | ' + p.msg.author.username + '**, You are not an admin!', 3000);
 			return;
 		}
 
 		/* Parse commands */
 		let commands = p.args.slice();
-		for (let i = 0; i < commands.length; i++)
-			commands[i] = commands[i].toLowerCase();
+		for (let i = 0; i < commands.length; i++) commands[i] = commands[i].toLowerCase();
 
 		/* If the user wants to enable all commands */
 		if (commands.includes('all')) {
 			let sql = 'DELETE FROM disabled WHERE channel = ' + p.msg.channel.id;
 			await p.query(sql);
-			p.replyMsg(
-				settingEmoji,
-				', **All** commands have been **enabled** for this channel!'
-			);
+			p.replyMsg(settingEmoji, ', **All** commands have been **enabled** for this channel!');
 			return;
 		}
 

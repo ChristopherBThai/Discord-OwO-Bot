@@ -60,9 +60,7 @@ async function display(p) {
 
 	p.replyMsg(
 		rumEmoji,
-		', You currently have **' +
-			count +
-			'** tankards of rum in your stash to give!'
+		', You currently have **' + count + '** tankards of rum in your stash to give!'
 	);
 }
 

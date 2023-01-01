@@ -37,8 +37,7 @@ module.exports = class VampStaff extends WeaponInterface {
 		if (me.stats.hp[0] <= 0) return;
 
 		/* No mana */
-		if (me.stats.wp[0] < this.manaCost)
-			return this.attackPhysical(me, team, enemy);
+		if (me.stats.wp[0] < this.manaCost) return this.attackPhysical(me, team, enemy);
 
 		let logs = new Logs();
 
@@ -60,13 +59,11 @@ module.exports = class VampStaff extends WeaponInterface {
 		let subLogs = new Logs();
 		for (let i = 0; i < enemy.length; i++) {
 			if (enemy[i].stats.hp[0] > 0) {
-				let dmg = WeaponInterface.inflictDamage(
+				let dmg = WeaponInterface.inflictDamage(me, enemy[i], damage, WeaponInterface.MAGICAL, {
 					me,
-					enemy[i],
-					damage,
-					WeaponInterface.MAGICAL,
-					{ me, allies: team, enemies: enemy }
-				);
+					allies: team,
+					enemies: enemy,
+				});
 				dealt += dmg.amount;
 				logText += `${enemy[i].nickname} -${dmg.amount} | `;
 				subLogs.push(dmg.logs);

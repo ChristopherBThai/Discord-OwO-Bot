@@ -85,9 +85,7 @@ async function openCrate(p, count = 1) {
 		result = await p.query(weapon.weaponSql);
 		let uwid = result.insertId;
 		if (!uwid) {
-			p.errorMsg(
-				', Uh oh. Something went wrong! The weapon passive could not be applied'
-			);
+			p.errorMsg(', Uh oh. Something went wrong! The weapon passive could not be applied');
 			console.error('Unable to add weapon passive to: ' + uwid);
 		} else {
 			weapon.uwid = uwid;

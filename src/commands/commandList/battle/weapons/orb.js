@@ -22,8 +22,7 @@ module.exports = class Orb extends WeaponInterface {
 			'<:forb:548783035244478474>',
 		];
 		this.defaultEmoji = '<:orb:548783216379559966>';
-		this.statDesc =
-			'This weapon has no active ability, but comes with two passives!';
+		this.statDesc = 'This weapon has no active ability, but comes with two passives!';
 		this.availablePassives = 'all';
 		this.passiveCount = 2;
 		this.qualityList = [];

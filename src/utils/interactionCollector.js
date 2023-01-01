@@ -24,8 +24,7 @@ class InteractionCollector {
 	}
 
 	interact({ member, message, data, id, token }) {
-		const listener =
-			this.listeners[message.id] || this.listeners[message.interaction?.id];
+		const listener = this.listeners[message.id] || this.listeners[message.interaction?.id];
 		if (listener) {
 			listener.interact(data, member.user, id, token);
 		} else {

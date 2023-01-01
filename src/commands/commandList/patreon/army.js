@@ -42,12 +42,9 @@ module.exports = new CommandInterface({
 });
 
 async function display(p) {
-	let rusty =
-		(await p.redis.hget('data_' + p.msg.channel.guild.id, 'r_emblem')) || 0;
-	let earthly =
-		(await p.redis.hget('data_' + p.msg.channel.guild.id, 'e_emblem')) || 0;
-	let heavenly =
-		(await p.redis.hget('data_' + p.msg.channel.guild.id, 'h_emblem')) || 0;
+	let rusty = (await p.redis.hget('data_' + p.msg.channel.guild.id, 'r_emblem')) || 0;
+	let earthly = (await p.redis.hget('data_' + p.msg.channel.guild.id, 'e_emblem')) || 0;
+	let heavenly = (await p.redis.hget('data_' + p.msg.channel.guild.id, 'h_emblem')) || 0;
 	text = `The server wide contributions are:\n${rEmoji}: ${rusty} | ${eEmoji}: ${earthly} | ${hEmoji}: ${heavenly}`;
 	p.send(text);
 }

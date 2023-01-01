@@ -148,10 +148,7 @@ async function give(p, key, user) {
 		// Error checking
 		if (result == null || result < 0) {
 			if (result < 0) p.redis.hincrby('data_' + p.msg.author.id, dataName, 1);
-			p.errorMsg(
-				', you do not have any ' + key.name + ' keys to give! >:c',
-				3000
-			);
+			p.errorMsg(', you do not have any ' + key.name + ' keys to give! >:c', 3000);
 			p.setCooldown(5);
 			return;
 		}

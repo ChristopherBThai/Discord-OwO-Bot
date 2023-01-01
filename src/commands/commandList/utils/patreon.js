@@ -47,18 +47,14 @@ module.exports = new CommandInterface({
 		else if (result[1][0]) {
 			let parsed = patreonUtil.parsePatreon(result[1][0]);
 			if (parsed) {
-				if (parsed.animal && !parsed.cowoncy)
-					stat = 'You are currently a **Patreon**';
+				if (parsed.animal && !parsed.cowoncy) stat = 'You are currently a **Patreon**';
 				else stat = 'You are currently a **Patreon+**';
 				stat +=
-					'\n**<:blank:427371936482328596> |** until: **' +
-					parsed.expireDate.toString() +
-					'**';
+					'\n**<:blank:427371936482328596> |** until: **' + parsed.expireDate.toString() + '**';
 			}
 		}
 
-		let text =
-			'**<:patreon:449705754522419222> |** Donate to OwO Bot for special benefits!\n';
+		let text = '**<:patreon:449705754522419222> |** Donate to OwO Bot for special benefits!\n';
 		text += '**<:blank:427371936482328596> |** ' + stat + '\n';
 		text += '**<:blank:427371936482328596> |** https://www.patreon.com/OwOBot';
 		p.send(text);

@@ -22,8 +22,7 @@ class Dhole extends Collectible {
 			'\nAfrican wild dog is an endangered species, with estimates that only about 2,500 remain.' +
 			'\nAn endangered species is a species that is very likely to become extinct in the near future.' +
 			'\nThe dhole has been described as combining the physical characteristics of the gray wolf and the red fox. ';
-		this.displayMsg =
-			'?emoji? **| ?user?**, you currently have ?count? Dhole?plural?!';
+		this.displayMsg = '?emoji? **| ?user?**, you currently have ?count? Dhole?plural?!';
 		this.brokeMsg = ', you do not have any Dholes! >:c';
 		this.giveMsg = '?emoji? **| ?receiver?**, ?giver? gave you 1 Dhole!';
 

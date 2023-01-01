@@ -38,9 +38,7 @@ module.exports = new CommandInterface({
 		if (totalPages <= 0) return;
 
 		let filter = (emoji, userID) =>
-			(emoji.name === buyEmoji ||
-				emoji.name === nextPageEmoji ||
-				emoji.name === prevPageEmoji) &&
+			(emoji.name === buyEmoji || emoji.name === nextPageEmoji || emoji.name === prevPageEmoji) &&
 			userID == p.msg.author.id;
 		let collector = p.reactionCollector.create(msg, filter, {
 			time: 900000,
@@ -101,16 +99,14 @@ async function createPage(p, page, totalPages) {
 	};
 
 	if (result[0]) {
-		embed.description =
-			'`' + (offsetID + result[0].bid) + '` **' + result[0].bname + '**';
+		embed.description = '`' + (offsetID + result[0].bid) + '` **' + result[0].bname + '**';
 		embed.image = {
 			url: `${process.env.GEN_HOST}/background/${result[0].bid}.png`,
 		};
 		if (result[0].profile) embed.description += '   *Currently Equipped*';
 		embed.bid = result[0].bid;
 	} else {
-		embed.description =
-			"You don't have any wallpapers! :c Purchase one in `owo shop`!";
+		embed.description = "You don't have any wallpapers! :c Purchase one in `owo shop`!";
 		delete embed.footer;
 	}
 

@@ -41,19 +41,13 @@ module.exports = new CommandInterface({
 			else {
 				let sql = `SELECT private FROM user INNER JOIN user_profile ON user.uid = user_profile.uid WHERE id = ${user.id};`;
 				let result = await p.query(sql);
-				if (!result[0] || !result[0].private)
-					await profileUtil.displayProfile(p, user);
-				else
-					p.errorMsg(
-						', **' + user.username + '** has their profile set to private'
-					);
+				if (!result[0] || !result[0].private) await profileUtil.displayProfile(p, user);
+				else p.errorMsg(', **' + user.username + '** has their profile set to private');
 			}
 		} else if (p.args.length > 1 && p.args[0] == 'set') {
 			if (['about'].includes(p.args[1].toLowerCase())) {
 				profileUtil.editAbout(p);
-			} else if (
-				['background', 'wallpaper', 'wp'].includes(p.args[1].toLowerCase())
-			) {
+			} else if (['background', 'wallpaper', 'wp'].includes(p.args[1].toLowerCase())) {
 				profileUtil.editBackground(p);
 			} else if (['title', 'status'].includes(p.args[1].toLowerCase())) {
 				profileUtil.editTitle(p);

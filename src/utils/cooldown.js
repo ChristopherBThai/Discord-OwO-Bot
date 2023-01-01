@@ -91,11 +91,7 @@ function parseTimer(diff) {
 	return { timerText, time };
 }
 
-const setCooldown = (exports.setCooldown = async function (
-	p,
-	command,
-	cooldown = 0
-) {
+const setCooldown = (exports.setCooldown = async function (p, command, cooldown = 0) {
 	let key = 'cd_' + command + '_' + p.msg.author.id;
 	let commandCooldown = p.commands[p.commandAlias].cooldown;
 

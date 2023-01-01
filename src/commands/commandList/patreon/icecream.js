@@ -71,10 +71,7 @@ async function display(p) {
 	let count = 0;
 	if (result[0] && result[0].count) count = result[0].count;
 
-	p.replyMsg(
-		icecreamEmoji,
-		', You currently have **' + count + '** scoops of ice cream to give!'
-	);
+	p.replyMsg(icecreamEmoji, ', You currently have **' + count + '** scoops of ice cream to give!');
 }
 
 async function give(p, user) {

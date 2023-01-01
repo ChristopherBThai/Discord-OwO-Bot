@@ -97,10 +97,7 @@ module.exports = new CommandInterface({
 				if (owners.includes(p.msg.author.id)) {
 					reset.bind(this)();
 				} else {
-					await p.errorMsg(
-						', only the owner of this command can use this!',
-						3000
-					);
+					await p.errorMsg(', only the owner of this command can use this!', 3000);
 				}
 				return;
 			}

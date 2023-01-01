@@ -41,39 +41,25 @@ module.exports = new CommandInterface({
 				if (result.mathjs) {
 					if (result.data) result = JSON.stringify(result.data);
 					else if (result.entries) result = result.entries + '';
-					else if (result.unit && result.value)
-						result = result.value + ' ' + result.unit;
+					else if (result.unit && result.value) result = result.value + ' ' + result.unit;
 					else if (result.value) result = result.value + '';
 					if (result.length > 1000)
 						p.replyMsg(
 							mathEmoji,
-							p.replaceMentions(
-								', the answer is: **' + result.substr(0, 1000) + '**...'
-							)
+							p.replaceMentions(', the answer is: **' + result.substr(0, 1000) + '**...')
 						);
-					else
-						p.replyMsg(
-							mathEmoji,
-							p.replaceMentions(', the answer is: **' + result + '**')
-						);
+					else p.replyMsg(mathEmoji, p.replaceMentions(', the answer is: **' + result + '**'));
 				} else if (typeof result == 'object')
 					p.replyMsg(
 						mathEmoji,
-						p.replaceMentions(
-							', the answer is: **' + JSON.stringify(result) + '**'
-						)
+						p.replaceMentions(', the answer is: **' + JSON.stringify(result) + '**')
 					);
-				else
-					p.replyMsg(
-						mathEmoji,
-						p.replaceMentions(', the answer is: **' + result + '**')
-					);
+				else p.replyMsg(mathEmoji, p.replaceMentions(', the answer is: **' + result + '**'));
 			})
 			.catch(function (err) {
 				if (err.message == 'Promise timed out after 1000 ms')
 					p.errorMsg(', that expression is too difficult for me... :c', 3000);
-				else
-					p.errorMsg("... I don't think that's an expression silly head", 3000);
+				else p.errorMsg("... I don't think that's an expression silly head", 3000);
 			})
 			.then(function () {
 				pool.terminate();

@@ -34,13 +34,10 @@ module.exports = new CommandInterface({
 
 	execute: async function (p) {
 		/* Query for agree/disagree votes */
-		let sql =
-			'SELECT rules.* FROM rules INNER JOIN user ON user.uid = rules.uid WHERE id = ?;';
+		let sql = 'SELECT rules.* FROM rules INNER JOIN user ON user.uid = rules.uid WHERE id = ?;';
 		sql += 'SELECT COUNT(*) as agree FROM rules WHERE opinion = 1;';
 		sql += 'SELECT COUNT(*) as disagree FROM rules WHERE opinion = -1;';
-		let result = await p
-			.query(sql, [BigInt(p.msg.author.id)])
-			.catch(console.error);
+		let result = await p.query(sql, [BigInt(p.msg.author.id)]).catch(console.error);
 
 		/* Parse query result */
 		let voted = false;
@@ -56,14 +53,11 @@ module.exports = new CommandInterface({
 			descriptionExtra =
 				'\n\n*Clicking on the button means you will follow the rules and acknowlege the consequences*';
 		else if (result[0][0].opinion == 1)
-			descriptionExtra =
-				"\n\nOwO what's this? You already agreed to these rules! <3";
+			descriptionExtra = "\n\nOwO what's this? You already agreed to these rules! <3";
 		else
-			descriptionExtra =
-				'\n\nUwU you disagreed! You still have to follow these rules though! c:<';
+			descriptionExtra = '\n\nUwU you disagreed! You still have to follow these rules though! c:<';
 		let embed = {
-			title:
-				'Failure to follow these rules will result in a ban and/or account reset!',
+			title: 'Failure to follow these rules will result in a ban and/or account reset!',
 			description: description + descriptionExtra,
 			color: p.config.embed_color,
 			footer: {
@@ -116,8 +110,7 @@ module.exports = new CommandInterface({
 			let sql =
 				'INSERT IGNORE INTO rules (uid,opinion) VALUES ((SELECT uid FROM user WHERE id = ?),1)';
 			embed.footer.text = p.global.toFancyNum(agree + 1) + ' Users agreed';
-			embed.description =
-				description + "\n\nOwO what's this? You agreed to these rules! <3";
+			embed.description = description + "\n\nOwO what's this? You agreed to these rules! <3";
 			sql = 'INSERT IGNORE INTO user (id,count) VALUES (?,0);' + sql;
 
 			// Query and edit existing message

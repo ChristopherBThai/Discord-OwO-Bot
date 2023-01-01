@@ -108,10 +108,7 @@ async function displayTeams(p) {
 	let activeTeam = 0;
 	const teamsOrder = {};
 	if (!result[2].length) {
-		p.errorMsg(
-			", you don't have a team! Create one with `owo team add {animalName}`!",
-			5000
-		);
+		p.errorMsg(", you don't have a team! Create one with `owo team add {animalName}`!", 5000);
 		return;
 	}
 	// Find current active team
@@ -134,10 +131,7 @@ async function displayTeams(p) {
 		const embed = teamUtil.createTeamEmbed(p, team, other);
 		const teamOrder = teamsOrder[pgid];
 		if (teamOrder == null) {
-			p.errorMsg(
-				", I couldn't parse your team... something went terribly wrong!",
-				3000
-			);
+			p.errorMsg(", I couldn't parse your team... something went terribly wrong!", 3000);
 			return;
 		}
 		teams[teamOrder] = embed;
@@ -155,9 +149,7 @@ async function displayTeams(p) {
 					'`owo team add {animal} {pos}` Add an animal to your team\n`owo team remove {pos}` Removes an animal from your team\n`owo team rename {name}` Renames your team\n`owo rename {animal} {name}` Rename an animal\n`owo setteam {teamNum}` to set multiple teams',
 				color: p.config.embed_color,
 				footer: {
-					text: `Current Streak: 0 | Highest Streak: 0 | Page ${
-						i + 1
-					}/${maxTeams}`,
+					text: `Current Streak: 0 | Highest Streak: 0 | Page ${i + 1}/${maxTeams}`,
 				},
 				fields: [],
 			};
@@ -199,22 +191,16 @@ async function displayTeams(p) {
 		additionalButtons,
 	});
 
-	pagedMsg.on(
-		'button',
-		async (component, user, ack, { currentPage, maxPage }) => {
-			if (component === 'star') {
-				await setTeam(p, currentPage + 1, true);
-				for (let i in teams) {
-					teams[i].footer.text = teams[i].footer.text.replace(
-						` ${starEmoji}`,
-						''
-					);
-				}
-				teams[currentPage].footer.text += ` ${starEmoji}`;
-				await ack({ embed: teams[currentPage] });
+	pagedMsg.on('button', async (component, user, ack, { currentPage, maxPage }) => {
+		if (component === 'star') {
+			await setTeam(p, currentPage + 1, true);
+			for (let i in teams) {
+				teams[i].footer.text = teams[i].footer.text.replace(` ${starEmoji}`, '');
 			}
+			teams[currentPage].footer.text += ` ${starEmoji}`;
+			await ack({ embed: teams[currentPage] });
 		}
-	);
+	});
 }
 
 async function setTeam(p, teamNum, dontDisplay) {

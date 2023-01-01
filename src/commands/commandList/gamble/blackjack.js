@@ -9,9 +9,8 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const maxBet = 150000;
 const deck = [
-	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
-	23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 35, 36, 37, 38, 39, 40, 41, 42,
-	43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
+	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
+	28, 29, 30, 31, 32, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
 ];
 const bjUtil = require('./blackjackUtil.js');
 const hitEmoji = '👊';
@@ -51,10 +50,7 @@ module.exports = new CommandInterface({
 			p.setCooldown(5);
 			return;
 		} else if (amount <= 0) {
-			p.send(
-				'**🚫 | ' + msg.author.username + "**, You can't bet that much silly!",
-				3000
-			);
+			p.send('**🚫 | ' + msg.author.username + "**, You can't bet that much silly!", 3000);
 			p.setCooldown(5);
 			return;
 		}
@@ -100,28 +96,15 @@ module.exports = new CommandInterface({
 			if (maxBet && money > maxBet) money = maxBet;
 			if (amount == 'all') {
 				if (money <= 0)
-					p.send(
-						'**🚫 | ' +
-							msg.author.username +
-							'**, You do not have enough cowoncy!',
-						3000
-					);
+					p.send('**🚫 | ' + msg.author.username + '**, You do not have enough cowoncy!', 3000);
 				else await initBlackjack(p, money);
 			} else {
 				if (money < amount)
-					p.send(
-						'**🚫 | ' +
-							msg.author.username +
-							'**, You do not have enough cowoncy!',
-						3000
-					);
+					p.send('**🚫 | ' + msg.author.username + '**, You do not have enough cowoncy!', 3000);
 				else await initBlackjack(p, amount);
 			}
 		} else {
-			p.send(
-				'**🚫 | ' + msg.author.username + '**, You do not have enough cowoncy!',
-				3000
-			);
+			p.send('**🚫 | ' + msg.author.username + '**, You do not have enough cowoncy!', 3000);
 		}
 	},
 });
@@ -129,8 +112,7 @@ module.exports = new CommandInterface({
 async function blackjack(p, player, dealer, bet, resume) {
 	let embed = bjUtil.generateEmbed(p.msg.author, dealer, player, bet);
 	let filter = (emoji, userID) =>
-		(emoji.name === hitEmoji || emoji.name === stopEmoji) &&
-		userID === p.msg.author.id;
+		(emoji.name === hitEmoji || emoji.name === stopEmoji) && userID === p.msg.author.id;
 	if (resume) embed.footer.text = '🎲 ~ resuming previous game';
 
 	let message = await p.send({ embed });
@@ -150,8 +132,7 @@ async function blackjack(p, player, dealer, bet, resume) {
 			return;
 		}
 		//HIT
-		if (emoji.name == hitEmoji)
-			await hit(p, nPlayer, nDealer, message, bet, collector);
+		if (emoji.name == hitEmoji) await hit(p, nPlayer, nDealer, message, bet, collector);
 		//STOP
 		else if (emoji.name == stopEmoji) {
 			collector.stop('done');
@@ -161,9 +142,7 @@ async function blackjack(p, player, dealer, bet, resume) {
 
 	collector.on('end', (collected, reason) => {
 		if (reason == 'time')
-			message.edit(
-				'**⏱ |** This session has expired. Retype `owo blackjack` to resume'
-			);
+			message.edit('**⏱ |** This session has expired. Retype `owo blackjack` to resume');
 	});
 }
 
@@ -179,14 +158,8 @@ async function initBlackjack(p, bet, existing) {
 		await blackjack(p, player, dealer, bet, true);
 	} else {
 		let tdeck = deck.slice(0);
-		let player = [
-			await bjUtil.randCard(tdeck, 'f'),
-			await bjUtil.randCard(tdeck, 'f'),
-		];
-		let dealer = [
-			await bjUtil.randCard(tdeck, 'f'),
-			await bjUtil.randCard(tdeck, 'b'),
-		];
+		let player = [await bjUtil.randCard(tdeck, 'f'), await bjUtil.randCard(tdeck, 'f')];
+		let dealer = [await bjUtil.randCard(tdeck, 'f'), await bjUtil.randCard(tdeck, 'b')];
 		let sql =
 			'INSERT INTO blackjack (id,bet,date,active) VALUES (' +
 			p.msg.author.id +
@@ -271,28 +244,16 @@ async function stop(p, player, dealer, msg, bet, fromHit) {
 	//dealer win
 	else winner = 'l';
 
-	let sql =
-		'UPDATE blackjack SET active = 0 WHERE id = ' +
-		p.msg.author.id +
-		' AND active > 0;';
+	let sql = 'UPDATE blackjack SET active = 0 WHERE id = ' + p.msg.author.id + ' AND active > 0;';
 	let sql2 =
 		'DELETE FROM blackjack_card WHERE bjid = (SELECT bjid FROM blackjack WHERE id = ' +
 		p.msg.author.id +
 		');';
 	if (winner == 'w')
 		sql2 +=
-			'UPDATE cowoncy SET money = money + ' +
-			bet * 2 +
-			' WHERE id = ' +
-			p.msg.author.id +
-			';';
+			'UPDATE cowoncy SET money = money + ' + bet * 2 + ' WHERE id = ' + p.msg.author.id + ';';
 	else if (winner == 't' || winner == 'tb')
-		sql2 +=
-			'UPDATE cowoncy SET money = money + ' +
-			bet +
-			' WHERE id = ' +
-			p.msg.author.id +
-			';';
+		sql2 += 'UPDATE cowoncy SET money = money + ' + bet + ' WHERE id = ' + p.msg.author.id + ';';
 	p.con.query(sql, function (err, result) {
 		if (err) {
 			console.error(err);
@@ -315,14 +276,7 @@ async function stop(p, player, dealer, msg, bet, fromHit) {
 					p.logger.decr(`gamble.blackjack.${p.msg.author.id}`);
 					p.logger.decr(`cowoncy.blackjack.${p.msg.author.id}`, -1 * bet);
 				}
-				let embed = bjUtil.generateEmbed(
-					p.msg.author,
-					dealer,
-					player,
-					bet,
-					winner,
-					bet
-				);
+				let embed = bjUtil.generateEmbed(p.msg.author, dealer, player, bet, winner, bet);
 				msg.edit({ embed });
 			});
 		}
@@ -337,10 +291,8 @@ async function parseQuery(info) {
 			let player = [];
 			let dealer = [];
 			for (let i = 0; i < query.length; i++) {
-				if (query[i].dealer == 0)
-					player.push({ card: query[i].card, type: 'c' });
-				else if (query[i].dealer == 1)
-					dealer.push({ card: query[i].card, type: 'b' });
+				if (query[i].dealer == 0) player.push({ card: query[i].card, type: 'c' });
+				else if (query[i].dealer == 1) dealer.push({ card: query[i].card, type: 'b' });
 				else dealer.push({ card: query[i].card, type: 'c' });
 			}
 			return { player, dealer };
@@ -356,10 +308,8 @@ async function parseQuery(info) {
 			let player = [];
 			let dealer = [];
 			for (let i = 0; i < result.length; i++) {
-				if (result[i].dealer == 0)
-					player.push({ card: result[i].card, type: 'c' });
-				else if (result[i].dealer == 1)
-					dealer.push({ card: result[i].card, type: 'b' });
+				if (result[i].dealer == 0) player.push({ card: result[i].card, type: 'c' });
+				else if (result[i].dealer == 1) dealer.push({ card: result[i].card, type: 'b' });
 				else dealer.push({ card: result[i].card, type: 'c' });
 			}
 			return { player, dealer };

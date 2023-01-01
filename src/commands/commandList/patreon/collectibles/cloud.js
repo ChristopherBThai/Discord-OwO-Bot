@@ -23,8 +23,7 @@ class Cloud extends Collectible {
 			'?emoji? **| ?user?**, your sky has **?count?** fluffy clouds ?emoji?' +
 			'\n?mergeEmoji? **|** You’ve had **?mergeCount?** storms come your way! <:thunder:1056432512953491526>';
 		this.brokeMsg = ', you do not have any clouds to give! >:c';
-		this.giveMsg =
-			'?emoji? **| ?receiver?**, have this soft fluffy ?emoji? cloud';
+		this.giveMsg = '?emoji? **| ?receiver?**, have this soft fluffy ?emoji? cloud';
 
 		this.failChance = 0.2;
 		this.failMsg =

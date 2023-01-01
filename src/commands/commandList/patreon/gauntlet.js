@@ -57,9 +57,7 @@ async function createGauntlet(p) {
 	const displayText = await getDisplayText(p);
 	if (result == null || refund) {
 		if (result < 0) p.redis.incr('yinyang', p.msg.author.id, 1);
-		p.errorMsg(
-			`, you don't have enough yin yangs!\n${p.config.emoji.blank} **|** ${displayText}`
-		);
+		p.errorMsg(`, you don't have enough yin yangs!\n${p.config.emoji.blank} **|** ${displayText}`);
 		p.setCooldown(5);
 		return;
 	}
@@ -76,9 +74,7 @@ async function useRamen(p) {
 	const displayText = await getDisplayText(p);
 	if (result == null || result < 0) {
 		if (result < 0) p.redis.incr('yinyang', p.msg.author.id, 6);
-		p.errorMsg(
-			`, you don't have enough ramen!\n${p.config.emoji.blank} **|** ${displayText}`
-		);
+		p.errorMsg(`, you don't have enough ramen!\n${p.config.emoji.blank} **|** ${displayText}`);
 		p.setCooldown(5);
 		return;
 	}
@@ -92,8 +88,7 @@ async function useRamen(p) {
 
 async function getDisplayText(p) {
 	const saved = (await p.redis.zscore('universe_saved', p.msg.author.id)) || 0;
-	const destroyed =
-		(await p.redis.zscore('universe_destroyed', p.msg.author.id)) || 0;
+	const destroyed = (await p.redis.zscore('universe_destroyed', p.msg.author.id)) || 0;
 	const pears = (await p.redis.zscore('pears', p.msg.author.id)) || 0;
 	return `${reverseEmoji} Universe saved: ${saved} | ${snapEmoji} Universe destroyed: ${destroyed} | ${pearEmoji} Pears collected: ${pears}`;
 }
@@ -116,10 +111,7 @@ async function useGauntlet(p) {
 		p.replyMsg(reverseEmoji, ', you have saved the earth by reversing!');
 	} else if (rand < 21) {
 		await p.redis.incr('universe_destroyed', p.msg.author.id, 1);
-		p.replyMsg(
-			snapEmoji,
-			", you have destroyed half of the universe's population! Astrocity!"
-		);
+		p.replyMsg(snapEmoji, ", you have destroyed half of the universe's population! Astrocity!");
 	} else {
 		await p.redis.incr('pears', p.msg.author.id, 1);
 		p.replyMsg(pearEmoji, ', you traded the mighty gauntlet for a sweet pear');

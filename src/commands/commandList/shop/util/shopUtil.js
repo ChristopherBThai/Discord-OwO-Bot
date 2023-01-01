@@ -53,8 +53,7 @@ exports.displayWallpaperShop = async function (p) {
 	let embed = await getWallpaperPage(p, currentPage, totalPages);
 	let msg = await p.send({ embed });
 	let filter = (emoji, userID) =>
-		(emoji.name === nextPageEmoji || emoji.name === prevPageEmoji) &&
-		userID == p.msg.author.id;
+		(emoji.name === nextPageEmoji || emoji.name === prevPageEmoji) && userID == p.msg.author.id;
 	let collector = p.reactionCollector.create(msg, filter, {
 		time: 900000,
 		idle: 120000,
@@ -87,9 +86,7 @@ exports.displayWallpaperShop = async function (p) {
 async function getWallpaperPage(p, currentPage, totalPages) {
 	let sql = `SELECT b.*,u.uid FROM backgrounds b LEFT JOIN (user_backgrounds ub INNER JOIN user u ON u.uid = ub.uid AND u.id = ${
 		p.msg.author.id
-	}) ON b.bid = ub.bid WHERE b.active = 1 ORDER BY b.bid LIMIT 1 OFFSET ${
-		currentPage - 1
-	};`;
+	}) ON b.bid = ub.bid WHERE b.active = 1 ORDER BY b.bid LIMIT 1 OFFSET ${currentPage - 1};`;
 	let result = await p.query(sql);
 
 	let embed = {
@@ -109,9 +106,9 @@ async function getWallpaperPage(p, currentPage, totalPages) {
 		let price = p.global.toShortNum(result[0].price);
 		if (result[0].uid) price = 'OWNED';
 		let cLength = charLen - result[0].bname.length + (4 - ('' + price).length);
-		embed.description = `\`${idOffset + result[0].bid}\` **\`${
-			result[0].bname
-		}\`**\`${'-'.repeat(cLength)} ${price}\` <:cowoncy:416043450337853441>`;
+		embed.description = `\`${idOffset + result[0].bid}\` **\`${result[0].bname}\`**\`${'-'.repeat(
+			cLength
+		)} ${price}\` <:cowoncy:416043450337853441>`;
 		embed.image = {
 			url: `${process.env.GEN_HOST}/background/${result[0].bid}.png`,
 		};

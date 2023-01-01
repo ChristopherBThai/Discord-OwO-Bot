@@ -66,7 +66,5 @@ async function display(p) {
 
 async function give(p, user) {
 	await p.redis.hincrby('data_' + user.id, data, 1);
-	p.send(
-		`${emoji} **| ${user.username}**, The OwO Bot Wiki bestows its knowledge to you.`
-	);
+	p.send(`${emoji} **| ${user.username}**, The OwO Bot Wiki bestows its knowledge to you.`);
 }

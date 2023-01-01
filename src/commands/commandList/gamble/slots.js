@@ -49,8 +49,7 @@ module.exports = new CommandInterface({
 		let amount = 0;
 		let all = false;
 		if (args.length == 0) amount = 1;
-		else if (global.isInt(args[0]) && args.length == 1)
-			amount = parseInt(args[0]);
+		else if (global.isInt(args[0]) && args.length == 1) amount = parseInt(args[0]);
 		else if (args.length == 1 && args[0] == 'all') all = true;
 		else {
 			p.errorMsg(', Invalid arguments!! >:c', 3000);
@@ -73,15 +72,8 @@ module.exports = new CommandInterface({
 		let result = await p.query(sql);
 		if (all && result[0] != undefined) amount = result[0].money;
 		if (maxBet && amount > maxBet) amount = maxBet;
-		if (
-			result[0] == undefined ||
-			result[0].money < amount ||
-			result[0].money <= 0
-		) {
-			p.send(
-				'**🚫 | ' + msg.author.username + "**, You don't have enough cowoncy!",
-				3000
-			);
+		if (result[0] == undefined || result[0].money < amount || result[0].money <= 0) {
+			p.send('**🚫 | ' + msg.author.username + "**, You don't have enough cowoncy!", 3000);
 		} else {
 			//Decide results
 			let rslots = [];
@@ -129,18 +121,14 @@ module.exports = new CommandInterface({
 				var slot2 = Math.floor(Math.random() * (slots.length - 1));
 				var slot3 = Math.floor(Math.random() * (slots.length - 1));
 				if (slot3 == slot1)
-					slot2 =
-						(slot1 + Math.ceil(Math.random() * (slots.length - 2))) %
-						(slots.length - 1);
+					slot2 = (slot1 + Math.ceil(Math.random() * (slots.length - 2))) % (slots.length - 1);
 				if (slot2 == slots.length - 2) slot2++;
 				rslots.push(slots[slot1]);
 				rslots.push(slots[slot2]);
 				rslots.push(slots[slot3]);
 			}
 			let winmsg =
-				win == 0
-					? 'nothing... :c'
-					: '<:cowoncy:416043450337853441> ' + p.global.toFancyNum(win);
+				win == 0 ? 'nothing... :c' : '<:cowoncy:416043450337853441> ' + p.global.toFancyNum(win);
 
 			sql =
 				'UPDATE cowoncy SET money = money + ' +

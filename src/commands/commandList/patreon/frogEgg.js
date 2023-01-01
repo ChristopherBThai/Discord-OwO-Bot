@@ -69,10 +69,7 @@ async function display(p) {
 	const count2 = (await p.redis.hget('data_' + p.msg.author.id, data2)) || 0;
 
 	if (count2) {
-		await p.replyMsg(
-			emoji,
-			`, you currently have ${count} ${plural} and ${count2} ball(s)!`
-		);
+		await p.replyMsg(emoji, `, you currently have ${count} ${plural} and ${count2} ball(s)!`);
 	} else {
 		await p.replyMsg(emoji, `, you currently have ${count} ${plural}!`);
 	}
@@ -108,8 +105,6 @@ async function trade(p) {
 			`, you received a shiny silver ball! Save that ball to gift to baby yoda!`
 		);
 	} else {
-		await p.errorMsg(
-			`, you need at least 6 frog eggs to convert them into silver balls!`
-		);
+		await p.errorMsg(`, you need at least 6 frog eggs to convert them into silver balls!`);
 	}
 }

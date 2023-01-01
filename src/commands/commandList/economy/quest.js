@@ -23,12 +23,7 @@ module.exports = new CommandInterface({
 
 	desc: 'Grab a quest everyday! Complete them to earn rewards! You also have one quest reroll per day! You can earn a new quest after 12am PST',
 
-	example: [
-		'owo quest',
-		'owo quest rr 1',
-		'owo quest lock 1',
-		'owo quest unlock 1',
-	],
+	example: ['owo quest', 'owo quest rr 1', 'owo quest lock 1', 'owo quest unlock 1'],
 
 	permissions: ['sendMessages', 'embedLinks'],
 
@@ -73,9 +68,7 @@ async function rrQuest(p) {
 	let result = await p.query(sql);
 
 	/* Parse dates */
-	let afterMid = dateUtil.afterMidnight(
-		result[0][0] ? result[0][0].questrrTime : undefined
-	);
+	let afterMid = dateUtil.afterMidnight(result[0][0] ? result[0][0].questrrTime : undefined);
 
 	/* After midnight? */
 	if (!afterMid || !afterMid.after) {
@@ -159,9 +152,7 @@ async function lockUnlockQuest(p) {
 	result = await p.query(sql);
 
 	/* Parse dates */
-	let afterMid = dateUtil.afterMidnight(
-		result[2][0] ? result[2][0].questTime : undefined
-	);
+	let afterMid = dateUtil.afterMidnight(result[2][0] ? result[2][0].questTime : undefined);
 
 	let quests = parseQuests(p.msg.author.id, result[1], afterMid);
 
@@ -187,8 +178,7 @@ async function addQuest(p) {
 
 	/* If there is no timer data, make one */
 	if (!result[0][0]) {
-		sql =
-			'INSERT IGNORE INTO user (id,count) values (' + p.msg.author.id + ',0);';
+		sql = 'INSERT IGNORE INTO user (id,count) values (' + p.msg.author.id + ',0);';
 		sql +=
 			'INSERT INTO timers (uid) values ((SELECT uid FROM user WHERE id = ' +
 			p.msg.author.id +
@@ -197,9 +187,7 @@ async function addQuest(p) {
 	}
 
 	/* Parse dates */
-	let afterMid = dateUtil.afterMidnight(
-		result[0][0] ? result[0][0].questTime : undefined
-	);
+	let afterMid = dateUtil.afterMidnight(result[0][0] ? result[0][0].questTime : undefined);
 
 	/* Check if its past midnight and number of quest < 3, if so add 1 quest */
 	let quest;
@@ -308,8 +296,7 @@ function parseQuests(id, result, afterMid, quest) {
 		}
 	}
 
-	if (text == '')
-		text = 'UwU You finished all of your quests! Come back tomorrow! <3';
+	if (text == '') text = 'UwU You finished all of your quests! Come back tomorrow! <3';
 
 	return { sql, text };
 }
@@ -319,17 +306,14 @@ function parseQuest(questInfo) {
 	let reward, text, progress;
 
 	if (questInfo.prize == 'cowoncy') {
-		reward =
-			global.toFancyNum(quest.cowoncy[questInfo.level]) +
-			' <:cowoncy:416043450337853441>';
+		reward = global.toFancyNum(quest.cowoncy[questInfo.level]) + ' <:cowoncy:416043450337853441>';
 	} else if (questInfo.prize == 'lootbox') {
 		reward = '<:box:427352600476647425>'.repeat(quest.lootbox[questInfo.level]);
 	} else if (questInfo.prize == 'crate') {
 		reward = '<:crate:523771259302182922>'.repeat(quest.crate[questInfo.level]);
 	} else if (questInfo.prize == 'shards') {
 		reward =
-			global.toFancyNum(quest.shards[questInfo.level]) +
-			' <:weaponshard:655902978712272917>';
+			global.toFancyNum(quest.shards[questInfo.level]) + ' <:weaponshard:655902978712272917>';
 	}
 
 	let count = quest.count[questInfo.level];

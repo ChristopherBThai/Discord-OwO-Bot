@@ -39,14 +39,7 @@ exports.grab = function (p, ptype, ftype, text, notsfw, retry) {
 		})
 		.catch((err) => {
 			if (retryt && (ftype == 'jpg' || ftype == 'png')) {
-				this.grab(
-					p,
-					ptype,
-					ftype == 'jpg' ? 'png' : 'jpg',
-					text,
-					notsfw,
-					false
-				);
+				this.grab(p, ptype, ftype == 'jpg' ? 'png' : 'jpg', text, notsfw, false);
 			} else
 				p.errorMsg(
 					", I couldn't find that image type! :c\nType `owo help gif` for the list of types!",
