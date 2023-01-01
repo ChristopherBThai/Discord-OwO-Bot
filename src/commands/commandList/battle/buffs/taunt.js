@@ -31,9 +31,7 @@ module.exports = class Taunt extends BuffInterface {
 		let negate = ((damage[0] + damage[1]) * this.stats[0]) / 100;
 		damage[1] -= negate;
 
-		logs.push(
-			`[TAUNT] ${animal.nickname} negated ${Math.round(negate)} damage`
-		);
+		logs.push(`[TAUNT] ${animal.nickname} negated ${Math.round(negate)} damage`);
 		return logs;
 	}
 };

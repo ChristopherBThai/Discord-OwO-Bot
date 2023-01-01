@@ -29,10 +29,7 @@ exports.send = function (msg) {
 			for (let i in fragments) {
 				if (sendCount >= maxSends) {
 					// Do not send more than 10 messages
-				} else if (
-					total.length + fragments[i].length + append.length >=
-					maxLength
-				) {
+				} else if (total.length + fragments[i].length + append.length >= maxLength) {
 					if (total === '') {
 						return createMessage(msg, 'ERROR: The message is too long to send');
 					} else {
@@ -69,9 +66,7 @@ async function createMessage(msg, content, file, del, opt = {}) {
 			}
 		);
 	} else {
-		const channel = msg.channel.createMessage
-			? msg.channel
-			: await msg.author.getDMChannel();
+		const channel = msg.channel.createMessage ? msg.channel : await msg.author.getDMChannel();
 		if (del) {
 			const sentMsg = await channel.createMessage(content, file);
 			setTimeout(() => {
@@ -93,8 +88,7 @@ exports.reply = function (msg) {
 	return function (emoji, content, del, file, opt) {
 		let username = this.opt?.author?.username || msg.author.username;
 		let tempContent = {};
-		if (typeof content === 'string')
-			tempContent.content = `**${emoji} | ${username}**${content}`;
+		if (typeof content === 'string') tempContent.content = `**${emoji} | ${username}**${content}`;
 		else {
 			tempContent = { ...content };
 			tempContent.content = `**${emoji} | ${username}**${content.content}`;
@@ -107,13 +101,7 @@ exports.reply = function (msg) {
 			for (let i in split) {
 				if (total.length + split[i].length >= 2000) {
 					if (total === '') {
-						return createMessage(
-							msg,
-							'ERROR: The message is too long to send',
-							null,
-							null,
-							opt
-						);
+						return createMessage(msg, 'ERROR: The message is too long to send', null, null, opt);
 					} else {
 						createMessage(msg, total, null, null, opt);
 						total = split[i];

@@ -30,9 +30,7 @@ module.exports = new CommandInterface({
 
 	execute: async function (p) {
 		//query ping from shard
-		let ping = p.client.shards.get(
-			p.client.guildShardMap[p.msg.channel.guild.id]
-		).latency;
+		let ping = p.client.shards.get(p.client.guildShardMap[p.msg.channel.guild.id]).latency;
 		let str = p.command === 'ping' ? 'pong' : 'ping';
 		p.send(pongEmoji + ' **|** ...' + str + '! In ' + ping + 'ms');
 	},

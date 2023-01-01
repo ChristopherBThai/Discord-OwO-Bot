@@ -36,8 +36,7 @@ module.exports = new CommandInterface({
 	six: 500,
 
 	execute: async function (p) {
-		if (p.args.length > 0 && p.global.isInt(p.args[0]))
-			await openMultiple(p, parseInt(p.args[0]));
+		if (p.args.length > 0 && p.global.isInt(p.args[0])) await openMultiple(p, parseInt(p.args[0]));
 		else if (p.args.length > 0 && p.args[0].toLowerCase() == 'all') {
 			let sql = `SELECT boxcount FROM lootbox WHERE id = ${p.msg.author.id};`;
 			let result = await p.query(sql);
@@ -48,10 +47,7 @@ module.exports = new CommandInterface({
 			let boxcount = result[0].boxcount;
 			if (boxcount > maxBoxes) boxcount = maxBoxes;
 			await openMultiple(p, boxcount);
-		} else if (
-			p.args.length &&
-			['f', 'fabled'].includes(p.args[0].toLowerCase())
-		) {
+		} else if (p.args.length && ['f', 'fabled'].includes(p.args[0].toLowerCase())) {
 			await openFabledBox(p);
 		} else await openBox(p);
 	},

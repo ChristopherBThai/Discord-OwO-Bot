@@ -33,10 +33,7 @@ module.exports = new CommandInterface({
 		const { inProgress, newSurvey } = (await getSurvey.bind(this)(uid)) || {};
 
 		if (inProgress) {
-			await this.replyMsg(
-				surveyEmoji,
-				', You already have a survey in progress!'
-			);
+			await this.replyMsg(surveyEmoji, ', You already have a survey in progress!');
 			return;
 		}
 

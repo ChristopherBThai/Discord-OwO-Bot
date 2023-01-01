@@ -43,9 +43,7 @@ function getInteractionArgs(interaction) {
 		switch (option.type) {
 			// User
 			case 6:
-				result[option.name] = interaction.data.resolved.members.get(
-					option.value
-				);
+				result[option.name] = interaction.data.resolved.members.get(option.value);
 				break;
 			// Sub command
 			case 2:

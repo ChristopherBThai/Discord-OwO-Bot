@@ -9,10 +9,7 @@ var macro;
 try {
 	macro = require('../../../../../tokens/macro.js');
 } catch (e) {
-	console.error(
-		'Missing macro.js. Please add this file to ../tokens/macro.js\n',
-		e
-	);
+	console.error('Missing macro.js. Please add this file to ../tokens/macro.js\n', e);
 }
 const traits = {
 	efficiency: { inc: 10, pow: 1.748, base: 25, upg: 1, max: 215, prefix: '/H' },

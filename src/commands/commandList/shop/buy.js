@@ -32,20 +32,14 @@ module.exports = new CommandInterface({
 		if (p.global.isInt(p.args[0])) {
 			buy(p, parseInt(p.args[0]));
 		} else {
-			p.errorMsg(
-				', invalid arguments! Please specify what item you want to buy!',
-				3000
-			);
+			p.errorMsg(', invalid arguments! Please specify what item you want to buy!', 3000);
 		}
 	},
 });
 
 function buy(p, id) {
 	if (id <= 0) {
-		p.errorMsg(
-			', that item does not exist! Please choose one from `owo shop`!',
-			3000
-		);
+		p.errorMsg(', that item does not exist! Please choose one from `owo shop`!', 3000);
 	} else if (id <= 7) {
 		ringUtil.buy(p, id);
 	} else if (id <= 150) {
@@ -53,9 +47,6 @@ function buy(p, id) {
 	} else if (id > 200) {
 		wallpaperUtil.buy(p, id);
 	} else {
-		p.errorMsg(
-			', that item does not exist! Please choose one from `owo shop`!',
-			3000
-		);
+		p.errorMsg(', that item does not exist! Please choose one from `owo shop`!', 3000);
 	}
 }

@@ -46,10 +46,7 @@ module.exports = new CommandInterface({
 		if (!p.args.length) {
 			let prefix = await p.redis.hget(p.msg.channel.guild.id, 'prefix');
 			if (prefix) {
-				p.replyMsg(
-					settingEmoji,
-					`, the current prefix is set to **\`${prefix}\`**!`
-				);
+				p.replyMsg(settingEmoji, `, the current prefix is set to **\`${prefix}\`**!`);
 				p.msg.channel.guild.prefix = prefix;
 			} else {
 				p.replyMsg(settingEmoji, ', no prefix is set for this server!');

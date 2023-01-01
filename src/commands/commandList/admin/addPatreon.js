@@ -20,9 +20,7 @@ module.exports = new CommandInterface({
 			let { user, date } = await addPatreon(p, p.args[0], p.args[1], p.args[2]);
 			await p.replyMsg(
 				tada,
-				`, Updated **${
-					user.username + '#' + user.discriminator
-				}** patreon perks until **${date}**`
+				`, Updated **${user.username + '#' + user.discriminator}** patreon perks until **${date}**`
 			);
 		} else {
 			await addPatreons(p);
@@ -76,11 +74,8 @@ async function addPatreon(p, id, addMonths = 1, type = 1) {
 	let sql = `SELECT user.uid,patreonMonths,patreonTimer,TIMESTAMPDIFF(MONTH,patreonTimer,NOW()) AS monthsPassed,patreonType FROM user LEFT JOIN patreons ON user.uid = patreons.uid WHERE id = ${id}`;
 	let result = await p.query(sql);
 	let uid;
-	let months =
-		result[0] && result[0].patreonMonths ? result[0].patreonMonths : 0;
-	let monthsPassed = p.global.isInt(result[0]?.monthsPassed)
-		? result[0].monthsPassed
-		: months;
+	let months = result[0] && result[0].patreonMonths ? result[0].patreonMonths : 0;
+	let monthsPassed = p.global.isInt(result[0]?.monthsPassed) ? result[0].monthsPassed : months;
 	if (!type) {
 		if (result[0] && result[0].patreonType) type = result[0].patreonType;
 		else type = 1;

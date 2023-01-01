@@ -183,10 +183,7 @@ function shippig(text) {
 	text = text
 		.replace(huntEmoji, '<:pandabag:566537378303311872>')
 		.replace('hunt is empowered', 'Roo is empowered')
-		.replace(
-			'You found: ',
-			'I broke into a zoo and kidnapped:\n**<:blank:427371936482328596> |** '
-		)
+		.replace('You found: ', 'I broke into a zoo and kidnapped:\n**<:blank:427371936482328596> |** ')
 		.replace(
 			'spent 5 <:cowoncy:416043450337853441> and caught an ',
 			'I broke into a zoo and kidnapped an\n**<:blank:427371936482328596> |** '
@@ -218,10 +215,7 @@ function spotifybot(text) {
 			text
 				.replace(', hunt is empowered by', "'s Playlist is Sponsored by")
 				.replace(huntEmoji, '<:blank:427371936482328596>')
-				.replace(
-					'**<:blank:427371936482328596> |** You found',
-					nowplaying + ' **|** You added'
-				)
+				.replace('**<:blank:427371936482328596> |** You found', nowplaying + ' **|** You added')
 				.replace('xp**!', 'xp**! *Shuffle Play* ' + swipeup);
 	} else {
 		text =
@@ -331,10 +325,7 @@ function crown(text) {
 	let crown = '<a:crown:599030694953353216>';
 	if (text.indexOf('empowered by') >= 0) {
 		text = text
-			.replace(
-				', hunt is empowered by',
-				"'s Elite Force marches into the forest with"
-			)
+			.replace(', hunt is empowered by', "'s Elite Force marches into the forest with")
 			.replace(huntEmoji, crown)
 			.replace('You found', 'and after 1 week they found')
 			.replace('  !', '');
@@ -401,15 +392,9 @@ function michelle(text, info) {
 
 function elsa(text) {
 	if (text.indexOf('empowered by') >= 0) {
-		text = text.replace(
-			', hunt is empowered by',
-			"'s Knights gather recruits! Using"
-		);
+		text = text.replace(', hunt is empowered by', "'s Knights gather recruits! Using");
 	} else {
-		text = text.replace(
-			' spent 5 <:cowoncy:416043450337853441> and caught',
-			"'s Knights found"
-		);
+		text = text.replace(' spent 5 <:cowoncy:416043450337853441> and caught', "'s Knights found");
 	}
 	let embed = {
 		description: text,
@@ -424,10 +409,7 @@ function elsa(text) {
 function pheonix(text) {
 	if (text.indexOf('empowered by') >= 0) {
 		text = text
-			.replace(
-				', hunt is empowered by',
-				' has searched far and wide all over the galaxy with'
-			)
+			.replace(', hunt is empowered by', ' has searched far and wide all over the galaxy with')
 			.replace('You found', 'and found')
 			.replace('  !', '');
 	} else {
@@ -468,24 +450,17 @@ function blacky(text) {
 	text = text.replace(huntEmoji, '<a:running:653370372997120010>');
 	if (text.indexOf('empowered by') >= 0) {
 		text = text
-			.replace(
-				', hunt is empowered by',
-				"'s umbreon is empowered by\n" + blank + ' **|**'
-			)
+			.replace(', hunt is empowered by', "'s umbreon is empowered by\n" + blank + ' **|**')
 			.replace('You found', 'and found');
 	} else {
 		text = text
 			.replace(
 				' spent 5 <:cowoncy:416043450337853441> and caught a **',
-				', your umbreon went out for a walk\n' +
-					blank +
-					' **|** and came back with an **amazing '
+				', your umbreon went out for a walk\n' + blank + ' **|** and came back with an **amazing '
 			)
 			.replace(
 				' spent 5 <:cowoncy:416043450337853441> and caught an **',
-				', your umbreon went out for a walk\n' +
-					blank +
-					' **|** and came back with an **amazing '
+				', your umbreon went out for a walk\n' + blank + ' **|** and came back with an **amazing '
 			);
 	}
 	let embed = {
@@ -619,9 +594,7 @@ function kitsune(text, info) {
 		}** plays a pledged game with OwO, the lord of games using: ${info.gemText.replace(
 			/`/gi,
 			'**'
-		)} **ASCHENTE**!\n${blank} **|** Victoriously returns with: ${
-			info.animalEmojis
-		}`;
+		)} **ASCHENTE**!\n${blank} **|** Victoriously returns with: ${info.animalEmojis}`;
 	} else {
 		text = `${emoji} **| ${info.author.username}** plays a pledged game with OwO, the lord of games. **ASCHENTE**!\n${blank} **|** Victoriously returns with a(n) ${info.animal[0][0]} ${info.animalEmojis}`;
 	}
@@ -959,10 +932,7 @@ function koala(text, info) {
 		}
 	} else {
 		text = `${emoji} **| ${info.author.username}** goes into hunt!\n`;
-		text += `${blank} **|** ${info.animal[0][0].replace(
-			/\*{2}\w+\*{2}\s/gi,
-			''
-		)}\n`;
+		text += `${blank} **|** ${info.animal[0][0].replace(/\*{2}\w+\*{2}\s/gi, '')}\n`;
 		text += `${blank} **|** ${info.animalEmojis}`;
 		if (info.petText) {
 			text += `\n${sapling} **|** **${info.animalXp}xp**!`;

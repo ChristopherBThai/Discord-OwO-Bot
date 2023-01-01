@@ -29,8 +29,7 @@ class Command {
 		// Parse content info
 		let args = await checkPrefix(this.main, msg);
 		const containsPoints =
-			msg.content.toLowerCase().includes('owo') ||
-			msg.content.toLowerCase().includes('uwu');
+			msg.content.toLowerCase().includes('owo') || msg.content.toLowerCase().includes('uwu');
 		if (!args) {
 			//if user said owo/uwu
 			if (containsPoints) {
@@ -107,17 +106,13 @@ class Command {
 				return true;
 			} else if (
 				commandObj.manager &&
-				this.main.config.role.manager.find((id) =>
-					msg.member?.roles.includes(id)
-				)
+				this.main.config.role.manager.find((id) => msg.member?.roles.includes(id))
 			) {
 				adminCommands[command].execute(param);
 				return true;
 			} else if (
 				commandObj.helper &&
-				this.main.config.role.helper.find((id) =>
-					msg.member?.roles.includes(id)
-				)
+				this.main.config.role.helper.find((id) => msg.member?.roles.includes(id))
 			) {
 				adminCommands[command].execute(param);
 				return true;
@@ -291,9 +286,7 @@ function initParam(msg, command, args, main) {
 		EmojiAdder: main.EmojiAdder,
 		badwords: main.badwords,
 		quest: function (questName, count, extra) {
-			main.questHandler
-				.increment(msg, questName, count, extra)
-				.catch(console.error);
+			main.questHandler.increment(msg, questName, count, extra).catch(console.error);
 		},
 		reactionCollector: main.reactionCollector,
 		interactionCollector: main.interactionCollector,
@@ -359,14 +352,8 @@ async function checkPrefix(main, msg) {
 	}
 
 	// check with custom prefix
-	if (
-		msg.channel.guild.prefix &&
-		content.startsWith(msg.channel.guild.prefix)
-	) {
-		return msg.content
-			.slice(msg.channel.guild.prefix.length)
-			.trim()
-			.split(/ +/g);
+	if (msg.channel.guild.prefix && content.startsWith(msg.channel.guild.prefix)) {
+		return msg.content.slice(msg.channel.guild.prefix.length).trim().split(/ +/g);
 	}
 }
 

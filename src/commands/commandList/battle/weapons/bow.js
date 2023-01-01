@@ -12,8 +12,7 @@ module.exports = class Bow extends WeaponInterface {
 	init() {
 		this.id = 3;
 		this.name = 'Bow';
-		this.basicDesc =
-			'An accurate bow that will deal alot of damage to a single opponent';
+		this.basicDesc = 'An accurate bow that will deal alot of damage to a single opponent';
 		this.emojis = [
 			'<:cbow:535283611260420096>',
 			'<:ubow:535283613198188594>',
@@ -24,10 +23,7 @@ module.exports = class Bow extends WeaponInterface {
 			'<:fbow:535283614099832872>',
 		];
 		this.defaultEmoji = '<:bow:538196864277807105>';
-		this.statDesc =
-			'Deals **?%** of your ' +
-			WeaponInterface.strEmoji +
-			'STR to a random opponent';
+		this.statDesc = 'Deals **?%** of your ' + WeaponInterface.strEmoji + 'STR to a random opponent';
 		this.availablePassives = 'all';
 		this.passiveCount = 1;
 		this.qualityList = [[110, 160]];
@@ -38,8 +34,7 @@ module.exports = class Bow extends WeaponInterface {
 		if (me.stats.hp[0] <= 0) return;
 
 		/* No mana */
-		if (me.stats.wp[0] < this.manaCost)
-			return this.attackPhysical(me, team, enemy);
+		if (me.stats.wp[0] < this.manaCost) return this.attackPhysical(me, team, enemy);
 
 		/* Grab an enemy that I'm attacking */
 		let attacking = WeaponInterface.getAttacking(me, team, enemy);
@@ -60,13 +55,11 @@ module.exports = class Bow extends WeaponInterface {
 		let damage = WeaponInterface.getDamage(me.stats.att, this.stats[0] / 100);
 
 		/* Deal damage */
-		damage = WeaponInterface.inflictDamage(
+		damage = WeaponInterface.inflictDamage(me, attacking, damage, WeaponInterface.PHYSICAL, {
 			me,
-			attacking,
-			damage,
-			WeaponInterface.PHYSICAL,
-			{ me, allies: team, enemies: enemy }
-		);
+			allies: team,
+			enemies: enemy,
+		});
 		logs.push(
 			`[BOW] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`,
 			damage.logs

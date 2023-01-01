@@ -55,14 +55,7 @@ async function getPatreons(p) {
 		text += '**Customized Command**\n';
 		let list = patreons.customizedCommand;
 		for (let i in list) {
-			text +=
-				'<@' +
-				list[i].discord +
-				'> | **' +
-				list[i].name +
-				'** | ' +
-				list[i].discord +
-				'\n';
+			text += '<@' + list[i].discord + '> | **' + list[i].name + '** | ' + list[i].discord + '\n';
 		}
 	}
 
@@ -71,40 +64,19 @@ async function getPatreons(p) {
 		text += '\n**Custom Command**\n';
 		let list = patreons.customCommand;
 		for (let i in list) {
-			text +=
-				'<@' +
-				list[i].discord +
-				'> | **' +
-				list[i].name +
-				'** | ' +
-				list[i].discord +
-				'\n';
+			text += '<@' + list[i].discord + '> | **' + list[i].name + '** | ' + list[i].discord + '\n';
 		}
 	}
 
 	console.log('custom pet');
-	csv =
-		'Discord Name,Discord ID,Patreon Name,Pet Name,hp str pr wp mag mr,Pet Desc,Pet ID,SQL\n';
+	csv = 'Discord Name,Discord ID,Patreon Name,Pet Name,hp str pr wp mag mr,Pet Desc,Pet ID,SQL\n';
 	if (patreons.pet.length) {
 		text += '\n**Custom Pet**\n';
 		let list = patreons.pet;
 		for (let i in list) {
-			text +=
-				'<@' +
-				list[i].discord +
-				'> | **' +
-				list[i].name +
-				'** | ' +
-				list[i].discord +
-				'\n';
+			text += '<@' + list[i].discord + '> | **' + list[i].name + '** | ' + list[i].discord + '\n';
 			let user = await p.fetch.getUser(list[i].discord);
-			csv +=
-				(user ? user.username : 'A User') +
-				',' +
-				list[i].discord +
-				',' +
-				list[i].name +
-				'\n';
+			csv += (user ? user.username : 'A User') + ',' + list[i].discord + ',' + list[i].name + '\n';
 		}
 	}
 

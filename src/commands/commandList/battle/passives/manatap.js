@@ -37,10 +37,7 @@ module.exports = class ManaTap extends PassiveInterface {
 		let mana = (totalDamage * this.stats[0]) / 100;
 		mana = WeaponInterface.replenish(animal, mana, animal, tags);
 
-		logs.push(
-			`[MTAP] ${animal.nickname} replenished ${mana.amount} WP`,
-			mana.logs
-		);
+		logs.push(`[MTAP] ${animal.nickname} replenished ${mana.amount} WP`, mana.logs);
 		return logs;
 	}
 };

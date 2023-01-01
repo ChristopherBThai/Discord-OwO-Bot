@@ -88,21 +88,14 @@ class Collectible {
 		this.data = this.dataOverride || this.key;
 		this.ownersString = `?${this.owners[this.owners.length - 1]}?`;
 		if (this.owners.slice(0, -1).length) {
-			this.ownersString = `?${this.owners.slice(0, -1).join('?, ?')}?, and ${
-				this.ownersString
-			}`;
+			this.ownersString = `?${this.owners.slice(0, -1).join('?, ?')}?, and ${this.ownersString}`;
 		}
 	}
 
 	async display(p) {
 		let count = await p.redis.hget(`data_${p.msg.author.id}`, this.data);
-		let receiveDate = await p.redis.hget(
-			`data_${p.msg.author.id}`,
-			`${this.data}_time`
-		);
-		receiveDate = receiveDate
-			? new Date(+receiveDate).toLocaleDateString()
-			: 'never';
+		let receiveDate = await p.redis.hget(`data_${p.msg.author.id}`, `${this.data}_time`);
+		receiveDate = receiveDate ? new Date(+receiveDate).toLocaleDateString() : 'never';
 
 		let mergeCount = 0;
 		if (this.hasMerge) {
@@ -110,10 +103,7 @@ class Collectible {
 			count = count % this.mergeNeeded;
 		}
 		if (this.hasManualMerge) {
-			mergeCount = await p.redis.hget(
-				`data_${p.msg.author.id}`,
-				this.manualMergeData
-			);
+			mergeCount = await p.redis.hget(`data_${p.msg.author.id}`, this.manualMergeData);
 		}
 
 		let msg = await this.getDisplayMsg(p, { count, mergeCount, receiveDate });
@@ -128,10 +118,7 @@ class Collectible {
 				.replaceAll('?mergeCount?', mergeCount || 0)
 				.replaceAll('?mergeEmoji?', this.mergeEmoji)
 				.replaceAll('?plural?', count > 1 ? 's' : '')
-				.replaceAll(
-					'?pluralName?',
-					count > 1 ? this.pluralName : this.singleName
-				)
+				.replaceAll('?pluralName?', count > 1 ? this.pluralName : this.singleName)
 				.replaceAll(
 					'?mergePluralName?',
 					mergeCount > 1 ? this.mergePluralName : this.mergeSingleName
@@ -145,10 +132,7 @@ class Collectible {
 				return this.displayNoneMsg
 					.replaceAll('?count?', count || 0)
 					.replaceAll('?plural?', count > 1 ? 's' : '')
-					.replaceAll(
-						'?pluralName?',
-						count > 1 ? this.pluralName : this.singleName
-					)
+					.replaceAll('?pluralName?', count > 1 ? this.pluralName : this.singleName)
 					.replaceAll(
 						'?mergePluralName?',
 						mergeCount > 1 ? this.mergePluralName : this.mergeSingleName
@@ -163,10 +147,7 @@ class Collectible {
 				return this.displayMsg
 					.replaceAll('?count?', count || 0)
 					.replaceAll('?plural?', count > 1 ? 's' : '')
-					.replaceAll(
-						'?pluralName?',
-						count > 1 ? this.pluralName : this.singleName
-					)
+					.replaceAll('?pluralName?', count > 1 ? this.pluralName : this.singleName)
 					.replaceAll(
 						'?mergePluralName?',
 						mergeCount > 1 ? this.mergePluralName : this.mergeSingleName
@@ -184,10 +165,7 @@ class Collectible {
 				.replaceAll('?count?', count || 0)
 				.replaceAll('?mergeCount?', mergeCount || 0)
 				.replaceAll('?plural?', count > 1 ? 's' : '')
-				.replaceAll(
-					'?pluralName?',
-					count > 1 ? this.pluralName : this.singleName
-				)
+				.replaceAll('?pluralName?', count > 1 ? this.pluralName : this.singleName)
 				.replaceAll(
 					'?mergePluralName?',
 					mergeCount > 1 ? this.mergePluralName : this.mergeSingleName
@@ -211,18 +189,11 @@ class Collectible {
 				take = this.costAmount;
 			}
 			if (take > 0) {
-				let result = await p.redis.hincrby(
-					`data_${p.msg.author.id}`,
-					this.data,
-					-1 * take
-				);
+				let result = await p.redis.hincrby(`data_${p.msg.author.id}`, this.data, -1 * take);
 				// TODO double check merge for costAmount greater than 1
-				const refund =
-					+result < 0 ||
-					(this.hasMerge && (+result + take) % this.mergeNeeded <= 0);
+				const refund = +result < 0 || (this.hasMerge && (+result + take) % this.mergeNeeded <= 0);
 				if (result == null || refund) {
-					if (refund)
-						p.redis.hincrby(`data_${p.msg.author.id}`, this.data, take);
+					if (refund) p.redis.hincrby(`data_${p.msg.author.id}`, this.data, take);
 					p.errorMsg(this.brokeMsg, 3000);
 					p.setCooldown(5);
 					return;
@@ -232,11 +203,7 @@ class Collectible {
 
 		if (await this.checkFailed(p, user)) return;
 
-		let result = await p.redis.hincrby(
-			`data_${user.id}`,
-			data,
-			this.giveAmount
-		);
+		let result = await p.redis.hincrby(`data_${user.id}`, data, this.giveAmount);
 		if (this.trackDate) {
 			await p.redis.hset(`data_${user.id}`, `${data}_time`, Date.now());
 		}
@@ -248,8 +215,7 @@ class Collectible {
 	async getGiveMsg(p, result, user, msgOverride) {
 		let selectedGiveMsg = this.giveMsg;
 		if (Array.isArray(this.giveMsg)) {
-			selectedGiveMsg =
-				this.giveMsg[Math.floor(Math.random() * this.giveMsg.length)];
+			selectedGiveMsg = this.giveMsg[Math.floor(Math.random() * this.giveMsg.length)];
 		}
 		if (msgOverride) {
 			return msgOverride
@@ -259,10 +225,7 @@ class Collectible {
 				.replaceAll('?emoji?', this.emoji)
 				.replaceAll('?blank?', p.config.emoji.blank)
 				.replaceAll('?mergeEmoji?', this.mergeEmoji);
-		} else if (
-			this.hasMerge &&
-			(result % this.mergeNeeded) - this.giveAmount < 0
-		) {
+		} else if (this.hasMerge && (result % this.mergeNeeded) - this.giveAmount < 0) {
 			return this.mergeMsg
 				.replaceAll('?giveMsg?', selectedGiveMsg)
 				.replaceAll('?giver?', p.msg.author.username)
@@ -297,17 +260,12 @@ class Collectible {
 			}
 			return false;
 		}
-		await redis.hset(
-			`data_${msg.author.id}`,
-			`${this.data}_reset`,
-			afterMid.now
-		);
+		await redis.hset(`data_${msg.author.id}`, `${this.data}_reset`, afterMid.now);
 		return true;
 	}
 
 	async checkFailed(p, user) {
-		if (typeof this.failChance !== 'number' || this.failChance <= 0)
-			return false;
+		if (typeof this.failChance !== 'number' || this.failChance <= 0) return false;
 		if (Math.random() <= this.failChance) {
 			const msg = await this.getFailMsg(p, user);
 			p.send(msg);
@@ -346,28 +304,18 @@ class Collectible {
 	}
 
 	async manualMerge(p) {
-		let result = await p.redis.hincrby(
-			`data_${p.msg.author.id}`,
-			this.data,
-			-1 * this.mergeNeeded
-		);
+		let result = await p.redis.hincrby(`data_${p.msg.author.id}`, this.data, -1 * this.mergeNeeded);
 		if (result == null || result < 0) {
-			if (result < 0)
-				p.redis.hincrby(`data_${p.msg.author.id}`, this.data, this.mergeNeeded);
+			if (result < 0) p.redis.hincrby(`data_${p.msg.author.id}`, this.data, this.mergeNeeded);
 			p.errorMsg(', you do not have have enough to merge! >:c', 3000);
 			p.setCooldown(5);
 			return;
 		}
 
-		const result2 = await p.redis.hincrby(
-			`data_${p.msg.author.id}`,
-			this.manualMergeData,
-			1
-		);
+		const result2 = await p.redis.hincrby(`data_${p.msg.author.id}`, this.manualMergeData, 1);
 		let selectedGiveMsg = this.giveMsg;
 		if (Array.isArray(this.giveMsg)) {
-			selectedGiveMsg =
-				this.giveMsg[Math.floor(Math.random() * this.giveMsg.length)];
+			selectedGiveMsg = this.giveMsg[Math.floor(Math.random() * this.giveMsg.length)];
 		}
 		const msg = this.mergeMsg
 			.replaceAll('?giveMsg?', selectedGiveMsg)

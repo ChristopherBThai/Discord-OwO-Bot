@@ -71,10 +71,7 @@ function elsa(text) {
 		h: '<:hocuspocustitlehidden:653376194305064960>',
 	};
 	text = replaceRanks(text, newRanks)
-		.replace(
-			'Zoo Points',
-			'<:frozentitlefabled:653376194602991645>ilm Collection Points'
-		)
+		.replace('Zoo Points', '<:frozentitlefabled:653376194602991645>ilm Collection Points')
 		.split('\n');
 	text[0] =
 		"<:elsasnowflake1:653376194414379029><:elsasnowflake2:653384773234065438> <:frozenN:653376194854518794>**erdy**<:frozenE:653376194594734117>**lsa's zoo!** <:elsasnowflake2:653384773234065438><:elsasnowflake1:653376194414379029>";

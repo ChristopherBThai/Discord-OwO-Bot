@@ -13,8 +13,7 @@ const data = 'devil';
 const alias = [data, 'dvl'];
 const ownerOnly = true;
 const giveAmount = 1;
-const desc =
-	'A pair of Devil wings to take you to the underworld a place called Hell.';
+const desc = 'A pair of Devil wings to take you to the underworld a place called Hell.';
 const displayMsg = `, you currently have ?count? ${emoji} Devil Wing?plural?!`;
 const brokeMsg = `, you do not have any Devil Wings to give! >:c`;
 const giveMsg = `, you have been given 1 ${emoji} Falling into Hell.`;
@@ -72,19 +71,13 @@ module.exports = new CommandInterface({
 
 async function display() {
 	let count = await this.redis.hget('data_' + this.msg.author.id, data);
-	const msg = displayMsg
-		.replace('?count?', count || 0)
-		.replace('?plural?', count > 1 ? 's' : '');
+	const msg = displayMsg.replace('?count?', count || 0).replace('?plural?', count > 1 ? 's' : '');
 	this.replyMsg(emoji, msg);
 }
 
 async function give(user) {
 	if (!owners.includes(this.msg.author.id)) {
-		let result = await this.redis.hincrby(
-			'data_' + this.msg.author.id,
-			data,
-			-1
-		);
+		let result = await this.redis.hincrby('data_' + this.msg.author.id, data, -1);
 		// Error checking
 		if (result == null || result < 0) {
 			if (result < 0) this.redis.hincrby('data_' + this.msg.author.id, data, 1);

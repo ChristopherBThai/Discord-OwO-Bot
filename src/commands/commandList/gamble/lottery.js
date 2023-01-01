@@ -54,8 +54,7 @@ async function bet(con, msg, args, global, p) {
 	}
 
 	let sql = 'SELECT money FROM cowoncy WHERE id = ' + msg.author.id + ';';
-	sql +=
-		'SELECT * FROM lottery WHERE id = ' + msg.author.id + ' AND valid = 1;';
+	sql += 'SELECT * FROM lottery WHERE id = ' + msg.author.id + ' AND valid = 1;';
 	let result = await p.query(sql);
 	if (!result[0][0] || result[0][0].money < amount) {
 		p.errorMsg(", You don't have enough cowoncy!", 3000);
@@ -66,10 +65,7 @@ async function bet(con, msg, args, global, p) {
 		let prevBet = 0;
 		if (result[1][0]) prevBet = result[1][0].amount;
 		if (prevBet >= maxBet) {
-			p.errorMsg(
-				', You can only bet up to ' + p.global.toFancyNum(maxBet) + ' cowoncy!',
-				3000
-			);
+			p.errorMsg(', You can only bet up to ' + p.global.toFancyNum(maxBet) + ' cowoncy!', 3000);
 			return;
 		}
 
@@ -103,8 +99,7 @@ async function bet(con, msg, args, global, p) {
 		if (chance >= 0.01) chance = Math.trunc(chance * 100) / 100;
 
 		let embed = {
-			description:
-				'Lottery ends once a day! The maximum lottery submission is 150K cowoncy!',
+			description: 'Lottery ends once a day! The maximum lottery submission is 150K cowoncy!',
 			color: p.config.embed_color,
 			timestamp: new Date(),
 			footer: {
@@ -220,9 +215,7 @@ async function display(con, msg, p) {
  */
 function getTimeLeft() {
 	var now = new Date();
-	var mill =
-		new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0, 0) -
-		now;
+	var mill = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0, 0) - now;
 	if (mill < 0) {
 		mill += 86400000;
 	}

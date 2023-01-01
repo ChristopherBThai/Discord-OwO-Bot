@@ -9,9 +9,7 @@ const offsetID = 200;
 const wallpaperEmoji = '🖼';
 
 exports.buy = async function (p, id) {
-	let sql = `SELECT * FROM backgrounds WHERE bid = ${
-		id - offsetID
-	} AND active = 1;`;
+	let sql = `SELECT * FROM backgrounds WHERE bid = ${id - offsetID} AND active = 1;`;
 	sql += `SELECT u.uid,b.bid FROM user u LEFT JOIN user_backgrounds b ON u.uid = b.uid AND b.bid = ${
 		id - offsetID
 	} WHERE id = ${p.msg.author.id};`;
@@ -53,10 +51,7 @@ exports.buy = async function (p, id) {
 	let embed = {
 		author: {
 			name:
-				p.msg.author.username +
-				', you have successfully purchased "' +
-				result[0][0].bname +
-				'"!',
+				p.msg.author.username + ', you have successfully purchased "' + result[0][0].bname + '"!',
 			icon_url: p.msg.author.avatarURL,
 		},
 		color: p.config.embed_color,

@@ -51,10 +51,7 @@ async function addUser(args, p, ctx, canvas, callback) {
 	let text = args.text;
 	let url = await p.getMention(text);
 	if (!url) {
-		p.send(
-			'**🚫 | ' + p.msg.author.username + '**, I could not find that user',
-			3000
-		);
+		p.send('**🚫 | ' + p.msg.author.username + '**, I could not find that user', 3000);
 		return;
 	}
 
@@ -73,11 +70,7 @@ async function addUser(args, p, ctx, canvas, callback) {
 	if (args.stroke) {
 		ctx.lineWidth = args.stroke;
 		ctx.fillStyle = 'black';
-		ctx.strokeText(
-			url.username,
-			x + args.imageSize / 2,
-			y + args.imageSize + 15
-		);
+		ctx.strokeText(url.username, x + args.imageSize / 2, y + args.imageSize + 15);
 		ctx.fillStyle = 'white';
 	}
 	ctx.fillText(url.username, x + args.imageSize / 2, y + args.imageSize + 15);
@@ -86,10 +79,7 @@ async function addUser(args, p, ctx, canvas, callback) {
 
 	url = url.avatarURL.replace('.jpg', '.png').replace('.gif', '.png');
 	if (!url) {
-		p.send(
-			'**🚫 | ' + p.msg.author.username + '**, I could not find that user',
-			3000
-		);
+		p.send('**🚫 | ' + p.msg.author.username + '**, I could not find that user', 3000);
 		return;
 	}
 
@@ -97,10 +87,7 @@ async function addUser(args, p, ctx, canvas, callback) {
 		await request.get(url, callbackImage(ctx, x, y, args.imageSize, callback));
 	} catch (err) {
 		console.error(err);
-		p.send(
-			'**🚫 | ' + p.msg.author.username + '**, could not grab the image',
-			3000
-		);
+		p.send('**🚫 | ' + p.msg.author.username + '**, could not grab the image', 3000);
 	}
 }
 
@@ -108,16 +95,10 @@ async function addEmoji(args, p, ctx, canvas, callback) {
 	let text = args.text;
 	let url = text.match(/:[0-9]+>/gi);
 	if (!url || !url[0]) {
-		p.send(
-			'**🚫 | ' + p.msg.author.username + '**, I could not grab the emoji',
-			3000
-		);
+		p.send('**🚫 | ' + p.msg.author.username + '**, I could not grab the emoji', 3000);
 		return;
 	}
-	url =
-		'https://cdn.discordapp.com/emojis/' +
-		url[0].slice(1, url[0].length - 1) +
-		'.png';
+	url = 'https://cdn.discordapp.com/emojis/' + url[0].slice(1, url[0].length - 1) + '.png';
 	let x = args.x + args.width / 2 - args.imageSize / 2;
 	let y = args.y - args.imageSize / 2;
 	if (args.imageX) x = args.imageX;
@@ -127,10 +108,7 @@ async function addEmoji(args, p, ctx, canvas, callback) {
 		request.get(url, callbackImage(ctx, x, y, args.imageSize, callback));
 	} catch (err) {
 		console.error(err);
-		p.send(
-			'**🚫 | ' + p.msg.author.username + '**, could not grab the image',
-			3000
-		);
+		p.send('**🚫 | ' + p.msg.author.username + '**, could not grab the image', 3000);
 	}
 }
 
@@ -143,10 +121,7 @@ function callbackImage(ctx, x, y, size, callback) {
 				callback();
 			};
 			img.onerror = function () {
-				p.send(
-					'**🚫 | ' + p.msg.author.username + '**, I could not grab the image',
-					3000
-				);
+				p.send('**🚫 | ' + p.msg.author.username + '**, I could not grab the image', 3000);
 			};
 			img.src = body;
 		} else console.error(err);
@@ -168,21 +143,15 @@ function addText(args, p, ctx, canvas, callback) {
 	let tempText = text.split(' ');
 	text = '';
 	for (var i = 0; i < tempText.length; i++) {
-		if (ctx.measureText(text + tempText[i] + ' ').width > args.width && i > 0)
-			text += '\n';
+		if (ctx.measureText(text + tempText[i] + ' ').width > args.width && i > 0) text += '\n';
 		text += tempText[i] + ' ';
 	}
 
 	//Check if it will fit
 	let measure = ctx.measureText(text);
-	let height = Math.abs(
-		measure.actualBoundingBoxAscent - measure.actualBoundingBoxDescent
-	);
+	let height = Math.abs(measure.actualBoundingBoxAscent - measure.actualBoundingBoxDescent);
 	if (measure.width > args.width || height > args.height) {
-		p.send(
-			'**🚫 | ' + p.msg.author.username + '**, The text is too long!',
-			3000
-		);
+		p.send('**🚫 | ' + p.msg.author.username + '**, The text is too long!', 3000);
 		return;
 	}
 

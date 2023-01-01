@@ -12,10 +12,7 @@ exports.alter = function (id, text, info = {}) {
 	let result;
 	if ((result = check(id, text, info))) {
 		return result;
-	} else if (
-		info.to &&
-		(result = check(info.to.id, text, { ...info, receive: true }))
-	) {
+	} else if (info.to && (result = check(info.to.id, text, { ...info, receive: true }))) {
 		return result;
 	}
 	return text;
@@ -68,8 +65,7 @@ function erys(text, info) {
 		desc =
 			`<a:receive1:993752858342199376> **${info.to.username} | ${info.from.username}** made you freshly baked cookies, delivered by the magic cat <:receive2:993752859298517043>` +
 			`\n<a:receive3:993752859973787693> **|** Hope you enjoy them! nom`;
-		img =
-			'https://cdn.discordapp.com/attachments/936398283750907965/984144172229459988/cookie.gif';
+		img = 'https://cdn.discordapp.com/attachments/936398283750907965/984144172229459988/cookie.gif';
 		color = 16436896;
 	} else if (info.ready) {
 		desc = `<:cat1:993750688448389170> **| ${info.from.username}**! hope you enjoy your **${info.count}** freshly baked cookies!\n<:cat2:993750689404698684> **|** Hope they fill you with love and joy! <a:cat3:993750690411319396>`;
@@ -80,8 +76,7 @@ function erys(text, info) {
 		desc =
 			`<a:give1:993752854877716521> **${info.to.username}**, **${info.from.username}** sent you a cookie from his catto's bakery! <:give2:993752856005980160>` +
 			`\n<a:give3:993752857348157460> **|** It was made with love, hope it's tasty! nom`;
-		img =
-			'https://cdn.discordapp.com/attachments/936398283750907965/984144172229459988/cookie.gif';
+		img = 'https://cdn.discordapp.com/attachments/936398283750907965/984144172229459988/cookie.gif';
 
 		color = 16436896;
 	}

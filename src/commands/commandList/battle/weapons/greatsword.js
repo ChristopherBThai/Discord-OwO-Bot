@@ -23,10 +23,7 @@ module.exports = class GreatSword extends WeaponInterface {
 			'<:fgreatsword:535279248923951116>',
 		];
 		this.defaultEmoji = '<:greatsword:538196865129250817>';
-		this.statDesc =
-			'Deals **?%** of your ' +
-			WeaponInterface.strEmoji +
-			'STR to all opponents';
+		this.statDesc = 'Deals **?%** of your ' + WeaponInterface.strEmoji + 'STR to all opponents';
 		this.availablePassives = 'all';
 		this.passiveCount = 1;
 		this.qualityList = [[35, 55]];
@@ -37,8 +34,7 @@ module.exports = class GreatSword extends WeaponInterface {
 		if (me.stats.hp[0] <= 0) return;
 
 		/* No mana */
-		if (me.stats.wp[0] < this.manaCost)
-			return this.attackPhysical(me, team, enemy);
+		if (me.stats.wp[0] < this.manaCost) return this.attackPhysical(me, team, enemy);
 
 		let logs = new Logs();
 
@@ -59,13 +55,11 @@ module.exports = class GreatSword extends WeaponInterface {
 		let subLogs = new Logs();
 		for (let i = 0; i < enemy.length; i++) {
 			if (enemy[i].stats.hp[0] > 0) {
-				let dmg = WeaponInterface.inflictDamage(
+				let dmg = WeaponInterface.inflictDamage(me, enemy[i], damage, WeaponInterface.PHYSICAL, {
 					me,
-					enemy[i],
-					damage,
-					WeaponInterface.PHYSICAL,
-					{ me, allies: team, enemies: enemy }
-				);
+					allies: team,
+					enemies: enemy,
+				});
 				logText += `${enemy[i].nickname} -${dmg.amount} | `;
 				subLogs.push(dmg.logs);
 			}

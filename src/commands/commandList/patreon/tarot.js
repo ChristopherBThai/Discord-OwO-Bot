@@ -123,10 +123,7 @@ module.exports = new CommandInterface({
 
 		const cardCopy = [...cards];
 		for (let i = 0; i < count; i++) {
-			const card = cardCopy.splice(
-				Math.floor(Math.random() * cardCopy.length),
-				1
-			)[0];
+			const card = cardCopy.splice(Math.floor(Math.random() * cardCopy.length), 1)[0];
 			embed.fields.push({
 				name: `${card.emoji} ${card.name}`,
 				value: card.desc,

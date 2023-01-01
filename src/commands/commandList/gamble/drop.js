@@ -94,17 +94,9 @@ async function pickup(p) {
 	let result = await p.query(sql);
 	//Not enough money
 	if (!result[1][0] || result[1][0].money < amount) {
-		p.send(
-			'**🚫 | ' +
-				p.msg.author.username +
-				'**, you can only pick up as much as you have!'
-		);
+		p.send('**🚫 | ' + p.msg.author.username + '**, you can only pick up as much as you have!');
 		return;
-	} else if (
-		result[0][0] &&
-		amount <= result[0][0].amount &&
-		amount <= result[1][0].money
-	) {
+	} else if (result[0][0] && amount <= result[0][0].amount && amount <= result[1][0].money) {
 		p.send(
 			'**💰 | ' +
 				p.msg.author.username +
@@ -142,8 +134,7 @@ async function handleWarning(p) {
 
 	await msg.addReaction(acceptEmoji);
 
-	let filter = (emoji, userID) =>
-		emoji.name === acceptEmoji && p.msg.author.id === userID;
+	let filter = (emoji, userID) => emoji.name === acceptEmoji && p.msg.author.id === userID;
 	let collector = p.reactionCollector.create(msg, filter, { time: 60000 });
 	collector.on('collect', async (emoji) => {
 		collector.stop('done');
@@ -151,9 +142,7 @@ async function handleWarning(p) {
 		embed.color = 65280;
 		embed.author.name = "✅ You're all set, " + p.msg.author.username + '!';
 		embed.description =
-			'**' +
-			acceptEmoji +
-			' |** The **pickup** command is now enabled for you! Good luck!';
+			'**' + acceptEmoji + ' |** The **pickup** command is now enabled for you! Good luck!';
 		msg.edit({ embed });
 		p.setCooldown(5);
 	});
@@ -201,16 +190,10 @@ async function pickup2(p) {
 			await p.errorMsg(err.errorMsg, 3000);
 		} else {
 			console.error(err);
-			await p.errorMsg(
-				', there was an picking up cowoncy! Please try again later.',
-				3000
-			);
+			await p.errorMsg(', there was an picking up cowoncy! Please try again later.', 3000);
 		}
 		return;
 	}
 
-	await p.replyMsg(
-		p.config.emoji.cowoncy,
-		`, you picked up **${amount} cowoncy**!`
-	);
+	await p.replyMsg(p.config.emoji.cowoncy, `, you picked up **${amount} cowoncy**!`);
 }

@@ -38,10 +38,7 @@ class Lxv extends Collectible {
 	}
 
 	async getDisplayMsg(p, args, msgOverride) {
-		let reset = await p.redis.hget(
-			`data_${p.msg.author.id}`,
-			`${this.data}_reset`
-		);
+		let reset = await p.redis.hget(`data_${p.msg.author.id}`, `${this.data}_reset`);
 		let afterMid = p.dateUtil.afterMidnight(reset);
 		let msg =
 			'<:847033688302551061:1055044687527948298> **| ?user?**, you currently have ?count? ?emoji? lxv. You have taken care of it for today!\n<:1039236830022868992:1055044688979185664> **|** Hedge has collected ?mergeCount? **lovesick** for you!';
@@ -51,17 +48,9 @@ class Lxv extends Collectible {
 					"<:846997443278274610:1055044684382208010> **| ?user?**, you currently have ?count? ?emoji? lxv. Don't forget to take care of them!\n<:1039236830022868992:1055044688979185664> **|** Hedge has collected ?mergeCount? **lovesick** for you!";
 			} else {
 				if (args.mergeCount > 0) {
-					const result = await p.redis.hincrby(
-						`data_${p.msg.author.id}`,
-						this.manualMergeData,
-						-1
-					);
+					const result = await p.redis.hincrby(`data_${p.msg.author.id}`, this.manualMergeData, -1);
 					args.mergeCount -= 1;
-					await p.redis.hset(
-						`data_${p.msg.author.id}`,
-						`${this.data}_reset`,
-						afterMid.now
-					);
+					await p.redis.hset(`data_${p.msg.author.id}`, `${this.data}_reset`, afterMid.now);
 					msg =
 						"<:846997478246318080:1055044685153972225> **| ?user?**, you currently have ?count? ?emoji? lxv. One of them ran away because you didn't take care of it..." +
 						'\n<:1039236830022868992:1055044688979185664> **|** Hedge has collected ?mergeCount? **lovesick** for you!';
@@ -84,20 +73,13 @@ class Lxv extends Collectible {
 		}
 
 		if (!this.owners.includes(p.msg.author.id)) {
-			let reset = await redis.hget(
-				`data_${msg.author.id}`,
-				`${this.data}_reset`
-			);
+			let reset = await redis.hget(`data_${msg.author.id}`, `${this.data}_reset`);
 			let afterMid = p.dateUtil.afterMidnight(reset);
 			if (!afterMid.after) {
 				p.errorMsg(', Please come back tomorrow! Hedge is asleep.');
 				return;
 			}
-			await redis.hset(
-				`data_${msg.author.id}`,
-				`${this.data}_reset`,
-				afterMid.now
-			);
+			await redis.hset(`data_${msg.author.id}`, `${this.data}_reset`, afterMid.now);
 		} else {
 			super.manualMerge(p);
 			p.setCooldown(10);

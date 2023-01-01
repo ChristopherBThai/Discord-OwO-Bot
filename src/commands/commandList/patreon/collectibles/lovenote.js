@@ -20,8 +20,7 @@ class LoveNote extends Collectible {
 		this.fullControl = true;
 		this.ownerOnly = true;
 		this.giveAmount = 1;
-		this.description =
-			'Receive both halves of the two love notes to complete your love letter.';
+		this.description = 'Receive both halves of the two love notes to complete your love letter.';
 		this.displayMsg =
 			'?emoji? **|** ?count? purple love notes <:purple_heart:1056420949911666778>' +
 			'\n<:pink_letter:1056420948842135572> **|** ?count2? pink love notes <:pink_heart:1056420947789357086>' +
@@ -91,15 +90,10 @@ class LoveNote extends Collectible {
 			return;
 		}
 
-		const result3 = await p.redis.hincrby(
-			`data_${p.msg.author.id}`,
-			this.manualMergeData,
-			1
-		);
+		const result3 = await p.redis.hincrby(`data_${p.msg.author.id}`, this.manualMergeData, 1);
 		let selectedGiveMsg = this.giveMsg;
 		if (Array.isArray(this.giveMsg)) {
-			selectedGiveMsg =
-				this.giveMsg[Math.floor(Math.random() * this.giveMsg.length)];
+			selectedGiveMsg = this.giveMsg[Math.floor(Math.random() * this.giveMsg.length)];
 		}
 		const msg = this.mergeMsg
 			.replaceAll('?giveMsg?', selectedGiveMsg)

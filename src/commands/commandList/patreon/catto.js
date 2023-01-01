@@ -12,11 +12,7 @@ const emojis = [
 	'<a:cat2:965356299221078016>',
 	'<a:cat3:965356298600337418>',
 ];
-const owners = [
-	'412812867348463636',
-	'692146302284202134',
-	'606142158067597332',
-];
+const owners = ['412812867348463636', '692146302284202134', '606142158067597332'];
 const data = 'catto';
 const ownerOnly = true;
 const giveAmount = 1;
@@ -69,10 +65,7 @@ module.exports = new CommandInterface({
 	cooldown: 15000,
 
 	execute: async function () {
-		if (
-			['reset', 'remove'].includes(this.args[0]) &&
-			owners.includes(this.msg.author.id)
-		) {
+		if (['reset', 'remove'].includes(this.args[0]) && owners.includes(this.msg.author.id)) {
 			reset.bind(this)();
 			return;
 		} else if (!this.args.length) {
@@ -110,11 +103,7 @@ async function display() {
 
 async function give(user) {
 	if (!owners.includes(this.msg.author.id)) {
-		let result = await this.redis.hincrby(
-			'data_' + this.msg.author.id,
-			data,
-			-1
-		);
+		let result = await this.redis.hincrby('data_' + this.msg.author.id, data, -1);
 		// Error checking
 		if (result == null || result < 0) {
 			if (result < 0) this.redis.hincrby('data_' + this.msg.author.id, data, 1);

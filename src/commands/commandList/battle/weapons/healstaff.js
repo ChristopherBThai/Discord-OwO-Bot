@@ -24,9 +24,7 @@ module.exports = class HealStaff extends WeaponInterface {
 		];
 		this.defaultEmoji = '<:healstaff:538196865410138125>';
 		this.statDesc =
-			'Heals **?%** of your ' +
-			WeaponInterface.magEmoji +
-			'MAG to the lowest health ally';
+			'Heals **?%** of your ' + WeaponInterface.magEmoji + 'MAG to the lowest health ally';
 		this.availablePassives = 'all';
 		this.passiveCount = 1;
 		this.qualityList = [[100, 150]];
@@ -37,15 +35,13 @@ module.exports = class HealStaff extends WeaponInterface {
 		if (me.stats.hp[0] <= 0) return;
 
 		/* No mana */
-		if (me.stats.wp[0] < this.manaCost)
-			return this.attackPhysical(me, team, enemy);
+		if (me.stats.wp[0] < this.manaCost) return this.attackPhysical(me, team, enemy);
 
 		let logs = new Logs();
 
 		/* Grab lowest hp */
 		let lowest = WeaponInterface.getLowestHp(team);
-		if (!lowest || WeaponInterface.isMaxHp(lowest))
-			return this.attackPhysical(me, team, enemy);
+		if (!lowest || WeaponInterface.isMaxHp(lowest)) return this.attackPhysical(me, team, enemy);
 
 		/* Calculate heal */
 		let heal = WeaponInterface.getDamage(me.stats.mag, this.stats[0] / 100);
@@ -65,10 +61,7 @@ module.exports = class HealStaff extends WeaponInterface {
 			allies: team,
 			enemies: enemy,
 		});
-		logs.push(
-			`[HSTAFF] ${me.nickname} healed ${lowest.nickname} for ${heal.amount} HP`,
-			heal.logs
-		);
+		logs.push(`[HSTAFF] ${me.nickname} healed ${lowest.nickname} for ${heal.amount} HP`, heal.logs);
 
 		logs.addSubLogs(manaLogs);
 

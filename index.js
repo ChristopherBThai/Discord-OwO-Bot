@@ -6,14 +6,10 @@
  */
 require('dotenv').config();
 if (!process.env.BOT_TOKEN) {
-	console.error(
-		'Bot token not found in ~/.env file. Checking secret file instead...'
-	);
+	console.error('Bot token not found in ~/.env file. Checking secret file instead...');
 	require('dotenv').config({ path: './secret/env' });
 	if (!process.env.BOT_TOKEN) {
-		console.error(
-			'No bot token found. Please edit ./secret/env file and add your token'
-		);
+		console.error('No bot token found. Please edit ./secret/env file and add your token');
 		return;
 	}
 }
@@ -56,29 +52,19 @@ let clusters = 60;
 		}
 
 		console.log(
-			'Creating shards ' +
-				firstShardID +
-				'~' +
-				lastShardID +
-				' out of ' +
-				shards +
-				' total shards!'
+			'Creating shards ' + firstShardID + '~' + lastShardID + ' out of ' + shards + ' total shards!'
 		);
 
 		// Start sharder
-		const sharder = new Sharder(
-			'Bot ' + process.env.BOT_TOKEN,
-			config.sharder.path,
-			{
-				name: config.sharder.name,
-				clientOptions: config.eris.clientOptions,
-				debug: true,
-				shards,
-				clusters,
-				firstShardID,
-				lastShardID,
-			}
-		);
+		const sharder = new Sharder('Bot ' + process.env.BOT_TOKEN, config.sharder.path, {
+			name: config.sharder.name,
+			clientOptions: config.eris.clientOptions,
+			debug: true,
+			shards,
+			clusters,
+			firstShardID,
+			lastShardID,
+		});
 	} catch (e) {
 		console.error('Failed to start eris sharder');
 		console.error(e);

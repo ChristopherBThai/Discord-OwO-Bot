@@ -59,10 +59,7 @@ async function display(p) {
 	let count = await p.redis.zscore('cpc', p.msg.author.id);
 	if (!count) count = 0;
 
-	p.replyMsg(
-		cpcEmoji1,
-		', You currently have **' + count + '** cupachicake(s) to give!'
-	);
+	p.replyMsg(cpcEmoji1, ', You currently have **' + count + '** cupachicake(s) to give!');
 }
 
 async function give(p, user) {

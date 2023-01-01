@@ -83,15 +83,8 @@ module.exports = new CommandInterface({
 
 		let sql = 'SELECT money FROM cowoncy WHERE id = ' + msg.author.id + ';';
 		let result = await p.query(sql);
-		if (
-			result[0] == undefined ||
-			result[0].money == 0 ||
-			(bet != 'all' && result[0].money < bet)
-		) {
-			p.send(
-				'**🚫 | ' + msg.author.username + "**, You don't have enough cowoncy!",
-				3000
-			);
+		if (result[0] == undefined || result[0].money == 0 || (bet != 'all' && result[0].money < bet)) {
+			p.send('**🚫 | ' + msg.author.username + "**, You don't have enough cowoncy!", 3000);
 			return;
 		} else {
 			if (bet == 'all') bet = result[0].money;
@@ -139,17 +132,9 @@ module.exports = new CommandInterface({
 			let text2 = text;
 			text2 +=
 				'\nThe coin spins... ' +
-				(win
-					? choice == 'h'
-						? heads
-						: tails
-					: choice == 'h'
-					? tails
-					: heads) +
+				(win ? (choice == 'h' ? heads : tails) : choice == 'h' ? tails : heads) +
 				' and you ';
-			if (win)
-				text2 +=
-					'won **' + cowoncy + ' ' + p.global.toFancyNum(bet * 2) + '**!!';
+			if (win) text2 += 'won **' + cowoncy + ' ' + p.global.toFancyNum(bet * 2) + '**!!';
 			else text2 += 'lost it all... :c';
 			text += '\nThe coin spins... ' + spin;
 

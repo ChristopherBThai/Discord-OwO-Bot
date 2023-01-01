@@ -91,8 +91,7 @@ const getRandomGems = (exports.getRandomGems = function (uid, count = 1, opts) {
 	let gemResult = {};
 	for (let i = 0; i < count; i++) {
 		let tempGem = getRandomGem(opts);
-		if (!gemResult[tempGem.id])
-			gemResult[tempGem.id] = { gem: tempGem, count: 1 };
+		if (!gemResult[tempGem.id]) gemResult[tempGem.id] = { gem: tempGem, count: 1 };
 		else gemResult[tempGem.id].count++;
 	}
 
@@ -100,10 +99,7 @@ const getRandomGems = (exports.getRandomGems = function (uid, count = 1, opts) {
 	for (let i in gemResult) {
 		sql += `(${uid},'${gemResult[i].gem.key}',${gemResult[i].count}),`;
 	}
-	sql = `${sql.slice(
-		0,
-		-1
-	)} ON DUPLICATE KEY UPDATE gcount = gcount + VALUES(gcount);`;
+	sql = `${sql.slice(0, -1)} ON DUPLICATE KEY UPDATE gcount = gcount + VALUES(gcount);`;
 
 	return { gems: gemResult, sql };
 });

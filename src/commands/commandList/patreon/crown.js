@@ -61,10 +61,7 @@ async function display(p) {
 	let count = await p.redis.zscore('crown', p.msg.author.id);
 	if (!count) count = 0;
 
-	p.replyMsg(
-		crownEmoji,
-		', You currently have **' + count + '** crown(s) to give!'
-	);
+	p.replyMsg(crownEmoji, ', You currently have **' + count + '** crown(s) to give!');
 }
 
 async function give(p, user) {

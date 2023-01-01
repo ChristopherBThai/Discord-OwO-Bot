@@ -39,16 +39,9 @@ module.exports = new CommandInterface({
 
 	execute: async function (p) {
 		if (p.args[0] === 'feed') {
-			const lastCrown = await p.redis.hget(
-				'cd_' + p.msg.author.id,
-				table + '_crown'
-			);
+			const lastCrown = await p.redis.hget('cd_' + p.msg.author.id, table + '_crown');
 			if (!lastCrown) {
-				await p.redis.hset(
-					'cd_' + p.msg.author.id,
-					table + '_crown',
-					new Date()
-				);
+				await p.redis.hset('cd_' + p.msg.author.id, table + '_crown', new Date());
 				await p.redis.expire('cd_' + p.msg.author.id);
 			} else if (new Date() - new Date(lastCrown) > 345600000) {
 				displayCrown(p);

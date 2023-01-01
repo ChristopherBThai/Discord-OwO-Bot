@@ -66,8 +66,7 @@ module.exports = new CommandInterface({
 					} else {
 						success.push(userObj);
 					}
-				else if ((guildObj = await p.fetch.getGuild(user, false)))
-					successGuild.push(guildObj);
+				else if ((guildObj = await p.fetch.getGuild(user, false))) successGuild.push(guildObj);
 				else failed.push(user);
 			} catch (e) {
 				failed.push(user);

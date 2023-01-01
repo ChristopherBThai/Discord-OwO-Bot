@@ -35,12 +35,8 @@ module.exports = new CommandInterface({
 async function harvest(p, msg) {
 	const reset = await p.redis.hget('data_' + p.msg.author.id, data + '_reset');
 	const afterMid = p.dateUtil.afterMidnight(reset);
-	const prevMax =
-		parseInt(await p.redis.hget('data_' + p.msg.author.id, data + '_max')) || 0;
-	let current =
-		parseInt(
-			await p.redis.hget('data_' + p.msg.author.id, data + '_current')
-		) || 0;
+	const prevMax = parseInt(await p.redis.hget('data_' + p.msg.author.id, data + '_max')) || 0;
+	let current = parseInt(await p.redis.hget('data_' + p.msg.author.id, data + '_current')) || 0;
 	let max = 1;
 
 	if (afterMid.after) {
@@ -51,48 +47,28 @@ async function harvest(p, msg) {
 			} else {
 				newMax = Math.ceil(prevMax / 2);
 			}
-			parseInt(
-				await p.redis.hset('data_' + p.msg.author.id, data + '_max', newMax)
-			);
+			parseInt(await p.redis.hset('data_' + p.msg.author.id, data + '_max', newMax));
 			max = newMax;
 		} else {
 			await p.redis.hset('data_' + p.msg.author.id, data + '_max', 1);
 		}
-		parseInt(
-			await p.redis.hset('data_' + p.msg.author.id, data + '_current', 0)
-		);
+		parseInt(await p.redis.hset('data_' + p.msg.author.id, data + '_current', 0));
 		current = 0;
-		await p.redis.hset(
-			'data_' + p.msg.author.id,
-			data + '_reset',
-			afterMid.now
-		);
+		await p.redis.hset('data_' + p.msg.author.id, data + '_reset', afterMid.now);
 	} else {
 		max = prevMax;
 	}
 
-	current = parseInt(
-		await p.redis.hincrby('data_' + p.msg.author.id, data + '_current', 1)
-	);
-	let total = await p.redis.hincrby(
-		'data_' + p.msg.author.id,
-		data + '_total',
-		1
-	);
+	current = parseInt(await p.redis.hincrby('data_' + p.msg.author.id, data + '_current', 1));
+	let total = await p.redis.hincrby('data_' + p.msg.author.id, data + '_total', 1);
 	if (current > max) {
 		await p.redis.hincrby('data_' + p.msg.author.id, data + '_current', -1);
-		total = await p.redis.hincrby(
-			'data_' + p.msg.author.id,
-			data + '_total',
-			-1
-		);
+		total = await p.redis.hincrby('data_' + p.msg.author.id, data + '_total', -1);
 		let text = `${p.config.emoji.invalid} **|** You are too tired to run!\n${
 			p.config.emoji.blank
-		} **|** You ran ${max} kilometer(s) today!\n${
-			p.config.emoji.blank
-		} **|** You can run ${max + 1} kilometers tomorrow!\n${
-			p.config.emoji.blank
-		} **|** You ran ${total} in total!`;
+		} **|** You ran ${max} kilometer(s) today!\n${p.config.emoji.blank} **|** You can run ${
+			max + 1
+		} kilometers tomorrow!\n${p.config.emoji.blank} **|** You ran ${total} in total!`;
 		p.send(text);
 	} else if (current == 1) {
 		let spoil = prevMax + 1 - max;

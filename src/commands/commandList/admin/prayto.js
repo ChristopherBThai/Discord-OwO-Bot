@@ -33,10 +33,7 @@ module.exports = new CommandInterface({
 
 async function banList(p) {
 	if (p.args[0] != 'ban') {
-		p.errorMsg(
-			', Invalid syntax! The correct use is `owo prayto ban {id} {minPrayCount}`',
-			4000
-		);
+		p.errorMsg(', Invalid syntax! The correct use is `owo prayto ban {id} {minPrayCount}`', 4000);
 		return;
 	}
 	let userid = p.args[1];
@@ -77,11 +74,7 @@ async function banList(p) {
 		} catch (e) {
 			p.replyMsg(
 				banEmoji,
-				', **' +
-					username +
-					'** and ' +
-					(count - 1) +
-					" users have been banned, I couldn't DM them"
+				', **' + username + '** and ' + (count - 1) + " users have been banned, I couldn't DM them"
 			);
 			return;
 		}
@@ -131,8 +124,7 @@ async function displayList(p) {
 	await msg.addReaction(prevPageEmoji);
 	await msg.addReaction(nextPageEmoji);
 	let filter = (emoji, userID) =>
-		[nextPageEmoji, prevPageEmoji].includes(emoji.name) &&
-		userID == p.msg.author.id;
+		[nextPageEmoji, prevPageEmoji].includes(emoji.name) && userID == p.msg.author.id;
 	let collector = p.reactionCollector.create(msg, filter, {
 		time: 900000,
 		idle: 120000,
@@ -162,20 +154,13 @@ async function displayList(p) {
 
 async function getPage(p, user, page, maxPage) {
 	let desc = '';
-	let sql = `SELECT * FROM user_pray WHERE receiver = ${
-		user.id
-	} LIMIT ${perPage} OFFSET ${page * perPage};`;
+	let sql = `SELECT * FROM user_pray WHERE receiver = ${user.id} LIMIT ${perPage} OFFSET ${
+		page * perPage
+	};`;
 	let result = await p.query(sql);
 	for (let i in result) {
 		let prayer = result[i];
-		desc +=
-			'`' +
-			prayer.sender +
-			'` | `' +
-			prayer.count +
-			'` | `' +
-			toDate(prayer.latest) +
-			'`\n';
+		desc += '`' + prayer.sender + '` | `' + prayer.count + '` | `' + toDate(prayer.latest) + '`\n';
 	}
 	let embed = {
 		author: {

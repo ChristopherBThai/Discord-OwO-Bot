@@ -30,8 +30,7 @@ class Kitty extends Collectible {
 			'\n<:hkitty:1056483630790230076> **|** ?count2? Hermes ?pluralName2?' +
 			'\n<:hnekitty:1056483632144990249> **|** ?mergeCount? Hermestee ?mergePluralName?';
 		this.brokeMsg = ', you do not have any kitties to give! >:c';
-		this.giveMsg =
-			'?emoji? **| ?receiver?**, You have been given one kitty, meow';
+		this.giveMsg = '?emoji? **| ?receiver?**, You have been given one kitty, meow';
 
 		this.hasManualMerge = true;
 		this.manualMergeData = 'kitty_hne';
@@ -50,10 +49,7 @@ class Kitty extends Collectible {
 		let count2 = await p.redis.hget(`data_${p.msg.author.id}`, this.data2);
 		const msgOverride = this.displayMsg
 			.replaceAll('?count2?', count2 || 0)
-			.replaceAll(
-				'?pluralName2?',
-				count2 > 1 ? this.pluralName : this.singleName
-			);
+			.replaceAll('?pluralName2?', count2 > 1 ? this.pluralName : this.singleName);
 		return super.getDisplayMsg(p, args, msgOverride);
 	}
 
@@ -99,15 +95,10 @@ class Kitty extends Collectible {
 			return;
 		}
 
-		const result3 = await p.redis.hincrby(
-			`data_${p.msg.author.id}`,
-			this.manualMergeData,
-			1
-		);
+		const result3 = await p.redis.hincrby(`data_${p.msg.author.id}`, this.manualMergeData, 1);
 		let selectedGiveMsg = this.giveMsg;
 		if (Array.isArray(this.giveMsg)) {
-			selectedGiveMsg =
-				this.giveMsg[Math.floor(Math.random() * this.giveMsg.length)];
+			selectedGiveMsg = this.giveMsg[Math.floor(Math.random() * this.giveMsg.length)];
 		}
 		const msg = this.mergeMsg
 			.replaceAll('?giveMsg?', selectedGiveMsg)

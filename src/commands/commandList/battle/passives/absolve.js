@@ -23,8 +23,7 @@ module.exports = class Absolve extends PassiveInterface {
 			'<:labsolve:562175424747143209>',
 			'<:fabsolve:562175424965115914>',
 		];
-		this.statDesc =
-			'When healed, deal **?%** of the healed amount to a random enemy as MAG damage';
+		this.statDesc = 'When healed, deal **?%** of the healed amount to a random enemy as MAG damage';
 		this.qualityList = [[60, 80]];
 	}
 
@@ -37,11 +36,7 @@ module.exports = class Absolve extends PassiveInterface {
 		let logs = new Log();
 
 		/* Grab an enemy that I'm attacking */
-		let attacking = WeaponInterface.getAttacking(
-			animal,
-			tags.allies,
-			tags.enemies
-		);
+		let attacking = WeaponInterface.getAttacking(animal, tags.allies, tags.enemies);
 		if (!attacking) return;
 
 		let dmg = WeaponInterface.inflictDamage(

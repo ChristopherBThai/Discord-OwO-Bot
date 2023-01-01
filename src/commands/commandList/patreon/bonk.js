@@ -56,24 +56,20 @@ module.exports = new CommandInterface({
 		let text;
 		if (target.id == owner) {
 			if (Math.random() < 0.1) {
-				let comment =
-					bonkComments[Math.trunc(Math.random() * bonkComments.length)];
+				let comment = bonkComments[Math.trunc(Math.random() * bonkComments.length)];
 				text = `${target.username} got bonked by ${p.msg.author.username}! ${comment}`;
 				emote = emotes[Math.trunc(Math.random() * emotes.length)];
 			} else {
-				let comment =
-					noBonkComments[Math.trunc(Math.random() * noBonkComments.length)];
+				let comment = noBonkComments[Math.trunc(Math.random() * noBonkComments.length)];
 				text = `${target.username} dodged ${p.msg.author.username}! ${comment}`;
 			}
 		} else {
 			if (Math.random() < 0.9) {
-				let comment =
-					bonkComments[Math.trunc(Math.random() * bonkComments.length)];
+				let comment = bonkComments[Math.trunc(Math.random() * bonkComments.length)];
 				text = `${target.username} got bonked by ${p.msg.author.username}! ${comment}`;
 				emote = emotes[Math.trunc(Math.random() * emotes.length)];
 			} else {
-				let comment =
-					noBonkComments[Math.trunc(Math.random() * noBonkComments.length)];
+				let comment = noBonkComments[Math.trunc(Math.random() * noBonkComments.length)];
 				text = `${target.username} dodged ${p.msg.author.username}! ${comment}`;
 			}
 		}

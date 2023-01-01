@@ -42,55 +42,34 @@ module.exports = new CommandInterface({
 async function harvest(p, msg) {
 	const reset = await p.redis.hget('data_' + p.msg.author.id, 'carrot_reset');
 	const afterMid = p.dateUtil.afterMidnight(reset);
-	const prevMax =
-		parseInt(await p.redis.hget('data_' + p.msg.author.id, 'carrot_max')) || 0;
-	let current =
-		parseInt(await p.redis.hget('data_' + p.msg.author.id, 'carrot_current')) ||
-		0;
+	const prevMax = parseInt(await p.redis.hget('data_' + p.msg.author.id, 'carrot_max')) || 0;
+	let current = parseInt(await p.redis.hget('data_' + p.msg.author.id, 'carrot_current')) || 0;
 	let max = 1;
 
 	if (afterMid.after) {
 		if (afterMid.withinDay) {
-			parseInt(
-				await p.redis.hset('data_' + p.msg.author.id, 'carrot_max', current + 1)
-			);
+			parseInt(await p.redis.hset('data_' + p.msg.author.id, 'carrot_max', current + 1));
 			max = current + 1;
 		} else {
 			await p.redis.hset('data_' + p.msg.author.id, 'carrot_max', 1);
 		}
-		parseInt(
-			await p.redis.hset('data_' + p.msg.author.id, 'carrot_current', 0)
-		);
+		parseInt(await p.redis.hset('data_' + p.msg.author.id, 'carrot_current', 0));
 		current = 0;
 		await p.redis.hset('data_' + p.msg.author.id, 'carrot_reset', afterMid.now);
 	} else {
 		max = prevMax;
 	}
 
-	current = parseInt(
-		await p.redis.hincrby('data_' + p.msg.author.id, 'carrot_current', 1)
-	);
-	let total = await p.redis.hincrby(
-		'data_' + p.msg.author.id,
-		'carrot_total',
-		1
-	);
+	current = parseInt(await p.redis.hincrby('data_' + p.msg.author.id, 'carrot_current', 1));
+	let total = await p.redis.hincrby('data_' + p.msg.author.id, 'carrot_total', 1);
 	if (current > max) {
 		await p.redis.hincrby('data_' + p.msg.author.id, 'carrot_current', -1);
-		total = await p.redis.hincrby(
-			'data_' + p.msg.author.id,
-			'carrot_total',
-			-1
-		);
-		let text = `${
-			p.config.emoji.invalid
-		} **|** Your garden is out of carrots!\n${
+		total = await p.redis.hincrby('data_' + p.msg.author.id, 'carrot_total', -1);
+		let text = `${p.config.emoji.invalid} **|** Your garden is out of carrots!\n${
 			p.config.emoji.blank
-		} **|** You harvested ${max} carrots today!\n${
-			p.config.emoji.blank
-		} **|** You can harvest ${max + 1} tomorrow!\n${
-			p.config.emoji.blank
-		} **|** You have ${total} carrots in total!`;
+		} **|** You harvested ${max} carrots today!\n${p.config.emoji.blank} **|** You can harvest ${
+			max + 1
+		} tomorrow!\n${p.config.emoji.blank} **|** You have ${total} carrots in total!`;
 		if (msg) msg.edit(text);
 		else p.send(text);
 	} else if (current == 1) {
@@ -115,25 +94,18 @@ async function farmer(p) {
 	if (await checkFarmer(p)) return;
 	const reset = await p.redis.hget('data_' + p.msg.author.id, 'carrot_reset');
 	const afterMid = p.dateUtil.afterMidnight(reset);
-	const prevMax =
-		parseInt(await p.redis.hget('data_' + p.msg.author.id, 'carrot_max')) || 0;
-	let current =
-		parseInt(await p.redis.hget('data_' + p.msg.author.id, 'carrot_current')) ||
-		0;
+	const prevMax = parseInt(await p.redis.hget('data_' + p.msg.author.id, 'carrot_max')) || 0;
+	let current = parseInt(await p.redis.hget('data_' + p.msg.author.id, 'carrot_current')) || 0;
 	let max = 1;
 
 	if (afterMid.after) {
 		if (afterMid.withinDay) {
-			parseInt(
-				await p.redis.hset('data_' + p.msg.author.id, 'carrot_max', current + 1)
-			);
+			parseInt(await p.redis.hset('data_' + p.msg.author.id, 'carrot_max', current + 1));
 			max = current + 1;
 		} else {
 			await p.redis.hset('data_' + p.msg.author.id, 'carrot_max', 1);
 		}
-		parseInt(
-			await p.redis.hset('data_' + p.msg.author.id, 'carrot_current', 0)
-		);
+		parseInt(await p.redis.hset('data_' + p.msg.author.id, 'carrot_current', 0));
 		current = 0;
 		await p.redis.hset('data_' + p.msg.author.id, 'carrot_reset', afterMid.now);
 	} else {
@@ -144,8 +116,7 @@ async function farmer(p) {
 		`${rabbitEmoji} **|** I'll harvest 10 carrots for you, but I'm keeping half! Deal?`
 	);
 	let filter = (emoji, userID) =>
-		(emoji.name === yesEmoji || emoji.name === noEmoji) &&
-		userID == p.msg.author.id;
+		(emoji.name === yesEmoji || emoji.name === noEmoji) && userID == p.msg.author.id;
 	let collector = p.reactionCollector.create(msg, filter, { time: 60000 });
 	await msg.addReaction(yesEmoji);
 	await msg.addReaction(noEmoji);
@@ -155,20 +126,12 @@ async function farmer(p) {
 		if (sema) return;
 		sema = true;
 		if (emoji.name === yesEmoji) {
-			current = parseInt(
-				await p.redis.hincrby('data_' + p.msg.author.id, 'carrot_current', 10)
-			);
+			current = parseInt(await p.redis.hincrby('data_' + p.msg.author.id, 'carrot_current', 10));
 			if (current > max) {
 				await p.redis.hincrby('data_' + p.msg.author.id, 'carrot_current', -10);
-				msg.edit(
-					`${rabbitEmoji} **|** You don't have at least 10 carrots left in your garden!`
-				);
+				msg.edit(`${rabbitEmoji} **|** You don't have at least 10 carrots left in your garden!`);
 			} else {
-				await p.redis.hset(
-					'data_' + p.msg.author.id,
-					'carrot_farmer',
-					afterMid.now
-				);
+				await p.redis.hset('data_' + p.msg.author.id, 'carrot_farmer', afterMid.now);
 				msg.edit(`${windEmoji} **|** I'll be back in 10 minutes!`);
 			}
 		} else {
@@ -182,11 +145,7 @@ async function checkFarmer(p) {
 	if (!farmer || farmer == 'false') return;
 	if (new Date() - new Date(farmer) >= 600000) {
 		await p.redis.hset('data_' + p.msg.author.id, 'carrot_farmer', false);
-		const total = await p.redis.hincrby(
-			'data_' + p.msg.author.id,
-			'carrot_total',
-			5
-		);
+		const total = await p.redis.hincrby('data_' + p.msg.author.id, 'carrot_total', 5);
 		p.send(
 			`${rabbitEmoji} **|** I'm back with 5 carrots!\n${p.config.emoji.blank} **|** You have ${total} carrots in total!`
 		);

@@ -87,9 +87,7 @@ async function generateJson(p, user, opt) {
 async function getRank(p, user, opt) {
 	let rank;
 	if (opt.guild)
-		rank = p.global.toFancyNum(
-			await levels.getUserServerRank(user.id, p.msg.channel.guild.id)
-		);
+		rank = p.global.toFancyNum(await levels.getUserServerRank(user.id, p.msg.channel.guild.id));
 	else rank = p.global.toFancyNum(await levels.getUserRank(user.id));
 	if (!rank || rank == 'NaN') rank = 'Last';
 	else rank = '#' + rank;

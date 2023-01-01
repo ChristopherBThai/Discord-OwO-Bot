@@ -37,13 +37,10 @@ module.exports = class Thorns extends PassiveInterface {
 
 		let logs = new Log();
 
-		let dmg = WeaponInterface.inflictDamage(
-			animal,
-			attacker,
-			totalDamage,
-			WeaponInterface.TRUE,
-			{ ...tags, thorns: true }
-		);
+		let dmg = WeaponInterface.inflictDamage(animal, attacker, totalDamage, WeaponInterface.TRUE, {
+			...tags,
+			thorns: true,
+		});
 
 		logs.push(
 			`[THORNS] ${animal.nickname} damaged ${attacker.nickname} for ${dmg.amount} HP`,

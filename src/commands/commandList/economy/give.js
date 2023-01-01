@@ -46,26 +46,19 @@ module.exports = new CommandInterface({
 
 		//Check for valid amount/id
 		if (invalid || !id || !amount || amount <= 0) {
-			return this.send(
-				'**🚫 | ' + this.msg.author.username + '**, Invalid arguments! :c',
-				3000
-			);
+			return this.send('**🚫 | ' + this.msg.author.username + '**, Invalid arguments! :c', 3000);
 		}
 
 		//Check if valid user
 		let user = await this.getMention(id);
 		if (!user) {
 			return this.send(
-				'**🚫 | ' +
-					this.msg.author.username +
-					'**, I could not find that user!',
+				'**🚫 | ' + this.msg.author.username + '**, I could not find that user!',
 				3000
 			);
 		} else if (user.bot) {
 			return this.send(
-				'**🚫 | ' +
-					this.msg.author.username +
-					"**, You can't send cowoncy to a bot silly!",
+				'**🚫 | ' + this.msg.author.username + "**, You can't send cowoncy to a bot silly!",
 				3000
 			);
 		} else if (user.id == this.msg.author.id) {
@@ -83,12 +76,7 @@ module.exports = new CommandInterface({
 		//Gives money
 		const con = await this.startTransaction();
 		try {
-			const canGive = await cowoncyUtils.canGive.bind(this)(
-				this.msg.author,
-				user,
-				amount,
-				con
-			);
+			const canGive = await cowoncyUtils.canGive.bind(this)(this.msg.author, user, amount, con);
 			if (canGive.error) {
 				this.errorMsg(canGive.error);
 				return con.rollback();
@@ -101,28 +89,20 @@ module.exports = new CommandInterface({
 			let result = await con.query(sql);
 
 			if (!result[0].changedRows) {
-				this.errorMsg(
-					", you silly hooman! You don't have enough cowoncy!",
-					3000
-				);
+				this.errorMsg(", you silly hooman! You don't have enough cowoncy!", 3000);
 				return con.rollback();
 			}
 
 			await con.commit();
 		} catch (err) {
 			console.error(err);
-			this.errorMsg(
-				', there was an error sending cowoncy! Please try again later.',
-				3000
-			);
+			this.errorMsg(', there was an error sending cowoncy! Please try again later.', 3000);
 			return con.rollback();
 		}
 
-		let text = `**💳 | ${
-			this.msg.author.username
-		}** sent **${this.global.toFancyNum(amount)} cowoncy** to **${
-			user.username
-		}**!`;
+		let text = `**💳 | ${this.msg.author.username}** sent **${this.global.toFancyNum(
+			amount
+		)} cowoncy** to **${user.username}**!`;
 		text = alterGive.alter(this, this.msg.author.id, text, {
 			from: this.msg.author,
 			to: user,

@@ -27,11 +27,7 @@ exports.reroll = async function (p) {
 	// Check if enough shards
 	if (!(await useShards(p))) {
 		p.errorMsg(
-			', you need ' +
-				rerollPrice +
-				' ' +
-				shardEmoji +
-				' Weapon Shards to reroll a weapon!',
+			', you need ' + rerollPrice + ' ' + shardEmoji + ' Weapon Shards to reroll a weapon!',
 			4000
 		);
 		return;
@@ -143,8 +139,7 @@ async function sendMessage(p, oldWeapon, newWeapon, rrType, msg) {
 	}
 
 	let filter = (emoji, userID) =>
-		[yesEmoji, noEmoji, retryEmoji].includes(emoji.name) &&
-		p.msg.author.id == userID;
+		[yesEmoji, noEmoji, retryEmoji].includes(emoji.name) && p.msg.author.id == userID;
 	let collector = p.reactionCollector.create(msg, filter, {
 		time: 900000,
 		idle: 120000,
@@ -159,8 +154,7 @@ async function sendMessage(p, oldWeapon, newWeapon, rrType, msg) {
 			} else {
 				embed.color = 16711680;
 				msg.edit({
-					content:
-						'Failed to change weapon stats! Please contact Scuttler#0001',
+					content: 'Failed to change weapon stats! Please contact Scuttler#0001',
 					embed,
 				});
 			}
@@ -205,11 +199,7 @@ function fetchNewWeapon(weapon, type) {
 	let newWeapon;
 	if (type == 'p') newWeapon = weapon.rerollPassives();
 	else if (type == 's') newWeapon = weapon.rerollStats();
-	else
-		p.errorMsg(
-			', It seems like javascript broke.. This should never happen!',
-			3000
-		);
+	else p.errorMsg(', It seems like javascript broke.. This should never happen!', 3000);
 	newWeapon.uwid = weapon.uwid;
 	newWeapon.ruwid = weapon.ruwid;
 	for (let i in weapon.passives) {
@@ -221,11 +211,7 @@ function fetchNewWeapon(weapon, type) {
 function createEmbed(p, oldWeapon, newWeapon) {
 	const embed = {
 		author: {
-			name:
-				p.msg.author.username +
-				' spent ' +
-				rerollPrice +
-				' Weapon Shards to reroll!',
+			name: p.msg.author.username + ' spent ' + rerollPrice + ' Weapon Shards to reroll!',
 			icon_url: p.msg.author.dynamicAvatarURL(),
 		},
 		footer: {
@@ -238,14 +224,10 @@ function createEmbed(p, oldWeapon, newWeapon) {
 				' to try again',
 		},
 		color: p.config.embed_color,
-		fields: [
-			parseDescription('OLD WEAPON', oldWeapon),
-			parseDescription('NEW WEAPON', newWeapon),
-		],
+		fields: [parseDescription('OLD WEAPON', oldWeapon), parseDescription('NEW WEAPON', newWeapon)],
 	};
 
-	embed.fields[0].value +=
-		'\n‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗';
+	embed.fields[0].value += '\n‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗';
 	return embed;
 }
 

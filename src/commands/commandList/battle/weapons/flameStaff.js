@@ -39,8 +39,7 @@ module.exports = class FStaff extends WeaponInterface {
 		if (me.stats.hp[0] <= 0) return;
 
 		/* No mana */
-		if (me.stats.wp[0] < this.manaCost)
-			return this.attackPhysical(me, team, enemy);
+		if (me.stats.wp[0] < this.manaCost) return this.attackPhysical(me, team, enemy);
 
 		/* Grab an enemy that I'm attacking */
 		let attacking = WeaponInterface.getAttacking(me, team, enemy);
@@ -61,13 +60,11 @@ module.exports = class FStaff extends WeaponInterface {
 		let damage = WeaponInterface.getDamage(me.stats.mag, this.stats[0] / 100);
 
 		/* Deal damage */
-		damage = WeaponInterface.inflictDamage(
+		damage = WeaponInterface.inflictDamage(me, attacking, damage, WeaponInterface.MAGICAL, {
 			me,
-			attacking,
-			damage,
-			WeaponInterface.MAGICAL,
-			{ me, allies: team, enemies: enemy }
-		);
+			allies: team,
+			enemies: enemy,
+		});
 		let buff = this.getBuffs(me)[0];
 		let buffLogs = buff.bind(attacking, 3, {
 			me,

@@ -71,9 +71,7 @@ exports.left = async function (guild, member) {
 	if (guild.id != '420104212895105044') return;
 
 	let sql =
-		'UPDATE IGNORE user SET patreonDaily = 0,patreonAnimal = 0 WHERE id = ' +
-		member.id +
-		';';
+		'UPDATE IGNORE user SET patreonDaily = 0,patreonAnimal = 0 WHERE id = ' + member.id + ';';
 	let result = await mysql.query(sql);
 	if (result.changedRows > 0)
 		sender.msgUser(
@@ -101,8 +99,7 @@ async function gainedDaily(user) {
 }
 
 async function lostDaily(user) {
-	let sql =
-		'UPDATE IGNORE user SET patreonDaily = 0 WHERE id = ' + user.id + ';';
+	let sql = 'UPDATE IGNORE user SET patreonDaily = 0 WHERE id = ' + user.id + ';';
 	await mysql.query(sql);
 	sender.msgUser(
 		user.id,
@@ -122,8 +119,7 @@ async function gainedAnimal(user) {
 }
 
 async function lostAnimal(user) {
-	let sql =
-		'UPDATE IGNORE user SET patreonAnimal = 0 WHERE id = ' + user.id + ';';
+	let sql = 'UPDATE IGNORE user SET patreonAnimal = 0 WHERE id = ' + user.id + ';';
 	await mysql.query(sql);
 	sender.msgUser(
 		user.id,

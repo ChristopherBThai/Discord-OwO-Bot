@@ -66,10 +66,7 @@ exports.use = async function (p, ids) {
 		if (!gem) {
 			invalidIds.push(id);
 		} else if (usedGemTypes[gem.type]) {
-			p.errorMsg(
-				`, you can not use multiple **${gem.type} Gems** at the same time!`,
-				3000
-			);
+			p.errorMsg(`, you can not use multiple **${gem.type} Gems** at the same time!`, 3000);
 			return;
 		} else {
 			gems.push(gem);
@@ -86,10 +83,7 @@ exports.use = async function (p, ids) {
 		}
 	}
 	if (invalidIds.length > 0) {
-		p.errorMsg(
-			`, one or more ids are not valid gems: ${invalidIds.toString()}`,
-			3000
-		);
+		p.errorMsg(`, one or more ids are not valid gems: ${invalidIds.toString()}`, 3000);
 		return;
 	}
 
@@ -101,11 +95,9 @@ exports.use = async function (p, ids) {
 			text = `**🚫 | ${p.msg.author.username}**, you already have an active ${gems[0].type} gem or you do not own this gem!`;
 		} else {
 			text =
-				`**${gems[0].emoji} | ${
-					p.msg.author.username
-				}**, you activated a(n) **${ranks[gems[0].key[0]]} ${
-					gems[0].type
-				} Gem**!\n` + getUseGemText(gems[0]);
+				`**${gems[0].emoji} | ${p.msg.author.username}**, you activated a(n) **${
+					ranks[gems[0].key[0]]
+				} ${gems[0].type} Gem**!\n` + getUseGemText(gems[0]);
 		}
 	} else {
 		text = `**✨ | ${p.msg.author.username}**, you activated the following gems:`;
@@ -114,9 +106,8 @@ exports.use = async function (p, ids) {
 				text += `\r\n**🚫 |** you already have an active ${gems[i].type} gem or you do not own this gem!`;
 			} else {
 				text +=
-					`\r\n**${gems[i].emoji} |** A(n) **${ranks[gems[i].key[0]]} ${
-						gems[i].type
-					} Gem!**\r\n` + getUseGemText(gems[i]);
+					`\r\n**${gems[i].emoji} |** A(n) **${ranks[gems[i].key[0]]} ${gems[i].type} Gem!**\r\n` +
+					getUseGemText(gems[i]);
 			}
 		}
 	}
@@ -126,8 +117,7 @@ exports.use = async function (p, ids) {
 
 function getUseGemText(gem) {
 	let text = `**<:blank:427371936482328596> |** Your next ${gem.length} `;
-	if (gem.type == 'Hunting')
-		text += `manual hunts will be increased by ${gem.amount}`;
+	if (gem.type == 'Hunting') text += `manual hunts will be increased by ${gem.amount}`;
 	else if (gem.type == 'Patreon')
 		text +=
 			'manual hunts will catch an extra animal and have a chance to contain Patreon exclusive animals!';

@@ -59,10 +59,7 @@ async function display(p) {
 	let count = await p.redis.zscore('coffee', p.msg.author.id);
 	if (!count) count = 0;
 
-	p.replyMsg(
-		coffeeEmoji,
-		', You currently have **' + count + '** cups of coffee to give!'
-	);
+	p.replyMsg(coffeeEmoji, ', You currently have **' + count + '** cups of coffee to give!');
 }
 
 async function give(p, user) {

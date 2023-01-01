@@ -44,8 +44,7 @@ module.exports = class Shield extends WeaponInterface {
 		if (animal.stats.wp[0] < this.manaCost) return;
 
 		/* check if we already have the buff or not */
-		for (let i in animal.buffs)
-			if (animal.buffs[i].id == this.buffList[0]) return;
+		for (let i in animal.buffs) if (animal.buffs[i].id == this.buffList[0]) return;
 
 		let logs = new Logs();
 
@@ -65,10 +64,7 @@ module.exports = class Shield extends WeaponInterface {
 			enemies: enemy,
 		});
 		let manaLogs = new Logs();
-		manaLogs.push(
-			`[AEGIS] ${animal.nickname} used ${mana.amount} WP`,
-			mana.logs
-		);
+		manaLogs.push(`[AEGIS] ${animal.nickname} used ${mana.amount} WP`, mana.logs);
 
 		logs.addSubLogs(buffLogs);
 		logs.addSubLogs(manaLogs);

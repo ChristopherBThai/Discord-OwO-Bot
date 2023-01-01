@@ -63,9 +63,7 @@ class OwO extends Base {
 		try {
 			this.animals = require('./../../tokens/owo-animals.json');
 		} catch (err) {
-			console.error(
-				'Could not find owo-animals.json, attempting to use ./secret file...'
-			);
+			console.error('Could not find owo-animals.json, attempting to use ./secret file...');
 			this.animals = require('../secret/owo-animals.json');
 			console.log('Found owo-animals.json file in secret folder!');
 		}
@@ -85,9 +83,7 @@ class OwO extends Base {
 		try {
 			this.macro = require('./../../tokens/macro.js');
 		} catch (err) {
-			console.error(
-				'Could not find macro.js, attempting to use ./secret file...'
-			);
+			console.error('Could not find macro.js, attempting to use ./secret file...');
 			this.macro = require('../secret/macro.js');
 			console.log('Found macro.js file in secret folder!');
 		}
@@ -98,13 +94,10 @@ class OwO extends Base {
 		this.fetch = new (require('./utils/fetch.js'))(this);
 
 		// Creates a reaction collector for a message (works for uncached messages too)
-		this.reactionCollector = new (require('./utils/reactionCollector.js'))(
-			this
-		);
+		this.reactionCollector = new (require('./utils/reactionCollector.js'))(this);
 
 		// Creates a reaction collector for a message (works for uncached messages too)
-		this.interactionCollector =
-			new (require('./utils/interactionCollector.js'))(this);
+		this.interactionCollector = new (require('./utils/interactionCollector.js'))(this);
 
 		// Fetches images and converts them to buffers
 		this.DataResolver = require('./utils/dataResolver.js');
@@ -119,9 +112,7 @@ class OwO extends Base {
 		try {
 			this.badwords = require('./../../tokens/badwords.json');
 		} catch (err) {
-			console.error(
-				'Could not find badwords.json, attempting to use ./secret file...'
-			);
+			console.error('Could not find badwords.json, attempting to use ./secret file...');
 			this.badwords = require('../secret/badwords.json');
 			console.log('Found badwords.json file in secret folder!');
 		}

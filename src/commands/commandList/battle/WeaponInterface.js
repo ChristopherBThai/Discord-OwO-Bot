@@ -93,8 +93,7 @@ module.exports = class WeaponInterface {
 			desc = desc.replace('?', stats[i]);
 		}
 
-		this.weaponQuality =
-			qualities.reduce((a, b) => a + b, 0) / qualities.length;
+		this.weaponQuality = qualities.reduce((a, b) => a + b, 0) / qualities.length;
 		this.qualities = qualities;
 		this.sqlStat = qualities.join(',');
 		this.avgQuality = avgQuality;
@@ -109,8 +108,7 @@ module.exports = class WeaponInterface {
 
 	/* Alters the animal's stats */
 	alterStats(stats) {
-		for (var i = 0; i < this.passives.length; i++)
-			this.passives[i].alterStats(stats);
+		for (var i = 0; i < this.passives.length; i++) this.passives[i].alterStats(stats);
 	}
 
 	/* Grabs a random passive(s) */
@@ -122,11 +120,7 @@ module.exports = class WeaponInterface {
 			passive = passives[passive];
 			if (!passive)
 				throw (
-					'Could not get passive[' +
-					this.availablePassives[rand] +
-					'] for weapon[' +
-					this.id +
-					']'
+					'Could not get passive[' + this.availablePassives[rand] + '] for weapon[' + this.id + ']'
 				);
 			randPassives.push(new passive());
 		}
@@ -167,9 +161,7 @@ module.exports = class WeaponInterface {
 			for (let i in this.buffList) {
 				let buff = buffs[this.buffList[i]];
 				let buffQualityLength = buff.getQualityList.length;
-				buffClasses.push(
-					new buff(from, this.qualities.slice(index, index + buffQualityLength))
-				);
+				buffClasses.push(new buff(from, this.qualities.slice(index, index + buffQualityLength)));
 				index += buffQualityLength;
 			}
 		}
@@ -223,13 +215,11 @@ module.exports = class WeaponInterface {
 		let damage = WeaponInterface.getDamage(me.stats.att);
 
 		/* Deal damage */
-		damage = WeaponInterface.inflictDamage(
+		damage = WeaponInterface.inflictDamage(me, attacking, damage, WeaponInterface.PHYSICAL, {
 			me,
-			attacking,
-			damage,
-			WeaponInterface.PHYSICAL,
-			{ me, allies: team, enemies: enemy }
-		);
+			allies: team,
+			enemies: enemy,
+		});
 
 		logs.push(
 			`[PHYS] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`,
@@ -246,22 +236,14 @@ module.exports = class WeaponInterface {
 		for (let i in enemy) {
 			if (enemy[i].stats.hp[0] > 0)
 				for (let j in enemy[i].buffs)
-					attacking = enemy[i].buffs[j].enemyChooseAttack(
-						enemy[i],
-						me,
-						attacking,
-						team,
-						enemy
-					);
+					attacking = enemy[i].buffs[j].enemyChooseAttack(enemy[i], me, attacking, team, enemy);
 		}
 		return attacking;
 	}
 
 	/* Calculate the damage output (Either mag or att) */
 	static getDamage(stat, multiplier = 1) {
-		return Math.round(
-			multiplier * (stat[0] + stat[1]) + (Math.random() * 100 - 50)
-		);
+		return Math.round(multiplier * (stat[0] + stat[1]) + (Math.random() * 100 - 50));
 	}
 
 	/* Get mixed damage */
@@ -277,11 +259,9 @@ module.exports = class WeaponInterface {
 	static inflictDamage(attacker, attackee, damage, type, tags = {}) {
 		let totalDamage = 0;
 		if (type == WeaponInterface.PHYSICAL)
-			totalDamage =
-				damage * (1 - WeaponInterface.resToPercent(attackee.stats.pr));
+			totalDamage = damage * (1 - WeaponInterface.resToPercent(attackee.stats.pr));
 		else if (type == WeaponInterface.MAGICAL)
-			totalDamage =
-				damage * (1 - WeaponInterface.resToPercent(attackee.stats.mr));
+			totalDamage = damage * (1 - WeaponInterface.resToPercent(attackee.stats.mr));
 		else if (type == WeaponInterface.TRUE) totalDamage = damage;
 		else throw 'Invalid attack type';
 
@@ -293,81 +273,37 @@ module.exports = class WeaponInterface {
 		/* Bonus damage calculation */
 		/* Event for attackee */
 		for (let i in attackee.buffs)
-			subLogs.push(
-				attackee.buffs[i].attacked(attackee, attacker, totalDamage, type, tags)
-			);
+			subLogs.push(attackee.buffs[i].attacked(attackee, attacker, totalDamage, type, tags));
 		if (attackee.weapon)
 			for (let i in attackee.weapon.passives)
 				subLogs.push(
-					attackee.weapon.passives[i].attacked(
-						attackee,
-						attacker,
-						totalDamage,
-						type,
-						tags
-					)
+					attackee.weapon.passives[i].attacked(attackee, attacker, totalDamage, type, tags)
 				);
 		/* Event for attacker */
 		for (let i in attacker.buffs)
-			subLogs.push(
-				attacker.buffs[i].attack(attacker, attackee, totalDamage, type, tags)
-			);
+			subLogs.push(attacker.buffs[i].attack(attacker, attackee, totalDamage, type, tags));
 		if (attacker.weapon)
 			for (let i in attacker.weapon.passives)
 				subLogs.push(
-					attacker.weapon.passives[i].attack(
-						attacker,
-						attackee,
-						totalDamage,
-						type,
-						tags
-					)
+					attacker.weapon.passives[i].attack(attacker, attackee, totalDamage, type, tags)
 				);
 
 		/* After bonus damage calculation */
 		/* Event for attackee */
 		for (let i in attackee.buffs)
-			subLogs.push(
-				attackee.buffs[i].postAttacked(
-					attackee,
-					attacker,
-					totalDamage,
-					type,
-					tags
-				)
-			);
+			subLogs.push(attackee.buffs[i].postAttacked(attackee, attacker, totalDamage, type, tags));
 		if (attackee.weapon)
 			for (let i in attackee.weapon.passives)
 				subLogs.push(
-					attackee.weapon.passives[i].postAttacked(
-						attackee,
-						attacker,
-						totalDamage,
-						type,
-						tags
-					)
+					attackee.weapon.passives[i].postAttacked(attackee, attacker, totalDamage, type, tags)
 				);
 		/* Event for attacker */
 		for (let i in attacker.buffs)
-			subLogs.push(
-				attacker.buffs[i].postAttack(
-					attacker,
-					attackee,
-					totalDamage,
-					type,
-					tags
-				)
-			);
+			subLogs.push(attacker.buffs[i].postAttack(attacker, attackee, totalDamage, type, tags));
 		if (attacker.weapon)
 			for (let i in attacker.weapon.passives)
 				subLogs.push(
-					attacker.weapon.passives[i].postAttack(
-						attacker,
-						attackee,
-						totalDamage,
-						type,
-						tags
-					)
+					attacker.weapon.passives[i].postAttack(attacker, attackee, totalDamage, type, tags)
 				);
 
 		totalDamage = totalDamage.reduce((a, b) => a + b, 0);
@@ -387,14 +323,12 @@ module.exports = class WeaponInterface {
 
 		/* Bonus heal calculation */
 		/* Event for me*/
-		for (let i in me.buffs)
-			subLogs.push(me.buffs[i].healed(me, from, totalHeal, tags));
+		for (let i in me.buffs) subLogs.push(me.buffs[i].healed(me, from, totalHeal, tags));
 		if (me.weapon)
 			for (let i in me.weapon.passives)
 				subLogs.push(me.weapon.passives[i].healed(me, from, totalHeal, tags));
 		/* Event for from*/
-		for (let i in from.buffs)
-			subLogs.push(from.buffs[i].heal(me, from, totalHeal, tags));
+		for (let i in from.buffs) subLogs.push(from.buffs[i].heal(me, from, totalHeal, tags));
 		if (from.weapon)
 			for (let i in from.weapon.passives)
 				subLogs.push(from.weapon.passives[i].heal(me, from, totalHeal, tags));
@@ -412,21 +346,15 @@ module.exports = class WeaponInterface {
 
 		/* After bonus heal calculation */
 		/* Event for me*/
-		for (let i in me.buffs)
-			subLogs.push(me.buffs[i].postHealed(me, from, totalHeal, tags));
+		for (let i in me.buffs) subLogs.push(me.buffs[i].postHealed(me, from, totalHeal, tags));
 		if (me.weapon)
 			for (let i in me.weapon.passives)
-				subLogs.push(
-					me.weapon.passives[i].postHealed(me, from, totalHeal, tags)
-				);
+				subLogs.push(me.weapon.passives[i].postHealed(me, from, totalHeal, tags));
 		/* Event for from*/
-		for (let i in from.buffs)
-			subLogs.push(from.buffs[i].postHeal(me, from, totalHeal, tags));
+		for (let i in from.buffs) subLogs.push(from.buffs[i].postHeal(me, from, totalHeal, tags));
 		if (from.weapon)
 			for (let i in from.weapon.passives)
-				subLogs.push(
-					from.weapon.passives[i].postHeal(me, from, totalHeal, tags)
-				);
+				subLogs.push(from.weapon.passives[i].postHeal(me, from, totalHeal, tags));
 
 		totalHeal = totalHeal.reduce((a, b) => a + b, 0);
 		if (totalHeal < 0) totalHeal = 0;
@@ -452,14 +380,12 @@ module.exports = class WeaponInterface {
 
 		/* Bonus calculation */
 		/* Event for me*/
-		for (let i in me.buffs)
-			subLogs.push(me.buffs[i].replenished(me, from, total, tags));
+		for (let i in me.buffs) subLogs.push(me.buffs[i].replenished(me, from, total, tags));
 		if (me.weapon)
 			for (let i in me.weapon.passives)
 				subLogs.push(me.weapon.passives[i].replenished(me, from, total, tags));
 		/* Event for from*/
-		for (let i in from.buffs)
-			subLogs.push(from.buffs[i].replenish(me, from, total, tags));
+		for (let i in from.buffs) subLogs.push(from.buffs[i].replenish(me, from, total, tags));
 		if (from.weapon)
 			for (let i in from.weapon.passives)
 				subLogs.push(from.weapon.passives[i].replenish(me, from, total, tags));
@@ -477,21 +403,15 @@ module.exports = class WeaponInterface {
 
 		/* After bonus calculation */
 		/* Event for me*/
-		for (let i in me.buffs)
-			subLogs.push(me.buffs[i].postReplenished(me, from, total, tags));
+		for (let i in me.buffs) subLogs.push(me.buffs[i].postReplenished(me, from, total, tags));
 		if (me.weapon)
 			for (let i in me.weapon.passives)
-				subLogs.push(
-					me.weapon.passives[i].postReplenished(me, from, total, tags)
-				);
+				subLogs.push(me.weapon.passives[i].postReplenished(me, from, total, tags));
 		/* Event for from*/
-		for (let i in from.buffs)
-			subLogs.push(from.buffs[i].postReplenish(me, from, total, tags));
+		for (let i in from.buffs) subLogs.push(from.buffs[i].postReplenish(me, from, total, tags));
 		if (from.weapon)
 			for (let i in from.weapon.passives)
-				subLogs.push(
-					from.weapon.passives[i].postReplenish(me, from, total, tags)
-				);
+				subLogs.push(from.weapon.passives[i].postReplenish(me, from, total, tags));
 
 		total = total.reduce((a, b) => a + b, 0);
 		if (total < 0) total = 0;
@@ -576,8 +496,7 @@ module.exports = class WeaponInterface {
 
 	/* Gets a dead animal */
 	static getDead(team) {
-		for (let i = 0; i < team.length; i++)
-			if (team[i].stats.hp[0] <= 0) return team[i];
+		for (let i = 0; i < team.length; i++) if (team[i].stats.hp[0] <= 0) return team[i];
 	}
 
 	/* Check if the animal is at max or higher health */
@@ -599,20 +518,10 @@ module.exports = class WeaponInterface {
 
 		let subLogs = new Logs();
 		for (let i in animal.buffs)
-			subLogs.push(
-				animal.buffs[i].canAttack(animal, ally, enemy, action, result)
-			);
+			subLogs.push(animal.buffs[i].canAttack(animal, ally, enemy, action, result));
 		if (animal.weapon)
 			for (let i in animal.weapon.passives)
-				subLogs.push(
-					animal.weapon.passives[i].canAttack(
-						animal,
-						ally,
-						enemy,
-						action,
-						result
-					)
-				);
+				subLogs.push(animal.weapon.passives[i].canAttack(animal, ally, enemy, action, result));
 
 		result = result.result;
 		return { canAttack: result, logs: subLogs };

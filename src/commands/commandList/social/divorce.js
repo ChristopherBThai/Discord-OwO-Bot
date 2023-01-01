@@ -48,10 +48,7 @@ module.exports = new CommandInterface({
 		let result = await p.query(sql);
 
 		if (result.length < 1) {
-			p.errorMsg(
-				", you can't divorce if you aren't married, silly butt!",
-				3000
-			);
+			p.errorMsg(", you can't divorce if you aren't married, silly butt!", 3000);
 			return;
 		}
 
@@ -72,10 +69,7 @@ module.exports = new CommandInterface({
 			},
 			description:
 				'You married on **' +
-				new Date(result[0].marriedDate).toLocaleDateString(
-					'default',
-					dateOptions
-				) +
+				new Date(result[0].marriedDate).toLocaleDateString('default', dateOptions) +
 				'** and have been married for **' +
 				result[0].days +
 				'** days and claimed **' +
@@ -104,19 +98,13 @@ module.exports = new CommandInterface({
 			reacted = true;
 			if (emoji.name == yes) {
 				embed.description =
-					embed.description +
-					'\n\n ' +
-					heartBreak +
-					' You have decided to divorce.';
+					embed.description + '\n\n ' + heartBreak + ' You have decided to divorce.';
 				collector.stop();
 				let sql = `DELETE FROM marriage WHERE uid1 = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) OR uid2 = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
 				p.query(sql);
 			} else {
 				embed.description =
-					embed.description +
-					'\n\n ' +
-					heartBeat +
-					' You have decided to stay married!';
+					embed.description + '\n\n ' + heartBeat + ' You have decided to stay married!';
 				collector.stop();
 			}
 		});

@@ -33,28 +33,16 @@ module.exports = new CommandInterface({
 		} else if (changeLink) {
 			this.macro.setCaptchaLink(enableCaptcha);
 			if (enableCaptcha) {
-				this.replyMsg(
-					this.config.emoji.gear,
-					', I **enabled** `link` captchas'
-				);
+				this.replyMsg(this.config.emoji.gear, ', I **enabled** `link` captchas');
 			} else {
-				this.replyMsg(
-					this.config.emoji.gear,
-					', I **disabled** `link` captchas'
-				);
+				this.replyMsg(this.config.emoji.gear, ', I **disabled** `link` captchas');
 			}
 		} else if (changeImage) {
 			this.macro.setCaptchaImage(enableCaptcha);
 			if (enableCaptcha) {
-				this.replyMsg(
-					this.config.emoji.gear,
-					', I **enabled** `image` captchas'
-				);
+				this.replyMsg(this.config.emoji.gear, ', I **enabled** `image` captchas');
 			} else {
-				this.replyMsg(
-					this.config.emoji.gear,
-					', I **disabled** `image` captchas'
-				);
+				this.replyMsg(this.config.emoji.gear, ', I **disabled** `image` captchas');
 			}
 		}
 	},

@@ -20,11 +20,7 @@
 		},
 		"dance": {
 			"name": "dance",
-			"msg": [
-				"? is dancing!!",
-				"? loves to dance!",
-				"? is shaking some booty!!"
-			]
+			"msg": ["? is dancing!!", "? loves to dance!", "? is shaking some booty!!"]
 		},
 		"lewd": {
 			"name": "lewd",
@@ -45,12 +41,7 @@
 		},
 		"sleepy": {
 			"name": "sleepy",
-			"msg": [
-				"? is sleepy...",
-				"? is tired...",
-				"? needs a nap...",
-				"? wants to sleep..."
-			]
+			"msg": ["? is sleepy...", "? is tired...", "? needs a nap...", "? wants to sleep..."]
 		},
 		"smile": {
 			"name": "smile",
@@ -58,11 +49,7 @@
 		},
 		"smug": {
 			"name": "smug",
-			"msg": [
-				"? scoffs c:<",
-				"? has a smug look c;",
-				"? thinks little of you ;)"
-			]
+			"msg": ["? scoffs c:<", "? has a smug look c;", "? thinks little of you ;)"]
 		},
 		"thumbsup": {
 			"name": "thumbsup",
@@ -70,19 +57,11 @@
 		},
 		"wag": {
 			"name": "wag",
-			"msg": [
-				"? wags its tail!",
-				"?'s tail is wagging~",
-				"? says, 'bork bork!'"
-			]
+			"msg": ["? wags its tail!", "?'s tail is wagging~", "? says, 'bork bork!'"]
 		},
 		"thinking": {
 			"name": "thinking",
-			"msg": [
-				"? is thinking...",
-				"? is trying to understand",
-				"? cannot process that..."
-			]
+			"msg": ["? is thinking...", "? is trying to understand", "? cannot process that..."]
 		},
 		"triggered": {
 			"name": "triggered",
@@ -115,20 +94,12 @@
 	"uEmote": {
 		"cuddle": {
 			"name": "cuddle",
-			"msg": [
-				"? snuggles ?~ cute!",
-				"? cuddles ?~ adorable!",
-				"? cuddles ?~~ kyaaaa!!"
-			],
+			"msg": ["? snuggles ?~ cute!", "? cuddles ?~ adorable!", "? cuddles ?~~ kyaaaa!!"],
 			"self": ["oh noo ;-; I'll cuddle you ?...", "D-do you need a hug ?...?"]
 		},
 		"hug": {
 			"name": "hug",
-			"msg": [
-				"? hugs ?!",
-				"? gives ? a big hug!",
-				"? hugs ?!! Don't squeeze too hard!"
-			],
+			"msg": ["? hugs ?!", "? gives ? a big hug!", "? hugs ?!! Don't squeeze too hard!"],
 			"self": ["D-do you need a hug ?...?", "I'll hug you ?... ;-;"]
 		},
 		"kiss": {
@@ -158,21 +129,12 @@
 		},
 		"pat": {
 			"name": "pat",
-			"msg": [
-				"? pets ?! There there!",
-				"? pets ?! Adorable~",
-				"? pets ?! *pat pat*"
-			],
+			"msg": ["? pets ?! There there!", "? pets ?! Adorable~", "? pets ?! *pat pat*"],
 			"self": ["oh noo ;-; I'll pat you ?...", "There there ?..."]
 		},
 		"poke": {
 			"name": "poke",
-			"msg": [
-				"? boops ? .-.",
-				"? pokes ?! boop!",
-				"? boops ?! Not too hard now!",
-				"? boops ? ;)"
-			],
+			"msg": ["? boops ? .-.", "? pokes ?! boop!", "? boops ?! Not too hard now!", "? boops ? ;)"],
 			"self": ["Did you.... poke yourself, ??"]
 		},
 		"slap": {
@@ -182,10 +144,7 @@
 				"? slaps ?!! oof.",
 				"? slaps ?!! That looks like it hurt..."
 			],
-			"self": [
-				"Did you... slap yourself, ??? :c",
-				"Don't do that to yourself, ?!"
-			]
+			"self": ["Did you... slap yourself, ??? :c", "Don't do that to yourself, ?!"]
 		},
 		"stare": {
 			"name": "stare",
@@ -198,20 +157,12 @@
 		},
 		"highfive": {
 			"name": "highfive",
-			"msg": [
-				"? gives ? a highfive!",
-				"? highfives ?!",
-				"? highfives ?! Nice!"
-			],
+			"msg": ["? gives ? a highfive!", "? highfives ?!", "? highfives ?! Nice!"],
 			"self": [";-; ?, there there...", "Isn't that just clapping, ??"]
 		},
 		"bite": {
 			"name": "bite",
-			"msg": [
-				"? bites ?! Owie",
-				"? bites ?!! Kinky ;)",
-				"? gives ? a bite! Yumm~"
-			],
+			"msg": ["? bites ?! Owie", "? bites ?!! Kinky ;)", "? gives ? a bite! Yumm~"],
 			"self": ["?! Don't bite yourself!"]
 		},
 		"greet": {
@@ -221,11 +172,7 @@
 		},
 		"punch": {
 			"name": "punch",
-			"msg": [
-				"? punches ?!! Oof",
-				"? gives ? a punch! Ouch!",
-				"? gives ? a wack! Ha!"
-			],
+			"msg": ["? punches ?!! Oof", "? gives ? a punch! Ouch!", "? gives ? a wack! Ha!"],
 			"self": ["Whats wrong ??", "Are you okay ??"]
 		},
 		"handholding": {
@@ -244,11 +191,7 @@
 		},
 		"kill": {
 			"name": "wasted",
-			"msg": [
-				"? killed ?! Brutal!",
-				"? killed ?! Oh my...",
-				"? killed ?! oof!"
-			],
+			"msg": ["? killed ?! Brutal!", "? killed ?! Oh my...", "? killed ?! oof!"],
 			"self": ["Lets... not do that, ?...", "No... ?... nu.... ;-;"]
 		},
 		"hold": { "alt": "handholding" },
@@ -258,10 +201,7 @@
 		"snuggle": { "alt": "cuddle" },
 		"fuck": {
 			"name": "handholding",
-			"msg": [
-				"? does lewd things to ?... ;o",
-				"?... What are you doing to ?! Oh my..."
-			],
+			"msg": ["? does lewd things to ?... ;o", "?... What are you doing to ?! Oh my..."],
 			"self": ["You can do that privately..."],
 			"mature": true
 		},

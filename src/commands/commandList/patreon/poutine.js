@@ -68,10 +68,7 @@ async function display(p) {
 	let count = await p.redis.zscore('poutine', p.msg.author.id);
 	if (!count) count = 0;
 
-	p.replyMsg(
-		poutineEmoji,
-		', You currently have **' + count + '** dish(es) of poutine to give!'
-	);
+	p.replyMsg(poutineEmoji, ', You currently have **' + count + '** dish(es) of poutine to give!');
 }
 
 async function give(p, user) {

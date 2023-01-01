@@ -159,9 +159,7 @@ exports.challenge = async function (p, opponent, bet = 0) {
 				p.opt = {
 					author: p.msg.author,
 				};
-				err(
-					`${p.config.emoji.error} **|** The opponent must accept the battle.`
-				);
+				err(`${p.config.emoji.error} **|** The opponent must accept the battle.`);
 				return;
 			}
 		} else {
@@ -331,12 +329,7 @@ function parseFlags(p, flags) {
 	let result = [];
 	let usedFlags = [];
 
-	flags = flags
-		.join('')
-		.replace(/[=:]/gi, '')
-		.replace(/[,]/gi, '-')
-		.toLowerCase()
-		.split('-');
+	flags = flags.join('').replace(/[=:]/gi, '').replace(/[,]/gi, '-').toLowerCase().split('-');
 
 	for (i in flags) {
 		let flag = parseFlag(p, flags[i]);

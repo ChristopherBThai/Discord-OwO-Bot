@@ -5,11 +5,7 @@
  * For more information, see README.md and LICENSE
  */
 
-const whitelist = [
-	'409959187229966337',
-	'420104212895105044',
-	'552384921914572802',
-];
+const whitelist = ['409959187229966337', '420104212895105044', '552384921914572802'];
 const PrivateChannel = 1;
 const levels = require('../utils/levels.js');
 const blacklist = require('../utils/blacklist.js');

@@ -34,9 +34,7 @@ module.exports = class Sprout extends PassiveInterface {
 		let bonus = amount[0] * (this.stats[0] / 100);
 		amount[1] += bonus;
 
-		logs.push(
-			`[SPRT] ${animal.nickname} gained an additional ${Math.round(bonus)} HP`
-		);
+		logs.push(`[SPRT] ${animal.nickname} gained an additional ${Math.round(bonus)} HP`);
 
 		return logs;
 	}

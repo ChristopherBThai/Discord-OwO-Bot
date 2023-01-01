@@ -43,25 +43,18 @@ module.exports = new CommandInterface({
 
 			/* Describe weapon */
 		} else if (p.args.length == 1) {
-			if (
-				p.global.isInt(p.args[0]) &&
-				weaponUtil.getWID(parseInt(p.args[0]) - 100)
-			) {
+			if (p.global.isInt(p.args[0]) && weaponUtil.getWID(parseInt(p.args[0]) - 100)) {
 				await weaponUtil.display(p, 0, 0, { wid: parseInt(p.args[0]) - 100 });
 			} else if (p.global.isUser(p.args[0])) {
 				await weaponUtil.askDisplay(p, p.args[0].match(/[0-9]+/)[0]);
 			} else {
 				var uwid = p.args[0];
 				if (uwid.length < uwidMax) await weaponUtil.describe(p, uwid);
-				else
-					p.errorMsg(', Invalid arguments! Use `owo weapon {uniqueWeaponId}`');
+				else p.errorMsg(', Invalid arguments! Use `owo weapon {uniqueWeaponId}`');
 			}
 
 			/* Unequip weapon */
-		} else if (
-			p.args.length == 2 &&
-			(p.args[0] == 'unequip' || p.args[0] == 'ue')
-		) {
+		} else if (p.args.length == 2 && (p.args[0] == 'unequip' || p.args[0] == 'ue')) {
 			/* No changing while in battle */
 			if (await battleUtil.inBattle(p)) {
 				p.errorMsg(
@@ -79,8 +72,7 @@ module.exports = new CommandInterface({
 
 			var uwid = p.args[1];
 			if (uwid.length < uwidMax) await weaponUtil.unequip(p, uwid);
-			else
-				p.errorMsg(', Invalid arguments! Use `owo weapon unequip {weaponId}`');
+			else p.errorMsg(', Invalid arguments! Use `owo weapon unequip {weaponId}`');
 
 			/* view someone's weapons by category */
 		} else if (
@@ -114,24 +106,18 @@ module.exports = new CommandInterface({
 			var pet = p.args[1];
 
 			if (uwid.length >= uwidMax) {
-				p.errorMsg(
-					', Invalid arguments! Use `owo weapon {uniqueWeaponId} {animalPos|animal}`'
-				);
+				p.errorMsg(', Invalid arguments! Use `owo weapon {uniqueWeaponId} {animalPos|animal}`');
 				return;
 			} else if (p.global.isInt(pet)) {
 				pet = parseInt(pet);
 				if (pet < 1 || pet > 3) {
-					p.errorMsg(
-						', Invalid arguments! Use `owo weapon {uniqueWeaponId} {animalPos|animal}`'
-					);
+					p.errorMsg(', Invalid arguments! Use `owo weapon {uniqueWeaponId} {animalPos|animal}`');
 					return;
 				}
 			} else {
 				pet = p.global.validAnimal(pet);
 				if (!pet) {
-					p.errorMsg(
-						', Invalid arguments! Use `owo weapon {uniqueWeaponId} {animalPos|animal}`'
-					);
+					p.errorMsg(', Invalid arguments! Use `owo weapon {uniqueWeaponId} {animalPos|animal}`');
 					return;
 				}
 			}

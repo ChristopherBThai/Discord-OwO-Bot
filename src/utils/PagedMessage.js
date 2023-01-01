@@ -65,8 +65,7 @@ class PagedMessage extends EventEmitter {
 		const userIds = this.allowedUsers || [this.p.msg.author.id];
 		const filter = (componentName, user) =>
 			this.additionalFilter(componentName, user) ||
-			(componentIds.includes(componentName) &&
-				(this.allowEveryone || userIds.includes(user.id)));
+			(componentIds.includes(componentName) && (this.allowEveryone || userIds.includes(user.id)));
 
 		this.collector = this.p.interactionCollector.create(this.msg, filter, {
 			time,

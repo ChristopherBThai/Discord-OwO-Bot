@@ -40,9 +40,7 @@ exports.giveXP = async function (msg) {
 		if (limit[msg.channel.guild.id]) {
 			// If server xp hit daily cap
 			if (limit[msg.channel.guild.id] > dailyLimit) guildLimitHit = true;
-			else
-				limit[msg.channel.guild.id] =
-					parseInt(limit[msg.channel.guild.id]) + gain;
+			else limit[msg.channel.guild.id] = parseInt(limit[msg.channel.guild.id]) + gain;
 		} else {
 			// first msg in guild
 			limit[msg.channel.guild.id] = gain;
@@ -72,11 +70,7 @@ exports.giveXP = async function (msg) {
 		logger.incr('xp', gain + bonus, {}, msg);
 	}
 	if (!guildLimitHit) {
-		await redis.incr(
-			'user_xp_' + msg.channel.guild.id,
-			msg.author.id,
-			gain + guildBonus
-		);
+		await redis.incr('user_xp_' + msg.channel.guild.id, msg.author.id, gain + guildBonus);
 	}
 
 	// Check if user leveled up

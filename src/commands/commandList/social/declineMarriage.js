@@ -47,11 +47,7 @@ module.exports = new CommandInterface({
 			} else {
 				p.replyMsg(
 					declineEmoji,
-					', you have declined a marriage request ' +
-						preposition +
-						' ' +
-						user.username +
-						'!'
+					', you have declined a marriage request ' + preposition + ' ' + user.username + '!'
 				);
 			}
 

@@ -23,8 +23,7 @@ module.exports = class PassiveInterface {
 			desc = desc.replace('?', stats[i]);
 		}
 		/* Check if it has enough emojis */
-		if (this.emojis.length != 7)
-			throw new Error(`[${args.id}] does not have 7 emojis`);
+		if (this.emojis.length != 7) throw new Error(`[${args.id}] does not have 7 emojis`);
 
 		this.avgQuality = avgQuality;
 		this.qualities = qualities;
@@ -61,9 +60,7 @@ module.exports = class PassiveInterface {
 
 	toStats(qualities) {
 		if (qualities.length != this.qualityList.length)
-			throw new Error(
-				'Array size does not match in toStats. Passive id:' + this.id
-			);
+			throw new Error('Array size does not match in toStats. Passive id:' + this.id);
 		var stats = [];
 		for (var i = 0; i < qualities.length; i++) {
 			let quality = qualities[i];

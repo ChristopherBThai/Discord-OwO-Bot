@@ -39,9 +39,7 @@ module.exports = class Enrage extends PassiveInterface {
 		if (Math.floor(extraDamage) <= 0) return;
 		damage[1] += extraDamage;
 
-		logs.push(
-			`[ENRA] ${animal.nickname} dealt ${Math.round(extraDamage)} extra damage`
-		);
+		logs.push(`[ENRA] ${animal.nickname} dealt ${Math.round(extraDamage)} extra damage`);
 		return logs;
 	}
 };

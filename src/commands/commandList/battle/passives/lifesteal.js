@@ -25,8 +25,7 @@ module.exports = class Lifesteal extends PassiveInterface {
 			'<:llifesteal:548729400447729664>',
 			'<:flifesteal:548729400473026560>',
 		];
-		this.statDesc =
-			'All damage you deal heals you for **?%** of the damage dealt!';
+		this.statDesc = 'All damage you deal heals you for **?%** of the damage dealt!';
 		this.qualityList = [[15, 35]];
 	}
 
@@ -39,10 +38,7 @@ module.exports = class Lifesteal extends PassiveInterface {
 			...tags,
 			lifesteal: true,
 		});
-		logs.push(
-			`[LIFESTEAL] ${animal.nickname} heals for ${heal.amount} HP`,
-			heal.logs
-		);
+		logs.push(`[LIFESTEAL] ${animal.nickname} heals for ${heal.amount} HP`, heal.logs);
 		return logs;
 	}
 };

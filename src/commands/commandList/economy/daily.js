@@ -39,8 +39,7 @@ module.exports = new CommandInterface({
 
 	execute: async function (p) {
 		const uid = await p.global.getUid(p.msg.author.id);
-		const { cowoncy, showAnnouncement, marriage, showSurvey } =
-			await getUserInfo(p, uid);
+		const { cowoncy, showAnnouncement, marriage, showSurvey } = await getUserInfo(p, uid);
 		const afterMid = p.dateUtil.afterMidnight(cowoncy?.daily);
 
 		if (!cowoncy) {
@@ -72,11 +71,9 @@ module.exports = new CommandInterface({
 			);
 			const cowoncySql = `UPDATE cowoncy SET money = money + ${
 				generalRewards.gain + generalRewards.extra
-			}, daily_streak = ${generalRewards.streak}, daily = ${
-				afterMid.sql
-			} WHERE id = ${p.msg.author.id} ${
-				cowoncy ? ` AND daily_streak = ${cowoncy.daily_streak}` : ''
-			} ;`;
+			}, daily_streak = ${generalRewards.streak}, daily = ${afterMid.sql} WHERE id = ${
+				p.msg.author.id
+			} ${cowoncy ? ` AND daily_streak = ${cowoncy.daily_streak}` : ''} ;`;
 
 			await executeQuery(
 				p,
@@ -111,9 +108,7 @@ function finalizeText(
 	let text = `${moneyEmoji} **| ${p.msg.author.username}**, Here is your daily **<:cowoncy:416043450337853441> ${gain} Cowoncy**!`;
 
 	if (streak - 1 > 0)
-		text += `\n${p.config.emoji.blank} **|** You're on a **${
-			streak - 1
-		} daily streak**!`;
+		text += `\n${p.config.emoji.blank} **|** You're on a **${streak - 1} daily streak**!`;
 	if (extra > 0)
 		text += `\n${p.config.emoji.blank} **|** You got an extra **${extra} Cowoncy** for being a <:patreon:449705754522419222> Patreon!`;
 
@@ -262,9 +257,9 @@ async function doubleCheckMarriage(p, afterMid, marriage) {
 							? await p.fetch.getUser(marriage.id2)
 							: await p.fetch.getUser(marriage.id1);
 					const ring = rings[marriage.rid];
-					let text = `${ring.emoji} **|** You and ${
-						so ? so.username : 'your partner'
-					} received ${p.config.emoji.cowoncy} **${totalGain} Cowoncy** and a `;
+					let text = `${ring.emoji} **|** You and ${so ? so.username : 'your partner'} received ${
+						p.config.emoji.cowoncy
+					} **${totalGain} Cowoncy** and a `;
 
 					sql = `UPDATE cowoncy SET money = money + ${totalGain} WHERE id IN (${marriage.id1}, ${marriage.id2});`;
 					if (Math.random() < 0.5) {
@@ -288,9 +283,7 @@ async function doubleCheckMarriage(p, afterMid, marriage) {
 
 function calculateMarriageBonus(marriage) {
 	let totalStreak = marriage.streak1 + marriage.streak2;
-	let totalGain = Math.round(
-		100 + Math.floor(Math.random() * 100) + totalStreak * 12.5
-	);
+	let totalGain = Math.round(100 + Math.floor(Math.random() * 100) + totalStreak * 12.5);
 	if (totalGain > 1000) totalGain = 1000;
 	return totalGain;
 }

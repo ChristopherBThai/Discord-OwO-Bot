@@ -83,11 +83,7 @@ async function giveBall(p) {
 }
 
 async function displayBall(p) {
-	display(
-		p,
-		'Baby Yoda is throwing a fit! Calm him down by giving him a silver ball!',
-		gif3
-	);
+	display(p, 'Baby Yoda is throwing a fit! Calm him down by giving him a silver ball!', gif3);
 }
 
 async function feed(p) {

@@ -53,8 +53,7 @@ module.exports = new CommandInterface({
 			//parse user's avatar color
 			if (
 				args.length == 1 &&
-				(p.global.isUser(p.args[0]) ||
-					(p.global.isInt(p.args[0]) && parseInt(p.args[0]) > maxInt))
+				(p.global.isUser(p.args[0]) || (p.global.isInt(p.args[0]) && parseInt(p.args[0]) > maxInt))
 			) {
 				let id = p.args[0].match(/[0-9]+/)[0];
 				let user = await p.fetch.getUser(id);
@@ -68,16 +67,11 @@ module.exports = new CommandInterface({
 					palette = await Vibrant.from(url).getPalette();
 				} catch (err) {
 					p.errorMsg(
-						'... sowwy, I couldnt parse the average color of ' +
-							user.username +
-							"'s profile!",
+						'... sowwy, I couldnt parse the average color of ' + user.username + "'s profile!",
 						3000
 					);
 				}
-				title =
-					', here is the prominent color for ' +
-					user.username +
-					"'s profile picture!";
+				title = ', here is the prominent color for ' + user.username + "'s profile picture!";
 				colors = [];
 				for (let i in palette) {
 					let values = parseRGB(palette[i]._rgb);
@@ -91,8 +85,7 @@ module.exports = new CommandInterface({
 			} else if (
 				args.length == 2 &&
 				['r', 'role'].includes(args[0].toLowerCase()) &&
-				(p.global.isUser(p.args[1]) ||
-					(p.global.isInt(p.args[1]) && parseInt(p.args[1]) > maxInt))
+				(p.global.isUser(p.args[1]) || (p.global.isInt(p.args[1]) && parseInt(p.args[1]) > maxInt))
 			) {
 				let id = p.args[1].match(/[0-9]+/)[0];
 				let user = await p.getMention(id);
@@ -128,8 +121,7 @@ module.exports = new CommandInterface({
 				// role mention
 			} else if (
 				p.msg.roleMentions.length &&
-				(args.length == 1 ||
-					(args.length == 2 && ['r', 'role'].includes(args[0].toLowerCase())))
+				(args.length == 1 || (args.length == 2 && ['r', 'role'].includes(args[0].toLowerCase())))
 			) {
 				let role = p.msg.channel.guild.roles.get(p.msg.roleMentions[0]);
 				color = parseIntValue(role.color);
@@ -171,8 +163,7 @@ module.exports = new CommandInterface({
 			await msg.addReaction(nextPageEmoji);
 
 			let filter = (emoji, userID) =>
-				[nextPageEmoji, prevPageEmoji].includes(emoji.name) &&
-				userID == p.msg.author.id;
+				[nextPageEmoji, prevPageEmoji].includes(emoji.name) && userID == p.msg.author.id;
 			let collector = p.reactionCollector.create(msg, filter, {
 				time: 900000,
 				idle: 120000,
@@ -184,15 +175,13 @@ module.exports = new CommandInterface({
 					else page = 0;
 					embed = await constructEmbed(colors[page], p);
 					embed.footer = {
-						text:
-							colors[page].name + ' - population: ' + colors[page].population,
+						text: colors[page].name + ' - population: ' + colors[page].population,
 					};
 					embed.image = {
 						url: colors[page].avatar,
 					};
 					await msg.edit({
-						content:
-							colorEmoji + ' **| ' + p.msg.author.username + '**' + title,
+						content: colorEmoji + ' **| ' + p.msg.author.username + '**' + title,
 						embed,
 					});
 				} else if (emoji.name === prevPageEmoji) {
@@ -200,15 +189,13 @@ module.exports = new CommandInterface({
 					else page = colors.length - 1;
 					embed = await constructEmbed(colors[page], p);
 					embed.footer = {
-						text:
-							colors[page].name + ' - population: ' + colors[page].population,
+						text: colors[page].name + ' - population: ' + colors[page].population,
 					};
 					embed.image = {
 						url: colors[page].avatar,
 					};
 					await msg.edit({
-						content:
-							colorEmoji + ' **| ' + p.msg.author.username + '**' + title,
+						content: colorEmoji + ' **| ' + p.msg.author.username + '**' + title,
 						embed,
 					});
 				}
@@ -391,13 +378,7 @@ function randHSL(p, args) {
 	let { r, g, b } = hslToRgb(h, s, l);
 	let hex = toHex(r) + toHex(g) + toHex(b);
 	let intValue = parseInt(hex.toLowerCase(), 16);
-	let hsl =
-		Math.round(h * 100) +
-		'%, ' +
-		Math.round(s * 100) +
-		'%, ' +
-		Math.round(l * 100) +
-		'%';
+	let hsl = Math.round(h * 100) + '%, ' + Math.round(s * 100) + '%, ' + Math.round(l * 100) + '%';
 	return {
 		r,
 		g,
@@ -446,13 +427,7 @@ function rgbToHsl(r, g, b) {
 		h /= 6;
 	}
 
-	let hsl =
-		Math.round(h * 100) +
-		'%, ' +
-		Math.round(s * 100) +
-		'%, ' +
-		Math.round(l * 100) +
-		'%';
+	let hsl = Math.round(h * 100) + '%, ' + Math.round(s * 100) + '%, ' + Math.round(l * 100) + '%';
 	return { h, s, l, hsl };
 }
 

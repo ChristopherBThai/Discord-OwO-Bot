@@ -12,9 +12,7 @@ exports.handle = async function (msg, ack) {
 	const survey = await getSurvey.bind(this)(msg.author.id);
 	if (!survey.length) return;
 
-	const currentQuestion = survey.find(
-		(question) => question.question_number === question.number
-	);
+	const currentQuestion = survey.find((question) => question.question_number === question.number);
 	if (!currentQuestion) return;
 
 	const embed = {
@@ -41,13 +39,9 @@ async function getSurvey(userId) {
 }
 
 async function sendNextQuestion(msg, survey) {
-	const currentQuestion = survey.find(
-		(question) => question.question_number === question.number
-	);
+	const currentQuestion = survey.find((question) => question.question_number === question.number);
 	const { uid, sid, number } = currentQuestion;
-	const nextQuestion = survey.find(
-		(question) => number + 1 === question.number
-	);
+	const nextQuestion = survey.find((question) => number + 1 === question.number);
 
 	const con = await this.mysqlhandler.startTransaction();
 	try {

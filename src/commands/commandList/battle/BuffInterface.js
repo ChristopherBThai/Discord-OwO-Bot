@@ -47,9 +47,7 @@ module.exports = class BuffInterface {
 	/* Converts qualities into stats */
 	toStats(qualities) {
 		if (qualities.length != this.qualityList.length)
-			throw new Error(
-				'Array size does not match in toStats. Buff id:' + this.id
-			);
+			throw new Error('Array size does not match in toStats. Buff id:' + this.id);
 		var stats = [];
 		for (var i = 0; i < qualities.length; i++) {
 			let quality = qualities[i];
@@ -109,10 +107,7 @@ module.exports = class BuffInterface {
 		this.duration -= 1;
 		if (this.duration <= 0) {
 			for (let i = 0; i < animal.buffs.length; i++) {
-				if (
-					animal.buffs[i].id == this.id &&
-					animal.buffs[i].from.pid == this.from.pid
-				) {
+				if (animal.buffs[i].id == this.id && animal.buffs[i].from.pid == this.from.pid) {
 					animal.buffs[i].markedForDeath = true;
 				}
 			}

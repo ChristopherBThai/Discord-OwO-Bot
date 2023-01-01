@@ -41,17 +41,11 @@ module.exports = new CommandInterface({
 			name = p.msg.author.username;
 		} else if (!user && p.global.isEmoji(p.args[0])) {
 			link = p.args[0].match(/:[0-9]+>/gi)[0];
-			link = `https://cdn.discordapp.com/emojis/${link.slice(
-				1,
-				link.length - 1
-			)}.png`;
+			link = `https://cdn.discordapp.com/emojis/${link.slice(1, link.length - 1)}.png`;
 			name = p.args[0].match(/:[\w]+:/gi)[0];
 			name = name.slice(1, name.length - 1);
 		} else {
-			p.errorMsg(
-				', invalid arguments! Please tag a user or add an emoji!',
-				3000
-			);
+			p.errorMsg(', invalid arguments! Please tag a user or add an emoji!', 3000);
 			p.setCooldown(5);
 			return;
 		}
@@ -82,8 +76,7 @@ async function display(p, url, name) {
 	if (canSteal) await msg.addReaction(p.config.emoji.steal);
 
 	// Create reaction collector
-	let filter = (emoji, userId) =>
-		emoji.name == p.config.emoji.steal && userId != p.client.user.id;
+	let filter = (emoji, userId) => emoji.name == p.config.emoji.steal && userId != p.client.user.id;
 	const collector = p.reactionCollector.create(msg, filter, { idle: 120000 });
 	const emojiAdder = new p.EmojiAdder(p, emojiName, url);
 
@@ -129,13 +122,11 @@ function createEmbed(p, url, name, emojiName, emojiAdder) {
 	if (emojiAdder) {
 		if (emojiAdder.successCount) {
 			embed.footer.text =
-				'Emoji added!' +
-				(emojiAdder.successCount > 1 ? ' x' + emojiAdder.successCount : '');
+				'Emoji added!' + (emojiAdder.successCount > 1 ? ' x' + emojiAdder.successCount : '');
 			embed.color = 65280;
 		} else {
 			embed.footer.text =
-				'Failed to add emoji' +
-				(emojiAdder.failureCount > 1 ? ' x' + emojiAdder.failureCount : '');
+				'Failed to add emoji' + (emojiAdder.failureCount > 1 ? ' x' + emojiAdder.failureCount : '');
 			embed.color = 16711680;
 		}
 	}

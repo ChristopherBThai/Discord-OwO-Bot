@@ -16,11 +16,7 @@ module.exports = new CommandInterface({
 
 	desc: 'Disable a command in the current channel. You can list multiple commands to disable multiple at once. You can also disable a whole group.',
 
-	example: [
-		'owo disable hunt battle zoo',
-		'owo disable gambling',
-		'owo disable all',
-	],
+	example: ['owo disable hunt battle zoo', 'owo disable gambling', 'owo disable all'],
 
 	related: ['owo enable'],
 
@@ -41,8 +37,7 @@ module.exports = new CommandInterface({
 
 		/* Parse commands */
 		let commands = p.args.slice();
-		for (let i = 0; i < commands.length; i++)
-			commands[i] = commands[i].toLowerCase();
+		for (let i = 0; i < commands.length; i++) commands[i] = commands[i].toLowerCase();
 
 		// If the user wants to disable all commands
 		if (commands.includes('all')) {
@@ -52,12 +47,10 @@ module.exports = new CommandInterface({
 					list += '(' + p.msg.channel.id + ",'" + key + "'),";
 			}
 			for (let key in p.commandGroups) {
-				if (key != 'undefined')
-					list += '(' + p.msg.channel.id + ",'" + key + "'),";
+				if (key != 'undefined') list += '(' + p.msg.channel.id + ",'" + key + "'),";
 			}
 			list = list.slice(0, -1);
-			let sql =
-				'INSERT IGNORE INTO disabled (channel,command) VALUES ' + list + ';';
+			let sql = 'INSERT IGNORE INTO disabled (channel,command) VALUES ' + list + ';';
 			await p.query(sql);
 			p.send('**⚙ | All** commands have been **disabled** for this channel!');
 			return;
@@ -70,12 +63,7 @@ module.exports = new CommandInterface({
 			/* Convert command name to proper name */
 			let command = p.aliasToCommand[commands[i]];
 			if (!command && p.commandGroups[commands[i]]) command = commands[i];
-			if (
-				command &&
-				command != 'disabled' &&
-				command != 'enable' &&
-				command != 'undefined'
-			) {
+			if (command && command != 'disabled' && command != 'enable' && command != 'undefined') {
 				validCommand = true;
 				sql += '(' + p.msg.channel.id + ",'" + command + "'),";
 			}

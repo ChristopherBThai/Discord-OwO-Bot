@@ -28,8 +28,7 @@ exports.help = async function (p, page = 0) {
 			name: 'Guide to battle!',
 		},
 		description:
-			'Have any questions? Please feel free to ask in our server!\n' +
-			p.config.guildlink,
+			'Have any questions? Please feel free to ask in our server!\n' + p.config.guildlink,
 		color: p.config.embed_color,
 		image: {
 			url: pages[page],
@@ -46,8 +45,7 @@ exports.help = async function (p, page = 0) {
 	await msg.addReaction(prevPageEmoji);
 	await msg.addReaction(nextPageEmoji);
 	let filter = (emoji, userID) =>
-		(emoji.name === nextPageEmoji || emoji.name === prevPageEmoji) &&
-		userID === p.msg.author.id;
+		(emoji.name === nextPageEmoji || emoji.name === prevPageEmoji) && userID === p.msg.author.id;
 	let collector = p.reactionCollector.create(msg, filter, {
 		time: 900000,
 		idle: 120000,

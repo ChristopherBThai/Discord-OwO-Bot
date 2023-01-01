@@ -45,15 +45,8 @@ module.exports = new CommandInterface({
 		}
 
 		let sql =
-			'SELECT * FROM animal WHERE id = ' +
-			msg.author.id +
-			" AND name = '" +
-			animal.value +
-			"';";
-		sql +=
-			"SELECT SUM(totalcount) as total FROM animal WHERE name = '" +
-			animal.value +
-			"';";
+			'SELECT * FROM animal WHERE id = ' + msg.author.id + " AND name = '" + animal.value + "';";
+		sql += "SELECT SUM(totalcount) as total FROM animal WHERE name = '" + animal.value + "';";
 		let result = await p.query(sql);
 		if (!result[0][0]) {
 			p.errorMsg(', I could not find that animal in your zoo!', 3000);
@@ -62,8 +55,7 @@ module.exports = new CommandInterface({
 
 		let emoji = animal.uni ? animal.uni : animal.value;
 		if ((temp = emoji.match(/:[0-9]+>/))) {
-			temp =
-				'https://cdn.discordapp.com/emojis/' + temp[0].match(/[0-9]+/)[0] + '.';
+			temp = 'https://cdn.discordapp.com/emojis/' + temp[0].match(/[0-9]+/)[0] + '.';
 			if (emoji.match(/<a:/)) temp += 'gif';
 			else temp += 'png';
 			emoji = temp;
@@ -73,28 +65,18 @@ module.exports = new CommandInterface({
 		let points = animal.points;
 		let sell = '???';
 		if (result[0][0].sellcount > 0)
-			sell =
-				animal.price +
-				' Cowoncy | ' +
-				global.toFancyNum(result[0][0].sellcount) +
-				' sold';
+			sell = animal.price + ' Cowoncy | ' + global.toFancyNum(result[0][0].sellcount) + ' sold';
 		let sac = '???';
 		if (result[0][0].saccount > 0)
-			sac =
-				animal.essence +
-				' Essence | ' +
-				global.toFancyNum(result[0][0].saccount) +
-				' killed';
+			sac = animal.essence + ' Essence | ' + global.toFancyNum(result[0][0].saccount) + ' killed';
 		let alias = 'None';
 		if (animal.alt.length > 0) alias = animal.alt.join(', ');
 		let phys = `<:hp:531620120410456064> \`${animal.hpr}\` <:att:531616155450998794> \`${animal.attr}\` <:pr:531616156222488606> \`${animal.prr}\` `;
 		let mag = `<:wp:531620120976687114> \`${animal.wpr}\` <:mag:531616156231139338> \`${animal.magr}\` <:mr:531616156226945024> \`${animal.mrr}\` `;
 		let rarity = global.toFancyNum(result[1][0].total) + ' total caught';
 		let nickname = '';
-		if (result[0][0].nickname)
-			nickname = '**Nickname:** ' + result[0][0].nickname + '\n';
-		let desc =
-			"*No description created\nHave a fun/creative description?\nUse 'owo feedback'!*";
+		if (result[0][0].nickname) nickname = '**Nickname:** ' + result[0][0].nickname + '\n';
+		let desc = "*No description created\nHave a fun/creative description?\nUse 'owo feedback'!*";
 		if (animal.desc) {
 			desc = '*' + animal.desc.trim() + '*';
 			let ids = desc.match(/\?[0-9]+\?/g);
@@ -104,33 +86,23 @@ module.exports = new CommandInterface({
 				desc = desc
 					.replace(
 						' ?' + descID + '? \n\n',
-						tempUser
-							? '* ***' + tempUser.username + '*** \n*'
-							: '* ***A User*** \n\n*'
+						tempUser ? '* ***' + tempUser.username + '*** \n*' : '* ***A User*** \n\n*'
 					)
 					.replace(
 						' ?' + descID + '?\n\n',
-						tempUser
-							? '* ***' + tempUser.username + '*** \n*'
-							: '* ***A User*** \n\n*'
+						tempUser ? '* ***' + tempUser.username + '*** \n*' : '* ***A User*** \n\n*'
 					)
 					.replace(
 						' ?' + descID + '? \n',
-						tempUser
-							? '* ***' + tempUser.username + '*** \n*'
-							: '* ***A User*** \n*'
+						tempUser ? '* ***' + tempUser.username + '*** \n*' : '* ***A User*** \n*'
 					)
 					.replace(
 						' ?' + descID + '?\n',
-						tempUser
-							? '* ***' + tempUser.username + '*** \n*'
-							: '* ***A User*** \n*'
+						tempUser ? '* ***' + tempUser.username + '*** \n*' : '* ***A User*** \n*'
 					)
 					.replace(
 						' ?' + descID + '? ',
-						tempUser
-							? '* ***' + tempUser.username + '*** *'
-							: '* ***A User*** *'
+						tempUser ? '* ***' + tempUser.username + '*** *' : '* ***A User*** *'
 					)
 					.replace(
 						' ?' + descID + '?*',
@@ -138,18 +110,14 @@ module.exports = new CommandInterface({
 					)
 					.replace(
 						' ?' + descID + '?,',
-						tempUser
-							? '* ***' + tempUser.username + '*** *,'
-							: '* ***A User*** *,'
+						tempUser ? '* ***' + tempUser.username + '*** *,' : '* ***A User*** *,'
 					);
 			}
 			ids = desc.match(/\?[0-9]+\!/g);
 			for (let i in ids) {
 				descID = ids[i].match(/[0-9]+/);
 				tempUser = await p.fetch.getUser(descID[0]);
-				const username = tempUser
-					? tempUser.username + '#' + tempUser.discriminator
-					: 'A User';
+				const username = tempUser ? tempUser.username + '#' + tempUser.discriminator : 'A User';
 				desc = desc
 					.replace(' ?' + descID + '! \n\n', '* ***' + username + '*** \n\n*')
 					.replace(' ?' + descID + '!\n\n', '* ***' + username + '*** \n\n*')
