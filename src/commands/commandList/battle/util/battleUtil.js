@@ -687,8 +687,8 @@ exports.displayAllBattles = async function (p, battle, logs, setting) {
 	let endResult = logs[logs.length - 1];
 	let logLink;
 	if (setting.showLogs == 'link') {
-		let uuid = await createLogUUID(logs.slice(0, -1));
-		if (uuid) logLink = `${process.env.GEN_HOST}/battle-log/${uuid}`;
+		let uuid = await createLogUUID(logs.slice(0, -1), battle);
+		if (uuid) logLink = `${process.env.SITE_URL}/battle-log?uuid=${uuid}`;
 	}
 	setting.logLink = logLink;
 	/* Instant mode sends just one message */
@@ -1368,8 +1368,8 @@ function parseLogs(logs) {
 }
 
 /* Creates a uuid for battle logs website */
-async function createLogUUID(logs) {
-	let info = { logs, password: process.env.GEN_PASS };
+async function createLogUUID(logs, battle) {
+	let info = { battle, logs, password: process.env.GEN_PASS };
 	try {
 		return new Promise((resolve, reject) => {
 			let req = request(
