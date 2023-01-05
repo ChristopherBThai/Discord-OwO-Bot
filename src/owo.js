@@ -46,6 +46,8 @@ class OwO extends Base {
 		this.config = require('./data/config.json');
 		this.debug = this.config.debug;
 		this.prefix = this.config.prefix;
+		this.optOut = {};
+		this.setOptOut();
 
 		// Ban check
 		this.ban = require('./utils/ban.js');
@@ -127,6 +129,13 @@ class OwO extends Base {
 
 		// sends info to our main server every X seconds
 		this.InfoUpdater = new (require('./utils/InfoUpdater.js'))(this);
+	}
+
+	async setOptOut() {
+		const ids = await this.redis.hgetall('optOut');
+		for (let id in ids) {
+			this.optOut[id] = true;
+		}
 	}
 }
 

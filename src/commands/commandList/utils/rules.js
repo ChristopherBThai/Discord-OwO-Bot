@@ -8,7 +8,7 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const description =
-	'•  Any actions performed to gain an unfair advantage over other users are explicitly against the rules. This includes but not limited to:\n├> Using macros/scripts for any commands\n└> Using multiple accounts for any reason\n\n•  Do **not** use any exploits and report any found in the bot\n\n•  You can **not** sell/trade cowoncy or any bot goods for anything outside of the bot\n\n•  If you have any questions come ask us in our [server](https://discord.gg/owobot)!';
+	'•  Any actions performed to gain an unfair advantage over other users are explicitly against the rules. This includes but not limited to:\n├> Using macros/scripts for any commands\n└> Using multiple accounts for any reason\n\n•  Do **not** use any exploits and report any found in the bot\n\n•  You can **not** sell/trade cowoncy or any bot goods for anything outside of the bot\n\n•  If you have any questions come ask us in our [server](https://discord.gg/owobot)!\n\n[Privacy Policy](https://owobot.com/privacy-policy)   **-**   [Terms of Service](https://owobot.com/terms-of-service)';
 const agreeEmoji = '👍';
 const disagreeEmoji = '👎';
 const warningEmoji = '⚠️';
