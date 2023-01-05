@@ -42,7 +42,7 @@ module.exports = new CommandInterface({
 					p.args[0].toLowerCase() == 'previous' ||
 					p.args[0].toLowerCase() == 'p'))
 		) {
-			let msgs = await p.msg.channel.getMessages(10);
+			let msgs = await p.global.getChannelMessages(p.msg.channel, 10);
 			if (!msgs) {
 				p.errorMsg(', There are no emojis! >:c', 3000);
 				return;

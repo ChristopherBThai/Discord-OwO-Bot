@@ -37,7 +37,7 @@ var commands = {};
 var animals = {};
 var ranks = {};
 var rankAlias = {};
-var client, con, animaljson;
+var client, con, animaljson, main;
 var totalShards, sharders;
 
 /**
@@ -89,6 +89,7 @@ exports.parseID = function (id) {
  * Maps alts to their command names
  */
 exports.init = function (bot) {
+	main = bot;
 	client = bot.bot;
 	con = bot.mysql.con;
 	animaljson = bot.animals;
@@ -345,3 +346,10 @@ exports.toDiscordTimestamp = function (date) {
 	}
 	return `<t:${Math.trunc(date.valueOf() / 1000)}:R>`;
 };
+
+exports.getChannelMessages = async function (channel, options, before, after, around) {
+	const msgs = await channel.getMessages(options, before, after, around);
+	return msgs.filter((msg) => {
+		return !main.optOut[msg.author.id];
+	});
+}

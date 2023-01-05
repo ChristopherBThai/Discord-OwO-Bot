@@ -35,7 +35,7 @@ module.exports = new CommandInterface({
 
 		// Check if we need to view previous msgs
 		if (p.args.length <= 0) {
-			let msgs = await p.msg.channel.getMessages(1, p.msg.id);
+			let msgs = await p.global.getChannelMessages(p.msg.channel, 1, p.msg.id);
 			if (!msgs || !msgs[0] || !msgs[0].content) {
 				p.errorMsg(', there is no message before yours! UwU', 3000);
 				return;
