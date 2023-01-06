@@ -104,6 +104,7 @@ module.exports = class WeaponInterface {
 		this.passives = cpassives;
 		this.rank = rank;
 		this.emoji = emoji;
+		this.buffs = this.getBuffs();
 	}
 
 	/* Alters the animal's stats */

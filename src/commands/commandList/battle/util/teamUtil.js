@@ -108,7 +108,7 @@ exports.addMember = async function (p, animal, pos) {
 	result[0].splice(pos - 1, 0, { name: animal.value, pos: pos });
 	let team = parseTeam(p, result[0]);
 	let text = '';
-	for (var i = 0; i < team.length; i++) {
+	for (let i = 0; i < team.length; i++) {
 		text +=
 			'[' +
 			team[i].pos +
@@ -308,11 +308,11 @@ const createTeamEmbed = (exports.createTeamEmbed = function (p, team, other = {}
 
 	/* Convert data to user readable strings */
 	let fields = [];
-	for (var i = 1; i <= 3; i++) {
+	for (let i = 1; i <= 3; i++) {
 		let title = `[${i}] `;
 		let body = '';
 		let animal;
-		for (var j = 0; j < team.length; j++) if (team[j].pos == i) animal = team[j];
+		for (let j = 0; j < team.length; j++) if (team[j].pos == i) animal = team[j];
 		if (!animal) {
 			title += 'none';
 			body = '*`owo team add {animal} ' + i + '`*';
@@ -336,7 +336,7 @@ const createTeamEmbed = (exports.createTeamEmbed = function (p, team, other = {}
 			let weapon = animal.weapon;
 			if (weapon) {
 				body += `\`${weapon.uwid}\` ${weapon.rank.emoji} ${weapon.emoji} `;
-				for (var j = 0; j < weapon.passives.length; j++) {
+				for (let j = 0; j < weapon.passives.length; j++) {
 					body += `${weapon.passives[j].emoji} `;
 				}
 				body += `${weapon.avgQuality}%`;
@@ -368,7 +368,7 @@ function parseTeam(p, animals, weapons, censor = false) {
 
 	/* get basic animal info */
 	let used = [];
-	for (var i = 0; i < animals.length; i++) {
+	for (let i = 0; i < animals.length; i++) {
 		let animal = animals[i];
 		if (!used.includes(animal.pid)) {
 			used.push(animal.pid);
@@ -394,9 +394,9 @@ function parseTeam(p, animals, weapons, censor = false) {
 		let weps = weaponUtil.parseWeaponQuery(weapons);
 
 		/* Combine the two json */
-		for (var key in weps) {
+		for (let key in weps) {
 			let pid = weps[key].pid;
-			for (var i = 0; i < result.length; i++)
+			for (let i = 0; i < result.length; i++)
 				if (result[i].pid == pid) result[i].weapon = weaponUtil.parseWeapon(weps[key]);
 		}
 	}
@@ -407,7 +407,7 @@ function parseTeam(p, animals, weapons, censor = false) {
 /* Checks if the team is dead */
 exports.isDead = function (team) {
 	let totalhp = 0;
-	for (var i in team) {
+	for (let i in team) {
 		let hp = team[i].stats.hp[0];
 		totalhp += hp < 0 ? 0 : hp;
 	}
