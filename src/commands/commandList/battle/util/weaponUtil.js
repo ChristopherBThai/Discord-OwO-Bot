@@ -157,12 +157,13 @@ var parseWeaponQuery = (exports.parseWeaponQuery = function (query) {
 					passives: [],
 				};
 			}
-			if (query[i].wpid)
+			if (query[i].wpid) {
 				weapons[key].passives.push({
 					id: query[i].wpid,
 					pcount: query[i].pcount,
 					stat: query[i].pstat,
 				});
+			}
 		}
 	}
 	return weapons;
