@@ -22,7 +22,7 @@ module.exports = new CommandInterface({
 
 		const id = p.args[0];
 		await p.redis.hdel('optOut', id);
-		await p.pubsub.publish("optOut", { id, remove: true });
+		await p.pubsub.publish('optOut', { id, remove: true });
 		await p.replyMsg(p.config.emoji.gear, `, removed user from opt out: ${id}`);
 	},
 });

@@ -352,4 +352,4 @@ exports.getChannelMessages = async function (channel, options, before, after, ar
 	return msgs.filter((msg) => {
 		return !main.optOut[msg.author.id];
 	});
-}
+};

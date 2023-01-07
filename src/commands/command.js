@@ -27,7 +27,7 @@ class Command {
 
 	async execute(msg, raw) {
 		// Parse content info
-		let args = await checkPrefix(this.main, msg);
+		let { args, context } = await checkPrefix(this.main, msg);
 		const containsPoints =
 			msg.content.toLowerCase().includes('owo') || msg.content.toLowerCase().includes('uwu');
 		if (!args) {
@@ -56,7 +56,7 @@ class Command {
 		}
 
 		// Init params to pass into command
-		let param = initParam(msg, command, args, this.main);
+		let param = initParam(msg, command, args, this.main, context);
 
 		// Parse user raw data, so our cache is up to date
 		this.checkRaw(raw);
@@ -82,17 +82,17 @@ class Command {
 		await executeCommand(this.main, param);
 	}
 
-	executeAdmin(msg) {
+	async executeAdmin(msg) {
 		if (msg.content.toLowerCase().indexOf(this.prefix) !== 0) {
 			return false;
 		}
-		let args = msg.content.slice(this.prefix.length).trim().split(/ +/g);
+		let { args, context } = await checkPrefix(this.main, msg);
 		let command = args.shift().toLowerCase();
 		let commandObj = adminCommands[command];
 		if (!commandObj) {
 			return false;
 		}
-		let param = initParam(msg, command, args, this.main);
+		let param = initParam(msg, command, args, this.main, context);
 
 		if (commandObj.owner && msg.author.id === this.main.config.owner) {
 			adminCommands[command].execute(param);
@@ -252,11 +252,12 @@ function initCommands() {
 /**
  * Initializes the resources/utilities required for each command
  */
-function initParam(msg, command, args, main) {
+function initParam(msg, command, args, main, context) {
 	let param = {
 		msg: msg,
 		options: msg.options || {},
 		args: args,
+		context: context,
 		command: command,
 		client: main.bot,
 		animals: main.animals,
@@ -339,7 +340,9 @@ function initParam(msg, command, args, main) {
 async function checkPrefix(main, msg) {
 	const content = msg.content.toLowerCase();
 	if (content.startsWith(main.prefix)) {
-		return msg.content.slice(main.prefix.length).trim().split(/ +/g);
+		let args = msg.content.slice(main.prefix.length).trim().split(/ +/g);
+		let context = getContext(args, main.prefix, msg.content);
+		return { args, context };
 	}
 
 	if (!msg.channel.guild) return;
@@ -353,8 +356,14 @@ async function checkPrefix(main, msg) {
 
 	// check with custom prefix
 	if (msg.channel.guild.prefix && content.startsWith(msg.channel.guild.prefix)) {
-		return msg.content.slice(msg.channel.guild.prefix.length).trim().split(/ +/g);
+		let args = msg.content.slice(msg.channel.guild.prefix.length).trim().split(/ +/g);
+		let context = getContext(args, msg.channel.guild.prefix, msg.content);
+		return { args, context };
 	}
+}
+
+function getContext(args, prefix, content) {
+	return content.trim().replace(prefix, '').trim().replace(/^\S+/i, '').trim();
 }
 
 async function acceptedRules(main, msg) {
