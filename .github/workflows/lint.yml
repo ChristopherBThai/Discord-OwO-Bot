@@ -14,6 +14,9 @@ jobs:
   run-linters:
     name: Run linters
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
       - name: Check out Git repository
@@ -26,7 +29,7 @@ jobs:
 
       # ESLint and Prettier must be in `package.json`
       - name: Install Node.js dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run linters
         uses: wearerequired/lint-action@v2
