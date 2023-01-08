@@ -41,11 +41,11 @@ module.exports = new CommandInterface({
 				id = this.args[i].match(/[0-9]+/)[0];
 			} else {
 				let value = this.args[i];
-				if (/[kK]/.test(value) && !amount) {
-					value = value.replace(/[kK]/, "");
+				if (/[kK]$/.test(value) && !amount) {
+					value = value.replace(/[kK]$/, "");
 					amount = parseInt(value) * 1000;
-				} else if (/[mM]/.test(value && !amount)) {
-					value = value.replace(/[mM]/, "");
+				} else if (/[mM]$/.test(value) && !amount) {
+					value = value.replace(/[mM]$/, "");
 					amount = parseInt(value) * 1000000;
 				} else {
 					invalid = true;
