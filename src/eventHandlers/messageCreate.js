@@ -26,7 +26,7 @@ exports.handle = async function (msg, raw) {
 		!whitelist.includes(msg.channel.guild.id)
 	) {
 		return;
-	} else if (this.command.executeAdmin(msg, raw)) {
+	} else if (await this.command.executeAdmin(msg, raw)) {
 		return;
 
 		// no guild, its a dm
