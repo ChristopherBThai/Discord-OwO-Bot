@@ -52,9 +52,8 @@ module.exports = class PassiveInterface {
         /* Get correct rank */
         for (let rankIndex = 0; rankIndex < ranks.length; rankIndex++) {
             const rankQuality = ranks[rankIndex];
-            const previousRankQuality = ranks[rankIndex - 1] || 0;
 
-            if (quality > previousRankQuality && quality < rankQuality) {
+            if (quality <= rankQuality) {
                 return this.emojis[rankIndex];
             }
         }
