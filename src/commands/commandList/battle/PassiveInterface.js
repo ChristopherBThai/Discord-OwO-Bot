@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
  */
 
-const ranks = [0.21, 0.41, 0.61, 0.81, 0.95, 1];
+const ranks = [0.2, 0.4, 0.6, 0.8, 0.94, 0.99, 1];
 
 module.exports = class PassiveInterface {
     constructor(qualities, noCreate) {
