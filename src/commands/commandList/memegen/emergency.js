@@ -3,7 +3,7 @@
  * Copyright (C) 2020 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
+ */
 
 const CommandInterface = require('../../CommandInterface.js');
 
@@ -12,78 +12,79 @@ const Vibrant = require('node-vibrant');
 const rocketEmoji = '🚀';
 
 module.exports = new CommandInterface({
+	alias: ['emergency', 'emergencymeeting'],
 
-	alias:["emergency", "emergencymeeting"],
+	args: '',
 
-	args:"",
+	desc: 'Call an emergency meeting!',
 
-	desc:"Call an emergency meeting!",
+	example: [],
 
-	example:[],
+	related: [],
 
-	related:[],
+	permissions: ['sendMessages', 'attachFiles'],
 
-	permissions:["sendMessages","attachFiles"],
+	group: ['memegeneration'],
 
-	group:["memegeneration"],
+	cooldown: 30000,
+	half: 100,
+	six: 500,
+	bot: true,
 
-	cooldown:30000,
-	half:100,
-	six:500,
-	bot:true,
-
-	execute: async function(p){
+	execute: async function (p) {
 		try {
 			const uuid = await fetchImage(p, p.msg.author);
-			const url = `${process.env.GEN_HOST}/img/${uuid}.gif`
+			const url = `${process.env.GEN_HOST}/img/${uuid}.gif`;
 			const data = await p.DataResolver.urlToBuffer(url);
-			await p.send(`${rocketEmoji} **| ${p.msg.author.username}** called an emergency meeting!`,null,{file:data,name:"eject.gif"});
+			await p.send(
+				`${rocketEmoji} **| ${p.msg.author.username}** called an emergency meeting!`,
+				null,
+				{ file: data, name: 'eject.gif' }
+			);
 		} catch (err) {
 			console.error(err);
-			p.errorMsg(", Failed to generate gif. Try again later.", 3000);
+			p.errorMsg(', Failed to generate gif. Try again later.', 3000);
 		}
-	}
-
-})
+	},
+});
 
 async function fetchImage(p, user) {
 	let handColor;
 	try {
-		let url = user.dynamicAvatarURL(null,32);
+		let url = user.dynamicAvatarURL(null, 32);
 		palette = await Vibrant.from(url).getPalette();
-		handColor = palette.Vibrant._rgb.join(",");
-	} catch(err) {
+		handColor = palette.Vibrant._rgb.join(',');
+	} catch (err) {
 		console.error(err);
-		handColor = "255,255,255";
+		handColor = '255,255,255';
 	}
 
 	const info = {
-		avatarLink: user.dynamicAvatarURL("png"),
+		avatarLink: user.dynamicAvatarURL('png'),
 		handColor,
-		password: process.env.GEN_PASS
-	}
+		password: process.env.GEN_PASS,
+	};
 
-	return new Promise( (resolve, reject) => {
+	return new Promise((resolve, reject) => {
 		try {
-			let req = request({
-				method:'POST',
-				uri:`${process.env.GEN_API_HOST}/emergency`,
-				json:true,
-				body: info,
-			},(error,res,body)=>{
-				if(error){
-					reject();
-					return;
+			let req = request(
+				{
+					method: 'POST',
+					uri: `${process.env.GEN_API_HOST}/emergency`,
+					json: true,
+					body: info,
+				},
+				(error, res, body) => {
+					if (error) {
+						reject();
+						return;
+					}
+					if (res.statusCode == 200) resolve(body);
+					else reject();
 				}
-				if(res.statusCode==200)
-					resolve(body);
-				else
-					reject();
-			});
+			);
 		} catch (err) {
 			reject();
 		}
 	});
-
 }
-

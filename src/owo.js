@@ -3,17 +3,17 @@
  * Copyright (C) 2019 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
+ */
 
 const Base = require('eris-sharder').Base;
 const EventHandler = require('./eventHandlers/EventHandler.js');
 
 // Discordbots.org api
-const DBL = require("dblapi.js");
+const DBL = require('dblapi.js');
 const dbl = new DBL(process.env.DBL_TOKEN);
 
-class OwO extends Base{
-	constructor(bot){
+class OwO extends Base {
+	constructor(bot) {
 		super(bot);
 		this.dbl = dbl;
 
@@ -47,17 +47,17 @@ class OwO extends Base{
 		this.debug = this.config.debug;
 		this.prefix = this.config.prefix;
 
-		// Ban check 
+		// Ban check
 		this.ban = require('./utils/ban.js');
 
-		// Cooldown check 
+		// Cooldown check
 		this.cooldown = require('./utils/cooldown.js');
 
 		// Quest Handler
-		this.questHandler = new (require("./botHandlers/questHandler.js"))();
+		this.questHandler = new (require('./botHandlers/questHandler.js'))();
 
 		// Mysql Query Handler
-		this.mysqlhandler = require("./botHandlers/mysqlHandler.js")
+		this.mysqlhandler = require('./botHandlers/mysqlHandler.js');
 		this.query = this.mysqlhandler.query;
 
 		// Global helper methods
@@ -74,17 +74,20 @@ class OwO extends Base{
 
 		// Hidden macro detection file
 		this.macro = require('./../../tokens/macro.js');
-		this.macro.bind(this,require('merge-images'),require('canvas'));
+		this.macro.bind(this, require('merge-images'), require('canvas'));
 		this.cooldown.setMacro(this.macro);
 
 		// Allows me to check catch before any fetch requests (reduces api calls)
 		this.fetch = new (require('./utils/fetch.js'))(this);
 
 		// Creates a reaction collector for a message (works for uncached messages too)
-		this.reactionCollector = new (require('./utils/reactionCollector.js'))(this);
+		this.reactionCollector = new (require('./utils/reactionCollector.js'))(
+			this
+		);
 
 		// Creates a reaction collector for a message (works for uncached messages too)
-		this.interactionCollector = new (require('./utils/interactionCollector.js'))(this);
+		this.interactionCollector =
+			new (require('./utils/interactionCollector.js'))(this);
 
 		// Fetches images and converts them to buffers
 		this.DataResolver = require('./utils/dataResolver.js');
@@ -100,8 +103,8 @@ class OwO extends Base{
 		this.command = new (require('./commands/command.js'))(this);
 	}
 
-	launch(){
-		// Bind bot events 
+	launch() {
+		// Bind bot events
 		this.eventHandler = new EventHandler(this);
 
 		// sends info to our main server every X seconds

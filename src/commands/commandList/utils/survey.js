@@ -3,43 +3,45 @@
  * Copyright (C) 2021 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
+ */
 
 const CommandInterface = require('../../CommandInterface.js');
 
 const surveyEmoji = '📝';
 
 module.exports = new CommandInterface({
+	alias: ['survey'],
 
-	alias:["survey"],
+	args: '',
 
-	args:"",
+	desc: 'View the latest survey! Surveys can help us improve the bot.',
 
-	desc:"View the latest survey! Surveys can help us improve the bot.",
+	example: [],
 
-	example:[],
+	related: ['owo daily'],
 
-	related:["owo daily"],
+	permissions: ['sendMessages', 'embedLinks', 'attachFiles'],
 
-	permissions:["sendMessages","embedLinks","attachFiles"],
+	group: ['utility'],
 
-	group:["utility"],
-
-	cooldown:10000,
-	half:100,
-	six:500,
+	cooldown: 10000,
+	half: 100,
+	six: 500,
 
 	execute: async function () {
 		const uid = await this.global.getUid(this.msg.author.id);
-		const { inProgress, newSurvey } = await getSurvey.bind(this)(uid) || {};
+		const { inProgress, newSurvey } = (await getSurvey.bind(this)(uid)) || {};
 
 		if (inProgress) {
-			await this.replyMsg(surveyEmoji, ", You already have a survey in progress!");
+			await this.replyMsg(
+				surveyEmoji,
+				', You already have a survey in progress!'
+			);
 			return;
 		}
 
 		if (!newSurvey) {
-			await this.replyMsg(surveyEmoji, ", There is no survey available.");
+			await this.replyMsg(surveyEmoji, ', There is no survey available.');
 			return;
 		}
 
@@ -49,24 +51,26 @@ module.exports = new CommandInterface({
 				components: [
 					{
 						type: 2,
-						label: "Answer Survey",
+						label: 'Answer Survey',
 						style: 1,
-						custom_id: "survey",
+						custom_id: 'survey',
 						emoji: {
 							id: null,
-							name: surveyEmoji
-						}
-					}
-				]
-			}
+							name: surveyEmoji,
+						},
+					},
+				],
+			},
 		];
-			
-		await this.replyMsg(surveyEmoji, { content: ", There is a survey available! Complete it to earn a reward!", components });
-	}
 
+		await this.replyMsg(surveyEmoji, {
+			content: ', There is a survey available! Complete it to earn a reward!',
+			components,
+		});
+	},
 });
 
-async function getSurvey (uid) {
+async function getSurvey(uid) {
 	const con = await this.startTransaction();
 	let userSurvey, survey;
 	try {
@@ -106,5 +110,3 @@ async function getSurvey (uid) {
 
 	return { newSurvey: survey };
 }
-
-

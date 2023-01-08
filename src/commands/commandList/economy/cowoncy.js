@@ -3,30 +3,29 @@
  * Copyright (C) 2019 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
+ */
 
 const CommandInterface = require('../../CommandInterface.js');
 const alterCowoncy = require('../patreon/alterCowoncy.js');
 
 module.exports = new CommandInterface({
+	alias: ['cowoncy', 'money', 'currency', 'cash', 'credit', 'balance'],
 
-	alias:["cowoncy","money","currency","cash","credit","balance"],
+	args: '',
 
-	args:"",
+	desc: 'Check your cowoncy balance! You can earn more cowoncy by saying owo, dailies, and voting!',
 
-	desc:"Check your cowoncy balance! You can earn more cowoncy by saying owo, dailies, and voting!",
+	example: [],
 
-	example:[],
+	related: ['owo give', 'owo daily', 'owo vote', 'owo my money'],
 
-	related:["owo give","owo daily","owo vote","owo my money"],
+	permissions: ['sendMessages'],
 
-	permissions:["sendMessages"],
+	group: ['economy'],
 
-	group:["economy"],
-
-	cooldown:5000,
-	half:100,
-	six:500,
+	cooldown: 5000,
+	half: 100,
+	six: 500,
 
 	execute: async function () {
 		const sql = `SELECT money FROM cowoncy WHERE id = ${this.msg.author.id};`;
@@ -37,10 +36,9 @@ module.exports = new CommandInterface({
 
 		text = alterCowoncy.alter(this, this.msg.author.id, text, {
 			user: this.msg.author,
-			money: money
+			money: money,
 		});
 
 		await this.send(text);
-	}
-
-})
+	},
+});

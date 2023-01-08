@@ -3,16 +3,16 @@
  * Copyright (C) 2022 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
+ */
 
-exports.alter = function(p, text, opt) {
+exports.alter = function (p, text, opt) {
 	switch (p.msg.author.id) {
 		case '459469724091154433':
 			return quincey(text, opt);
 		default:
 			return text;
 	}
-}
+};
 
 function quincey(text, opt) {
 	if (opt.type === 'ring') {
@@ -53,4 +53,3 @@ function quincey(text, opt) {
 	}
 	return text;
 }
-
