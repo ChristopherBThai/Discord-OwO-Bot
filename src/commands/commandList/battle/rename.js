@@ -7,8 +7,6 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const badwords = require('../../../../../tokens/badwords.json');
-
 module.exports = new CommandInterface({
 	alias: ['rename'],
 
@@ -30,9 +28,7 @@ module.exports = new CommandInterface({
 
 	execute: async function (p) {
 		if (p.args.length < 2) {
-			return p.errorMsg(
-				', The correct command is `owo rename [animal] [name]`!'
-			);
+			return p.errorMsg(', The correct command is `owo rename [animal] [name]`!');
 		}
 
 		let animal = p.args.shift();

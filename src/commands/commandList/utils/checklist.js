@@ -60,30 +60,21 @@ module.exports = new CommandInterface({
 		let tasks = [];
 		for (let i in checklist) {
 			let task = checklist[i].parse(result[i]);
-			description +=
-				'\n' + (task.done ? check : box) + ' ' + task.emoji + ' ' + task.desc;
+			description += '\n' + (task.done ? check : box) + ' ' + task.emoji + ' ' + task.desc;
 			if (!task.done) reward = false;
 			tasks.push(task);
 		}
 
 		// Check if they already claimed
 		let afterMid = dateUtil.afterMidnight(
-			result[result.length - 1][0]
-				? result[result.length - 1][0].checklist
-				: undefined
+			result[result.length - 1][0] ? result[result.length - 1][0].checklist : undefined
 		);
 		if (afterMid && !afterMid.after) {
 			reward = false;
 			done = true;
-			description +=
-				'\n' +
-				check +
-				' ' +
-				tada +
-				' You already claimed your checklist rewards!';
+			description += '\n' + check + ' ' + tada + ' You already claimed your checklist rewards!';
 		} else if (!reward) {
-			description +=
-				'\n' + box + ' ' + tada + ' Complete your checklist to get a reward!';
+			description += '\n' + box + ' ' + tada + ' Complete your checklist to get a reward!';
 		} else {
 			description +=
 				'\n' +
@@ -122,14 +113,7 @@ module.exports = new CommandInterface({
 			},
 			color: p.config.embed_color,
 			footer: {
-				text:
-					'Resets in ' +
-					time.hours +
-					'H ' +
-					time.minutes +
-					'M ' +
-					time.seconds +
-					'S',
+				text: 'Resets in ' + time.hours + 'H ' + time.minutes + 'M ' + time.seconds + 'S',
 			},
 			timestamp: new Date(),
 			description,
@@ -150,9 +134,7 @@ function daily(p) {
 	return {
 		sql: `SELECT daily FROM cowoncy WHERE id = ${p.msg.author.id};`,
 		parse: function (result) {
-			let afterMid = dateUtil.afterMidnight(
-				result[0] ? result[0].daily : undefined
-			);
+			let afterMid = dateUtil.afterMidnight(result[0] ? result[0].daily : undefined);
 			if (afterMid && !afterMid.after)
 				return {
 					done: true,
@@ -182,8 +164,7 @@ function vote(p) {
 						(result[0].time < 11 ? ' hours!' : ' hour!'),
 					emoji: '📝',
 				};
-			else
-				return { done: false, desc: 'You can claim your vote!', emoji: '📝' };
+			else return { done: false, desc: 'You can claim your vote!', emoji: '📝' };
 		},
 	};
 }
@@ -192,9 +173,7 @@ function cookie(p) {
 	return {
 		sql: `SELECT cookieTime FROM user INNER JOIN timers ON user.uid = timers.uid WHERE id = ${p.msg.author.id};`,
 		parse: function (result) {
-			let afterMid = dateUtil.afterMidnight(
-				result[0] ? result[0].cookieTime : undefined
-			);
+			let afterMid = dateUtil.afterMidnight(result[0] ? result[0].cookieTime : undefined);
 			if (afterMid && !afterMid.after)
 				return { done: true, desc: 'You have used your cookie!', emoji: '🍪' };
 			else
@@ -211,12 +190,8 @@ function quests(p) {
 	return {
 		sql: `SELECT questrrTime,questTime FROM user INNER JOIN timers ON user.uid = timers.uid WHERE id = ${p.msg.author.id};`,
 		parse: function (result) {
-			let afterMid = dateUtil.afterMidnight(
-				result[0] ? result[0].questTime : undefined
-			);
-			let rrText = dateUtil.afterMidnight(
-				result[0] ? result[0].questrrTime : undefined
-			).after
+			let afterMid = dateUtil.afterMidnight(result[0] ? result[0].questTime : undefined);
+			let rrText = dateUtil.afterMidnight(result[0] ? result[0].questrrTime : undefined).after
 				? ' (+rr)'
 				: '';
 			if (afterMid && !afterMid.after) {
@@ -239,9 +214,7 @@ function lootboxes(p) {
 	return {
 		sql: `SELECT claim,claimcount FROM lootbox WHERE id = ${p.msg.author.id};`,
 		parse: function (result) {
-			let afterMid = dateUtil.afterMidnight(
-				result[0] ? result[0].claim : undefined
-			);
+			let afterMid = dateUtil.afterMidnight(result[0] ? result[0].claim : undefined);
 			let claimed = result[0] ? result[0].claimcount : 0;
 			if (afterMid && !afterMid.after) {
 				if (claimed < 3)
@@ -275,9 +248,7 @@ function crates(p) {
 	return {
 		sql: `SELECT claim,claimcount FROM crate INNER JOIN user ON user.uid = crate.uid WHERE id = ${p.msg.author.id};`,
 		parse: function (result) {
-			let afterMid = dateUtil.afterMidnight(
-				result[0] ? result[0].claim : undefined
-			);
+			let afterMid = dateUtil.afterMidnight(result[0] ? result[0].claim : undefined);
 			let claimed = result[0] ? result[0].claimcount : 0;
 			if (afterMid && !afterMid.after) {
 				if (claimed < 3)

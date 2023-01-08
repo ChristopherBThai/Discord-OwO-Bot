@@ -106,12 +106,7 @@ module.exports = new CommandInterface({
 		p.replyMsg(
 			eightballEmoji,
 			p.replaceMentions(
-				' **asked:** ' +
-					question +
-					'\n' +
-					p.config.emoji.blank +
-					' **| Answer:** ' +
-					reply
+				' **asked:** ' + question + '\n' + p.config.emoji.blank + ' **| Answer:** ' + reply
 			)
 		);
 	},

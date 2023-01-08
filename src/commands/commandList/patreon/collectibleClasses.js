@@ -24,7 +24,7 @@ function addCommand(coll) {
 		new CommandInterface({
 			alias: [coll.key, ...coll.alias],
 			args: '{@user}',
-			desc: `${coll.description}\n\nThis command was created by ${coll.ownerString}`,
+			desc: `${coll.description}\n\nThis command was created by ${coll.ownersString}`,
 			example: [],
 			related: [],
 			permissions: ['sendMessages'],
@@ -45,20 +45,14 @@ function addCommand(coll) {
 						return;
 					}
 
-					if (
-						coll.hasManualMerge &&
-						coll.manualMergeCommands?.includes(this.args[0])
-					) {
+					if (coll.hasManualMerge && coll.manualMergeCommands?.includes(this.args[0])) {
 						coll.manualMerge(this);
 						return;
 					}
 
 					let user = this.getMention(this.args[0]);
 					if (!user) {
-						user = await this.fetch.getMember(
-							this.msg.channel.guild,
-							this.args[0]
-						);
+						user = await this.fetch.getMember(this.msg.channel.guild, this.args[0]);
 						if (!user) {
 							this.errorMsg(', Invalid syntax! Please tag a user!', 3000);
 							this.setCooldown(5);
@@ -70,10 +64,7 @@ function addCommand(coll) {
 						return;
 					}
 
-					if (
-						!coll.owners.includes(this.msg.author.id) &&
-						user.id === this.msg.author.id
-					) {
+					if (!coll.owners.includes(this.msg.author.id) && user.id === this.msg.author.id) {
 						coll.noSelfMsg(this);
 						return;
 					}

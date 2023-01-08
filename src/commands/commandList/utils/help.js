@@ -79,8 +79,7 @@ function display(p) {
 			{ name: '🎖 Rankings', value: '`top`  `my`' },
 			{
 				name: '💰 Economy',
-				value:
-					'`cowoncy`  `give`  `daily`  `vote`  `quest`  `checklist`  `shop`  `buy`',
+				value: '`cowoncy`  `give`  `daily`  `vote`  `quest`  `checklist`  `shop`  `buy`',
 			},
 			{
 				name: '🌱 Animals',
@@ -93,8 +92,7 @@ function display(p) {
 			},
 			{
 				name: '🎱 Fun',
-				value:
-					'`8b`  `define`  `gif`  `pic`  `translate`  `roll`  `choose`  `bell`',
+				value: '`8b`  `define`  `gif`  `pic`  `translate`  `roll`  `choose`  `bell`',
 			},
 			{
 				name: '🎭 Social',
@@ -133,20 +131,17 @@ async function describe(p, send, commandName, command) {
 	else title += '>';
 	if (command.alias[1] != undefined) {
 		alias = '\n# Aliases\n';
-		for (var i = 0; i < command.alias.length; i++)
-			alias += command.alias[i] + ' , ';
+		for (var i = 0; i < command.alias.length; i++) alias += command.alias[i] + ' , ';
 		alias = alias.substr(0, alias.length - 3);
 	}
 	if (command.example[0] != undefined) {
 		example = '\n# Example Command(s)\n';
-		for (var i = 0; i < command.example.length; i++)
-			example += command.example[i] + ' , ';
+		for (var i = 0; i < command.example.length; i++) example += command.example[i] + ' , ';
 		example = example.substr(0, example.length - 3);
 	}
 	if (command.related[0] != undefined) {
 		related = '\n# Related Command(s)\n';
-		for (var i = 0; i < command.related.length; i++)
-			related += command.related[i] + ' , ';
+		for (var i = 0; i < command.related.length; i++) related += command.related[i] + ' , ';
 		related = related.substr(0, related.length - 3);
 	}
 
@@ -154,10 +149,7 @@ async function describe(p, send, commandName, command) {
 	for (let i in ids) {
 		descID = ids[i].match(/[0-9]+/);
 		tempUser = await p.fetch.getUser(descID[0]);
-		desc = desc.replace(
-			'?' + descID + '?',
-			tempUser ? tempUser.username : 'A User'
-		);
+		desc = desc.replace('?' + descID + '?', tempUser ? tempUser.username : 'A User');
 	}
 
 	let text =

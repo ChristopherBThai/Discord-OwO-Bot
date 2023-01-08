@@ -59,10 +59,7 @@ async function display(p) {
 	let count = await p.redis.hget('data_' + p.msg.author.id, data);
 	if (!count) count = 0;
 
-	p.replyMsg(
-		emoji,
-		', you currently have ' + count + ' ' + emoji + ' **Plug-in chip**!'
-	);
+	p.replyMsg(emoji, ', you currently have ' + count + ' ' + emoji + ' **Plug-in chip**!');
 }
 
 async function give(p, user) {
@@ -79,7 +76,5 @@ async function give(p, user) {
 	}
 
 	await p.redis.hincrby('data_' + user.id, data, 1);
-	p.send(
-		`${emoji} **| ${user.username}**, you have been given 1 **Plug-in chip**.`
-	);
+	p.send(`${emoji} **| ${user.username}**, you have been given 1 **Plug-in chip**.`);
 }

@@ -33,9 +33,7 @@ module.exports = new CommandInterface({
 			if (voted) {
 				p.dbl.isWeekend().then((weekend) => {
 					let sql =
-						'SELECT count,TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = ' +
-						id +
-						';';
+						'SELECT count,TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = ' + id + ';';
 					sql +=
 						'SELECT IF(patreonDaily = 1 OR ((TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths) AND patreonType = 3),1,0) as patreon FROM user LEFT JOIN patreons ON user.uid = patreons.uid WHERE user.id = ' +
 						id +
@@ -51,15 +49,13 @@ module.exports = new CommandInterface({
 									'INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES (' +
 									p.msg.author.id +
 									",1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
-								box.text =
-									'**<:box:427352600476647425> |** You received a lootbox!\n';
+								box.text = '**<:box:427352600476647425> |** You received a lootbox!\n';
 							} else {
 								box.sql =
 									'INSERT INTO crate(uid,cratetype,boxcount,claimcount,claim) VALUES ((SELECT uid FROM user WHERE id = ' +
 									p.msg.author.id +
 									"),0,1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
-								box.text =
-									'**<:crate:523771259302182922> |** You received a weapon crate!\n';
+								box.text = '**<:crate:523771259302182922> |** You received a weapon crate!\n';
 							}
 							var reward = 100;
 							var patreonBonus = 0;
@@ -112,15 +108,13 @@ module.exports = new CommandInterface({
 									'INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES (' +
 									p.msg.author.id +
 									",1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
-								box.text =
-									'**<:box:427352600476647425> |** You received a lootbox!\n';
+								box.text = '**<:box:427352600476647425> |** You received a lootbox!\n';
 							} else {
 								box.sql =
 									'INSERT INTO crate(uid,cratetype,boxcount,claimcount,claim) VALUES ((SELECT uid FROM user WHERE id = ' +
 									p.msg.author.id +
 									"),0,1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
-								box.text =
-									'**<:crate:523771259302182922> |** You received a weapon crate!\n';
+								box.text = '**<:crate:523771259302182922> |** You received a weapon crate!\n';
 							}
 							var bonus = 100 + result[0][0].count * 3;
 							var patreonBonus = 0;
@@ -167,10 +161,8 @@ module.exports = new CommandInterface({
 								p.logger.incr(`votecount`, 1, {}, p.msg);
 							});
 						} else {
-							var text =
-								'**☑ |** Click the link to vote and gain 100+ cowoncy!\n';
-							text +=
-								'**<:blank:427371936482328596> |** You can vote every 12 hours!\n';
+							var text = '**☑ |** Click the link to vote and gain 100+ cowoncy!\n';
+							text += '**<:blank:427371936482328596> |** You can vote every 12 hours!\n';
 							text +=
 								'**<:blank:427371936482328596> |** Your daily vote is available in **' +
 								(12 - result[0][0].time) +
@@ -185,12 +177,10 @@ module.exports = new CommandInterface({
 				});
 			} else {
 				var text = '**☑ | Your daily vote is available!**\n';
-				text +=
-					'**<:blank:427371936482328596> |** You can vote every 12 hours!\n';
+				text += '**<:blank:427371936482328596> |** You can vote every 12 hours!\n';
 				//text += "**⚠ |** Automatic votes are currently broken!\n";
 				//text += "**<:blank:427371936482328596> |** Please retype `owo vote` 1-10min after you vote!\n";
-				text +=
-					'**<:blank:427371936482328596> |** https://top.gg/bot/408785106942164992/vote';
+				text += '**<:blank:427371936482328596> |** https://top.gg/bot/408785106942164992/vote';
 				p.send(text);
 			}
 		});

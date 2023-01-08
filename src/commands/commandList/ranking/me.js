@@ -8,10 +8,17 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const global = require('../../../utils/global.js');
-const animals = require('../../../../../tokens/owo-animals.json');
 const animalUtil = require('../battle/util/animalUtil.js');
 const animalUtil2 = require('../zoo/animalUtil.js');
 const levels = require('../../../utils/levels.js');
+let animals;
+try {
+	animals = require('../../../../../tokens/owo-animals.json');
+} catch (err) {
+	console.error('Could not find owo-animals.json, attempting to use ./secret file...');
+	animals = require('../../../../secret/owo-animals.json');
+	console.log('Found owo-animals.json file in secret folder!');
+}
 
 module.exports = new CommandInterface({
 	alias: ['my', 'me', 'guild'],
@@ -77,14 +84,8 @@ async function display(p, con, msg, args) {
 			!level &&
 			!shard
 		) {
-			if (args[i] === 'points' || args[i] === 'point' || args[i] === 'p')
-				points = true;
-			else if (
-				args[i] === 'guild' ||
-				args[i] === 'server' ||
-				args[i] === 'g' ||
-				args[i] === 's'
-			)
+			if (args[i] === 'points' || args[i] === 'point' || args[i] === 'p') points = true;
+			else if (args[i] === 'guild' || args[i] === 'server' || args[i] === 'g' || args[i] === 's')
 				guild = true;
 			else if (args[i] === 'zoo' || args[i] === 'z') zoo = true;
 			else if (
@@ -113,8 +114,7 @@ async function display(p, con, msg, args) {
 			else if (args[i] === 'luck' || args[i] === 'pray') luck = true;
 			else if (args[i] === 'curse') curse = true;
 			else if (args[i] === 'battle' || args[i] === 'streak') battle = true;
-			else if (args[i] === 'level' || args[i] === 'lvl' || args[i] === 'xp')
-				level = true;
+			else if (args[i] === 'level' || args[i] === 'lvl' || args[i] === 'xp') level = true;
 			else if (args[i] === 'daily') daily = true;
 			else if (
 				args[i] === 'shards' ||
@@ -169,12 +169,9 @@ async function displayRanking(con, msg, sql, title, subText, p) {
 		if (id !== '' && id !== null && !isNaN(id)) {
 			let user = await p.fetch.getUser(id, true);
 			let name = '';
-			if (user === undefined || user.username === undefined)
-				name = 'User Left Discord';
+			if (user === undefined || user.username === undefined) name = 'User Left Discord';
 			else name = '' + user.username;
-			name = name
-				.replace('discord.gg', 'discord,gg')
-				.replace(/(```)/g, '`\u200b``');
+			name = name.replace('discord.gg', 'discord,gg').replace(/(```)/g, '`\u200b``');
 			embed += '#' + rank + '\t' + name + '\n' + subText(ele) + '\n';
 			rank++;
 		} else if (rank == 0) rank = 1;
@@ -184,9 +181,7 @@ async function displayRanking(con, msg, sql, title, subText, p) {
 	let uname;
 	if ((uname = await p.fetch.getUser(me.id, true))) uname = uname.username;
 	else uname = 'you';
-	uname = uname
-		.replace('discord.gg', 'discord,gg')
-		.replace(/(```)/g, '`\u200b``');
+	uname = uname.replace('discord.gg', 'discord,gg').replace(/(```)/g, '`\u200b``');
 	embed += '< ' + rank + '   ' + uname + ' >\n' + subText(me) + '\n';
 	rank++;
 
@@ -196,8 +191,7 @@ async function displayRanking(con, msg, sql, title, subText, p) {
 		if (id !== '' && id !== null && !isNaN(id)) {
 			var user = await p.fetch.getUser(id, true);
 			var name = '';
-			if (user === undefined || user.username === undefined)
-				name = 'User Left Discord';
+			if (user === undefined || user.username === undefined) name = 'User Left Discord';
 			else name = '' + user.username;
 			name = name.replace('discord.gg', 'discord,gg');
 			embed += '#' + rank + '\t' + name + '\n' + subText(ele) + '\n';
@@ -359,10 +353,7 @@ function getZooRanking(globalRank, con, msg, p) {
 		(globalRank ? 'Global ' : '') + 'Zoo Ranking',
 		function (query) {
 			return (
-				'\t\t' +
-				global.toFancyNum(query.points) +
-				' zoo points: ' +
-				animalUtil2.zooScore(query)
+				'\t\t' + global.toFancyNum(query.points) + ' zoo points: ' + animalUtil2.zooScore(query)
 			);
 		},
 		p
@@ -1090,14 +1081,8 @@ async function getLevelRanking(global, p) {
 			userLevel.currentxp +
 			'xp\n\n';
 	} else {
-		userRank = await levels.getUserServerRank(
-			p.msg.author.id,
-			p.msg.channel.guild.id
-		);
-		userLevel = await levels.getUserServerLevel(
-			p.msg.author.id,
-			p.msg.channel.guild.id
-		);
+		userRank = await levels.getUserServerRank(p.msg.author.id, p.msg.channel.guild.id);
+		userLevel = await levels.getUserServerLevel(p.msg.author.id, p.msg.channel.guild.id);
 		ranking = await levels.getNearbyServerXP(userRank, p.msg.channel.guild.id);
 		text =
 			'```md\n< ' +

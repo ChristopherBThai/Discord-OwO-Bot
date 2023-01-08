@@ -41,8 +41,7 @@ module.exports = class ArcaneScepter extends WeaponInterface {
 		if (me.stats.hp[0] <= 0) return;
 
 		/* No mana */
-		if (me.stats.wp[0] < this.manaCost)
-			return this.attackPhysical(me, team, enemy);
+		if (me.stats.wp[0] < this.manaCost) return this.attackPhysical(me, team, enemy);
 
 		let logs = new Logs();
 
@@ -58,14 +57,10 @@ module.exports = class ArcaneScepter extends WeaponInterface {
 					lowest = team[i];
 			}
 		}
-		if (!lowest || WeaponInterface.isMaxWp(lowest))
-			return this.attackPhysical(me, team, enemy);
+		if (!lowest || WeaponInterface.isMaxWp(lowest)) return this.attackPhysical(me, team, enemy);
 
 		/* Calculate replenish */
-		let replenish = WeaponInterface.getDamage(
-			me.stats.mag,
-			this.stats[0] / 100
-		);
+		let replenish = WeaponInterface.getDamage(me.stats.mag, this.stats[0] / 100);
 
 		/* deplete weapon points*/
 		let mana = WeaponInterface.useMana(me, this.manaCost, me, {

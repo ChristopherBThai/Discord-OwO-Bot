@@ -37,13 +37,10 @@ function teamFilter(userId) {
 }
 
 let minPgid = 0;
-mysql.con.query(
-	`SELECT pgid FROM pet_team ORDER BY pgid ASC LIMIT 1`,
-	(err, result) => {
-		if (err) throw err;
-		minPgid = result[0]?.pgid || 0;
-	}
-);
+mysql.con.query(`SELECT pgid FROM pet_team ORDER BY pgid ASC LIMIT 1`, (err, result) => {
+	if (err) throw err;
+	minPgid = result[0]?.pgid || 0;
+});
 
 /* ==================================== Grabs battle from sql ====================================  */
 /* Grabs existing battle */
@@ -101,15 +98,7 @@ var getBattle = (exports.getBattle = async function (p, setting) {
 		parseSqlBuffs(eTeam, result[2], pTeam);
 	} catch (err) {
 		console.error(err);
-		await finishBattle(
-			null,
-			p,
-			null,
-			6381923,
-			'An error occured',
-			false,
-			false
-		);
+		await finishBattle(null, p, null, 6381923, 'An error occured', false, false);
 		return;
 	}
 
@@ -128,8 +117,7 @@ var getBattle = (exports.getBattle = async function (p, setting) {
 	};
 	let enemy = {
 		pgid: epgid,
-		name:
-			censor && result[1][0].ptcensor == 1 ? 'Censored' : result[1][0].tname,
+		name: censor && result[1][0].ptcensor == 1 ? 'Censored' : result[1][0].tname,
 		team: eTeam,
 	};
 	let teams = { player, enemy };
@@ -144,9 +132,7 @@ exports.initBattle = async function (p, setting) {
 	let count = await p.query(sql);
 	let pgid = count[1][0];
 	if (!pgid) {
-		p.errorMsg(
-			", You don't have a team! Set one with `owo team add {animal}`!"
-		);
+		p.errorMsg(", You don't have a team! Set one with `owo team add {animal}`!");
 		return;
 	}
 	pgid = pgid.pgid;
@@ -207,8 +193,7 @@ exports.initBattle = async function (p, setting) {
 	};
 	let enemy = {
 		pgid: epgid,
-		name:
-			censor && result[0][0].ptcensor == 1 ? 'Censored' : result[0][0].tname,
+		name: censor && result[0][0].ptcensor == 1 ? 'Censored' : result[0][0].tname,
 		team: eTeam,
 	};
 	let teams = { player, enemy };
@@ -241,13 +226,11 @@ var display = (exports.display = async function (
 	logs,
 	{ display, title, showLogs, logLink }
 ) {
-	if (display == 'text')
-		return displayText(p, team, logs, { title, showLogs, logLink });
-	else if (display == 'compact')
-		return displayCompact(p, team, logs, { title, showLogs, logLink });
+	display = alterBattle.overrideDisplay(p, display);
+	if (display == 'text') return displayText(p, team, logs, { title, showLogs, logLink });
+	else if (display == 'compact') return displayCompact(p, team, logs, { title, showLogs, logLink });
 	let image = await battleImageUtil.generateImage(team);
-	if (!image || image == '')
-		return displayCompact(p, team, logs, { title, showLogs, logLink });
+	if (!image || image == '') return displayCompact(p, team, logs, { title, showLogs, logLink });
 	let logtext = '';
 	let pTeam = '';
 	for (var i = 0; i < team.player.team.length; i++) {
@@ -329,10 +312,7 @@ var displayText = (exports.displayText = async function (
 		let player = team.player.team[i];
 		let text = '';
 		text += animalDisplayText(player);
-		logtext +=
-			'\n' +
-			(player.animal.uni ? player.animal.uni : player.animal.value) +
-			' ';
+		logtext += '\n' + (player.animal.uni ? player.animal.uni : player.animal.value) + ' ';
 		if (logs && logs.player && logs.player[i]) {
 			logtext += logs.player[i];
 		} else logtext += 'is ready to battle!';
@@ -343,8 +323,7 @@ var displayText = (exports.displayText = async function (
 		let enemy = team.enemy.team[i];
 		let text = '';
 		text += animalDisplayText(enemy);
-		logtext +=
-			'\n' + (enemy.animal.uni ? enemy.animal.uni : enemy.animal.value) + ' ';
+		logtext += '\n' + (enemy.animal.uni ? enemy.animal.uni : enemy.animal.value) + ' ';
 		if (logs && logs.enemy && logs.enemy[i]) {
 			logtext += logs.enemy[i];
 		} else logtext += 'is ready to battle!';
@@ -470,15 +449,7 @@ var reactionCollector = (exports.reactionCollector = async function (
 	while (team[current] && team[current].stats.hp[0] <= 0) current++;
 	/* If all animals are dead end it. */
 	if (!team[current]) {
-		await finishBattle(
-			msg,
-			p,
-			battle,
-			6381923,
-			'An error occured',
-			false,
-			false
-		);
+		await finishBattle(msg, p, battle, 6381923, 'An error occured', false, false);
 		return;
 	}
 
@@ -590,45 +561,15 @@ async function executeBattle(p, msg, action, setting) {
 
 	/* tie */
 	if (enemyWin && playerWin) {
-		await finishBattle(
-			msg,
-			p,
-			battle,
-			6381923,
-			"It's a tie!",
-			playerWin,
-			enemyWin,
-			null,
-			setting
-		);
+		await finishBattle(msg, p, battle, 6381923, "It's a tie!", playerWin, enemyWin, null, setting);
 
 		/* enemy wins */
 	} else if (enemyWin) {
-		await finishBattle(
-			msg,
-			p,
-			battle,
-			16711680,
-			'You lost!',
-			playerWin,
-			enemyWin,
-			null,
-			setting
-		);
+		await finishBattle(msg, p, battle, 16711680, 'You lost!', playerWin, enemyWin, null, setting);
 
 		/* player wins */
 	} else if (playerWin) {
-		await finishBattle(
-			msg,
-			p,
-			battle,
-			65280,
-			'You won!',
-			playerWin,
-			enemyWin,
-			null,
-			setting
-		);
+		await finishBattle(msg, p, battle, 65280, 'You won!', playerWin, enemyWin, null, setting);
 
 		/* continue battle */
 	} else {
@@ -651,15 +592,7 @@ async function executeBattle(p, msg, action, setting) {
 		sql += sqlBuffs;
 		let result = await p.query(sql);
 		if (result[0].changedRows == 0) {
-			await finishBattle(
-				null,
-				p,
-				null,
-				6381923,
-				'An error occured',
-				false,
-				false
-			);
+			await finishBattle(null, p, null, 6381923, 'An error occured', false, false);
 			await msg.edit('It seems like the enemy team ran away...');
 			return;
 		}
@@ -724,9 +657,7 @@ var calculateAll = (exports.calculateAll = function (p, battle, logs = []) {
 	battleLogs = battleLogs.concat(
 		preTurn(battle.player.team, battle.enemy.team, [weapon, weapon, weapon])
 	);
-	battleLogs = battleLogs.concat(
-		preTurn(battle.enemy.team, battle.player.team, eaction)
-	);
+	battleLogs = battleLogs.concat(preTurn(battle.enemy.team, battle.player.team, eaction));
 	/* Execute actions */
 	battleLogs = battleLogs.concat(
 		executeTurn(battle.player.team, battle.enemy.team, {
@@ -738,9 +669,7 @@ var calculateAll = (exports.calculateAll = function (p, battle, logs = []) {
 	battleLogs = battleLogs.concat(
 		postTurn(battle.player.team, battle.enemy.team, [weapon, weapon, weapon])
 	);
-	battleLogs = battleLogs.concat(
-		postTurn(battle.enemy.team, battle.player.team, eaction)
-	);
+	battleLogs = battleLogs.concat(postTurn(battle.enemy.team, battle.player.team, eaction));
 	/* Remove marked buffs */
 	removeBuffs(battle.player.team, battle.enemy.team);
 
@@ -758,8 +687,8 @@ exports.displayAllBattles = async function (p, battle, logs, setting) {
 	let endResult = logs[logs.length - 1];
 	let logLink;
 	if (setting.showLogs == 'link') {
-		let uuid = await createLogUUID(logs.slice(0, -1));
-		if (uuid) logLink = `${process.env.GEN_HOST}/battle-log/${uuid}`;
+		let uuid = await createLogUUID(logs.slice(0, -1), battle);
+		if (uuid) logLink = `${process.env.SITE_URL}/battle-log?uuid=${uuid}`;
 	}
 	setting.logLink = logLink;
 	/* Instant mode sends just one message */
@@ -834,7 +763,7 @@ exports.displayAllBattles = async function (p, battle, logs, setting) {
 	updatePreviousStats(battle);
 	let embed = await display(p, battle, undefined, setting);
 	embed.embed.footer = { text: 'Turn 0/' + (logs.length - 1) };
-	embed.embed = await alterBattle.alter(p, p.msg.author, embed.embed);
+	embed.embed = await alterBattle.alter(p, p.msg.author, embed.embed, null, setting);
 	let msg = await p.send(embed);
 
 	/* Update the message for each log in log timeline */
@@ -994,12 +923,7 @@ function preTurn(team, enemy, action) {
 			let log = animal.weapon.preTurn(animal, team, enemy, action[i]);
 			if (log) logs = logs.concat(log.logs);
 			for (let j in animal.weapon.passives) {
-				let log2 = animal.weapon.passives[j].preTurn(
-					animal,
-					team,
-					enemy,
-					action[i]
-				);
+				let log2 = animal.weapon.passives[j].preTurn(animal, team, enemy, action[i]);
 				if (log2) logs = logs.concat(log2.logs);
 			}
 		}
@@ -1043,8 +967,7 @@ function executeTurn(team, enemy, action) {
 
 				// Animal has a weapon
 			} else if (animal.weapon) {
-				if (tempAction == weapon)
-					log = animal.weapon.attackWeapon(animal, tempAlly, tempEnemy);
+				if (tempAction == weapon) log = animal.weapon.attackWeapon(animal, tempAlly, tempEnemy);
 				else log = animal.weapon.attackPhysical(animal, tempAlly, tempEnemy);
 
 				// Animal has no weapon
@@ -1079,12 +1002,7 @@ function postTurn(team, enemy, action) {
 			let log = animal.weapon.postTurn(animal, team, enemy, action[i]);
 			if (log) logs = logs.concat(log.logs);
 			for (let j in animal.weapon.passives) {
-				let log2 = animal.weapon.passives[j].postTurn(
-					animal,
-					team,
-					enemy,
-					action[i]
-				);
+				let log2 = animal.weapon.passives[j].postTurn(animal, team, enemy, action[i]);
 				if (log2) logs = logs.concat(log2.logs);
 			}
 		}
@@ -1128,17 +1046,7 @@ function removeBuffs(team, enemy) {
 }
 
 /* finish battle */
-async function finishBattle(
-	msg,
-	p,
-	battle,
-	color,
-	text,
-	playerWin,
-	enemyWin,
-	logs,
-	setting
-) {
+async function finishBattle(msg, p, battle, color, text, playerWin, enemyWin, logs, setting) {
 	/* Check if the battle is still active and if the player should receive rewards */
 	let sql = '';
 	if (!battle)
@@ -1148,9 +1056,7 @@ async function finishBattle(
 	else if (!setting.instant)
 		sql = `UPDATE pet_team_battle SET active = 0 WHERE active = 1 and pgid = ${battle.player.pgid};`;
 	sql += `SELECT * FROM user INNER JOIN crate ON user.uid = crate.uid WHERE id = ${p.msg.author.id};`;
-	sql += `DELETE FROM pet_team_battle_buff WHERE pgid = (${teamFilter(
-		p.msg.author.id
-	)});`;
+	sql += `DELETE FROM pet_team_battle_buff WHERE pgid = (${teamFilter(p.msg.author.id)});`;
 	let result = await p.query(sql);
 	if ((!setting || !setting.instant) && result[0].changedRows == 0) return;
 
@@ -1205,9 +1111,7 @@ async function finishBattle(
 				opt.streak = battle.player.streak;
 			} else if (pXP.addStreak) {
 				if (pXP.bonus) {
-					text += ` + ${pXP.bonus} bonus xp! Streak: ${
-						battle.player.streak + 1
-					}`;
+					text += ` + ${pXP.bonus} bonus xp! Streak: ${battle.player.streak + 1}`;
 					opt.xp += ` + ${pXP.bonus}`;
 				} else text += `! Streak: ${battle.player.streak + 1}`;
 				opt.streak = battle.player.streak + 1;
@@ -1217,7 +1121,7 @@ async function finishBattle(
 			}
 		} else text += '!';
 		embed.embed.footer = { text };
-		embed.embed = await alterBattle.alter(p, p.msg.author, embed.embed, opt);
+		embed.embed = await alterBattle.alter(p, p.msg.author, embed.embed, opt, setting);
 		if (msg) await msg.edit(embed);
 		else await p.send(embed);
 	}
@@ -1242,7 +1146,7 @@ async function finishFriendlyBattle(
 	let embed = await display(p, battle, logs, setting);
 	embed.embed.color = color;
 	embed.embed.footer = { text };
-	embed.embed = await alterBattle.alter(p, p.msg.author, embed.embed);
+	embed.embed = await alterBattle.alter(p, p.msg.author, embed.embed, null, setting);
 	if (msg) await msg.edit(embed);
 	else await p.send(embed);
 }
@@ -1290,10 +1194,8 @@ function calculateXP(team, enemy, currentStreak = 0) {
 function bonusXP(streak) {
 	let bonus = 0;
 	if (streak % 1000 === 0) bonus = 25 * (Math.sqrt(streak / 100) * 100 + 500);
-	else if (streak % 500 === 0)
-		bonus = 10 * (Math.sqrt(streak / 100) * 100 + 500);
-	else if (streak % 100 === 0)
-		bonus = 5 * (Math.sqrt(streak / 100) * 100 + 500);
+	else if (streak % 500 === 0) bonus = 10 * (Math.sqrt(streak / 100) * 100 + 500);
+	else if (streak % 100 === 0) bonus = 5 * (Math.sqrt(streak / 100) * 100 + 500);
 	else if (streak % 50 === 0) bonus = 3 * (Math.sqrt(streak / 100) * 100 + 500);
 	else if (streak % 10 === 0) bonus = Math.sqrt(streak / 100) * 100 + 500;
 	else bonus = 0;
@@ -1384,10 +1286,8 @@ function updateTeamStats(team, stats) {
 	if (Number.isFinite(stats)) percent = stats / 100;
 	for (let i = 0; i < team.length; i++) {
 		if (percent) {
-			team[i].stats.hp[0] =
-				(team[i].stats.hp[1] + team[i].stats.hp[3]) * percent;
-			team[i].stats.wp[0] =
-				(team[i].stats.wp[1] + team[i].stats.wp[3]) * percent;
+			team[i].stats.hp[0] = (team[i].stats.hp[1] + team[i].stats.hp[3]) * percent;
+			team[i].stats.wp[0] = (team[i].stats.wp[1] + team[i].stats.wp[3]) * percent;
 			team[i].buffs = [];
 		} else {
 			team[i].stats.hp = stats[i].hp;
@@ -1468,8 +1368,8 @@ function parseLogs(logs) {
 }
 
 /* Creates a uuid for battle logs website */
-async function createLogUUID(logs) {
-	let info = { logs, password: process.env.GEN_PASS };
+async function createLogUUID(logs, battle) {
+	let info = { battle, logs, password: process.env.GEN_PASS };
 	try {
 		return new Promise((resolve, reject) => {
 			let req = request(

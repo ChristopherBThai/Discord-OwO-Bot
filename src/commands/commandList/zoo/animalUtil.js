@@ -5,7 +5,14 @@
  * For more information, see README.md and LICENSE
  */
 
-const animals = require('../../../../../tokens/owo-animals.json');
+let animals;
+try {
+	animals = require('../../../../../tokens/owo-animals.json');
+} catch (err) {
+	console.error('Could not find owo-animals.json, attempting to use ./secret file...');
+	animals = require('../../../../secret/owo-animals.json');
+	console.log('Found owo-animals.json file in secret folder!');
+}
 
 let enableDistortedTier = true;
 setTimeout(() => {
@@ -44,8 +51,7 @@ exports.randAnimal = function ({ patreon, gem, lucky, huntbot, manual } = {}) {
 	if (!gem) gemPercent = 0;
 	else if (lucky) gemPercent += gemPercent * lucky.amount;
 	// If bot has restarted
-	let distortedPercent =
-		enableDistortedTier && manual ? animals.distorted[0] : 0;
+	let distortedPercent = enableDistortedTier && manual ? animals.distorted[0] : 0;
 	if (distortedPercent) {
 		distortedPercent += specialPercent + patreonPercent;
 		if (huntbot) distortedPercent += huntbot;
@@ -85,10 +91,7 @@ exports.randAnimal = function ({ patreon, gem, lucky, huntbot, manual } = {}) {
 		result.push(animals.bot[rand]);
 		result.push('bot');
 		result.push(100000);
-	} else if (
-		gemPercent &&
-		rand < gemPercent + specialPercent + patreonPercent
-	) {
+	} else if (gemPercent && rand < gemPercent + specialPercent + patreonPercent) {
 		rand = Math.ceil(Math.random() * (animals.gem.length - 1));
 		result.push('**gem** ' + animals.ranks.gem);
 		result.push(animals.gem[rand]);

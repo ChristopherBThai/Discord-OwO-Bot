@@ -74,9 +74,9 @@ exports.getRandomWeapons = function (uid, count) {
 	let randomWeapons = [];
 	for (let i = 0; i < count; i++) {
 		let tempWeapon = getRandomWeapon();
-		let weaponSql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${
-			uid ? uid : '?'
-		},${tempWeapon.id},'${tempWeapon.sqlStat}',${tempWeapon.avgQuality});`;
+		let weaponSql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${uid ? uid : '?'},${
+			tempWeapon.id
+		},'${tempWeapon.sqlStat}',${tempWeapon.avgQuality});`;
 		let passiveSql = `INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES `;
 		for (let j = 0; j < tempWeapon.passives.length; j++) {
 			let tempPassive = tempWeapon.passives[j];
@@ -113,8 +113,7 @@ var parseWeapon = (exports.parseWeapon = function (data) {
 		/* Parse stats */
 		data.stat = data.stat.split(',');
 		if (data.stat[0] == '') data.stat = [];
-		for (var i = 0; i < data.stat.length; i++)
-			data.stat[i] = parseInt(data.stat[i]);
+		for (var i = 0; i < data.stat.length; i++) data.stat[i] = parseInt(data.stat[i]);
 
 		/* Grab all passives */
 		for (var i = 0; i < data.passives.length; i++) {
@@ -158,24 +157,20 @@ var parseWeaponQuery = (exports.parseWeaponQuery = function (query) {
 					passives: [],
 				};
 			}
-			if (query[i].wpid)
+			if (query[i].wpid) {
 				weapons[key].passives.push({
 					id: query[i].wpid,
 					pcount: query[i].pcount,
 					stat: query[i].pstat,
 				});
+			}
 		}
 	}
 	return weapons;
 });
 
 /* Displays weapons with multiple pages */
-var display = (exports.display = async function (
-	p,
-	pageNum = 0,
-	sort = 0,
-	opt
-) {
+var display = (exports.display = async function (p, pageNum = 0, sort = 0, opt) {
 	if (!opt) opt = {};
 	let { users, msg, user } = opt;
 	if (!users) users = [];
@@ -196,13 +191,8 @@ var display = (exports.display = async function (
 	if (page.maxPage > 19) await msg.addReaction(fastForwardEmoji);
 	await msg.addReaction(sortEmoji);
 	let filter = (emoji, userID) =>
-		[
-			sortEmoji,
-			nextPageEmoji,
-			prevPageEmoji,
-			rewindEmoji,
-			fastForwardEmoji,
-		].includes(emoji.name) && users.includes(userID);
+		[sortEmoji, nextPageEmoji, prevPageEmoji, rewindEmoji, fastForwardEmoji].includes(emoji.name) &&
+		users.includes(userID);
 	let collector = p.reactionCollector.create(msg, filter, {
 		time: 900000,
 		idle: 120000,
@@ -279,11 +269,7 @@ exports.askDisplay = async function (p, id, opt = {}) {
 
 	let embed = {
 		author: {
-			name:
-				user.username +
-				', ' +
-				p.msg.author.username +
-				' wants to see your weapons!',
+			name: user.username + ', ' + p.msg.author.username + ' wants to see your weapons!',
 			icon_url: p.msg.author.avatarURL,
 		},
 		description: 'Do you give permission for this user to view your weapons?',
@@ -296,8 +282,7 @@ exports.askDisplay = async function (p, id, opt = {}) {
 	await msg.addReaction(declineEmoji);
 
 	let filter = (emoji, userID) =>
-		(emoji.name === acceptEmoji || emoji.name === declineEmoji) &&
-		user.id === userID;
+		(emoji.name === acceptEmoji || emoji.name === declineEmoji) && user.id === userID;
 	let collector = p.reactionCollector.create(msg, filter, { time: 60000 });
 	collector.on('collect', async (emoji) => {
 		collector.stop('done');
@@ -360,10 +345,7 @@ var getDisplayPage = async function (p, user, page, sort, opt = {}) {
 
 	/* out of bounds or no weapon */
 	if (!result[0][0]) {
-		p.errorMsg(
-			', you do not have any weapons, or the page is out of bounds',
-			3000
-		);
+		p.errorMsg(', you do not have any weapons, or the page is out of bounds', 3000);
 		return;
 	}
 
@@ -396,9 +378,7 @@ var getDisplayPage = async function (p, user, page, sort, opt = {}) {
 				let animal = p.global.validAnimal(user_weapons[key].animal.name);
 				row += p.replaceMentions(
 					` | ${animal.uni ? animal.uni : animal.value} ${
-						user_weapons[key].animal.nickname
-							? user_weapons[key].animal.nickname
-							: ''
+						user_weapons[key].animal.nickname ? user_weapons[key].animal.nickname : ''
 					}`
 				);
 			}
@@ -412,7 +392,7 @@ var getDisplayPage = async function (p, user, page, sort, opt = {}) {
 				} else {
 					fieldText += row;
 				}
-			} else if (descHelp.length + desc.length + row.length >= 2048) {
+			} else if (descHelp.length + desc.length + row.length >= 4096) {
 				fieldText = row;
 			} else {
 				desc += row;
@@ -494,8 +474,7 @@ exports.describe = async function (p, uwid) {
 	/* Parse image url */
 	let url = weapon.emoji;
 	if ((temp = url.match(/:[0-9]+>/))) {
-		temp =
-			'https://cdn.discordapp.com/emojis/' + temp[0].match(/[0-9]+/)[0] + '.';
+		temp = 'https://cdn.discordapp.com/emojis/' + temp[0].match(/[0-9]+/)[0] + '.';
 		if (url.match(/<a:/)) temp += 'gif';
 		else temp += 'png';
 		url = temp;
@@ -510,9 +489,7 @@ exports.describe = async function (p, uwid) {
 	let desc = `**Name:** ${weapon.name}\n`;
 	desc += `**Owner:** ${username}\n`;
 	desc += `**ID:** \`${shortenUWID(uwid)}\`\n`;
-	desc += `**Sell Value:** ${
-		weapon.unsellable ? 'UNSELLABLE' : prices[weapon.rank.name]
-	}\n`;
+	desc += `**Sell Value:** ${weapon.unsellable ? 'UNSELLABLE' : prices[weapon.rank.name]}\n`;
 	desc += `**Quality:** ${weapon.rank.emoji} ${weapon.avgQuality}%\n`;
 	desc += `**WP Cost:** ${Math.ceil(weapon.manaCost)} <:wp:531620120976687114>`;
 	desc += `\n**Description:** ${weapon.desc}\n`;
@@ -670,11 +647,7 @@ exports.unequip = async function (p, uwid) {
 		let weapon = this.parseWeaponQuery(result[0]);
 		weapon = weapon[Object.keys(weapon)[0]];
 		weapon = this.parseWeapon(weapon);
-		if (weapon)
-			p.replyMsg(
-				weaponEmoji,
-				`, No animal is using ${weapon.emoji} **${weapon.name}**`
-			);
+		if (weapon) p.replyMsg(weaponEmoji, `, No animal is using ${weapon.emoji} **${weapon.name}**`);
 		else p.errorMsg(`, Could not find a weapon with that id!`);
 
 		/* Invalid */

@@ -33,8 +33,7 @@ module.exports = new CommandInterface({
 		}
 
 		// query
-		let sql =
-			'SELECT type,message,sender FROM feedback WHERE id = ' + feedbackId + ';';
+		let sql = 'SELECT type,message,sender FROM feedback WHERE id = ' + feedbackId + ';';
 		let result = await p.query(sql);
 		if (!result | !result[0]) {
 			p.errorMsg(', Could not find that feedback id!', 3000);
@@ -79,10 +78,7 @@ module.exports = new CommandInterface({
 				},
 				{
 					name: 'Reply from Admin',
-					value:
-						'```' +
-						reply +
-						'```\n\n===============================================',
+					value: '```' + reply + '```\n\n===============================================',
 				},
 			],
 		};

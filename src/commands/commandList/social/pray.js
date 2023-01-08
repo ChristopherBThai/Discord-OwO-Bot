@@ -69,12 +69,7 @@ module.exports = new CommandInterface({
 			let prayLine = prayLines[Math.floor(Math.random() * prayLines.length)];
 			if (user) {
 				text =
-					'**🙏 | ' +
-					p.msg.author.username +
-					'** prays for **' +
-					user.username +
-					'**! ' +
-					prayLine;
+					'**🙏 | ' + p.msg.author.username + '** prays for **' + user.username + '**! ' + prayLine;
 				authorPoints = -1;
 				opponentPoints = 1;
 				quest = 'prayBy';
@@ -96,8 +91,7 @@ module.exports = new CommandInterface({
 				opponentPoints = -1;
 				quest = 'curseBy';
 			} else {
-				text =
-					'**👻 | ' + p.msg.author.username + '** is now cursed. ' + curseLine;
+				text = '**👻 | ' + p.msg.author.username + '** is now cursed. ' + curseLine;
 				authorPoints = -1;
 			}
 		}
@@ -112,8 +106,7 @@ module.exports = new CommandInterface({
 		sql += ');';
 		let result = await p.query(sql);
 		if (result.length < len) {
-			sql =
-				'INSERT IGNORE INTO user (id,count) VALUES (' + p.msg.author.id + ',0)';
+			sql = 'INSERT IGNORE INTO user (id,count) VALUES (' + p.msg.author.id + ',0)';
 			if (opponentPoints && user) sql += ',(' + user.id + ',0);';
 		}
 
@@ -145,9 +138,7 @@ module.exports = new CommandInterface({
 
 		result = await p.query(sql);
 		text +=
-			'\n**<:blank:427371936482328596> |** You have **' +
-			result[1][0].lcount +
-			'** luck point(s)!';
+			'\n**<:blank:427371936482328596> |** You have **' + result[1][0].lcount + '** luck point(s)!';
 		text = alterPray.alter(p.msg.author.id, text, {
 			command: p.command,
 			author: p.msg.author,

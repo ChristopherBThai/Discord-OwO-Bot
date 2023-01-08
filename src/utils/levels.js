@@ -1,8 +1,14 @@
 const redis = require('./redis.js');
 const logger = require('./logger.js');
 const levelRewards = require('./levelRewards.js');
-var macro;
-macro = require('../../../tokens/macro.js');
+let macro;
+try {
+	macro = require('../../../tokens/macro.js');
+} catch (err) {
+	console.error('Could not find macro.js, attempting to use ./secret file...');
+	macro = require('../../secret/macro.js');
+	console.log('Found macro.js file in secret folder!');
+}
 const minXP = 10,
 	maxXP = 15,
 	dailyLimit = 3000;
@@ -34,9 +40,7 @@ exports.giveXP = async function (msg) {
 		if (limit[msg.channel.guild.id]) {
 			// If server xp hit daily cap
 			if (limit[msg.channel.guild.id] > dailyLimit) guildLimitHit = true;
-			else
-				limit[msg.channel.guild.id] =
-					parseInt(limit[msg.channel.guild.id]) + gain;
+			else limit[msg.channel.guild.id] = parseInt(limit[msg.channel.guild.id]) + gain;
 		} else {
 			// first msg in guild
 			limit[msg.channel.guild.id] = gain;
@@ -66,11 +70,7 @@ exports.giveXP = async function (msg) {
 		logger.incr('xp', gain + bonus, {}, msg);
 	}
 	if (!guildLimitHit) {
-		await redis.incr(
-			'user_xp_' + msg.channel.guild.id,
-			msg.author.id,
-			gain + guildBonus
-		);
+		await redis.incr('user_xp_' + msg.channel.guild.id, msg.author.id, gain + guildBonus);
 	}
 
 	// Check if user leveled up

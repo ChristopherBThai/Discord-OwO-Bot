@@ -42,8 +42,7 @@ module.exports = class AbsorbWand extends WeaponInterface {
 		if (me.stats.hp[0] <= 0) return;
 
 		/* No mana */
-		if (me.stats.wp[0] < this.manaCost)
-			return this.attackPhysical(me, team, enemy);
+		if (me.stats.wp[0] < this.manaCost) return this.attackPhysical(me, team, enemy);
 
 		let logs = new Logs();
 
@@ -64,13 +63,11 @@ module.exports = class AbsorbWand extends WeaponInterface {
 		let damage = WeaponInterface.getDamage(me.stats.mag, this.stats[0] / 100);
 
 		/* Deal damage */
-		damage = WeaponInterface.inflictDamage(
+		damage = WeaponInterface.inflictDamage(me, attacking, damage, WeaponInterface.MAGICAL, {
 			me,
-			attacking,
-			damage,
-			WeaponInterface.MAGICAL,
-			{ me, allies: team, enemies: enemy }
-		);
+			allies: team,
+			enemies: enemy,
+		});
 
 		/* Steal WP */
 		let stole = (damage.amount * this.stats[1]) / 100;
@@ -89,9 +86,7 @@ module.exports = class AbsorbWand extends WeaponInterface {
 
 		/* Add everything to logs */
 		if (!lowestWp || !replenishLogs)
-			logs.push(
-				`[AWAND] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`
-			);
+			logs.push(`[AWAND] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP`);
 		else
 			logs.push(
 				`[AWAND] ${me.nickname} damaged ${attacking.nickname} for ${

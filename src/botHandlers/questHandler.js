@@ -17,14 +17,7 @@ const findQuest = {
 	epic: ['common', 'uncommon', 'rare'],
 	mythical: ['common', 'uncommon', 'rare', 'epic'],
 };
-const questBy = [
-	'friendlyBattle',
-	'friendlyBattleBy',
-	'emoteBy',
-	'prayBy',
-	'curseBy',
-	'cookieBy',
-];
+const questBy = ['friendlyBattle', 'friendlyBattleBy', 'emoteBy', 'prayBy', 'curseBy', 'cookieBy'];
 
 module.exports = class Quest {
 	/* Constructer to grab mysql connection */

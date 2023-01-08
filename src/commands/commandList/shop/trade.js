@@ -11,8 +11,7 @@ const itemUtil = require('./util/itemUtil.js');
 const thumbsup = '👍';
 const thumbsdown = '👎';
 const tada = '🎉';
-const spacer =
-	'                                                               ';
+const spacer = '                                                               ';
 
 module.exports = new CommandInterface({
 	alias: ['trade', 'tr', 'gift'],
@@ -51,17 +50,11 @@ async function validate(p) {
 	itemId = parseInt(itemId);
 	const item = itemUtil.getById(itemId);
 	if (!item) {
-		await p.errorMsg(
-			', an item with that id does not exist or you cannot trade that item.',
-			3000
-		);
+		await p.errorMsg(', an item with that id does not exist or you cannot trade that item.', 3000);
 		return { error: true };
 	}
 	if (item.untradeable) {
-		await p.errorMsg(
-			`, ${item.emoji} **${item.name}** is not tradeable!`,
-			3000
-		);
+		await p.errorMsg(`, ${item.emoji} **${item.name}** is not tradeable!`, 3000);
 		return { error: true };
 	}
 
@@ -76,10 +69,7 @@ async function validate(p) {
 	}
 
 	if (!item.giveOnly && !price) {
-		await p.errorMsg(
-			', please specify what price you want to sell the item for!',
-			3000
-		);
+		await p.errorMsg(', please specify what price you want to sell the item for!', 3000);
 		return { error: true };
 	}
 	if (!item.giveOnly && !p.global.isInt(price)) {
@@ -127,17 +117,11 @@ async function validate(p) {
 		const afterMid = p.dateUtil.afterMidnight(result[0][0].daily_reset);
 		if (!afterMid.after) {
 			if (result[0][0].daily_count >= item.tradeLimit) {
-				await p.errorMsg(
-					`, you can only trade this item ${item.tradeLimit}x per day!`,
-					3000
-				);
+				await p.errorMsg(`, you can only trade this item ${item.tradeLimit}x per day!`, 3000);
 				return { error: true };
 			} else if (result[0][0].daily_count + count > item.tradeLimit) {
 				const diff = item.tradeLimit - result[0][0].daily_count;
-				await p.errorMsg(
-					`, you can only trade this item ${diff} more times today!`,
-					3000
-				);
+				await p.errorMsg(`, you can only trade this item ${diff} more times today!`, 3000);
 				return { error: true };
 			}
 		}
@@ -161,16 +145,12 @@ async function sendMessage(p, { item, user, price, count }) {
 		fields: [
 			{
 				name: `${p.msg.author.username}#${p.msg.author.discriminator} will give:`,
-				value: `\`\`\`fix\n${count} ${item.name}${
-					count > 1 ? 's' : ''
-				}${spacer}\n\`\`\``,
+				value: `\`\`\`fix\n${count} ${item.name}${count > 1 ? 's' : ''}${spacer}\n\`\`\``,
 				inline: true,
 			},
 			{
 				name: `${user.username}#${user.discriminator} will give:`,
-				value: `\`\`\`fix\n${p.global.toFancyNum(
-					count * price
-				)} cowoncy${spacer}\n\`\`\``,
+				value: `\`\`\`fix\n${p.global.toFancyNum(count * price)} cowoncy${spacer}\n\`\`\``,
 				inline: true,
 			},
 		],

@@ -21,15 +21,7 @@ const ranks = [
 		'mythicweapon',
 	],
 	['legendary', 'lw', 'legendaryweapons', 'legendaryweapon'],
-	[
-		'fabled',
-		'fable',
-		'fw',
-		'fabledweapons',
-		'fabledweapon',
-		'fableweapons',
-		'fableweapon',
-	],
+	['fabled', 'fable', 'fw', 'fabledweapons', 'fabledweapon', 'fableweapons', 'fableweapon'],
 ];
 const shardEmoji = '<:weaponshard:655902978712272917>';
 const dismantleEmoji = '🔨';
@@ -114,11 +106,7 @@ async function dismantleRank(p, rankLoc) {
 	let weapons = [];
 	let weaponsSQL = [];
 	let price = weaponUtil.shardPrices[WeaponInterface.ranks[rankLoc][1]];
-	let rank =
-		WeaponInterface.ranks[rankLoc][2] +
-		' **' +
-		WeaponInterface.ranks[rankLoc][1] +
-		'**';
+	let rank = WeaponInterface.ranks[rankLoc][2] + ' **' + WeaponInterface.ranks[rankLoc][1] + '**';
 	for (var key in weapon) {
 		let tempWeapon = weaponUtil.parseWeapon(weapon[key]);
 		if (!tempWeapon.unsellable) {
@@ -255,11 +243,9 @@ async function dismantleId(p, uwid) {
 
 	p.replyMsg(
 		dismantleEmoji,
-		`, You dismantled a(n) **${weapon.rank.name} ${weapon.name}**  ${
-			weapon.rank.emoji
-		}${weapon.emoji} for **${p.global.toFancyNum(
-			price
-		)}** ${shardEmoji} Weapon Shard${price == 1 ? '' : 's'}!`
+		`, You dismantled a(n) **${weapon.rank.name} ${weapon.name}**  ${weapon.rank.emoji}${
+			weapon.emoji
+		} for **${p.global.toFancyNum(price)}** ${shardEmoji} Weapon Shard${price == 1 ? '' : 's'}!`
 	);
 	p.logger.incr(`shards`, price, { type: 'dismantle' }, p.msg);
 }

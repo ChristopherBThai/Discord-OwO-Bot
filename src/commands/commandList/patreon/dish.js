@@ -60,9 +60,7 @@ async function display(p) {
 
 	p.replyMsg(
 		dishEmoji,
-		', you currently have ' +
-			count +
-			" dish(es) of iskender to enjoy! Eat while it's hot!"
+		', you currently have ' + count + " dish(es) of iskender to enjoy! Eat while it's hot!"
 	);
 }
 

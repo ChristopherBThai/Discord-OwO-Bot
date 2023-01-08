@@ -17,9 +17,7 @@ module.exports = new CommandInterface({
 
 	desc: "Generate a Drake meme! Seperate the two arguments with a '|' bar, or press 'Shift+Enter' between arguments",
 
-	example: [
-		'owo drake Using Discord to communicate with friends | Using discord to play OwO bot',
-	],
+	example: ['owo drake Using Discord to communicate with friends | Using discord to play OwO bot'],
 
 	related: [],
 
@@ -47,44 +45,35 @@ module.exports = new CommandInterface({
 			p.setCooldown(5);
 			return;
 		}
-		canvasUtil.loadBackground(
-			'./src/data/images/drake.jpg',
-			function (err, ctx, canvas, image) {
-				if (err) {
-					p.send(
-						'**🚫 | ' +
-							p.msg.author.username +
-							'**, Uh oh.. this command is broken!',
-						3000
-					);
-					return;
-				}
+		canvasUtil.loadBackground('./src/data/images/drake.jpg', function (err, ctx, canvas, image) {
+			if (err) {
+				p.send('**🚫 | ' + p.msg.author.username + '**, Uh oh.. this command is broken!', 3000);
+				return;
+			}
 
-				let textArgs = {
-					font: 'Arial',
-					x: 340,
-					y: 130,
-					width: 260,
-					height: 250,
-					size: 30,
-					color: 'black',
-					text: args[0],
-					imageSize: 100,
-				};
+			let textArgs = {
+				font: 'Arial',
+				x: 340,
+				y: 130,
+				width: 260,
+				height: 250,
+				size: 30,
+				color: 'black',
+				text: args[0],
+				imageSize: 100,
+			};
 
+			canvasUtil.addText(textArgs, p, ctx, canvas, function () {
+				textArgs.text = args[1];
+				textArgs.y = 410;
 				canvasUtil.addText(textArgs, p, ctx, canvas, function () {
-					textArgs.text = args[1];
-					textArgs.y = 410;
-					canvasUtil.addText(textArgs, p, ctx, canvas, function () {
-						buf = canvas.toBuffer();
-						p.send(
-							'**🖼 | ' + p.msg.author.username + '** generated a meme!',
-							null,
-							{ file: buf, name: 'meme.png' }
-						);
+					buf = canvas.toBuffer();
+					p.send('**🖼 | ' + p.msg.author.username + '** generated a meme!', null, {
+						file: buf,
+						name: 'meme.png',
 					});
 				});
-			}
-		);
+			});
+		});
 	},
 });

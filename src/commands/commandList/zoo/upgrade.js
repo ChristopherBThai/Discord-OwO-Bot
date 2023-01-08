@@ -12,8 +12,7 @@ const autohuntUtil = require('./autohuntutil.js');
 const essence = '<a:essence:451638978299428875>';
 const traits = {};
 const efficiency = ['efficiency', 'timer', 'cd', 'cooldown'];
-for (let i = 0; i < efficiency.length; i++)
-	traits[efficiency[i]] = 'efficiency';
+for (let i = 0; i < efficiency.length; i++) traits[efficiency[i]] = 'efficiency';
 const cost = ['cost', 'price', 'cowoncy'];
 for (let i = 0; i < cost.length; i++) traits[cost[i]] = 'cost';
 const duration = ['duration', 'totaltime', 'time'];
@@ -32,11 +31,7 @@ module.exports = new CommandInterface({
 
 	desc: 'Use animal essence to upgrade autohunt!\nYou can specify an amount, upgrade to the next level, or use all your essence.',
 
-	example: [
-		'owo upgrade efficiency 200',
-		'owo upgrade cost level',
-		'owo upgrade duration all',
-	],
+	example: ['owo upgrade efficiency 200', 'owo upgrade cost level', 'owo upgrade duration all'],
 
 	related: ['owo autohunt', 'owo sacrifice'],
 
@@ -75,10 +70,7 @@ module.exports = new CommandInterface({
 			all = true;
 
 			// owo upg duration lvl
-		} else if (
-			(args[1] && 'lvl' == args[1].toLowerCase()) ||
-			'level' == args[1].toLowerCase()
-		) {
+		} else if ((args[1] && 'lvl' == args[1].toLowerCase()) || 'level' == args[1].toLowerCase()) {
 			if (args[0]) {
 				trait = traits[args[0].toLowerCase()];
 			}
@@ -133,10 +125,7 @@ module.exports = new CommandInterface({
 		} catch (err) {
 			con.rollback();
 			console.error(err);
-			p.errorMsg(
-				', there was an error upgrading! Please try again later.',
-				3000
-			);
+			p.errorMsg(', there was an error upgrading! Please try again later.', 3000);
 			return;
 		}
 
@@ -160,11 +149,9 @@ module.exports = new CommandInterface({
 		}**, You successfully upgraded \`${trait}\` with  **${p.global.toFancyNum(
 			count
 		)} Animal Essence** ${essence}!`;
-		text += `\n**<:blank:427371936482328596> |** \`${trait}: ${
-			stat.stat + stat.prefix
-		} -  Lvl ${stat.lvl} ${
-			stat.max ? '[MAX]' : `[${stat.currentxp}/${stat.maxxp}]`
-		}\``;
+		text += `\n**<:blank:427371936482328596> |** \`${trait}: ${stat.stat + stat.prefix} -  Lvl ${
+			stat.lvl
+		} ${stat.max ? '[MAX]' : `[${stat.currentxp}/${stat.maxxp}]`}\``;
 		if (stat.max) {
 			text += '\n**<:blank:427371936482328596> |** HuntBot is at max level!';
 		} else if (stat.lvlup) {

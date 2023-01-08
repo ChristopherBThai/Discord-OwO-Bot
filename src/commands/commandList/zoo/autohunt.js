@@ -15,7 +15,6 @@ const letters = 'abcdefghijklmnopqrstuvwxyz';
 const botrank =
 	'SELECT (COUNT(*)) AS rank, (SELECT COUNT(*) FROM autohunt) AS total FROM autohunt WHERE autohunt.total >= (SELECT autohunt.total FROM autohunt WHERE id = ';
 const logger = require('../../../utils/logger.js');
-const animals = require('../../../../../tokens/owo-animals.json');
 const parse = require('parse-duration');
 
 module.exports = new CommandInterface({
@@ -62,9 +61,7 @@ async function claim(p, msg, con, query, bot) {
 
 	let duration = query.huntmin / 60;
 	//Get Total essence
-	let totalGain = Math.floor(
-		autohuntutil.getLvl(query.gain, 0, 'gain').stat * duration
-	);
+	let totalGain = Math.floor(autohuntutil.getLvl(query.gain, 0, 'gain').stat * duration);
 
 	let sql =
 		'SELECT IF(patreonAnimal = 1 OR (TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths),1,0) as patreon FROM user LEFT JOIN patreons ON user.uid = patreons.uid WHERE user.id = ' +
@@ -90,9 +87,7 @@ async function claim(p, msg, con, query, bot) {
 
 	sql = '';
 	//Get total exp
-	let totalExp = Math.floor(
-		autohuntutil.getLvl(query.exp, 0, 'exp').stat * duration
-	);
+	let totalExp = Math.floor(autohuntutil.getLvl(query.exp, 0, 'exp').stat * duration);
 	sql += `UPDATE IGNORE user 
 			INNER JOIN pet_team ON user.uid = pet_team.uid
 			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
@@ -138,13 +133,11 @@ async function claim(p, msg, con, query, bot) {
 	let tempText = [];
 	let count = 0;
 	for (let animal in total) {
-		let animalString =
-			animal + animalUtil.toSmallNum(total[animal].count, digits) + '  ';
-		let animalLoc = animals.order.indexOf(total[animal].rank);
+		let animalString = animal + animalUtil.toSmallNum(total[animal].count, digits) + '  ';
+		let animalLoc = p.animals.order.indexOf(total[animal].rank);
 		if (animalLoc || animalLoc === 0) {
 			if (!tempText[animalLoc])
-				tempText[animalLoc] =
-					' \n' + animals.ranks[animals.order[animalLoc]] + ' **|**';
+				tempText[animalLoc] = ' \n' + p.animals.ranks[p.animals.order[animalLoc]] + ' **|**';
 			tempText[animalLoc] += ' ' + animalString;
 		}
 		count++;
@@ -178,8 +171,7 @@ async function claim(p, msg, con, query, bot) {
 			';';
 	}
 
-	for (let i = 0; i < tempText.length; i++)
-		if (tempText[i]) text += tempText[i];
+	for (let i = 0; i < tempText.length; i++) if (tempText[i]) text += tempText[i];
 
 	result = await p.query(sql);
 	text = alterhb(msg.author.id, text, 'returned');
@@ -263,21 +255,14 @@ async function autohunt(p, msg, con, args, global, send) {
 
 	// convert duration to cowoncy
 	if (length) {
-		let efficiency = autohuntutil.getLvl(
-			result[0][0].efficiency,
-			0,
-			'efficiency'
-		);
+		let efficiency = autohuntutil.getLvl(result[0][0].efficiency, 0, 'efficiency');
 		let cost = autohuntutil.getLvl(result[0][0].cost, 0, 'cost');
 		cowoncy = Math.floor(efficiency.stat * cost.stat * length);
 	}
 
 	//Check if enough cowoncy
 	if (!result[1][0] || result[1][0].money < cowoncy) {
-		send(
-			'**🚫 | ' + msg.author.username + "**, You don't have enough cowoncy!",
-			3000
-		);
+		send('**🚫 | ' + msg.author.username + "**, You don't have enough cowoncy!", 3000);
 		return;
 	}
 
@@ -290,8 +275,7 @@ async function autohunt(p, msg, con, args, global, send) {
 		result[0][0].pwtime >= 10
 	) {
 		let rand = '';
-		for (let i = 0; i < 5; i++)
-			rand += letters.charAt(Math.floor(Math.random() * letters.length));
+		for (let i = 0; i < 5; i++) rand += letters.charAt(Math.floor(Math.random() * letters.length));
 		sql =
 			'INSERT INTO autohunt (id,start,huntcount,huntmin,password,passwordtime) VALUES (' +
 			msg.author.id +
@@ -370,12 +354,7 @@ async function autohunt(p, msg, con, args, global, send) {
 	let huntgain = Math.floor(tempPercent * maxgain);
 	let huntexp = Math.floor(tempPercent * maxexp);
 
-	sql =
-		'UPDATE cowoncy SET money = money - ' +
-		cowoncy +
-		' WHERE id = ' +
-		msg.author.id +
-		';';
+	sql = 'UPDATE cowoncy SET money = money - ' + cowoncy + ' WHERE id = ' + msg.author.id + ';';
 	sql +=
 		'INSERT INTO autohunt (id,start,huntcount,huntmin,password) VALUES (' +
 		msg.author.id +
@@ -452,13 +431,9 @@ async function display(p, msg, con, send) {
 
 	let traits = [duration, efficiency, cost, gain, exp, radar];
 	for (let i = 0; i < traits.length; i++) {
-		traits[i].percent = generatePercent(
-			traits[i].currentxp,
-			traits[i].maxxp
-		).bar;
+		traits[i].percent = generatePercent(traits[i].currentxp, traits[i].maxxp).bar;
 		if (traits[i].max)
-			traits[i].value =
-				'`Lvl ' + traits[i].lvl + ' [MAX]`\n' + generatePercent(1, 1).bar;
+			traits[i].value = '`Lvl ' + traits[i].lvl + ' [MAX]`\n' + generatePercent(1, 1).bar;
 		else
 			traits[i].value =
 				'`Lvl ' +
@@ -496,11 +471,7 @@ async function display(p, msg, con, send) {
 				inline: true,
 			},
 			{
-				name:
-					'<:cowoncy:416043450337853441> Cost - `' +
-					cost.stat +
-					cost.prefix +
-					'`',
+				name: '<:cowoncy:416043450337853441> Cost - `' + cost.stat + cost.prefix + '`',
 				value: cost.value,
 				inline: true,
 			},
@@ -521,9 +492,7 @@ async function display(p, msg, con, send) {
 			},
 			{
 				name:
-					'<a:essence:451638978299428875> Animal Essence - `' +
-					global.toFancyNum(essence) +
-					'`',
+					'<a:essence:451638978299428875> Animal Essence - `' + global.toFancyNum(essence) + '`',
 				value:
 					'`Current Max Autohunt: ' +
 					global.toFancyNum(maxhunt) +

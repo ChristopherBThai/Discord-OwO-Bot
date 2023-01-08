@@ -31,10 +31,7 @@ module.exports = new CommandInterface({
 
 	execute: async function (p) {
 		let perms = p.msg.member.permissions;
-		if (
-			p.args.length >= 1 &&
-			['disable', 'disabletext', 'dt'].includes(p.args[0].toLowerCase())
-		) {
+		if (p.args.length >= 1 && ['disable', 'disabletext', 'dt'].includes(p.args[0].toLowerCase())) {
 			if (perms.has('manageChannels')) {
 				let sql = `INSERT INTO guild_setting (id,levelup) VALUES (${p.msg.channel.guild.id},1) ON DUPLICATE KEY UPDATE levelup = 1;`;
 				await p.query(sql);
@@ -53,10 +50,7 @@ module.exports = new CommandInterface({
 			if (perms.has('manageChannels')) {
 				let sql = `UPDATE guild_setting SET levelup = 0 WHERE id = ${p.msg.channel.guild.id};`;
 				await p.query(sql);
-				await p.replyMsg(
-					settingEmoji,
-					', level up messages will be displayed in this guild.'
-				);
+				await p.replyMsg(settingEmoji, ', level up messages will be displayed in this guild.');
 			} else {
 				p.errorMsg(', you do not have the `MANAGE_CHANNELS` permission!', 3000);
 				return;
@@ -64,12 +58,7 @@ module.exports = new CommandInterface({
 		} else {
 			//try{
 			let opt = {};
-			if (
-				p.args[0] == 's' ||
-				p.args[0] == 'server' ||
-				p.args[0] == 'g' ||
-				p.args[0] == 'guild'
-			) {
+			if (p.args[0] == 's' || p.args[0] == 'server' || p.args[0] == 'g' || p.args[0] == 'guild') {
 				opt.guild = true;
 			}
 			let uuid = await levelUtil.display(p, p.msg.author, opt);

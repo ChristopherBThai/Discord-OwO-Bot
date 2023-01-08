@@ -64,15 +64,10 @@ async function display(p) {
 
 	let name = 'Butterfly';
 	if (count > 1) name = 'Butterflies';
-	p.replyMsg(
-		emoji,
-		', you currently have ' + count + ' ' + emoji + ' **' + name + '**!'
-	);
+	p.replyMsg(emoji, ', you currently have ' + count + ' ' + emoji + ' **' + name + '**!');
 }
 
 async function give(p, user) {
 	await p.redis.hincrby('data_' + user.id, data, 1);
-	p.send(
-		`${emoji} **| ${user.username}**, you have been given 1 **Butterfly**.`
-	);
+	p.send(`${emoji} **| ${user.username}**, you have been given 1 **Butterfly**.`);
 }

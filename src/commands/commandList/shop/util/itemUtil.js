@@ -14,8 +14,7 @@ const items = {
 		name: 'Wrapped Common Ticket',
 		emoji: config.emoji.perkTicket.wcommon,
 		column: 'common_tickets',
-		tradeNote:
-			'⚠️ **You can only trade this item ONCE. The ticket will be unwrapped.**',
+		tradeNote: '⚠️ **You can only trade this item ONCE. The ticket will be unwrapped.**',
 		tradeConvert: 14,
 		desc: 'You can use this item to redeem 1 month of common tier perks!\n\nYou can trade this item with other users with `owo trade 10 {@user} {pricePerTicket} {numberOfTickets}`. An example would be `owo trade 10 @Scuttler 100000 2`. This will trade 2 tickets for a total price of 200000 cowoncy.\n\n**This ticket is only tradeable ONCE.** It will be unwrapped once traded.\n\nYou can also use this item by typing in `owo use 10`.',
 	},
@@ -103,17 +102,14 @@ async function useCommonTicket(ticket, p) {
 	}
 
 	const embed = {
-		description: `**${
-			p.msg.author.username
-		}**, are you sure you want to redeem **${count}** ${ticket.emoji} **${
-			ticket.name
-		}${count > 1 ? 's' : ''}**?`,
+		description: `**${p.msg.author.username}**, are you sure you want to redeem **${count}** ${
+			ticket.emoji
+		} **${ticket.name}${count > 1 ? 's' : ''}**?`,
 		color: p.config.embed_color,
 	};
 	const msg = await p.send({ embed });
 	const filter = (emoji, userId) =>
-		(emoji.name === thumbsup || emoji.name === thumbsdown) &&
-		userId == p.msg.author.id;
+		(emoji.name === thumbsup || emoji.name === thumbsdown) && userId == p.msg.author.id;
 	const collector = p.reactionCollector.create(msg, filter, { time: 60000 });
 
 	await msg.addReaction(thumbsup);
@@ -146,9 +142,7 @@ async function useCommonTicket(ticket, p) {
 			result = await p.query(sql);
 			let uid = result[0].uid;
 			let months = result[0]?.patreonMonths || 0;
-			let monthsPassed = p.global.isInt(result[0]?.monthsPassed)
-				? result[0].monthsPassed
-				: months;
+			let monthsPassed = p.global.isInt(result[0]?.monthsPassed) ? result[0].monthsPassed : months;
 			const type = 1;
 
 			// reset timer or continue with current timer
@@ -167,10 +161,7 @@ async function useCommonTicket(ticket, p) {
 			con.commit();
 		} catch (err) {
 			console.error(err);
-			p.errorMsg(
-				', there was an error using your ticket! Please try again later.',
-				3000
-			);
+			p.errorMsg(', there was an error using your ticket! Please try again later.', 3000);
 			con.rollback();
 			return;
 		}
@@ -228,9 +219,9 @@ exports.desc = async function (p, id) {
 	if (item.tradeLimit) {
 		const afterMid = p.dateUtil.afterMidnight(result[0].daily_reset);
 		if (afterMid.after) {
-			embed.fields[0].value += `\n\n📑 **You can ${
-				item.giveOnly ? 'gift' : 'trade'
-			} this item ${item.tradeLimit} more times today.**`;
+			embed.fields[0].value += `\n\n📑 **You can ${item.giveOnly ? 'gift' : 'trade'} this item ${
+				item.tradeLimit
+			} more times today.**`;
 		} else {
 			if (result[0].daily_count >= item.tradeLimit) {
 				embed.fields[0].value += `\n\n📑 **You have hit the max ${

@@ -114,9 +114,7 @@ async function changeType(p, type) {
 	try {
 		await p.query(sql);
 	} catch (error) {
-		await p.query(
-			`INSERT IGNORE INTO user (id,count) VALUES (${p.msg.author.id},0);+sql`
-		);
+		await p.query(`INSERT IGNORE INTO user (id,count) VALUES (${p.msg.author.id},0);+sql`);
 	}
 	p.replyMsg(battleEmoji, text);
 }

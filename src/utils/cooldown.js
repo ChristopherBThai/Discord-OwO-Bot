@@ -1,3 +1,5 @@
+const global = require('./global.js');
+
 const timerEmoji = '⏱';
 const cooldown = {};
 const lock = {};
@@ -40,7 +42,7 @@ exports.check = async function (p, command) {
 				let { timerText, time } = parseTimer(mcommands[ccd.command].cd - diff);
 				await p.replyMsg(
 					timerEmoji,
-					'! Please wait ' + timerText + ' and try again!',
+					`! Slow down and try the command again **${timerText}**`,
 					time,
 					null,
 					{ ephemeral: true }
@@ -84,20 +86,12 @@ function parseTimer(diff) {
 	let time = diff;
 	if (time < 1000) time = 1000;
 
-	let mspercent = Math.trunc(((diff % 1000) / 1000) * 100);
-	diff = Math.trunc(diff / 1000);
-	let min = Math.trunc(diff / 60);
-	let sec = diff % 60;
-	let timerText =
-		'**' + (min > 0 ? min + 'm ' : '') + sec + '.' + mspercent + 's**';
-	return { min, sec, timerText, time };
+	const timerText = global.toDiscordTimestamp(Date.now() + diff);
+
+	return { timerText, time };
 }
 
-const setCooldown = (exports.setCooldown = async function (
-	p,
-	command,
-	cooldown = 0
-) {
+const setCooldown = (exports.setCooldown = async function (p, command, cooldown = 0) {
 	let key = 'cd_' + command + '_' + p.msg.author.id;
 	let commandCooldown = p.commands[p.commandAlias].cooldown;
 

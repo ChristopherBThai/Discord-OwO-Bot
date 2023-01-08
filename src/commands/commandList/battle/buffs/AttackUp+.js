@@ -15,8 +15,7 @@ module.exports = class AttackUp extends BuffInterface {
 		this.name = 'Attack Up+';
 		this.debuff = false;
 		this.emoji = '<:attupp:619405867543953408>';
-		this.statDesc =
-			'Increases all damage by **?%**. Cannot stack with other Attack Up+ buffs';
+		this.statDesc = 'Increases all damage by **?%**. Cannot stack with other Attack Up+ buffs';
 		this.qualityList = [[20, 30]];
 	}
 
@@ -38,9 +37,7 @@ module.exports = class AttackUp extends BuffInterface {
 		let bonus = damage[0] * (this.stats[0] / 100);
 		damage[1] += bonus;
 
-		logs.push(
-			`[ATTUP+] ${animal.nickname} dealt ${Math.round(bonus)} bonus damage`
-		);
+		logs.push(`[ATTUP+] ${animal.nickname} dealt ${Math.round(bonus)} bonus damage`);
 		return logs;
 	}
 };

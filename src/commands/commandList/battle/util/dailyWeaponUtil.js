@@ -32,10 +32,7 @@ const getDailyWeapons = (exports.getDailyWeapons = async function (p) {
 	let weapons = await redis.hgetall(redisKey);
 	let weaponKeys = Object.keys(weapons);
 	let weaponKeyResults = weaponKeys.map((id) => id + '' + p.msg.author.id);
-	weaponKeyResults = await redis.hmget(
-		redisKey + 'Purchased',
-		weaponKeyResults
-	);
+	weaponKeyResults = await redis.hmget(redisKey + 'Purchased', weaponKeyResults);
 	let purchased = {};
 	for (let i in weaponKeys) {
 		purchased[weaponKeys[i]] = weaponKeyResults[i];
@@ -70,8 +67,7 @@ exports.resetDailyWeapons = async function () {
 		let wid = weapon.id;
 		let qualities = weapon.qualities;
 		for (let j in qualities) {
-			qualities[j] =
-				Math.floor(Math.random() * (maxQuality - minQuality + 1)) + minQuality;
+			qualities[j] = Math.floor(Math.random() * (maxQuality - minQuality + 1)) + minQuality;
 		}
 
 		let passives = [];
@@ -79,9 +75,7 @@ exports.resetDailyWeapons = async function () {
 			let qualities = weapon.passives[j].qualities;
 			let wpid = weapon.passives[j].id;
 			for (let k in qualities) {
-				qualities[k] =
-					Math.floor(Math.random() * (maxQuality - minQuality + 1)) +
-					minQuality;
+				qualities[k] = Math.floor(Math.random() * (maxQuality - minQuality + 1)) + minQuality;
 			}
 			passives.push({ wpid, qualities });
 		}
@@ -123,9 +117,7 @@ exports.buy = async function (p, id) {
 	}
 
 	// Check if purchased already
-	let purchased = await redis.hmget(redisKey + 'Purchased', [
-		id + '' + p.msg.author.id,
-	]);
+	let purchased = await redis.hmget(redisKey + 'Purchased', [id + '' + p.msg.author.id]);
 	if (!!purchased[0]) {
 		p.errorMsg(', You already purchased this weapon, silly!', 3000);
 		return;
@@ -211,8 +203,7 @@ exports.displayShop = async function (p) {
 	await msg.addReaction(nextPageEmoji);
 
 	let filter = (emoji, userID) =>
-		[nextPageEmoji, prevPageEmoji].includes(emoji.name) &&
-		userID == p.msg.author.id;
+		[nextPageEmoji, prevPageEmoji].includes(emoji.name) && userID == p.msg.author.id;
 	let collector = p.reactionCollector.create(msg, filter, {
 		time: 900000,
 		idle: 120000,
@@ -241,8 +232,7 @@ function createEmbed(p, weapons, page) {
 	/* Parse image url */
 	let url = weapon.emoji;
 	if ((temp = url.match(/:[0-9]+>/))) {
-		temp =
-			'https://cdn.discordapp.com/emojis/' + temp[0].match(/[0-9]+/)[0] + '.';
+		temp = 'https://cdn.discordapp.com/emojis/' + temp[0].match(/[0-9]+/)[0] + '.';
 		if (url.match(/<a:/)) temp += 'gif';
 		else temp += 'png';
 		url = temp;

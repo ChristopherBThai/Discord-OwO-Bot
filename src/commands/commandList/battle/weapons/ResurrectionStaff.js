@@ -24,9 +24,7 @@ module.exports = class ResurrectionStaff extends WeaponInterface {
 		];
 		this.defaultEmoji = '<:rstaff:618001309483925504>';
 		this.statDesc =
-			'Revive a dead ally and heal them for **?%** of your ' +
-			WeaponInterface.magEmoji +
-			'MAG';
+			'Revive a dead ally and heal them for **?%** of your ' + WeaponInterface.magEmoji + 'MAG';
 		this.availablePassives = 'all';
 		this.passiveCount = 1;
 		this.qualityList = [[50, 80]];
@@ -37,8 +35,7 @@ module.exports = class ResurrectionStaff extends WeaponInterface {
 		if (me.stats.hp[0] <= 0) return;
 
 		/* No mana */
-		if (me.stats.wp[0] < this.manaCost)
-			return this.attackPhysical(me, team, enemy);
+		if (me.stats.wp[0] < this.manaCost) return this.attackPhysical(me, team, enemy);
 
 		let logs = new Logs();
 
@@ -65,10 +62,7 @@ module.exports = class ResurrectionStaff extends WeaponInterface {
 			allies: team,
 			enemies: enemy,
 		});
-		logs.push(
-			`[RSTAFF] ${me.nickname} revived ${dead.nickname} with ${heal.amount} HP`,
-			heal.logs
-		);
+		logs.push(`[RSTAFF] ${me.nickname} revived ${dead.nickname} with ${heal.amount} HP`, heal.logs);
 
 		logs.addSubLogs(manaLogs);
 

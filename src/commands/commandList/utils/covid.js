@@ -137,8 +137,7 @@ function showStats(p, name) {
 				')',
 		});
 
-		let percent =
-			Math.round(((stat.cases - stat.active) / stat.cases) * 1000) / 10;
+		let percent = Math.round(((stat.cases - stat.active) / stat.cases) * 1000) / 10;
 		if (!percent) percent = '<0.001';
 		embed.fields.push({
 			inline: true,

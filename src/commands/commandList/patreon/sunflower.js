@@ -62,10 +62,7 @@ async function display(p) {
 	let count = await p.redis.hget('data_' + p.msg.author.id, data);
 	if (!count) count = 0;
 
-	p.replyMsg(
-		emoji,
-		`, you currently have ${count} ${data}${count != 1 ? 's' : ''}.`
-	);
+	p.replyMsg(emoji, `, you currently have ${count} ${data}${count != 1 ? 's' : ''}.`);
 }
 
 async function give(p, user) {

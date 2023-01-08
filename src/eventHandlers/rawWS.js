@@ -62,10 +62,7 @@ class Interaction {
 		if (this.channel.guild) {
 			if (data.member) {
 				data.member.id = this.author.id;
-				this.member = this.channel.guild.members.update(
-					data.member,
-					this.channel.guild
-				);
+				this.member = this.channel.guild.members.update(data.member, this.channel.guild);
 			} else if (this.channel.guild.members.has(this.author.id)) {
 				this.member = this.channel.guild.members.get(this.author.id);
 			} else {

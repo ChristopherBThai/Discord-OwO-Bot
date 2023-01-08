@@ -52,8 +52,7 @@ function lexus(text, type) {
 	switch (type) {
 		case 'hb':
 			text.color = 15704149;
-			text.fields[0].name =
-				lunawave + ' `Bork! I am Luna! I will find friends for you, master!`';
+			text.fields[0].name = lunawave + ' `Bork! I am Luna! I will find friends for you, master!`';
 			if (text.fields.length >= 9) {
 				text.fields[8].name = lunajump + ' Luna is still searching!';
 				text.fields[8].value = text.fields[8].value
@@ -110,13 +109,9 @@ function shippig(text, type) {
 			text.fields[0].name =
 				'<:pandabag:566537378303311872> `Hi! I am Roo! I will kidnap animals for you!`';
 			if (text.fields.length >= 9) {
-				text.fields[8].name =
-					'<a:roonyoom:566536940846055444> Roo is still kidnapping!';
+				text.fields[8].name = '<a:roonyoom:566536940846055444> Roo is still kidnapping!';
 				text.fields[8].value = text.fields[8].value
-					.replace(
-						'BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN',
-						'Roo will be back in'
-					)
+					.replace('BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN', 'Roo will be back in')
 					.replace('DONE', 'done')
 					.replace('`\n', '!`\n')
 					.replace('ANIMALS CAPTURED', 'animals captured!');
@@ -134,10 +129,7 @@ function shippig(text, type) {
 				.replace('ANIMALS CAPTURED', 'animals captured!');
 			return text;
 		case 'password':
-			text = text.replace(
-				/<:[a-z]bot:[0-9]+>/gi,
-				'<:pandabag:566537378303311872>'
-			);
+			text = text.replace(/<:[a-z]bot:[0-9]+>/gi, '<:pandabag:566537378303311872>');
 			return text;
 		case 'spent':
 			text = text
@@ -196,8 +188,7 @@ function spotifybot(text, type) {
 				' *Or do you want more Sponsors??*\n'
 			);
 			if (text.fields.length >= 9) {
-				text.fields[8].name =
-					spotify + ' SPOTIFYBOT is currently adding songs!';
+				text.fields[8].name = spotify + ' SPOTIFYBOT is currently adding songs!';
 				text.fields[8].value = text.fields[8].value
 					.replace(
 						'BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN',
@@ -250,8 +241,7 @@ function elsa(text, type) {
 				.replace('Efficiency', 'Knights in Attendance')
 				.replace('⏱', trait1);
 			text.fields[1].value =
-				'*How many invitations are going out, my mistress?*\n' +
-				text.fields[1].value;
+				'*How many invitations are going out, my mistress?*\n' + text.fields[1].value;
 
 			text.fields[2].name = text.fields[2].name
 				.replace('Duration', 'Tournament Deadline')
@@ -262,8 +252,7 @@ function elsa(text, type) {
 			text.fields[3].name = text.fields[3].name
 				.replace('Cost', 'Tournament Funds')
 				.replace('<:cowoncy:416043450337853441>', trait3);
-			text.fields[3].value =
-				'*How much is my mistress willing to spare?*\n' + text.fields[3].value;
+			text.fields[3].value = '*How much is my mistress willing to spare?*\n' + text.fields[3].value;
 
 			text.fields[4].name = text.fields[4].name
 				.replace('Gain', 'Cosmos Power')
@@ -289,16 +278,12 @@ function elsa(text, type) {
 				.replace(/`/g, '');
 
 			text.author.name = text.author.name.replace('HuntBot', 'Bronze Knight');
-			text.description =
-				shiryu1 + ' **`I will scour the cosmos for you, my mistress`**';
+			text.description = shiryu1 + ' **`I will scour the cosmos for you, my mistress`**';
 			text.color = 7319500;
 			if (text.fields.length >= 9) {
 				text.fields[8].name = shiryu1 + " I'm still gathering knights.";
 				text.fields[8].value = text.fields[8].value
-					.replace(
-						'BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN',
-						"I'll be back in"
-					)
+					.replace('BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN', "I'll be back in")
 					.replace('DONE', 'done')
 					.replace('ANIMALS CAPTURED', 'knights found');
 			}
@@ -347,8 +332,7 @@ function dalu(text, type) {
 	switch (type) {
 		case 'hb':
 			text.fields[0].name =
-				foxbot +
-				' `Hai Hai Master. I am KitsuneBot. Ready to find more food for you!`';
+				foxbot + ' `Hai Hai Master. I am KitsuneBot. Ready to find more food for you!`';
 			text.fields[0].value = blank;
 			text.author.name = text.author.name.replace('HuntBot', 'KitsuneBot');
 			text.color = 63996;
@@ -391,10 +375,7 @@ function dalu(text, type) {
 		case 'progress':
 			text = text
 				.replace(/<:[a-z]bot:[0-9]+>/gi, foxbot)
-				.replace(
-					'BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN',
-					'Estimated time to be back:'
-				);
+				.replace('BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN', 'Estimated time to be back:');
 			return text;
 		case 'password':
 			text = text.split('\n')[0].replace(/<:[a-z]bot:[0-9]+>/gi, foxbot);
@@ -431,30 +412,24 @@ function rikudou(text, type) {
 	let emoji3 = '<:emoji3:655689103555166208>';
 	switch (type) {
 		case 'hb':
-			text.fields[0].name =
-				emoji1 + ' `Rikudou, are you ready to go on another mission?`';
-			text.fields[0].value =
-				emoji3 + ' The Mission Assignment Desk has a S rank mission for you!';
+			text.fields[0].name = emoji1 + ' `Rikudou, are you ready to go on another mission?`';
+			text.fields[0].value = emoji3 + ' The Mission Assignment Desk has a S rank mission for you!';
 			text.color = 255;
 			text.fields[1].name =
-				text.fields[1].name
-					.replace('Efficiency', 'Chakra Levels')
-					.slice(0, -1) + ' How are your chakra Levels doing?`';
+				text.fields[1].name.replace('Efficiency', 'Chakra Levels').slice(0, -1) +
+				' How are your chakra Levels doing?`';
 			text.fields[2].name =
 				text.fields[2].name.replace('Duration', 'Mission Length').slice(0, -1) +
 				' Phew! This is one tedious mission!`';
 			text.fields[3].name =
-				text.fields[3].name.replace('Cost', 'Ryō').slice(0, -1) +
-				' Do you have enough Ryō?`';
+				text.fields[3].name.replace('Cost', 'Ryō').slice(0, -1) + ' Do you have enough Ryō?`';
 			text.fields[4].name =
-				text.fields[4].name.slice(0, -1) +
-				' Want to become Hokage? Time to gain more Reputation!`';
+				text.fields[4].name.slice(0, -1) + ' Want to become Hokage? Time to gain more Reputation!`';
 			text.fields[5].name =
 				text.fields[5].name.replace('Experience', 'Training').slice(0, -1) +
 				' Time for more training Shinobi!`';
 			if (text.fields.length >= 9) {
-				text.fields[8].name =
-					emoji2 + ' Rikudou is currently out on a mission!';
+				text.fields[8].name = emoji2 + ' Rikudou is currently out on a mission!';
 				text.fields[8].value = text.fields[8].value.replace(
 					'BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN',
 					'Sorry, Rikudou is still out on a mission! You may request Rikudou for another mission at a later time. RIKUDOU WILL BE BACK IN'
@@ -504,19 +479,13 @@ function kuma(text, type) {
 	const bear = '<:kuma:674153774088060957>';
 	switch (type) {
 		case 'hb':
-			text.author.name = text.author.name.replace(
-				"'s HuntBot",
-				"'s Cookie Collector"
-			);
+			text.author.name = text.author.name.replace("'s HuntBot", "'s Cookie Collector");
 			text.fields.shift();
 			text.color = 13344488;
 			if (text.fields.length >= 7) {
 				text.fields[7].name = bear + " I'm still collecting minions master";
 				text.fields[7].value = text.fields[7].value
-					.replace(
-						'BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN',
-						'I will be back in'
-					)
+					.replace('BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN', 'I will be back in')
 					.replace('DONE', 'done')
 					.replace('ANIMALS CAPTURED', 'minions recruited');
 			}
@@ -571,13 +540,10 @@ function spotifybot2(text, type) {
 	const angry = '<:birdangry:704924005546590268>';
 	switch (type) {
 		case 'hb':
-			text.author.name =
-				'OH NOO!! It looks like Ross has ran out of friend to play with!!';
-			text.author.icon_url =
-				'https://cdn.discordapp.com/emojis/704924005546590268.png';
+			text.author.name = 'OH NOO!! It looks like Ross has ran out of friend to play with!!';
+			text.author.icon_url = 'https://cdn.discordapp.com/emojis/704924005546590268.png';
 			text.color = 16312092;
-			text.fields[0].name =
-				rainbow + '`ROSS can make friends and bring them to your zoo!`';
+			text.fields[0].name = rainbow + '`ROSS can make friends and bring them to your zoo!`';
 			text.fields[1].name = text.fields[1].name.replace('⏱', jump);
 			text.fields[1].value = text.fields[1].value.replace(
 				'\n',
@@ -588,10 +554,7 @@ function spotifybot2(text, type) {
 				'\n',
 				'\n*Maybe he needs more time to catch them?!*\n'
 			);
-			text.fields[3].name = text.fields[3].name.replace(
-				'<:cowoncy:416043450337853441>',
-				roll
-			);
+			text.fields[3].name = text.fields[3].name.replace('<:cowoncy:416043450337853441>', roll);
 			text.fields[3].value = text.fields[3].value.replace(
 				'\n',
 				'\n*Oh my.. Does he need more money?*\n'
@@ -662,10 +625,8 @@ function kirito(text, type) {
 	const essence = '<:ess:737118875400929374>';
 	switch (type) {
 		case 'hb':
-			text.author.name =
-				'Daaarling! I will hunt down Klaxosaurs for you with my Franxx!';
-			text.author.icon_url =
-				'https://cdn.discordapp.com/emojis/580749862279184394.gif?v=1';
+			text.author.name = 'Daaarling! I will hunt down Klaxosaurs for you with my Franxx!';
+			text.author.icon_url = 'https://cdn.discordapp.com/emojis/580749862279184394.gif?v=1';
 			text.fields[0].name =
 				'Oh no! There seems to be Klaxosaurs heading to attack Plantation 13, shall I take them down?';
 			text.color = 15450599;
@@ -674,42 +635,28 @@ function kirito(text, type) {
 				efficiency + ' Klaxosaurs to Hunt'
 			);
 			text.fields[1].value =
-				'*How many Klaxosaurs would you like me to hunt down?*\n' +
-				text.fields[1].value;
+				'*How many Klaxosaurs would you like me to hunt down?*\n' + text.fields[1].value;
 			text.fields[2].name = text.fields[2].name.replace(
 				'⏳ Duration',
 				duration + ' Klaxosaur Hunting Duration'
 			);
 			text.fields[2].value =
-				'*How long would you like to send me out for?*\n' +
-				text.fields[2].value;
+				'*How long would you like to send me out for?*\n' + text.fields[2].value;
 			text.fields[3].name = text.fields[3].name.replace(
 				'<:cowoncy:416043450337853441> Cost',
 				cost + ' Hunting Funds'
 			);
 			text.fields[3].value =
-				'*How much will I be rewarded with for my hunting?*\n' +
-				text.fields[3].value;
-			text.fields[4].name = text.fields[4].name.replace(
-				'🔧 Gain',
-				gain + ' Klaxosaur Points'
-			);
+				'*How much will I be rewarded with for my hunting?*\n' + text.fields[3].value;
+			text.fields[4].name = text.fields[4].name.replace('🔧 Gain', gain + ' Klaxosaur Points');
 			text.fields[4].value =
 				'*How many Klaxosaur Points will I gather from hunting them down?*\n' +
 				text.fields[4].value;
-			text.fields[5].name = text.fields[5].name.replace(
-				'⚔ Experience',
-				exp + ' Franxx XP'
-			);
-			text.fields[5].value =
-				'*How can I enhance my Franxx?*\n' + text.fields[5].value;
-			text.fields[6].name = text.fields[6].name.replace(
-				'📡 Radar',
-				radar + ' VIRM Elimination'
-			);
+			text.fields[5].name = text.fields[5].name.replace('⚔ Experience', exp + ' Franxx XP');
+			text.fields[5].value = '*How can I enhance my Franxx?*\n' + text.fields[5].value;
+			text.fields[6].name = text.fields[6].name.replace('📡 Radar', radar + ' VIRM Elimination');
 			text.fields[6].value =
-				'*Shall I eliminate VIRM today? They seem pretty tough..*\n' +
-				text.fields[6].value;
+				'*Shall I eliminate VIRM today? They seem pretty tough..*\n' + text.fields[6].value;
 			text.fields[7].name = text.fields[7].name.replace(
 				'<a:essence:451638978299428875> Animal Essence',
 				essence + ' Franxx Points'
@@ -843,8 +790,7 @@ function arichy(text, type) {
 				'<a:1_:839769859193831434> Well of Power'
 			);
 			if (text.fields.length >= 9) {
-				text.fields[8].name =
-					'<a:11_:839770046867439669> The Archmage is currently on a mission!';
+				text.fields[8].name = '<a:11_:839770046867439669> The Archmage is currently on a mission!';
 				text.fields[8].value = text.fields[8].value
 					.replace(
 						'BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN',
@@ -889,28 +835,15 @@ function capz(text, type) {
 				duration,
 				'<:duration:993769501122379827> '
 			);
-			text.fields[3].name = text.fields[3].name.replace(
-				cowoncy,
-				'<:cost:993769499973140552>'
-			);
-			text.fields[4].name = text.fields[4].name.replace(
-				gain,
-				'<:gain:993769505169870870> '
-			);
-			text.fields[5].name = text.fields[5].name.replace(
-				experience,
-				'<:exp:993769504360378413> '
-			);
-			text.fields[6].name = text.fields[6].name.replace(
-				radar,
-				'<:radar:1016113320127901746>'
-			);
+			text.fields[3].name = text.fields[3].name.replace(cowoncy, '<:cost:993769499973140552>');
+			text.fields[4].name = text.fields[4].name.replace(gain, '<:gain:993769505169870870> ');
+			text.fields[5].name = text.fields[5].name.replace(experience, '<:exp:993769504360378413> ');
+			text.fields[6].name = text.fields[6].name.replace(radar, '<:radar:1016113320127901746>');
 			text.fields[7].name = text.fields[7].name
 				.replace(essence, '<:essence:993769503349542922>')
 				.replace('Animal', 'Empowered');
 			if (text.fields.length >= 9) {
-				text.fields[8].name =
-					'<:searching:993769508693090315> I am still searching for pets!';
+				text.fields[8].name = '<:searching:993769508693090315> I am still searching for pets!';
 				text.fields[8].value = text.fields[8].value
 					.replace(
 						'BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN',
@@ -948,10 +881,7 @@ function capz(text, type) {
 		case 'spent':
 			text = text
 				.replace(/<:[a-z]bot:[0-9]+>/gi, emoji3)
-				.replace(
-					/BEEP BOOP\. `\*\*`[^`]+`\*\*`, YOU SPENT/gi,
-					'Capz, you spent'
-				)
+				.replace(/BEEP BOOP\. `\*\*`[^`]+`\*\*`, YOU SPENT/gi, 'Capz, you spent')
 				.replace('I WILL BE BACK IN', 'I will return in')
 				.replace('WITH', 'with')
 				.replace('ANIMALS', 'pets')

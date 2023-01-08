@@ -49,15 +49,9 @@ module.exports = new CommandInterface({
 			await shopUtil.displayWallpaperShop(p);
 		} else if (
 			p.args.length &&
-			[
-				'weapon',
-				'w',
-				'shard',
-				'weapons',
-				'weaponshard',
-				'shards',
-				'weaponshards',
-			].includes(p.args[0].toLowerCase())
+			['weapon', 'w', 'shard', 'weapons', 'weaponshard', 'shards', 'weaponshards'].includes(
+				p.args[0].toLowerCase()
+			)
 		) {
 			await dailyWeaponUtil.displayShop(p);
 		} else {
@@ -72,8 +66,7 @@ async function displayShop(p) {
 	let embed = await getPage(p, pages);
 	let msg = await p.send({ embed });
 	let filter = (emoji, userID) =>
-		(emoji.name === nextPageEmoji || emoji.name === prevPageEmoji) &&
-		userID === p.msg.author.id;
+		(emoji.name === nextPageEmoji || emoji.name === prevPageEmoji) && userID === p.msg.author.id;
 	let collector = p.reactionCollector.create(msg, filter, {
 		time: 900000,
 		idle: 120000,

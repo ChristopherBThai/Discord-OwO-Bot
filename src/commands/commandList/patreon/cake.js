@@ -11,15 +11,7 @@ const cakeEmoji = '🍰';
 const cupcakeEmoji = '<:cupcake:641879181680181248>';
 const sliceEmoji = '🎂';
 const owner = '520399213683671074';
-const words = [
-	'Yum!',
-	'Delicious!',
-	'*Drools...*',
-	'Lucky!!',
-	':0',
-	'Yummy!',
-	'Gimme gimme!',
-];
+const words = ['Yum!', 'Delicious!', '*Drools...*', 'Lucky!!', ':0', 'Yummy!', 'Gimme gimme!'];
 
 module.exports = new CommandInterface({
 	alias: ['cake'],
@@ -69,10 +61,7 @@ async function display(p) {
 	let count = await p.redis.zscore('cake', p.msg.author.id);
 	if (!count) count = 0;
 
-	p.replyMsg(
-		cakeEmoji,
-		', You currently have **' + count + '** slice(s) of cake to give!'
-	);
+	p.replyMsg(cakeEmoji, ', You currently have **' + count + '** slice(s) of cake to give!');
 }
 
 async function give(p, user) {

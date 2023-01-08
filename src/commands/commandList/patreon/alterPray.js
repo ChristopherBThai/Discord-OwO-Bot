@@ -174,8 +174,7 @@ function dire(text, info) {
 		bottomImg =
 			'https://cdn.discordapp.com/attachments/771398927912009738/893263445145841744/image1.gif';
 		color = 1;
-		title =
-			'The Emperor Spriggan, Zeref, is inflicted with the Contradictory Curse!';
+		title = 'The Emperor Spriggan, Zeref, is inflicted with the Contradictory Curse!';
 		if (info.user) {
 			desc =
 				`<a:flame_black:901377311859957781> **| ${info.author.username}**, with the help of Ankhseram, inflicts the **Curse of Contradiction**!\n` +

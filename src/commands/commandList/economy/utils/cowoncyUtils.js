@@ -38,9 +38,7 @@ async function checkSender(user, amount, con) {
 	if (afterMid.after) {
 		if (amount > limit) {
 			return {
-				error: `, you can only send **${this.global.toFancyNum(
-					limit
-				)}** more cowoncy today!`,
+				error: `, you can only send **${this.global.toFancyNum(limit)}** more cowoncy today!`,
 			};
 		}
 		return {
@@ -58,9 +56,7 @@ async function checkSender(user, amount, con) {
 		const diff = limit - result[0].send;
 		if (diff > 0) {
 			return {
-				error: `, you can only send **${this.global.toFancyNum(
-					diff
-				)}** more cowoncy today!`,
+				error: `, you can only send **${this.global.toFancyNum(diff)}** more cowoncy today!`,
 			};
 		} else {
 			return {
@@ -85,9 +81,7 @@ async function checkReceiver(user, amount, con) {
 	if (afterMid.after) {
 		if (amount > limit) {
 			return {
-				error: `, **${
-					user.username
-				}** can only receive **${this.global.toFancyNum(
+				error: `, **${user.username}** can only receive **${this.global.toFancyNum(
 					limit
 				)}** more cowoncy today!`,
 			};
@@ -109,9 +103,7 @@ async function checkReceiver(user, amount, con) {
 		const diff = limit - result[0].receive;
 		if (diff > 0) {
 			return {
-				error: `, **${
-					user.username
-				}** can only receive **${this.global.toFancyNum(
+				error: `, **${user.username}** can only receive **${this.global.toFancyNum(
 					diff
 				)}** more cowoncy today!`,
 			};

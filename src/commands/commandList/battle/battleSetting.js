@@ -62,9 +62,7 @@ async function changeSettings(p) {
 	args = args.toLowerCase();
 	args = args.split('=');
 	if (args.length != 2) {
-		p.errorMsg(
-			', The correct command is `owo battlesetting {settingName=setting}`'
-		);
+		p.errorMsg(', The correct command is `owo battlesetting {settingName=setting}`');
 		return;
 	}
 
@@ -90,9 +88,7 @@ async function changeSettings(p) {
 		} else if (args[1] == 'compact') {
 			setting = "'compact'";
 		} else {
-			p.errorMsg(
-				', the display settings can only be `image`, `compact`, or `text`!'
-			);
+			p.errorMsg(', the display settings can only be `image`, `compact`, or `text`!');
 			return;
 		}
 	} else if (args[0] == 'speed') {
@@ -104,9 +100,7 @@ async function changeSettings(p) {
 		} else if (args[1] == '2' || args[1] == 'lengthy') {
 			setting = 2;
 		} else {
-			p.errorMsg(
-				', the speed settings can only be `instant`, `short`, or `lengthy`!'
-			);
+			p.errorMsg(', the speed settings can only be `instant`, `short`, or `lengthy`!');
 			return;
 		}
 	} else if (args[0] == 'log' || args[0] == 'logs') {
@@ -122,9 +116,7 @@ async function changeSettings(p) {
 			return;
 		}
 	} else {
-		p.errorMsg(
-			', the display settings can only be `logs`, `display`, or `speed`!'
-		);
+		p.errorMsg(', the display settings can only be `logs`, `display`, or `speed`!');
 		return;
 	}
 

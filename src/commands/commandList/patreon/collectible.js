@@ -50,19 +50,15 @@ for (let dataName in collectibles) {
 		failChance,
 		failMessage,
 		trackDate,
+		multiGive,
 	} = collectibles[dataName];
 	const ownerString = getOwnerString(owners);
 	const data = dataOverride || dataName;
 
 	const display = async function () {
 		let count = await this.redis.hget(`data_${this.msg.author.id}`, data);
-		let receiveDate = await this.redis.hget(
-			`data_${this.msg.author.id}`,
-			`${data}_time`
-		);
-		receiveDate = receiveDate
-			? new Date(+receiveDate).toLocaleDateString()
-			: 'never';
+		let receiveDate = await this.redis.hget(`data_${this.msg.author.id}`, `${data}_time`);
+		receiveDate = receiveDate ? this.global.toDiscordTimestamp(receiveDate) : 'never';
 
 		let mergeCount = 0;
 		if (hasMerge) {
@@ -70,10 +66,7 @@ for (let dataName in collectibles) {
 			count = count % mergeNeeded;
 		}
 		if (hasManualMerge) {
-			mergeCount = await this.redis.hget(
-				'data_' + this.msg.author.id,
-				manualMergeData
-			);
+			mergeCount = await this.redis.hget('data_' + this.msg.author.id, manualMergeData);
 		}
 		let msg;
 		if (!mergeCount) {
@@ -119,17 +112,11 @@ for (let dataName in collectibles) {
 				take = costAmount;
 			}
 			if (take > 0) {
-				let result = await this.redis.hincrby(
-					'data_' + this.msg.author.id,
-					data,
-					-1 * take
-				);
+				let result = await this.redis.hincrby('data_' + this.msg.author.id, data, -1 * take);
 				// TODO double check merge for costAmount greater than 1
-				const refund =
-					+result < 0 || (hasMerge && (+result + take) % mergeNeeded <= 0);
+				const refund = +result < 0 || (hasMerge && (+result + take) % mergeNeeded <= 0);
 				if (result == null || refund) {
-					if (refund)
-						this.redis.hincrby('data_' + this.msg.author.id, data, take);
+					if (refund) this.redis.hincrby('data_' + this.msg.author.id, data, take);
 					this.errorMsg(brokeMsg, 3000);
 					this.setCooldown(5);
 					return;
@@ -139,7 +126,6 @@ for (let dataName in collectibles) {
 
 		if (checkFailed.bind(this)(user)) return;
 
-		let result = await this.redis.hincrby(`data_${user.id}`, data, giveAmount);
 		if (trackDate) {
 			await this.redis.hset(`data_${user.id}`, `${data}_time`, Date.now());
 		}
@@ -147,22 +133,44 @@ for (let dataName in collectibles) {
 		if (Array.isArray(giveMsg)) {
 			selectedGiveMsg = giveMsg[Math.floor(Math.random() * giveMsg.length)];
 		}
-		if (hasMerge && (result % mergeNeeded) - giveAmount < 0) {
-			const msg = mergeMsg
-				.replaceAll('?giveMsg?', selectedGiveMsg)
-				.replaceAll('?giver?', this.msg.author.username)
-				.replaceAll('?receiver?', user.username)
-				.replaceAll('?emoji?', emoji)
-				.replaceAll('?blank?', this.config.emoji.blank)
-				.replaceAll('?mergeEmoji?', mergeEmoji);
-			this.send(msg);
-		} else {
-			const msg = selectedGiveMsg
-				.replaceAll('?giver?', this.msg.author.username)
-				.replaceAll('?receiver?', user.username)
-				.replaceAll('?emoji?', emoji);
-			this.send(msg);
+
+		const users = [user];
+		if (multiGive) {
+			for (let i = 1; i < Math.min(25, this.args.length); i++) {
+				let user = this.getMention(this.args[i]);
+				if (!user) {
+					user = await this.fetch.getMember(this.msg.channel.guild, this.args[i]);
+					if (!user) {
+						this.errorMsg(', invalid user: `' + this.args[i] + '`', 3000);
+					}
+				}
+				if (user) {
+					users.push(user);
+				}
+			}
 		}
+
+		let msg = '';
+		for (let i in users) {
+			let user = users[i];
+			let result = await this.redis.hincrby(`data_${user.id}`, data, giveAmount);
+			if (hasMerge && (result % mergeNeeded) - giveAmount < 0) {
+				msg += mergeMsg
+					.replaceAll('?giveMsg?', selectedGiveMsg)
+					.replaceAll('?giver?', this.msg.author.username)
+					.replaceAll('?receiver?', user.username)
+					.replaceAll('?emoji?', emoji)
+					.replaceAll('?blank?', this.config.emoji.blank)
+					.replaceAll('?mergeEmoji?', mergeEmoji);
+			} else {
+				msg += selectedGiveMsg
+					.replaceAll('?giver?', this.msg.author.username)
+					.replaceAll('?receiver?', user.username)
+					.replaceAll('?emoji?', emoji);
+			}
+			msg += '\n';
+		}
+		this.send(msg);
 	};
 
 	const checkFailed = function (user) {
@@ -179,10 +187,7 @@ for (let dataName in collectibles) {
 	};
 
 	const checkDaily = async function (user) {
-		let reset = await this.redis.hget(
-			'data_' + this.msg.author.id,
-			data + '_reset'
-		);
+		let reset = await this.redis.hget('data_' + this.msg.author.id, data + '_reset');
 		let afterMid = this.dateUtil.afterMidnight(reset);
 		if (!afterMid.after) {
 			if (!dailyLimitMsg) {
@@ -198,11 +203,7 @@ for (let dataName in collectibles) {
 			}
 			return false;
 		}
-		await this.redis.hset(
-			'data_' + this.msg.author.id,
-			data + '_reset',
-			afterMid.now
-		);
+		await this.redis.hset('data_' + this.msg.author.id, data + '_reset', afterMid.now);
 		return true;
 	};
 
@@ -228,24 +229,15 @@ for (let dataName in collectibles) {
 	};
 
 	const manualMerge = async function () {
-		let result = await this.redis.hincrby(
-			'data_' + this.msg.author.id,
-			data,
-			-10
-		);
+		let result = await this.redis.hincrby('data_' + this.msg.author.id, data, -10);
 		if (result == null || result < 0) {
-			if (result < 0)
-				this.redis.hincrby('data_' + this.msg.author.id, data, 10);
+			if (result < 0) this.redis.hincrby('data_' + this.msg.author.id, data, 10);
 			this.errorMsg(', you do not have have enough to merge! >:c', 3000);
 			this.setCooldown(5);
 			return;
 		}
 
-		const result2 = await this.redis.hincrby(
-			'data_' + this.msg.author.id,
-			manualMergeData,
-			1
-		);
+		const result2 = await this.redis.hincrby('data_' + this.msg.author.id, manualMergeData, 1);
 		let selectedGiveMsg = giveMsg;
 		if (Array.isArray(giveMsg)) {
 			selectedGiveMsg = giveMsg[Math.floor(Math.random() * giveMsg.length)];
@@ -291,10 +283,7 @@ for (let dataName in collectibles) {
 					}
 					let user = this.getMention(this.args[0]);
 					if (!user) {
-						user = await this.fetch.getMember(
-							this.msg.channel.guild,
-							this.args[0]
-						);
+						user = await this.fetch.getMember(this.msg.channel.guild, this.args[0]);
 						if (!user) {
 							this.errorMsg(', Invalid syntax! Please tag a user!', 3000);
 							this.setCooldown(5);
@@ -310,18 +299,12 @@ for (let dataName in collectibles) {
 								.replaceAll('?error?', this.config.emoji.error);
 							this.send(msg);
 						} else {
-							this.errorMsg(
-								', only the owner of this command can give items!',
-								3000
-							);
+							this.errorMsg(', only the owner of this command can give items!', 3000);
 						}
 						this.setCooldown(5);
 						return;
 					}
-					if (
-						!owners.includes(this.msg.author.id) &&
-						user.id === this.msg.author.id
-					) {
+					if (!owners.includes(this.msg.author.id) && user.id === this.msg.author.id) {
 						if (selfErrorMsg) {
 							const msg = selfErrorMsg
 								.replaceAll('?user?', this.msg.author.username)

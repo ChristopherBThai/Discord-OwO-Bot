@@ -56,11 +56,8 @@ class InfoUpdater {
 	}
 
 	async updateDBLInfo() {
-		if (!this.totalShards)
-			this.totalShards = await this.main.global.getTotalShardCount();
-		let guildSize = Math.floor(
-			this.main.bot.guilds.size / this.main.bot.shards.size
-		);
+		if (!this.totalShards) this.totalShards = await this.main.global.getTotalShardCount();
+		let guildSize = Math.floor(this.main.bot.guilds.size / this.main.bot.shards.size);
 
 		this.main.bot.shards.forEach((val, key, map) => {
 			this.main.dbl.postStats(guildSize, val.id, this.totalShards);

@@ -39,13 +39,10 @@ module.exports = class Kamikaze extends PassiveInterface {
 		let logs = new Log();
 
 		let dmg = ((animal.stats.hp[1] + animal.stats.hp[3]) * this.stats[0]) / 100;
-		dmg = WeaponInterface.inflictDamage(
-			animal,
-			attacker,
-			dmg,
-			WeaponInterface.MAGICAL,
-			{ ...tags, kamikaze: true }
-		);
+		dmg = WeaponInterface.inflictDamage(animal, attacker, dmg, WeaponInterface.MAGICAL, {
+			...tags,
+			kamikaze: true,
+		});
 
 		logs.push(
 			`[KKAZE] ${animal.nickname} died and damaged ${attacker.nickname} for ${dmg.amount} HP`,

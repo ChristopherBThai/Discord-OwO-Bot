@@ -8,9 +8,16 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const ranks = {};
-const animals = require('../../../../../tokens/owo-animals.json');
 const weaponUtil = require('../battle/util/weaponUtil.js');
 const ringUtil = require('../social/util/ringUtil.js');
+let animals;
+try {
+	animals = require('../../../../../tokens/owo-animals.json');
+} catch (err) {
+	console.error('Could not find owo-animals.json, attempting to use ./secret file...');
+	animals = require('../../../../secret/owo-animals.json');
+	console.log('Found owo-animals.json file in secret folder!');
+}
 
 module.exports = new CommandInterface({
 	alias: ['sell'],
@@ -52,27 +59,19 @@ module.exports = new CommandInterface({
 		/* If no args */
 		if (args.length == 0) {
 			p.send(
-				'**🚫 | ' +
-					msg.author.username +
-					'**, Please specify what rank/animal to sell!',
+				'**🚫 | ' + msg.author.username + '**, Please specify what rank/animal to sell!',
 				3000
 			);
 			return;
 
 			/* if arg0 is a count */
-		} else if (
-			args.length == 2 &&
-			(global.isInt(args[0]) || args[0].toLowerCase() == 'all')
-		) {
+		} else if (args.length == 2 && (global.isInt(args[0]) || args[0].toLowerCase() == 'all')) {
 			if (args[0].toLowerCase() != 'all') count = parseInt(args[0]);
 			else count = 'all';
 			name = args[1];
 
 			/* if arg1 is a count (or not) */
-		} else if (
-			args.length == 2 &&
-			(global.isInt(args[1]) || args[1].toLowerCase() == 'all')
-		) {
+		} else if (args.length == 2 && (global.isInt(args[1]) || args[1].toLowerCase() == 'all')) {
 			if (args[1].toLowerCase() != 'all') count = parseInt(args[1]);
 			else count = 'all';
 			name = args[0];
@@ -88,10 +87,7 @@ module.exports = new CommandInterface({
 			for (i = 0; i < args.length; i++) {
 				let tempRank = global.validRank(args[i].toLowerCase());
 				if (!tempRank) {
-					p.send(
-						'**🚫 | ' + msg.author.username + '**, Invalid arguments!',
-						3000
-					);
+					p.send('**🚫 | ' + msg.author.username + '**, Invalid arguments!', 3000);
 					return;
 				}
 				if (!(tempRank in ranks)) {
@@ -108,8 +104,7 @@ module.exports = new CommandInterface({
 
 			//if its an animal...
 		} else if ((animal = global.validAnimal(name))) {
-			if (args.length < 3)
-				sellAnimal(msg, con, animal, count, p.send, global, p);
+			if (args.length < 3) sellAnimal(msg, con, animal, count, p.send, global, p);
 			else
 				p.send(
 					'**🚫 | ' +
@@ -131,11 +126,7 @@ module.exports = new CommandInterface({
 
 			//if a weapon or a ring...
 		} else if (args.length == 1) {
-			if (
-				global.isInt(name) &&
-				parseInt(name) > 0 &&
-				parseInt(name) <= ringUtil.getMaxID()
-			)
+			if (global.isInt(name) && parseInt(name) > 0 && parseInt(name) <= ringUtil.getMaxID())
 				ringUtil.sell(p, parseInt(args[0]));
 			else weaponUtil.sell(p, args[0]);
 
@@ -188,12 +179,7 @@ function sellAnimal(msg, con, animal, count, send, global, p) {
 		}
 		if (count == 'all') {
 			if (result[1].affectedRows <= 0) {
-				send(
-					'**🚫 | ' +
-						msg.author.username +
-						"**, You don't have enough animals! >:c",
-					3000
-				);
+				send('**🚫 | ' + msg.author.username + "**, You don't have enough animals! >:c", 3000);
 			} else {
 				count = result[0][0].count;
 				send(
@@ -226,9 +212,7 @@ function sellAnimal(msg, con, animal, count, send, global, p) {
 			// TODO neo4j
 		} else {
 			send(
-				'**🚫 | ' +
-					msg.author.username +
-					"**, You can't sell more than you have silly! >:c",
+				'**🚫 | ' + msg.author.username + "**, You can't sell more than you have silly! >:c",
 				3000
 			);
 		}
@@ -261,12 +245,7 @@ function sellRank(msg, con, rank, send, global, p) {
 			return;
 		}
 		if (result[1].affectedRows <= 0) {
-			send(
-				'**🚫 | ' +
-					msg.author.username +
-					"**, You don't have enough animals! >:c",
-				3000
-			);
+			send('**🚫 | ' + msg.author.username + "**, You don't have enough animals! >:c", 3000);
 		} else {
 			count = result[0][0].total;
 			send(
@@ -337,11 +316,6 @@ async function sellRanks(msg, con, ranks, send, global, p) {
 		p.logger.incr(`cowoncy`, total, { type: 'sell' }, p.msg);
 		// TODO neo4j
 	} else {
-		send(
-			'**🚫 | ' +
-				msg.author.username +
-				"**, You don't have enough animals! >:c",
-			3000
-		);
+		send('**🚫 | ' + msg.author.username + "**, You don't have enough animals! >:c", 3000);
 	}
 }

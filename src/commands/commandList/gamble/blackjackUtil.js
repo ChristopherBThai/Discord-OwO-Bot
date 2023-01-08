@@ -160,10 +160,8 @@ function diff(a, b) {
 }
 exports.initDeck = initDeck;
 function initDeck(deck, player, dealer) {
-	for (var i = 0; i < player.length; i++)
-		deck.splice(deck.indexOf(player[i].card), 1);
-	for (var i = 0; i < dealer.length; i++)
-		deck.splice(deck.indexOf(dealer[i].card), 1);
+	for (var i = 0; i < player.length; i++) deck.splice(deck.indexOf(player[i].card), 1);
+	for (var i = 0; i < dealer.length; i++) deck.splice(deck.indexOf(dealer[i].card), 1);
 	return deck;
 }
 
@@ -193,11 +191,7 @@ function generateEmbed(author, dealer, player, bet, end, winnings) {
 			text: footer,
 		},
 		author: {
-			name:
-				author.username +
-				', you bet ' +
-				global.toFancyNum(bet) +
-				' to play blackjack',
+			name: author.username + ', you bet ' + global.toFancyNum(bet) + ' to play blackjack',
 			icon_url: author.avatarURL,
 		},
 		fields: [
@@ -208,12 +202,7 @@ function generateEmbed(author, dealer, player, bet, end, winnings) {
 			},
 			{
 				name:
-					author.username +
-					' `[' +
-					playerValue.points +
-					']' +
-					(playerValue.ace ? '*' : '') +
-					'`',
+					author.username + ' `[' + playerValue.points + ']' + (playerValue.ace ? '*' : '') + '`',
 				value: playerValue.display,
 				inline: true,
 			},

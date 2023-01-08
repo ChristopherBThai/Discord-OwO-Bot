@@ -50,12 +50,7 @@ module.exports = new CommandInterface({
 		}
 
 		let item = items[Math.floor(Math.random() * items.length)];
-		let msg =
-			', ' +
-			msgs[Math.floor(Math.random() * msgs.length)].replace(
-				'?',
-				'**' + item + '**'
-			);
+		let msg = ', ' + msgs[Math.floor(Math.random() * msgs.length)].replace('?', '**' + item + '**');
 		p.replyMsg(diceEmoji, p.replaceMentions(msg));
 	},
 });

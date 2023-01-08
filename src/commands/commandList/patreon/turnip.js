@@ -71,19 +71,13 @@ module.exports = new CommandInterface({
 
 async function display() {
 	let count = await this.redis.hget('data_' + this.msg.author.id, data);
-	const msg = displayMsg
-		.replace('?count?', count || 0)
-		.replace('?plural?', count > 1 ? 's' : '');
+	const msg = displayMsg.replace('?count?', count || 0).replace('?plural?', count > 1 ? 's' : '');
 	this.replyMsg(emoji, msg);
 }
 
 async function give(user) {
 	if (!owners.includes(this.msg.author.id)) {
-		let result = await this.redis.hincrby(
-			'data_' + this.msg.author.id,
-			data,
-			-1
-		);
+		let result = await this.redis.hincrby('data_' + this.msg.author.id, data, -1);
 		// Error checking
 		if (result == null || result < 0) {
 			if (result < 0) this.redis.hincrby('data_' + this.msg.author.id, data, 1);

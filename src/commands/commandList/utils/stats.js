@@ -34,14 +34,11 @@ module.exports = new CommandInterface({
 		let sql = 'SELECT COUNT(*) user,sum(count) AS total FROM user;';
 		sql +=
 			'SELECT SUM(common) AS common, SUM(uncommon) AS uncommon, SUM(rare) AS rare, SUM(epic) AS epic, SUM(mythical) AS mythical, SUM(legendary) AS legendary FROM animal_count;';
-		sql +=
-			'SELECT command FROM disabled WHERE channel = ' + msg.channel.id + ';';
+		sql += 'SELECT command FROM disabled WHERE channel = ' + msg.channel.id + ';';
 
 		let { guilds, channels, users } = await fetchInfo(p);
 
-		let ping = p.client.shards.get(
-			p.client.guildShardMap[p.msg.channel.guild.id]
-		).latency;
+		let ping = p.client.shards.get(p.client.guildShardMap[p.msg.channel.guild.id]).latency;
 
 		let rows = await p.query(sql);
 		let totalAnimals =

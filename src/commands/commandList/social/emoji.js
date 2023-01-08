@@ -42,7 +42,7 @@ module.exports = new CommandInterface({
 					p.args[0].toLowerCase() == 'previous' ||
 					p.args[0].toLowerCase() == 'p'))
 		) {
-			let msgs = await p.msg.channel.getMessages(10);
+			let msgs = await p.global.getChannelMessages(p.msg.channel, 10);
 			if (!msgs) {
 				p.errorMsg(', There are no emojis! >:c', 3000);
 				return;
@@ -55,25 +55,16 @@ module.exports = new CommandInterface({
 
 			emojis = parseIDs(emojis);
 			if (emojis.length == 0)
-				p.errorMsg(
-					', There are no emojis! I can only look at the previous 10 messages! >:c',
-					3000
-				);
+				p.errorMsg(', There are no emojis! I can only look at the previous 10 messages! >:c', 3000);
 			else await display(p, emojis);
 
 			// Set emoji steal guild
-		} else if (
-			['setguild', 'setserver', 'set', 'setsteal'].includes(
-				p.args[0].toLowerCase()
-			)
-		) {
+		} else if (['setguild', 'setserver', 'set', 'setsteal'].includes(p.args[0].toLowerCase())) {
 			setServer(p);
 
 			// unset emoji steal guild
 		} else if (
-			['unsetguild', 'unsetserver', 'unset', 'unsetsteal'].includes(
-				p.args[0].toLowerCase()
-			)
+			['unsetguild', 'unsetserver', 'unset', 'unsetsteal'].includes(p.args[0].toLowerCase())
 		) {
 			unsetServer(p);
 
@@ -154,25 +145,22 @@ async function display(p, emojis) {
 		additionalButtons,
 	});
 
-	pagedMsg.on(
-		'button',
-		async (component, user, ack, { currentPage, maxPage }) => {
-			if (component === 'steal') {
-				const emoji = emojis[currentPage];
-				if (!emojiAdders[currentPage])
-					emojiAdders[currentPage] = new p.EmojiAdder(p, emoji.name, emoji.url);
-				try {
-					if (await emojiAdders[currentPage].addEmoji(user.id)) {
-						await ack({ embed: createEmbed(currentPage, maxPage) });
-					}
-				} catch (err) {
-					if (!emojiAdders[currentPage].successCount) {
-						await ack({ embed: createEmbed(currentPage, maxPage) });
-					}
+	pagedMsg.on('button', async (component, user, ack, { currentPage, maxPage }) => {
+		if (component === 'steal') {
+			const emoji = emojis[currentPage];
+			if (!emojiAdders[currentPage])
+				emojiAdders[currentPage] = new p.EmojiAdder(p, emoji.name, emoji.url);
+			try {
+				if (await emojiAdders[currentPage].addEmoji(user.id)) {
+					await ack({ embed: createEmbed(currentPage, maxPage) });
+				}
+			} catch (err) {
+				if (!emojiAdders[currentPage].successCount) {
+					await ack({ embed: createEmbed(currentPage, maxPage) });
 				}
 			}
 		}
-	);
+	});
 }
 
 async function getStealButton(p) {
@@ -197,19 +185,12 @@ async function getStealButton(p) {
 async function setServer(p) {
 	// Check if the user has emoji permissions
 	if (!p.msg.member.permissions.has('manageEmojis')) {
-		p.errorMsg(
-			', you do not have permissions to edit emojis on this server!',
-			3000
-		);
+		p.errorMsg(', you do not have permissions to edit emojis on this server!', 3000);
 		return;
 	}
 
 	// Check if the bot has permissions
-	if (
-		!p.msg.channel.guild.members
-			.get(p.client.user.id)
-			.permissions.has('manageEmojis')
-	) {
+	if (!p.msg.channel.guild.members.get(p.client.user.id).permissions.has('manageEmojis')) {
 		p.errorMsg(
 			", I don't have permissions to add emojis! Please give me permission or reinvite me!\n" +
 				p.config.invitelink
@@ -222,9 +203,7 @@ async function setServer(p) {
 		await p.query(sql);
 	} catch (e) {
 		if (e.code == 'ER_BAD_NULL_ERROR') {
-			sql =
-				`INSERT IGNORE INTO user (id,count) VALUES (${p.msg.author.id},0);` +
-				sql;
+			sql = `INSERT IGNORE INTO user (id,count) VALUES (${p.msg.author.id},0);` + sql;
 			await p.query(sql);
 		}
 	}

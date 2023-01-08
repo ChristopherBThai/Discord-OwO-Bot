@@ -43,8 +43,7 @@ module.exports = new CommandInterface({
 			return;
 		}
 		if (p.msg.author.id == target.id) {
-			let text =
-				'**' + p.msg.author.username + "**! You can't guillotine yourself!";
+			let text = '**' + p.msg.author.username + "**! You can't guillotine yourself!";
 			p.send(text);
 			return;
 		}

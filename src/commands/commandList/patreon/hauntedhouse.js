@@ -44,29 +44,15 @@ module.exports = new CommandInterface({
 async function display(p) {
 	let count = await this.redis.hget('data_' + this.msg.author.id, data);
 	const displayMsg = ', you have ?count? haunetd house?plural?.';
-	const msg = displayMsg
-		.replace('?count?', count || 0)
-		.replace('?plural?', count > 1 ? 's' : '');
+	const msg = displayMsg.replace('?count?', count || 0).replace('?plural?', count > 1 ? 's' : '');
 	this.replyMsg(emoji, msg);
 }
 
 async function combine(p, user) {
 	let bat = await this.redis.hincrby('data_' + this.msg.author.id, 'bat', -1);
-	let witch = await this.redis.hincrby(
-		'data_' + this.msg.author.id,
-		'witch',
-		-1
-	);
-	let ghost = await this.redis.hincrby(
-		'data_' + this.msg.author.id,
-		'ghost',
-		-1
-	);
-	let spider = await this.redis.hincrby(
-		'data_' + this.msg.author.id,
-		'spider',
-		-1
-	);
+	let witch = await this.redis.hincrby('data_' + this.msg.author.id, 'witch', -1);
+	let ghost = await this.redis.hincrby('data_' + this.msg.author.id, 'ghost', -1);
+	let spider = await this.redis.hincrby('data_' + this.msg.author.id, 'spider', -1);
 
 	let missing;
 	if (bat == null || bat < 0) {

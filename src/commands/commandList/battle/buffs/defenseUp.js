@@ -15,8 +15,7 @@ module.exports = class defenseUp extends BuffInterface {
 		this.name = 'Defense Up';
 		this.debuff = false;
 		this.emoji = '<:dfup:572988965838258176>';
-		this.statDesc =
-			'Reduces incoming damage by **?%**. Cannot stack with other Defense Up buffs';
+		this.statDesc = 'Reduces incoming damage by **?%**. Cannot stack with other Defense Up buffs';
 		this.qualityList = [[20, 30]];
 	}
 

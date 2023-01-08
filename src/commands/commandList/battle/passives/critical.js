@@ -39,9 +39,7 @@ module.exports = class Critical extends PassiveInterface {
 		let extraDamage = (damage[0] * this.stats[1]) / 100;
 		damage[1] += extraDamage;
 
-		logs.push(
-			`[CRIT] ${animal.nickname} dealt ${Math.round(extraDamage)} extra damage`
-		);
+		logs.push(`[CRIT] ${animal.nickname} dealt ${Math.round(extraDamage)} extra damage`);
 		return logs;
 	}
 
@@ -53,9 +51,7 @@ module.exports = class Critical extends PassiveInterface {
 		let extraHeal = (amount[0] * this.stats[1]) / 100;
 		amount[1] += extraHeal;
 
-		logs.push(
-			`[CRIT] ${animal.nickname} healed ${Math.round(extraHeal)} extra health`
-		);
+		logs.push(`[CRIT] ${animal.nickname} healed ${Math.round(extraHeal)} extra health`);
 		return logs;
 	}
 };

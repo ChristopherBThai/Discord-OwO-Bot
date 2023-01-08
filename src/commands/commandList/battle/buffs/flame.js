@@ -32,17 +32,11 @@ module.exports = class Flame extends BuffInterface {
 		for (let i in animal.buffs) {
 			if (animal.buffs[i].id == this.id && !animal.buffs[i].markedForDeath) {
 				animal.buffs[i].markedForDeath = true;
-				let damage = WeaponInterface.getDamage(
-					this.from.stats.mag,
-					this.stats[1] / 100
-				);
-				damage = WeaponInterface.inflictDamage(
-					this.from,
-					animal,
-					damage,
-					WeaponInterface.MAGICAL,
-					{ ...tags, flame: true }
-				);
+				let damage = WeaponInterface.getDamage(this.from.stats.mag, this.stats[1] / 100);
+				damage = WeaponInterface.inflictDamage(this.from, animal, damage, WeaponInterface.MAGICAL, {
+					...tags,
+					flame: true,
+				});
 				logs.push(
 					`[FLAME] Exploded and damaged ${animal.nickname} for ${damage.amount} HP`,
 					damage.logs
@@ -61,17 +55,12 @@ module.exports = class Flame extends BuffInterface {
 		let logs = new Logs();
 
 		// Calculate and deal damage
-		let damage = WeaponInterface.getDamage(
-			this.from.stats.mag,
-			this.stats[0] / 100
-		);
-		damage = WeaponInterface.inflictDamage(
-			this.from,
-			animal,
-			damage,
-			WeaponInterface.MAGICAL,
-			{ me: this.from, allies: enemy, enemies: ally }
-		);
+		let damage = WeaponInterface.getDamage(this.from.stats.mag, this.stats[0] / 100);
+		damage = WeaponInterface.inflictDamage(this.from, animal, damage, WeaponInterface.MAGICAL, {
+			me: this.from,
+			allies: enemy,
+			enemies: ally,
+		});
 		logs.push(
 			`[FLAME] ${this.from.nickname} damaged ${animal.nickname} for ${damage.amount} HP`,
 			damage.logs

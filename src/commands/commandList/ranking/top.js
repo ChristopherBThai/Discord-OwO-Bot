@@ -8,10 +8,17 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const global = require('../../../utils/global.js');
-const animals = require('../../../../../tokens/owo-animals.json');
 const animalUtil = require('../battle/util/animalUtil.js');
 const animalUtil2 = require('../zoo/animalUtil.js');
 const levels = require('../../../utils/levels.js');
+let animals;
+try {
+	animals = require('../../../../../tokens/owo-animals.json');
+} catch (err) {
+	console.error('Could not find owo-animals.json, attempting to use ./secret file...');
+	animals = require('../../../../secret/owo-animals.json');
+	console.log('Found owo-animals.json file in secret folder!');
+}
 
 module.exports = new CommandInterface({
 	alias: ['top', 'rank', 'ranking'],
@@ -76,14 +83,8 @@ async function display(p, con, msg, args) {
 			!level &&
 			!shard
 		) {
-			if (args[i] === 'points' || args[i] === 'point' || args[i] === 'p')
-				points = true;
-			else if (
-				args[i] === 'guild' ||
-				args[i] === 'server' ||
-				args[i] === 's' ||
-				args[i] === 'g'
-			)
+			if (args[i] === 'points' || args[i] === 'point' || args[i] === 'p') points = true;
+			else if (args[i] === 'guild' || args[i] === 'server' || args[i] === 's' || args[i] === 'g')
 				guild = true;
 			else if (args[i] === 'zoo' || args[i] === 'z') zoo = true;
 			else if (
@@ -113,8 +114,7 @@ async function display(p, con, msg, args) {
 			else if (args[i] === 'curse') curse = true;
 			else if (args[i] === 'battle' || args[i] === 'streak') battle = true;
 			else if (args[i] === 'daily') daily = true;
-			else if (args[i] === 'level' || args[i] === 'lvl' || args[i] === 'xp')
-				level = true;
+			else if (args[i] === 'level' || args[i] === 'lvl' || args[i] === 'xp') level = true;
 			else if (
 				args[i] === 'shards' ||
 				args[i] === 'shard' ||
@@ -173,9 +173,7 @@ function displayRanking(con, msg, count, globalRank, sql, title, subText, p) {
 			if (!user) name = 'User Left Bot';
 			else name = '' + user.username;
 
-			name = name
-				.replace('discord.gg', 'discord,gg')
-				.replace(/(```)/g, '`\u200b``');
+			name = name.replace('discord.gg', 'discord,gg').replace(/(```)/g, '`\u200b``');
 			embed += '#' + rank + '\t' + name + subText(ele, rank);
 			rank++;
 		}
@@ -211,11 +209,7 @@ function getRanking(globalRank, con, msg, count, p) {
 	} else {
 		let userids = global.getids(msg.channel.guild.members);
 		sql =
-			'SELECT * FROM user WHERE id IN ( ' +
-			userids +
-			' ) ORDER BY count DESC LIMIT ' +
-			count +
-			';';
+			'SELECT * FROM user WHERE id IN ( ' + userids + ' ) ORDER BY count DESC LIMIT ' + count + ';';
 		sql +=
 			'SELECT id,count,(SELECT COUNT(*)+1 FROM user WHERE id IN (' +
 			userids +
@@ -233,16 +227,10 @@ function getRanking(globalRank, con, msg, count, p) {
 		'Top ' +
 			count +
 			' ' +
-			(globalRank
-				? 'Global OwO Rankings'
-				: 'OwO Rankings for ' + msg.channel.guild.name),
+			(globalRank ? 'Global OwO Rankings' : 'OwO Rankings for ' + msg.channel.guild.name),
 		function (query, rank) {
-			if (rank == 0)
-				return (
-					'>\t\tyou said owo ' + global.toFancyNum(query.count) + ' times!\n\n'
-				);
-			else
-				return '\n\t\tsaid owo ' + global.toFancyNum(query.count) + ' times!\n';
+			if (rank == 0) return '>\t\tyou said owo ' + global.toFancyNum(query.count) + ' times!\n\n';
+			else return '\n\t\tsaid owo ' + global.toFancyNum(query.count) + ' times!\n';
 		},
 		p
 	);
@@ -303,9 +291,7 @@ function getZooRanking(globalRank, con, msg, count, p) {
 		'Top ' +
 			count +
 			' ' +
-			(globalRank
-				? 'Global Zoo Rankings'
-				: 'Zoo Rankings for ' + msg.channel.guild.name),
+			(globalRank ? 'Global Zoo Rankings' : 'Zoo Rankings for ' + msg.channel.guild.name),
 		function (query, rank) {
 			if (rank == 0)
 				return (
@@ -342,11 +328,7 @@ function getMoneyRanking(globalRank, con, msg, count, p) {
 	} else {
 		let users = global.getids(msg.channel.guild.members);
 		sql =
-			'SELECT * FROM cowoncy WHERE id IN (' +
-			users +
-			') ORDER BY money DESC LIMIT ' +
-			count +
-			';';
+			'SELECT * FROM cowoncy WHERE id IN (' + users + ') ORDER BY money DESC LIMIT ' + count + ';';
 		sql +=
 			'SELECT id,money,(SELECT COUNT(*)+1 FROM cowoncy WHERE id IN (' +
 			users +
@@ -364,12 +346,9 @@ function getMoneyRanking(globalRank, con, msg, count, p) {
 		'Top ' +
 			count +
 			' ' +
-			(globalRank
-				? 'Global Cowoncy Rankings'
-				: 'Cowoncy Rankings for ' + msg.channel.guild.name),
+			(globalRank ? 'Global Cowoncy Rankings' : 'Cowoncy Rankings for ' + msg.channel.guild.name),
 		function (query, rank) {
-			if (rank == 0)
-				return '>\t\tCowoncy: ' + global.toFancyNum(query.money) + '\n\n';
+			if (rank == 0) return '>\t\tCowoncy: ' + global.toFancyNum(query.money) + '\n\n';
 			else return '\n\t\tCowoncy: ' + global.toFancyNum(query.money) + '\n';
 		},
 		p
@@ -389,12 +368,7 @@ function getRepRanking(globalRank, con, msg, count, p) {
 			';';
 	} else {
 		var users = global.getids(msg.channel.guild.members);
-		sql =
-			'SELECT * FROM rep WHERE id IN (' +
-			users +
-			') ORDER BY count DESC LIMIT ' +
-			count +
-			';';
+		sql = 'SELECT * FROM rep WHERE id IN (' + users + ') ORDER BY count DESC LIMIT ' + count + ';';
 		sql +=
 			'SELECT id,count,(SELECT COUNT(*)+1 FROM rep WHERE id IN (' +
 			users +
@@ -412,12 +386,9 @@ function getRepRanking(globalRank, con, msg, count, p) {
 		'Top ' +
 			count +
 			' ' +
-			(globalRank
-				? 'Global Cookie Rankings'
-				: 'Cookie Rankings for ' + msg.channel.guild.name),
+			(globalRank ? 'Global Cookie Rankings' : 'Cookie Rankings for ' + msg.channel.guild.name),
 		function (query, rank) {
-			if (rank == 0)
-				return '>\t\tCookies: ' + global.toFancyNum(query.count) + '\n\n';
+			if (rank == 0) return '>\t\tCookies: ' + global.toFancyNum(query.count) + '\n\n';
 			else return '\n\t\tCookies: ' + global.toFancyNum(query.count) + '\n';
 		},
 		p
@@ -437,12 +408,7 @@ function getPetRanking(globalRank, con, msg, count, p) {
 			' ORDER BY xp DESC LIMIT 1;';
 	} else {
 		let users = global.getids(msg.channel.guild.members);
-		sql =
-			'SELECT * FROM animal WHERE id IN (' +
-			users +
-			') ORDER BY xp DESC LIMIT ' +
-			count +
-			';';
+		sql = 'SELECT * FROM animal WHERE id IN (' + users + ') ORDER BY xp DESC LIMIT ' + count + ';';
 		sql +=
 			'SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE id IN (' +
 			users +
@@ -460,9 +426,7 @@ function getPetRanking(globalRank, con, msg, count, p) {
 		'Top ' +
 			count +
 			' ' +
-			(globalRank
-				? 'Global Pet Rankings'
-				: 'Pet Rankings for ' + msg.channel.guild.name),
+			(globalRank ? 'Global Pet Rankings' : 'Pet Rankings for ' + msg.channel.guild.name),
 		function (query, rank) {
 			let result = '\t\t ';
 			if (query.nickname) result += query.nickname + ' ';
@@ -481,8 +445,7 @@ function getPetRanking(globalRank, con, msg, count, p) {
 function getHuntbotRanking(globalRank, con, msg, count, p) {
 	let sql;
 	if (globalRank) {
-		sql =
-			'SELECT id,total FROM autohunt ORDER BY total DESC LIMIT ' + count + ';';
+		sql = 'SELECT id,total FROM autohunt ORDER BY total DESC LIMIT ' + count + ';';
 		sql +=
 			'SELECT id,total, (SELECT COUNT(*)+1 FROM autohunt WHERE autohunt.total > c.total) AS rank FROM autohunt c WHERE c.id = ' +
 			msg.author.id +
@@ -512,12 +475,9 @@ function getHuntbotRanking(globalRank, con, msg, count, p) {
 		'Top ' +
 			count +
 			' ' +
-			(globalRank
-				? 'Global HuntBot Rankings'
-				: 'HuntBot Rankings for ' + msg.channel.guild.name),
+			(globalRank ? 'Global HuntBot Rankings' : 'HuntBot Rankings for ' + msg.channel.guild.name),
 		function (query, rank) {
-			if (rank == 0)
-				return '>\t\tEssence: ' + global.toFancyNum(query.total) + '\n\n';
+			if (rank == 0) return '>\t\tEssence: ' + global.toFancyNum(query.total) + '\n\n';
 			else return '\n\t\tEssence: ' + global.toFancyNum(query.total) + '\n';
 		},
 		p
@@ -538,11 +498,7 @@ function getLuckRanking(globalRank, con, msg, count, p) {
 	} else {
 		let users = global.getids(msg.channel.guild.members);
 		sql =
-			'SELECT * FROM luck WHERE id IN (' +
-			users +
-			') ORDER BY lcount DESC LIMIT ' +
-			count +
-			';';
+			'SELECT * FROM luck WHERE id IN (' + users + ') ORDER BY lcount DESC LIMIT ' + count + ';';
 		sql +=
 			'SELECT *, (SELECT COUNT(*)+1 FROM luck WHERE id IN (' +
 			users +
@@ -560,12 +516,9 @@ function getLuckRanking(globalRank, con, msg, count, p) {
 		'Top ' +
 			count +
 			' ' +
-			(globalRank
-				? 'Global Luck Rankings'
-				: 'Luck Rankings for ' + msg.channel.guild.name),
+			(globalRank ? 'Global Luck Rankings' : 'Luck Rankings for ' + msg.channel.guild.name),
 		function (query, rank) {
-			if (rank == 0)
-				return '>\t\tLuck: ' + global.toFancyNum(query.lcount) + '\n\n';
+			if (rank == 0) return '>\t\tLuck: ' + global.toFancyNum(query.lcount) + '\n\n';
 			else return '\n\t\tLuck: ' + global.toFancyNum(query.lcount) + '\n';
 		},
 		p
@@ -585,12 +538,7 @@ function getCurseRanking(globalRank, con, msg, count, p) {
 			' ORDER BY lcount DESC LIMIT 1;';
 	} else {
 		let users = global.getids(msg.channel.guild.members);
-		sql =
-			'SELECT * FROM luck WHERE id IN (' +
-			users +
-			') ORDER BY lcount ASC LIMIT ' +
-			count +
-			';';
+		sql = 'SELECT * FROM luck WHERE id IN (' + users + ') ORDER BY lcount ASC LIMIT ' + count + ';';
 		sql +=
 			'SELECT *, (SELECT COUNT(*)+1 FROM luck WHERE id IN (' +
 			users +
@@ -608,12 +556,9 @@ function getCurseRanking(globalRank, con, msg, count, p) {
 		'Top ' +
 			count +
 			' ' +
-			(globalRank
-				? 'Global Curse Rankings'
-				: 'Curse Rankings for ' + msg.channel.guild.name),
+			(globalRank ? 'Global Curse Rankings' : 'Curse Rankings for ' + msg.channel.guild.name),
 		function (query, rank) {
-			if (rank == 0)
-				return '>\t\tLuck: ' + global.toFancyNum(query.lcount) + '\n\n';
+			if (rank == 0) return '>\t\tLuck: ' + global.toFancyNum(query.lcount) + '\n\n';
 			else return '\n\t\tLuck: ' + global.toFancyNum(query.lcount) + '\n';
 		},
 		p
@@ -646,10 +591,7 @@ function getGuildRanking(con, msg, count, p) {
 		let embed = '```md\n< Top ' + count + ' Guild OwO Rankings >\n';
 		if (rows[1][0] !== undefined && rows[1][0] !== null) {
 			embed += '> Your Guild Rank: ' + rows[1][0].rank + '\n';
-			embed +=
-				'>\t\tcollectively said owo ' +
-				global.toFancyNum(rows[1][0].count) +
-				' times!\n\n';
+			embed += '>\t\tcollectively said owo ' + global.toFancyNum(rows[1][0].count) + ' times!\n\n';
 		}
 		for (let ele of rows[0]) {
 			let id = String(ele.id);
@@ -758,8 +700,7 @@ function getBattleRanking(globalRank, con, msg, count, p) {
 function getDailyRanking(globalRank, con, msg, count, p) {
 	let sql;
 	if (globalRank) {
-		sql =
-			'SELECT * FROM cowoncy ORDER BY daily_streak DESC LIMIT ' + count + ';';
+		sql = 'SELECT * FROM cowoncy ORDER BY daily_streak DESC LIMIT ' + count + ';';
 		sql +=
 			'SELECT *, (SELECT COUNT(*)+1 FROM cowoncy WHERE daily_streak > c.daily_streak) AS rank FROM cowoncy c WHERE c.id = ' +
 			msg.author.id +
@@ -793,10 +734,8 @@ function getDailyRanking(globalRank, con, msg, count, p) {
 				? 'Global Daily Streak Rankings'
 				: 'Daily Streak Rankings for ' + msg.channel.guild.name),
 		function (query, rank) {
-			if (rank == 0)
-				return '>\t\tStreak: ' + global.toFancyNum(query.daily_streak) + '\n\n';
-			else
-				return '\n\t\tStreak: ' + global.toFancyNum(query.daily_streak) + '\n';
+			if (rank == 0) return '>\t\tStreak: ' + global.toFancyNum(query.daily_streak) + '\n\n';
+			else return '\n\t\tStreak: ' + global.toFancyNum(query.daily_streak) + '\n';
 		},
 		p
 	);
@@ -820,14 +759,8 @@ async function getLevelRanking(global, p, count) {
 			'xp\n\n';
 	} else {
 		ranking = await levels.getServerRanking(p.msg.channel.guild.id, count);
-		userRank = await levels.getUserServerRank(
-			p.msg.author.id,
-			p.msg.channel.guild.id
-		);
-		userLevel = await levels.getUserServerLevel(
-			p.msg.author.id,
-			p.msg.channel.guild.id
-		);
+		userRank = await levels.getUserServerRank(p.msg.author.id, p.msg.channel.guild.id);
+		userLevel = await levels.getUserServerLevel(p.msg.author.id, p.msg.channel.guild.id);
 		text =
 			'```md\n< Top ' +
 			count +
@@ -915,8 +848,7 @@ function getShardRanking(globalRank, con, msg, count, p) {
 				? 'Global Weapon Shard Rankings'
 				: 'Weapon Shard Rankings for ' + msg.channel.guild.name),
 		function (query, rank) {
-			if (rank == 0)
-				return '>\t\tShards: ' + global.toFancyNum(query.count) + '\n\n';
+			if (rank == 0) return '>\t\tShards: ' + global.toFancyNum(query.count) + '\n\n';
 			else return '\n\tShards: ' + global.toFancyNum(query.count) + '\n';
 		},
 		p

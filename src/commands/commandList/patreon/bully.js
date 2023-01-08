@@ -68,12 +68,7 @@ module.exports = new CommandInterface({
 				url: emote,
 			},
 			author: {
-				name:
-					p.msg.author.username +
-					' bullies ' +
-					target.username +
-					'! ' +
-					comment,
+				name: p.msg.author.username + ' bullies ' + target.username + '! ' + comment,
 				url: emote,
 				icon_url: p.msg.author.avatarURL,
 			},

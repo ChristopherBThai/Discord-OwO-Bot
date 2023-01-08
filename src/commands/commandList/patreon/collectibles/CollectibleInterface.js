@@ -10,7 +10,7 @@ class Collectible {
 		// Name of collectible
 		this.key;
 		// Command alias
-		this.alias;
+		this.alias = [];
 		// Override database key
 		this.dataOverride;
 		// Emoji for collectible
@@ -56,6 +56,10 @@ class Collectible {
 		this.mergeMsg;
 		// Display msg for when user has merged items
 		this.mergeDisplayMsg;
+		// Plural noun for merge
+		this.mergePluralName;
+		// Singular noun for merge
+		this.mergeSingleName;
 
 		// User can manual merge
 		this.hasManualMerge = false;
@@ -72,7 +76,7 @@ class Collectible {
 		// Precent chance to fail giving item
 		this.failChance;
 		// Message when fails
-		this.failMessage;
+		this.failMsg;
 
 		// Track when items are given
 		this.trackDate = false;
@@ -84,21 +88,14 @@ class Collectible {
 		this.data = this.dataOverride || this.key;
 		this.ownersString = `?${this.owners[this.owners.length - 1]}?`;
 		if (this.owners.slice(0, -1).length) {
-			this.ownersString = `?${this.owners.slice(0, -1).join('?, ?')}?, and ${
-				this.ownersString
-			}`;
+			this.ownersString = `?${this.owners.slice(0, -1).join('?, ?')}?, and ${this.ownersString}`;
 		}
 	}
 
 	async display(p) {
 		let count = await p.redis.hget(`data_${p.msg.author.id}`, this.data);
-		let receiveDate = await p.redis.hget(
-			`data_${p.msg.author.id}`,
-			`${this.data}_time`
-		);
-		receiveDate = receiveDate
-			? new Date(+receiveDate).toLocaleDateString()
-			: 'never';
+		let receiveDate = await p.redis.hget(`data_${p.msg.author.id}`, `${this.data}_time`);
+		receiveDate = receiveDate ? new Date(+receiveDate).toLocaleDateString() : 'never';
 
 		let mergeCount = 0;
 		if (this.hasMerge) {
@@ -106,59 +103,83 @@ class Collectible {
 			count = count % this.mergeNeeded;
 		}
 		if (this.hasManualMerge) {
-			mergeCount = await p.redis.hget(
-				`data_${p.msg.author.id}`,
-				this.manualMergeData
-			);
+			mergeCount = await p.redis.hget(`data_${p.msg.author.id}`, this.manualMergeData);
 		}
 
-		let msg = this.getDisplayMsg(p, { count, mergeCount, receiveDate });
+		let msg = await this.getDisplayMsg(p, { count, mergeCount, receiveDate });
 		p.send(msg);
 	}
 
-	getDisplayMsg(p, { count, mergeCount, receiveDate }) {
-		if (!mergeCount) {
+	async getDisplayMsg(p, { count, mergeCount, receiveDate }, msgOverride) {
+		if (msgOverride) {
+			return msgOverride
+				.replaceAll('?displayMsg?', this.displayMsg)
+				.replaceAll('?count?', count || 0)
+				.replaceAll('?mergeCount?', mergeCount || 0)
+				.replaceAll('?mergeEmoji?', this.mergeEmoji)
+				.replaceAll('?plural?', count > 1 ? 's' : '')
+				.replaceAll('?pluralName?', count > 1 ? this.pluralName : this.singleName)
+				.replaceAll(
+					'?mergePluralName?',
+					mergeCount > 1 ? this.mergePluralName : this.mergeSingleName
+				)
+				.replaceAll('?mergePlural?', mergeCount > 1 ? 's' : '')
+				.replaceAll('?emoji?', this.emoji)
+				.replaceAll('?blank?', p.config.emoji.blank)
+				.replaceAll('?user?', p.msg.author.username);
+		} else if (!mergeCount) {
 			if (!count && this.displayNoneMsg) {
 				return this.displayNoneMsg
 					.replaceAll('?count?', count || 0)
 					.replaceAll('?plural?', count > 1 ? 's' : '')
+					.replaceAll('?pluralName?', count > 1 ? this.pluralName : this.singleName)
 					.replaceAll(
-						'?pluralName?',
-						count > 1 ? this.pluralName : this.singleName
+						'?mergePluralName?',
+						mergeCount > 1 ? this.mergePluralName : this.mergeSingleName
 					)
 					.replaceAll('?emoji?', this.emoji)
+					.replaceAll('?mergeCount?', mergeCount || 0)
+					.replaceAll('?mergeEmoji?', this.mergeEmoji)
 					.replaceAll('?date?', receiveDate)
+					.replaceAll('?blank?', p.config.emoji.blank)
 					.replaceAll('?user?', p.msg.author.username);
 			} else {
 				return this.displayMsg
 					.replaceAll('?count?', count || 0)
 					.replaceAll('?plural?', count > 1 ? 's' : '')
+					.replaceAll('?pluralName?', count > 1 ? this.pluralName : this.singleName)
 					.replaceAll(
-						'?pluralName?',
-						count > 1 ? this.pluralName : this.singleName
+						'?mergePluralName?',
+						mergeCount > 1 ? this.mergePluralName : this.mergeSingleName
 					)
 					.replaceAll('?emoji?', this.emoji)
+					.replaceAll('?mergeCount?', mergeCount || 0)
+					.replaceAll('?mergeEmoji?', this.mergeEmoji)
 					.replaceAll('?date?', receiveDate)
+					.replaceAll('?blank?', p.config.emoji.blank)
 					.replaceAll('?user?', p.msg.author.username);
 			}
 		} else {
-			return this.mergeDisplayMsg
+			return (this.mergeDisplayMsg || this.displayMsg)
 				.replaceAll('?displayMsg?', this.displayMsg)
 				.replaceAll('?count?', count || 0)
 				.replaceAll('?mergeCount?', mergeCount || 0)
 				.replaceAll('?plural?', count > 1 ? 's' : '')
+				.replaceAll('?pluralName?', count > 1 ? this.pluralName : this.singleName)
 				.replaceAll(
-					'?pluralName?',
-					count > 1 ? this.pluralName : this.singleName
+					'?mergePluralName?',
+					mergeCount > 1 ? this.mergePluralName : this.mergeSingleName
 				)
 				.replaceAll('?mergePlural?', mergeCount > 1 ? 's' : '')
 				.replaceAll('?emoji?', this.emoji)
+				.replaceAll('?blank?', p.config.emoji.blank)
 				.replaceAll('?mergeEmoji?', this.mergeEmoji)
 				.replaceAll('?user?', p.msg.author.username);
 		}
 	}
 
-	async give(p, user) {
+	async give(p, user, dataOverride) {
+		const data = dataOverride || this.data;
 		if (!this.owners.includes(p.msg.author.id)) {
 			if (this.dailyOnly && !(await this.checkDaily(p, user))) {
 				return;
@@ -168,18 +189,11 @@ class Collectible {
 				take = this.costAmount;
 			}
 			if (take > 0) {
-				let result = await p.redis.hincrby(
-					`data_${p.msg.author.id}`,
-					this.data,
-					-1 * take
-				);
+				let result = await p.redis.hincrby(`data_${p.msg.author.id}`, this.data, -1 * take);
 				// TODO double check merge for costAmount greater than 1
-				const refund =
-					+result < 0 ||
-					(this.hasMerge && (+result + take) % this.mergeNeeded <= 0);
+				const refund = +result < 0 || (this.hasMerge && (+result + take) % this.mergeNeeded <= 0);
 				if (result == null || refund) {
-					if (refund)
-						p.redis.hincrby(`data_${p.msg.author.id}`, this.data, take);
+					if (refund) p.redis.hincrby(`data_${p.msg.author.id}`, this.data, take);
 					p.errorMsg(this.brokeMsg, 3000);
 					p.setCooldown(5);
 					return;
@@ -187,36 +201,44 @@ class Collectible {
 			}
 		}
 
-		if (this.checkFailed(p, user)) return;
+		if (await this.checkFailed(p, user)) return;
 
-		let result = await p.redis.hincrby(
-			`data_${user.id}`,
-			this.data,
-			this.giveAmount
-		);
+		let result = await p.redis.hincrby(`data_${user.id}`, data, this.giveAmount);
 		if (this.trackDate) {
-			await p.redis.hset(`data_${user.id}`, `${this.data}_time`, Date.now());
+			await p.redis.hset(`data_${user.id}`, `${data}_time`, Date.now());
 		}
+
+		const msg = await this.getGiveMsg(p, result, user);
+		p.send(msg);
+	}
+
+	async getGiveMsg(p, result, user, msgOverride) {
 		let selectedGiveMsg = this.giveMsg;
 		if (Array.isArray(this.giveMsg)) {
-			selectedGiveMsg =
-				this.giveMsg[Math.floor(Math.random() * this.giveMsg.length)];
+			selectedGiveMsg = this.giveMsg[Math.floor(Math.random() * this.giveMsg.length)];
 		}
-		if (this.hasMerge && (result % this.mergeNeeded) - this.giveAmount < 0) {
-			const msg = this.mergeMsg
+		if (msgOverride) {
+			return msgOverride
 				.replaceAll('?giveMsg?', selectedGiveMsg)
 				.replaceAll('?giver?', p.msg.author.username)
 				.replaceAll('?receiver?', user.username)
 				.replaceAll('?emoji?', this.emoji)
 				.replaceAll('?blank?', p.config.emoji.blank)
 				.replaceAll('?mergeEmoji?', this.mergeEmoji);
-			p.send(msg);
-		} else {
-			const msg = selectedGiveMsg
+		} else if (this.hasMerge && (result % this.mergeNeeded) - this.giveAmount < 0) {
+			return this.mergeMsg
+				.replaceAll('?giveMsg?', selectedGiveMsg)
 				.replaceAll('?giver?', p.msg.author.username)
 				.replaceAll('?receiver?', user.username)
+				.replaceAll('?emoji?', this.emoji)
+				.replaceAll('?blank?', p.config.emoji.blank)
+				.replaceAll('?mergeEmoji?', this.mergeEmoji);
+		} else {
+			return selectedGiveMsg
+				.replaceAll('?giver?', p.msg.author.username)
+				.replaceAll('?receiver?', user.username)
+				.replaceAll('?blank?', p.config.emoji.blank)
 				.replaceAll('?emoji?', this.emoji);
-			p.send(msg);
 		}
 	}
 
@@ -238,23 +260,26 @@ class Collectible {
 			}
 			return false;
 		}
-		await redis.hset(`data_${msg.author.id}`, `${data}_reset`, afterMid.now);
+		await redis.hset(`data_${msg.author.id}`, `${this.data}_reset`, afterMid.now);
 		return true;
 	}
 
-	checkFailed(p, user) {
-		const { msg } = p;
-		if (typeof this.failChance !== 'number' || this.failChance <= 0)
-			return false;
+	async checkFailed(p, user) {
+		if (typeof this.failChance !== 'number' || this.failChance <= 0) return false;
 		if (Math.random() <= this.failChance) {
-			const msg = this.failMessage
-				.replaceAll('?giver?', msg.author.username)
-				.replaceAll('?receiver?', user.username)
-				.replaceAll('?emoji?', this.emoji);
+			const msg = await this.getFailMsg(p, user);
 			p.send(msg);
 			return true;
 		}
 		return false;
+	}
+
+	async getFailMsg(p, user, msgOverride) {
+		const msg = msgOverride || this.failMsg;
+		return msg
+			.replaceAll('?giver?', p.msg.author.username)
+			.replaceAll('?receiver?', user.username)
+			.replaceAll('?emoji?', this.emoji);
 	}
 
 	async reset(p) {
@@ -279,28 +304,18 @@ class Collectible {
 	}
 
 	async manualMerge(p) {
-		let result = await p.redis.hincrby(
-			`data_${p.msg.author.id}`,
-			this.data,
-			-1 * this.mergeNeeded
-		);
+		let result = await p.redis.hincrby(`data_${p.msg.author.id}`, this.data, -1 * this.mergeNeeded);
 		if (result == null || result < 0) {
-			if (result < 0)
-				p.redis.hincrby(`data_${p.msg.author.id}`, this.data, this.mergeNeeded);
+			if (result < 0) p.redis.hincrby(`data_${p.msg.author.id}`, this.data, this.mergeNeeded);
 			p.errorMsg(', you do not have have enough to merge! >:c', 3000);
 			p.setCooldown(5);
 			return;
 		}
 
-		const result2 = await p.redis.hincrby(
-			`data_${p.msg.author.id}`,
-			this.manualMergeData,
-			1
-		);
+		const result2 = await p.redis.hincrby(`data_${p.msg.author.id}`, this.manualMergeData, 1);
 		let selectedGiveMsg = this.giveMsg;
 		if (Array.isArray(this.giveMsg)) {
-			selectedGiveMsg =
-				this.giveMsg[Math.floor(Math.random() * this.giveMsg.length)];
+			selectedGiveMsg = this.giveMsg[Math.floor(Math.random() * this.giveMsg.length)];
 		}
 		const msg = this.mergeMsg
 			.replaceAll('?giveMsg?', selectedGiveMsg)

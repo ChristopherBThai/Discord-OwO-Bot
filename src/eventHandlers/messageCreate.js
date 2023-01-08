@@ -5,11 +5,7 @@
  * For more information, see README.md and LICENSE
  */
 
-const whitelist = [
-	'409959187229966337',
-	'420104212895105044',
-	'552384921914572802',
-];
+const whitelist = ['409959187229966337', '420104212895105044', '552384921914572802'];
 const PrivateChannel = 1;
 const levels = require('../utils/levels.js');
 const blacklist = require('../utils/blacklist.js');
@@ -18,19 +14,19 @@ const survey = require('../utils/survey.js');
 // Fired when a message is created
 exports.handle = async function (msg, raw) {
 	// if (blacklist.checkBot(msg)) return;
+	if (this.optOut[msg.author.id]) return;
 
 	//Ignore if bot
 	if (msg.author.bot) {
 		return;
 	} else if (
-
-	/* Ignore guilds if in debug mode */
+		/* Ignore guilds if in debug mode */
 		this.debug &&
 		msg.channel.guild &&
 		!whitelist.includes(msg.channel.guild.id)
 	) {
 		return;
-	} else if (this.command.executeAdmin(msg, raw)) {
+	} else if (await this.command.executeAdmin(msg, raw)) {
 		return;
 
 		// no guild, its a dm

@@ -8,7 +8,6 @@
 const CommandInterface = require('../../CommandInterface.js');
 const ban = require('../../../utils/ban.js');
 const config = require('../../../data/config.json');
-const badwords = require('../../../../../tokens/badwords.json');
 
 const feedbackChannel = '519778148888346635';
 const supportGuild = '420104212895105044';
@@ -22,9 +21,7 @@ module.exports = new CommandInterface({
 
 	args: '{msg}',
 
-	desc:
-		'Suggest a new feature. You must be in our support server to suggest.\n' +
-		config.guildlink,
+	desc: 'Suggest a new feature. You must be in our support server to suggest.\n' + config.guildlink,
 
 	example: ['owo suggest Add a new type of gamble!'],
 
@@ -159,13 +156,13 @@ async function suggest(message) {
 async function confirmSuggestion(message) {
 	// Check for banned words
 	const temp = message.replace(/\s/gi, '').toLowerCase();
-	for (let i in badwords) {
-		if (temp.indexOf(badwords[i]) >= 0) {
+	for (let i in this.badwords) {
+		if (temp.indexOf(this.badwords[i]) >= 0) {
 			await ban.banCommand(
 				this,
 				this.msg.author,
 				this.commandAlias,
-				`Your suggestion did not seem appropriate\n${this.config.emoji.blank} **| Your suggestion:** ${message}\n${this.config.emoji.blank} **| Bad word:** ${badwords[i]}`
+				`Your suggestion did not seem appropriate\n${this.config.emoji.blank} **| Your suggestion:** ${message}\n${this.config.emoji.blank} **| Bad word:** ${this.badwords[i]}`
 			);
 			return false;
 		}
@@ -183,11 +180,7 @@ async function confirmSuggestion(message) {
 			text: this.msg.author.id,
 		},
 	};
-	this.sender.msgChannel(
-		feedbackChannel,
-		{ embed },
-		{ react: ['👍', '🔁', '👎'] }
-	);
+	this.sender.msgChannel(feedbackChannel, { embed }, { react: ['👍', '🔁', '👎'] });
 
 	return true;
 }

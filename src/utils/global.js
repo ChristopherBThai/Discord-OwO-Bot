@@ -14,7 +14,6 @@ const filter = new (require('bad-words'))({
 	placeHolder: 'OwO',
 	replaceRegex: /\w+/g,
 });
-const badwords = require('../../../tokens/badwords.json');
 const { Profanity, ProfanityOptions } = require('@2toad/profanity');
 const options = new ProfanityOptions();
 options.wholeWord = false;
@@ -22,17 +21,23 @@ options.grawlix = 'OwO';
 const emojis = require('../data/emojis.json');
 const emojiRegex = new RegExp(Object.keys(emojis).join('|'), 'gi');
 const filter2 = new Profanity(options);
-const goodwords = require('../../../tokens/goodwords.json');
+let goodwords;
+try {
+	goodwords = require('../../../tokens/goodwords.json');
+} catch (err) {
+	console.error('Could not find goodwords.json, attempting to use ./secret file...');
+	goodwords = require('../../secret/goodwords.json');
+	console.log('Found goodwords.json file in secret folder!');
+}
 filter2.removeWords(goodwords);
 const namor = require('namor');
 const mysql = require('./../botHandlers/mysqlHandler.js');
-var animaljson = require('../../../tokens/owo-animals.json');
 var animalunicode = {};
 var commands = {};
 var animals = {};
 var ranks = {};
 var rankAlias = {};
-var client, con;
+var client, con, animaljson, main;
 var totalShards, sharders;
 
 /**
@@ -40,13 +45,9 @@ var totalShards, sharders;
  * @param {string}	value - value to check if integer
  *
  */
-exports.isInt = function (value) {
-	return (
-		!isNaN(value) &&
-		parseInt(Number(value)) == value &&
-		!isNaN(parseInt(value, 10))
-	);
-};
+const isInt = (exports.isInt = function (value) {
+	return !isNaN(value) && parseInt(Number(value)) == value && !isNaN(parseInt(value, 10));
+});
 
 /**
  * Grabs all id from guild
@@ -87,8 +88,11 @@ exports.parseID = function (id) {
 /**
  * Maps alts to their command names
  */
-exports.client = function (tclient) {
-	client = tclient;
+exports.init = function (bot) {
+	main = bot;
+	client = bot.bot;
+	con = bot.mysql.con;
+	animaljson = bot.animals;
 
 	var animallist = animaljson['list'];
 
@@ -142,13 +146,6 @@ exports.client = function (tclient) {
 			rankAlias[animaljson.alias[key][i]] = key;
 		}
 	}
-};
-
-/**
- * Gets mysql con
- */
-exports.con = function (tcon) {
-	con = tcon;
 };
 
 /**
@@ -341,4 +338,18 @@ exports.replacer = function (text, replacer) {
 		text = text.replace(new RegExp(`{\s*${key}\s*}`, 'gi'), replacer[key]);
 	}
 	return text;
+};
+
+exports.toDiscordTimestamp = function (date) {
+	if (typeof date === 'number' || isInt(date)) {
+		return `<t:${Math.trunc(+date / 1000)}:R>`;
+	}
+	return `<t:${Math.trunc(date.valueOf() / 1000)}:R>`;
+};
+
+exports.getChannelMessages = async function (channel, options, before, after, around) {
+	const msgs = await channel.getMessages(options, before, after, around);
+	return msgs.filter((msg) => {
+		return !main.optOut[msg.author.id];
+	});
 };

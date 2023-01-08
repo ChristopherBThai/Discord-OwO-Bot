@@ -6,9 +6,17 @@
  */
 
 const blank = '<:blank:427371936482328596>';
-exports.alter = async function (p, user, text, type) {
+exports.alter = async function (p, user, text, type, setting) {
 	const result = await checkDb(p, user.id, text, type);
 	if (result) return result;
+	switch (p.msg.channel.id) {
+		case '1054101525191995502':
+			return quincey(text, type, setting);
+		case '1056148694480715886':
+			return quincey(text, type, setting);
+		case '1056148656572596264':
+			return quincey(text, type, setting);
+	}
 	switch (user.id) {
 		case '176046069954641921':
 			return crown(text, type);
@@ -69,6 +77,18 @@ exports.alter = async function (p, user, text, type) {
 	}
 };
 
+exports.overrideDisplay = function (p, display) {
+	switch (p.msg.channel.id) {
+		case '1054101525191995502':
+			return 'compact';
+		case '1056148694480715886':
+			return 'compact';
+		case '1056148656572596264':
+			return 'compact';
+	}
+	return display;
+};
+
 async function checkDb(p, id, text, info) {
 	if (!info) return;
 
@@ -119,8 +139,7 @@ function crown(text, type) {
 		url: 'http://cdn.discordapp.com/attachments/598115387158036500/615856437708455936/image0.gif',
 	};
 	text.author.name =
-		'Someone accidently stepped on ' +
-		text.author.name.replace(' goes into battle', "'s garden");
+		'Someone accidently stepped on ' + text.author.name.replace(' goes into battle', "'s garden");
 	text.color = 16776960;
 	return text;
 }
@@ -151,10 +170,7 @@ function dalu(text, type) {
 		url: 'https://i.imgur.com/iks7lY3.gif',
 	};
 	text.color = 63996;
-	text.author.name = text.author.name.replace(
-		' goes into battle!',
-		' starts it off with a bite!'
-	);
+	text.author.name = text.author.name.replace(' goes into battle!', ' starts it off with a bite!');
 	return text;
 }
 
@@ -394,8 +410,7 @@ function kirito(text, opt) {
 }
 
 function direwolf(text, opt) {
-	text.author.name =
-		'Lucy and Yukino go into battle and open the TWELVE ZODIAC GATES!';
+	text.author.name = 'Lucy and Yukino go into battle and open the TWELVE ZODIAC GATES!';
 	switch (text.color) {
 		case 16711680:
 			text.color = 16023551;
@@ -429,8 +444,7 @@ function direwolf(text, opt) {
 }
 
 function jiraya(text, opt) {
-	text.author.name =
-		'Gojo Satoru and Itadori Yuji goes into battle against curses!';
+	text.author.name = 'Gojo Satoru and Itadori Yuji goes into battle against curses!';
 	switch (text.color) {
 		// lost
 		case 16711680:
@@ -473,8 +487,7 @@ function notJames(text, opt) {
 		// lost
 		case 16711680:
 			if (opt) {
-				text.author.name =
-					'chem has arrived to protect the Fallen Stars from outerspace invaders!';
+				text.author.name = 'chem has arrived to protect the Fallen Stars from outerspace invaders!';
 				text.footer.text = `Defeat || Collected: 50 stardust || Lost: ${opt.streak} booms :c`;
 			}
 			text.color = 1262169;
@@ -486,9 +499,7 @@ function notJames(text, opt) {
 		// win
 		case 65280:
 			if (opt) {
-				const stardust = ('' + opt.xp).includes('+')
-					? 'bonus stardust'
-					: 'stardust';
+				const stardust = ('' + opt.xp).includes('+') ? 'bonus stardust' : 'stardust';
 				text.author.name =
 					'james has arrived to protect the Fallen Stars from outerspace invaders!';
 				if (opt.streak % 10000 == 0) {
@@ -577,8 +588,7 @@ function lexx(text, opt) {
 }
 
 function mercureid(text, opt) {
-	text.author.name =
-		'Mario and Luigi embark on a journey to rescue Princess Peach!';
+	text.author.name = 'Mario and Luigi embark on a journey to rescue Princess Peach!';
 	switch (text.color) {
 		// lost
 		case 16711680:
@@ -768,8 +778,7 @@ function wibi(text, opt) {
 }
 
 function jekyll(text, opt) {
-	text.author.name =
-		'You and Levi Ackerman goes into the Ragako village to fight the titans!';
+	text.author.name = 'You and Levi Ackerman goes into the Ragako village to fight the titans!';
 	switch (text.color) {
 		// win
 		case 65280:
@@ -899,5 +908,16 @@ function estee(text, opt) {
 			}
 			break;
 	}
+	return text;
+}
+
+function quincey(text, opt, { friendlyBattle }) {
+	if (!friendlyBattle) {
+		return text;
+	}
+	text.image = {
+		url: 'https://media.discordapp.net/attachments/1051442610595708960/1054065287395291186/ezgif-4-fc0dd870e6.gif',
+	};
+	text.color = 2201331;
 	return text;
 }

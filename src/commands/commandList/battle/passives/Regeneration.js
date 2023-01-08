@@ -23,10 +23,7 @@ module.exports = class Regeneration extends PassiveInterface {
 			'<:lhgen:621558018265579530>',
 			'<:fhgen:621558018286419979>',
 		];
-		this.statDesc =
-			'Heal **?%** of your max ' +
-			WeaponInterface.hpEmoji +
-			'HP after every turn';
+		this.statDesc = 'Heal **?%** of your max ' + WeaponInterface.hpEmoji + 'HP after every turn';
 		this.qualityList = [[5, 10]];
 	}
 
@@ -34,17 +31,13 @@ module.exports = class Regeneration extends PassiveInterface {
 		if (animal.stats.hp[0] <= 0) return;
 
 		let logs = new Log();
-		let heal =
-			(animal.stats.hp[1] + animal.stats.hp[3]) * (this.stats[0] / 100);
+		let heal = (animal.stats.hp[1] + animal.stats.hp[3]) * (this.stats[0] / 100);
 		heal = WeaponInterface.heal(animal, heal, animal, {
 			me: animal,
 			allies: ally,
 			enemies: enemy,
 		});
-		logs.push(
-			`[REGEN] ${animal.nickname} heals for ${heal.amount} HP`,
-			heal.logs
-		);
+		logs.push(`[REGEN] ${animal.nickname} heals for ${heal.amount} HP`, heal.logs);
 
 		return logs;
 	}
