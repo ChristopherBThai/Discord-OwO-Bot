@@ -125,20 +125,30 @@ async function checkDb(p, id, text, info) {
 		return result.text;
 	}
 
-	return {
+	const content = {
 		embed: {
 			description: result.text,
 			title: p.global.replacer(result.title, replacers),
 			color: result.color || 1,
-			footer: { text: p.global.replacer(result.footer, replacers) },
-			thumbnail: { url: result.sideImg },
-			image: { url: result.bottomImg },
-			author: {
-				name: p.global.replacer(result.author, replacers),
-				icon_url: result.showAvatar ? p.msg.author.avatarURL : null,
-			},
 		},
 	};
+	if (result.sideImg) {
+		content.embed.thumbnail = { url: result.sideImg };
+	}
+	if (result.footer) {
+		content.embed.footer = { text: p.global.replacer(result.footer, replacers) };
+	}
+	if (result.bottomImg) {
+		content.embed.image = { url: result.bottomImg };
+	}
+	if (result.author) {
+		content.embed.author = {
+			name: p.global.replacer(result.author, replacers),
+			icon_url: result.showAvatar ? p.msg.author.avatarURL : null,
+		};
+	}
+
+	return content;
 }
 
 function geist(text) {

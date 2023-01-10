@@ -119,19 +119,29 @@ async function checkDb(p, id, text, info) {
 	const result = (await p.query(sql))[0];
 	if (!result || !result.updated_at) return;
 
-	return {
+	let embed = {
 		description: text.description,
 		fields: text.fields,
-		image: { url: result.bottomImg || text.image?.url },
 		title: p.global.replacer(result.title, replacers),
 		color: result.color || 1,
-		footer: { text: p.global.replacer(result.footer, replacers) },
-		thumbnail: { url: result.sideImg },
-		author: {
+	};
+	if (result.sideImg) {
+		embed.thumbnail = { url: result.sideImg };
+	}
+	if (result.footer) {
+		embed.footer = { text: p.global.replacer(result.footer, replacers) };
+	}
+	if (result.bottomImg) {
+		embed.image = { url: result.bottomImg || text.image?.url };
+	}
+	if (result.author) {
+		embed.author = {
 			name: p.global.replacer(result.author, replacers),
 			icon_url: result.showAvatar ? p.msg.author.avatarURL : null,
-		},
-	};
+		};
+	}
+
+	return embed;
 }
 
 function crown(text, type) {
