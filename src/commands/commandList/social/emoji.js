@@ -8,11 +8,7 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const baseURL = 'https://cdn.discordapp.com/emojis/';
-const permissions = require('../../../data/permissions.json');
-const nextPageEmoji = '➡️';
-const prevPageEmoji = '⬅️';
 const stealEmoji = '🕵️';
-const errorEmoji = '';
 
 module.exports = new CommandInterface({
 	alias: ['emoji', 'enlarge', 'jumbo'],
@@ -138,7 +134,7 @@ async function display(p, emojis) {
 	};
 
 	const additionalButtons = await getStealButton(p);
-	const additionalFilter = (componentName, user) => componentName === 'steal';
+	const additionalFilter = (componentName, _user) => componentName === 'steal';
 	const pagedMsg = new p.PagedMessage(p, createEmbed, emojis.length - 1, {
 		idle: 120000,
 		additionalFilter,

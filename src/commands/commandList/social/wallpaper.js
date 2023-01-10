@@ -70,7 +70,7 @@ module.exports = new CommandInterface({
 			}
 		});
 
-		collector.on('end', async function (collected) {
+		collector.on('end', async function (_collected) {
 			page = await createPage(p, currentPage, totalPages);
 			page.embed.color = 6381923;
 			await msg.edit({

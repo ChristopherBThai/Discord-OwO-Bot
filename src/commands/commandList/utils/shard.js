@@ -106,7 +106,7 @@ module.exports = new CommandInterface({
 				await msg.edit(page);
 			}
 		});
-		collector.on('end', async function (collected) {
+		collector.on('end', async function (_collected) {
 			page.embed.color = 6381923;
 			await msg.edit({
 				content: 'This message is now inactive',
@@ -116,7 +116,7 @@ module.exports = new CommandInterface({
 	},
 });
 
-function getPage(p, currentPage, shards, shardID) {
+function getPage(p, currentPage, shards, _shardID) {
 	let desc = '```\n[ID]  cluster ping uptime        status\n';
 	for (let i = currentPage * perPage; i < perPage + currentPage * perPage; i++) {
 		if (shards[i]) desc += shards[i] + '\n';
@@ -142,7 +142,7 @@ async function fetchInfo(p) {
 
 	return new Promise((resolve, reject) => {
 		setTimeout(function () {
-			let req = request(
+			request(
 				{
 					method: 'GET',
 					uri: process.env.SHARDER_HOST + '/shard-status',

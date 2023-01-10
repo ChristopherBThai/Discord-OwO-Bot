@@ -7,8 +7,6 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const permissions = require('../../../data/permissions.json');
-
 module.exports = new CommandInterface({
 	alias: ['invite', 'link'],
 

@@ -38,7 +38,7 @@ class InfoUpdater {
 				json: true,
 				body: info,
 			},
-			(err, res, body) => {
+			(err, res) => {
 				if (err) {
 					console.error(err);
 					throw err;
@@ -59,7 +59,7 @@ class InfoUpdater {
 		if (!this.totalShards) this.totalShards = await this.main.global.getTotalShardCount();
 		let guildSize = Math.floor(this.main.bot.guilds.size / this.main.bot.shards.size);
 
-		this.main.bot.shards.forEach((val, key, map) => {
+		this.main.bot.shards.forEach((val) => {
 			this.main.dbl.postStats(guildSize, val.id, this.totalShards);
 		});
 	}

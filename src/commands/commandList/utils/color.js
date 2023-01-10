@@ -141,14 +141,14 @@ module.exports = new CommandInterface({
 		}
 
 		if (!colors) {
-			let embed = await constructEmbed(color, p);
+			let embed = await constructEmbed(color);
 			await p.send({
 				content: colorEmoji + ' **| ' + p.msg.author.username + '**' + title,
 				embed,
 			});
 		} else {
 			let page = 0;
-			let embed = await constructEmbed(colors[page], p);
+			let embed = await constructEmbed(colors[page]);
 			embed.footer = {
 				text: colors[page].name + ' - population: ' + colors[page].population,
 			};
@@ -173,7 +173,7 @@ module.exports = new CommandInterface({
 				if (emoji.name === nextPageEmoji) {
 					if (page + 1 < colors.length) page++;
 					else page = 0;
-					embed = await constructEmbed(colors[page], p);
+					embed = await constructEmbed(colors[page]);
 					embed.footer = {
 						text: colors[page].name + ' - population: ' + colors[page].population,
 					};
@@ -187,7 +187,7 @@ module.exports = new CommandInterface({
 				} else if (emoji.name === prevPageEmoji) {
 					if (page > 0) page--;
 					else page = colors.length - 1;
-					embed = await constructEmbed(colors[page], p);
+					embed = await constructEmbed(colors[page]);
 					embed.footer = {
 						text: colors[page].name + ' - population: ' + colors[page].population,
 					};
@@ -201,14 +201,14 @@ module.exports = new CommandInterface({
 				}
 			});
 
-			collector.on('end', async function (collected) {
+			collector.on('end', async function (_collected) {
 				await msg.edit({ content: 'This message is now inactive', embed });
 			});
 		}
 	},
 });
 
-async function constructEmbed(color, p) {
+async function constructEmbed(color) {
 	let description =
 		'**HEX:** `' +
 		color.hex +
@@ -231,10 +231,6 @@ async function constructEmbed(color, p) {
 		},
 	};
 	return embed;
-}
-
-function parseMember(member) {
-	return parseIntValue(member.displayColor);
 }
 
 function parseIntValue(intValue) {
@@ -467,8 +463,8 @@ function generateImage(color) {
 
 	/* Returns a promise to avoid callback hell */
 	try {
-		return new Promise((resolve, reject) => {
-			let req = request(
+		return new Promise((resolve, _reject) => {
+			request(
 				{
 					method: 'POST',
 					uri: `${process.env.GEN_API_HOST}/colorgen`,

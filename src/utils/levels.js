@@ -174,11 +174,13 @@ function ban(id, time = 1800000) {
 }
 
 /* Permma ban a user from getting xp */
+/* eslint-disable-next-line */
 function permBan(id) {
 	banned[id] = true;
 }
 
 /* Remove a ban */
+/* eslint-disable-next-line */
 function removeBan(id) {
 	delete banned[id];
 }

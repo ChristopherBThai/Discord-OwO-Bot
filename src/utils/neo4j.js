@@ -23,7 +23,7 @@ exports.give = function (msg, receiver, amount) {
 			json: true,
 			body: info,
 		},
-		(error, res, body) => {
+		(error) => {
 			if (error) console.error(error);
 		}
 	);
@@ -51,7 +51,7 @@ exports.battle = function (msg, sender, receiver, amount) {
 			json: true,
 			body: info,
 		},
-		(error, res, body) => {
+		(error) => {
 			if (error) console.error(error);
 		}
 	);
@@ -77,7 +77,7 @@ exports.drop = function (msg, amount) {
 			json: true,
 			body: info,
 		},
-		(error, res, body) => {
+		(error) => {
 			if (error) console.error(error);
 		}
 	);
@@ -103,7 +103,7 @@ exports.pickup = function (msg, amount) {
 			json: true,
 			body: info,
 		},
-		(error, res, body) => {
+		(error) => {
 			if (error) console.error(error);
 		}
 	);

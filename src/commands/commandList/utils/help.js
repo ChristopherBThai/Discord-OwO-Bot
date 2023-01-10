@@ -9,11 +9,11 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const battleHelpUtil = require('../battle/util/battleHelpUtil.js');
 const emotes = require('../../../data/emotes.json');
-var sEmotes = [];
-for (var key in emotes.sEmote) sEmotes.push(key);
+let sEmotes = [];
+for (let key in emotes.sEmote) sEmotes.push(key);
 sEmotes = '`' + sEmotes.join('`  `') + '`';
-var uEmotes = [];
-for (var key in emotes.uEmote) uEmotes.push(key);
+let uEmotes = [];
+for (let key in emotes.uEmote) uEmotes.push(key);
 uEmotes.pop();
 uEmotes.pop();
 uEmotes = '`' + uEmotes.join('`  `') + '`';
@@ -131,24 +131,24 @@ async function describe(p, send, commandName, command) {
 	else title += '>';
 	if (command.alias[1] != undefined) {
 		alias = '\n# Aliases\n';
-		for (var i = 0; i < command.alias.length; i++) alias += command.alias[i] + ' , ';
+		for (let i = 0; i < command.alias.length; i++) alias += command.alias[i] + ' , ';
 		alias = alias.substr(0, alias.length - 3);
 	}
 	if (command.example[0] != undefined) {
 		example = '\n# Example Command(s)\n';
-		for (var i = 0; i < command.example.length; i++) example += command.example[i] + ' , ';
+		for (let i = 0; i < command.example.length; i++) example += command.example[i] + ' , ';
 		example = example.substr(0, example.length - 3);
 	}
 	if (command.related[0] != undefined) {
 		related = '\n# Related Command(s)\n';
-		for (var i = 0; i < command.related.length; i++) related += command.related[i] + ' , ';
+		for (let i = 0; i < command.related.length; i++) related += command.related[i] + ' , ';
 		related = related.substr(0, related.length - 3);
 	}
 
 	let ids = desc.match(/\?[0-9]+\?/g);
 	for (let i in ids) {
-		descID = ids[i].match(/[0-9]+/);
-		tempUser = await p.fetch.getUser(descID[0]);
+		let descID = ids[i].match(/[0-9]+/);
+		let tempUser = await p.fetch.getUser(descID[0]);
 		desc = desc.replace('?' + descID + '?', tempUser ? tempUser.username : 'A User');
 	}
 

@@ -6,8 +6,8 @@
  */
 
 const whitelist = ['409959187229966337', '420104212895105044', '552384921914572802'];
-const PrivateChannel = 1;
 const levels = require('../utils/levels.js');
+/* eslint-disable-next-line */
 const blacklist = require('../utils/blacklist.js');
 const survey = require('../utils/survey.js');
 

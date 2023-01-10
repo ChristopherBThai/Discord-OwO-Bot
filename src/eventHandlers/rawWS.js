@@ -7,7 +7,7 @@
 const User = require('../../node_modules/eris/lib/structures/User');
 const axios = require('axios');
 
-exports.handle = function (packet, id) {
+exports.handle = function (packet, _id) {
 	if (packet.t === 'INTERACTION_CREATE') {
 		switch (packet.d.type) {
 		case 2:
@@ -88,7 +88,7 @@ class Interaction {
 	}
 
 	async createMessage(content, file, del) {
-		const msg = await axios.post(this.url, {
+		await axios.post(this.url, {
 			type: 4,
 			data: content,
 		});

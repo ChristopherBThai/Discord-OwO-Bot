@@ -28,15 +28,14 @@ module.exports = new CommandInterface({
 	six: 500,
 
 	execute: async function (p) {
-		let con = p.con,
-			client = p.client,
+		let client = p.client,
 			msg = p.msg;
 		let sql = 'SELECT COUNT(*) user,sum(count) AS total FROM user;';
 		sql +=
 			'SELECT SUM(common) AS common, SUM(uncommon) AS uncommon, SUM(rare) AS rare, SUM(epic) AS epic, SUM(mythical) AS mythical, SUM(legendary) AS legendary FROM animal_count;';
 		sql += 'SELECT command FROM disabled WHERE channel = ' + msg.channel.id + ';';
 
-		let { guilds, channels, users } = await fetchInfo(p);
+		let { guilds, users } = await fetchInfo();
 
 		let ping = p.client.shards.get(p.client.guildShardMap[p.msg.channel.guild.id]).latency;
 
@@ -49,7 +48,7 @@ module.exports = new CommandInterface({
 			parseInt(rows[1][0].mythical) +
 			parseInt(rows[1][0].legendary);
 		let disabled = '';
-		for (i in rows[2]) {
+		for (let i in rows[2]) {
 			disabled += rows[2][i].command + ', ';
 		}
 		disabled = disabled.slice(0, -2);
@@ -122,10 +121,10 @@ module.exports = new CommandInterface({
 	},
 });
 
-function fetchInfo(p) {
+function fetchInfo() {
 	return new Promise((resolve, reject) => {
 		setTimeout(function () {
-			let req = request(
+			request(
 				{
 					method: 'GET',
 					uri: process.env.SHARDER_HOST + '/botinfo',

@@ -8,7 +8,7 @@
 const surveyEmoji = '📝';
 const surveyLogChannel = '882521311371485184';
 
-exports.handle = async function (msg, ack) {
+exports.handle = async function (msg, _ack) {
 	const survey = await getSurvey.bind(this)(msg.author.id);
 	if (!survey.length) return;
 

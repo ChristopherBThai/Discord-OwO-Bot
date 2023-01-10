@@ -7,7 +7,6 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const dateUtil = require('../../../utils/dateUtil.js');
 const rings = require('../../../data/rings.json');
 const yes = '✅';
 const no = '❎';
@@ -110,7 +109,7 @@ module.exports = new CommandInterface({
 		});
 
 		// Once reaction collector ends, change color of embed message
-		collector.on('end', async function (collected) {
+		collector.on('end', async function (_collected) {
 			embed.color = 6381923;
 			await msg.edit({ embed });
 		});

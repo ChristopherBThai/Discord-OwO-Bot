@@ -52,6 +52,7 @@ const sdc = new SDC({
 
 const incr = (exports.incr = function (name, amount = 1, tags = {}, msg) {
 	return;
+	/* eslint-disable-next-line */
 	if (amount < 0) {
 		decr(name, amount, tags, msg);
 		return;
@@ -66,6 +67,7 @@ const incr = (exports.incr = function (name, amount = 1, tags = {}, msg) {
 
 const decr = (exports.decr = function (name, amount = -1, tags = {}, msg) {
 	return;
+	/* eslint-disable-next-line */
 	if (amount > 0) {
 		incr(name, amount, tags, msg);
 		return;
@@ -98,7 +100,7 @@ exports.command = function (command, msg) {
 			json: true,
 			body: body,
 		},
-		function (err, res, body) {
+		function (err) {
 			if (err && !influxErrorShown) {
 				console.error('InfluxDB is inactive. Log upload will not work.');
 				influxErrorShown = true;
@@ -124,7 +126,7 @@ exports.logstash = function (command, p) {
 			json: true,
 			body: body,
 		},
-		function (err, res, body) {
+		function (err) {
 			if (err && !influxErrorShown) {
 				console.error('InfluxDB is inactive. Log upload will not work.');
 				influxErrorShown = true;
@@ -150,7 +152,7 @@ exports.logstashBanned = function (command, p) {
 			json: true,
 			body: body,
 		},
-		function (err, res, body) {
+		function (err) {
 			if (err && !influxErrorShown) {
 				console.error('InfluxDB is inactive. Log upload will not work.');
 				influxErrorShown = true;
@@ -170,7 +172,7 @@ exports.logstashCaptcha = function (metric) {
 			json: true,
 			body: metric,
 		},
-		function (err, res, body) {
+		function (err) {
 			if (err && !influxErrorShown) {
 				console.error('InfluxDB is inactive. Log upload will not work.');
 				influxErrorShown = true;

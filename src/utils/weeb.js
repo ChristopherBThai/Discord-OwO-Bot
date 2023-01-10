@@ -37,7 +37,7 @@ exports.grab = function (p, ptype, ftype, text, notsfw, retry) {
 
 			p.send({ embed });
 		})
-		.catch((err) => {
+		.catch(() => {
 			if (retryt && (ftype == 'jpg' || ftype == 'png')) {
 				this.grab(p, ptype, ftype == 'jpg' ? 'png' : 'jpg', text, notsfw, false);
 			} else

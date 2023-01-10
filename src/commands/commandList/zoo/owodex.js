@@ -7,8 +7,6 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const ranks = {};
-
 module.exports = new CommandInterface({
 	alias: ['owodex', 'od', 'dex', 'd'],
 
@@ -30,7 +28,6 @@ module.exports = new CommandInterface({
 
 	execute: async function (p) {
 		let global = p.global,
-			con = p.con,
 			msg = p.msg,
 			args = p.args;
 
@@ -54,6 +51,7 @@ module.exports = new CommandInterface({
 		}
 
 		let emoji = animal.uni ? animal.uni : animal.value;
+		let temp;
 		if ((temp = emoji.match(/:[0-9]+>/))) {
 			temp = 'https://cdn.discordapp.com/emojis/' + temp[0].match(/[0-9]+/)[0] + '.';
 			if (emoji.match(/<a:/)) temp += 'gif';
@@ -81,8 +79,8 @@ module.exports = new CommandInterface({
 			desc = '*' + animal.desc.trim() + '*';
 			let ids = desc.match(/\?[0-9]+\?/g);
 			for (let i in ids) {
-				descID = ids[i].match(/[0-9]+/);
-				tempUser = await p.fetch.getUser(descID[0]);
+				let descID = ids[i].match(/[0-9]+/);
+				let tempUser = await p.fetch.getUser(descID[0]);
 				desc = desc
 					.replace(
 						' ?' + descID + '? \n\n',
@@ -115,8 +113,8 @@ module.exports = new CommandInterface({
 			}
 			ids = desc.match(/\?[0-9]+\!/g);
 			for (let i in ids) {
-				descID = ids[i].match(/[0-9]+/);
-				tempUser = await p.fetch.getUser(descID[0]);
+				let descID = ids[i].match(/[0-9]+/);
+				let tempUser = await p.fetch.getUser(descID[0]);
 				const username = tempUser ? tempUser.username + '#' + tempUser.discriminator : 'A User';
 				desc = desc
 					.replace(' ?' + descID + '! \n\n', '* ***' + username + '*** \n\n*')

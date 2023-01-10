@@ -1,4 +1,4 @@
-/* eslint no-use-before-define: 0 */
+/* eslint-disable */
 
 // Checks for macros
 exports.check = async function (p, command, { diff, now }) {

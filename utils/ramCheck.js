@@ -9,7 +9,7 @@
  * It resets the all shards if we have less than 0.75GB of ram left
  */
 const si = require('systeminformation');
-const global = require('./global.js');
+// const global = require('./global.js');
 /* Interval to check (0.5H) */
 const interval = 3600000 / 2;
 /* Minimum ram (1.5GB) */

@@ -7,6 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
+/* eslint-disable-next-line */
 const regex = /^[\x00-\x7F]{1,25}$/i;
 const mentions = /<(?:@[!&]?|#)\d+>/g;
 const settingEmoji = '⚙️';

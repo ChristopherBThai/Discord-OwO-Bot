@@ -157,8 +157,7 @@ exports.randAnimal = function ({ patreon, gem, lucky, huntbot, manual } = {}) {
 
 exports.toSmallNum = function (count, digits) {
 	let result = '';
-	let num = count;
-	for (i = 0; i < digits; i++) {
+	for (let i = 0; i < digits; i++) {
 		let digit = count % 10;
 		count = Math.trunc(count / 10);
 		result = animals.numbers[digit] + result;

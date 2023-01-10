@@ -176,6 +176,7 @@ module.exports = new CommandInterface({
 	},
 });
 
+/* eslint-disable-next-line */
 function toPages(text) {
 	text = text.split('\n');
 	let pages = [];
@@ -193,6 +194,7 @@ function toPages(text) {
 	return pages;
 }
 
+/* eslint-disable-next-line */
 async function sendPages(p, pages, header, footer) {
 	if (pages.length <= 3) {
 		for (let i in pages) {
@@ -230,7 +232,7 @@ async function sendPages(p, pages, header, footer) {
 			await msg.edit({ embed });
 		}
 	});
-	collector.on('end', async function (collected) {
+	collector.on('end', async function (_collected) {
 		embed.color = 6381923;
 		await msg.edit({ content: 'This message is now inactive', embed });
 	});
@@ -252,9 +254,8 @@ function toEmbed(p, header, pages, footer, loc) {
 }
 
 function toSmallNum(count, digits) {
-	var result = '';
-	var num = count;
-	for (i = 0; i < digits; i++) {
+	let result = '';
+	for (let i = 0; i < digits; i++) {
 		var digit = count % 10;
 		count = Math.trunc(count / 10);
 		result = animals.numbers[digit] + result;
@@ -265,15 +266,15 @@ function toSmallNum(count, digits) {
 function initDisplay() {
 	var gap = '  ';
 	display = animals.ranks.common + '   ';
-	for (i = 1; i < animals.common.length; i++) display += '~' + animals.common[i] + gap;
+	for (let i = 1; i < animals.common.length; i++) display += '~' + animals.common[i] + gap;
 	display += '\n' + animals.ranks.uncommon + '   ';
-	for (i = 1; i < animals.uncommon.length; i++) display += '~' + animals.uncommon[i] + gap;
+	for (let i = 1; i < animals.uncommon.length; i++) display += '~' + animals.uncommon[i] + gap;
 	display += '\n' + animals.ranks.rare + '   ';
-	for (i = 1; i < animals.rare.length; i++) display += '~' + animals.rare[i] + gap;
+	for (let i = 1; i < animals.rare.length; i++) display += '~' + animals.rare[i] + gap;
 	display += '\n' + animals.ranks.epic + '   ';
-	for (i = 1; i < animals.epic.length; i++) display += '~' + animals.epic[i] + gap;
+	for (let i = 1; i < animals.epic.length; i++) display += '~' + animals.epic[i] + gap;
 	display += '\n' + animals.ranks.mythical + '   ';
-	for (i = 1; i < animals.mythical.length; i++) display += '~' + animals.mythical[i] + gap;
+	for (let i = 1; i < animals.mythical.length; i++) display += '~' + animals.mythical[i] + gap;
 	patreon = '\n' + animals.ranks.patreon + '    ';
 	cpatreon = '\n' + animals.ranks.cpatreon + '    ';
 	secret = '\n' + animals.ranks.legendary + '    ';

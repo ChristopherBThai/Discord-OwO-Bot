@@ -12,7 +12,7 @@ exports.urlToBufferString = function (url) {
 		try {
 			request.get(url, (error, response, body) => {
 				if (!error && response.statusCode == 200) {
-					data =
+					let data =
 						'data:' +
 						response.headers['content-type'] +
 						';base64,' +

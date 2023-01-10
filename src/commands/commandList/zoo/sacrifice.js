@@ -69,7 +69,7 @@ module.exports = new CommandInterface({
 			/* Multiple ranks */
 		} else {
 			ranks = {};
-			for (i = 0; i < args.length; i++) {
+			for (let i = 0; i < args.length; i++) {
 				let tempRank = global.validRank(args[i].toLowerCase());
 				if (!tempRank) {
 					p.errorMsg(', Invalid arguments!', 3000);
@@ -83,9 +83,10 @@ module.exports = new CommandInterface({
 
 		if (name) name = name.toLowerCase();
 
+		let animal, rank;
 		/* If multiple ranks */
 		if (ranks) {
-			await sellRanks(p, msg, con, ranks, p.send, global, p);
+			await sellRanks(p, msg, con, ranks, p.send, global);
 
 			//if its an animal...
 		} else if ((animal = global.validAnimal(name))) {
@@ -211,7 +212,7 @@ async function sellRank(p, msg, con, rank, send, global) {
 	if (result[1].affectedRows <= 0) {
 		send('**🚫 | ' + msg.author.username + '**, You don\'t have enough animals! >:c', 3000);
 	} else {
-		count = 0;
+		let count = 0;
 		for (let i in result[0]) count += result[0][i].count;
 		send(
 			'**🔪 | ' +
@@ -228,20 +229,21 @@ async function sellRank(p, msg, con, rank, send, global) {
 		);
 
 		for (let i in result[0]) {
+			/* eslint-disable-next-line */
 			let tempAnimal = p.global.validAnimal(result[0][i].name);
 			p.logger.incr('essence', count * rank.essence, { type: 'sacrifice' }, p.msg);
 		}
 	}
 }
 
-async function sellRanks(p, msg, con, ranks, send, global, p) {
+async function sellRanks(p, msg, con, ranks, send, global) {
 	let sql = `SELECT * FROM autohunt WHERE id = ${msg.author.id};`;
 	let result = await p.query(sql);
 	if (!result[0])
 		await p.query(`INSERT IGNORE INTO autohunt (id,essence) VALUES (${msg.author.id},0);`);
 
 	sql = '';
-	for (i in ranks) {
+	for (let i in ranks) {
 		let rank = ranks[i];
 		let animals = '(\'' + rank.animals.join('\',\'') + '\')';
 		let points =
@@ -271,7 +273,7 @@ async function sellRanks(p, msg, con, ranks, send, global, p) {
 	let sold = '';
 	let total = 0;
 	let count = 0;
-	for (i in ranks) {
+	for (let i in ranks) {
 		let rank = ranks[i];
 		let sellCount = 0;
 		for (let j in result[count * 2]) {
@@ -297,10 +299,11 @@ async function sellRanks(p, msg, con, ranks, send, global, p) {
 				'**'
 		);
 		count = 0;
-		for (i in ranks) {
+		for (let i in ranks) {
 			let rank = ranks[i];
 			for (let j in result[count * 2]) {
 				let temp = result[count * 2][j];
+				/* eslint-disable-next-line */
 				let tempAnimal = p.global.validAnimal(temp.name);
 				p.logger.incr('essence', temp.count * rank.essence, { type: 'sacrifice' }, p.msg);
 			}
