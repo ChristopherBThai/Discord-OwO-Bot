@@ -7,10 +7,10 @@
 
 let timer;
 
-exports.handle = async function (main, message) {
+exports.handle = async function (main, _message) {
 	if (timer) {
 		clearTimeout(timer);
-		delete timer;
+		timer = null;
 	}
 	const time = main.clusterID * 3 * 60 * 1000;
 	console.log('ending ' + main.clusterID + ' in ' + time + 'ms');

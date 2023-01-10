@@ -83,7 +83,6 @@ function getRandomGem({ tier } = {}) {
 	} else {
 		gem = type[tier];
 	}
-	let rank = ranks[gem.key[0]];
 	return gem;
 }
 

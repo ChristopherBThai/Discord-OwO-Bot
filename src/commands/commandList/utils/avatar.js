@@ -55,6 +55,7 @@ module.exports = new CommandInterface({
 			image: { url: user.dynamicAvatarURL(null, 1024) },
 		};
 
+		let member;
 		if ((member = await p.fetch.getMember(p.msg.channel.guild, user.id))) {
 			let hex = p.global.getRoleColor(member);
 			let memberStatus = !member.status ? 'offline' : member.status;

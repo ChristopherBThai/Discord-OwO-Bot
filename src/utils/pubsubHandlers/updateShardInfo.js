@@ -10,7 +10,7 @@ let onCooldown = false;
 
 const request = require('request');
 
-exports.handle = async function (main, message) {
+exports.handle = async function (main, _message) {
 	if (onCooldown) return;
 	onCooldown = true;
 	setTimeout(function () {
@@ -24,7 +24,7 @@ exports.handle = async function (main, message) {
 			json: true,
 			body: fetchInfo(main),
 		},
-		function (err, res, body) {
+		function (err) {
 			if (err) {
 				console.error(err);
 				throw err;
@@ -37,7 +37,7 @@ function fetchInfo(main) {
 	let result = { password: process.env.SHARDER_PASS };
 	let shards = main.bot.shards;
 
-	shards.forEach(function (val, key, map) {
+	shards.forEach(function (val) {
 		result[val.id] = {
 			shard: val.id,
 			status: val.status,

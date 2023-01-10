@@ -8,7 +8,7 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const blank = '<:blank:427371936482328596>';
-const box = '<:box:427352600476647425>';
+const _box = '<:box:427352600476647425>';
 const boxShake = '<a:boxshake:427004983460888588>';
 const boxOpen = '<a:boxopen:427019823747301377>';
 const fboxShake = '<a:fboxshake:725570543834759230>';

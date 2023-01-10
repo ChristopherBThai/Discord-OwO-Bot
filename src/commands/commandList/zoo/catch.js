@@ -35,8 +35,7 @@ module.exports = new CommandInterface({
 	bot: true,
 
 	execute: async function (p) {
-		let msg = p.msg,
-			con = p.con;
+		let msg = p.msg;
 
 		let sql =
 			'SELECT money,IF(patreonAnimal = 1 OR (TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths),1,0) as patreon FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id LEFT JOIN patreons ON user.uid = patreons.uid WHERE cowoncy.id = ' +
@@ -72,7 +71,7 @@ module.exports = new CommandInterface({
 			let gems = {};
 			let uid = undefined;
 			for (let i = 0; i < result[3].length; i++) {
-				tempGem = gemUtil.getGem(result[3][i].gname);
+				let tempGem = gemUtil.getGem(result[3][i].gname);
 				tempGem.uid = result[3][i].uid;
 				tempGem.activecount = result[3][i].activecount;
 				tempGem.gname = result[3][i].gname;
@@ -125,7 +124,7 @@ module.exports = new CommandInterface({
 			});
 			//text += "\n⚠ **|** `battle` and `hunt` cooldowns have increased to prevent rateLimits issues.\n<:blank:427371936482328596> **|** They will revert back to `15s` in the future.";
 
-			let result2 = await p.query(sql);
+			await p.query(sql);
 			p.logger.decr('cowoncy', -5, { type: 'hunt' }, p.msg);
 			for (let i in animal.animal) {
 				let tempAnimal = p.global.validAnimal(animal.animal[i][1]);

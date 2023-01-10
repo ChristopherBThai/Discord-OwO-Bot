@@ -15,16 +15,16 @@ class SnailSocket {
 				token: process.env.SNAIL_TOKEN,
 			},
 		});
-		this.socket.on('error', (error) => {
+		this.socket.on('error', (_error) => {
 			console.error('SnailSocket error');
 		});
-		this.socket.on('disconnect', (reason) => {
+		this.socket.on('disconnect', (_reason) => {
 			console.error('SnailSocket disconnect');
 		});
 		this.socket.on('connect', () => {
 			console.log('SnailSocket connected');
 		});
-		this.socket.on('connect_error', (error) => {
+		this.socket.on('connect_error', (_error) => {
 			console.error('SnailSocket connect_error');
 		});
 	}

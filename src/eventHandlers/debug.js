@@ -5,6 +5,6 @@
  * For more information, see README.md and LICENSE
  */
 
-exports.handle = function (msg, id) {
-	//console.log(`[${id}] ${msg}`);
+exports.handle = function (_msg, _id) {
+	//console.log(`[${_id}] ${_msg}`);
 };

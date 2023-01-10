@@ -5,8 +5,6 @@
  * For more information, see README.md and LICENSE
  */
 
-const animal = '';
-const daily = '';
 var mysql, sender;
 
 exports.parsePatreon = function (query) {

@@ -30,8 +30,7 @@ module.exports = new CommandInterface({
 
 	execute: async function (p) {
 		var args = p.args,
-			msg = p.msg,
-			global = p.global;
+			msg = p.msg;
 		var user1, user2;
 		if (args.length == 2) {
 			user1 = await p.fetch.getMember(p.msg.channel.guild.id, args[0]);
@@ -70,7 +69,7 @@ function combinename(name1, name2) {
 	var mid2 = Math.ceil(name2.length / 2) - 1;
 	var noVowel1 = false,
 		noVowel2 = false;
-	for (i = mid1; i >= 0; i--) {
+	for (let i = mid1; i >= 0; i--) {
 		count1++;
 		if (vowels.includes(name1.charAt(i).toLowerCase())) {
 			i = -1;
@@ -78,7 +77,7 @@ function combinename(name1, name2) {
 			noVowel1 = true;
 		}
 	}
-	for (i = mid2; i < name2.length; i++) {
+	for (let i = mid2; i < name2.length; i++) {
 		count2++;
 		if (vowels.includes(name2.charAt(i).toLowerCase())) {
 			i = name2.length;

@@ -30,9 +30,8 @@ exports.getItem = function (args) {
 
 exports.toSmallNum = function (count, digits) {
 	var result = '';
-	var num = count;
-	for (i = 0; i < digits; i++) {
-		var digit = count % 10;
+	for (let i = 0; i < digits; i++) {
+		let digit = count % 10;
 		count = Math.trunc(count / 10);
 		result = numbers[digit] + result;
 	}
@@ -76,7 +75,7 @@ exports.displayWallpaperShop = async function (p) {
 		}
 	});
 
-	collector.on('end', async function (collected) {
+	collector.on('end', async function (_collected) {
 		embed = await getWallpaperPage(p, currentPage, totalPages);
 		embed.color = 6381923;
 		await msg.edit({ content: 'This message is now inactive', embed });

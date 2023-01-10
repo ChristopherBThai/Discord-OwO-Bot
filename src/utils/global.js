@@ -32,13 +32,12 @@ try {
 filter2.removeWords(goodwords);
 const namor = require('namor');
 const mysql = require('./../botHandlers/mysqlHandler.js');
-var animalunicode = {};
-var commands = {};
-var animals = {};
-var ranks = {};
-var rankAlias = {};
-var client, con, animaljson, main;
-var totalShards, sharders;
+let animalunicode = {};
+let animals = {};
+let ranks = {};
+let rankAlias = {};
+let client, animaljson, main;
+let totalShards;
 
 /**
  * Checks if its an integer
@@ -54,7 +53,7 @@ const isInt = (exports.isInt = function (value) {
  */
 exports.getids = function (members) {
 	let result = '';
-	members.forEach(function (ele, key, map) {
+	members.forEach(function (ele, key) {
 		result += key + ',';
 	});
 	return result.slice(0, -1);
@@ -91,36 +90,35 @@ exports.parseID = function (id) {
 exports.init = function (bot) {
 	main = bot;
 	client = bot.bot;
-	con = bot.mysql.con;
 	animaljson = bot.animals;
 
-	var animallist = animaljson['list'];
+	let animallist = animaljson['list'];
 
 	//Make nickname alias
-	for (var key in animallist) {
-		var alt = animallist[key].alt;
+	for (let key in animallist) {
+		let alt = animallist[key].alt;
 		animals[animallist[key].value] = key;
 		animals[animallist[key].value.toLowerCase()] = key;
 		animals[key] = key;
 		animals[key.toLowerCase()] = key;
-		for (i in alt) {
+		for (let i in alt) {
 			animals[alt[i]] = key;
 			animals[alt[i].toLowerCase()] = key;
 		}
 	}
 
 	//to unicode
-	for (key in animallist) {
+	for (let key in animallist) {
 		if (animallist[key].uni != undefined)
 			animalunicode[animallist[key].value] = animallist[key].uni;
 	}
 
 	//other info to animaljson
-	for (key in animaljson.ranks) {
+	for (let key in animaljson.ranks) {
 		ranks[key] = {};
-		var animalRank = [];
-		for (var i = 1; i < animaljson[key].length; i++) {
-			var name = animals[animaljson[key][i]];
+		let animalRank = [];
+		for (let i = 1; i < animaljson[key].length; i++) {
+			let name = animals[animaljson[key][i]];
 			try {
 				animalRank.push(animaljson[key][i]);
 				animaljson.list[name].rank = key;
@@ -140,9 +138,9 @@ exports.init = function (bot) {
 		ranks[key].rank = key;
 	}
 
-	for (key in animaljson.alias) {
+	for (let key in animaljson.alias) {
 		rankAlias[key] = key;
-		for (var i = 0; i < animaljson.alias[key].length; i++) {
+		for (let i = 0; i < animaljson.alias[key].length; i++) {
 			rankAlias[animaljson.alias[key][i]] = key;
 		}
 	}
@@ -153,7 +151,7 @@ exports.init = function (bot) {
  */
 exports.validAnimal = function (animal) {
 	if (animal != undefined) animal = animal.toLowerCase();
-	var ranimal = animaljson.list[animals[animal]];
+	let ranimal = animaljson.list[animals[animal]];
 	if (ranimal) ranimal['name'] = animals[animal];
 	return ranimal;
 };
@@ -172,15 +170,14 @@ exports.getAllRanks = function () {
  * Changes animal to unicode
  */
 exports.unicodeAnimal = function (animal) {
-	var unicode = animalunicode[animal];
+	let unicode = animalunicode[animal];
 	return unicode == undefined ? animal : unicode;
 };
 
 exports.toSmallNum = function (count, digits) {
 	let result = '';
-	let num = count;
 	if (!digits) digits = count.toString().length;
-	for (i = 0; i < digits; i++) {
+	for (let i = 0; i < digits; i++) {
 		let digit = count % 10;
 		count = Math.trunc(count / 10);
 		result = numbers[digit] + result;
@@ -189,7 +186,7 @@ exports.toSmallNum = function (count, digits) {
 };
 
 exports.toFancyNum = function (num) {
-	var parts = num.toString().split('.');
+	let parts = num.toString().split('.');
 	parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 	return parts.join('.');
 };
@@ -224,7 +221,7 @@ exports.getRoleColor = function (member) {
 exports.getTotalShardCount = function () {
 	if (totalShards) return totalShards;
 	return new Promise((resolve, reject) => {
-		let req = request(
+		request(
 			{
 				method: 'GET',
 				uri: process.env.SHARDER_HOST + '/totalShards',
@@ -237,7 +234,6 @@ exports.getTotalShardCount = function () {
 				if (res.statusCode == 200) {
 					body = JSON.parse(body);
 					totalShards = body.totalShards;
-					sharders = body.sharders;
 					resolve(totalShards);
 				} else {
 					reject();

@@ -7,17 +7,8 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const ranks = {};
 const weaponUtil = require('../battle/util/weaponUtil.js');
 const ringUtil = require('../social/util/ringUtil.js');
-let animals;
-try {
-	animals = require('../../../../../tokens/owo-animals.json');
-} catch (err) {
-	console.error('Could not find owo-animals.json, attempting to use ./secret file...');
-	animals = require('../../../../secret/owo-animals.json');
-	console.log('Found owo-animals.json file in secret folder!');
-}
 
 module.exports = new CommandInterface({
 	alias: ['sell'],
@@ -84,7 +75,7 @@ module.exports = new CommandInterface({
 			/* Multiple ranks */
 		} else {
 			ranks = {};
-			for (i = 0; i < args.length; i++) {
+			for (let i = 0; i < args.length; i++) {
 				let tempRank = global.validRank(args[i].toLowerCase());
 				if (!tempRank) {
 					p.send('**🚫 | ' + msg.author.username + '**, Invalid arguments!', 3000);
@@ -98,11 +89,12 @@ module.exports = new CommandInterface({
 
 		if (name) name = name.toLowerCase();
 
+		let animal, rank;
 		/* If multiple ranks */
 		if (ranks) {
 			sellRanks(msg, con, ranks, p.send, global, p);
 
-			//if its an animal...
+		//if its an animal...
 		} else if ((animal = global.validAnimal(name))) {
 			if (args.length < 3) sellAnimal(msg, con, animal, count, p.send, global, p);
 			else
@@ -247,7 +239,7 @@ function sellRank(msg, con, rank, send, global, p) {
 		if (result[1].affectedRows <= 0) {
 			send('**🚫 | ' + msg.author.username + '**, You don\'t have enough animals! >:c', 3000);
 		} else {
-			count = result[0][0].total;
+			let count = result[0][0].total;
 			send(
 				'**🔪 | ' +
 					msg.author.username +
@@ -268,7 +260,7 @@ function sellRank(msg, con, rank, send, global, p) {
 async function sellRanks(msg, con, ranks, send, global, p) {
 	let sold = '',
 		total = 0;
-	for (i in ranks) {
+	for (let i in ranks) {
 		let rank = ranks[i];
 		let animals = '(\'' + rank.animals.join('\',\'') + '\')';
 		let sql =

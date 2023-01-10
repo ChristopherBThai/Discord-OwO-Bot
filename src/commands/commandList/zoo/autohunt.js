@@ -131,7 +131,6 @@ async function claim(p, msg, con, query, bot) {
 		totalExp +
 		' EXPERIENCE`';
 	let tempText = [];
-	let count = 0;
 	for (let animal in total) {
 		let animalString = animal + animalUtil.toSmallNum(total[animal].count, digits) + '  ';
 		let animalLoc = p.animals.order.indexOf(total[animal].rank);
@@ -140,7 +139,6 @@ async function claim(p, msg, con, query, bot) {
 				tempText[animalLoc] = ' \n' + p.animals.ranks[p.animals.order[animalLoc]] + ' **|**';
 			tempText[animalLoc] += ' ' + animalString;
 		}
-		count++;
 		sql +=
 			'INSERT INTO animal (id,name,count,totalcount) VALUES (' +
 			msg.author.id +
@@ -324,25 +322,23 @@ async function autohunt(p, msg, con, args, global, send) {
 	}
 
 	//Extract info
-	let duration, efficiency, cost, essence, maxhunt, gain, exp;
+	let duration, efficiency, cost, gain, exp;
 	if (result[0][0]) {
 		duration = autohuntutil.getLvl(result[0][0].duration, 0, 'duration');
 		efficiency = autohuntutil.getLvl(result[0][0].efficiency, 0, 'efficiency');
 		cost = autohuntutil.getLvl(result[0][0].cost, 0, 'cost');
 		gain = autohuntutil.getLvl(result[0][0].gain, 0, 'gain');
 		exp = autohuntutil.getLvl(result[0][0].exp, 0, 'exp');
-		essence = result[0][0].essence;
 	} else {
 		duration = autohuntutil.getLvl(0, 0, 'duration');
 		efficiency = autohuntutil.getLvl(0, 0, 'efficiency');
 		cost = autohuntutil.getLvl(0, 0, 'cost');
 		gain = autohuntutil.getLvl(0, 0, 'gain');
 		exp = autohuntutil.getLvl(0, 0, 'exp');
-		essence = 0;
 	}
-	maxhunt = Math.floor(duration.stat * efficiency.stat);
-	maxgain = Math.floor(gain.stat * duration.stat);
-	maxexp = Math.floor(exp.stat * duration.stat);
+	let maxhunt = Math.floor(duration.stat * efficiency.stat);
+	let maxgain = Math.floor(gain.stat * duration.stat);
+	let maxexp = Math.floor(exp.stat * duration.stat);
 
 	//Format cowoncy
 	cowoncy -= cowoncy % cost.stat;
@@ -394,7 +390,7 @@ async function autohunt(p, msg, con, args, global, send) {
 	send(text);
 }
 
-async function display(p, msg, con, send) {
+async function display(p, msg, con) {
 	let sql =
 		'SELECT *,TIMESTAMPDIFF(MINUTE,start,NOW()) AS timer FROM autohunt WHERE id = ' +
 		msg.author.id +
@@ -410,7 +406,7 @@ async function display(p, msg, con, send) {
 		hunting = await claim(p, msg, con, result[0][0], bot);
 		if (!hunting) return;
 	}
-	let duration, efficiency, cost, essence, maxhunt, gain, exp;
+	let duration, efficiency, cost, essence, maxhunt, gain, exp, radar;
 	if (result[0][0]) {
 		duration = autohuntutil.getLvl(result[0][0].duration, 0, 'duration');
 		efficiency = autohuntutil.getLvl(result[0][0].efficiency, 0, 'efficiency');

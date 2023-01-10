@@ -61,7 +61,7 @@ function getInteractionArgs(interaction) {
 function ackTimer(interaction) {
 	setTimeout(() => {
 		if (interaction.ignoreDefer || interaction.acknowledged) return;
-		interaction.defer().catch((err) => {
+		interaction.defer().catch((_err) => {
 			console.error('Interaction defer failed.');
 		});
 		interaction.acknowledged = true;

@@ -7,7 +7,7 @@
 
 const mysql = require('mysql');
 
-config = {
+const config = {
 	host: process.env.MYSQL_HOST,
 	user: process.env.MYSQL_USER,
 	password: process.env.MYSQL_PASS,

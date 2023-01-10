@@ -66,7 +66,7 @@ function translate(p) {
 			};
 			p.send({ embed });
 		})
-		.catch((err) => {
+		.catch(() => {
 			p.errorMsg(', Could not find that language! Use `owo listlang` to see available languages');
 		});
 }
@@ -74,7 +74,7 @@ function translate(p) {
 function listlang(p) {
 	var text = 'Available languages: \n';
 	var done = false;
-	for (key in gtranslate.languages) {
+	for (let key in gtranslate.languages) {
 		if (key == 'zu') done = true;
 		if (!done) text += '`' + key + '`-' + gtranslate.languages[key] + '  ';
 	}

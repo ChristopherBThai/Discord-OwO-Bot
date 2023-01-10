@@ -6,7 +6,6 @@
  */
 
 var cooldown = {};
-const permissions = require('../data/permissions.json');
 const noEmoji = '🚫';
 const skullEmoji = '☠';
 const liftEmoji = '🙇';

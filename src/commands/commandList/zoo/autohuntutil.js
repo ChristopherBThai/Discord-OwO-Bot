@@ -42,7 +42,7 @@ const bots = [
 //test(traits.radar);
 
 exports.getLvl = function (xp, gain, traitName) {
-	totalxp = 0;
+	let totalxp = 0;
 	let temp = {};
 	let hit = false;
 	let prevlvl = 0;
@@ -79,6 +79,7 @@ exports.getMaxXp = function (lvl, trait) {
 	return Math.trunc(traits[trait].inc * Math.pow(lvl, trait.pow));
 };
 
+/* eslint-disable-next-line */
 function test(trait) {
 	var total = 0;
 	var result = trait.base;

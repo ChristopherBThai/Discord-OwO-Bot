@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
  */
 
-let client, pubsub, admin;
+let client;
 const logChannel = '739393782805692476';
 const modLogChannel = '471579186059018241';
 
@@ -133,8 +133,8 @@ exports.error = function (errorEmoji, msg) {
 			tempContent.content = `**${emoji} | ${username}**${content.content}`;
 		}
 
-		if (del) return createMessage(msg, tempContent, file, del);
-		else return createMessage(msg, tempContent, file);
+		if (del) return createMessage(msg, tempContent, file, del, opt);
+		else return createMessage(msg, tempContent, file, opt);
 	};
 };
 
@@ -190,7 +190,6 @@ exports.msgModLogChannel = async function (msg) {
 
 exports.init = function (main) {
 	client = main.bot;
-	pubsub = main.pubsub;
 };
 
 function cleanContent(content) {

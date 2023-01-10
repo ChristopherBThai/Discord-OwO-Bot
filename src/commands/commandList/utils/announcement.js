@@ -57,16 +57,16 @@ async function announcementSetting(p) {
 		let sql =
 			'INSERT INTO user_announcement (uid,aid,disabled) values ((SELECT uid FROM user WHERE id = ?),(SELECT aid FROM announcement ORDER BY aid ASC LIMIT 1),0) ON DUPLICATE KEY UPDATE disabled = 0;';
 		p.query(sql, [BigInt(p.msg.author.id)])
-			.then((result) => {
+			.then(() => {
 				p.send(
 					'**📮 | ' +
 						p.msg.author.username +
 						'** You will now receive announcements in your daily command!'
 				);
 			})
-			.catch((err) => {
+			.catch(() => {
 				sql = 'INSERT IGNORE INTO user (id,count) VALUES (?,0);' + sql;
-				p.query(sql, [BigInt(p.msg.author.id), BigInt(p.msg.author.id)]).then((result) => {
+				p.query(sql, [BigInt(p.msg.author.id), BigInt(p.msg.author.id)]).then(() => {
 					p.send(
 						'**📮 | ' +
 							p.msg.author.username +
@@ -78,12 +78,12 @@ async function announcementSetting(p) {
 		let sql =
 			'INSERT INTO user_announcement (uid,aid,disabled) values ((SELECT uid FROM user WHERE id = ?),(SELECT aid FROM announcement ORDER BY aid ASC LIMIT 1),1) ON DUPLICATE KEY UPDATE disabled = 1;';
 		p.query(sql, [BigInt(p.msg.author.id)])
-			.then((result) => {
+			.then(() => {
 				p.send('**📮 | ' + p.msg.author.username + '** You have disabled announcements!');
 			})
-			.catch((err) => {
+			.catch(() => {
 				sql = 'INSERT IGNORE INTO user (id,count) VALUES (?,0);' + sql;
-				p.query(sql, [BigInt(p.msg.author.id), BigInt(p.msg.author.id)]).then((result) => {
+				p.query(sql, [BigInt(p.msg.author.id), BigInt(p.msg.author.id)]).then(() => {
 					p.send('**📮 | ' + p.msg.author.username + '** You have disabled announcements!');
 				});
 			});

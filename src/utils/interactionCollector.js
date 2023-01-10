@@ -68,7 +68,6 @@ class InteractionEventEmitter extends EventEmitter {
 				type: 4,
 				data: content,
 			});
-			return;
 		}
 		if (this.ended) {
 			const url = `https://discord.com/api/v8/interactions/${id}/${token}/callback`;
@@ -80,7 +79,6 @@ class InteractionEventEmitter extends EventEmitter {
 				type: 4,
 				data: content,
 			});
-			return;
 		}
 
 		const url = `https://discord.com/api/v8/interactions/${id}/${token}/callback`;

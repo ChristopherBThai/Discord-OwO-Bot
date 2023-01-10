@@ -57,9 +57,9 @@ module.exports = new CommandInterface({
 									'),0,1,0,\'2017-01-01\') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;';
 								box.text = '**<:crate:523771259302182922> |** You received a weapon crate!\n';
 							}
-							var reward = 100;
-							var patreonBonus = 0;
-							var weekendBonus = weekend ? reward : 0;
+							let reward = 100;
+							let patreonBonus = 0;
+							let weekendBonus = weekend ? reward : 0;
 							if (patreon) patreonBonus *= 2;
 							sql =
 								'INSERT IGNORE INTO vote (id,date,count) VALUES (' +
@@ -71,7 +71,7 @@ module.exports = new CommandInterface({
 								id +
 								';';
 							sql += box.sql;
-							con.query(sql, function (err, result) {
+							con.query(sql, function (err) {
 								if (err) {
 									console.error(err);
 									return;
@@ -83,7 +83,7 @@ module.exports = new CommandInterface({
 									p.msg
 								);
 								// TODO neo4j
-								var text =
+								let text =
 									'**☑ |** You have received **' +
 									reward +
 									'** cowoncy for voting!' +
@@ -116,9 +116,9 @@ module.exports = new CommandInterface({
 									'),0,1,0,\'2017-01-01\') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;';
 								box.text = '**<:crate:523771259302182922> |** You received a weapon crate!\n';
 							}
-							var bonus = 100 + result[0][0].count * 3;
-							var patreonBonus = 0;
-							var weekendBonus = weekend ? bonus : 0;
+							let bonus = 100 + result[0][0].count * 3;
+							let patreonBonus = 0;
+							let weekendBonus = weekend ? bonus : 0;
 							if (patreon) patreonBonus = bonus;
 							sql =
 								'UPDATE vote SET date = NOW(),count = count+1 WHERE id = ' +
@@ -130,7 +130,7 @@ module.exports = new CommandInterface({
 								id +
 								';';
 							sql += box.sql;
-							con.query(sql, function (err, result) {
+							con.query(sql, function (err) {
 								if (err) {
 									console.error(err);
 									return;
@@ -142,7 +142,7 @@ module.exports = new CommandInterface({
 									p.msg
 								);
 								// TODO neo4j
-								var text =
+								let text =
 									'**☑ |** You have received **' +
 									bonus +
 									'** cowoncy for voting!' +
@@ -161,7 +161,7 @@ module.exports = new CommandInterface({
 								p.logger.incr('votecount', 1, {}, p.msg);
 							});
 						} else {
-							var text = '**☑ |** Click the link to vote and gain 100+ cowoncy!\n';
+							let text = '**☑ |** Click the link to vote and gain 100+ cowoncy!\n';
 							text += '**<:blank:427371936482328596> |** You can vote every 12 hours!\n';
 							text +=
 								'**<:blank:427371936482328596> |** Your daily vote is available in **' +
@@ -176,7 +176,7 @@ module.exports = new CommandInterface({
 					});
 				});
 			} else {
-				var text = '**☑ | Your daily vote is available!**\n';
+				let text = '**☑ | Your daily vote is available!**\n';
 				text += '**<:blank:427371936482328596> |** You can vote every 12 hours!\n';
 				//text += "**⚠ |** Automatic votes are currently broken!\n";
 				//text += "**<:blank:427371936482328596> |** Please retype `owo vote` 1-10min after you vote!\n";

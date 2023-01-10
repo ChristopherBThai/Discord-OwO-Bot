@@ -152,8 +152,8 @@ async function generateImage(msg, reward) {
 	};
 	info.password = process.env.GEN_PASS;
 	try {
-		return new Promise((resolve, reject) => {
-			let req = request(
+		return new Promise((resolve) => {
+			request(
 				{
 					method: 'POST',
 					uri: `${process.env.GEN_API_HOST}/levelupgen`,

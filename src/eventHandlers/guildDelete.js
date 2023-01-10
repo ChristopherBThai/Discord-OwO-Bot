@@ -6,6 +6,6 @@
  */
 
 // When guild is deleted
-exports.handle = function (guild) {
+exports.handle = function (_guild) {
 	if (!this.debug) this.logger.decr('guildcount');
 };
