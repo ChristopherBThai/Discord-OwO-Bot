@@ -33,7 +33,7 @@ jobs:
 
       # ESLint and Prettier must be in `package.json`
       - name: Install Node.js dependencies
-        run: npm install prettier@2.8.0 eslint@8.29.0 eslint-config-prettier@8.5.0
+        run: rm package.json && mv package-dev.json package.json && npm ci
 
       - name: Run linters
         uses: wearerequired/lint-action@v2
