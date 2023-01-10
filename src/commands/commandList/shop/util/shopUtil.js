@@ -40,7 +40,7 @@ exports.toSmallNum = function (count, digits) {
 };
 
 exports.displayWallpaperShop = async function (p) {
-	let sql = `SELECT COUNT(bid) AS count FROM backgrounds WHERE active = 1;`;
+	let sql = 'SELECT COUNT(bid) AS count FROM backgrounds WHERE active = 1;';
 	let result = await p.query(sql);
 	let totalPages = result[0].count;
 	let currentPage = 1;

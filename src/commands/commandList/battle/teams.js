@@ -108,7 +108,7 @@ async function displayTeams(p) {
 	let activeTeam = 0;
 	const teamsOrder = {};
 	if (!result[2].length) {
-		p.errorMsg(", you don't have a team! Create one with `owo team add {animalName}`!", 5000);
+		p.errorMsg(', you don\'t have a team! Create one with `owo team add {animalName}`!', 5000);
 		return;
 	}
 	// Find current active team
@@ -131,7 +131,7 @@ async function displayTeams(p) {
 		const embed = teamUtil.createTeamEmbed(p, team, other);
 		const teamOrder = teamsOrder[pgid];
 		if (teamOrder == null) {
-			p.errorMsg(", I couldn't parse your team... something went terribly wrong!", 3000);
+			p.errorMsg(', I couldn\'t parse your team... something went terribly wrong!', 3000);
 			return;
 		}
 		teams[teamOrder] = embed;
@@ -142,7 +142,7 @@ async function displayTeams(p) {
 		if (!teams[i]) {
 			teams[i] = {
 				author: {
-					name: p.msg.author.username + "'s team",
+					name: p.msg.author.username + '\'s team',
 					icon_url: p.msg.author.avatarURL,
 				},
 				description:
@@ -213,7 +213,7 @@ async function setTeam(p, teamNum, dontDisplay) {
 	// You cant change teams if in battle
 	if (await battleUtil.inBattle(p)) {
 		p.errorMsg(
-			", You cannot change your team while you're in battle! Please finish your `owo battle`!",
+			', You cannot change your team while you\'re in battle! Please finish your `owo battle`!',
 			3000
 		);
 		return;
@@ -228,12 +228,12 @@ async function setTeam(p, teamNum, dontDisplay) {
 	// Fetch uid and pgid
 	let sql = `SELECT uid FROM user WHERE id = ${p.msg.author.id};
 		SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${
-			p.msg.author.id
-		} ORDER BY pgid LIMIT 1 OFFSET ${teamNum - 1}`;
+	p.msg.author.id
+} ORDER BY pgid LIMIT 1 OFFSET ${teamNum - 1}`;
 	let result = await p.query(sql);
 
 	if (!result[0]) {
-		p.errorMsg(", you don't have any animals! Get some with `owo hunt`!", 3000);
+		p.errorMsg(', you don\'t have any animals! Get some with `owo hunt`!', 3000);
 		return;
 	}
 

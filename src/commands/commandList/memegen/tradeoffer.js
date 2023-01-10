@@ -15,7 +15,7 @@ module.exports = new CommandInterface({
 
 	args: '{leftText|@user|emoji} | {rightText|@user|emoji} | {@user|emoji}',
 
-	desc: "Generate a Trade Offer meme! Seperate the arguments with a '|' bar, or press 'Shift+Enter' between arguments",
+	desc: 'Generate a Trade Offer meme! Seperate the arguments with a \'|\' bar, or press \'Shift+Enter\' between arguments',
 
 	example: ['owo tradeoffer tons of animals | tons of captchas | @OwO'],
 

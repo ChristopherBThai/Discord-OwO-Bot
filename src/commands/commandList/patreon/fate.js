@@ -13,10 +13,10 @@ const data = 'fate';
 const ownerOnly = true;
 const giveAmount = 1;
 const desc =
-	"A fateful stone that connects People. Its glimmers can entwine their fates, just as how its glimmer links stars into the shapes of a heart's desires. No one knows where this stone comes from.";
+	'A fateful stone that connects People. Its glimmers can entwine their fates, just as how its glimmer links stars into the shapes of a heart\'s desires. No one knows where this stone comes from.';
 const displayMsg = `, you currently have ?count? ${emoji} Intertwined Fate?plural?!`;
-const brokeMsg = `, you do not have any Interwined Fates to give! >:c`;
-const giveMsg = `, you have been given an Interwined Fate.`;
+const brokeMsg = ', you do not have any Interwined Fates to give! >:c';
+const giveMsg = ', you have been given an Interwined Fate.';
 
 module.exports = new CommandInterface({
 	alias: [data],

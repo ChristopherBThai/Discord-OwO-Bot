@@ -74,7 +74,7 @@ async function banList(p) {
 		} catch (e) {
 			p.replyMsg(
 				banEmoji,
-				', **' + username + '** and ' + (count - 1) + " users have been banned, I couldn't DM them"
+				', **' + username + '** and ' + (count - 1) + ' users have been banned, I couldn\'t DM them'
 			);
 			return;
 		}

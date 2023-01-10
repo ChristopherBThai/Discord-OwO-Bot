@@ -19,7 +19,7 @@ const config = require('./src/data/config.json');
 
 // Grab tokens and secret files
 const debug = config.debug;
-if (!debug) var tracer = require('dd-trace').init();
+if (!debug) require('dd-trace').init();
 
 const request = require('./utils/request.js');
 // Eris-Sharder
@@ -29,7 +29,7 @@ var result, shards, firstShardID, lastShardID;
 // Helper files
 if (require('cluster').isMaster) {
 	const global = require('./utils/global.js');
-	const RamCheck = new (require('./utils/ramCheck.js'))(global);
+	new (require('./utils/ramCheck.js'))(global);
 }
 
 let clusters = 60;
@@ -56,7 +56,7 @@ let clusters = 60;
 		);
 
 		// Start sharder
-		const sharder = new Sharder('Bot ' + process.env.BOT_TOKEN, config.sharder.path, {
+		new Sharder('Bot ' + process.env.BOT_TOKEN, config.sharder.path, {
 			name: config.sharder.name,
 			clientOptions: config.eris.clientOptions,
 			debug: true,

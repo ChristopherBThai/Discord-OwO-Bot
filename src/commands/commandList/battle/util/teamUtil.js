@@ -45,7 +45,7 @@ exports.addMember = async function (p, animal, pos) {
 	let usedPos = [];
 	for (let i = 0; i < result[0].length; i++) {
 		if (result[0][i].name == animal.value) {
-			p.errorMsg(`, This animal is already in your team!`, 3000);
+			p.errorMsg(', This animal is already in your team!', 3000);
 			return;
 		}
 
@@ -64,7 +64,7 @@ exports.addMember = async function (p, animal, pos) {
 	}
 	if (!pos) {
 		p.errorMsg(
-			`, Your team is full! Please specify a position with \`owo team add {animal} {position}\`!`,
+			', Your team is full! Please specify a position with `owo team add {animal} {position}`!',
 			5000
 		);
 		return;
@@ -72,10 +72,10 @@ exports.addMember = async function (p, animal, pos) {
 
 	/* Check if user owns animal */
 	if (!result[1][0]) {
-		p.errorMsg(`, you do not own this animal!`, 3000);
+		p.errorMsg(', you do not own this animal!', 3000);
 		return;
 	} else if (false && result[1][0].count < 1) {
-		p.errorMsg(`, you need at least 1 animal in the zoo!`, 3000);
+		p.errorMsg(', you need at least 1 animal in the zoo!', 3000);
 		return;
 	}
 
@@ -172,7 +172,7 @@ exports.removeMember = async function (p, remove) {
 	result = await p.query(sql, remove);
 
 	if (result[1][0] && !result[1][0].pid) {
-		p.errorMsg(", your team doesn't have an animal!");
+		p.errorMsg(', your team doesn\'t have an animal!');
 		return;
 	}
 
@@ -192,9 +192,9 @@ exports.removeMember = async function (p, remove) {
 			`, Successfully changed the team!\n**${p.config.emoji.blank} |** Your team: ${text}`
 		);
 	} else if (!result[1]) {
-		p.errorMsg(`, You do not have a team!`, 3000);
+		p.errorMsg(', You do not have a team!', 3000);
 	} else if (result[1].length == 1) {
-		p.errorMsg(`, You need to keep at least one animal in the team!`, 3000);
+		p.errorMsg(', You need to keep at least one animal in the team!', 3000);
 	} else {
 		p.errorMsg(
 			`, I failed to remove that animal\n**${p.config.emoji.blank} |** Your team: ${text}`,
@@ -240,7 +240,7 @@ exports.renameTeam = async function (p, teamName) {
 			p.replaceMentions(`, You successfully changed your team name to: **${name}**`)
 		);
 	} else {
-		p.errorMsg(", You don't have a team! Please set one with `owo team add {animal}`", 5000);
+		p.errorMsg(', You don\'t have a team! Please set one with `owo team add {animal}`', 5000);
 	}
 };
 
@@ -348,7 +348,7 @@ const createTeamEmbed = (exports.createTeamEmbed = function (p, team, other = {}
 	/* Construct msg */
 	return (embed = {
 		author: {
-			name: p.msg.author.username + "'s " + p.replaceMentions(other.tname),
+			name: p.msg.author.username + '\'s ' + p.replaceMentions(other.tname),
 			icon_url: p.msg.author.avatarURL,
 		},
 		description:

@@ -14,7 +14,7 @@ module.exports = new CommandInterface({
 
 	args: '',
 
-	desc: "Gives the user a point. This is the same as just saying owo in your messages.\nYou weren't really suppose to find this.",
+	desc: 'Gives the user a point. This is the same as just saying owo in your messages.\nYou weren\'t really suppose to find this.',
 
 	example: [],
 
@@ -39,7 +39,7 @@ module.exports = new CommandInterface({
 
 		await p.query(sql);
 		p.quest('owo');
-		p.logger.incr(`cowoncy`, 2, { type: 'points' }, p.msg);
-		p.logger.incr(`points`, 1, {}, p.msg);
+		p.logger.incr('cowoncy', 2, { type: 'points' }, p.msg);
+		p.logger.incr('points', 1, {}, p.msg);
 	},
 });

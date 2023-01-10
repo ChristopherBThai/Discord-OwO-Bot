@@ -32,7 +32,7 @@ exports.buy = async function (p, id) {
 	sql = `UPDATE cowoncy SET money = money - ${price} WHERE id = ${p.msg.author.id} AND money >= ${price};`;
 	let result2 = await p.query(sql);
 	if (result2.affectedRows <= 0) {
-		p.errorMsg(", you don't have enough cowoncy! :c", 3000);
+		p.errorMsg(', you don\'t have enough cowoncy! :c', 3000);
 		return;
 	}
 

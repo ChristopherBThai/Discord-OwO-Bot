@@ -108,7 +108,7 @@ module.exports = new CommandInterface({
 
 		let embed = {
 			author: {
-				name: p.msg.author.username + "'s Checklist",
+				name: p.msg.author.username + '\'s Checklist',
 				icon_url: p.msg.author.avatarURL,
 			},
 			color: p.config.embed_color,
@@ -197,7 +197,7 @@ function quests(p) {
 			if (afterMid && !afterMid.after) {
 				return {
 					done: true,
-					desc: "You already claimed today's quest!" + rrText,
+					desc: 'You already claimed today\'s quest!' + rrText,
 					emoji: '📜',
 				};
 			} else

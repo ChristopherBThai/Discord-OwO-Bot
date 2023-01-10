@@ -53,7 +53,7 @@ module.exports = new CommandInterface({
 			descriptionExtra =
 				'\n\n*Clicking on the button means you will follow the rules and acknowlege the consequences*';
 		else if (result[0][0].opinion == 1)
-			descriptionExtra = "\n\nOwO what's this? You already agreed to these rules! <3";
+			descriptionExtra = '\n\nOwO what\'s this? You already agreed to these rules! <3';
 		else
 			descriptionExtra = '\n\nUwU you disagreed! You still have to follow these rules though! c:<';
 		let embed = {
@@ -77,21 +77,21 @@ module.exports = new CommandInterface({
 
 		let components = !voted
 			? [
-					{
-						type: 1,
-						components: [
-							{
-								type: 2,
-								label: 'I accept the OwO Bot Rules',
-								style: 1,
-								custom_id: 'accept_rules',
-								emoji: {
-									id: null,
-									name: agreeEmoji,
-								},
+				{
+					type: 1,
+					components: [
+						{
+							type: 2,
+							label: 'I accept the OwO Bot Rules',
+							style: 1,
+							custom_id: 'accept_rules',
+							emoji: {
+								id: null,
+								name: agreeEmoji,
 							},
-						],
-					},
+						},
+					],
+				},
 			  ]
 			: null;
 		let message = await p.send({ content, embed, components });
@@ -110,7 +110,7 @@ module.exports = new CommandInterface({
 			let sql =
 				'INSERT IGNORE INTO rules (uid,opinion) VALUES ((SELECT uid FROM user WHERE id = ?),1)';
 			embed.footer.text = p.global.toFancyNum(agree + 1) + ' Users agreed';
-			embed.description = description + "\n\nOwO what's this? You agreed to these rules! <3";
+			embed.description = description + '\n\nOwO what\'s this? You agreed to these rules! <3';
 			sql = 'INSERT IGNORE INTO user (id,count) VALUES (?,0);' + sql;
 
 			// Query and edit existing message

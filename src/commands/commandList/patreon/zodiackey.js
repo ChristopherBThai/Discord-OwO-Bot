@@ -135,7 +135,7 @@ async function display(p) {
 	if (hasKeys) {
 		p.send(text);
 	} else {
-		p.errorMsg(`, you do not have any zodiac keys.`, 3000);
+		p.errorMsg(', you do not have any zodiac keys.', 3000);
 	}
 	p.setCooldown(5);
 }

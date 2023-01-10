@@ -59,12 +59,12 @@ exports.getItems = async function (p) {
 exports.use = async function (id, p) {
 	let item = getById(id);
 	switch (item?.id) {
-		case 10:
-		case 14:
-			await useCommonTicket(item, p);
-			break;
-		default:
-			await p.errorMsg(', something went wrong using this item... :(');
+	case 10:
+	case 14:
+		await useCommonTicket(item, p);
+		break;
+	default:
+		await p.errorMsg(', something went wrong using this item... :(');
 	}
 };
 
@@ -209,11 +209,11 @@ exports.desc = async function (p, id) {
 	};
 
 	if (item.giveOnly) {
-		embed.fields[0].value += `\n\n💸 **This item can only be gifted. You cannot trade this for cowoncy.**`;
+		embed.fields[0].value += '\n\n💸 **This item can only be gifted. You cannot trade this for cowoncy.**';
 	}
 
 	if (item.untradeable) {
-		embed.fields[0].value += `\n\n🚫 **This item can not be traded.**`;
+		embed.fields[0].value += '\n\n🚫 **This item can not be traded.**';
 	}
 
 	if (item.tradeLimit) {

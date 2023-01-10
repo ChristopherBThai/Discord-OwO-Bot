@@ -101,7 +101,7 @@ function finalizeText(
 	let sql = '';
 
 	if (showAnnouncement) {
-		sql += `SELECT * FROM announcement ORDER BY aid DESC LIMIT 1;`;
+		sql += 'SELECT * FROM announcement ORDER BY aid DESC LIMIT 1;';
 		sql += `INSERT INTO user_announcement (uid, aid) VALUES (${uid}, (SELECT aid FROM announcement ORDER BY aid DESC LIMIT 1)) ON DUPLICATE KEY UPDATE aid = (SELECT aid FROM announcement ORDER BY aid DESC LIMIT 1);`;
 	}
 
@@ -153,7 +153,7 @@ async function executeQuery(
 	}
 
 	rows = await p.query(sql);
-	p.logger.incr(`cowoncy`, gain + extra, { type: 'daily' }, p.msg);
+	p.logger.incr('cowoncy', gain + extra, { type: 'daily' }, p.msg);
 
 	let embed, components;
 	if (showAnnouncement && rows[0][0].url) {

@@ -18,7 +18,7 @@ module.exports = class WallpaperPage extends PageClass {
 	}
 
 	async totalPages() {
-		let sql = `SELECT COUNT(bid) AS count FROM backgrounds WHERE active = 1;`;
+		let sql = 'SELECT COUNT(bid) AS count FROM backgrounds WHERE active = 1;';
 		let result = await this.p.query(sql);
 		let pages = Math.ceil(result[0].count / perPage);
 		return pages;

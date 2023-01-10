@@ -43,7 +43,7 @@ module.exports = new CommandInterface({
 		}
 		let target = await p.getMention(args[0]);
 		if (target == undefined) {
-			p.send("**🚫 |** I couldn't find that user :c", 3000);
+			p.send('**🚫 |** I couldn\'t find that user :c', 3000);
 			return;
 		}
 		let emote = emotes[p.command];

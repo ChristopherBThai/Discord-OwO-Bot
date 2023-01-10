@@ -51,7 +51,7 @@ exports.check = async function (p, command) {
 			if (command != 'points' && cooldown[author] == 4)
 				await p.replyMsg(
 					timerEmoji,
-					", Please slow down~ You're a little **too fast** for me :c",
+					', Please slow down~ You\'re a little **too fast** for me :c',
 					3000
 				);
 			return;
@@ -63,7 +63,7 @@ exports.check = async function (p, command) {
 	//Check if the command is enabled
 	let commandNames = `'all','${command}'`;
 	for (let i in p.commands[command].group) {
-		commandNames += ",'" + p.commands[command].group[i] + "'";
+		commandNames += ',\'' + p.commands[command].group[i] + '\'';
 	}
 	let sql = `SELECT * FROM disabled WHERE command IN (${commandNames}) AND channel = ${channel};
 				SELECT id FROM timeout WHERE id IN (${author},${guild}) AND TIMESTAMPDIFF(HOUR,time,NOW()) < penalty;
@@ -78,7 +78,7 @@ exports.check = async function (p, command) {
 		setTimeout(() => {
 			delete cooldown[author + command];
 		}, 10000);
-		if (command != 'points') await p.errorMsg(", you're banned from this command! >:c", 3000);
+		if (command != 'points') await p.errorMsg(', you\'re banned from this command! >:c', 3000);
 		p.logger.logstashBanned(p.commandAlias, p);
 	} else if (!result[0][0] || ['points', 'disable', 'enable'].includes(command)) {
 		// Success
@@ -131,7 +131,7 @@ exports.banCommand = async function (p, user, command, reason) {
 				reason +
 				'\n' +
 				p.config.emoji.blank +
-				" **| I couldn't DM them.**"
+				' **| I couldn\'t DM them.**'
 		);
 		return;
 	}
@@ -172,7 +172,7 @@ exports.liftCommand = async function (p, user, command) {
 					user.username +
 					'#' +
 					user.discriminator +
-					"**'s ban on `" +
+					'**\'s ban on `' +
 					command +
 					'` has been lifted!\n' +
 					p.config.emoji.blank +
@@ -180,7 +180,7 @@ exports.liftCommand = async function (p, user, command) {
 					user.id +
 					'\n' +
 					p.config.emoji.blank +
-					" **| I couldn't DM them.**"
+					' **| I couldn\'t DM them.**'
 			);
 			return;
 		}
@@ -190,7 +190,7 @@ exports.liftCommand = async function (p, user, command) {
 				user.username +
 				'#' +
 				user.discriminator +
-				"**'s ban on `" +
+				'**\'s ban on `' +
 				command +
 				'` has been lifted!\n' +
 				p.config.emoji.blank +

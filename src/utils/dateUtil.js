@@ -86,7 +86,7 @@ exports.afterMidnight = function (date) {
 
 function toMySQL(date) {
 	return (
-		"'" +
+		'\'' +
 		date.getFullYear() +
 		'-' +
 		('00' + (date.getMonth() + 1)).slice(-2) +
@@ -98,6 +98,6 @@ function toMySQL(date) {
 		('00' + date.getMinutes()).slice(-2) +
 		':' +
 		('00' + date.getSeconds()).slice(-2) +
-		"'"
+		'\''
 	);
 }

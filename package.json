@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"lint": "npx eslint .",
-		"lint:fix": "npx eslint --fix",
+		"lint:fix": "npx eslint --fix .",
 		"prettier": "npx prettier --check .",
 		"prettier:fix": "npx prettier --write .",
 		"format": "npm run lint:fix && npm run prettier:fix"

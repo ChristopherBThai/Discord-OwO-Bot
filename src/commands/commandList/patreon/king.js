@@ -15,7 +15,7 @@ const giveAmount = 1;
 const desc =
 	'A noble descendant of God, a royal ruler over mankind.\nBehind ever King is a powerful Queen.\nThe king of spades x "Guards take him away!"';
 const displayMsg = `, you currently have ?count? ${emoji} King of Spade?plural?!`;
-const brokeMsg = `, you do not have any King of Spades to give! >:c`;
+const brokeMsg = ', you do not have any King of Spades to give! >:c';
 const giveMsg = `, you have been given 1 ${emoji} King of Spade. You are my King.`;
 
 let ownersString = `?${owners[owners.length - 1]}?`;

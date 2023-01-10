@@ -67,15 +67,15 @@ async function giveTicket(p, id, count = 1, type = 1) {
 	}
 	let name, emoji;
 	switch (type) {
-		case 1:
-			type = 'common_tickets';
-			name = 'Common Ticket';
-			if (Math.abs(count) > 1) name += 's';
-			emoji = p.config.emoji.perkTicket.common;
-			break;
-		default:
-			p.errorMsg(', wrong ticket type for ' + id);
-			return;
+	case 1:
+		type = 'common_tickets';
+		name = 'Common Ticket';
+		if (Math.abs(count) > 1) name += 's';
+		emoji = p.config.emoji.perkTicket.common;
+		break;
+	default:
+		p.errorMsg(', wrong ticket type for ' + id);
+		return;
 	}
 
 	// Fetch uid first

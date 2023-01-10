@@ -42,11 +42,11 @@ module.exports = new CommandInterface({
 		}
 		let target = p.getMention(p.args[0]);
 		if (target == undefined) {
-			p.send("**🚫 |** I couldn't find that user :c", 3000);
+			p.send('**🚫 |** I couldn\'t find that user :c', 3000);
 			return;
 		}
 		if (p.msg.author.id == target.id) {
-			let text = '**' + p.msg.author.username + "**, you can't bonk yourself!";
+			let text = '**' + p.msg.author.username + '**, you can\'t bonk yourself!';
 			p.send(text);
 			return;
 		}

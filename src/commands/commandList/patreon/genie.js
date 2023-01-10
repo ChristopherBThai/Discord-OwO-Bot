@@ -14,7 +14,7 @@ const ownerOnly = true;
 const giveAmount = 1;
 const desc = 'This custom item can only be given by the owner of this command.';
 const displayMsg = `, you currently have ?count? ${emoji} Genie!`;
-const brokeMsg = `, you do not have any Genies to give! >:c`;
+const brokeMsg = ', you do not have any Genies to give! >:c';
 const giveMsg = `, you have been given 1 ${emoji} Genie.`;
 
 let ownersString = `?${owners[owners.length - 1]}?`;

@@ -20,7 +20,7 @@ class Fear extends Collectible {
 		this.ownerOnly = true;
 		this.giveAmount = 1;
 		this.description =
-			"What do you fear?\n\n fears can alarming, but we all overcome them... unless it's me noming you \n\nI'd nom you if I could\"";
+			'What do you fear?\n\n fears can alarming, but we all overcome them... unless it\'s me noming you \n\nI\'d nom you if I could"';
 		this.displayMsg = '?emoji? **| ?user?**, you have overcome ?count? fear?plural? ?emoji?';
 		this.brokeMsg = ', you do not have any Fears! >:c';
 		this.giveMsg =

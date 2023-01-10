@@ -48,7 +48,7 @@ async function give(p, con, msg, args, global, send) {
 		}
 	}
 	if (msg.author.id == user.id) {
-		p.errorMsg(", you can't give yourself a cookie, silly!", 3000);
+		p.errorMsg(', you can\'t give yourself a cookie, silly!', 3000);
 		return;
 	}
 

@@ -7,21 +7,21 @@
 
 exports.handle = function (interaction) {
 	switch (interaction.type) {
-		case 2:
-			handleCommand.bind(this)(interaction);
-			break;
-		default:
-			break;
+	case 2:
+		handleCommand.bind(this)(interaction);
+		break;
+	default:
+		break;
 	}
 };
 
 function handleCommand(interaction) {
 	switch (interaction.data.type) {
-		case 1:
-			handleSlash.bind(this)(interaction);
-			break;
-		default:
-			break;
+	case 1:
+		handleSlash.bind(this)(interaction);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -41,18 +41,18 @@ function getInteractionArgs(interaction) {
 	const result = {};
 	interaction.data.options?.forEach((option) => {
 		switch (option.type) {
-			// User
-			case 6:
-				result[option.name] = interaction.data.resolved.members.get(option.value);
-				break;
+		// User
+		case 6:
+			result[option.name] = interaction.data.resolved.members.get(option.value);
+			break;
 			// Sub command
-			case 2:
-				// console.log(option);
-				break;
+		case 2:
+			// console.log(option);
+			break;
 			// Number
-			case 4:
-				result[option.name] = option.value;
-				break;
+		case 4:
+			result[option.name] = option.value;
+			break;
 		}
 	});
 	return result;

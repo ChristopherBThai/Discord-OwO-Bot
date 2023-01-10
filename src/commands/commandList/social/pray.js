@@ -20,7 +20,7 @@ const curseLines = [
 	'You feel very unlucky.',
 	'Oh no.',
 	'You should be careful...',
-	"I've got a bad feeling about this...",
+	'I\'ve got a bad feeling about this...',
 	'oh boy.',
 	'rip',
 ];
@@ -148,8 +148,8 @@ module.exports = new CommandInterface({
 		p.send(text);
 		if (user && quest) p.quest(quest, 1, user);
 		if (opponentPoints && user) {
-			p.logger.incr(`pray`, 1, { from: p.msg.author.id, to: user.id });
+			p.logger.incr('pray', 1, { from: p.msg.author.id, to: user.id });
 			p.macro.checkToCommands(p, user.id);
-		} else p.logger.incr(`pray`, 1, { from: p.msg.author.id, to: 'self' });
+		} else p.logger.incr('pray', 1, { from: p.msg.author.id, to: 'self' });
 	},
 });

@@ -41,7 +41,7 @@ module.exports = new CommandInterface({
 			await ud.define(word, function (error, entries) {
 				try {
 					if (error) {
-						p.errorMsg(", I couldn't find that word! :c", 3000);
+						p.errorMsg(', I couldn\'t find that word! :c', 3000);
 					} else {
 						let pages = [];
 						let count = 1;
@@ -69,7 +69,7 @@ module.exports = new CommandInterface({
 									description: print || '*no description*',
 									color: p.config.embed_color,
 									author: {
-										name: "Definition of '" + entries[0].word + "'",
+										name: 'Definition of \'' + entries[0].word + '\'',
 										icon_url: p.msg.author.avatarURL,
 									},
 									url: url,

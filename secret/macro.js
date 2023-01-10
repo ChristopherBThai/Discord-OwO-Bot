@@ -1,3 +1,5 @@
+/* eslint no-use-before-define: 0 */
+
 // Checks for macros
 exports.check = async function (p, command, { diff, now }) {
 	return true;

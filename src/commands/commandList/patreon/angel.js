@@ -15,7 +15,7 @@ const ownerOnly = true;
 const giveAmount = 1;
 const desc = 'A pair of Angel wings to take you higher than the sky a placed called Heaven.';
 const displayMsg = `, you currently have ?count? ${emoji} Angel Wing?plural?!`;
-const brokeMsg = `, you do not have any Angel Wings to give! >:c`;
+const brokeMsg = ', you do not have any Angel Wings to give! >:c';
 const giveMsg = `, you have been given 1 ${emoji} Fly to the Heavens.
 `;
 

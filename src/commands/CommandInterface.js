@@ -30,7 +30,7 @@ module.exports = class CommandInterface {
 								'` permission! Please reinvite the bot, or contact your server admin!',
 							4000
 						);
-					params.logger.incr(`noperms`, 1, { permission: this.permissions }, params.msg);
+					params.logger.incr('noperms', 1, { permission: this.permissions }, params.msg);
 					return;
 				}
 			}

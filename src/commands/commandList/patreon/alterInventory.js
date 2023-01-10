@@ -19,20 +19,20 @@ for (let i in gems) {
 
 exports.alter = function (p, text, info) {
 	switch (p.msg.author.id) {
-		case '658299153042112512':
-			return grace(text);
-		case '456598711590715403':
-			return lexx(p, info);
-		case '427296171883626496':
-			return lIlIIIll(p, info);
-		case '460987842961866762':
-			return estee(p, info);
-		case '709396638661083146':
-			return rosie(p, info);
-		case '683742950668501001':
-			return dadada(p, info);
-		default:
-			return text;
+	case '658299153042112512':
+		return grace(text);
+	case '456598711590715403':
+		return lexx(p, info);
+	case '427296171883626496':
+		return lIlIIIll(p, info);
+	case '460987842961866762':
+		return estee(p, info);
+	case '709396638661083146':
+		return rosie(p, info);
+	case '683742950668501001':
+		return dadada(p, info);
+	default:
+		return text;
 	}
 };
 
@@ -71,7 +71,7 @@ function grace(text) {
 		text = text.replace(emojis[i], newEmojis[i]);
 	}
 	text = text.split('\n');
-	text[0] = "𝔊𝔯𝔞𝔠𝔢'𝔰 𝔇𝔦𝔤𝔦 𝔖𝔲𝔭𝔭𝔩𝔦𝔢𝔰";
+	text[0] = '𝔊𝔯𝔞𝔠𝔢\'𝔰 𝔇𝔦𝔤𝔦 𝔖𝔲𝔭𝔭𝔩𝔦𝔢𝔰';
 	text = text.join('\n');
 
 	return text;
@@ -100,7 +100,7 @@ function estee(p, info) {
 	const embed = {
 		color: p.config.embed_color,
 		author: {
-			name: "꧁•⊹٭𝙴𝚜𝚝𝚎𝚎'𝚜 𝚂𝚎𝚌𝚛𝚎𝚝 𝚃𝚛𝚎𝚊𝚜𝚞𝚛𝚎𝚜٭⊹•꧂",
+			name: '꧁•⊹٭𝙴𝚜𝚝𝚎𝚎\'𝚜 𝚂𝚎𝚌𝚛𝚎𝚝 𝚃𝚛𝚎𝚊𝚜𝚞𝚛𝚎𝚜٭⊹•꧂',
 		},
 		image: {
 			url: 'https://i.imgur.com/eK7F8Gv.gif',

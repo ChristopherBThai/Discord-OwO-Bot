@@ -201,7 +201,7 @@ async function getInfo(p, user) {
 	let sql = `SELECT user_profile.* from user_profile INNER JOIN user ON user.uid = user_profile.uid WHERE user.id = ${user.id};`;
 	let result = await p.query(sql);
 	let info = {
-		about: "I'm just a plain human.",
+		about: 'I\'m just a plain human.',
 		title: 'An OwO Bot User',
 	};
 	if (result[0]) {
@@ -249,7 +249,7 @@ exports.editBackground = async function (p) {
 	let sql = `SELECT u.uid,b.* FROM user u INNER JOIN user_backgrounds ub ON u.uid = ub.uid INNER JOIN backgrounds b ON ub.bid = b.bid WHERE u.id = ${p.msg.author.id} AND ub.bid = ${bid}`;
 	let result = await p.query(sql);
 	if (!result[0]) {
-		p.errorMsg(", You don't have a wallpaper with this id! Please buy one from `owo shop`!", 3000);
+		p.errorMsg(', You don\'t have a wallpaper with this id! Please buy one from `owo shop`!', 3000);
 		return;
 	}
 

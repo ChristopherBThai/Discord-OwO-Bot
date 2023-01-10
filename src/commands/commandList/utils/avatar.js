@@ -12,7 +12,7 @@ module.exports = new CommandInterface({
 
 	args: '{@user}',
 
-	desc: "Look at your or other people's avatar!",
+	desc: 'Look at your or other people\'s avatar!',
 
 	example: ['owo avatar @OwO'],
 

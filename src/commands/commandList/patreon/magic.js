@@ -15,7 +15,7 @@ const dailyOnly = false;
 const giveAmount = 2;
 const desc = 'Give some Black Magic to a friend!';
 const displayMsg = `, you currently have ?count? ${emoji} Black Magic`;
-const brokeMsg = `, you do not have any Black Magic to give! >:c`;
+const brokeMsg = ', you do not have any Black Magic to give! >:c';
 const giveMsg = `, you have been given 2 <a:sparkle1:975266751312965643> <a:sparkle2:975266751573020694> ${emoji} <a:sparkle1:975266751312965643> <a:sparkle2:975266751573020694> it fizzles and sparkles in your hand, these originated from the Black Magic Gang owo clan, trade these with other users to further spread the black magic upon these lands, GO! GO! BEFORE THEY CATCH YOU!`;
 
 let ownersString = `?${owners[owners.length - 1]}?`;

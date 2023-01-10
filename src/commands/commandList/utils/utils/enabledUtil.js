@@ -79,7 +79,7 @@ exports.createEmbed = async function (p) {
 			});
 			if (commandString !== '') {
 				embed.fields.push({
-					name: groupName + (fieldsCount ? ` [${fieldsCount + 1}]` : ``),
+					name: groupName + (fieldsCount ? ` [${fieldsCount + 1}]` : ''),
 					value: commandString,
 				});
 			}

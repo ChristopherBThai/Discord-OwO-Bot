@@ -119,7 +119,7 @@ async function getWeapon(p, uwid) {
 		);
 		return;
 	} else if (weapon.unsellable) {
-		p.errorMsg(", I can't reroll this weapon!", 4000);
+		p.errorMsg(', I can\'t reroll this weapon!', 4000);
 		return;
 	}
 
@@ -165,7 +165,7 @@ async function sendMessage(p, oldWeapon, newWeapon, rrType, msg) {
 			if (!(await useShards(p))) {
 				embed.color = 16711680;
 				msg.edit({
-					content: "You don't have enough " + shardEmoji + ' Weapon Shards!',
+					content: 'You don\'t have enough ' + shardEmoji + ' Weapon Shards!',
 					embed,
 				});
 			} else {
@@ -188,7 +188,7 @@ async function useShards(p) {
 	let sql = `UPDATE shards INNER JOIN user ON shards.uid = user.uid SET shards.count = shards.count - ${rerollPrice} WHERE user.id = ${p.msg.author.id} AND shards.count >= ${rerollPrice};`;
 	let result = await p.query(sql);
 	if (result.changedRows >= 1) {
-		p.logger.decr(`shards`, -1 * rerollPrice, { type: 'reroll' }, p.msg);
+		p.logger.decr('shards', -1 * rerollPrice, { type: 'reroll' }, p.msg);
 		return true;
 	}
 	return false;
@@ -237,13 +237,13 @@ function parseDescription(title, weapon) {
 	desc += `**WP Cost:** ${Math.ceil(weapon.manaCost)} <:wp:531620120976687114>`;
 	desc += `\n**Description:** ${weapon.desc}\n`;
 	if (weapon.buffList.length > 0) {
-		desc += `\n`;
+		desc += '\n';
 		let buffs = weapon.getBuffs();
 		for (let i in buffs) {
 			desc += `${buffs[i].emoji} **${buffs[i].name}** - ${buffs[i].desc}\n`;
 		}
 	}
-	if (weapon.passives.length <= 0) desc += `\n**Passives:** None`;
+	if (weapon.passives.length <= 0) desc += '\n**Passives:** None';
 	for (let i = 0; i < weapon.passives.length; i++) {
 		let passive = weapon.passives[i];
 		desc += `\n${passive.emoji} **${passive.name}** - ${passive.desc}`;

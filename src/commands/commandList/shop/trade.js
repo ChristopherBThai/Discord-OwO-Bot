@@ -110,7 +110,7 @@ async function validate(p) {
 		return { error: true };
 	}
 	if (result[1][0]?.id) {
-		await p.errorMsg(`, you cannot trade with this user!`, 3000);
+		await p.errorMsg(', you cannot trade with this user!', 3000);
 		return { error: true };
 	}
 	if (item.tradeLimit) {
@@ -162,7 +162,7 @@ async function sendMessage(p, { item, user, price, count }) {
 		embed.description += `\n\n📑 **You can only trade this item ${item.tradeLimit} times per day.**`;
 	}
 	if (item.giveOnly) {
-		embed.description += `\n\n⚠️ **You can not trade this item for cowoncy. Failure to follow these rules can result in a ban.**`;
+		embed.description += '\n\n⚠️ **You can not trade this item for cowoncy. Failure to follow these rules can result in a ban.**';
 	}
 	const msg = await p.send({ embed });
 	return { msg, embed };

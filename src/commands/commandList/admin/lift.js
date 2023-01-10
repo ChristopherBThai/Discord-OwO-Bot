@@ -43,7 +43,7 @@ module.exports = new CommandInterface({
 			))
 		) {
 			if (user.dmError) {
-				p.send('⚠ **|** Penalty has been set to 0 for ' + user.username + ", I couldn't DM them.");
+				p.send('⚠ **|** Penalty has been set to 0 for ' + user.username + ', I couldn\'t DM them.');
 			} else {
 				p.send('Penalty has been set to 0 for ' + user.username);
 			}

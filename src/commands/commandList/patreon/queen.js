@@ -15,7 +15,7 @@ const giveAmount = 1;
 const desc =
 	'A noble descendant of God, a royal ruler over mankind.\nTreat her like a queen and she\'ll treat you like a king.\nThe queen of hearts x "Off with your head!"';
 const displayMsg = `, you currently have ?count? ${emoji} Queen of Heart?plural?!`;
-const brokeMsg = `, you do not have any Queen of Hearts to give! >:c`;
+const brokeMsg = ', you do not have any Queen of Hearts to give! >:c';
 const giveMsg = `, you have been given an 1 ${emoji} Queen of Heart. You are my Queen.`;
 
 let ownersString = `?${owners[owners.length - 1]}?`;

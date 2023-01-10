@@ -269,7 +269,7 @@ exports.filteredName = function (name) {
 		.replace(/discord.gg/gi, 'discord,gg')
 		.replace(/@everyone/gi, 'everyone')
 		.replace(/<@!?[0-9]+>/gi, 'User')
-		.replace(/[*`]+/gi, "'")
+		.replace(/[*`]+/gi, '\'')
 		.replace(/\|\|/g, '│');
 
 	return { name, offensive: false };
@@ -313,12 +313,12 @@ exports.parseTime = function (diff) {
 /* gets uid from discord id */
 exports.getUid = async function (id) {
 	id = BigInt(id);
-	let sql = `SELECT uid FROM user where id = ?;`;
+	let sql = 'SELECT uid FROM user where id = ?;';
 	let result = await mysql.query(sql, id);
 
 	if (result[0]?.uid) return result[0].uid;
 
-	sql = `INSERT INTO user (id, count) VALUES (?, 0);`;
+	sql = 'INSERT INTO user (id, count) VALUES (?, 0);';
 	result = await mysql.query(sql, id);
 	return result.insertId;
 };

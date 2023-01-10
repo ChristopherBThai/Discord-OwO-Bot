@@ -60,7 +60,7 @@ async function giveCrown(p) {
 	let lastCrown = await p.redis.hget('cd_' + p.msg.author.id, table + '_crown');
 	lastCrown = lastCrown ? new Date(lastCrown) : new Date();
 	if (new Date() - lastCrown < 345600000) {
-		p.errorMsg(", Alastor doesn't need a crown");
+		p.errorMsg(', Alastor doesn\'t need a crown');
 		return;
 	}
 
@@ -94,7 +94,7 @@ async function feed(p) {
 	const afterMid = dateUtil.afterMidnight(lasttime);
 
 	let streak = 1;
-	let title = p.msg.author.username + "'s Alastor";
+	let title = p.msg.author.username + '\'s Alastor';
 	if (afterMid.after) {
 		await p.redis.hset('cd_' + p.msg.author.id, table, afterMid.now);
 		await p.redis.expire('cd_' + p.msg.author.id);
@@ -130,7 +130,7 @@ async function display(p, title, gif) {
 	const lasttime = await p.redis.hget('cd_' + p.msg.author.id, table);
 	const afterMid = dateUtil.afterMidnight(lasttime);
 	const streak = await p.redis.hget(p.msg.author.id, table);
-	if (!title) title = p.msg.author.username + "'s Alastor";
+	if (!title) title = p.msg.author.username + '\'s Alastor';
 	if (!gif) gif = gif2;
 
 	const embed = {

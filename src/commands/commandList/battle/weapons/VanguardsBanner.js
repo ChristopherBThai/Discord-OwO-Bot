@@ -12,7 +12,7 @@ const battleUtil = require('../util/battleUtil.js');
 module.exports = class VanguardsBanner extends WeaponInterface {
 	init() {
 		this.id = 16;
-		this.name = "Vanguard's Banner";
+		this.name = 'Vanguard\'s Banner';
 		this.basicDesc = '';
 		this.emojis = [
 			'<:cvban:618001307411677195>',

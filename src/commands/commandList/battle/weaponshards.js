@@ -160,7 +160,7 @@ async function dismantleRank(p, rankLoc) {
 			p.config.emoji.blank
 		} **| Dismantled:** ${weapons.join('')}`
 	);
-	p.logger.incr(`shards`, price, { type: 'dismantle' }, p.msg);
+	p.logger.incr('shards', price, { type: 'dismantle' }, p.msg);
 }
 
 async function dismantleId(p, uwid) {
@@ -247,5 +247,5 @@ async function dismantleId(p, uwid) {
 			weapon.emoji
 		} for **${p.global.toFancyNum(price)}** ${shardEmoji} Weapon Shard${price == 1 ? '' : 's'}!`
 	);
-	p.logger.incr(`shards`, price, { type: 'dismantle' }, p.msg);
+	p.logger.incr('shards', price, { type: 'dismantle' }, p.msg);
 }

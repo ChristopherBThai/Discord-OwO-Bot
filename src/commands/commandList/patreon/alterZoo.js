@@ -24,26 +24,26 @@ const ranks = {
 
 exports.alter = function (id, text, opt) {
 	switch (id) {
-		case '250383887312748545':
-			return elsa(text);
-		case '192692796841263104':
-			return dalu(text);
-		case '176046069954641921':
-			return crown(text);
-		case '658299153042112512':
-			return heysay(text);
-		case '575555630312456193':
-			return xmelanie(text);
-		case '343094664414363658':
-			return tiggy(text);
-		case '714215538821431398':
-			return ivy(text);
-		case '427296171883626496':
-			return lIlIIIll(text, opt);
-		case '460987842961866762':
-			return estee(text, opt);
-		default:
-			return text;
+	case '250383887312748545':
+		return elsa(text);
+	case '192692796841263104':
+		return dalu(text);
+	case '176046069954641921':
+		return crown(text);
+	case '658299153042112512':
+		return heysay(text);
+	case '575555630312456193':
+		return xmelanie(text);
+	case '343094664414363658':
+		return tiggy(text);
+	case '714215538821431398':
+		return ivy(text);
+	case '427296171883626496':
+		return lIlIIIll(text, opt);
+	case '460987842961866762':
+		return estee(text, opt);
+	default:
+		return text;
 	}
 };
 
@@ -74,14 +74,14 @@ function elsa(text) {
 		.replace('Zoo Points', '<:frozentitlefabled:653376194602991645>ilm Collection Points')
 		.split('\n');
 	text[0] =
-		"<:elsasnowflake1:653376194414379029><:elsasnowflake2:653384773234065438> <:frozenN:653376194854518794>**erdy**<:frozenE:653376194594734117>**lsa's zoo!** <:elsasnowflake2:653384773234065438><:elsasnowflake1:653376194414379029>";
+		'<:elsasnowflake1:653376194414379029><:elsasnowflake2:653384773234065438> <:frozenN:653376194854518794>**erdy**<:frozenE:653376194594734117>**lsa\'s zoo!** <:elsasnowflake2:653384773234065438><:elsasnowflake1:653376194414379029>';
 
 	return text.join('\n');
 }
 
 function dalu(text) {
 	text = text.replace('Zoo Points', 'Fox Friends').split('\n');
-	text[0] = "**Dalu's Kitsune Home**";
+	text[0] = '**Dalu\'s Kitsune Home**';
 	text.pop();
 	return text.join('\n');
 }
@@ -104,7 +104,7 @@ function crown(text) {
 	};
 	text = replaceRanks(text, newRanks).split('\n');
 	text[0] =
-		"<a:peek1:663634457294798859> <a:peek2:663634216021655559> <a:peek3:663634215069417477> <a:crown:663613803786797056> <:c:663634207175868425> <:r:663634208731824138> <:o:663634208400474113> <:w:663634208530366464> <:n_:663634208115392518> <a:crown:663613803786797056> 's zoo! <a:peek4:663634215086325771> <a:peek2:663634216021655559> <a:peek1:663634457294798859>";
+		'<a:peek1:663634457294798859> <a:peek2:663634216021655559> <a:peek3:663634215069417477> <a:crown:663613803786797056> <:c:663634207175868425> <:r:663634208731824138> <:o:663634208400474113> <:w:663634208530366464> <:n_:663634208115392518> <a:crown:663613803786797056> \'s zoo! <a:peek4:663634215086325771> <a:peek2:663634216021655559> <a:peek1:663634457294798859>';
 
 	return text.join('\n');
 }
@@ -242,7 +242,7 @@ function estee(text, opt) {
 	};
 
 	text = replaceRanks(text, newRanks).split('\n');
-	text[0] = `꧁༺ 𝓔𝓼𝓽𝓮𝓮'𝓼 𝓒𝓮𝓶𝓮𝓽𝓮𝓻𝔂 ༻꧂`;
+	text[0] = '꧁༺ 𝓔𝓼𝓽𝓮𝓮\'𝓼 𝓒𝓮𝓶𝓮𝓽𝓮𝓻𝔂 ༻꧂';
 
 	return text.join('\n');
 }

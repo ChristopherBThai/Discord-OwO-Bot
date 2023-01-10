@@ -96,7 +96,7 @@ async function give(p, user) {
 	if (friendCount >= 7 && Math.random() <= 0.2) {
 		const friendCount = await p.redis.hincrby('data_' + user.id, data, -3);
 		const totalStolen = await p.redis.hincrby('data_custom', 'chicken', 3);
-		msg += `\n<a:jester1:878170294462853130> **|** ꒪꒳꒪psieee!  The OwO-Jester has stolen 3 chickens out of your inventory! <a:jester2:878170294756470795>`;
+		msg += '\n<a:jester1:878170294462853130> **|** ꒪꒳꒪psieee!  The OwO-Jester has stolen 3 chickens out of your inventory! <a:jester2:878170294756470795>';
 	}
 
 	p.send(msg);

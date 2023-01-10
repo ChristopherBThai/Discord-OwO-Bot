@@ -14,8 +14,8 @@ const ownerOnly = true;
 const giveAmount = 1;
 const desc = 'This custom item can only be given by the owner of this command.';
 const displayMsg = `, you currently have ?count? ${emoji} boba?plural?!`;
-const brokeMsg = `, you do not have any bobas to give! >:c`;
-const giveMsg = `, you’ve received 1 *delicious* boba. you’re the bubble to my tea.`;
+const brokeMsg = ', you do not have any bobas to give! >:c';
+const giveMsg = ', you’ve received 1 *delicious* boba. you’re the bubble to my tea.';
 
 let ownersString = `?${owners[owners.length - 1]}?`;
 if (owners.slice(0, -1).length) {

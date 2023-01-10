@@ -11,72 +11,72 @@ exports.alter = async function (p, id, text, info) {
 	const result = await checkDb(p, id, text, info);
 	if (result) return result;
 	switch (id) {
-		case '220934553861226498':
-			return geist(text);
-		case '369533933471268875':
-			return light(text);
-		case '242718397836558337':
-			return shippig(text);
-		case '255750356519223297':
-			return spotifybot(text);
-		case '358448141424394251':
-			return oliverLaVey(text);
-		case '371344384366739457':
-			return nou(text);
-		case '176046069954641921':
-			return crown(text);
-		case '289411794672418819':
-			return louis(text);
-		case '348828692539113490':
-			return michelle(text, info);
-		case '250383887312748545':
-			return elsa(text);
-		case '181264821713371136':
-			return pheonix(text);
-		case '192692796841263104':
-			return dalu(text);
-		case '336611676604596227':
-			return blacky(text);
-		case '576758923688804357':
-			return papershark(text);
-		case '283000589976338432':
-			return kuma(text);
-		case '536711790558576651':
-			return garcom(text, info);
-		case '229299825072537601':
-			return alradio(text, info);
-		case '408875125283225621':
-			return kirito(text, info);
-		case '549876586720133120':
-			return kitsune(text, info);
-		case '343094664414363658':
-			return tiggy(text, info);
-		case '166619476479967232':
-			return valentine(text, info);
-		case '403989717483257877':
-			return u_1s1k(text, info);
-		case '541103499992367115':
-			return ashley(text, info);
-		case '216710431572492289':
-			return arichy(text, info);
-		case '103409793972043776':
-			return potsun(text, info);
-		case '417350932662059009':
-			return sky(text, info);
-		case '707939636835516457':
-			return direwolf(text, info);
-		case '554617574646874113':
-			return notJames(text, info);
-		case '456598711590715403':
-			return lexx(text, info);
-		case '490709773495435285':
-			return koala(text, info);
-		case '468873774960476177':
-			return gojo(text, info);
-		case '183696273382178816':
-			return vanor(text, info);
-		default:
-			return text;
+	case '220934553861226498':
+		return geist(text);
+	case '369533933471268875':
+		return light(text);
+	case '242718397836558337':
+		return shippig(text);
+	case '255750356519223297':
+		return spotifybot(text);
+	case '358448141424394251':
+		return oliverLaVey(text);
+	case '371344384366739457':
+		return nou(text);
+	case '176046069954641921':
+		return crown(text);
+	case '289411794672418819':
+		return louis(text);
+	case '348828692539113490':
+		return michelle(text, info);
+	case '250383887312748545':
+		return elsa(text);
+	case '181264821713371136':
+		return pheonix(text);
+	case '192692796841263104':
+		return dalu(text);
+	case '336611676604596227':
+		return blacky(text);
+	case '576758923688804357':
+		return papershark(text);
+	case '283000589976338432':
+		return kuma(text);
+	case '536711790558576651':
+		return garcom(text, info);
+	case '229299825072537601':
+		return alradio(text, info);
+	case '408875125283225621':
+		return kirito(text, info);
+	case '549876586720133120':
+		return kitsune(text, info);
+	case '343094664414363658':
+		return tiggy(text, info);
+	case '166619476479967232':
+		return valentine(text, info);
+	case '403989717483257877':
+		return u_1s1k(text, info);
+	case '541103499992367115':
+		return ashley(text, info);
+	case '216710431572492289':
+		return arichy(text, info);
+	case '103409793972043776':
+		return potsun(text, info);
+	case '417350932662059009':
+		return sky(text, info);
+	case '707939636835516457':
+		return direwolf(text, info);
+	case '554617574646874113':
+		return notJames(text, info);
+	case '456598711590715403':
+		return lexx(text, info);
+	case '490709773495435285':
+		return koala(text, info);
+	case '468873774960476177':
+		return gojo(text, info);
+	case '183696273382178816':
+		return vanor(text, info);
+	default:
+		return text;
 	}
 };
 
@@ -223,7 +223,7 @@ function spotifybot(text) {
 			spotify +
 			' Hey **Spotify** *Make a New Playlist!*\n' +
 			text
-				.replace(', hunt is empowered by', "'s Playlist is Sponsored by")
+				.replace(', hunt is empowered by', '\'s Playlist is Sponsored by')
 				.replace(huntEmoji, '<:blank:427371936482328596>')
 				.replace('**<:blank:427371936482328596> |** You found', nowplaying + ' **|** You added')
 				.replace('xp**!', 'xp**! *Shuffle Play* ' + swipeup);
@@ -255,7 +255,7 @@ function oliverLaVey(text) {
 			tube +
 			' *New specimens inbound!*\n' +
 			text
-				.replace(', hunt is empowered by', "'s research is empowered by")
+				.replace(', hunt is empowered by', '\'s research is empowered by')
 				.replace(huntEmoji, dna)
 				.replace('You found', 'You sampled')
 				.replace('xp**!', 'xp**! *Downloading CRISPR-Cas9* ' + needle);
@@ -335,7 +335,7 @@ function crown(text) {
 	let crown = '<a:crown:599030694953353216>';
 	if (text.indexOf('empowered by') >= 0) {
 		text = text
-			.replace(', hunt is empowered by', "'s Elite Force marches into the forest with")
+			.replace(', hunt is empowered by', '\'s Elite Force marches into the forest with')
 			.replace(huntEmoji, crown)
 			.replace('You found', 'and after 1 week they found')
 			.replace('  !', '');
@@ -344,7 +344,7 @@ function crown(text) {
 			.replace(huntEmoji, crown)
 			.replace(
 				'spent 5 <:cowoncy:416043450337853441> and caught a',
-				"'s Elite Force marches into the forest\n**<:blank:427371936482328596> |** and after 1 week they found a"
+				'\'s Elite Force marches into the forest\n**<:blank:427371936482328596> |** and after 1 week they found a'
 			);
 	}
 	let embed = {
@@ -402,9 +402,9 @@ function michelle(text, info) {
 
 function elsa(text) {
 	if (text.indexOf('empowered by') >= 0) {
-		text = text.replace(', hunt is empowered by', "'s Knights gather recruits! Using");
+		text = text.replace(', hunt is empowered by', '\'s Knights gather recruits! Using');
 	} else {
-		text = text.replace(' spent 5 <:cowoncy:416043450337853441> and caught', "'s Knights found");
+		text = text.replace(' spent 5 <:cowoncy:416043450337853441> and caught', '\'s Knights found');
 	}
 	let embed = {
 		description: text,
@@ -460,7 +460,7 @@ function blacky(text) {
 	text = text.replace(huntEmoji, '<a:running:653370372997120010>');
 	if (text.indexOf('empowered by') >= 0) {
 		text = text
-			.replace(', hunt is empowered by', "'s umbreon is empowered by\n" + blank + ' **|**')
+			.replace(', hunt is empowered by', '\'s umbreon is empowered by\n' + blank + ' **|**')
 			.replace('You found', 'and found');
 	} else {
 		text = text
@@ -536,7 +536,7 @@ function kuma(text) {
 		text = text
 			.replace(
 				' spent 5 <:cowoncy:416043450337853441> and caught',
-				"'s Cookie minions came back with"
+				'\'s Cookie minions came back with'
 			)
 			.replace(huntEmoji, ck);
 	}

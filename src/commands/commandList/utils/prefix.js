@@ -16,7 +16,7 @@ const comments = [
 	'nice.',
 	';)',
 	'I love it <3',
-	"It's perfect!",
+	'It\'s perfect!',
 	'amazing.',
 	'wow',
 	'Wonderful',
@@ -56,7 +56,7 @@ module.exports = new CommandInterface({
 
 		// Must have manage channels perm
 		if (!p.msg.member.permissions.has('manageChannels')) {
-			p.errorMsg(", you're not an admin! >:c", 3000);
+			p.errorMsg(', you\'re not an admin! >:c', 3000);
 			return;
 		}
 

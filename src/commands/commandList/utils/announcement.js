@@ -12,7 +12,7 @@ module.exports = new CommandInterface({
 
 	args: '{disable|enable}',
 
-	desc: "View the latest announcement! Announcements will also be displayed in your daily command! You can disable this by typing 'owo announcement disable'",
+	desc: 'View the latest announcement! Announcements will also be displayed in your daily command! You can disable this by typing \'owo announcement disable\'',
 
 	example: ['owo announcement', 'owo announcement enable', 'owo announcement disable'],
 
