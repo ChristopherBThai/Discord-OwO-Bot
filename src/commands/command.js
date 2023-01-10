@@ -27,7 +27,7 @@ class Command {
 
 	async execute(msg, raw) {
 		// Parse content info
-		let { args, context } = await checkPrefix(this.main, msg);
+		let { args, context } = await checkPrefix(this.main, msg) || {};
 		const containsPoints =
 			msg.content.toLowerCase().includes('owo') || msg.content.toLowerCase().includes('uwu');
 		if (!args) {
@@ -86,7 +86,7 @@ class Command {
 		if (msg.content.toLowerCase().indexOf(this.prefix) !== 0) {
 			return false;
 		}
-		let { args, context } = await checkPrefix(this.main, msg);
+		let { args, context } = await checkPrefix(this.main, msg) || {};
 		let command = args.shift().toLowerCase();
 		let commandObj = adminCommands[command];
 		if (!commandObj) {
