@@ -345,7 +345,7 @@ async function checkPrefix(main, msg) {
 		return { args, context };
 	}
 
-	if (!msg.channel.guild) return;
+	if (!msg.channel.guild) return {};
 
 	// If prefix isn't saved, fetch it
 	if (msg.channel.guild.prefix === undefined) {
