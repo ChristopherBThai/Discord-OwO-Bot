@@ -66,7 +66,7 @@ module.exports = new CommandInterface({
 									run = false;
 								}
 								let embed = {
-									description: print,
+									description: print || '*no description*',
 									color: p.config.embed_color,
 									author: {
 										name: "Definition of '" + entries[0].word + "'",
