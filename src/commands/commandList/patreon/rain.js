@@ -17,7 +17,7 @@ const giveAmount = 1;
 
 const desc =
 	'May Happiness Rain On You!\nMay Your Sorrows Be Washed Away In The Rain…\n\nSometimes, If You Want The Rainbow, You Gotta Put Up With The Rain!\n\nCollect 8 Raindrops to get a Rainbow!';
-const brokeMsg = `, you do not have any Rain to give! >:c`;
+const brokeMsg = ', you do not have any Rain to give! >:c';
 const giveMsg = `, you have been given 1 ${emoji} raindrop!`;
 
 const hasMerge = true;
@@ -27,9 +27,9 @@ const mergeMsg = `, you have been given 1 ${emoji} raindrop!\n${config.emoji.bla
 
 function getDisplay(count, mergeCount) {
 	if (mergeCount) {
-		return `, you currently have ?count? raindrop?plural? <a:rainbow:975313415218266153> and ?mergeCount? rainbow?mergePlural?! <a:rainbow:1035472481563181057> Sometimes, If You Want The Rainbow, You Gotta Put Up With The Rain!`;
+		return ', you currently have ?count? raindrop?plural? <a:rainbow:975313415218266153> and ?mergeCount? rainbow?mergePlural?! <a:rainbow:1035472481563181057> Sometimes, If You Want The Rainbow, You Gotta Put Up With The Rain!';
 	} else {
-		return `, you currently have ?count? raindrop?plural?! May Happiness Rain On You!`;
+		return ', you currently have ?count? raindrop?plural?! May Happiness Rain On You!';
 	}
 }
 

@@ -16,10 +16,10 @@ const moving = '<a:slot_gif:417473893368987649>';
 
 exports.alter = function (id, text) {
 	switch (id) {
-		case '220934553861226498':
-			return geist(text);
-		default:
-			return text;
+	case '220934553861226498':
+		return geist(text);
+	default:
+		return text;
 	}
 };
 
@@ -48,7 +48,7 @@ function geist(text) {
 		text = text.replace(line1[0], '');
 		text += '\n' + line1[0].trim();
 	}
-	let line2 = text.match(/  and won <:cowoncy:416043450337853441> [0-9,]+/gi);
+	let line2 = text.match(/ {2}and won <:cowoncy:416043450337853441> [0-9,]+/gi);
 	if (line2) {
 		text = text.replace(line2[0], '');
 		text += '\n' + line2[0].trim();

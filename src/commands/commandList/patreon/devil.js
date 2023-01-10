@@ -15,7 +15,7 @@ const ownerOnly = true;
 const giveAmount = 1;
 const desc = 'A pair of Devil wings to take you to the underworld a place called Hell.';
 const displayMsg = `, you currently have ?count? ${emoji} Devil Wing?plural?!`;
-const brokeMsg = `, you do not have any Devil Wings to give! >:c`;
+const brokeMsg = ', you do not have any Devil Wings to give! >:c';
 const giveMsg = `, you have been given 1 ${emoji} Falling into Hell.`;
 
 let ownersString = `?${owners[owners.length - 1]}?`;

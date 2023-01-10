@@ -97,7 +97,7 @@ class PagedMessage extends EventEmitter {
 			disableComponents(this.components);
 			embed.color = 6381923;
 			await this.msg.edit({
-				content: `This message is now inactive.`,
+				content: 'This message is now inactive.',
 				embed,
 				components: this.components,
 			});

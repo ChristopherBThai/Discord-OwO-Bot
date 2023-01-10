@@ -21,10 +21,10 @@ class Lxv extends Collectible {
 		this.description =
 			'Make sure to give Hedge some love, and he might bring you a gift!\nOnly given out in lovesick. A server for OwO, anigame and ERPG grinders! .gg/lxv';
 		this.displayMsg =
-			"<:846997443278274610:1055044684382208010> **| ?user?**, you currently have ?count? ?emoji? lxv. Don't forget to take care of them!\n<:1039236830022868992:1055044688979185664> **|** Hedge has collected ?mergeCount? **lovesick** for you!";
+			'<:846997443278274610:1055044684382208010> **| ?user?**, you currently have ?count? ?emoji? lxv. Don\'t forget to take care of them!\n<:1039236830022868992:1055044688979185664> **|** Hedge has collected ?mergeCount? **lovesick** for you!';
 		this.brokeMsg = ', you do not have any Lxv! >:c';
 		this.giveMsg =
-			"<:822030768981016577:1055044681429422080> **| ?receiver?**, you were walking around and **?giver?** surprised you with 2 lxv!\n?blank? **|** Remember to take care of them! or they'll run away <:821431807425642567:1055044680162742283>";
+			'<:822030768981016577:1055044681429422080> **| ?receiver?**, you were walking around and **?giver?** surprised you with 2 lxv!\n?blank? **|** Remember to take care of them! or they\'ll run away <:821431807425642567:1055044680162742283>';
 
 		this.hasManualMerge = true;
 		this.manualMergeCommands = ['pet'];
@@ -45,14 +45,14 @@ class Lxv extends Collectible {
 		if (afterMid.after) {
 			if (afterMid.withinDay) {
 				msg =
-					"<:846997443278274610:1055044684382208010> **| ?user?**, you currently have ?count? ?emoji? lxv. Don't forget to take care of them!\n<:1039236830022868992:1055044688979185664> **|** Hedge has collected ?mergeCount? **lovesick** for you!";
+					'<:846997443278274610:1055044684382208010> **| ?user?**, you currently have ?count? ?emoji? lxv. Don\'t forget to take care of them!\n<:1039236830022868992:1055044688979185664> **|** Hedge has collected ?mergeCount? **lovesick** for you!';
 			} else {
 				if (args.mergeCount > 0) {
 					const result = await p.redis.hincrby(`data_${p.msg.author.id}`, this.manualMergeData, -1);
 					args.mergeCount -= 1;
 					await p.redis.hset(`data_${p.msg.author.id}`, `${this.data}_reset`, afterMid.now);
 					msg =
-						"<:846997478246318080:1055044685153972225> **| ?user?**, you currently have ?count? ?emoji? lxv. One of them ran away because you didn't take care of it..." +
+						'<:846997478246318080:1055044685153972225> **| ?user?**, you currently have ?count? ?emoji? lxv. One of them ran away because you didn\'t take care of it...' +
 						'\n<:1039236830022868992:1055044688979185664> **|** Hedge has collected ?mergeCount? **lovesick** for you!';
 				} else {
 					msg =

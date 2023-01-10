@@ -77,7 +77,7 @@ exports.getRandomWeapons = function (uid, count) {
 		let weaponSql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${uid ? uid : '?'},${
 			tempWeapon.id
 		},'${tempWeapon.sqlStat}',${tempWeapon.avgQuality});`;
-		let passiveSql = `INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES `;
+		let passiveSql = 'INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES ';
 		for (let j = 0; j < tempWeapon.passives.length; j++) {
 			let tempPassive = tempWeapon.passives[j];
 			passiveSql += `(?,${j},${tempPassive.id},'${tempPassive.sqlStat}'),`;
@@ -253,17 +253,17 @@ exports.askDisplay = async function (p, id, opt = {}) {
 		return;
 	}
 	if (id == p.client.user.id) {
-		p.errorMsg("... trust me. You don't want to see what I have.", 3000);
+		p.errorMsg('... trust me. You don\'t want to see what I have.', 3000);
 		return;
 	}
 
 	let user = p.getMention(id);
 	if (!user) {
-		p.errorMsg(", I couldn't find that user! :(", 3000);
+		p.errorMsg(', I couldn\'t find that user! :(', 3000);
 		return;
 	}
 	if (user.bot) {
-		p.errorMsg(", you dum dum! Bots don't carry weapons!", 3000);
+		p.errorMsg(', you dum dum! Bots don\'t carry weapons!', 3000);
 		return;
 	}
 
@@ -323,7 +323,7 @@ var getDisplayPage = async function (p, user, page, sort, opt = {}) {
 			WHERE
 				user.id = ${user.id} `;
 	if (wid) sql += `AND user_weapon.wid = ${wid} `;
-	sql += `ORDER BY `;
+	sql += 'ORDER BY ';
 
 	if (sort === 1) sql += 'user_weapon.avg DESC,';
 	else if (sort === 2) sql += 'user_weapon.wid DESC, user_weapon.avg DESC,';
@@ -407,7 +407,7 @@ var getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	}
 
 	/* Construct msg */
-	let title = user.username + "'s " + (wid ? weapons[wid].name : 'weapons');
+	let title = user.username + '\'s ' + (wid ? weapons[wid].name : 'weapons');
 	let embed = {
 		author: {
 			name: title,
@@ -494,13 +494,13 @@ exports.describe = async function (p, uwid) {
 	desc += `**WP Cost:** ${Math.ceil(weapon.manaCost)} <:wp:531620120976687114>`;
 	desc += `\n**Description:** ${weapon.desc}\n`;
 	if (weapon.buffList.length > 0) {
-		desc += `\n`;
+		desc += '\n';
 		let buffs = weapon.getBuffs();
 		for (let i in buffs) {
 			desc += `${buffs[i].emoji} **${buffs[i].name}** - ${buffs[i].desc}\n`;
 		}
 	}
-	if (weapon.passives.length <= 0) desc += `\n**Passives:** None`;
+	if (weapon.passives.length <= 0) desc += '\n**Passives:** None';
 	for (var i = 0; i < weapon.passives.length; i++) {
 		let passive = weapon.passives[i];
 		desc += `\n${passive.emoji} **${passive.name}** - ${passive.desc}`;
@@ -509,7 +509,7 @@ exports.describe = async function (p, uwid) {
 	/* Construct embed */
 	let embed = {
 		author: {
-			name: username + "'s " + weapon.name,
+			name: username + '\'s ' + weapon.name,
 		},
 		color: p.config.embed_color,
 		thumbnail: {
@@ -583,7 +583,7 @@ exports.equip = async function (p, uwid, pet) {
 					}** is now wielding ${weapon.emoji} **${weapon.name}**!`
 				)
 			);
-		else p.errorMsg(`, Could not find a weapon with that id!`);
+		else p.errorMsg(', Could not find a weapon with that id!');
 
 		/* Already equipped */
 	} else if (result[1].affectedRows > 0) {
@@ -601,7 +601,7 @@ exports.equip = async function (p, uwid, pet) {
 					}** is already wielding ${weapon.emoji} **${weapon.name}**!`
 				)
 			);
-		else p.errorMsg(`, Could not find a weapon with that id!`);
+		else p.errorMsg(', Could not find a weapon with that id!');
 
 		/* A Failure (like me!) */
 	} else {
@@ -616,7 +616,7 @@ exports.equip = async function (p, uwid, pet) {
 exports.unequip = async function (p, uwid) {
 	uwid = expandUWID(uwid);
 	if (!uwid) {
-		p.errorMsg(`, Could not find a weapon with that id!`);
+		p.errorMsg(', Could not find a weapon with that id!');
 		return;
 	}
 
@@ -640,7 +640,7 @@ exports.unequip = async function (p, uwid) {
 					} **${nickname ? nickname : animal.name}**`
 				)
 			);
-		else p.errorMsg(`, Could not find a weapon with that id!`);
+		else p.errorMsg(', Could not find a weapon with that id!');
 
 		/* No body using weapon */
 	} else if (result[1].affectedRows > 0) {
@@ -648,11 +648,11 @@ exports.unequip = async function (p, uwid) {
 		weapon = weapon[Object.keys(weapon)[0]];
 		weapon = this.parseWeapon(weapon);
 		if (weapon) p.replyMsg(weaponEmoji, `, No animal is using ${weapon.emoji} **${weapon.name}**`);
-		else p.errorMsg(`, Could not find a weapon with that id!`);
+		else p.errorMsg(', Could not find a weapon with that id!');
 
 		/* Invalid */
 	} else {
-		p.errorMsg(`, Could not find a weapon with that id!`);
+		p.errorMsg(', Could not find a weapon with that id!');
 	}
 };
 
@@ -747,7 +747,7 @@ exports.sell = async function (p, uwid) {
 		weaponEmoji,
 		`, You sold a(n) **${weapon.rank.name} ${weapon.name}**  ${weapon.rank.emoji}${weapon.emoji} for **${price}** cowoncy!`
 	);
-	p.logger.incr(`cowoncy`, price, { type: 'sell' }, p.msg);
+	p.logger.incr('cowoncy', price, { type: 'sell' }, p.msg);
 };
 
 var sellRank = (exports.sellRank = async function (p, rankLoc) {
@@ -840,7 +840,7 @@ var sellRank = (exports.sellRank = async function (p, rankLoc) {
 			p.config.emoji.blank
 		} **| Sold:** ${weapons.join('')}`
 	);
-	p.logger.incr(`cowoncy`, price, { type: 'sell' }, p.msg);
+	p.logger.incr('cowoncy', price, { type: 'sell' }, p.msg);
 });
 
 /* Shorten a uwid to base36 */

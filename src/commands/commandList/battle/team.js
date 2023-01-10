@@ -53,7 +53,7 @@ module.exports = new CommandInterface({
 			/* No changing while in battle */
 			if (await battleUtil.inBattle(p))
 				p.errorMsg(
-					", You cannot change your team while you're in battle! Please finish your `owo battle`!",
+					', You cannot change your team while you\'re in battle! Please finish your `owo battle`!',
 					3000
 				);
 			else if (await battleFriendUtil.inBattle(p))
@@ -68,7 +68,7 @@ module.exports = new CommandInterface({
 			/* No changing while in battle */
 			if (await battleUtil.inBattle(p))
 				p.errorMsg(
-					", You cannot change your team while you're in battle! Please finish your `owo battle`!",
+					', You cannot change your team while you\'re in battle! Please finish your `owo battle`!',
 					3000
 				);
 			else if (await battleFriendUtil.inBattle(p))
@@ -95,7 +95,7 @@ async function displayTeam(p) {
 		await teamUtil.displayTeam(p);
 	} catch (err) {
 		console.error(err);
-		p.errorMsg(`, something went wrong... Try again!`, 5000);
+		p.errorMsg(', something went wrong... Try again!', 5000);
 	}
 }
 
@@ -129,7 +129,7 @@ async function add(p) {
 		await teamUtil.addMember(p, animal, pos);
 	} catch (err) {
 		console.error(err);
-		p.errorMsg(`, something went wrong... Try again!`, 5000);
+		p.errorMsg(', something went wrong... Try again!', 5000);
 	}
 }
 
@@ -162,7 +162,7 @@ async function remove(p) {
 		await teamUtil.removeMember(p, remove);
 	} catch (err) {
 		console.error(err);
-		p.errorMsg(`, something went wrong... Try again!`, 5000);
+		p.errorMsg(', something went wrong... Try again!', 5000);
 	}
 }
 
@@ -183,6 +183,6 @@ async function rename(p) {
 		await teamUtil.renameTeam(p, name);
 	} catch (err) {
 		console.error(err);
-		p.errorMsg(`, something went wrong... Try again!`, 5000);
+		p.errorMsg(', something went wrong... Try again!', 5000);
 	}
 }

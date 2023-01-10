@@ -21,7 +21,7 @@ module.exports = new CommandInterface({
 
 	args: '{count}|fabled',
 
-	desc: "Opens a lootbox! Check how many you have in 'owo inv'!\nYou can get some more by hunting for animals. You can get a maximum of 3 lootboxes per day.\nYou can use the items by using 'owo use {id}'",
+	desc: 'Opens a lootbox! Check how many you have in \'owo inv\'!\nYou can get some more by hunting for animals. You can get a maximum of 3 lootboxes per day.\nYou can use the items by using \'owo use {id}\'',
 
 	example: ['owo lb', 'owo lb 10', 'owo lb fabled'],
 
@@ -41,7 +41,7 @@ module.exports = new CommandInterface({
 			let sql = `SELECT boxcount FROM lootbox WHERE id = ${p.msg.author.id};`;
 			let result = await p.query(sql);
 			if (!result || result[0].boxcount <= 0) {
-				p.errorMsg(", you don't have any more lootboxes!");
+				p.errorMsg(', you don\'t have any more lootboxes!');
 				return;
 			}
 			let boxcount = result[0].boxcount;
@@ -60,7 +60,7 @@ async function openBox(p) {
 
 	let uid;
 	if (result[0].changedRows == 0) {
-		p.errorMsg(", You don't have any lootboxes!", 3000);
+		p.errorMsg(', You don\'t have any lootboxes!', 3000);
 		return;
 	} else if (!result[1][0] || !result[1][0].uid) {
 		sql = `INSERT IGNORE INTO user (id) VALUES (${p.msg.author.id});`;
@@ -118,7 +118,7 @@ async function openMultiple(p, count) {
 
 	let uid;
 	if (result[0].changedRows == 0) {
-		p.errorMsg(", You don't have any lootboxes!", 3000);
+		p.errorMsg(', You don\'t have any lootboxes!', 3000);
 		return;
 	} else if (!result[1][0] || !result[1][0].uid) {
 		sql = `INSERT IGNORE INTO user (id) VALUES (${p.msg.author.id});`;
@@ -174,7 +174,7 @@ async function openFabledBox(p) {
 
 	let uid;
 	if (result[0].changedRows == 0) {
-		p.errorMsg(", You don't have any lootboxes!", 3000);
+		p.errorMsg(', You don\'t have any lootboxes!', 3000);
 		return;
 	} else if (!result[1][0] || !result[1][0].uid) {
 		sql = `INSERT IGNORE INTO user (id) VALUES (${p.msg.author.id});`;

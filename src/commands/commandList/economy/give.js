@@ -58,7 +58,7 @@ module.exports = new CommandInterface({
 			);
 		} else if (user.bot) {
 			return this.send(
-				'**🚫 | ' + this.msg.author.username + "**, You can't send cowoncy to a bot silly!",
+				'**🚫 | ' + this.msg.author.username + '**, You can\'t send cowoncy to a bot silly!',
 				3000
 			);
 		} else if (user.id == this.msg.author.id) {
@@ -89,7 +89,7 @@ module.exports = new CommandInterface({
 			let result = await con.query(sql);
 
 			if (!result[0].changedRows) {
-				this.errorMsg(", you silly hooman! You don't have enough cowoncy!", 3000);
+				this.errorMsg(', you silly hooman! You don\'t have enough cowoncy!', 3000);
 				return con.rollback();
 			}
 
@@ -111,7 +111,7 @@ module.exports = new CommandInterface({
 
 		this.send(text);
 		this.neo4j.give(this.msg, user, amount);
-		this.logger.incr(`cowoncy`, amount, { type: 'given' }, this.msg);
-		this.logger.decr(`cowoncy`, -1 * amount, { type: 'give' }, this.msg);
+		this.logger.incr('cowoncy', amount, { type: 'given' }, this.msg);
+		this.logger.decr('cowoncy', -1 * amount, { type: 'give' }, this.msg);
 	},
 });

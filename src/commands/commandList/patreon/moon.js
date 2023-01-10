@@ -15,7 +15,7 @@ const giveAmount = 1;
 const desc =
 	'I miss you like the moon misses the sun, forever separated by thousands of miles for thousands of years.\n\nDestined to chase it until the end of time.\n\nThe sun and moon misses each other without any hope of meeting ever.\n\nLove by the moon';
 const displayMsg = `, you currently have ?count? ${emoji} You are my Moon!`;
-const brokeMsg = `, you do not have any moons to give! >:c`;
+const brokeMsg = ', you do not have any moons to give! >:c';
 const giveMsg = `, you have been given 1 ${emoji} Love by the moon.
 `;
 

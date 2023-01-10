@@ -12,11 +12,6 @@
 const quests = require('../data/quests.json');
 const mysql = require('./mysqlHandler.js');
 const global = require('../utils/global.js');
-const findQuest = {
-	rare: ['common', 'uncommon'],
-	epic: ['common', 'uncommon', 'rare'],
-	mythical: ['common', 'uncommon', 'rare', 'epic'],
-};
 const questBy = ['friendlyBattle', 'friendlyBattleBy', 'emoteBy', 'prayBy', 'curseBy', 'cookieBy'];
 
 module.exports = class Quest {
@@ -72,7 +67,7 @@ async function check(msg, id, username, questName, result, count, extra) {
 	}
 
 	/* Check if the quest is complete */
-	let text, rewardSql, sqls, variables, rewardVar;
+	let text, rewardSql, sql, variables, rewardVar;
 	if (current >= needed) {
 		sql =
 			'DELETE FROM quest WHERE qid = ? AND qname = ? AND uid = (SELECT uid FROM user WHERE id = ?);';
@@ -82,16 +77,16 @@ async function check(msg, id, username, questName, result, count, extra) {
 		if (rewardType == 'lootbox') {
 			text += '<:box:427352600476647425>'.repeat(reward);
 			rewardSql =
-				"INSERT INTO lootbox (id,boxcount,claim) VALUES (?,?,'2017-01-01 10:10:10') ON DUPLICATE KEY UPDATE boxcount = boxcount + ?;";
+				'INSERT INTO lootbox (id,boxcount,claim) VALUES (?,?,\'2017-01-01 10:10:10\') ON DUPLICATE KEY UPDATE boxcount = boxcount + ?;';
 			rewardVar = [id, reward, reward];
 		} else if (rewardType == 'crate') {
 			text += '<:crate:523771259302182922>'.repeat(reward);
 			rewardSql =
-				"INSERT INTO crate (uid,boxcount,claim) VALUES ((SELECT uid FROM user WHERE id = ?),?,'2017-01-01 10:10:10') ON DUPLICATE KEY UPDATE boxcount = boxcount + ?;";
+				'INSERT INTO crate (uid,boxcount,claim) VALUES ((SELECT uid FROM user WHERE id = ?),?,\'2017-01-01 10:10:10\') ON DUPLICATE KEY UPDATE boxcount = boxcount + ?;';
 			rewardVar = [id, reward, reward];
 		} else if (rewardType == 'shards') {
 			text += '<:weaponshard:655902978712272917>**x' + reward + '**';
-			rewardSql = `INSERT INTO shards (uid,count) VALUES ((SELECT uid FROM user WHERE id = ?),?) ON DUPLICATE KEY UPDATE count = count + ?;`;
+			rewardSql = 'INSERT INTO shards (uid,count) VALUES ((SELECT uid FROM user WHERE id = ?),?) ON DUPLICATE KEY UPDATE count = count + ?;';
 			rewardVar = [id, reward, reward];
 		} else {
 			text += global.toFancyNum(reward) + ' <:cowoncy:416043450337853441>';

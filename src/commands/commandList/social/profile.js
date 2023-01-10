@@ -37,7 +37,7 @@ module.exports = new CommandInterface({
 		} else if (p.global.isUser(p.args[0]) || p.global.isInt(p.args[0])) {
 			let user = p.args[0].match(/[0-9]+/)[0];
 			user = await p.fetch.getUser(user);
-			if (!user) p.errorMsg(", I couldn't find that user!", 3000);
+			if (!user) p.errorMsg(', I couldn\'t find that user!', 3000);
 			else {
 				let sql = `SELECT private FROM user INNER JOIN user_profile ON user.uid = user_profile.uid WHERE id = ${user.id};`;
 				let result = await p.query(sql);

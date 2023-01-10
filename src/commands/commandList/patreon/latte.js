@@ -14,7 +14,7 @@ const ownerOnly = true;
 const giveAmount = 1;
 const desc = 'This custom item can only be given by the owner of this command.';
 const displayMsg = `, you currently have ?count? ${emoji} latte?plural?!`;
-const brokeMsg = `, you do not have any lattes to give! >:c`;
+const brokeMsg = ', you do not have any lattes to give! >:c';
 const giveMsg = `, you have been given 1 ${emoji} latte.`;
 
 let ownersString = `?${owners[owners.length - 1]}?`;

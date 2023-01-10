@@ -22,15 +22,15 @@ exports.parsePatreon = function (query) {
 
 	// parse benefits
 	switch (type) {
-		case 1:
-			animal = true;
-			break;
-		case 3:
-			animal = true;
-			cowoncy = true;
-			break;
-		default:
-			return null;
+	case 1:
+		animal = true;
+		break;
+	case 3:
+		animal = true;
+		cowoncy = true;
+		break;
+	default:
+		return null;
 	}
 
 	// Already expired

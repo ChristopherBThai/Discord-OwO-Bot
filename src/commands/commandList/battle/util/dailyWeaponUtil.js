@@ -111,14 +111,14 @@ exports.buy = async function (p, id) {
 					' Weapon Shards**'
 			);
 		} else {
-			p.errorMsg(", You don't have enough Weapon Shards!", 3000);
+			p.errorMsg(', You don\'t have enough Weapon Shards!', 3000);
 		}
 		return;
 	}
 
 	// Check if purchased already
 	let purchased = await redis.hmget(redisKey + 'Purchased', [id + '' + p.msg.author.id]);
-	if (!!purchased[0]) {
+	if (purchased[0]) {
 		p.errorMsg(', You already purchased this weapon, silly!', 3000);
 		return;
 	}
@@ -143,7 +143,7 @@ exports.buy = async function (p, id) {
 	weapon.shardPrice = markupPrices[weapon.rank.name];
 
 	if (!(await useShards(p, weapon.shardPrice))) {
-		p.errorMsg(", You don't have enough Weapon Shards!", 3000);
+		p.errorMsg(', You don\'t have enough Weapon Shards!', 3000);
 		return;
 	}
 
@@ -153,7 +153,7 @@ exports.buy = async function (p, id) {
 		let result = await p.query(weaponSql);
 		let uwid = result.insertId;
 		weaponEmojis = '`' + weaponUtil.shortenUWID(uwid) + '` ' + weaponEmojis;
-		let passiveSql = `INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES `;
+		let passiveSql = 'INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES ';
 		for (let i = 0; i < weapon.passives.length; i++) {
 			let tempPassive = weapon.passives[i];
 			weaponEmojis += tempPassive.emoji;
@@ -187,7 +187,7 @@ async function useShards(p, count) {
 	let sql = `UPDATE shards INNER JOIN user ON shards.uid = user.uid SET shards.count = shards.count - ${count} WHERE user.id = ${p.msg.author.id} AND shards.count >= ${count};`;
 	let result = await p.query(sql);
 	if (result.changedRows >= 1) {
-		p.logger.decr(`shards`, -1 * count, { type: 'shop' }, p.msg);
+		p.logger.decr('shards', -1 * count, { type: 'shop' }, p.msg);
 		return true;
 	}
 	return false;
@@ -241,19 +241,19 @@ function createEmbed(p, weapons, page) {
 	/* Make description */
 	let desc = `**Name:** ${weapon.name}\n`;
 	desc += `**Shop ID:** ${weapon.shopID}\n`;
-	if (weapon.purchased) desc += `**Price:** PURCHASED\n\n`;
+	if (weapon.purchased) desc += '**Price:** PURCHASED\n\n';
 	else desc += `**Price:** ${weapon.shardPrice} ${shardEmoji}\n\n`;
 	desc += `**Quality:** ${weapon.rank.emoji} ${weapon.avgQuality}%\n`;
 	desc += `**WP Cost:** ${Math.ceil(weapon.manaCost)} <:wp:531620120976687114>`;
 	desc += `\n**Description:** ${weapon.desc}\n`;
 	if (weapon.buffList.length > 0) {
-		desc += `\n`;
+		desc += '\n';
 		let buffs = weapon.getBuffs();
 		for (let i in buffs) {
 			desc += `${buffs[i].emoji} **${buffs[i].name}** - ${buffs[i].desc}\n`;
 		}
 	}
-	if (weapon.passives.length <= 0) desc += `\n**Passives:** None`;
+	if (weapon.passives.length <= 0) desc += '\n**Passives:** None';
 	for (var i = 0; i < weapon.passives.length; i++) {
 		let passive = weapon.passives[i];
 		desc += `\n${passive.emoji} **${passive.name}** - ${passive.desc}`;
@@ -264,7 +264,7 @@ function createEmbed(p, weapons, page) {
 	/* Construct embed */
 	return (embed = {
 		author: {
-			name: "Today's Available Weapons",
+			name: 'Today\'s Available Weapons',
 			icon_url: p.msg.author.avatarURL,
 		},
 		color: p.config.embed_color,

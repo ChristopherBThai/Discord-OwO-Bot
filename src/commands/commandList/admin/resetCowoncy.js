@@ -49,7 +49,7 @@ module.exports = new CommandInterface({
 				} **|** I couldn't DM them.`
 			);
 		} else {
-			p.send(`⚠ **|** Failed to reset cowoncy`);
+			p.send('⚠ **|** Failed to reset cowoncy');
 		}
 	},
 });

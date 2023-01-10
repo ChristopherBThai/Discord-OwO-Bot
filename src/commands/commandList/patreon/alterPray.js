@@ -11,22 +11,22 @@ const curseEmoji = '👻';
 
 exports.alter = function (id, text, info) {
 	switch (id) {
-		case '192692796841263104':
-			return dalu(text, info);
-		case '456598711590715403':
-			return lexx(text, info);
-		case '417350932662059009':
-			return sky(text, info);
-		case '707939636835516457':
-			return dire(text, info);
-		case '856036736970260490':
-			return lapiis(text, info);
-		case '460987842961866762':
-			return estee(text, info);
-		case '683742950668501001':
-			return dadada(text, info);
-		default:
-			return text;
+	case '192692796841263104':
+		return dalu(text, info);
+	case '456598711590715403':
+		return lexx(text, info);
+	case '417350932662059009':
+		return sky(text, info);
+	case '707939636835516457':
+		return dire(text, info);
+	case '856036736970260490':
+		return lapiis(text, info);
+	case '460987842961866762':
+		return estee(text, info);
+	case '683742950668501001':
+		return dadada(text, info);
+	default:
+		return text;
 	}
 };
 

@@ -44,7 +44,7 @@ async function getPatreons(p) {
 	console.log(patreons);
 	let result = [];
 	if (p.args[0] != 'ignoresql') {
-		let sql = `SELECT id FROM user INNER JOIN patreons ON user.uid = patreons.uid WHERE TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths;`;
+		let sql = 'SELECT id FROM user INNER JOIN patreons ON user.uid = patreons.uid WHERE TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths;';
 		result = await p.query(sql);
 	}
 

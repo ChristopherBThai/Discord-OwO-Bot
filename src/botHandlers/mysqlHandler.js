@@ -48,7 +48,7 @@ exports.startTransaction = () => {
 					delete result.rollback;
 					delete result.query;
 					clearTimeout(releaseTimer);
-					return new Promise((res, rej) => {
+					return new Promise((res) => {
 						acon.rollback(() => {
 							acon.release();
 							res();

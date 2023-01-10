@@ -325,45 +325,45 @@ function parseQuest(questInfo) {
 	let locked = !!questInfo.locked;
 
 	switch (questInfo.qname) {
-		case 'hunt':
-			text = 'Manually hunt ' + count + ' times!';
-			break;
-		case 'battle':
-			text = 'Battle ' + count + ' times!';
-			break;
-		case 'gamble':
-			text = 'Gamble ' + count + ' times!';
-			break;
-		case 'owo':
-			text = "Say 'owo' " + count + ' times!';
-			break;
-		case 'emoteTo':
-			text = 'Use an action command on someone ' + count + ' times!';
-			break;
-		case 'emoteBy':
-			text = 'Have a friend use an action command on you ' + count + ' times!';
-			break;
-		case 'find':
-			text = 'Hunt 3 animals that are ' + count + ' rank!';
-			break;
-		case 'cookieBy':
-			text = 'Receive a cookie from ' + count + ' friends!';
-			break;
-		case 'prayBy':
-			text = 'Have a friend pray to you ' + count + ' times!';
-			break;
-		case 'curseBy':
-			text = 'Have a friend curse you ' + count + ' times!';
-			break;
-		case 'friendlyBattle':
-			text = 'Battle with a friend ' + count + ' times!';
-			break;
-		case 'xp':
-			text = 'Earn  ' + count + ' xp from hunting and battling!';
-			break;
-		default:
-			text = 'Invalid Quest';
-			break;
+	case 'hunt':
+		text = 'Manually hunt ' + count + ' times!';
+		break;
+	case 'battle':
+		text = 'Battle ' + count + ' times!';
+		break;
+	case 'gamble':
+		text = 'Gamble ' + count + ' times!';
+		break;
+	case 'owo':
+		text = 'Say \'owo\' ' + count + ' times!';
+		break;
+	case 'emoteTo':
+		text = 'Use an action command on someone ' + count + ' times!';
+		break;
+	case 'emoteBy':
+		text = 'Have a friend use an action command on you ' + count + ' times!';
+		break;
+	case 'find':
+		text = 'Hunt 3 animals that are ' + count + ' rank!';
+		break;
+	case 'cookieBy':
+		text = 'Receive a cookie from ' + count + ' friends!';
+		break;
+	case 'prayBy':
+		text = 'Have a friend pray to you ' + count + ' times!';
+		break;
+	case 'curseBy':
+		text = 'Have a friend curse you ' + count + ' times!';
+		break;
+	case 'friendlyBattle':
+		text = 'Battle with a friend ' + count + ' times!';
+		break;
+	case 'xp':
+		text = 'Earn  ' + count + ' xp from hunting and battling!';
+		break;
+	default:
+		text = 'Invalid Quest';
+		break;
 	}
 
 	return { text, reward, progress, locked };

@@ -48,7 +48,7 @@ async function display(p) {
 	let embed = {
 		color: p.config.embed_color,
 		author: {
-			name: p.msg.author.username + "'s battle settings",
+			name: p.msg.author.username + '\'s battle settings',
 			icon_url: p.msg.author.avatarURL,
 		},
 		description: text,
@@ -82,11 +82,11 @@ async function changeSettings(p) {
 	}else*/ if (args[0] == 'display') {
 		field = 'display';
 		if (args[1] == 'image') {
-			setting = "'image'";
+			setting = '\'image\'';
 		} else if (args[1] == 'text') {
-			setting = "'text'";
+			setting = '\'text\'';
 		} else if (args[1] == 'compact') {
-			setting = "'compact'";
+			setting = '\'compact\'';
 		} else {
 			p.errorMsg(', the display settings can only be `image`, `compact`, or `text`!');
 			return;

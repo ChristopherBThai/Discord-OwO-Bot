@@ -16,7 +16,7 @@ const giveAmount = 2;
 const desc =
 	'A bite size delectable snack you can’t live without. As sweet as pie, as cold as the winters breeze, nothing compares to my mochi.';
 const displayMsg = `, you currently have ?count? ${emoji} mochi?plural?!`;
-const brokeMsg = `, you do not have any mochis to give! >:c`;
+const brokeMsg = ', you do not have any mochis to give! >:c';
 const giveMsg = `, you have been given 2 ${emoji} sweet mochi :3`;
 
 let ownersString = `?${owners[owners.length - 1]}?`;

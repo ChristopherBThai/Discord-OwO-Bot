@@ -156,7 +156,7 @@ async function displayRanking(con, msg, sql, title, subText, p) {
 	let below = rows[1];
 	let me = rows[2][0];
 	if (!me) {
-		p.send("You're at the very bottom c:");
+		p.send('You\'re at the very bottom c:');
 		return;
 	}
 	let userRank = parseInt(me.rank);
@@ -203,7 +203,7 @@ async function displayRanking(con, msg, sql, title, subText, p) {
 	embed =
 		'```md\n< ' +
 		uname +
-		"'s " +
+		'\'s ' +
 		title +
 		' >\n> Your rank is: ' +
 		userRank +
@@ -687,7 +687,7 @@ function getGuildRanking(con, msg, id, p) {
 		let below = rows[1];
 		let me = rows[2][0];
 		if (!me) {
-			p.send("You haven't said 'owo' yet!");
+			p.send('You haven\'t said \'owo\' yet!');
 			return;
 		}
 		let guildRank = parseInt(me.rank);
@@ -754,7 +754,7 @@ function getGuildRanking(con, msg, id, p) {
 			embed =
 				'```md\n< ' +
 				uname +
-				"'s Global Ranking >\n> Your guild rank is: " +
+				'\'s Global Ranking >\n> Your guild rank is: ' +
 				guildRank +
 				'\n>\t\tcollectively said owo ' +
 				global.toFancyNum(rows[2][0].count) +
@@ -764,7 +764,7 @@ function getGuildRanking(con, msg, id, p) {
 			embed =
 				'```md\n< ' +
 				uname +
-				"'s Global Ranking >\n> Your guild rank is: " +
+				'\'s Global Ranking >\n> Your guild rank is: ' +
 				guildRank +
 				'\n>\t\tcollectively said owo ' +
 				global.toFancyNum(rows[2][0].count) +
@@ -1073,7 +1073,7 @@ async function getLevelRanking(global, p) {
 		text =
 			'```md\n< ' +
 			p.msg.author.username +
-			"'s Global Level Ranking >\n> Your Rank: " +
+			'\'s Global Level Ranking >\n> Your Rank: ' +
 			p.global.toFancyNum(userRank) +
 			'\n>\t\tLvl ' +
 			userLevel.level +
@@ -1087,7 +1087,7 @@ async function getLevelRanking(global, p) {
 		text =
 			'```md\n< ' +
 			p.msg.author.username +
-			"'s Level Ranking for " +
+			'\'s Level Ranking for ' +
 			p.msg.channel.guild.name +
 			' >\n> Your Rank: ' +
 			p.global.toFancyNum(userRank) +

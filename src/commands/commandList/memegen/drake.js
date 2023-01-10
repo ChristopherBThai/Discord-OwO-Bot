@@ -15,7 +15,7 @@ module.exports = new CommandInterface({
 
 	args: '{topText|@user|emoji} | {bottomText|@user|emoji}',
 
-	desc: "Generate a Drake meme! Seperate the two arguments with a '|' bar, or press 'Shift+Enter' between arguments",
+	desc: 'Generate a Drake meme! Seperate the two arguments with a \'|\' bar, or press \'Shift+Enter\' between arguments',
 
 	example: ['owo drake Using Discord to communicate with friends | Using discord to play OwO bot'],
 

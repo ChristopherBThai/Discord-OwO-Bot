@@ -83,7 +83,7 @@ class LoveNote extends Collectible {
 			p.redis.hincrby(`data_${p.msg.author.id}`, this.data, this.mergeNeeded);
 			p.redis.hincrby(`data_${p.msg.author.id}`, this.data2, this.mergeNeeded);
 			p.send(
-				`<a:warning:1056420952054960168> **| Seems like you don’t have enough love notes :c**`,
+				'<a:warning:1056420952054960168> **| Seems like you don’t have enough love notes :c**',
 				3000
 			);
 			p.setCooldown(5);

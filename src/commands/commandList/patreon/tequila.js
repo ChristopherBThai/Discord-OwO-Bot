@@ -16,7 +16,7 @@ const dailyOnly = false;
 const giveAmount = 1;
 
 const desc = 'This item can only be given out by the creator.';
-const brokeMsg = `, you do not have any tequilas to give! >:c`;
+const brokeMsg = ', you do not have any tequilas to give! >:c';
 const giveMsg = `, you have been given 1 ${emoji} tequila!`;
 
 const hasMerge = false;

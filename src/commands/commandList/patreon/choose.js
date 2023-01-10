@@ -45,7 +45,7 @@ module.exports = new CommandInterface({
 		let items = p.args.join(' ').replace(/[,;]/gi, '|').split('|');
 
 		if (items.length == 1) {
-			p.errorMsg(", you silly!  I can't just choose from one item!", 3000);
+			p.errorMsg(', you silly!  I can\'t just choose from one item!', 3000);
 			return;
 		}
 

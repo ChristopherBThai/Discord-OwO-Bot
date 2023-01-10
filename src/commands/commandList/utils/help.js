@@ -42,26 +42,26 @@ module.exports = new CommandInterface({
 		else {
 			let command = p.aliasToCommand[p.args[0]];
 			switch (command) {
-				case 'battle':
-					await battleHelpUtil.help(p, 0);
-					break;
-				case 'team':
-					await battleHelpUtil.help(p, 0);
-					break;
-				case 'weapon':
-					await battleHelpUtil.help(p, 2);
-					break;
-				case 'crate':
-					await battleHelpUtil.help(p, 1);
-					break;
-				case 'battlesetting':
-					await battleHelpUtil.help(p, 5);
-					break;
-				case 'weaponshard':
-					await battleHelpUtil.help(p, 6);
-					break;
-				default:
-					describe(p, p.send, p.args[0], p.commands[command]);
+			case 'battle':
+				await battleHelpUtil.help(p, 0);
+				break;
+			case 'team':
+				await battleHelpUtil.help(p, 0);
+				break;
+			case 'weapon':
+				await battleHelpUtil.help(p, 2);
+				break;
+			case 'crate':
+				await battleHelpUtil.help(p, 1);
+				break;
+			case 'battlesetting':
+				await battleHelpUtil.help(p, 5);
+				break;
+			case 'weaponshard':
+				await battleHelpUtil.help(p, 6);
+				break;
+			default:
+				describe(p, p.send, p.args[0], p.commands[command]);
 			}
 		}
 	},

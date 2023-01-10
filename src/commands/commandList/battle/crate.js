@@ -41,7 +41,7 @@ module.exports = new CommandInterface({
 			let sql = `SELECT boxcount FROM crate INNER JOIN user ON crate.uid = user.uid WHERE id = ${p.msg.author.id};`;
 			let result = await p.query(sql);
 			if (!result || result[0].boxcount <= 0) {
-				p.errorMsg(", you don't have any more weapon crates!");
+				p.errorMsg(', you don\'t have any more weapon crates!');
 				return;
 			}
 			let boxcount = result[0].boxcount;
@@ -68,7 +68,7 @@ async function openCrate(p, count = 1) {
 	let result = await p.query(sql);
 
 	if (result[0].changedRows == 0 || !result[1][0]) {
-		p.errorMsg(", You don't have any weapon crates!", 3000);
+		p.errorMsg(', You don\'t have any weapon crates!', 3000);
 		return;
 	}
 

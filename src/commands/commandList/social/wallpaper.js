@@ -89,7 +89,7 @@ async function createPage(p, page, totalPages) {
 
 	let embed = {
 		author: {
-			name: p.msg.author.username + "'s wallpapers",
+			name: p.msg.author.username + '\'s wallpapers',
 			icon_url: p.msg.author.avatarURL,
 		},
 		color: p.config.embed_color,
@@ -106,7 +106,7 @@ async function createPage(p, page, totalPages) {
 		if (result[0].profile) embed.description += '   *Currently Equipped*';
 		embed.bid = result[0].bid;
 	} else {
-		embed.description = "You don't have any wallpapers! :c Purchase one in `owo shop`!";
+		embed.description = 'You don\'t have any wallpapers! :c Purchase one in `owo shop`!';
 		delete embed.footer;
 	}
 

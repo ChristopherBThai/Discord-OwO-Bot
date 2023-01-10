@@ -102,9 +102,9 @@ async function trade(p) {
 		await p.redis.hincrby('data_' + p.msg.author.id, data2, 1);
 		await p.replyMsg(
 			emoji,
-			`, you received a shiny silver ball! Save that ball to gift to baby yoda!`
+			', you received a shiny silver ball! Save that ball to gift to baby yoda!'
 		);
 	} else {
-		await p.errorMsg(`, you need at least 6 frog eggs to convert them into silver balls!`);
+		await p.errorMsg(', you need at least 6 frog eggs to convert them into silver balls!');
 	}
 }

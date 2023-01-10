@@ -58,11 +58,11 @@ module.exports = new CommandInterface({
 		}
 
 		if (amount == 0 && !all) {
-			p.errorMsg(", uwu.. you can't bet 0 silly!", 3000);
+			p.errorMsg(', uwu.. you can\'t bet 0 silly!', 3000);
 			p.setCooldown(5);
 			return;
 		} else if (amount < 0) {
-			p.errorMsg(", that... that's not how it works.", 3000);
+			p.errorMsg(', that... that\'s not how it works.', 3000);
 			p.setCooldown(5);
 			return;
 		}
@@ -73,7 +73,7 @@ module.exports = new CommandInterface({
 		if (all && result[0] != undefined) amount = result[0].money;
 		if (maxBet && amount > maxBet) amount = maxBet;
 		if (result[0] == undefined || result[0].money < amount || result[0].money <= 0) {
-			p.send('**🚫 | ' + msg.author.username + "**, You don't have enough cowoncy!", 3000);
+			p.send('**🚫 | ' + msg.author.username + '**, You don\'t have enough cowoncy!', 3000);
 		} else {
 			//Decide results
 			let rslots = [];
@@ -139,8 +139,8 @@ module.exports = new CommandInterface({
 				amount +
 				';';
 			result = await p.query(sql);
-			p.logger.incr(`cowoncy`, win - amount, { type: 'slots' }, p.msg);
-			p.logger.incr(`gamble`, logging, { type: 'slots' }, p.msg);
+			p.logger.incr('cowoncy', win - amount, { type: 'slots' }, p.msg);
+			p.logger.incr('gamble', logging, { type: 'slots' }, p.msg);
 
 			//Display slots
 			let machine =

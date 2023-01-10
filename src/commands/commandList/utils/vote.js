@@ -48,13 +48,13 @@ module.exports = new CommandInterface({
 								box.sql =
 									'INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES (' +
 									p.msg.author.id +
-									",1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
+									',1,0,\'2017-01-01\') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;';
 								box.text = '**<:box:427352600476647425> |** You received a lootbox!\n';
 							} else {
 								box.sql =
 									'INSERT INTO crate(uid,cratetype,boxcount,claimcount,claim) VALUES ((SELECT uid FROM user WHERE id = ' +
 									p.msg.author.id +
-									"),0,1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
+									'),0,1,0,\'2017-01-01\') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;';
 								box.text = '**<:crate:523771259302182922> |** You received a weapon crate!\n';
 							}
 							var reward = 100;
@@ -77,7 +77,7 @@ module.exports = new CommandInterface({
 									return;
 								}
 								p.logger.incr(
-									`cowoncy`,
+									'cowoncy',
 									reward + patreonBonus + weekendBonus,
 									{ type: 'vote' },
 									p.msg
@@ -91,7 +91,7 @@ module.exports = new CommandInterface({
 									'\n';
 								if (weekend)
 									text +=
-										"**⛱ |** It's the weekend! You also earned a bonus of **" +
+										'**⛱ |** It\'s the weekend! You also earned a bonus of **' +
 										weekendBonus +
 										'** cowoncy!\n';
 								text += box.text;
@@ -99,7 +99,7 @@ module.exports = new CommandInterface({
 									'**<:blank:427371936482328596> |** https://top.gg/bot/408785106942164992/vote';
 								p.send(text);
 								//console.log("\x1b[33m",id+" has voted for the first time!");
-								p.logger.incr(`votecount`, 1, {}, p.msg);
+								p.logger.incr('votecount', 1, {}, p.msg);
 							});
 						} else if (result[0][0].time >= 12) {
 							let box = {};
@@ -107,13 +107,13 @@ module.exports = new CommandInterface({
 								box.sql =
 									'INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES (' +
 									p.msg.author.id +
-									",1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
+									',1,0,\'2017-01-01\') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;';
 								box.text = '**<:box:427352600476647425> |** You received a lootbox!\n';
 							} else {
 								box.sql =
 									'INSERT INTO crate(uid,cratetype,boxcount,claimcount,claim) VALUES ((SELECT uid FROM user WHERE id = ' +
 									p.msg.author.id +
-									"),0,1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
+									'),0,1,0,\'2017-01-01\') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;';
 								box.text = '**<:crate:523771259302182922> |** You received a weapon crate!\n';
 							}
 							var bonus = 100 + result[0][0].count * 3;
@@ -136,7 +136,7 @@ module.exports = new CommandInterface({
 									return;
 								}
 								p.logger.incr(
-									`cowoncy`,
+									'cowoncy',
 									bonus + patreonBonus + weekendBonus,
 									{ type: 'vote' },
 									p.msg
@@ -150,7 +150,7 @@ module.exports = new CommandInterface({
 									'\n';
 								if (weekend)
 									text +=
-										"**⛱ |** It's the weekend! You also earned a bonus of **" +
+										'**⛱ |** It\'s the weekend! You also earned a bonus of **' +
 										weekendBonus +
 										'** cowoncy!\n';
 								text += box.text;
@@ -158,7 +158,7 @@ module.exports = new CommandInterface({
 									'**<:blank:427371936482328596> |** https://top.gg/bot/408785106942164992/vote';
 								p.send(text);
 								//console.log("\x1b[33m",id+" has voted and  received cowoncy!");
-								p.logger.incr(`votecount`, 1, {}, p.msg);
+								p.logger.incr('votecount', 1, {}, p.msg);
 							});
 						} else {
 							var text = '**☑ |** Click the link to vote and gain 100+ cowoncy!\n';

@@ -12,7 +12,7 @@ const Logs = require('../util/logUtil.js');
 module.exports = class Shield extends WeaponInterface {
 	init() {
 		this.id = 5;
-		this.name = "Defender's Aegis";
+		this.name = 'Defender\'s Aegis';
 		this.basicDesc = '';
 		this.emojis = [
 			'<:cshield:546552025828163585>',

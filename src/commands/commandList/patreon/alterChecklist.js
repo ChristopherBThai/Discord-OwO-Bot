@@ -12,17 +12,17 @@ const tada = '🎉';
 
 exports.alter = function (id, opt) {
 	switch (id) {
-		case '460987842961866762':
-			return estee(opt);
-		default:
-			return opt.embed;
+	case '460987842961866762':
+		return estee(opt);
+	default:
+		return opt.embed;
 	}
 };
 
 function estee(opt) {
 	let embed = opt.embed;
 	embed.color = 8421504;
-	embed.author.name = "꧁༺𝔼𝕤𝕥𝕖𝕖'𝕤 𝔻𝕖𝕒𝕥𝕙 ℕ𝕠𝕥𝕖༻꧂";
+	embed.author.name = '꧁༺𝔼𝕤𝕥𝕖𝕖\'𝕤 𝔻𝕖𝕒𝕥𝕙 ℕ𝕠𝕥𝕖༻꧂';
 	const tasks = [
 		'♤|Time of Death noted!',
 		'◇|Souls collected!',
