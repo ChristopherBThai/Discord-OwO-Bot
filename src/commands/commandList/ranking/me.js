@@ -53,9 +53,6 @@ module.exports = new CommandInterface({
  * @param {string[]}		args 	- Command arguments
  */
 async function display(p, con, msg, args) {
-	let channel = msg.channel;
-	let id = msg.author.id;
-
 	let aglobal = false;
 	let invalid = false;
 	let points = false;
@@ -665,7 +662,6 @@ function getCurseRanking(globalRank, con, msg, p) {
  * @param {int} 		id 	- User's id
  */
 function getGuildRanking(con, msg, id, p) {
-	let channel = msg.channel;
 	//Sql statements
 	let sql =
 		'SELECT g.id,g.count,g1.id,g1.count FROM guild AS g LEFT JOIN ( SELECT id,count FROM guild ORDER BY count ASC ) AS g1 ON g1.count > g.count WHERE g.id = ' +
@@ -681,7 +677,7 @@ function getGuildRanking(con, msg, id, p) {
 		';';
 
 	//Sql query
-	con.query(sql, async function (err, rows, fields) {
+	con.query(sql, async function (err, rows, _fields) {
 		if (err) throw err;
 		let above = rows[0];
 		let below = rows[1];

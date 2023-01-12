@@ -78,7 +78,7 @@ async function give(p, user) {
 		}
 	}
 
-	const total = await p.redis.hincrby('data_' + user.id, data, 2);
+	await p.redis.hincrby('data_' + user.id, data, 2);
 	p.send(
 		`${emoji} **| ${user.username}**, you have received two beautiful sunflowers from **${p.msg.author.username}**. I hope it brightens your day! <a:sunflower1:818742418290507796>\n`
 	);

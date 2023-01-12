@@ -53,7 +53,7 @@ class Kitty extends Collectible {
 		return super.getDisplayMsg(p, args, msgOverride);
 	}
 
-	async give(p, user, dataOverride) {
+	async give(p, user, _dataOverride) {
 		if (p.msg.author.id === this.owners[0]) {
 			return super.give(p, user, this.data);
 		} else if (p.msg.author.id === this.owners[1]) {
@@ -62,7 +62,7 @@ class Kitty extends Collectible {
 		return super.give(p, user);
 	}
 
-	async getGiveMsg(p, result, user, msgOverride) {
+	async getGiveMsg(p, result, user, _msgOverride) {
 		if (p.msg.author.id === this.owners[0]) {
 			return super.getGiveMsg(p, result, user, this.giveMsg);
 		} else if (p.msg.author.id === this.owners[1]) {

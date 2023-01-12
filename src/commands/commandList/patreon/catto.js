@@ -26,7 +26,7 @@ function sendDisplay(count) {
 }
 function sendBroke() {
 	const msg = ', you do not have any cattos to give! >:c';
-	this.errorMsg(brokeMsg, 3000);
+	this.errorMsg(msg, 3000);
 }
 function sendGive(giver, receiver) {
 	const emoji = emojis[Math.floor(emojis.length * Math.random())];

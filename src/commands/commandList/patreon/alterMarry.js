@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
  */
 
-const blank = '<:blank:427371936482328596>';
+const _blank = '<:blank:427371936482328596>';
 
 exports.alter = function (p, embed, opt) {
 	switch (p.msg.author.id) {
@@ -16,7 +16,7 @@ exports.alter = function (p, embed, opt) {
 	}
 };
 
-function estee(p, embed, opt) {
+function estee(p, embed, _opt) {
 	embed.image = {
 		url: 'https://i.imgur.com/SBwHXU8.gif',
 	};

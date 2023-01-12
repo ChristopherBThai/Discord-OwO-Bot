@@ -9,7 +9,7 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const fs = require('fs');
 const request = require('request');
-const { createCanvas, Canvas, Image } = require('canvas');
+const { createCanvas, Image } = require('canvas');
 const textBoxHeight = 100;
 
 module.exports = new CommandInterface({
@@ -46,11 +46,11 @@ function car(p) {
 			return;
 		}
 
-		img = new Image();
+		let img = new Image();
 		img.src = image;
-		canvas = createCanvas(img.width, img.height + textBoxHeight);
+		let canvas = createCanvas(img.width, img.height + textBoxHeight);
 		canvas.backgroundColor = 'white';
-		ctx = canvas.getContext('2d');
+		let ctx = canvas.getContext('2d');
 		ctx.fillStyle = 'white';
 		ctx.fillRect(0, 0, img.width, img.height + textBoxHeight);
 		ctx.fillStyle = 'black';
@@ -61,13 +61,13 @@ function car(p) {
 		if (p.args.join(' ').length > 120) ctx.font = '20px Arial';
 		else ctx.font = '30px Arial';
 		let text = '';
-		for (var i = 0; i < p.args.length; i++) {
+		for (let i = 0; i < p.args.length; i++) {
 			if (ctx.measureText(text + p.args[i]).width > 700 && i > 0) text += '\n';
 			text += p.args[i] + ' ';
 		}
 
-		lines = text.split(/\r\n|\r|\n/).length - 1;
-		te = ctx.measureText(text);
+		let lines = text.split(/\r\n|\r|\n/).length - 1;
+		// te = ctx.measureText(text);
 		if (lines > 4) {
 			p.send('**🚫 | ' + p.msg.author.username + '**, The text is too long!', 3000);
 			p.setCooldown(5);
@@ -75,7 +75,7 @@ function car(p) {
 		}
 		ctx.fillText(text, 10, 80 - lines * 15);
 
-		buf = canvas.toBuffer();
+		let buf = canvas.toBuffer();
 		p.send('**🖼 | ' + p.msg.author.username + '** generated a meme!', null, {
 			file: buf,
 			name: 'meme.png',
@@ -98,13 +98,13 @@ function user(p) {
 
 		request({ url: url, method: 'GET', encoding: null }, function (err, response, body) {
 			if (!err && response.statusCode == 200) {
-				img2 = new Image();
+				let img2 = new Image();
 				img2.onload = function () {
-					img = new Image();
+					let img = new Image();
 					img.src = image;
-					canvas = createCanvas(img.width, img.height + textBoxHeight);
+					let canvas = createCanvas(img.width, img.height + textBoxHeight);
 					canvas.backgroundColor = 'white';
-					ctx = canvas.getContext('2d');
+					let ctx = canvas.getContext('2d');
 					ctx.fillStyle = 'white';
 					ctx.fillRect(0, 0, img.width, img.height + textBoxHeight);
 					ctx.fillStyle = 'black';
@@ -113,17 +113,17 @@ function user(p) {
 					ctx.textAlign = 'left';
 
 					//Format text
-					var tempText = p.args.slice(0, p.args.length - 1);
+					let tempText = p.args.slice(0, p.args.length - 1);
 					if (tempText.join(' ').length > 120) ctx.font = '20px Arial';
 					else ctx.font = '30px Arial';
-					var text = '';
-					for (var i = 0; i < tempText.length; i++) {
+					let text = '';
+					for (let i = 0; i < tempText.length; i++) {
 						if (ctx.measureText(text + tempText[i] + ' ').width > 700 && i > 0) text += '\n';
 						text += tempText[i] + ' ';
 					}
 
-					lines = text.split(/\r\n|\r|\n/).length - 1;
-					te = ctx.measureText(text);
+					let lines = text.split(/\r\n|\r|\n/).length - 1;
+					// te = ctx.measureText(text);
 					if (lines > 4) {
 						p.send('**🚫 | ' + p.msg.author.username + '**, The text is too long!');
 						p.setCooldown(5);
@@ -131,7 +131,7 @@ function user(p) {
 					}
 					ctx.fillText(text, 10, 80 - lines * 15);
 
-					buf = canvas.toBuffer();
+					let buf = canvas.toBuffer();
 					p.send('**🖼 | ' + p.msg.author.username + '** generated a meme!', null, {
 						file: buf,
 						name: 'meme.png',
@@ -153,7 +153,7 @@ function emoji(p) {
 			return;
 		}
 
-		var url = p.args[p.args.length - 1].match(/:[0-9]+>/gi);
+		let url = p.args[p.args.length - 1].match(/:[0-9]+>/gi);
 		if (!url || !url[0]) {
 			p.send('**🚫 | ' + p.msg.author.username + '**, I could not grab the emoji', 3000);
 			p.setCooldown(5);
@@ -163,13 +163,13 @@ function emoji(p) {
 
 		request({ url: url, method: 'GET', encoding: null }, function (err, response, body) {
 			if (!err && response.statusCode == 200) {
-				img2 = new Image();
+				let img2 = new Image();
 				img2.onload = function () {
-					img = new Image();
+					let img = new Image();
 					img.src = image;
-					canvas = createCanvas(img.width, img.height + textBoxHeight);
+					let canvas = createCanvas(img.width, img.height + textBoxHeight);
 					canvas.backgroundColor = 'white';
-					ctx = canvas.getContext('2d');
+					let ctx = canvas.getContext('2d');
 					ctx.fillStyle = 'white';
 					ctx.fillRect(0, 0, img.width, img.height + textBoxHeight);
 					ctx.fillStyle = 'black';
@@ -178,17 +178,17 @@ function emoji(p) {
 					ctx.textAlign = 'left';
 
 					//Format text
-					var tempText = p.args.slice(0, p.args.length - 1);
+					let tempText = p.args.slice(0, p.args.length - 1);
 					if (tempText.join(' ').length > 120) ctx.font = '20px Arial';
 					else ctx.font = '30px Arial';
-					var text = '';
-					for (var i = 0; i < tempText.length; i++) {
+					let text = '';
+					for (let i = 0; i < tempText.length; i++) {
 						if (ctx.measureText(text + tempText[i] + ' ').width > 700 && i > 0) text += '\n';
 						text += tempText[i] + ' ';
 					}
 
-					lines = text.split(/\r\n|\r|\n/).length - 1;
-					te = ctx.measureText(text);
+					let lines = text.split(/\r\n|\r|\n/).length - 1;
+					// te = ctx.measureText(text);
 					if (lines > 4) {
 						p.send('**🚫 | ' + p.msg.author.username + '**, The text is too long!');
 						p.setCooldown(5);
@@ -196,7 +196,7 @@ function emoji(p) {
 					}
 					ctx.fillText(text, 10, 80 - lines * 15);
 
-					buf = canvas.toBuffer();
+					let buf = canvas.toBuffer();
 					p.send('**🖼 | ' + p.msg.author.username + '** generated a meme!', null, {
 						file: buf,
 						name: 'meme.png',

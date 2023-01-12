@@ -7,8 +7,6 @@
 
 const CommandInterface = require('../CommandInterface.js');
 
-const levels = require('../../utils/levels.js');
-
 module.exports = new CommandInterface({
 	alias: ['points'],
 

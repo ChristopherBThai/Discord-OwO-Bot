@@ -6,7 +6,6 @@
  */
 
 const CommandInterface = require('../../CommandInterface.js');
-const config = require('../../../data/config.json');
 
 const emoji = '<:tequila:975318312990937099>';
 const owners = ['427296171883626496'];
@@ -21,11 +20,10 @@ const giveMsg = `, you have been given 1 ${emoji} tequila!`;
 
 const hasMerge = false;
 const mergeNeeded = 5;
-const mergeEmoji = '';
 const mergeMsg = '';
 
-function getDisplay(count, mergeCount) {
-	return `, you currently have ?count? tequila?plural?!`;
+function getDisplay(_count, _mergeCount) {
+	return ', you currently have ?count? tequila?plural?!';
 }
 
 let ownersString = `?${owners[owners.length - 1]}?`;
@@ -48,7 +46,7 @@ module.exports = new CommandInterface({
 
 	group: ['patreon'],
 
-	cooldown: 000,
+	cooldown: 15000,
 
 	execute: async function () {
 		if (!this.args.length) {

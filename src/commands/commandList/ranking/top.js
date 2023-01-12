@@ -52,7 +52,6 @@ module.exports = new CommandInterface({
  * @param {string[]}		args 	- Command arguments
  */
 async function display(p, con, msg, args) {
-	let channel = msg.channel;
 	//check for args
 	let globala = false;
 
@@ -153,13 +152,12 @@ async function display(p, con, msg, args) {
 }
 
 function displayRanking(con, msg, count, globalRank, sql, title, subText, p) {
-	con.query(sql, async function (err, rows, fields) {
+	con.query(sql, async function (err, rows, _fields) {
 		if (err) {
 			console.error(err);
 			return;
 		}
 		let rank = 1;
-		let ranking = [];
 		let embed = '```md\n< ' + title + ' >\n';
 		if (rows[1][0] !== undefined && rows[1][0] !== null) {
 			embed += '> Your Rank: ' + rows[1][0].rank + '\n';
@@ -572,7 +570,6 @@ function getCurseRanking(globalRank, con, msg, count, p) {
  * @param {int} 		count 	- number of ranks to display
  */
 function getGuildRanking(con, msg, count, p) {
-	let channel = msg.channel;
 	//Grabs top 5
 	var sql = 'SELECT * FROM guild ORDER BY count DESC LIMIT ' + count + ';';
 	sql +=
@@ -581,13 +578,12 @@ function getGuildRanking(con, msg, count, p) {
 		';';
 
 	//Create an embeded message
-	con.query(sql, async function (err, rows, fields) {
+	con.query(sql, async function (err, rows, _fields) {
 		if (err) {
 			console.error(err);
 			return;
 		}
 		let rank = 1;
-		let ranking = [];
 		let embed = '```md\n< Top ' + count + ' Guild OwO Rankings >\n';
 		if (rows[1][0] !== undefined && rows[1][0] !== null) {
 			embed += '> Your Guild Rank: ' + rows[1][0].rank + '\n';

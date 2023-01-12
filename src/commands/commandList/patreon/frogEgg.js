@@ -88,7 +88,7 @@ async function give(p, user) {
 		}
 	}
 
-	const newCount = await p.redis.hincrby('data_' + user.id, data, 2);
+	await p.redis.hincrby('data_' + user.id, data, 2);
 	await p.send(
 		`${emoji} **| ${user.username}**, **${p.msg.author.username}** gave you 2 frogeggs! Save 6 to trade for a silverball!`
 	);

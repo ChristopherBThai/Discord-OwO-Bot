@@ -6,7 +6,7 @@
  */
 
 exports.alter = function (id, text) {
-	if (id == 220934553861226498) return geist(text);
+	if (id == '220934553861226498') return geist(text);
 	else return text;
 };
 

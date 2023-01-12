@@ -7,7 +7,7 @@
 
 const fs = require('fs');
 const request = require('request').defaults({ encoding: null });
-const { createCanvas, Canvas, Image } = require('canvas');
+const { createCanvas, Image } = require('canvas');
 const font = 'Impact';
 
 exports.loadBackground = async function (file, callback) {
@@ -17,11 +17,11 @@ exports.loadBackground = async function (file, callback) {
 			callback(true);
 			return;
 		}
-		img = new Image();
+		let img = new Image();
 		img.src = image;
-		canvas = new createCanvas(img.width, img.height);
+		let canvas = new createCanvas(img.width, img.height);
 		canvas.backgroundColor = 'white';
-		ctx = canvas.getContext('2d');
+		let ctx = canvas.getContext('2d');
 		ctx.textAlign = 'left';
 		ctx.textBaseline = 'middle';
 		ctx.drawImage(img, 0, 0, img.width, img.height);
@@ -84,7 +84,7 @@ async function addUser(args, p, ctx, canvas, callback) {
 	}
 
 	try {
-		await request.get(url, callbackImage(ctx, x, y, args.imageSize, callback));
+		await request.get(url, callbackImage(p, ctx, x, y, args.imageSize, callback));
 	} catch (err) {
 		console.error(err);
 		p.send('**🚫 | ' + p.msg.author.username + '**, could not grab the image', 3000);
@@ -105,17 +105,17 @@ async function addEmoji(args, p, ctx, canvas, callback) {
 	if (args.imageY) y = args.imageY;
 
 	try {
-		request.get(url, callbackImage(ctx, x, y, args.imageSize, callback));
+		request.get(url, callbackImage(p, ctx, x, y, args.imageSize, callback));
 	} catch (err) {
 		console.error(err);
 		p.send('**🚫 | ' + p.msg.author.username + '**, could not grab the image', 3000);
 	}
 }
 
-function callbackImage(ctx, x, y, size, callback) {
+function callbackImage(p, ctx, x, y, size, callback) {
 	return function (err, response, body) {
 		if (!err && response.statusCode == 200) {
-			img = new Image();
+			let img = new Image();
 			img.onload = function () {
 				ctx.drawImage(img, x, y, size, size);
 				callback();
@@ -175,6 +175,7 @@ function addText(args, p, ctx, canvas, callback) {
 	callback();
 }
 
+/* eslint-disable-next-line */
 function addSimpleText(x, y, ctx, text, color) {
 	ctx.save();
 	ctx.fillStyle = color;

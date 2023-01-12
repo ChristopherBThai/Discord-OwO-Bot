@@ -89,8 +89,8 @@ async function give(p, user) {
 	}
 
 	// Add two scoops
-	sql = `INSERT IGNORE INTO icecream (uid,count) VALUES ((SELECT uid FROM user WHERE id = ${user.id}),2) ON DUPLICATE KEY UPDATE count = count + 2;`;
-	result = await p.query(sql);
+	let sql = `INSERT IGNORE INTO icecream (uid,count) VALUES ((SELECT uid FROM user WHERE id = ${user.id}),2) ON DUPLICATE KEY UPDATE count = count + 2;`;
+	let result = await p.query(sql);
 	if (result.warningCount > 0) {
 		sql = `INSERT IGNORE INTO user (id,count) VALUES (${user.id},0);${sql}`;
 		await p.query(sql);

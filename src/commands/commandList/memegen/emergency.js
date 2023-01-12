@@ -52,7 +52,7 @@ async function fetchImage(p, user) {
 	let handColor;
 	try {
 		let url = user.dynamicAvatarURL(null, 32);
-		palette = await Vibrant.from(url).getPalette();
+		let palette = await Vibrant.from(url).getPalette();
 		handColor = palette.Vibrant._rgb.join(',');
 	} catch (err) {
 		console.error(err);
@@ -67,7 +67,7 @@ async function fetchImage(p, user) {
 
 	return new Promise((resolve, reject) => {
 		try {
-			let req = request(
+			request(
 				{
 					method: 'POST',
 					uri: `${process.env.GEN_API_HOST}/emergency`,

@@ -11,7 +11,6 @@ exports.alter = function (id, text, info) {
 	switch (id) {
 	case '456598711590715403':
 		return lexx(text, info);
-		break;
 	}
 	return text;
 };

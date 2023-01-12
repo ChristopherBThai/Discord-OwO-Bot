@@ -7,7 +7,6 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const { createCanvas, Canvas, Image } = require('canvas');
 const canvasUtil = require('./canvasUtil.js');
 
 module.exports = new CommandInterface({
@@ -58,7 +57,7 @@ module.exports = new CommandInterface({
 		}
 		canvasUtil.loadBackground(
 			'./src/data/images/distracted.jpg',
-			function (err, ctx, canvas, image) {
+			function (err, ctx, canvas, _image) {
 				if (err) {
 					p.errorMsg(', Uh oh... this command broke..', 3000);
 					return;
@@ -86,7 +85,7 @@ module.exports = new CommandInterface({
 						textArgs.x = 300;
 						textArgs.y = 120;
 						canvasUtil.addText(textArgs, p, ctx, canvas, function () {
-							buf = canvas.toBuffer();
+							let buf = canvas.toBuffer();
 							p.send('**🖼 | ' + p.msg.author.username + '** generated a meme!', null, {
 								file: buf,
 								name: 'meme.png',

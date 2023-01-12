@@ -6,7 +6,6 @@
  */
 
 const CommandInterface = require('../../CommandInterface.js');
-const config = require('../../../data/config.json');
 
 const emoji = '<a:crystal:976030431428354048>';
 const owners = ['460987842961866762'];
@@ -22,10 +21,9 @@ const giveMsg = ', you have been given 1 Destined to love.';
 
 const hasMerge = false;
 const mergeNeeded = 3;
-const mergeEmoji = '';
 const mergeMsg = '';
 
-function getDisplay(count, mergeCount) {
+function getDisplay(_count, _mergeCount) {
 	return `, you currently have ?count? ${emoji} Destiny?plural?!`;
 }
 

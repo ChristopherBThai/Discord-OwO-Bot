@@ -9,7 +9,7 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const fs = require('fs');
 const request = require('request').defaults({ encoding: null });
-const { createCanvas, Canvas, Image } = require('canvas');
+const { Canvas, Image } = require('canvas');
 
 module.exports = new CommandInterface({
 	alias: ['isthisa'],
@@ -60,17 +60,17 @@ module.exports = new CommandInterface({
 				console.error(err);
 				return;
 			}
-			img = new Image();
+			let img = new Image();
 			img.src = image;
-			canvas = new Canvas(img.width, img.height);
+			let canvas = new Canvas(img.width, img.height);
 			canvas.backgroundColor = 'white';
-			ctx = canvas.getContext('2d');
+			let ctx = canvas.getContext('2d');
 			ctx.drawImage(img, 0, 0, img.width, img.height);
 
 			if (!addBottomText(p, args[0], ctx, canvas)) return;
 			addButterflyText(p, args[1], ctx, canvas, function () {
 				addPersonText(p, args[2], ctx, canvas, function () {
-					buf = canvas.toBuffer();
+					let buf = canvas.toBuffer();
 					p.send('**🖼 | ' + p.msg.author.username + '** generated a meme!', null, {
 						file: buf,
 						name: 'meme.png',
@@ -104,7 +104,7 @@ async function addButterflyText(p, text, ctx, canvas, callback) {
 	}
 	ctx.textAlign = 'center';
 	if (p.global.isUser(text)) {
-		var url = await p.fetch.getUser(text);
+		let url = await p.fetch.getUser(text);
 		if (!url) {
 			p.send('**🚫 | ' + p.msg.author.username + '**, I could not find that user', 3000);
 			return;
@@ -123,7 +123,7 @@ async function addButterflyText(p, text, ctx, canvas, callback) {
 			p.send('**🚫 | ' + p.msg.author.username + '**, could not grab the image', 3000);
 		}
 	} else if (/^\s*<a?:[a-zA-Z0-9]+:[0-9]+>\s*$/gi.test(text)) {
-		var url = text.match(/:[0-9]+>/gi);
+		let url = text.match(/:[0-9]+>/gi);
 		if (!url || !url[0]) {
 			p.send('**🚫 | ' + p.msg.author.username + '**, I could not grab the emoji', 3000);
 			return;
@@ -140,9 +140,9 @@ async function addButterflyText(p, text, ctx, canvas, callback) {
 		text = text.replace(/:[0-9]+>/gi, '');
 		ctx.font = '30px Impact';
 		if (ctx.measureText(text).width > 300) ctx.font = '15px Impact';
-		var tempText = text.split(' ');
+		let tempText = text.split(' ');
 		text = '';
-		for (var i = 0; i < tempText.length; i++) {
+		for (let i = 0; i < tempText.length; i++) {
 			if (ctx.measureText(text + tempText[i] + ' ').width > 300 && i > 0) text += '\n';
 			text += tempText[i] + ' ';
 		}
@@ -163,7 +163,7 @@ async function addPersonText(p, text, ctx, canvas, callback) {
 	}
 	ctx.textAlign = 'center';
 	if (p.global.isUser(text)) {
-		var url = await p.fetch.getUser(text);
+		let url = await p.fetch.getUser(text);
 		if (!url) {
 			p.send('**🚫 | ' + p.msg.author.username + '**, I could not find that user', 3000);
 			return;
@@ -182,7 +182,7 @@ async function addPersonText(p, text, ctx, canvas, callback) {
 			p.send('**🚫 | ' + p.msg.author.username + '**, could not grab the image', 3000);
 		}
 	} else if (/^\s*<a?:[a-zA-Z0-9]+:[0-9]+>\s*$/gi.test(text)) {
-		var url = text.match(/:[0-9]+>/gi);
+		let url = text.match(/:[0-9]+>/gi);
 		if (!url || !url[0]) {
 			p.send('**🚫 | ' + p.msg.author.username + '**, I could not grab the emoji', 3000);
 			return;
@@ -199,9 +199,9 @@ async function addPersonText(p, text, ctx, canvas, callback) {
 		text = text.replace(/:[0-9]+>/gi, '');
 		ctx.font = '30px Impact';
 		if (ctx.measureText(text).width > 300) ctx.font = '15px Impact';
-		var tempText = text.split(' ');
+		let tempText = text.split(' ');
 		text = '';
-		for (var i = 0; i < tempText.length; i++) {
+		for (let i = 0; i < tempText.length; i++) {
 			if (ctx.measureText(text + tempText[i]).width > 300 && i > 0) text += '\n';
 			text += tempText[i] + ' ';
 		}
@@ -218,7 +218,7 @@ async function addPersonText(p, text, ctx, canvas, callback) {
 function callbackImage(p, ctx, x, y, size, callback) {
 	return function (err, response, body) {
 		if (!err && response.statusCode == 200) {
-			img = new Image();
+			let img = new Image();
 			img.onload = function () {
 				ctx.drawImage(img, x, y, size, size);
 				callback();
