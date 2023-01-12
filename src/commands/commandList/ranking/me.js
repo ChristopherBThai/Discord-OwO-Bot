@@ -41,7 +41,7 @@ module.exports = new CommandInterface({
 	bot: true,
 
 	execute: async function (p) {
-		if (p.command == 'guild') await display(p, p.con, p.msg, ['guild']);
+		if (p.command === 'guild') await display(p, p.con, p.msg, ['guild']);
 		else await display(p, p.con, p.msg, p.args);
 	},
 });
@@ -53,100 +53,114 @@ module.exports = new CommandInterface({
  * @param {string[]}		args 	- Command arguments
  */
 async function display(p, con, msg, args) {
-	let channel = msg.channel;
-	let id = msg.author.id;
+	let globala = false;
+	let rankType = '';
 
-	let aglobal = false;
-	let invalid = false;
-	let points = false;
-	let guild = false;
-	let zoo = false;
-	let money = false;
-	let rep = false;
-	let pet = false;
-	let team = false;
-	let huntbot, luck, curse, daily, battle, level, shard;
-
-	for (var i = 0; i < args.length; i++) {
-		if (
-			!points &&
-			!guild &&
-			!money &&
-			!zoo &&
-			!rep &&
-			!pet &&
-			!huntbot &&
-			!luck &&
-			!curse &&
-			!team &&
-			!daily &&
-			!battle &&
-			!level &&
-			!shard
-		) {
-			if (args[i] === 'points' || args[i] === 'point' || args[i] === 'p') points = true;
-			else if (args[i] === 'guild' || args[i] === 'server' || args[i] === 'g' || args[i] === 's')
-				guild = true;
-			else if (args[i] === 'zoo' || args[i] === 'z') zoo = true;
-			else if (
-				args[i] === 'cowoncy' ||
-				args[i] === 'money' ||
-				args[i] === 'c' ||
-				args[i] === 'm' ||
-				args[i] === 'cash'
-			)
-				money = true;
-			else if (
-				args[i] === 'cookies' ||
-				args[i] === 'cookie' ||
-				args[i] === 'rep' ||
-				args[i] === 'r'
-			)
-				rep = true;
-			else if (args[i] === 'pets' || args[i] === 'pet') pet = true;
-			else if (
-				args[i] === 'huntbot' ||
-				args[i] === 'hb' ||
-				args[i] === 'autohunt' ||
-				args[i] === 'ah'
-			)
-				huntbot = true;
-			else if (args[i] === 'luck' || args[i] === 'pray') luck = true;
-			else if (args[i] === 'curse') curse = true;
-			else if (args[i] === 'battle' || args[i] === 'streak') battle = true;
-			else if (args[i] === 'level' || args[i] === 'lvl' || args[i] === 'xp') level = true;
-			else if (args[i] === 'daily') daily = true;
-			else if (
-				args[i] === 'shards' ||
-				args[i] === 'shard' ||
-				args[i] === 'ws' ||
-				args[i] === 'weaponshard'
-			)
-				shard = true;
-			else if (args[i] === 'global' || args[i] === 'g') aglobal = true;
-			else invalid = true;
-		} else if (args[i] === 'global' || args[i] === 'g') aglobal = true;
-		else invalid = true;
+	for (let i = 0; i < args.length; i++) {
+		if (!rankType) {
+			switch (args[i]) {
+			case 'points': case 'point': case 'p':
+				rankType = 'points';
+				break;
+			case 'guild': case 'g': case 'server': case 's':
+				rankType = 'guild';
+				break;
+			case 'zoo': case 'z':
+				rankType = 'zoo';
+				break;
+			case 'cowoncy': case 'money': case 'c': case 'm': case 'cash':
+				rankType = 'money';
+				break;
+			case 'cookies': case 'cookie': case 'rep': case 'reputation': case 'r':
+				rankType = 'rep';
+				break;
+			case 'pets': case 'pet':
+				rankType = 'pet';
+				break;
+			case 'huntbot': case 'hb': case 'autohunt': case 'ah':
+				rankType = 'huntbot';
+				break;
+			case 'luck': case 'pray':
+				rankType = 'luck';
+				break;
+			case 'curse':
+				rankType = 'curse';
+				break;
+			case 'battle': case 'streak':
+				rankType = 'battle';
+				break;
+			case 'daily':
+				rankType = 'daily';
+				break;
+			case 'level': case 'lvl': case 'xp':
+				rankType = 'level';
+				break;
+			case 'shards': case 'shard': case 'ws': case 'weaponshards': case 'weaponshard':
+				rankType = 'shard';
+				break;
+			case 'marriage': case 'marry':
+				rankType = 'marriage';
+				break;
+			case 'global':
+				globala = true;
+				break;
+			default:
+				p.errorMsg(', Invalid ranking type!', 3000);
+				return;
+			}
+		} else if (args[i] === 'global' || args[i] === 'g') {
+			globala = true;
+		} else {
+			p.errorMsg(', Invalid ranking type!', 3000);
+			return;
+		}
 	}
 
-	if (invalid) {
-		p.errorMsg(', Invalid ranking type!', 3000);
-	} else {
-		if (points) getPointRanking(aglobal, con, msg, p);
-		else if (guild) getGuildRanking(con, msg, msg.channel.guild.id, p);
-		else if (zoo) getZooRanking(aglobal, con, msg, p);
-		else if (money) getMoneyRanking(aglobal, con, msg, p);
-		else if (rep) getRepRanking(aglobal, con, msg, p);
-		else if (pet) getPetRanking(aglobal, con, msg, p);
-		else if (huntbot) getHuntbotRanking(aglobal, con, msg, p);
-		else if (luck) getLuckRanking(aglobal, con, msg, p);
-		else if (curse) getCurseRanking(aglobal, con, msg, p);
-		else if (team) getTeamRanking(aglobal, con, msg, p);
-		else if (battle) getBattleRanking(aglobal, con, msg, p);
-		else if (daily) getDailyRanking(aglobal, con, msg, p);
-		else if (level) await getLevelRanking(aglobal, p);
-		else if (shard) getShardRanking(aglobal, con, msg, p);
-		else getPointRanking(aglobal, con, msg, p);
+	switch (rankType) {
+	case 'points':
+		getPointRanking(globala, con, msg, p);
+		break;
+	case 'guild':
+		getGuildRanking(con, msg, msg.channel.guild.id, p);
+		break;
+	case 'zoo':
+		getZooRanking(globala, con, msg, p);
+		break;
+	case 'money':
+		getMoneyRanking(globala, con, msg, p);
+		break;
+	case 'rep':
+		getRepRanking(globala, con, msg, p);
+		break;
+	case 'pet':
+		getPetRanking(globala, con, msg, p);
+		break;
+	case 'huntbot':
+		getHuntbotRanking(globala, con, msg, p);
+		break;
+	case 'luck':
+		getLuckRanking(globala, con, msg, p);
+		break;
+	case 'curse':
+		getCurseRanking(globala, con, msg, p);
+		break;
+	case 'battle':
+		getBattleRanking(globala, con, msg, p);
+		break;
+	case 'daily':
+		getDailyRanking(globala, con, msg, p);
+		break;
+	case 'level':
+		await getLevelRanking(globala, p);
+		break;
+	case 'shard':
+		getShardRanking(globala, con, msg, p);
+		break;
+	case 'marriage':
+		getMarriageRanking(globala, con, msg, p);
+		break;
+	default:
+		getPointRanking(globala, con, msg, p);
 	}
 }
 
@@ -169,8 +183,16 @@ async function displayRanking(con, msg, sql, title, subText, p) {
 		if (id !== '' && id !== null && !isNaN(id)) {
 			let user = await p.fetch.getUser(id, true);
 			let name = '';
-			if (user === undefined || user.username === undefined) name = 'User Left Discord';
+			if (user === undefined || user.username === undefined) name = 'User Left Bot';
 			else name = '' + user.username;
+			if ('id2' in ele) {
+				// used for marriage leaderboard
+				let user2 = await p.fetch.getUser(String(ele.id2), true);
+				if (!user)
+					name += ' & User Left Bot';
+				else
+					name += ' & ' + user2.username;
+			}
 			name = name.replace('discord.gg', 'discord,gg').replace(/(```)/g, '`\u200b``');
 			embed += '#' + rank + '\t' + name + '\n' + subText(ele) + '\n';
 			rank++;
@@ -191,8 +213,16 @@ async function displayRanking(con, msg, sql, title, subText, p) {
 		if (id !== '' && id !== null && !isNaN(id)) {
 			var user = await p.fetch.getUser(id, true);
 			var name = '';
-			if (user === undefined || user.username === undefined) name = 'User Left Discord';
+			if (user === undefined || user.username === undefined) name = 'User Left Bot';
 			else name = '' + user.username;
+			if ('id2' in ele) {
+				// used for marriage leaderboard
+				let user2 = await p.fetch.getUser(String(ele.id2), true);
+				if (!user)
+					name += ' & User Left Bot';
+				else
+					name += ' & ' + user2.username;
+			}
 			name = name.replace('discord.gg', 'discord,gg');
 			embed += '#' + rank + '\t' + name + '\n' + subText(ele) + '\n';
 			rank++;
@@ -1200,4 +1230,28 @@ function getShardRanking(globalRank, con, msg, p) {
 		},
 		p
 	);
+}
+
+/**
+ * displays marriage ranking
+ */
+function getMarriageRanking(globalRank, con, msg, p) {
+	let sql;
+	if (globalRank) {
+		sql = 'SELECT uid1 AS id,uid2 AS id2,dailies FROM marriage WHERE dailies > (SELECT dailies FROM marriage WHERE uid1 = ' + msg.author.id + ' OR uid2 = ' + msg.author.id + ' LIMIT 1) ORDER BY dailies ASC LIMIT 2;';
+		sql += 'SELECT uid1 AS id,uid2 AS id2,dailies FROM marriage WHERE dailies < (SELECT dailies FROM marriage WHERE uid1 = ' + msg.author.id + ' OR uid2 = ' + msg.author.id + ' LIMIT 1) ORDER BY dailies DESC LIMIT 2;';
+		sql += 'SELECT uid1 AS id,uid2 AS id2,dailies,(SELECT COUNT(*)+1 FROM marriage WHERE dailies > u.dailies ) AS rank FROM marriage u WHERE u.uid1 = ' + msg.author.id + ' OR u.uid2 = ' + msg.author.id + ';';
+	} else {
+		let users = global.getids(msg.channel.guild.members);
+		sql = 'SELECT uid1 AS id,uid2 AS id2,dailies FROM marriage WHERE (uid1 IN (' + users + ') OR uid2 IN (' + users + ')) AND dailies > (SELECT dailies FROM marriage WHERE uid1 = ' + msg.author.id + ' OR uid2 = ' + msg.author.id + ' LIMIT 1) ORDER BY dailies ASC LIMIT 2;';
+		sql += 'SELECT uid1 AS id,uid2 AS id2,dailies FROM marriage WHERE (uid1 IN (' + users + ') OR uid2 IN (' + users + ')) dailies < (SELECT dailies FROM marriage WHERE uid1 = ' + msg.author.id + ' OR uid2 = ' + msg.author.id + ' LIMIT 1) ORDER BY dailies DESC LIMIT 2;';
+		sql += 'SELECT uid1 AS id,uid2 AS id2,dailies,(SELECT COUNT(*)+1 FROM marriage WHERE (uid1 IN (' + users + ') OR uid2 IN (' + users + ')) AND dailies > u.dailies ) AS rank FROM marriage u WHERE u.uid1 = ' + msg.author.id + ' OR u.uid2 = ' + msg.author.id + ';';
+	}
+
+	displayRanking(con, msg, sql,
+		((globalRank) ? 'Global Marriage Rankings' : 'Marriage Rankings for ' + msg.channel.guild.name),
+		function (query) {
+			return '\n\t\Dailies Collected Together: ' + global.toFancyNum(query.dailies);
+		}
+		, p);
 }
