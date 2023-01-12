@@ -5,8 +5,8 @@
  * For more information, see README.md and LICENSE
  */
 
-const blank = '<:blank:427371936482328596>';
-const check = '☑';
+const _blank = '<:blank:427371936482328596>';
+const _check = '☑';
 const box = '⬛';
 const tada = '🎉';
 

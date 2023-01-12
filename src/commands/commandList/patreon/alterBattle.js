@@ -5,7 +5,8 @@
  * For more information, see README.md and LICENSE
  */
 
-const blank = '<:blank:427371936482328596>';
+const _blank = '<:blank:427371936482328596>';
+
 exports.alter = async function (p, user, text, type, setting) {
 	const result = await checkDb(p, user.id, text, type);
 	if (result) return result;
@@ -144,7 +145,7 @@ async function checkDb(p, id, text, info) {
 	return embed;
 }
 
-function crown(text, type) {
+function crown(text) {
 	text.thumbnail = {
 		url: 'http://cdn.discordapp.com/attachments/598115387158036500/615856437708455936/image0.gif',
 	};
@@ -154,7 +155,7 @@ function crown(text, type) {
 	return text;
 }
 
-function elsa(text, type) {
+function elsa(text) {
 	text.thumbnail = {
 		url: 'https://i.imgur.com/HovVT8A.gif',
 	};
@@ -166,7 +167,7 @@ function elsa(text, type) {
 	return text;
 }
 
-function rikudou(text, type) {
+function rikudou(text) {
 	text.thumbnail = {
 		url: 'https://cdn.discordapp.com/attachments/598318102307930114/620814063764766725/image0.gif',
 	};
@@ -175,7 +176,7 @@ function rikudou(text, type) {
 	return text;
 }
 
-function dalu(text, type) {
+function dalu(text) {
 	text.thumbnail = {
 		url: 'https://i.imgur.com/iks7lY3.gif',
 	};
@@ -184,7 +185,7 @@ function dalu(text, type) {
 	return text;
 }
 
-function kuma(text, type) {
+function kuma(text) {
 	text.thumbnail = {
 		url: 'https://cdn.discordapp.com/emojis/674153774088060957.png',
 	};
@@ -195,7 +196,7 @@ function kuma(text, type) {
 	return text;
 }
 
-function garcom(text, type) {
+function garcom(text) {
 	text.author.name = '전투를 시작합니다!';
 	text.thumbnail = {
 		url: 'https://cdn.discordapp.com/attachments/674765942445703198/676257154893873172/C8fHZTfVYAIaFOc.png',
@@ -203,7 +204,7 @@ function garcom(text, type) {
 	return text;
 }
 
-function alradio(text, type) {
+function alradio(text) {
 	text.author.name =
 		'...then he\'d broadcast his carnage all throughout Hell, just so everyone could witness his ability. Sinners started calling him, "The Radio Demon."';
 	text.thumbnail = {
@@ -221,8 +222,8 @@ function alradio(text, type) {
 }
 
 function valentine(text, opt) {
-	const star = '<a:star:759725222042927124>';
-	const sadcat = '<a:sadcat:759725223423115266>';
+	const _star = '<a:star:759725222042927124>';
+	const _sadcat = '<a:sadcat:759725223423115266>';
 	text.author.name = text.author.name.replace(
 		' goes into battle!',
 		'\'s Sailors arrive to defend Planet Earth!'
@@ -589,7 +590,7 @@ function theGoldenPatrik1(text, opt) {
 	return text;
 }
 
-function lexx(text, opt) {
+function lexx(text) {
 	text.author.name = 'lexx takes one look and says: "Lets do this"';
 	text.thumbnail = {
 		url: 'https://cdn.discordapp.com/attachments/696878982758531152/838655892932395028/Roberto.png',

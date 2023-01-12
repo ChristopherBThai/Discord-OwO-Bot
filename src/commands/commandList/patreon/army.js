@@ -11,7 +11,7 @@ const rEmoji = '<:rusty:704108168313045072>';
 const eEmoji = '<:earthly:704108167990083706>';
 const hEmoji = '<:heavenly:704108168258781284>';
 const bEmoji = '<:broken:704913505937260654>';
-const emblem = '<:emblem:704913505693859881>';
+const _emblem = '<:emblem:704913505693859881>';
 const yessirEmoji = '<:yessir:704916201071181845>';
 const gaspEmoji = '<:gasp:704916200794357762>';
 
@@ -45,7 +45,7 @@ async function display(p) {
 	let rusty = (await p.redis.hget('data_' + p.msg.channel.guild.id, 'r_emblem')) || 0;
 	let earthly = (await p.redis.hget('data_' + p.msg.channel.guild.id, 'e_emblem')) || 0;
 	let heavenly = (await p.redis.hget('data_' + p.msg.channel.guild.id, 'h_emblem')) || 0;
-	text = `The server wide contributions are:\n${rEmoji}: ${rusty} | ${eEmoji}: ${earthly} | ${hEmoji}: ${heavenly}`;
+	let text = `The server wide contributions are:\n${rEmoji}: ${rusty} | ${eEmoji}: ${earthly} | ${hEmoji}: ${heavenly}`;
 	p.send(text);
 }
 

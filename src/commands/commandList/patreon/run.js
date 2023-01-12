@@ -32,7 +32,7 @@ module.exports = new CommandInterface({
 	},
 });
 
-async function harvest(p, msg) {
+async function harvest(p) {
 	const reset = await p.redis.hget('data_' + p.msg.author.id, data + '_reset');
 	const afterMid = p.dateUtil.afterMidnight(reset);
 	const prevMax = parseInt(await p.redis.hget('data_' + p.msg.author.id, data + '_max')) || 0;

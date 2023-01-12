@@ -115,7 +115,7 @@ async function useCommonTicket(ticket, p) {
 	await msg.addReaction(thumbsup);
 	await msg.addReaction(thumbsdown);
 
-	collector.on('collect', async (emoji, userId) => {
+	collector.on('collect', async (emoji, _userId) => {
 		if (emoji.name === thumbsdown) {
 			collector.stop('cancel');
 			return;
@@ -133,7 +133,7 @@ async function useCommonTicket(ticket, p) {
 				try {
 					embed.description = `${p.config.emoji.error} **| ${p.msg.author.username}**, you do not have enough tickets silly!`;
 					msg.edit({ embed });
-				} catch (err) {}
+				} catch (err) { /* empty */ }
 				return;
 			}
 

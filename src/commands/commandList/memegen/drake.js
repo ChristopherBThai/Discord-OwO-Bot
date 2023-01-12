@@ -7,7 +7,6 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const { createCanvas, Canvas, Image } = require('canvas');
 const canvasUtil = require('./canvasUtil.js');
 
 module.exports = new CommandInterface({
@@ -45,7 +44,7 @@ module.exports = new CommandInterface({
 			p.setCooldown(5);
 			return;
 		}
-		canvasUtil.loadBackground('./src/data/images/drake.jpg', function (err, ctx, canvas, image) {
+		canvasUtil.loadBackground('./src/data/images/drake.jpg', function (err, ctx, canvas, _image) {
 			if (err) {
 				p.send('**🚫 | ' + p.msg.author.username + '**, Uh oh.. this command is broken!', 3000);
 				return;
@@ -67,7 +66,7 @@ module.exports = new CommandInterface({
 				textArgs.text = args[1];
 				textArgs.y = 410;
 				canvasUtil.addText(textArgs, p, ctx, canvas, function () {
-					buf = canvas.toBuffer();
+					let buf = canvas.toBuffer();
 					p.send('**🖼 | ' + p.msg.author.username + '** generated a meme!', null, {
 						file: buf,
 						name: 'meme.png',

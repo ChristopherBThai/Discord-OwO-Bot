@@ -97,6 +97,7 @@ function lexus(text, type) {
 			.replace('ANIMALS', 'friends')
 			.replace('ESSENCE, AND', 'essence, and')
 			.replace('EXPERIENCE', 'experience!');
+		return text;
 	default:
 		return text;
 	}
@@ -149,6 +150,7 @@ function shippig(text, type) {
 			.replace('ANIMALS', 'animals')
 			.replace('ESSENCE, AND', 'essence, and')
 			.replace('EXPERIENCE', 'experience!');
+		return text;
 	default:
 		return text;
 	}
@@ -156,7 +158,7 @@ function shippig(text, type) {
 
 function spotifybot(text, type) {
 	let spotify = '<a:spotify:577027003656437766>';
-	let swipeup = '<a:swipeup:577026648646483969>';
+	let _swipeup = '<a:swipeup:577026648646483969>';
 	let nowplaying = '<a:nowplaying:577026647434330132>';
 	switch (type) {
 	case 'hb':
@@ -221,6 +223,7 @@ function spotifybot(text, type) {
 			.replace(/<:[a-z]bot:[0-9]+>/gi, spotify)
 			.replace('BEEP BOOP. I AM', 'SPOTIFY Playlist is ready! I AM')
 			.replace('ANIMALS', 'SONGS');
+		return text;
 	default:
 		return text;
 	}
@@ -322,6 +325,7 @@ function elsa(text, type) {
 			.replace('ANIMALS', 'knights')
 			.replace('ESSENCE, AND', 'essence, and')
 			.replace('EXPERIENCE', 'experience');
+		return text;
 	default:
 		return text;
 	}
@@ -537,7 +541,7 @@ function spotifybot2(text, type) {
 	const roll = '<a:birdroll:704924006364741794>';
 	const pat = '<a:birdpat:704924006830309436>';
 	const jump = '<a:birdjump:704924007161397280>';
-	const angry = '<:birdangry:704924005546590268>';
+	const _angry = '<:birdangry:704924005546590268>';
 	switch (type) {
 	case 'hb':
 		text.author.name = 'OH NOO!! It looks like Ross has ran out of friend to play with!!';
@@ -614,6 +618,7 @@ function spotifybot2(text, type) {
 	}
 }
 
+/* eslint-disable-next-line */
 function kirito(text, type) {
 	const bot = '<a:bot:737118875585478767>';
 	const efficiency = '<:eff:737118875757445180>';

@@ -19,7 +19,6 @@ exports.alter = function (p, id, text, info) {
 		return jayyy(p, info);
 	default:
 		return checkReceive(p, text, info);
-		return text;
 	}
 };
 

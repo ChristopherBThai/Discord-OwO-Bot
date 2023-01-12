@@ -37,8 +37,7 @@ module.exports = new CommandInterface({
 	six: 500,
 
 	execute: async function (p) {
-		let con = p.con,
-			msg = p.msg;
+		let msg = p.msg;
 
 		/* {emoji,id,count} */
 		let promises = await Promise.all([

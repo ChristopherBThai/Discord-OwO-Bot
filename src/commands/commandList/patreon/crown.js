@@ -8,10 +8,8 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const crownEmoji = '<a:crown:663613803786797056>';
-const crownText = '<:crowntext:663613803702779904>';
 const crownCat = '<a:crowncat:663613804441108480>';
 const owner = '176046069954641921';
-const words = ['Fancy!', 'Shiny!', 'Cool!'];
 
 module.exports = new CommandInterface({
 	alias: ['crown'],

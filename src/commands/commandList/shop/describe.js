@@ -8,7 +8,6 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const shopUtil = require('./util/shopUtil.js');
-const cowoncy = '<:cowoncy:416043450337853441>';
 const lootboxUtil = require('../zoo/lootboxUtil.js');
 const weaponUtil = require('../battle/util/weaponUtil.js');
 const gemUtil = require('../zoo/gemUtil.js');

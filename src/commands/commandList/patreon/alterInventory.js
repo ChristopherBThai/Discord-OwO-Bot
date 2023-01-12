@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
  */
 
-const blank = '<:blank:427371936482328596>';
+const _blank = '<:blank:427371936482328596>';
 const gems = require('../../../data/gems.json').gems;
 const emojis = {
 	box: '<:box:427352600476647425>',

@@ -17,7 +17,7 @@ module.exports = class ShopPage {
 		return 0;
 	}
 
-	async getPage(page, embed) {}
+	async getPage(_page, _embed) {}
 
 	toItem({ id, emoji, name, url, price, priceEmoji, lineThrough, offset }) {
 		let cLength = this.charLen - name.length + (4 - ('' + price).length);

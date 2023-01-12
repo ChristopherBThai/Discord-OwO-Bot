@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
  */
 
-const blank = '<:blank:427371936482328596>';
+const _blank = '<:blank:427371936482328596>';
 
 exports.alter = function (p, id, text, info) {
 	switch (id) {

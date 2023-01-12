@@ -37,7 +37,7 @@ class Lxv extends Collectible {
 		this.init();
 	}
 
-	async getDisplayMsg(p, args, msgOverride) {
+	async getDisplayMsg(p, args, _msgOverride) {
 		let reset = await p.redis.hget(`data_${p.msg.author.id}`, `${this.data}_reset`);
 		let afterMid = p.dateUtil.afterMidnight(reset);
 		let msg =
@@ -48,7 +48,7 @@ class Lxv extends Collectible {
 					'<:846997443278274610:1055044684382208010> **| ?user?**, you currently have ?count? ?emoji? lxv. Don\'t forget to take care of them!\n<:1039236830022868992:1055044688979185664> **|** Hedge has collected ?mergeCount? **lovesick** for you!';
 			} else {
 				if (args.mergeCount > 0) {
-					const result = await p.redis.hincrby(`data_${p.msg.author.id}`, this.manualMergeData, -1);
+					await p.redis.hincrby(`data_${p.msg.author.id}`, this.manualMergeData, -1);
 					args.mergeCount -= 1;
 					await p.redis.hset(`data_${p.msg.author.id}`, `${this.data}_reset`, afterMid.now);
 					msg =
@@ -65,7 +65,7 @@ class Lxv extends Collectible {
 	}
 
 	async manualMerge(p) {
-		const { redis, msg, config } = p;
+		const { redis, msg } = p;
 		let count = (await p.redis.hget(`data_${p.msg.author.id}`, this.data)) || 0;
 		if (!count) {
 			p.errorMsg(', You need at least one lxv to pet the hedge!');

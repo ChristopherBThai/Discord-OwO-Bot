@@ -69,7 +69,7 @@ async function display(p, url, name) {
 
 	// Check if user set stealing
 	let sql = `SELECT emoji_steal.guild FROM emoji_steal INNER JOIN user ON emoji_steal.uid = user.uid WHERE id = ${p.msg.author.id};`;
-	let result = await p.query(sql);
+	await p.query(sql);
 	let canSteal = (await p.query(sql))[0]?.guild;
 
 	// Add reactions
@@ -96,7 +96,7 @@ async function display(p, url, name) {
 		}
 	});
 
-	collector.on('end', async function (collected) {
+	collector.on('end', async function (_collected) {
 		const embed = createEmbed(p, url, name, emojiName, emojiAdder);
 		embed.color = 6381923;
 		await msg.edit({ content: 'This message is now inactive', embed });
@@ -142,7 +142,7 @@ async function fetchImage(p, link) {
 
 	return new Promise((resolve, reject) => {
 		try {
-			let req = request(
+			request(
 				{
 					method: 'POST',
 					uri: `${process.env.GEN_API_HOST}/headpat`,

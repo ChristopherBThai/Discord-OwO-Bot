@@ -31,7 +31,7 @@ module.exports = new CommandInterface({
 	bot: true,
 
 	execute: async function (p) {
-		user = p.getMention(p.args[0]);
+		let user = p.getMention(p.args[0]);
 		if (!user) {
 			p.errorMsg(', you must tag a user!', 5000);
 			p.setCooldown(5);
@@ -63,7 +63,7 @@ function fetchImage(p, user) {
 
 	return new Promise((resolve, reject) => {
 		try {
-			let req = request(
+			request(
 				{
 					method: 'POST',
 					uri: `${process.env.GEN_API_HOST}/amongus`,

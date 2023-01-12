@@ -6,7 +6,7 @@
  */
 
 const blank = '<:blank:427371936482328596>';
-const cookie = '<a:cookieeat:423020737364885525>';
+const _cookie = '<a:cookieeat:423020737364885525>';
 
 exports.alter = function (id, text, info = {}) {
 	let result;
@@ -29,7 +29,7 @@ function check(id, text, info) {
 	}
 }
 
-function elsa(text, info) {
+function elsa(text, _info) {
 	return text.replace(/ cookie/gi, ' lemon cookie');
 }
 
@@ -51,7 +51,6 @@ function arichy(text, info) {
 	} else {
 		return `${cookies} **| ${info.to.username}**! You open shiny box with gluten free cookies sent by **${info.from.username}**. Smells delicious, tastes amazing! ⭐`;
 	}
-	return text;
 }
 
 function erys(text, info) {
