@@ -921,7 +921,10 @@ function estee(text, opt) {
 	return text;
 }
 
+/* eslint-disable-next-line */
 function quincey(text, opt, { friendlyBattle }) {
+	return text;
+	/*
 	if (!friendlyBattle) {
 		return text;
 	}
@@ -930,4 +933,5 @@ function quincey(text, opt, { friendlyBattle }) {
 	};
 	text.color = 2201331;
 	return text;
+	*/
 }
