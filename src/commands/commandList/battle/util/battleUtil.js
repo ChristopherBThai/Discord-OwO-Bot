@@ -636,7 +636,7 @@ var calculateAll = (exports.calculateAll = function (p, battle, logs = []) {
 	}
 
 	/* Battle is way too long */
-	if (logs.length >= 34) {
+	if (logs.length >= 20) {
 		logs.push({
 			enemy: true,
 			player: true,
