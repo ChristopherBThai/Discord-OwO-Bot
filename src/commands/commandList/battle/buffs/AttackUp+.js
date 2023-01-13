@@ -6,7 +6,6 @@
  */
 
 const BuffInterface = require('../BuffInterface.js');
-const WeaponInterface = require('../WeaponInterface.js');
 const Logs = require('../util/logUtil.js');
 
 module.exports = class AttackUp extends BuffInterface {
@@ -31,7 +30,7 @@ module.exports = class AttackUp extends BuffInterface {
 		super.bind(animal, duration, tags);
 	}
 
-	attack(animal, attackee, damage, type, last) {
+	attack(animal, attackee, damage, _type, _last) {
 		let logs = new Logs();
 
 		let bonus = damage[0] * (this.stats[0] / 100);

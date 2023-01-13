@@ -6,7 +6,6 @@
  */
 
 const BuffInterface = require('../BuffInterface.js');
-const WeaponInterface = require('../WeaponInterface.js');
 const Logs = require('../util/logUtil.js');
 
 module.exports = class Taunt extends BuffInterface {
@@ -20,12 +19,12 @@ module.exports = class Taunt extends BuffInterface {
 		this.qualityList = [[30, 50]];
 	}
 
-	enemyChooseAttack(animal, attacker, attackee, ally, enemy) {
+	enemyChooseAttack(animal, attacker, attackee, _ally, _enemy) {
 		if (animal.stats.hp[0] > 0) return animal;
 		return attackee;
 	}
 
-	attacked(animal, attacker, damage, type, last) {
+	attacked(animal, attacker, damage, _type, _last) {
 		let logs = new Logs();
 
 		let negate = ((damage[0] + damage[1]) * this.stats[0]) / 100;

@@ -48,7 +48,7 @@ module.exports = new CommandInterface({
 			} else if (p.global.isUser(p.args[0])) {
 				await weaponUtil.askDisplay(p, p.args[0].match(/[0-9]+/)[0]);
 			} else {
-				var uwid = p.args[0];
+				let uwid = p.args[0];
 				if (uwid.length < uwidMax) await weaponUtil.describe(p, uwid);
 				else p.errorMsg(', Invalid arguments! Use `owo weapon {uniqueWeaponId}`');
 			}
@@ -70,7 +70,7 @@ module.exports = new CommandInterface({
 				return;
 			}
 
-			var uwid = p.args[1];
+			let uwid = p.args[1];
 			if (uwid.length < uwidMax) await weaponUtil.unequip(p, uwid);
 			else p.errorMsg(', Invalid arguments! Use `owo weapon unequip {weaponId}`');
 
@@ -102,8 +102,8 @@ module.exports = new CommandInterface({
 				return;
 			}
 
-			var uwid = p.args[0];
-			var pet = p.args[1];
+			let uwid = p.args[0];
+			let pet = p.args[1];
 
 			if (uwid.length >= uwidMax) {
 				p.errorMsg(', Invalid arguments! Use `owo weapon {uniqueWeaponId} {animalPos|animal}`');

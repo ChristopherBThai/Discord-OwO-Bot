@@ -43,8 +43,7 @@ module.exports = new CommandInterface({
 	execute: async function (p) {
 		let global = p.global,
 			msg = p.msg,
-			args = p.args,
-			con = p.con;
+			args = p.args;
 		//Check arguments
 		let amount = 0;
 		let all = false;

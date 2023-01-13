@@ -205,7 +205,7 @@ function toEmbedRequest(p, stats, bet, sender, receiver, flags) {
 		if (animal.weapon) {
 			tempText += ' | ' + animal.weapon.rank.emoji + animal.weapon.emoji;
 			let passives = animal.weapon.passives;
-			for (var j in passives) {
+			for (let j in passives) {
 				tempText += passives[j].emoji;
 			}
 			tempText += ' ' + animal.weapon.avgQuality + '%';
@@ -221,7 +221,7 @@ function toEmbedRequest(p, stats, bet, sender, receiver, flags) {
 		if (animal.weapon) {
 			tempText += ' | ' + animal.weapon.rank.emoji + animal.weapon.emoji;
 			let passives = animal.weapon.passives;
-			for (var j in passives) {
+			for (let j in passives) {
 				tempText += passives[j].emoji;
 			}
 			tempText += ' ' + animal.weapon.avgQuality + '%';
@@ -331,7 +331,7 @@ function parseFlags(p, flags) {
 
 	flags = flags.join('').replace(/[=:]/gi, '').replace(/[,]/gi, '-').toLowerCase().split('-');
 
-	for (i in flags) {
+	for (let i in flags) {
 		let flag = parseFlag(p, flags[i]);
 		if (flag && !usedFlags.includes(flag.flag)) {
 			result.push(flag.res);
@@ -348,13 +348,10 @@ function parseFlag(p, flag) {
 		switch (flag) {
 		case 'text':
 			return { flag: 'display', res: 'text' };
-			break;
 		case 'compact':
 			return { flag: 'display', res: 'compact' };
-			break;
 		case 'image':
 			return { flag: 'display', res: 'image' };
-			break;
 		default:
 			return undefined;
 		}

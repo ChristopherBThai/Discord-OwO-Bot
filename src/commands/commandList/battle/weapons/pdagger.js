@@ -6,7 +6,6 @@
  */
 
 const WeaponInterface = require('../WeaponInterface.js');
-const battleUtil = require('../util/battleUtil.js');
 const Logs = require('../util/logUtil.js');
 
 module.exports = class PDagger extends WeaponInterface {

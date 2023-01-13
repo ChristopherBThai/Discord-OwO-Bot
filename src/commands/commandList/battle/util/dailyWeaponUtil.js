@@ -221,7 +221,7 @@ exports.displayShop = async function (p) {
 		await msg.edit({ embed });
 	});
 
-	collector.on('end', async function (collected) {
+	collector.on('end', async function (_collected) {
 		embed.color = 6381923;
 		await msg.edit({ content: 'This message is now inactive', embed });
 	});
@@ -231,6 +231,7 @@ function createEmbed(p, weapons, page) {
 	let weapon = weapons[page];
 	/* Parse image url */
 	let url = weapon.emoji;
+	let temp;
 	if ((temp = url.match(/:[0-9]+>/))) {
 		temp = 'https://cdn.discordapp.com/emojis/' + temp[0].match(/[0-9]+/)[0] + '.';
 		if (url.match(/<a:/)) temp += 'gif';
@@ -262,7 +263,7 @@ function createEmbed(p, weapons, page) {
 	let timeUntil = dateUtil.afterMidnight();
 
 	/* Construct embed */
-	return (embed = {
+	return {
 		author: {
 			name: 'Today\'s Available Weapons',
 			icon_url: p.msg.author.avatarURL,
@@ -286,5 +287,5 @@ function createEmbed(p, weapons, page) {
 				timeUntil.seconds +
 				'S',
 		},
-	});
+	};
 }

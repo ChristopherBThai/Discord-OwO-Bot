@@ -34,7 +34,7 @@ exports.reroll = async function (p) {
 	}
 
 	// Get rerolled weapon
-	let newWeapon = fetchNewWeapon(weapon, rrType);
+	let newWeapon = fetchNewWeapon(p, weapon, rrType);
 
 	// Send message
 	await sendMessage(p, weapon, newWeapon, rrType);
@@ -169,7 +169,7 @@ async function sendMessage(p, oldWeapon, newWeapon, rrType, msg) {
 					embed,
 				});
 			} else {
-				newWeapon = fetchNewWeapon(oldWeapon, rrType);
+				newWeapon = fetchNewWeapon(p, oldWeapon, rrType);
 				sendMessage(p, oldWeapon, newWeapon, rrType, msg);
 			}
 		}
@@ -194,7 +194,7 @@ async function useShards(p) {
 	return false;
 }
 
-function fetchNewWeapon(weapon, type) {
+function fetchNewWeapon(p, weapon, type) {
 	/* Get new weapon */
 	let newWeapon;
 	if (type == 'p') newWeapon = weapon.rerollPassives();

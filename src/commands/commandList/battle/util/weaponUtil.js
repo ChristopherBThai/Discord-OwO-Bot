@@ -5,7 +5,6 @@
  * For more information, see README.md and LICENSE
  */
 
-const requireDir = require('require-dir');
 const WeaponInterface = require('../WeaponInterface.js');
 const alterWeapon = require('../../patreon/alterWeapon.js');
 const alterWeaponDisplay = require('../../patreon/alterWeaponDisplay.js');
@@ -47,8 +46,8 @@ const fastForwardEmoji = '⏩';
 const sortEmoji = '🔃';
 
 /* All weapons */
-var weapons = {};
-var availableWeapons = {};
+let weapons = {};
+let availableWeapons = {};
 setTimeout(() => {
 	weapons = WeaponInterface.weapons;
 	for (let key in weapons) {
@@ -93,11 +92,11 @@ exports.getRandomWeapons = function (uid, count) {
 };
 
 exports.getItems = async function (p) {
-	var sql = `SELECT wid,count(uwid) AS count FROM user_weapon WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) GROUP BY wid`;
-	var result = await p.query(sql);
-	var items = {};
-	for (var i = 0; i < result.length; i++) {
-		var key = result[i].wid;
+	let sql = `SELECT wid,count(uwid) AS count FROM user_weapon WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) GROUP BY wid`;
+	let result = await p.query(sql);
+	let items = {};
+	for (let i = 0; i < result.length; i++) {
+		let key = result[i].wid;
 		if (weapons[key])
 			items[key] = {
 				id: key + 100,
@@ -108,17 +107,17 @@ exports.getItems = async function (p) {
 	return items;
 };
 
-var parseWeapon = (exports.parseWeapon = function (data) {
+let parseWeapon = (exports.parseWeapon = function (data) {
 	if (!data.parsed) {
 		/* Parse stats */
 		data.stat = data.stat.split(',');
 		if (data.stat[0] == '') data.stat = [];
-		for (var i = 0; i < data.stat.length; i++) data.stat[i] = parseInt(data.stat[i]);
+		for (let i = 0; i < data.stat.length; i++) data.stat[i] = parseInt(data.stat[i]);
 
 		/* Grab all passives */
-		for (var i = 0; i < data.passives.length; i++) {
+		for (let i = 0; i < data.passives.length; i++) {
 			let stats = data.passives[i].stat.split(',');
-			for (var j = 0; j < stats.length; j++) stats[j] = parseInt(stats[j]);
+			for (let j = 0; j < stats.length; j++) stats[j] = parseInt(stats[j]);
 			let passive = new WeaponInterface.allPassives[data.passives[i].id](stats);
 			passive.pcount = data.passives[i].pcount;
 			data.passives[i] = passive;
@@ -137,12 +136,12 @@ var parseWeapon = (exports.parseWeapon = function (data) {
 	return weapon;
 });
 
-var parseWeaponQuery = (exports.parseWeaponQuery = function (query) {
+let parseWeaponQuery = (exports.parseWeaponQuery = function (query) {
 	/* Group weapons by uwid and add their respective passives */
 	let weapons = {};
-	for (var i = 0; i < query.length; i++) {
+	for (let i = 0; i < query.length; i++) {
 		if (query[i].uwid) {
-			var key = '_' + query[i].uwid;
+			let key = '_' + query[i].uwid;
 			if (!(key in weapons)) {
 				weapons[key] = {
 					uwid: shortenUWID(query[i].uwid),
@@ -170,7 +169,7 @@ var parseWeaponQuery = (exports.parseWeaponQuery = function (query) {
 });
 
 /* Displays weapons with multiple pages */
-var display = (exports.display = async function (p, pageNum = 0, sort = 0, opt) {
+let display = (exports.display = async function (p, pageNum = 0, sort = 0, opt) {
 	if (!opt) opt = {};
 	let { users, msg, user } = opt;
 	if (!users) users = [];
@@ -228,11 +227,11 @@ var display = (exports.display = async function (p, pageNum = 0, sort = 0, opt) 
 					if (page) await msg.edit({ embed: page.embed });
 				}
 			}
-		} catch (err) {}
+		} catch (err) {/* empty */}
 	};
 
 	collector.on('collect', handler);
-	collector.on('end', async function (collected) {
+	collector.on('end', async function (_collected) {
 		if (page) {
 			page.embed.color = 6381923;
 			await msg.edit({
@@ -292,7 +291,7 @@ exports.askDisplay = async function (p, id, opt = {}) {
 		} else {
 			try {
 				await msg.removeReactions();
-			} catch (e) {}
+			} catch (e) {/* empty */}
 			display(p, 0, 0, {
 				users: [p.msg.author.id],
 				msg,
@@ -311,7 +310,7 @@ exports.askDisplay = async function (p, id, opt = {}) {
 };
 
 /* Gets a single page */
-var getDisplayPage = async function (p, user, page, sort, opt = {}) {
+let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	let { wid } = opt;
 	/* Query all weapons */
 	let sql = `SELECT temp.*,user_weapon_passive.wpid,user_weapon_passive.pcount,user_weapon_passive.stat as pstat
@@ -341,7 +340,7 @@ var getDisplayPage = async function (p, user, page, sort, opt = {}) {
 			user.id = ${user.id} `;
 	if (wid) sql += `AND user_weapon.wid = ${wid} `;
 	sql += ';';
-	var result = await p.query(sql);
+	let result = await p.query(sql);
 
 	/* out of bounds or no weapon */
 	if (!result[0][0]) {
@@ -364,12 +363,12 @@ var getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	let desc = '';
 	let fieldText;
 	let fields = [];
-	for (var key in user_weapons) {
+	for (let key in user_weapons) {
 		let weapon = parseWeapon(user_weapons[key]);
 		if (weapon) {
 			let row = '';
 			let emoji = `${weapon.rank.emoji}${weapon.emoji}`;
-			for (var i = 0; i < weapon.passives.length; i++) {
+			for (let i = 0; i < weapon.passives.length; i++) {
 				let passive = weapon.passives[i];
 				emoji += passive.emoji;
 			}
@@ -473,6 +472,7 @@ exports.describe = async function (p, uwid) {
 
 	/* Parse image url */
 	let url = weapon.emoji;
+	let temp;
 	if ((temp = url.match(/:[0-9]+>/))) {
 		temp = 'https://cdn.discordapp.com/emojis/' + temp[0].match(/[0-9]+/)[0] + '.';
 		if (url.match(/<a:/)) temp += 'gif';
@@ -501,7 +501,7 @@ exports.describe = async function (p, uwid) {
 		}
 	}
 	if (weapon.passives.length <= 0) desc += '\n**Passives:** None';
-	for (var i = 0; i < weapon.passives.length; i++) {
+	for (let i = 0; i < weapon.passives.length; i++) {
 		let passive = weapon.passives[i];
 		desc += `\n${passive.emoji} **${passive.name}** - ${passive.desc}`;
 	}
@@ -697,7 +697,7 @@ exports.sell = async function (p, uwid) {
 
 	/* Parse stats to determine price */
 	let weapon = this.parseWeaponQuery(result);
-	for (var key in weapon) {
+	for (let key in weapon) {
 		weapon = this.parseWeapon(weapon[key]);
 	}
 
@@ -750,7 +750,7 @@ exports.sell = async function (p, uwid) {
 	p.logger.incr('cowoncy', price, { type: 'sell' }, p.msg);
 };
 
-var sellRank = (exports.sellRank = async function (p, rankLoc) {
+let sellRank = (exports.sellRank = async function (p, rankLoc) {
 	// (min,max]
 	let min = 0,
 		max = 0;
@@ -783,7 +783,7 @@ var sellRank = (exports.sellRank = async function (p, rankLoc) {
 	let weaponsSQL = [];
 	let price;
 	let rank;
-	for (var key in weapon) {
+	for (let key in weapon) {
 		let tempWeapon = parseWeapon(weapon[key]);
 		if (!tempWeapon.unsellable) {
 			weapons.push(tempWeapon.emoji);
@@ -844,13 +844,13 @@ var sellRank = (exports.sellRank = async function (p, rankLoc) {
 });
 
 /* Shorten a uwid to base36 */
-var shortenUWID = (exports.shortenUWID = function (uwid) {
+let shortenUWID = (exports.shortenUWID = function (uwid) {
 	if (!uwid) return;
 	return uwid.toString(36).toUpperCase();
 });
 
 /* expand base36 to decimal */
-var expandUWID = (exports.expandUWID = function (euwid) {
+let expandUWID = (exports.expandUWID = function (euwid) {
 	if (!euwid) return;
 	euwid = euwid + '';
 	if (!/^[a-zA-Z0-9]+$/.test(euwid)) return;

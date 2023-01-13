@@ -11,8 +11,6 @@ const teamUtil = require('./util/teamUtil.js');
 const battleUtil = require('./util/battleUtil.js');
 const battleFriendUtil = require('./util/battleFriendUtil.js');
 const maxTeams = 2;
-const nextPageEmoji = '➡️';
-const prevPageEmoji = '⬅️';
 const starEmoji = '⭐';
 
 module.exports = new CommandInterface({
@@ -191,6 +189,7 @@ async function displayTeams(p) {
 		additionalButtons,
 	});
 
+	/* eslint-disable-next-line */
 	pagedMsg.on('button', async (component, user, ack, { currentPage, maxPage }) => {
 		if (component === 'star') {
 			await setTeam(p, currentPage + 1, true);

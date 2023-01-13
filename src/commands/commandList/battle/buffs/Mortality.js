@@ -6,7 +6,6 @@
  */
 
 const BuffInterface = require('../BuffInterface.js');
-const WeaponInterface = require('../WeaponInterface.js');
 const Logs = require('../util/logUtil.js');
 
 module.exports = class Mortality extends BuffInterface {
@@ -31,7 +30,7 @@ module.exports = class Mortality extends BuffInterface {
 		super.bind(animal, duration, tags);
 	}
 
-	postHealed(animal, healer, amount, tag) {
+	postHealed(animal, healer, amount, _tag) {
 		let logs = new Logs();
 
 		let dec = amount[0] * (this.stats[0] / 100);

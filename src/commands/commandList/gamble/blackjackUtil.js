@@ -122,15 +122,15 @@ const random = require('random-number-csprng');
 
 exports.randCard = randCard;
 async function randCard(deck, type) {
-	var card = deck.splice(await random(0, deck.length - 1), 1)[0];
+	let card = deck.splice(await random(0, deck.length - 1), 1)[0];
 	return { card: card, type: type };
 }
 
 exports.generateSQL = generateSQL;
 function generateSQL(hand, dealer, id) {
 	id = '(SELECT bjid FROM blackjack WHERE id = ' + id + ')';
-	var sql = '';
-	for (var i = 0; i < hand.length; i++)
+	let sql = '';
+	for (let i = 0; i < hand.length; i++)
 		sql +=
 			'INSERT INTO blackjack_card (bjid,card,dealer,sort) VALUES (' +
 			id +
@@ -141,7 +141,7 @@ function generateSQL(hand, dealer, id) {
 			') ON DUPLICATE KEY UPDATE dealer = 0,sort= ' +
 			(i + 1) +
 			';';
-	for (var i = 0; i < dealer.length; i++)
+	for (let i = 0; i < dealer.length; i++)
 		sql +=
 			'INSERT INTO blackjack_card (bjid,card,dealer) VALUES (' +
 			id +
@@ -153,24 +153,19 @@ function generateSQL(hand, dealer, id) {
 	return sql;
 }
 
-function diff(a, b) {
-	return a.filter(function (i) {
-		return b.indexOf(i) < 0;
-	});
-}
 exports.initDeck = initDeck;
 function initDeck(deck, player, dealer) {
-	for (var i = 0; i < player.length; i++) deck.splice(deck.indexOf(player[i].card), 1);
-	for (var i = 0; i < dealer.length; i++) deck.splice(deck.indexOf(dealer[i].card), 1);
+	for (let i = 0; i < player.length; i++) deck.splice(deck.indexOf(player[i].card), 1);
+	for (let i = 0; i < dealer.length; i++) deck.splice(deck.indexOf(dealer[i].card), 1);
 	return deck;
 }
 
 exports.generateEmbed = generateEmbed;
 function generateEmbed(author, dealer, player, bet, end, winnings) {
-	var color = config.embed_color;
-	var footer = '🎲 ~ game in progress';
-	var dealerValue = cardValue(dealer);
-	var playerValue = cardValue(player);
+	let color = config.embed_color;
+	let footer = '🎲 ~ game in progress';
+	let dealerValue = cardValue(dealer);
+	let playerValue = cardValue(player);
 	if (end == 'w') {
 		color = 65280;
 		footer = '🎲 ~ You won ' + global.toFancyNum(winnings) + ' cowoncy!';
@@ -214,12 +209,12 @@ function generateEmbed(author, dealer, player, bet, end, winnings) {
 
 exports.cardValue = cardValue;
 function cardValue(deck) {
-	var text = '';
-	var points = 0;
-	var unhiddenPoints = 0;
-	var aces = 0;
-	for (var i = 0; i < deck.length; i++) {
-		var value = deck[i].card % 13;
+	let text = '';
+	let points = 0;
+	let unhiddenPoints = 0;
+	let aces = 0;
+	for (let i = 0; i < deck.length; i++) {
+		let value = deck[i].card % 13;
 
 		if (deck[i].type == 'f') text += cardsf[deck[i].card] + ' ';
 		else if (deck[i].type == 'c') text += cards[deck[i].card] + ' ';
@@ -238,8 +233,8 @@ function cardValue(deck) {
 		}
 	}
 
-	var usedAces = 0;
-	for (var i = 0; i < aces; i++) {
+	let usedAces = 0;
+	for (let i = 0; i < aces; i++) {
 		points += 10;
 		if (points > 21) {
 			usedAces++;
@@ -247,7 +242,7 @@ function cardValue(deck) {
 		}
 	}
 
-	var ace = false;
+	let ace = false;
 	if (aces > 0 && usedAces < aces) ace = true;
 
 	return {

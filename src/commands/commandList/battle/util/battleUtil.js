@@ -9,11 +9,10 @@ const dateUtil = require('../../../../utils/dateUtil.js');
 const global = require('../../../../utils/global.js');
 const mysql = require('../../../../utils/mysql.js');
 const teamUtil = require('./teamUtil.js');
-const weaponUtil = require('./weaponUtil.js');
 const animalUtil = require('./animalUtil.js');
 const battleImageUtil = require('../battleImage.js');
 const WeaponInterface = require('../WeaponInterface.js');
-var allBuffs = WeaponInterface.allBuffs;
+let allBuffs = WeaponInterface.allBuffs;
 const request = require('request');
 const crateUtil = require('./crateUtil.js');
 const alterBattle = require('../../patreon/alterBattle.js');
@@ -44,7 +43,7 @@ mysql.con.query('SELECT pgid FROM pet_team ORDER BY pgid ASC LIMIT 1', (err, res
 
 /* ==================================== Grabs battle from sql ====================================  */
 /* Grabs existing battle */
-var getBattle = (exports.getBattle = async function (p, setting) {
+let getBattle = (exports.getBattle = async function (p, setting) {
 	/* And our team */
 	let sql = `SELECT pet_team_battle.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat,cphp,cpwp,cehp,cewp,pet_team.streak,pet_team.highest_streak
 		FROM pet_team
@@ -220,7 +219,7 @@ exports.initBattle = async function (p, setting) {
 /* ==================================== battle display methods ====================================  */
 
 /* Generates a display for the current battle (image mode)*/
-var display = (exports.display = async function (
+let display = (exports.display = async function (
 	p,
 	team,
 	logs,
@@ -231,43 +230,34 @@ var display = (exports.display = async function (
 	else if (display == 'compact') return displayCompact(p, team, logs, { title, showLogs, logLink });
 	let image = await battleImageUtil.generateImage(team);
 	if (!image || image == '') return displayCompact(p, team, logs, { title, showLogs, logLink });
-	let logtext = '';
 	let pTeam = '';
-	for (var i = 0; i < team.player.team.length; i++) {
+	for (let i = 0; i < team.player.team.length; i++) {
 		let player = team.player.team[i];
 		pTeam += 'L. ' + player.stats.lvl + ' ';
 		pTeam += player.animal.value;
 		if (player.weapon) {
 			pTeam += ' - ' + player.weapon.rank.emoji + player.weapon.emoji;
 			let passives = player.weapon.passives;
-			for (var j in passives) {
+			for (let j in passives) {
 				pTeam += passives[j].emoji;
 			}
 			//pTeam += " "+player.weapon.avgQuality+"%";
 		} else pTeam += ' - *no weapon*';
-		if (logs && logs.player && logs.player[i]) {
-			logtext += '\n';
-			logtext += logs.player[i];
-		}
 		pTeam += '\n';
 	}
 	let eTeam = '';
-	for (var i = 0; i < team.enemy.team.length; i++) {
+	for (let i = 0; i < team.enemy.team.length; i++) {
 		let enemy = team.enemy.team[i];
 		eTeam += 'L. ' + enemy.stats.lvl + ' ';
 		eTeam += enemy.animal.value;
 		if (enemy.weapon) {
 			eTeam += ' - ' + enemy.weapon.rank.emoji + enemy.weapon.emoji;
 			let passives = enemy.weapon.passives;
-			for (var j in passives) {
+			for (let j in passives) {
 				eTeam += passives[j].emoji;
 			}
 			//eTeam += " "+enemy.weapon.avgQuality+"%";
 		} else eTeam += ' - *no weapon*';
-		if (logs && logs.enemy && logs.enemy[i]) {
-			logtext += '\n';
-			logtext += logs.enemy[i];
-		}
 		eTeam += '\n';
 	}
 	let embed = {
@@ -300,33 +290,24 @@ var display = (exports.display = async function (
 });
 
 /* displays the battle as text */
-var displayText = (exports.displayText = async function (
+let displayText = (exports.displayText = async function (
 	p,
 	team,
 	logs,
 	{ title, showLogs, logLink }
 ) {
-	let logtext = '';
 	let pTeam = [];
-	for (var i = 0; i < team.player.team.length; i++) {
+	for (let i = 0; i < team.player.team.length; i++) {
 		let player = team.player.team[i];
 		let text = '';
 		text += animalDisplayText(player);
-		logtext += '\n' + (player.animal.uni ? player.animal.uni : player.animal.value) + ' ';
-		if (logs && logs.player && logs.player[i]) {
-			logtext += logs.player[i];
-		} else logtext += 'is ready to battle!';
 		pTeam.push(text);
 	}
 	let eTeam = [];
-	for (var i = 0; i < team.enemy.team.length; i++) {
+	for (let i = 0; i < team.enemy.team.length; i++) {
 		let enemy = team.enemy.team[i];
 		let text = '';
 		text += animalDisplayText(enemy);
-		logtext += '\n' + (enemy.animal.uni ? enemy.animal.uni : enemy.animal.value) + ' ';
-		if (logs && logs.enemy && logs.enemy[i]) {
-			logtext += logs.enemy[i];
-		} else logtext += 'is ready to battle!';
 		eTeam.push(text);
 	}
 	let embed = {
@@ -372,21 +353,21 @@ var displayText = (exports.displayText = async function (
 });
 
 /* displays the battle as compact mode*/
-var displayCompact = (exports.displayCompact = async function (
+let displayCompact = (exports.displayCompact = async function (
 	p,
 	team,
 	logs,
 	{ title, showLogs, logLink }
 ) {
 	let pTeam = [];
-	for (var i = 0; i < team.player.team.length; i++) {
+	for (let i = 0; i < team.player.team.length; i++) {
 		let player = team.player.team[i];
 		let text = '';
 		text += animalCompactDisplayText(player);
 		pTeam.push(text);
 	}
 	let eTeam = [];
-	for (var i = 0; i < team.enemy.team.length; i++) {
+	for (let i = 0; i < team.enemy.team.length; i++) {
 		let enemy = team.enemy.team[i];
 		let text = '';
 		text += animalCompactDisplayText(enemy);
@@ -434,7 +415,7 @@ var displayCompact = (exports.displayCompact = async function (
 
 /* ==================================== battle execution ====================================  */
 /* Creates a reaction collector and executes the turn */
-var reactionCollector = (exports.reactionCollector = async function (
+let reactionCollector = (exports.reactionCollector = async function (
 	p,
 	msg,
 	battle,
@@ -444,7 +425,7 @@ var reactionCollector = (exports.reactionCollector = async function (
 ) {
 	/* Parse team and first animal choice */
 	let team = battle.player.team;
-	var current = 0;
+	let current = 0;
 	/* Skip if the animal is dead */
 	while (team[current] && team[current].stats.hp[0] <= 0) current++;
 	/* If all animals are dead end it. */
@@ -467,7 +448,7 @@ var reactionCollector = (exports.reactionCollector = async function (
 			actions = actions.split('');
 			if (actions.length >= team.length) {
 				action = {};
-				for (var i = 0; i < actions.length; i++) {
+				for (let i = 0; i < actions.length; i++) {
 					if (actions[i] == 'w') action[i] = weapon;
 					else action[i] = attack;
 				}
@@ -491,14 +472,14 @@ var reactionCollector = (exports.reactionCollector = async function (
 	await msg.react(weapon);
 	/* Add reaction */
 	let emoji = numEmojis[current];
-	var emojiReaction = await msg.react(emoji);
+	let emojiReaction = await msg.react(emoji);
 
 	/* Construct reaction collector */
-	var filter = (reaction, user) =>
+	let filter = (reaction, user) =>
 		(reaction.emoji.name === attack || reaction.emoji.name === weapon) &&
 		user.id === p.msg.author.id;
-	var collector = msg.createReactionCollector(filter, { time: 20000 });
-	var action = {};
+	let collector = msg.createReactionCollector(filter, { time: 20000 });
+	let action = {};
 	collector.on('collect', async function (r) {
 		/* Save the animal's action */
 		if (r.emoji.name === attack) action[current] = attack;
@@ -525,7 +506,7 @@ var reactionCollector = (exports.reactionCollector = async function (
 		}
 	});
 
-	collector.on('end', (collected) => {});
+	collector.on('end', (_collected) => {});
 });
 
 /* Executes a whole battle sequence */
@@ -578,7 +559,7 @@ async function executeBattle(p, msg, action, setting) {
 		let cestats = initSqlSaveStats(battle.enemy.team);
 		let ocpstats = initSqlSaveStats(battle.player.team, 2);
 		let ocestats = initSqlSaveStats(battle.enemy.team, 2);
-		sql = `UPDATE IGNORE pet_team_battle SET
+		let sql = `UPDATE IGNORE pet_team_battle SET
 				cphp = '${cpstats.hp}', cpwp = '${cpstats.wp}',
 				cehp = '${cestats.hp}', cewp = '${cestats.wp}'
 			WHERE
@@ -610,7 +591,7 @@ async function executeBattle(p, msg, action, setting) {
 }
 
 /* Calculates all the steps required to finish the battle in recursion */
-var calculateAll = (exports.calculateAll = function (p, battle, logs = []) {
+let calculateAll = (exports.calculateAll = function (p, battle, logs = []) {
 	/* check if the battle is finished */
 	let enemyWin = teamUtil.isDead(battle.player.team);
 	let playerWin = teamUtil.isDead(battle.enemy.team);
@@ -818,12 +799,12 @@ exports.displayAllBattles = async function (p, battle, logs, setting) {
 
 /* Creates string to save in sql */
 function initSqlSaveStats(team, offset = 0) {
-	hp = '';
-	wp = '';
+	let hp = '';
+	let wp = '';
 	for (let i in team) {
 		if (!team[i].stats) animalUtil.stats(team[i]);
-		hpN = Math.trunc(team[i].stats.hp[offset]);
-		wpN = Math.trunc(team[i].stats.wp[offset]);
+		let hpN = Math.trunc(team[i].stats.hp[offset]);
+		let wpN = Math.trunc(team[i].stats.wp[offset]);
 		if (global.isInt(hpN)) hp += hpN + ',';
 		else hp += '0,';
 		if (global.isInt(wpN)) wp += wpN + ',';
@@ -886,7 +867,7 @@ function parseSqlBuffs(team, buffs, otherTeam) {
 				if (buff) {
 					let qualities = buffs[j].qualities.split(',').map((x) => parseInt(x));
 					if (!buffs[j].qualities || buffs[j].qualities == '') qualities = [];
-					owner = null;
+					let owner = null;
 					for (let k in team) {
 						if (team[k].pid == buffs[j].pfrom) owner = team[k];
 					}
@@ -909,7 +890,7 @@ function preTurn(team, enemy, action) {
 
 	for (let i in team) {
 		let animal = team[i];
-		check = WeaponInterface.canAttack(animal, team, enemy, action);
+		let check = WeaponInterface.canAttack(animal, team, enemy, action);
 		animal.disabled = check;
 		for (let j in animal.buffs) {
 			let log = animal.buffs[j].preTurn(animal, team, enemy, action[i]);
@@ -1206,8 +1187,8 @@ function bonusXP(streak) {
 
 /* Test bonus xp */
 /*
-var totalxp = 0;
-var pxp = 0;
+let totalxp = 0;
+let pxp = 0;
 for(let i = 35000;i<=40000;i+=10){
 	pxp += 10*200;
 	let currentxp = bonusXP(i);
@@ -1247,7 +1228,7 @@ function animalDisplayText(animal) {
 	if (animal.weapon) {
 		text += '\n' + animal.weapon.rank.emoji + animal.weapon.emoji;
 		let passives = animal.weapon.passives;
-		for (var j in passives) {
+		for (let j in passives) {
 			text += passives[j].emoji;
 		}
 		text += ' ' + animal.weapon.avgQuality + '%';
@@ -1273,7 +1254,7 @@ function animalCompactDisplayText(animal) {
 	if (animal.weapon) {
 		text += ' ' + animal.weapon.rank.emoji + animal.weapon.emoji;
 		let passives = animal.weapon.passives;
-		for (var j in passives) {
+		for (let j in passives) {
 			text += passives[j].emoji;
 		}
 	}
@@ -1371,8 +1352,8 @@ function parseLogs(logs) {
 async function createLogUUID(logs, battle) {
 	let info = { battle, logs, password: process.env.GEN_PASS };
 	try {
-		return new Promise((resolve, reject) => {
-			let req = request(
+		return new Promise((resolve, _reject) => {
+			request(
 				{
 					method: 'POST',
 					uri: `${process.env.GEN_API_HOST}/savelog`,
