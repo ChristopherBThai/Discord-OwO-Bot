@@ -87,13 +87,14 @@ class InteractionEventEmitter extends EventEmitter {
 				if (typeof content === 'string') {
 					content = { content };
 				}
-				if (content.embed) {
-					content.embeds = [content.embed];
-					delete content.embed;
+				const newContent = { ...content };
+				if (newContent.embed) {
+					newContent.embeds = [newContent.embed];
+					delete newContent.embed;
 				}
 				return axios.post(url, {
 					type: 7,
-					data: content,
+					data: newContent,
 				});
 			} else {
 				return axios.post(url, { type: 1 });
