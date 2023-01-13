@@ -7,7 +7,6 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const crate = '<:crate:523771259302182922>';
 const crateShake = '<a:crateshake:523771259172028420>';
 const crateOpen = '<a:crateopen:523771437408845852>';
 const weaponUtil = require('./util/weaponUtil.js');

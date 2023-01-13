@@ -74,6 +74,7 @@ exports.addMember = async function (p, animal, pos) {
 	if (!result[1][0]) {
 		p.errorMsg(', you do not own this animal!', 3000);
 		return;
+	/* eslint-disable-next-line */
 	} else if (false && result[1][0].count < 1) {
 		p.errorMsg(', you need at least 1 animal in the zoo!', 3000);
 		return;
@@ -244,6 +245,7 @@ exports.renameTeam = async function (p, teamName) {
 	}
 };
 
+/* eslint-disable-next-line */
 const getTeam = (exports.getTeam = async function (p) {
 	/* Query info */
 	let sql = `SELECT tname,pos,name,nickname,a.pid,xp,pt.streak,highest_streak
@@ -284,6 +286,7 @@ const getTeam = (exports.getTeam = async function (p) {
 	return await p.query(sql);
 });
 
+/* eslint-disable-next-line */
 const createTeamEmbed = (exports.createTeamEmbed = function (p, team, other = {}) {
 	/* Parse query */
 	let digits = 1;
@@ -346,7 +349,7 @@ const createTeamEmbed = (exports.createTeamEmbed = function (p, team, other = {}
 	}
 
 	/* Construct msg */
-	return (embed = {
+	return {
 		author: {
 			name: p.msg.author.username + '\'s ' + p.replaceMentions(other.tname),
 			icon_url: p.msg.author.avatarURL,
@@ -358,7 +361,7 @@ const createTeamEmbed = (exports.createTeamEmbed = function (p, team, other = {}
 			text: `Current Streak: ${streak} | Highest Streak: ${highestStreak}`,
 		},
 		fields,
-	});
+	};
 });
 
 /* Parses animals and weapons into json */

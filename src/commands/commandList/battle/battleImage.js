@@ -16,8 +16,8 @@ exports.generateImage = function (teams) {
 
 	/* Returns a promise to avoid callback hell */
 	try {
-		return new Promise((resolve, reject) => {
-			let req = request(
+		return new Promise((resolve, _reject) => {
+			request(
 				{
 					method: 'POST',
 					uri: `${process.env.GEN_API_HOST}/imagegen`,
@@ -52,9 +52,9 @@ function generateJson(teams) {
 		},
 	};
 
-	for (i = 0; i < teams.player.team.length; i++)
+	for (let i = 0; i < teams.player.team.length; i++)
 		json.player.animals.push(generateAnimalJson(teams.player.team[i]));
-	for (i = 0; i < teams.enemy.team.length; i++)
+	for (let i = 0; i < teams.enemy.team.length; i++)
 		json.enemy.animals.push(generateAnimalJson(teams.enemy.team[i]));
 	return json;
 }

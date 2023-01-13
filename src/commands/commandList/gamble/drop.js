@@ -41,6 +41,7 @@ module.exports = new CommandInterface({
 	},
 });
 
+/* eslint-disable-next-line */
 async function drop(p) {
 	let amount;
 	if (p.global.isInt(p.args[0])) amount = parseInt(p.args[0]);
@@ -72,6 +73,7 @@ async function drop(p) {
 	p.quest('drop');
 }
 
+/* eslint-disable-next-line */
 async function pickup(p) {
 	let agreed = await p.redis.hget('data_' + p.msg.author.id, key);
 	if (!agreed) {
@@ -136,7 +138,7 @@ async function handleWarning(p) {
 
 	let filter = (emoji, userID) => emoji.name === acceptEmoji && p.msg.author.id === userID;
 	let collector = p.reactionCollector.create(msg, filter, { time: 60000 });
-	collector.on('collect', async (emoji) => {
+	collector.on('collect', async (_emoji) => {
 		collector.stop('done');
 		p.redis.hincrby('data_' + p.msg.author.id, key, 1);
 		embed.color = 65280;
@@ -167,7 +169,6 @@ async function pickup2(p) {
 	}
 
 	const con = await p.startTransaction();
-	let date;
 	try {
 		let sql = `UPDATE cowoncydrop SET amount = amount - ${amount} WHERE amount >= ${amount} AND channel = ${p.msg.channel.id};`;
 		let result = await con.query(sql);

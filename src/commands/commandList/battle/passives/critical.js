@@ -6,7 +6,6 @@
  */
 
 const PassiveInterface = require('../PassiveInterface.js');
-const WeaponInterface = require('../WeaponInterface.js');
 const Log = require('../util/logUtil.js');
 
 module.exports = class Critical extends PassiveInterface {
@@ -31,7 +30,7 @@ module.exports = class Critical extends PassiveInterface {
 		];
 	}
 
-	attack(animal, attackee, damage, type, tags) {
+	attack(animal, attackee, damage, _type, _tags) {
 		if (Math.random() * 100 > this.stats[0]) return;
 
 		let logs = new Log();
@@ -43,7 +42,7 @@ module.exports = class Critical extends PassiveInterface {
 		return logs;
 	}
 
-	heal(animal, healer, amount, tag) {
+	heal(animal, healer, amount, _tag) {
 		if (Math.random() * 100 > this.stats[0]) return;
 
 		let logs = new Log();

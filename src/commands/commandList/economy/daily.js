@@ -339,13 +339,16 @@ async function checkMarriage(p, marriage) {
 		return;
 	}
 
+	/* eslint-disable-next-line */
 	let soID, soStreak, soDaily;
 	if (p.msg.author.id == marriage.id1) {
 		soID = marriage.id2;
+		/* eslint-disable-next-line */
 		soStreak = marriage.streak2;
 		soDaily = marriage.daily2;
 	} else {
 		soID = marriage.id1;
+		/* eslint-disable-next-line */
 		soStreak = marriage.streak1;
 		soDaily = marriage.daily1;
 	}

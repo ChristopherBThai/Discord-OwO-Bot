@@ -168,7 +168,7 @@ async function confirmation(user, amount) {
 				inline: true,
 			}
 		]
-	}
+	};
 
 	let components = [{
 		type: 1,
@@ -204,7 +204,7 @@ async function confirmation(user, amount) {
 		idle: 120000
 	});
 
-	return new Promise((res, rej) => {
+	return new Promise((res, _rej) => {
 		const accepted = {};
 		collector.on('collect', async (component, reactionUser, ack, err) => {
 			if (component === 'give_decline') {
@@ -221,7 +221,7 @@ async function confirmation(user, amount) {
 					return;
 				}
 				accepted[reactionUser.id] = true;
-				const usernames = []
+				const usernames = [];
 				for (let key in accepted) {
 					if (key === this.msg.author.id) {
 						usernames.push(this.msg.author.username + '#' + this.msg.author.discriminator);

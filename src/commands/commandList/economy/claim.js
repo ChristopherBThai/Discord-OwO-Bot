@@ -99,7 +99,7 @@ module.exports = new CommandInterface({
 		}
 		let txt = `, You claimed ${totalRewards} reward(s)! 🎉\n`;
 		txt += `${p.config.emoji.blank} **|** `;
-		rewardTxt = [];
+		let rewardTxt = [];
 		if (totalCowoncy) {
 			rewardTxt.push(`+${totalCowoncy} ${p.config.emoji.cowoncy}`);
 		}

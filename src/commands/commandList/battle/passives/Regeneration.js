@@ -27,7 +27,7 @@ module.exports = class Regeneration extends PassiveInterface {
 		this.qualityList = [[5, 10]];
 	}
 
-	postTurn(animal, ally, enemy, action) {
+	postTurn(animal, ally, enemy, _action) {
 		if (animal.stats.hp[0] <= 0) return;
 
 		let logs = new Log();

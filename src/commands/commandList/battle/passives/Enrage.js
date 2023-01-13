@@ -6,7 +6,6 @@
  */
 
 const PassiveInterface = require('../PassiveInterface.js');
-const WeaponInterface = require('../WeaponInterface.js');
 const Log = require('../util/logUtil.js');
 
 module.exports = class Enrage extends PassiveInterface {
@@ -27,7 +26,7 @@ module.exports = class Enrage extends PassiveInterface {
 		this.qualityList = [[1, 4]];
 	}
 
-	attack(animal, attackee, damage, type, tags) {
+	attack(animal, attackee, damage, _type, _tags) {
 		let maxHP = animal.stats.hp[1] + animal.stats.hp[3];
 		let currentHP = animal.stats.hp[0];
 		if (currentHP >= maxHP) return;

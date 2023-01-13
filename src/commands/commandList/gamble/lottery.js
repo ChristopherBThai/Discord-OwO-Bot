@@ -93,7 +93,6 @@ async function bet(con, msg, args, global, p) {
 		p.logger.decr('cowoncy', -1 * amount, { type: 'lottery' }, p.msg);
 
 		let sum = parseInt(result[1][0].sum);
-		let count = result[1][0].count;
 		let bet = prevBet + amount;
 		let chance = (bet / sum) * 100;
 		if (chance >= 0.01) chance = Math.trunc(chance * 100) / 100;

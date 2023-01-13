@@ -8,7 +8,6 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const teams = require('./teams.js');
-const global = require('../../../utils/global.js');
 const teamUtil = require('./util/teamUtil.js');
 const battleUtil = require('./util/battleUtil.js');
 const battleFriendUtil = require('./util/battleFriendUtil.js');
@@ -90,6 +89,7 @@ module.exports = new CommandInterface({
 	},
 });
 
+/* eslint-disable-next-line */
 async function displayTeam(p) {
 	try {
 		await teamUtil.displayTeam(p);

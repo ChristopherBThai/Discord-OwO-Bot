@@ -6,7 +6,6 @@
  */
 
 const PassiveInterface = require('../PassiveInterface.js');
-const WeaponInterface = require('../WeaponInterface.js');
 const Log = require('../util/logUtil.js');
 
 module.exports = class Sprout extends PassiveInterface {
@@ -27,7 +26,7 @@ module.exports = class Sprout extends PassiveInterface {
 		this.qualityList = [[20, 40]];
 	}
 
-	healed(animal, healer, amount, tag) {
+	healed(animal, healer, amount, _tag) {
 		let logs = new Log();
 
 		// Bonus heals

@@ -210,7 +210,7 @@ async function addQuest(p) {
 }
 
 function constructEmbed(p, afterMid, quests) {
-	return (embed = {
+	return {
 		color: p.config.embed_color,
 		footer: {
 			text: `Next quest in: ${afterMid.hours}H ${afterMid.minutes}M ${afterMid.seconds}S`,
@@ -220,7 +220,7 @@ function constructEmbed(p, afterMid, quests) {
 			icon_url: p.msg.author.avatarURL,
 		},
 		description: quests.text,
-	});
+	};
 }
 
 function getQuest(id, qid, afterMidSQL) {

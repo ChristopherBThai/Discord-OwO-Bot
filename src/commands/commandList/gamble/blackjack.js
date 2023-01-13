@@ -38,8 +38,7 @@ module.exports = new CommandInterface({
 
 	execute: async function (p) {
 		let args = p.args,
-			msg = p.msg,
-			con = p.con;
+			msg = p.msg;
 
 		//Check if there is a bet amount
 		let amount = 1;
@@ -185,7 +184,6 @@ async function hit(p, player, dealer, msg, bet, collector) {
 	let card = await bjUtil.randCard(tdeck, 'f');
 	player.push(card);
 	let ppoints = bjUtil.cardValue(player).points;
-	let dpoints = bjUtil.cardValue(dealer).points;
 
 	if (ppoints > 21) {
 		collector.stop('done');
@@ -201,7 +199,7 @@ async function hit(p, player, dealer, msg, bet, collector) {
 			') ON DUPLICATE KEY UPDATE dealer = 0,sort= ' +
 			player.length +
 			';';
-		p.con.query(sql, function (err, result) {
+		p.con.query(sql, function (err, _result) {
 			if (err) {
 				console.error(err);
 				msg.edit('Something went wrong...');
@@ -261,7 +259,7 @@ async function stop(p, player, dealer, msg, bet, fromHit) {
 			return;
 		}
 		if (result.changedRows > 0) {
-			p.con.query(sql2, function (err, result) {
+			p.con.query(sql2, function (err, _result) {
 				if (err) {
 					console.error(err);
 					msg.edit('Something went wrong...');

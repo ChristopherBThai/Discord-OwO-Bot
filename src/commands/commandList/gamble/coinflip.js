@@ -38,7 +38,6 @@ module.exports = new CommandInterface({
 	execute: async function (p) {
 		let global = p.global,
 			msg = p.msg,
-			con = p.con,
 			args = p.args;
 
 		//Syntax Check
