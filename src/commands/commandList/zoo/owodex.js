@@ -42,8 +42,8 @@ module.exports = new CommandInterface({
 		}
 
 		let sql =
-			'SELECT * FROM animal WHERE id = ' + msg.author.id + ' AND name = \'' + animal.value + '\';';
-		sql += 'SELECT SUM(totalcount) as total FROM animal WHERE name = \'' + animal.value + '\';';
+			'SELECT * FROM animal WHERE id = ' + msg.author.id + " AND name = '" + animal.value + "';";
+		sql += "SELECT SUM(totalcount) as total FROM animal WHERE name = '" + animal.value + "';";
 		let result = await p.query(sql);
 		if (!result[0][0]) {
 			p.errorMsg(', I could not find that animal in your zoo!', 3000);
@@ -74,7 +74,7 @@ module.exports = new CommandInterface({
 		let rarity = global.toFancyNum(result[1][0].total) + ' total caught';
 		let nickname = '';
 		if (result[0][0].nickname) nickname = '**Nickname:** ' + result[0][0].nickname + '\n';
-		let desc = '*No description created\nHave a fun/creative description?\nUse \'owo feedback\'!*';
+		let desc = "*No description created\nHave a fun/creative description?\nUse 'owo feedback'!*";
 		if (animal.desc) {
 			desc = '*' + animal.desc.trim() + '*';
 			let ids = desc.match(/\?[0-9]+\?/g);

@@ -27,7 +27,7 @@ module.exports = new CommandInterface({
 	six: 500,
 
 	execute: async function (p) {
-		let con = p.con, id = p.msg.author.id;
+		let id = p.msg.author.id;
 		const voted = await p.dbl.hasVoted('' + p.msg.author.id);
 		if (!voted) {
 			let text = '**☑ | Your daily vote is available!**\n';
@@ -50,9 +50,12 @@ module.exports = new CommandInterface({
 			let patreonBonus = patreon ? reward : 0;
 			let weekendBonus = weekend ? reward : 0;
 
-			sql = `INSERT IGNORE INTO vote (id,date,count) VALUES (${id}, NOW(), 1);`
-				+ `UPDATE IGNORE cowoncy SET money = money + ${reward + patreonBonus + weekendBonus} WHERE id = ${id};`
-				+ box.sql;
+			sql =
+				`INSERT IGNORE INTO vote (id,date,count) VALUES (${id}, NOW(), 1);` +
+				`UPDATE IGNORE cowoncy SET money = money + ${
+					reward + patreonBonus + weekendBonus
+				} WHERE id = ${id};` +
+				box.sql;
 			await this.query(sql);
 
 			let text =
@@ -63,21 +66,15 @@ module.exports = new CommandInterface({
 				'\n';
 			if (weekend)
 				text +=
-					'**⛱ |** It\'s the weekend! You also earned a bonus of **' +
+					"**⛱ |** It's the weekend! You also earned a bonus of **" +
 					weekendBonus +
 					'** cowoncy!\n';
 			text += box.text;
-			text +=
-				'**<:blank:427371936482328596> |** https://top.gg/bot/408785106942164992/vote';
+			text += '**<:blank:427371936482328596> |** https://top.gg/bot/408785106942164992/vote';
 			p.send(text);
 
 			p.logger.incr('votecount', 1, {}, p.msg);
-			p.logger.incr(
-				'cowoncy',
-				reward + patreonBonus + weekendBonus,
-				{ type: 'vote' },
-				p.msg
-			);
+			p.logger.incr('cowoncy', reward + patreonBonus + weekendBonus, { type: 'vote' }, p.msg);
 		} else if (result[0].time >= 12) {
 			let box = getRandomBox.bind(this)();
 			let bonus = 100 + result[0].count * 3;
@@ -85,9 +82,12 @@ module.exports = new CommandInterface({
 			let weekendBonus = weekend ? bonus : 0;
 			if (patreon) patreonBonus = bonus;
 
-			sql = `UPDATE vote SET date = NOW(),count = count+1 WHERE id = ${id};`
-				+ `UPDATE IGNORE cowoncy SET money = money + ${bonus + patreonBonus + weekendBonus} WHERE id = ${id};`;
-				+ box.sql;
+			sql =
+				`UPDATE vote SET date = NOW(),count = count+1 WHERE id = ${id};` +
+				`UPDATE IGNORE cowoncy SET money = money + ${
+					bonus + patreonBonus + weekendBonus
+				} WHERE id = ${id};` +
+				box.sql;
 			await this.query(sql);
 
 			let text =
@@ -98,21 +98,15 @@ module.exports = new CommandInterface({
 				'\n';
 			if (weekend)
 				text +=
-					'**⛱ |** It\'s the weekend! You also earned a bonus of **' +
+					"**⛱ |** It's the weekend! You also earned a bonus of **" +
 					weekendBonus +
 					'** cowoncy!\n';
 			text += box.text;
-			text +=
-				'**<:blank:427371936482328596> |** https://top.gg/bot/408785106942164992/vote';
+			text += '**<:blank:427371936482328596> |** https://top.gg/bot/408785106942164992/vote';
 			p.send(text);
 
 			p.logger.incr('votecount', 1, {}, p.msg);
-			p.logger.incr(
-				'cowoncy',
-				bonus + patreonBonus + weekendBonus,
-				{ type: 'vote' },
-				p.msg
-			);
+			p.logger.incr('cowoncy', bonus + patreonBonus + weekendBonus, { type: 'vote' }, p.msg);
 		} else {
 			let text = '**☑ |** Click the link to vote and gain 100+ cowoncy!\n';
 			text += '**<:blank:427371936482328596> |** You can vote every 12 hours!\n';
@@ -120,8 +114,7 @@ module.exports = new CommandInterface({
 				'**<:blank:427371936482328596> |** Your daily vote is available in **' +
 				(12 - result[0].time) +
 				' H**\n';
-			text +=
-				'**<:blank:427371936482328596> |** https://top.gg/bot/408785106942164992/vote';
+			text += '**<:blank:427371936482328596> |** https://top.gg/bot/408785106942164992/vote';
 			p.send(text);
 		}
 	},
@@ -137,8 +130,7 @@ function patreonMsg(amount) {
 }
 
 async function hasPatreon() {
-	let sql =
-			`SELECT IF(
+	let sql = `SELECT IF(
 				patreonDaily = 1
 				OR ((TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths) AND patreons.patreonType = 3)
 				OR (endDate > NOW() AND patreon_wh.patreonType = 3)
@@ -149,7 +141,6 @@ async function hasPatreon() {
 			WHERE user.id = ${this.msg.author.id};`;
 	let result = this.query(sql);
 
-	let patreon = false;
 	return result[0] && result[0].patreon == 1;
 }
 
@@ -159,13 +150,13 @@ function getRandomBox() {
 		box.sql =
 			'INSERT INTO lootbox(id,boxcount,claimcount,claim) VALUES (' +
 			this.msg.author.id +
-			',1,0,\'2017-01-01\') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;';
+			",1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
 		box.text = '**<:box:427352600476647425> |** You received a lootbox!\n';
 	} else {
 		box.sql =
 			'INSERT INTO crate(uid,cratetype,boxcount,claimcount,claim) VALUES ((SELECT uid FROM user WHERE id = ' +
 			this.msg.author.id +
-			'),0,1,0,\'2017-01-01\') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;';
+			"),0,1,0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;";
 		box.text = '**<:crate:523771259302182922> |** You received a weapon crate!\n';
 	}
 	return box;

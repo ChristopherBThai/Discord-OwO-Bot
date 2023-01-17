@@ -48,7 +48,7 @@ async function parseUsers(p) {
 
 async function addPerk(p, id) {
 	// Fetch uid first
-	const uid = await p.global.getUid(id);
+	await p.global.getUid(id);
 	await patreonUtil.giveCustomHunt(p, id);
 
 	// Send msgs

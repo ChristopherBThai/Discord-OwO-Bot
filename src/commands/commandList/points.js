@@ -12,7 +12,7 @@ module.exports = new CommandInterface({
 
 	args: '',
 
-	desc: 'Gives the user a point. This is the same as just saying owo in your messages.\nYou weren\'t really suppose to find this.',
+	desc: "Gives the user a point. This is the same as just saying owo in your messages.\nYou weren't really suppose to find this.",
 
 	example: [],
 

@@ -227,7 +227,9 @@ let display = (exports.display = async function (p, pageNum = 0, sort = 0, opt) 
 					if (page) await msg.edit({ embed: page.embed });
 				}
 			}
-		} catch (err) {/* empty */}
+		} catch (err) {
+			/* empty */
+		}
 	};
 
 	collector.on('collect', handler);
@@ -252,17 +254,17 @@ exports.askDisplay = async function (p, id, opt = {}) {
 		return;
 	}
 	if (id == p.client.user.id) {
-		p.errorMsg('... trust me. You don\'t want to see what I have.', 3000);
+		p.errorMsg("... trust me. You don't want to see what I have.", 3000);
 		return;
 	}
 
 	let user = p.getMention(id);
 	if (!user) {
-		p.errorMsg(', I couldn\'t find that user! :(', 3000);
+		p.errorMsg(", I couldn't find that user! :(", 3000);
 		return;
 	}
 	if (user.bot) {
-		p.errorMsg(', you dum dum! Bots don\'t carry weapons!', 3000);
+		p.errorMsg(", you dum dum! Bots don't carry weapons!", 3000);
 		return;
 	}
 
@@ -291,7 +293,9 @@ exports.askDisplay = async function (p, id, opt = {}) {
 		} else {
 			try {
 				await msg.removeReactions();
-			} catch (e) {/* empty */}
+			} catch (e) {
+				/* empty */
+			}
 			display(p, 0, 0, {
 				users: [p.msg.author.id],
 				msg,
@@ -406,7 +410,7 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	}
 
 	/* Construct msg */
-	let title = user.username + '\'s ' + (wid ? weapons[wid].name : 'weapons');
+	let title = user.username + "'s " + (wid ? weapons[wid].name : 'weapons');
 	let embed = {
 		author: {
 			name: title,
@@ -509,7 +513,7 @@ exports.describe = async function (p, uwid) {
 	/* Construct embed */
 	let embed = {
 		author: {
-			name: username + '\'s ' + weapon.name,
+			name: username + "'s " + weapon.name,
 		},
 		color: p.config.embed_color,
 		thumbnail: {

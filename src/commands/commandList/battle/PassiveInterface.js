@@ -4,6 +4,7 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
  */
+/* eslint-disable no-unused-vars */
 
 const ranks = [0.2, 0.2, 0.2, 0.2, 0.14, 0.05, 0.01];
 module.exports = class PassiveInterface {
@@ -19,11 +20,11 @@ module.exports = class PassiveInterface {
 
 		/* Construct desc */
 		let desc = this.statDesc;
-		for (var i = 0; i < stats.length; i++) {
+		for (let i = 0; i < stats.length; i++) {
 			desc = desc.replace('?', stats[i]);
 		}
 		/* Check if it has enough emojis */
-		if (this.emojis.length != 7) throw new Error(`[${args.id}] does not have 7 emojis`);
+		if (this.emojis.length != 7) throw new Error(`[${this.id}] does not have 7 emojis`);
 
 		this.avgQuality = avgQuality;
 		this.qualities = qualities;
@@ -34,8 +35,8 @@ module.exports = class PassiveInterface {
 	}
 
 	randomQualities() {
-		var qualities = [];
-		for (var i = 0; i < this.qualityList.length; i++)
+		let qualities = [];
+		for (let i = 0; i < this.qualityList.length; i++)
 			qualities.push(Math.trunc(Math.random() * 101));
 		return qualities;
 	}
@@ -50,8 +51,8 @@ module.exports = class PassiveInterface {
 		quality /= 100;
 
 		/* Get correct rank */
-		var count = 0;
-		for (var i = 0; i < ranks.length; i++) {
+		let count = 0;
+		for (let i = 0; i < ranks.length; i++) {
 			count += ranks[i];
 			if (quality <= count) return this.emojis[i];
 		}
@@ -61,8 +62,8 @@ module.exports = class PassiveInterface {
 	toStats(qualities) {
 		if (qualities.length != this.qualityList.length)
 			throw new Error('Array size does not match in toStats. Passive id:' + this.id);
-		var stats = [];
-		for (var i = 0; i < qualities.length; i++) {
+		let stats = [];
+		for (let i = 0; i < qualities.length; i++) {
 			let quality = qualities[i];
 			if (quality > 100) quality = 100;
 			if (quality < 0) quality = 0;

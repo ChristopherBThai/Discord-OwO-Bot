@@ -14,7 +14,7 @@ module.exports = new CommandInterface({
 
 	args: '{type}',
 
-	desc: 'Grabs a gif/pic with the given type. To list all the types, type \'owo gif\'. Some listed types may not work',
+	desc: "Grabs a gif/pic with the given type. To list all the types, type 'owo gif'. Some listed types may not work",
 
 	example: ['owo pic neko', 'owo gif neko'],
 

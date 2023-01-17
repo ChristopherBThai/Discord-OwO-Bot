@@ -57,7 +57,7 @@ async function bet(con, msg, args, global, p) {
 	sql += 'SELECT * FROM lottery WHERE id = ' + msg.author.id + ' AND valid = 1;';
 	let result = await p.query(sql);
 	if (!result[0][0] || result[0][0].money < amount) {
-		p.errorMsg(', You don\'t have enough cowoncy!', 3000);
+		p.errorMsg(", You don't have enough cowoncy!", 3000);
 		return;
 	} else {
 		if (all) amount = parseInt(result[0][0].money);
@@ -107,7 +107,7 @@ async function bet(con, msg, args, global, p) {
 				text: '*Percentage and jackpot may change over time',
 			},
 			author: {
-				name: msg.author.username + '\'s Lottery Submission',
+				name: msg.author.username + "'s Lottery Submission",
 			},
 			fields: [
 				{
@@ -175,7 +175,7 @@ async function display(con, msg, p) {
 			text: '*Percentage and jackpot may change over time',
 		},
 		author: {
-			name: msg.author.username + '\'s Lottery Status',
+			name: msg.author.username + "'s Lottery Status",
 		},
 		fields: [
 			{

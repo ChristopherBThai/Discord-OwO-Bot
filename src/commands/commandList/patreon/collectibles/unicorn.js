@@ -21,7 +21,7 @@ class Unicorn extends Collectible {
 			'The unicorn is a legendary creature with a single large, pointed, spiraling horn projecting from its forehead.' +
 			'\nThe unicorn has captured the minds and hearts of many because of the unique properties it supposedly possessed.  The unicorn is greatly desired but difficult or impossible to find.' +
 			'\n"The Unicorn" song was made very popular by the Irish Rovers in 1968.' +
-			'\nAccording to the song, the unicorn was not a fantasy, but a creature that missed the boat by not boarding Noah\'s Ark in time to be saved from the Great Flood.' +
+			"\nAccording to the song, the unicorn was not a fantasy, but a creature that missed the boat by not boarding Noah's Ark in time to be saved from the Great Flood." +
 			'\nNOTE:  The Okapi is a real animal once known as the "African unicorn".';
 		this.displayMsg = '?emoji? **| ?user?**, you currently have ?count? Unicorn?plural?!';
 		this.brokeMsg = ', you do not have any Unicorns! >:c';

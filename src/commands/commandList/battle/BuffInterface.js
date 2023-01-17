@@ -4,6 +4,7 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
  */
+/* eslint-disable no-unused-vars */
 
 module.exports = class BuffInterface {
 	/* Constructor */
@@ -23,7 +24,7 @@ module.exports = class BuffInterface {
 
 		/* Construct desc */
 		let desc = this.statDesc;
-		for (var i = 0; i < stats.length; i++) {
+		for (let i = 0; i < stats.length; i++) {
 			desc = desc.replace('?', stats[i]);
 		}
 
@@ -38,8 +39,8 @@ module.exports = class BuffInterface {
 
 	/* Get random qualities based on quality list */
 	randomQualities() {
-		var qualities = [];
-		for (var i = 0; i < this.qualityList.length; i++)
+		let qualities = [];
+		for (let i = 0; i < this.qualityList.length; i++)
 			qualities.push(Math.trunc(Math.random() * 101));
 		return qualities;
 	}
@@ -48,8 +49,8 @@ module.exports = class BuffInterface {
 	toStats(qualities) {
 		if (qualities.length != this.qualityList.length)
 			throw new Error('Array size does not match in toStats. Buff id:' + this.id);
-		var stats = [];
-		for (var i = 0; i < qualities.length; i++) {
+		let stats = [];
+		for (let i = 0; i < qualities.length; i++) {
 			let quality = qualities[i];
 			if (quality > 100) quality = 100;
 			if (quality < 0) quality = 0;

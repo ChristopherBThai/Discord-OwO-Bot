@@ -59,7 +59,7 @@ module.exports = new CommandInterface({
 			.catch(function (err) {
 				if (err.message == 'Promise timed out after 1000 ms')
 					p.errorMsg(', that expression is too difficult for me... :c', 3000);
-				else p.errorMsg('... I don\'t think that\'s an expression silly head', 3000);
+				else p.errorMsg("... I don't think that's an expression silly head", 3000);
 			})
 			.then(function () {
 				pool.terminate();

@@ -63,7 +63,7 @@ async function giveBall(p) {
 	let last = await p.redis.hget('cd_' + p.msg.author.id, cdBall);
 	last = last ? new Date(last) : new Date();
 	if (new Date() - last < 345600000) {
-		return p.errorMsg(', Baby Yoda doesn\'t need a silver ball');
+		return p.errorMsg(", Baby Yoda doesn't need a silver ball");
 	}
 
 	let result = await p.redis.hincrby('data_' + p.msg.author.id, ball, -1);
@@ -91,7 +91,7 @@ async function feed(p) {
 	const afterMid = dateUtil.afterMidnight(lasttime);
 
 	let streak = 1;
-	let title = p.msg.author.username + '\'s Baby Yoda';
+	let title = p.msg.author.username + "'s Baby Yoda";
 	if (afterMid.after) {
 		await p.redis.hset('cd_' + p.msg.author.id, cdFeed, afterMid.now);
 		await p.redis.expire('cd_' + p.msg.author.id);
@@ -127,7 +127,7 @@ async function display(p, title, gif = gif2) {
 	const lasttime = await p.redis.hget('cd_' + p.msg.author.id, cdFeed);
 	const afterMid = dateUtil.afterMidnight(lasttime);
 	const streak = (await p.redis.hget('data_' + p.msg.author.id, table)) || 0;
-	if (!title) title = p.msg.author.username + '\'s Baby Yoda';
+	if (!title) title = p.msg.author.username + "'s Baby Yoda";
 
 	const embed = {
 		author: {

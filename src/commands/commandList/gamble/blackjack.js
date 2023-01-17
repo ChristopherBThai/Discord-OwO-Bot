@@ -49,7 +49,7 @@ module.exports = new CommandInterface({
 			p.setCooldown(5);
 			return;
 		} else if (amount <= 0) {
-			p.send('**🚫 | ' + msg.author.username + '**, You can\'t bet that much silly!', 3000);
+			p.send('**🚫 | ' + msg.author.username + "**, You can't bet that much silly!", 3000);
 			p.setCooldown(5);
 			return;
 		}

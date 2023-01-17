@@ -15,7 +15,7 @@ module.exports = new CommandInterface({
 
 	args: '[server|disabletext|enabletext]',
 
-	desc: 'Display your Level! Increase your level by talking on Discord!\nYou can gain a maximum of 3000xp per day with a bonus of 500 for the first message of the day! SPAMMING MESSAGES WILL NOT COUNT.\nYou will get rewards for leveling up. If you missed a level up reward, you can type this command to claim it. You can disable level up messages for the guild by using \'owo level disabletext\'.',
+	desc: "Display your Level! Increase your level by talking on Discord!\nYou can gain a maximum of 3000xp per day with a bonus of 500 for the first message of the day! SPAMMING MESSAGES WILL NOT COUNT.\nYou will get rewards for leveling up. If you missed a level up reward, you can type this command to claim it. You can disable level up messages for the guild by using 'owo level disabletext'.",
 
 	example: ['owo level', 'owo level server', 'owo level disabletext'],
 

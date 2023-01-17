@@ -73,7 +73,7 @@ module.exports = new CommandInterface({
 			' AND activecount > 0;';
 		let result = await p.query(sql);
 		if (result[0][0] == undefined || result[0][0].money < this.animals.rollprice) {
-			p.errorMsg(', You don\'t have enough cowoncy!', 3000);
+			p.errorMsg(", You don't have enough cowoncy!", 3000);
 		} else {
 			//Sort gem benefits
 			let gems = {};
@@ -205,7 +205,7 @@ function getAnimals(p, result, gems, uid) {
 	for (let i = 0; i < animal.length; i++) {
 		let type = animal[i][2];
 		xp += animal[i][3];
-		insertAnimal += '(1,1,' + p.msg.author.id + ',\'' + animal[i][1] + '\'),';
+		insertAnimal += '(1,1,' + p.msg.author.id + ",'" + animal[i][1] + "'),";
 		if (!typeCount[type]) typeCount[type] = 0;
 		typeCount[type] += 1;
 	}
@@ -238,17 +238,17 @@ function getAnimals(p, result, gems, uid) {
 		sql +=
 			'UPDATE user_gem SET activecount = GREATEST(activecount - 1, 0) WHERE uid = ' +
 			uid +
-			' AND gname = \'' +
+			" AND gname = '" +
 			gems['Patreon'].gname +
-			'\';';
+			"';";
 	if (gems['Hunting']) {
 		huntingActive = true;
 		sql +=
 			'UPDATE user_gem SET activecount = GREATEST(activecount - 1, 0) WHERE uid = ' +
 			uid +
-			' AND gname = \'' +
+			" AND gname = '" +
 			gems['Hunting'].gname +
-			'\';';
+			"';";
 	}
 	if (gems['Empowering']) {
 		empoweringActive = true;
@@ -257,9 +257,9 @@ function getAnimals(p, result, gems, uid) {
 			Math.trunc(animal.length / 2) +
 			', 0) WHERE uid = ' +
 			uid +
-			' AND gname = \'' +
+			" AND gname = '" +
 			gems['Empowering'].gname +
-			'\';';
+			"';";
 	}
 	if (gems['Lucky']) {
 		// make lucky gems last twice as long if you're running all 3 gems
@@ -271,9 +271,9 @@ function getAnimals(p, result, gems, uid) {
 			luckySubtract +
 			', 0) WHERE uid = ' +
 			uid +
-			' AND gname = \'' +
+			" AND gname = '" +
 			gems['Lucky'].gname +
-			'\';';
+			"';";
 	}
 
 	/* Construct output message for user */
@@ -299,8 +299,8 @@ function getAnimals(p, result, gems, uid) {
 					? 1
 					: gems[i].type == 'Empowering' ||
 					  (gems[i].type == 'Lucky' && huntingActive && empoweringActive)
-						? Math.trunc(animal.length / 2)
-						: animal.length);
+					? Math.trunc(animal.length / 2)
+					: animal.length);
 			if (remaining < 0) remaining = 0;
 			gemText += gems[i].emoji + '`[' + remaining + '/' + gems[i].length + ']` ';
 		}

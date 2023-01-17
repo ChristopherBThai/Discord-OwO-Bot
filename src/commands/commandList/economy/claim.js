@@ -71,22 +71,22 @@ module.exports = new CommandInterface({
 					const type = reward.charAt(0);
 					const count = parseInt(reward.substring(1));
 					switch (type) {
-					case 'c':
-						sql += `INSERT INTO cowoncy (id, money) VALUES (${p.msg.author.id}, ${count}) ON DUPLICATE KEY UPDATE money = money + ${count};`;
-						totalCowoncy += count;
-						break;
-					case 'l':
-						sql += `INSERT INTO lootbox (id,boxcount,claimcount,claim) VALUES (${p.msg.author.id},${count},0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
-						totalLootbox += count;
-						break;
-					case 'w':
-						sql += `INSERT INTO crate (uid,cratetype,boxcount,claimcount,claim) VALUES (${uid},0,${count},0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
-						totalWeaponCrate += count;
-						break;
-					case 'f':
-						sql += `INSERT INTO lootbox (id,fbox,claimcount,claim) VALUES (${p.msg.author.id},${count},0,'2017-01-01') ON DUPLICATE KEY UPDATE fbox = fbox + ${count};`;
-						totalFabledLootbox += count;
-						break;
+						case 'c':
+							sql += `INSERT INTO cowoncy (id, money) VALUES (${p.msg.author.id}, ${count}) ON DUPLICATE KEY UPDATE money = money + ${count};`;
+							totalCowoncy += count;
+							break;
+						case 'l':
+							sql += `INSERT INTO lootbox (id,boxcount,claimcount,claim) VALUES (${p.msg.author.id},${count},0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
+							totalLootbox += count;
+							break;
+						case 'w':
+							sql += `INSERT INTO crate (uid,cratetype,boxcount,claimcount,claim) VALUES (${uid},0,${count},0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
+							totalWeaponCrate += count;
+							break;
+						case 'f':
+							sql += `INSERT INTO lootbox (id,fbox,claimcount,claim) VALUES (${p.msg.author.id},${count},0,'2017-01-01') ON DUPLICATE KEY UPDATE fbox = fbox + ${count};`;
+							totalFabledLootbox += count;
+							break;
 					}
 				});
 				await p.query(sql);

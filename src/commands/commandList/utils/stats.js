@@ -56,7 +56,7 @@ module.exports = new CommandInterface({
 
 		let embed = {
 			description:
-				'Here\'s a little bit of information! If you need help with commands, type `owo help`.',
+				"Here's a little bit of information! If you need help with commands, type `owo help`.",
 			color: p.config.embed_color,
 			timestamp: new Date(),
 			author: {

@@ -7,9 +7,6 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const tada = '🎉';
-const gear = '⚙';
-
 module.exports = new CommandInterface({
 	alias: ['giveperkticket', 'giveticket'],
 
@@ -67,15 +64,15 @@ async function giveTicket(p, id, count = 1, type = 1) {
 	}
 	let name, emoji;
 	switch (type) {
-	case 1:
-		type = 'common_tickets';
-		name = 'Common Ticket';
-		if (Math.abs(count) > 1) name += 's';
-		emoji = p.config.emoji.perkTicket.common;
-		break;
-	default:
-		p.errorMsg(', wrong ticket type for ' + id);
-		return;
+		case 1:
+			type = 'common_tickets';
+			name = 'Common Ticket';
+			if (Math.abs(count) > 1) name += 's';
+			emoji = p.config.emoji.perkTicket.common;
+			break;
+		default:
+			p.errorMsg(', wrong ticket type for ' + id);
+			return;
 	}
 
 	// Fetch uid first
@@ -83,7 +80,7 @@ async function giveTicket(p, id, count = 1, type = 1) {
 
 	// Query result
 	let sql = `INSERT INTO user_item (uid, name, count) VALUES (${uid}, '${type}', ${count}) ON DUPLICATE KEY update count = count + ${count};`;
-	let result = await p.query(sql);
+	await p.query(sql);
 
 	// Send msgs
 	let user;

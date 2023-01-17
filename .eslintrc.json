@@ -11,11 +11,13 @@
 	},
 	"ignorePatterns": [".github/*"],
 	"rules": {
-		"indent": ["error", "tab"],
+		"indent": "off",
 		"linebreak-style": ["error", "unix"],
 		"quotes": ["error", "single"],
 		"semi": ["error", "always"],
 		"no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
-		"no-useless-escape": "off"
+		"no-useless-escape": "off",
+		"max-len": [0, 100, "tab", { "ignoreUrls": true }],
+		"quotes": "off"
 	}
 }

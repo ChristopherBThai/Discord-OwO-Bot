@@ -34,8 +34,9 @@ module.exports = new CommandInterface({
 			' WHERE id = ' +
 			p.args[0] +
 			';';
-		let result = await p.query(sql);
+		await p.query(sql);
 
+		let user, guild;
 		if (
 			(user = await p.sender.msgUser(
 				p.args[0],
@@ -43,7 +44,7 @@ module.exports = new CommandInterface({
 			))
 		) {
 			if (user.dmError) {
-				p.send('⚠ **|** Penalty has been set to 0 for ' + user.username + ', I couldn\'t DM them.');
+				p.send('⚠ **|** Penalty has been set to 0 for ' + user.username + ", I couldn't DM them.");
 			} else {
 				p.send('Penalty has been set to 0 for ' + user.username);
 			}

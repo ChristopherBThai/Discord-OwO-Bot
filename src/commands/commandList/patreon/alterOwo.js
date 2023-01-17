@@ -9,8 +9,8 @@ const blank = '<:blank:427371936482328596>';
 
 exports.alter = function (id, text, info) {
 	switch (id) {
-	case '456598711590715403':
-		return lexx(text, info);
+		case '456598711590715403':
+			return lexx(text, info);
 	}
 	return text;
 };

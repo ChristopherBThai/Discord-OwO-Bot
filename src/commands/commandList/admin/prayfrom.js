@@ -74,7 +74,7 @@ async function banList(p) {
 		} catch (e) {
 			p.replyMsg(
 				banEmoji,
-				', **' + username + '** and ' + (count - 1) + ' users have been banned, I couldn\'t DM them.'
+				', **' + username + '** and ' + (count - 1) + " users have been banned, I couldn't DM them."
 			);
 			return;
 		}
@@ -112,7 +112,7 @@ async function displayList(p) {
 	let result = await p.query(sql);
 
 	if (!result[0] || !result[0].count || result[0].count == 0) {
-		p.errorMsg(', ' + username + ' hasn\'t prayed to anyone!', 3000);
+		p.errorMsg(', ' + username + " hasn't prayed to anyone!", 3000);
 		return;
 	}
 
@@ -143,7 +143,7 @@ async function displayList(p) {
 			msg.edit(embed);
 		}
 	});
-	collector.on('end', async function (collected) {
+	collector.on('end', async function (_collected) {
 		embed.embed.color = 6381923;
 		await msg.edit({
 			content: 'This message is now inactive',

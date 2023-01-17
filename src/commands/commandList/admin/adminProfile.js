@@ -22,7 +22,7 @@ module.exports = new CommandInterface({
 			let user = p.args[0].match(/[0-9]+/)[0];
 			user = await p.fetch.getUser(user);
 			if (!user) {
-				p.errorMsg(', I couldn\'t find that user!', 3000);
+				p.errorMsg(", I couldn't find that user!", 3000);
 			} else {
 				await profileUtil.displayProfile(p, user);
 			}

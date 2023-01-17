@@ -217,7 +217,6 @@ function initCommands() {
 
 	let addAdminCommand = function (command) {
 		let alias = command.alias;
-		let name = alias[0];
 		if (alias) {
 			for (let i = 0; i < alias.length; i++) {
 				adminCommands[alias[i]] = command;

@@ -98,7 +98,7 @@ async function useGauntlet(p) {
 		let result = await p.redis.incr('gauntlet', p.msg.author.id, -1);
 		if (result == null || result < 0) {
 			if (result < 0) p.redis.incr('gauntlet', p.msg.author.id, 1);
-			p.errorMsg(', you don\'t have a gauntlet!', 3000);
+			p.errorMsg(", you don't have a gauntlet!", 3000);
 			p.setCooldown(5);
 			return;
 		}
@@ -111,7 +111,7 @@ async function useGauntlet(p) {
 		p.replyMsg(reverseEmoji, ', you have saved the earth by reversing!');
 	} else if (rand < 21) {
 		await p.redis.incr('universe_destroyed', p.msg.author.id, 1);
-		p.replyMsg(snapEmoji, ', you have destroyed half of the universe\'s population! Astrocity!');
+		p.replyMsg(snapEmoji, ", you have destroyed half of the universe's population! Astrocity!");
 	} else {
 		await p.redis.incr('pears', p.msg.author.id, 1);
 		p.replyMsg(pearEmoji, ', you traded the mighty gauntlet for a sweet pear');

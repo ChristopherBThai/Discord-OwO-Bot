@@ -7,8 +7,6 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const delay = 30000;
-
 module.exports = new CommandInterface({
 	alias: ['resetbot', 'restartbot'],
 

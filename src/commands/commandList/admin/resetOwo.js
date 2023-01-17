@@ -31,12 +31,10 @@ module.exports = new CommandInterface({
 		let result = await p.query(sql);
 
 		let count;
-		let isUser = true;
 		if (result[0].length) {
 			count = result[0][0].count;
 		} else if (result[2].length) {
 			count = result[2][0].count;
-			isUser = false;
 			const guild = await p.fetch.getGuild(p.args[0]);
 			const guildName = guild ? guild.name : p.args[0];
 			return p.send(

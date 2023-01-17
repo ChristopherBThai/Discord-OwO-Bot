@@ -27,7 +27,6 @@ module.exports = new CommandInterface({
 			}
 		}
 
-		const result = 'Successfully messaged: ';
 		const usernames = [];
 		for (let key in users) {
 			try {

@@ -18,7 +18,7 @@ class Cloud extends Collectible {
 		this.ownerOnly = true;
 		this.giveAmount = 1;
 		this.description =
-			'Soft mist of cotton gentle and sweet,  combine me with thunder and I\'ll be your worst nightmare.';
+			"Soft mist of cotton gentle and sweet,  combine me with thunder and I'll be your worst nightmare.";
 		this.displayMsg =
 			'?emoji? **| ?user?**, your sky has **?count?** fluffy clouds ?emoji?' +
 			'\n?mergeEmoji? **|** You’ve had **?mergeCount?** storms come your way! <:thunder:1056432512953491526>';

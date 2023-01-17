@@ -17,7 +17,7 @@ module.exports = new CommandInterface({
 
 	desc: 'Creates a spongebob chicken meme!',
 
-	example: ['owo spongebobchicken I don\'t like owo bot!'],
+	example: ["owo spongebobchicken I don't like owo bot!"],
 
 	related: [],
 

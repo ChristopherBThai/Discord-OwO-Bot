@@ -119,7 +119,7 @@ async function getWeapon(p, uwid) {
 		);
 		return;
 	} else if (weapon.unsellable) {
-		p.errorMsg(', I can\'t reroll this weapon!', 4000);
+		p.errorMsg(", I can't reroll this weapon!", 4000);
 		return;
 	}
 
@@ -165,7 +165,7 @@ async function sendMessage(p, oldWeapon, newWeapon, rrType, msg) {
 			if (!(await useShards(p))) {
 				embed.color = 16711680;
 				msg.edit({
-					content: 'You don\'t have enough ' + shardEmoji + ' Weapon Shards!',
+					content: "You don't have enough " + shardEmoji + ' Weapon Shards!',
 					embed,
 				});
 			} else {

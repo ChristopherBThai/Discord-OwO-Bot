@@ -28,7 +28,7 @@ async function checkSender(user, amount, con) {
 	let result = await con.query(sql);
 	if (!result[0] || result[0].money < amount) {
 		return {
-			error: ', you silly hooman! You don\'t have enough cowoncy!',
+			error: ", you silly hooman! You don't have enough cowoncy!",
 		};
 	}
 

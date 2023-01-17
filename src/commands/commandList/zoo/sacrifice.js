@@ -122,7 +122,7 @@ async function sellAnimal(p, msg, con, animal, count, send, global) {
 	}
 
 	sql =
-		'SELECT count FROM animal WHERE id = ' + msg.author.id + ' AND name = \'' + animal.value + '\';';
+		'SELECT count FROM animal WHERE id = ' + msg.author.id + " AND name = '" + animal.value + "';";
 	if (count == 'all') {
 		sql += `UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id INNER JOIN (SELECT count FROM animal WHERE id = ${msg.author.id} AND name = '${animal.value}') AS sum SET essence = essence + (sum.count*${animal.essence}), autohunt.total = autohunt.total + (sum.count*${animal.essence}), saccount = saccount + animal.count, animal.count = 0 WHERE animal.id = ${msg.author.id} AND name = '${animal.value}' AND animal.count > 0;`;
 	} else {
@@ -138,7 +138,7 @@ async function sellAnimal(p, msg, con, animal, count, send, global) {
 
 	if (count == 'all') {
 		if (!result[0][0] || result[0][0].count <= 0) {
-			send('**🚫 | ' + msg.author.username + '**, You don\'t have enough animals! >:c', 3000);
+			send('**🚫 | ' + msg.author.username + "**, You don't have enough animals! >:c", 3000);
 		} else {
 			count = result[0][0].count;
 			send(
@@ -173,7 +173,7 @@ async function sellAnimal(p, msg, con, animal, count, send, global) {
 		p.logger.incr('essence', count * animal.essence, { type: 'sacrifice' }, p.msg);
 	} else {
 		send(
-			'**🚫 | ' + msg.author.username + '**, You can\'t sacrifice more than you have silly! >:c',
+			'**🚫 | ' + msg.author.username + "**, You can't sacrifice more than you have silly! >:c",
 			3000
 		);
 	}
@@ -185,7 +185,7 @@ async function sellRank(p, msg, con, rank, send, global) {
 	if (!result[0])
 		await p.query(`INSERT IGNORE INTO autohunt (id,essence) VALUES (${msg.author.id},0);`);
 
-	let animals = '(\'' + rank.animals.join('\',\'') + '\')';
+	let animals = "('" + rank.animals.join("','") + "')";
 	let points =
 		'(SELECT COALESCE(SUM(count),0) AS sum FROM animal WHERE id = ' +
 		msg.author.id +
@@ -210,7 +210,7 @@ async function sellRank(p, msg, con, rank, send, global) {
 
 	result = await p.query(sql);
 	if (result[1].affectedRows <= 0) {
-		send('**🚫 | ' + msg.author.username + '**, You don\'t have enough animals! >:c', 3000);
+		send('**🚫 | ' + msg.author.username + "**, You don't have enough animals! >:c", 3000);
 	} else {
 		let count = 0;
 		for (let i in result[0]) count += result[0][i].count;
@@ -245,7 +245,7 @@ async function sellRanks(p, msg, con, ranks, send, global) {
 	sql = '';
 	for (let i in ranks) {
 		let rank = ranks[i];
-		let animals = '(\'' + rank.animals.join('\',\'') + '\')';
+		let animals = "('" + rank.animals.join("','") + "')";
 		let points =
 			'(SELECT COALESCE(SUM(count),0) AS sum FROM animal WHERE id = ' +
 			msg.author.id +
@@ -309,5 +309,5 @@ async function sellRanks(p, msg, con, ranks, send, global) {
 			}
 			count++;
 		}
-	} else send('**🚫 | ' + msg.author.username + '**, You don\'t have enough animals! >:c', 3000);
+	} else send('**🚫 | ' + msg.author.username + "**, You don't have enough animals! >:c", 3000);
 }

@@ -14,7 +14,7 @@ module.exports = new CommandInterface({
 
 	args: '{gfText|@user|emoji} | {womenText|@user|emoji} | {bfText|@user|emoji}',
 
-	desc: 'Generate a distracted boyfriend meme! Seperate the three arguments with a \'|\' bar, or press \'Shift+Enter\' between arguments',
+	desc: "Generate a distracted boyfriend meme! Seperate the three arguments with a '|' bar, or press 'Shift+Enter' between arguments",
 
 	example: ['owo distracted Playing actual games | @OwO | @me'],
 

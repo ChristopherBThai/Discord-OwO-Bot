@@ -14,7 +14,7 @@ module.exports = new CommandInterface({
 
 	args: '{msg} -{language}',
 
-	desc: 'Translates a message to a specific language. The default language will be english.\nUse \'owo listlang to list all the languages',
+	desc: "Translates a message to a specific language. The default language will be english.\nUse 'owo listlang to list all the languages",
 
 	example: ['owo translate Hello -ja', 'owo translate no hablo espanol -en'],
 

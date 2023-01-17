@@ -10,14 +10,14 @@ const axios = require('axios');
 exports.handle = function (packet, _id) {
 	if (packet.t === 'INTERACTION_CREATE') {
 		switch (packet.d.type) {
-		case 2:
-			handleApplicationCommand.bind(this)(packet);
-			break;
+			case 2:
+				handleApplicationCommand.bind(this)(packet);
+				break;
 
 			// Buttons
-		case 3:
-			handleMessageComponent.bind(this)(packet);
-			break;
+			case 3:
+				handleMessageComponent.bind(this)(packet);
+				break;
 		}
 	}
 };
@@ -25,15 +25,15 @@ exports.handle = function (packet, _id) {
 function handleApplicationCommand(packet) {
 	const interaction = new Interaction(this.bot, packet.d);
 	switch (packet.d.data.type) {
-	// Slash commands
-	case 1:
-		// this.command.executeInteraction(interaction);
-		break;
+		// Slash commands
+		case 1:
+			// this.command.executeInteraction(interaction);
+			break;
 
 		// Message commands
-	case 3:
-		this.interactionHandlers.messages.emit(interaction);
-		break;
+		case 3:
+			this.interactionHandlers.messages.emit(interaction);
+			break;
 	}
 }
 

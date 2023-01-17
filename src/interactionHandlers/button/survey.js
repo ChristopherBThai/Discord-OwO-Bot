@@ -23,7 +23,8 @@ async function startSurvey(user, uid) {
 
 	try {
 		let sql = `SELECT * FROM user_survey WHERE uid = ${uid};`;
-		sql += 'SELECT * FROM survey_question WHERE sid = (SELECT sid FROM survey ORDER BY sid DESC LIMIT 1);';
+		sql +=
+			'SELECT * FROM survey_question WHERE sid = (SELECT sid FROM survey ORDER BY sid DESC LIMIT 1);';
 		let result = await con.query(sql);
 
 		const userSurvey = result[0][0];

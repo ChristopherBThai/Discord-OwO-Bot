@@ -37,7 +37,7 @@ module.exports = new CommandInterface({
 		/* Validity check */
 		animal = p.global.validAnimal(animal);
 		if (!animal) {
-			return p.errorMsg(', I couldn\'t find that animal! D:');
+			return p.errorMsg(", I couldn't find that animal! D:");
 		}
 		if (input.length > 35) {
 			return p.errorMsg(', The nickname is too long!', 3000);
