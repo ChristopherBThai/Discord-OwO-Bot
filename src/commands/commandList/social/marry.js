@@ -76,7 +76,7 @@ module.exports = new CommandInterface({
 			ringId = parseInt(p.args[0]);
 		} else {
 			p.errorMsg(
-				', invalid arguments! Please include the person you\'re marrying and the ring id.',
+				", invalid arguments! Please include the person you're marrying and the ring id.",
 				3000
 			);
 			return;
@@ -84,13 +84,13 @@ module.exports = new CommandInterface({
 
 		/* More validation checks */
 		if (ringId < 1 || ringId > 7) {
-			p.errorMsg(', that\'s not a valid ring id!', 3000);
+			p.errorMsg(", that's not a valid ring id!", 3000);
 			return;
 		} else if (id == p.msg.author.id) {
-			p.errorMsg(', silly. You can\'t marry yourself!', 3000);
+			p.errorMsg(", silly. You can't marry yourself!", 3000);
 			return;
 		} else if (id == p.client.user.id) {
-			p.errorMsg(', sorry love! I\'m already taken c;', 3000);
+			p.errorMsg(", sorry love! I'm already taken c;", 3000);
 			return;
 		}
 
@@ -99,7 +99,7 @@ module.exports = new CommandInterface({
 			p.errorMsg(', please tag a user to marry them!', 3000);
 			return;
 		} else if (user.bot) {
-			p.errorMsg(', you silly hooman! You can\'t marry a bot!', 3000);
+			p.errorMsg(", you silly hooman! You can't marry a bot!", 3000);
 			return;
 		}
 
@@ -132,7 +132,7 @@ async function propose(p, user, ringId) {
 	sql += `SELECT * FROM user WHERE id = ${user.id}`;
 	result = await p.query(sql);
 	if (result[0].changedRows < 1) {
-		p.errorMsg(', You don\'t have this ring! Please buy one at `owo shop`!');
+		p.errorMsg(", You don't have this ring! Please buy one at `owo shop`!");
 		return;
 	}
 
@@ -184,7 +184,7 @@ async function upgradeRing(p, user, ringId, result, ringResult) {
 		p.errorMsg(', you or your friend is already married!');
 		return;
 	} else if (ringResult.length < 1) {
-		p.errorMsg(', you cannot upgrade your ring if you don\'t have it silly!', 3000);
+		p.errorMsg(", you cannot upgrade your ring if you don't have it silly!", 3000);
 		return;
 	} else if (ringId == result.rid) {
 		p.errorMsg(', you silly. You are already using a ring with the same rarity!');
@@ -235,7 +235,7 @@ async function upgradeRing(p, user, ringId, result, ringResult) {
 			let iresult = await p.query(sql);
 			if (iresult.changedRows < 1) {
 				embed.description =
-					embed.description + '\n\n🚫 I don\'t see the ring in your inventory... 😏';
+					embed.description + "\n\n🚫 I don't see the ring in your inventory... 😏";
 				msg.edit({ embed });
 				return;
 			}

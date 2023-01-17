@@ -117,7 +117,7 @@ async function displayTransactions(p, id, query) {
 			msg.edit(embed);
 		}
 	});
-	collector.on('end', async function (collected) {
+	collector.on('end', async function (_collected) {
 		embed.embed.color = 6381923;
 		await msg.edit({
 			content: 'This message is now inactive',

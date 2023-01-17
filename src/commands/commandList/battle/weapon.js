@@ -58,7 +58,7 @@ module.exports = new CommandInterface({
 			/* No changing while in battle */
 			if (await battleUtil.inBattle(p)) {
 				p.errorMsg(
-					', You cannot change your weapon while you\'re in battle! Please finish your `owo battle`!',
+					", You cannot change your weapon while you're in battle! Please finish your `owo battle`!",
 					3000
 				);
 				return;
@@ -90,7 +90,7 @@ module.exports = new CommandInterface({
 			/* No changing while in battle */
 			if (await battleUtil.inBattle(p)) {
 				p.errorMsg(
-					', You cannot change your weapon while you\'re in battle! Please finish your `owo battle`!',
+					", You cannot change your weapon while you're in battle! Please finish your `owo battle`!",
 					3000
 				);
 				return;

@@ -20,7 +20,7 @@ const curseLines = [
 	'You feel very unlucky.',
 	'Oh no.',
 	'You should be careful...',
-	'I\'ve got a bad feeling about this...',
+	"I've got a bad feeling about this...",
 	'oh boy.',
 	'rip',
 ];

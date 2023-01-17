@@ -4,8 +4,8 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
  */
+/* eslint-disable no-unused-vars */
 
-const PassiveInterface = require('./PassiveInterface.js');
 const Logs = require('./util/logUtil.js');
 const requireDir = require('require-dir');
 const ranks = [
@@ -59,7 +59,7 @@ module.exports = class WeaponInterface {
 		if (cpassives.length > 0) {
 			let totalQualities = qualities.reduce((a, b) => a + b, 0);
 			let qualityCount = qualities.length;
-			for (var i = 0; i < cpassives.length; i++) {
+			for (let i = 0; i < cpassives.length; i++) {
 				totalQualities += cpassives[i].qualities.reduce((a, b) => a + b, 0);
 				qualityCount += cpassives[i].qualities.length;
 			}
@@ -73,7 +73,7 @@ module.exports = class WeaponInterface {
 
 		/* Determine rank */
 		let rank = 0;
-		for (var i = 0; i < ranks.length; i++) {
+		for (let i = 0; i < ranks.length; i++) {
 			rank += ranks[i][0];
 			if (avgQuality / 100 <= rank) {
 				rank = ranks[i];
@@ -89,7 +89,7 @@ module.exports = class WeaponInterface {
 
 		/* Construct desc */
 		let desc = this.statDesc;
-		for (var i = 0; i < stats.length; i++) {
+		for (let i = 0; i < stats.length; i++) {
 			desc = desc.replace('?', stats[i]);
 		}
 
@@ -109,13 +109,13 @@ module.exports = class WeaponInterface {
 
 	/* Alters the animal's stats */
 	alterStats(stats) {
-		for (var i = 0; i < this.passives.length; i++) this.passives[i].alterStats(stats);
+		for (let i = 0; i < this.passives.length; i++) this.passives[i].alterStats(stats);
 	}
 
 	/* Grabs a random passive(s) */
 	randomPassives() {
 		let randPassives = [];
-		for (var i = 0; i < this.passiveCount; i++) {
+		for (let i = 0; i < this.passiveCount; i++) {
 			let rand = Math.floor(Math.random() * this.availablePassives.length);
 			let passive = this.availablePassives[rand];
 			passive = passives[passive];
@@ -130,8 +130,8 @@ module.exports = class WeaponInterface {
 
 	/* Inits random qualities */
 	randomQualities() {
-		var qualities = [];
-		for (var i = 0; i < this.qualityList.length; i++)
+		let qualities = [];
+		for (let i = 0; i < this.qualityList.length; i++)
 			qualities.push(Math.trunc(Math.random() * 101));
 		return qualities;
 	}
@@ -140,8 +140,8 @@ module.exports = class WeaponInterface {
 	toStats(qualities) {
 		if (qualities.length != this.qualityList.length)
 			throw 'Array size does not match in toStats. Weapon id:' + this.id;
-		var stats = [];
-		for (var i = 0; i < qualities.length; i++) {
+		let stats = [];
+		for (let i = 0; i < qualities.length; i++) {
 			let quality = qualities[i];
 			if (quality > 100) quality = 100;
 			if (quality < 0) quality = 0;
@@ -183,7 +183,7 @@ module.exports = class WeaponInterface {
 	/* Get list of alive animals */
 	static getAlive(team) {
 		let alive = [];
-		for (var i in team) {
+		for (let i in team) {
 			if (team[i].stats.hp[0] > 0) alive.push(i);
 		}
 		return alive;
@@ -437,8 +437,8 @@ module.exports = class WeaponInterface {
 		quality /= 100;
 
 		/* Get correct rank */
-		var count = 0;
-		for (var i = 0; i < ranks.length; i++) {
+		let count = 0;
+		for (let i = 0; i < ranks.length; i++) {
 			count += ranks[i][0];
 			if (quality <= count) return this.emojis[i];
 		}

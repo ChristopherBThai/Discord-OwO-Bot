@@ -10,7 +10,6 @@ const CommandInterface = require('../../CommandInterface.js');
 const battleUtil = require('./util/battleUtil.js');
 const battleFriendUtil = require('./util/battleFriendUtil.js');
 const battleEmoji = '⚔';
-const battleSettings = require('./battleSetting.js');
 
 module.exports = new CommandInterface({
 	alias: ['battle', 'b', 'fight'],
@@ -67,10 +66,8 @@ module.exports = new CommandInterface({
 		let setting = await parseSettings(p);
 
 		/* Get battle info */
-		let resume = true;
 		let battle = await battleUtil.getBattle(p, setting);
 		if (!battle) {
-			resume = false;
 			battle = await battleUtil.initBattle(p, setting);
 		}
 
@@ -101,6 +98,7 @@ module.exports = new CommandInterface({
 });
 
 /* Change the display type */
+/* eslint-disable-next-line */
 async function changeType(p, type) {
 	let sql = '';
 	let text = '';

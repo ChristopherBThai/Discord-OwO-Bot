@@ -19,7 +19,7 @@ const pronouns = [
 	'nii-san',
 	'onee-san',
 	'love',
-	'ma\'am',
+	"ma'am",
 	'sir',
 	'friend',
 	'b-baka',
@@ -43,7 +43,7 @@ const answer = [
 	'maybe',
 	'you bet',
 	'not a chance',
-	'it\'s a secret',
+	"it's a secret",
 	'only for today',
 ];
 const faces = [
@@ -73,7 +73,7 @@ const result = [
 	'?a?!!',
 	'?p?... ?a?',
 	'?a?! ?f?',
-	'don\'t tell anyone but ?a? ?f?',
+	"don't tell anyone but ?a? ?f?",
 ];
 
 module.exports = new CommandInterface({

@@ -52,7 +52,7 @@ module.exports = new CommandInterface({
 		result =
 			'**<:blank:427371936482328596> |**  ' +
 			message[Math.trunc(Math.random() * message.length)] +
-			' It\'s a **' +
+			" It's a **" +
 			result +
 			'**!';
 

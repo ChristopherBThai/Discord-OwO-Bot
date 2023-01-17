@@ -28,6 +28,6 @@ module.exports = new CommandInterface({
 	bot: false,
 
 	execute: async function (p) {
-		p.send('Hi i\'m duwas');
+		p.send("Hi i'm duwas");
 	},
 });

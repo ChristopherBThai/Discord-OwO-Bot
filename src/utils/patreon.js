@@ -20,15 +20,15 @@ exports.parsePatreon = function (query) {
 
 	// parse benefits
 	switch (type) {
-	case 1:
-		animal = true;
-		break;
-	case 3:
-		animal = true;
-		cowoncy = true;
-		break;
-	default:
-		return null;
+		case 1:
+			animal = true;
+			break;
+		case 3:
+			animal = true;
+			cowoncy = true;
+			break;
+		default:
+			return null;
 	}
 
 	// Already expired
@@ -51,19 +51,19 @@ exports.parseSecondPatreon = function (query) {
 
 	// parse benefits
 	switch (query.patreonType) {
-	case 1:
-		animal = true;
-		break;
-	case 3:
-		animal = true;
-		cowoncy = true;
-		break;
-	default:
-		return null;
+		case 1:
+			animal = true;
+			break;
+		case 3:
+			animal = true;
+			cowoncy = true;
+			break;
+		default:
+			return null;
 	}
-	
+
 	return { animal, cowoncy, expireDate };
-}
+};
 
 exports.update = function (guild, oldMember, newMember) {
 	if (guild.id != '420104212895105044') return;

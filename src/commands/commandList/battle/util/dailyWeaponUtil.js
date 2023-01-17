@@ -111,7 +111,7 @@ exports.buy = async function (p, id) {
 					' Weapon Shards**'
 			);
 		} else {
-			p.errorMsg(', You don\'t have enough Weapon Shards!', 3000);
+			p.errorMsg(", You don't have enough Weapon Shards!", 3000);
 		}
 		return;
 	}
@@ -143,7 +143,7 @@ exports.buy = async function (p, id) {
 	weapon.shardPrice = markupPrices[weapon.rank.name];
 
 	if (!(await useShards(p, weapon.shardPrice))) {
-		p.errorMsg(', You don\'t have enough Weapon Shards!', 3000);
+		p.errorMsg(", You don't have enough Weapon Shards!", 3000);
 		return;
 	}
 
@@ -265,7 +265,7 @@ function createEmbed(p, weapons, page) {
 	/* Construct embed */
 	return {
 		author: {
-			name: 'Today\'s Available Weapons',
+			name: "Today's Available Weapons",
 			icon_url: p.msg.author.avatarURL,
 		},
 		color: p.config.embed_color,

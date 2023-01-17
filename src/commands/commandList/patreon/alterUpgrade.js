@@ -9,10 +9,10 @@ const botEmoji = '🛠';
 
 exports.alter = function (id, text) {
 	switch (id) {
-	case '255750356519223297':
-		return spotifybot(text);
-	default:
-		return text;
+		case '255750356519223297':
+			return spotifybot(text);
+		default:
+			return text;
 	}
 };
 

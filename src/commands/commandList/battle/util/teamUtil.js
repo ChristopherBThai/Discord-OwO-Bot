@@ -74,7 +74,7 @@ exports.addMember = async function (p, animal, pos) {
 	if (!result[1][0]) {
 		p.errorMsg(', you do not own this animal!', 3000);
 		return;
-	/* eslint-disable-next-line */
+		/* eslint-disable-next-line */
 	} else if (false && result[1][0].count < 1) {
 		p.errorMsg(', you need at least 1 animal in the zoo!', 3000);
 		return;
@@ -173,7 +173,7 @@ exports.removeMember = async function (p, remove) {
 	result = await p.query(sql, remove);
 
 	if (result[1][0] && !result[1][0].pid) {
-		p.errorMsg(', your team doesn\'t have an animal!');
+		p.errorMsg(", your team doesn't have an animal!");
 		return;
 	}
 
@@ -241,7 +241,7 @@ exports.renameTeam = async function (p, teamName) {
 			p.replaceMentions(`, You successfully changed your team name to: **${name}**`)
 		);
 	} else {
-		p.errorMsg(', You don\'t have a team! Please set one with `owo team add {animal}`', 5000);
+		p.errorMsg(", You don't have a team! Please set one with `owo team add {animal}`", 5000);
 	}
 };
 
@@ -351,7 +351,7 @@ const createTeamEmbed = (exports.createTeamEmbed = function (p, team, other = {}
 	/* Construct msg */
 	return {
 		author: {
-			name: p.msg.author.username + '\'s ' + p.replaceMentions(other.tname),
+			name: p.msg.author.username + "'s " + p.replaceMentions(other.tname),
 			icon_url: p.msg.author.avatarURL,
 		},
 		description:

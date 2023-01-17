@@ -15,7 +15,7 @@ module.exports = new CommandInterface({
 
 	args: '{setguild|unsetguild|previous|emoji1 emoji2 emoji3...}',
 
-	desc: 'Enlarge an emoji! You can list multiple emojis are use the \'previous\' keyword to enlarge an emoji from the message above you!\nYou can also steal emojis if you use \'owo emoji setguild\'.',
+	desc: "Enlarge an emoji! You can list multiple emojis are use the 'previous' keyword to enlarge an emoji from the message above you!\nYou can also steal emojis if you use 'owo emoji setguild'.",
 
 	example: ['owo emoji previous', 'owo emoji setguild'],
 
@@ -188,7 +188,7 @@ async function setServer(p) {
 	// Check if the bot has permissions
 	if (!p.msg.channel.guild.members.get(p.client.user.id).permissions.has('manageEmojis')) {
 		p.errorMsg(
-			', I don\'t have permissions to add emojis! Please give me permission or reinvite me!\n' +
+			", I don't have permissions to add emojis! Please give me permission or reinvite me!\n" +
 				p.config.invitelink
 		);
 		return;

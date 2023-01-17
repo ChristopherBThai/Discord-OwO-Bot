@@ -33,11 +33,11 @@ function sendGive(giver, receiver) {
 	let msg = `${emoji} **| ${receiver.username}**, you have received one catto from ${giver.username}! *meow~*\n${this.config.emoji.blank} **|** `;
 	const rand = Math.random();
 	if (rand < 0.333) {
-		msg += 'He\'s probably sleeping don\'t wake him up... <a:cat4:965356298893950977>';
+		msg += "He's probably sleeping don't wake him up... <a:cat4:965356298893950977>";
 	} else if (rand < 0.666) {
 		msg += 'The purr-fect company for your lonely nights <a:cat5:965356298965245992>';
 	} else {
-		msg += 'Maybe now you\'ll have 9 lives to waste...probably <a:cat6:965356298814238800>';
+		msg += "Maybe now you'll have 9 lives to waste...probably <a:cat6:965356298814238800>";
 	}
 	this.send(msg);
 }

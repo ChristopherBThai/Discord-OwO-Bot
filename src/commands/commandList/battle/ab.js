@@ -126,7 +126,7 @@ module.exports = new CommandInterface({
 					(SELECT * FROM (SELECT COUNT(id) FROM cowoncy c2 WHERE c2.id IN (${author.id},${sender.id}) AND c2.money >= ${bet}) c3) >= 2`;
 			result = await p.query(sql);
 			if (result.changedRows < 2) {
-				p.errorMsg(', looks like someone doesn\'t have enough money!', 3000);
+				p.errorMsg(", looks like someone doesn't have enough money!", 3000);
 				return;
 			}
 			sql = `UPDATE cowoncy SET money = money + ${bet * 2} WHERE id = ${winner.id}; ${winSql}`;

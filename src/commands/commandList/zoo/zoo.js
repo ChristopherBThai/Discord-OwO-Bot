@@ -36,7 +36,7 @@ module.exports = new CommandInterface({
 
 	args: '{display}',
 
-	desc: 'Displays your zoo! Some animals are rarer than others! Use the \'display\' args to display all your animals from your history!',
+	desc: "Displays your zoo! Some animals are rarer than others! Use the 'display' args to display all your animals from your history!",
 
 	example: ['owo zoo', 'owo zoo display'],
 
@@ -72,7 +72,7 @@ module.exports = new CommandInterface({
 				console.error(err);
 				return;
 			}
-			let header = '🌿 🌱 🌳** ' + msg.author.username + '\'s zoo! **🌳 🌿 🌱\n';
+			let header = '🌿 🌱 🌳** ' + msg.author.username + "'s zoo! **🌳 🌿 🌱\n";
 			let text = display;
 			var additional0 = '';
 			var additional = '';

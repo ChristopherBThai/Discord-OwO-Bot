@@ -67,7 +67,7 @@ module.exports = new CommandInterface({
 
 		//Final syntax check
 		if (bet == 0) {
-			p.errorMsg(', You can\'t bet 0 dum dum!', 3000);
+			p.errorMsg(", You can't bet 0 dum dum!", 3000);
 			p.setCooldown(5);
 			return;
 		} else if (bet < 0) {
@@ -83,7 +83,7 @@ module.exports = new CommandInterface({
 		let sql = 'SELECT money FROM cowoncy WHERE id = ' + msg.author.id + ';';
 		let result = await p.query(sql);
 		if (result[0] == undefined || result[0].money == 0 || (bet != 'all' && result[0].money < bet)) {
-			p.send('**🚫 | ' + msg.author.username + '**, You don\'t have enough cowoncy!', 3000);
+			p.send('**🚫 | ' + msg.author.username + "**, You don't have enough cowoncy!", 3000);
 			return;
 		} else {
 			if (bet == 'all') bet = result[0].money;
@@ -91,7 +91,7 @@ module.exports = new CommandInterface({
 			if (maxBet && bet > maxBet) {
 				bet = maxBet;
 			} else if (bet <= 0) {
-				p.errorMsg(', you don\'t have any cowoncy silly!', 3000);
+				p.errorMsg(", you don't have any cowoncy silly!", 3000);
 				p.setCooldown(5);
 				return;
 			}

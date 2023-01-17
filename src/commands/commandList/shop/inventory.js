@@ -22,7 +22,7 @@ module.exports = new CommandInterface({
 
 	args: '',
 
-	desc: 'Displays your inventory! Use \'owo equip\' to use them!',
+	desc: "Displays your inventory! Use 'owo equip' to use them!",
 
 	example: [],
 
@@ -51,7 +51,7 @@ module.exports = new CommandInterface({
 		]);
 		let inv = addToString(promises);
 
-		let text = '**====== ' + msg.author.username + '\'s Inventory ======**\n' + inv;
+		let text = '**====== ' + msg.author.username + "'s Inventory ======**\n" + inv;
 		if (inv == '') text = 'Your inventory is empty :c';
 		text = alterInventory.alter(p, text, { user: p.msg.author, inv });
 		p.send(text);

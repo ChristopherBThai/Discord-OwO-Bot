@@ -66,16 +66,16 @@ exports.challenge = async function (p, opponent, bet = 0) {
 
 	/* Error check for teams */
 	if (!result[0][0]) {
-		p.errorMsg(', The opponent doesn\'t have a team!', 3000);
+		p.errorMsg(", The opponent doesn't have a team!", 3000);
 		return;
 	} else if (!result[1][0]) {
-		p.errorMsg(', You don\'t have a team!', 3000);
+		p.errorMsg(", You don't have a team!", 3000);
 		return;
 	} else if (!result[2][0] || result[2][0].money < bet) {
-		p.errorMsg(', You don\'t have enough cowoncy!', 3000);
+		p.errorMsg(", You don't have enough cowoncy!", 3000);
 		return;
 	} else if (!result[3][0] || result[3][0].money < bet) {
-		p.errorMsg(', The opponent doesn\'t have enough cowoncy!', 3000);
+		p.errorMsg(", The opponent doesn't have enough cowoncy!", 3000);
 		return;
 	} else if (result[4][0]) {
 		p.errorMsg(', There is already a pending battle!', 3000);
@@ -269,7 +269,7 @@ function toEmbedRequest(p, stats, bet, sender, receiver, flags) {
 		for (let i in text) {
 			embed.fields.push({
 				name:
-					(sender.name ? sender.name : sender.username + '\'s Team') +
+					(sender.name ? sender.name : sender.username + "'s Team") +
 					(sender.id == receiver.id
 						? ''
 						: ' | ' + (stats[sender.id] ? stats[sender.id] : 0) + ' wins'),
@@ -280,7 +280,7 @@ function toEmbedRequest(p, stats, bet, sender, receiver, flags) {
 		for (let i in text2) {
 			embed.fields.push({
 				name:
-					(receiver.name ? receiver.name : receiver.username + '\'s Team') +
+					(receiver.name ? receiver.name : receiver.username + "'s Team") +
 					(sender.id == receiver.id
 						? ''
 						: ' | ' + (stats[receiver.id] ? stats[receiver.id] : 0) + ' wins'),
@@ -292,7 +292,7 @@ function toEmbedRequest(p, stats, bet, sender, receiver, flags) {
 		embed.fields = [
 			{
 				name:
-					(sender.name ? sender.name : sender.username + '\'s Team') +
+					(sender.name ? sender.name : sender.username + "'s Team") +
 					(sender.id == receiver.id
 						? ''
 						: ' | ' + (stats[sender.id] ? stats[sender.id] : 0) + ' wins'),
@@ -301,7 +301,7 @@ function toEmbedRequest(p, stats, bet, sender, receiver, flags) {
 			},
 			{
 				name:
-					(receiver.name ? receiver.name : receiver.username + '\'s Team') +
+					(receiver.name ? receiver.name : receiver.username + "'s Team") +
 					(sender.id == receiver.id
 						? ''
 						: ' | ' + (stats[receiver.id] ? stats[receiver.id] : 0) + ' wins'),
@@ -346,22 +346,22 @@ function parseFlag(p, flag) {
 	if (flag.startsWith('display')) {
 		flag = flag.replace('display', '');
 		switch (flag) {
-		case 'text':
-			return { flag: 'display', res: 'text' };
-		case 'compact':
-			return { flag: 'display', res: 'compact' };
-		case 'image':
-			return { flag: 'display', res: 'image' };
-		default:
-			return undefined;
+			case 'text':
+				return { flag: 'display', res: 'text' };
+			case 'compact':
+				return { flag: 'display', res: 'compact' };
+			case 'image':
+				return { flag: 'display', res: 'image' };
+			default:
+				return undefined;
 		}
 	} else if (flag.startsWith('log')) {
 		flag = flag.replace('logs', '').replace('log', '');
 		switch (flag) {
-		case 'link':
-			return { flag: 'log', res: 'link' };
-		default:
-			return { flag: 'log', res: 'log' };
+			case 'link':
+				return { flag: 'log', res: 'link' };
+			default:
+				return { flag: 'log', res: 'log' };
 		}
 	} else if (flag.startsWith('lvl') || flag.startsWith('level')) {
 		flag = flag.replace('level', '').replace('lvl', '');

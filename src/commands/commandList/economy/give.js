@@ -44,9 +44,9 @@ module.exports = new CommandInterface({
 		if (!message) return;
 
 		if (!(await sendMoney.bind(this)(user, amount))) return;
-		
+
 		await sendMsg.bind(this)(user, amount, message);
-		
+
 		log.bind(this)(user, amount);
 	},
 });
@@ -77,7 +77,7 @@ async function parseArgs() {
 		this.errorMsg(', I could not find that user', 3000);
 		return { error: true };
 	} else if (user.bot) {
-		this.errorMsg(', You can\'t send cowoncy to a bot, silly!', 3000);
+		this.errorMsg(", You can't send cowoncy to a bot, silly!", 3000);
 		return { error: true };
 	} else if (user.id == this.msg.author.id) {
 		this.send(
@@ -91,7 +91,7 @@ async function parseArgs() {
 		);
 		return { error: true };
 	}
-	
+
 	return { user, amount };
 }
 
@@ -112,7 +112,7 @@ async function sendMoney(user, amount) {
 		let result = await con.query(sql);
 
 		if (!result[0].changedRows) {
-			this.errorMsg(', you silly hooman! You don\'t have enough cowoncy!', 3000);
+			this.errorMsg(", you silly hooman! You don't have enough cowoncy!", 3000);
 			await con.rollback();
 			return false;
 		}
@@ -152,9 +152,10 @@ function log(user, amount) {
 
 async function confirmation(user, amount) {
 	let embed = {
-		description: `Both users must hit the ${agree} agree button to send cowoncy.`
-			+ `\nEither user can hit the ${decline} decline button to stop the transaction.`
-			+ `\n\n${this.config.emoji.warning} *It is against our rules to trade cowoncy for anything of monetary value. This includes real money, crypto, nitro, or anything similar. You will be* ***banned*** *if caught doing so.*`,
+		description:
+			`Both users must hit the ${agree} agree button to send cowoncy.` +
+			`\nEither user can hit the ${decline} decline button to stop the transaction.` +
+			`\n\n${this.config.emoji.warning} *It is against our rules to trade cowoncy for anything of monetary value. This includes real money, crypto, nitro, or anything similar. You will be* ***banned*** *if caught doing so.*`,
 		color: this.config.embed_color,
 		timestamp: new Date(),
 		author: {
@@ -166,42 +167,46 @@ async function confirmation(user, amount) {
 				name: `${this.msg.author.username}#${this.msg.author.discriminator} will give ${user.username}#${user.discriminator}:`,
 				value: `\`\`\`fix\n${this.global.toFancyNum(amount)} cowoncy${spacer}\n\`\`\``,
 				inline: true,
-			}
-		]
-	};
-
-	let components = [{
-		type: 1,
-		components: [
-			{
-				type: 2,
-				label: 'Agree',
-				style: 3,
-				custom_id: 'give_accept',
-				emoji: {
-					id: null,
-					name: agree,
-				},
-			},
-			{
-				type: 2,
-				label: 'Decline',
-				style: 4,
-				custom_id: 'give_decline',
-				emoji: {
-					id: null,
-					name: decline,
-				},
 			},
 		],
-	}];
+	};
+
+	let components = [
+		{
+			type: 1,
+			components: [
+				{
+					type: 2,
+					label: 'Agree',
+					style: 3,
+					custom_id: 'give_accept',
+					emoji: {
+						id: null,
+						name: agree,
+					},
+				},
+				{
+					type: 2,
+					label: 'Decline',
+					style: 4,
+					custom_id: 'give_decline',
+					emoji: {
+						id: null,
+						name: decline,
+					},
+				},
+			],
+		},
+	];
 
 	const content = { embed, components };
 	let message = await this.send(content);
-	let filter = (componentName, reactionUser) => ['give_accept', 'give_decline'].includes(componentName) && [this.msg.author.id, user.id].includes(reactionUser.id);
+	let filter = (componentName, reactionUser) =>
+		['give_accept', 'give_decline'].includes(componentName) &&
+		[this.msg.author.id, user.id].includes(reactionUser.id);
 	let collector = this.interactionCollector.create(message, filter, {
 		time: 900000,
-		idle: 120000
+		idle: 120000,
 	});
 
 	return new Promise((res, _rej) => {
@@ -230,7 +235,7 @@ async function confirmation(user, amount) {
 					}
 				}
 				content.embed.footer = {
-					text: usernames.join(' and ') + ' accepted!'
+					text: usernames.join(' and ') + ' accepted!',
 				};
 
 				if (accepted[user.id] && accepted[this.msg.author.id]) {

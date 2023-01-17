@@ -18,14 +18,14 @@ const comments = [
 	['yikes.', 'oh.', 'Why.. are you so weak...?'],
 	['oh. Try harder next time', 'Do you even lift?', 'How do you even lift your arms?'],
 	['Below average.', 'Seriously?', 'Try harder next time!'],
-	['You should work out more...', 'Do you even work out?', 'That\'s all you got...?'],
-	['You did ok', 'Could\'ve been better.', 'meh'],
-	['Average strength', 'You\'re pretty average :/'],
+	['You should work out more...', 'Do you even work out?', "That's all you got...?"],
+	['You did ok', "Could've been better.", 'meh'],
+	['Average strength', "You're pretty average :/"],
 	['Pretty decent!', 'Not bad!', 'Better than average!'],
-	['Woah! That\'s still pretty good!', 'Pretty strong aren\'t you? ;)', 'Wish I was strong as you!'],
-	['You\'re still pretty strong! ;)', 'WOW you\'re strong!', 'Can I feel your muscles? ;o'],
+	["Woah! That's still pretty good!", "Pretty strong aren't you? ;)", 'Wish I was strong as you!'],
+	["You're still pretty strong! ;)", "WOW you're strong!", 'Can I feel your muscles? ;o'],
 	['SO CLOSE!', 'You were almost there...', 'Just a little bit more!!'],
-	['You\'re the strongest person alive!', 'Oh my. You\'re so strong!'],
+	["You're the strongest person alive!", "Oh my. You're so strong!"],
 ];
 
 module.exports = new CommandInterface({
@@ -112,6 +112,6 @@ function getMessage(percent) {
 	let msg = comments[Math.floor(percent)];
 	msg = msg[Math.floor(Math.random() * msg.length)];
 	percent = Math.floor(percent * 10);
-	if (percent == 99) msg = 'You almost hit the bell, but couldn\'t quite do it...';
+	if (percent == 99) msg = "You almost hit the bell, but couldn't quite do it...";
 	return percent + '/100 ' + msg;
 }

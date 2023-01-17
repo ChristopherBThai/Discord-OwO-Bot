@@ -94,7 +94,7 @@ module.exports = new CommandInterface({
 		if (ranks) {
 			sellRanks(msg, con, ranks, p.send, global, p);
 
-		//if its an animal...
+			//if its an animal...
 		} else if ((animal = global.validAnimal(name))) {
 			if (args.length < 3) sellAnimal(msg, con, animal, count, p.send, global, p);
 			else
@@ -143,26 +143,26 @@ function sellAnimal(msg, con, animal, count, send, global, p) {
 		count +
 		' WHERE id = ' +
 		msg.author.id +
-		' AND name = \'' +
+		" AND name = '" +
 		animal.value +
-		'\' AND count >= ' +
+		"' AND count >= " +
 		count +
 		';';
 	if (count == 'all') {
 		sql =
 			'SELECT count FROM animal WHERE id = ' +
 			msg.author.id +
-			' AND name = \'' +
+			" AND name = '" +
 			animal.value +
-			'\';';
+			"';";
 		sql +=
 			'UPDATE cowoncy NATURAL JOIN animal SET money = money + (count*' +
 			animal.price +
 			'), sellcount = sellcount + count, count = 0 WHERE id = ' +
 			msg.author.id +
-			' AND name = \'' +
+			" AND name = '" +
 			animal.value +
-			'\' AND count >= 1;';
+			"' AND count >= 1;";
 	}
 	con.query(sql, function (err, result) {
 		if (err) {
@@ -171,7 +171,7 @@ function sellAnimal(msg, con, animal, count, send, global, p) {
 		}
 		if (count == 'all') {
 			if (result[1].affectedRows <= 0) {
-				send('**🚫 | ' + msg.author.username + '**, You don\'t have enough animals! >:c', 3000);
+				send('**🚫 | ' + msg.author.username + "**, You don't have enough animals! >:c", 3000);
 			} else {
 				count = result[0][0].count;
 				send(
@@ -204,7 +204,7 @@ function sellAnimal(msg, con, animal, count, send, global, p) {
 			// TODO neo4j
 		} else {
 			send(
-				'**🚫 | ' + msg.author.username + '**, You can\'t sell more than you have silly! >:c',
+				'**🚫 | ' + msg.author.username + "**, You can't sell more than you have silly! >:c",
 				3000
 			);
 		}
@@ -212,7 +212,7 @@ function sellAnimal(msg, con, animal, count, send, global, p) {
 }
 
 function sellRank(msg, con, rank, send, global, p) {
-	let animals = '(\'' + rank.animals.join('\',\'') + '\')';
+	let animals = "('" + rank.animals.join("','") + "')";
 	let sql =
 		'SELECT SUM(count) AS total FROM animal WHERE id = ' +
 		msg.author.id +
@@ -237,7 +237,7 @@ function sellRank(msg, con, rank, send, global, p) {
 			return;
 		}
 		if (result[1].affectedRows <= 0) {
-			send('**🚫 | ' + msg.author.username + '**, You don\'t have enough animals! >:c', 3000);
+			send('**🚫 | ' + msg.author.username + "**, You don't have enough animals! >:c", 3000);
 		} else {
 			let count = result[0][0].total;
 			send(
@@ -262,7 +262,7 @@ async function sellRanks(msg, con, ranks, send, global, p) {
 		total = 0;
 	for (let i in ranks) {
 		let rank = ranks[i];
-		let animals = '(\'' + rank.animals.join('\',\'') + '\')';
+		let animals = "('" + rank.animals.join("','") + "')";
 		let sql =
 			'SELECT SUM(count) AS total FROM animal WHERE id = ' +
 			msg.author.id +
@@ -308,6 +308,6 @@ async function sellRanks(msg, con, ranks, send, global, p) {
 		p.logger.incr('cowoncy', total, { type: 'sell' }, p.msg);
 		// TODO neo4j
 	} else {
-		send('**🚫 | ' + msg.author.username + '**, You don\'t have enough animals! >:c', 3000);
+		send('**🚫 | ' + msg.author.username + "**, You don't have enough animals! >:c", 3000);
 	}
 }

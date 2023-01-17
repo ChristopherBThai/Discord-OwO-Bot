@@ -13,7 +13,7 @@ const text = [
 	'Good luck!',
 	'Go get em!',
 	'Beep boop.',
-	'Good luck... You\'ll need it :)',
+	"Good luck... You'll need it :)",
 	'I wish you luck!',
 ];
 

@@ -123,7 +123,7 @@ async function getInfo(p, user) {
 	let sql = `SELECT user_profile.* from user_profile INNER JOIN user ON user.uid = user_profile.uid WHERE user.id = ${user.id};`;
 	let result = await p.query(sql);
 	let info = {
-		about: 'I\'m just a plain human.',
+		about: "I'm just a plain human.",
 		title: 'An OwO Bot User',
 	};
 	if (result[0]) {

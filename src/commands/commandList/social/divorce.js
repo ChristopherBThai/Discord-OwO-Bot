@@ -47,7 +47,7 @@ module.exports = new CommandInterface({
 		let result = await p.query(sql);
 
 		if (result.length < 1) {
-			p.errorMsg(', you can\'t divorce if you aren\'t married, silly butt!', 3000);
+			p.errorMsg(", you can't divorce if you aren't married, silly butt!", 3000);
 			return;
 		}
 

@@ -105,8 +105,8 @@ async function claim(p, msg, con, query, bot) {
 					ORDER BY pt_act.pgid DESC, pt2.pgid ASC LIMIT 1) tmp
 				ON tmp.pgid = pet_team.pgid
 		SET animal.xp = animal.xp + (CASE WHEN tmp.pgid IS NULL THEN ${Math.round(
-		totalExp / 2
-	)} ELSE ${totalExp} END)
+			totalExp / 2
+		)} ELSE ${totalExp} END)
 		WHERE  user.id = ${msg.author.id};`;
 
 	//Get all animal
@@ -148,9 +148,9 @@ async function claim(p, msg, con, query, bot) {
 		sql +=
 			'INSERT INTO animal (id,name,count,totalcount) VALUES (' +
 			msg.author.id +
-			',\'' +
+			",'" +
 			animal +
-			'\',' +
+			"'," +
 			total[animal].count +
 			',' +
 			total[animal].count +
@@ -266,7 +266,7 @@ async function autohunt(p, msg, con, args, global, send) {
 
 	//Check if enough cowoncy
 	if (!result[1][0] || result[1][0].money < cowoncy) {
-		send('**🚫 | ' + msg.author.username + '**, You don\'t have enough cowoncy!', 3000);
+		send('**🚫 | ' + msg.author.username + "**, You don't have enough cowoncy!", 3000);
 		return;
 	}
 
@@ -283,11 +283,11 @@ async function autohunt(p, msg, con, args, global, send) {
 		sql =
 			'INSERT INTO autohunt (id,start,huntcount,huntmin,password,passwordtime) VALUES (' +
 			msg.author.id +
-			',NOW(),0,0,\'' +
+			",NOW(),0,0,'" +
 			rand +
-			'\',NOW()) ON DUPLICATE KEY UPDATE password = \'' +
+			"',NOW()) ON DUPLICATE KEY UPDATE password = '" +
 			rand +
-			'\',passwordtime = NOW();';
+			"',passwordtime = NOW();";
 
 		result = await p.query(sql);
 		let text =
@@ -364,11 +364,11 @@ async function autohunt(p, msg, con, args, global, send) {
 		huntcount +
 		',' +
 		huntmin +
-		',\'\') ON DUPLICATE KEY UPDATE start = NOW(), huntcount = ' +
+		",'') ON DUPLICATE KEY UPDATE start = NOW(), huntcount = " +
 		huntcount +
 		',huntmin = ' +
 		huntmin +
-		',password = \'\';';
+		",password = '';";
 	result = await p.query(sql);
 	logger.decr('cowoncy', -1 * cowoncy, { type: 'huntbot' }, p.msg);
 	let min = huntmin % 60;
@@ -452,7 +452,7 @@ async function display(p, msg, con) {
 	let embed = {
 		color: p.config.embed_color,
 		author: {
-			name: msg.author.username + '\'s HuntBot',
+			name: msg.author.username + "'s HuntBot",
 			icon_url: msg.author.avatarURL,
 		},
 		fields: [

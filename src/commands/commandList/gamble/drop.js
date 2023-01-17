@@ -15,7 +15,7 @@ module.exports = new CommandInterface({
 
 	args: '{amount}',
 
-	desc: 'This command is now deprecated. ~~Drop some cowoncy in a channel with \'owo drop {amount}\'! Users can pick it up with \'owo pickup {amount}\' If you try to pick up more than what\'s on the floor, you\'ll lose that amount! Be careful!~~',
+	desc: "This command is now deprecated. ~~Drop some cowoncy in a channel with 'owo drop {amount}'! Users can pick it up with 'owo pickup {amount}' If you try to pick up more than what's on the floor, you'll lose that amount! Be careful!~~",
 
 	example: ['owo drop 3000'],
 
@@ -57,7 +57,7 @@ async function drop(p) {
 		CALL CowoncyDrop(${p.msg.author.id},${p.msg.channel.id},${amount});`;
 	let result = await p.query(sql);
 	if (!result[0][0] || result[0][0].money < amount) {
-		p.errorMsg(', you don\'t have enough cowoncy! >:c', 3000);
+		p.errorMsg(", you don't have enough cowoncy! >:c", 3000);
 		return;
 	}
 	p.neo4j.drop(p.msg, amount);
@@ -112,7 +112,7 @@ async function pickup(p) {
 		p.send(
 			'**💰 | ' +
 				p.msg.author.username +
-				'**, there\'s not enough cowoncy on the floor!\n**<:blank:427371936482328596> |** You felt nice so you dropped **' +
+				"**, there's not enough cowoncy on the floor!\n**<:blank:427371936482328596> |** You felt nice so you dropped **" +
 				amount +
 				'** cowoncy!',
 			8000
@@ -129,7 +129,7 @@ async function handleWarning(p) {
 			icon_url: p.msg.author.avatarURL,
 		},
 		description:
-			'If you try to pickup more than what\'s on the floor, you\'ll drop it instead!\nReact with 👍 to confirm you understand!',
+			"If you try to pickup more than what's on the floor, you'll drop it instead!\nReact with 👍 to confirm you understand!",
 		color: p.config.embed_color,
 	};
 	let msg = await p.send({ embed });
@@ -142,7 +142,7 @@ async function handleWarning(p) {
 		collector.stop('done');
 		p.redis.hincrby('data_' + p.msg.author.id, key, 1);
 		embed.color = 65280;
-		embed.author.name = '✅ You\'re all set, ' + p.msg.author.username + '!';
+		embed.author.name = "✅ You're all set, " + p.msg.author.username + '!';
 		embed.description =
 			'**' + acceptEmoji + ' |** The **pickup** command is now enabled for you! Good luck!';
 		msg.edit({ embed });
@@ -173,7 +173,7 @@ async function pickup2(p) {
 		let sql = `UPDATE cowoncydrop SET amount = amount - ${amount} WHERE amount >= ${amount} AND channel = ${p.msg.channel.id};`;
 		let result = await con.query(sql);
 		if (!result.changedRows) {
-			throw { errorMsg: ', there isn\'t enough cowoncy on the floor!' };
+			throw { errorMsg: ", there isn't enough cowoncy on the floor!" };
 		}
 
 		sql = `UPDATE cowoncy SET money = money + ${amount} WHERE id = ${p.msg.author.id};`;

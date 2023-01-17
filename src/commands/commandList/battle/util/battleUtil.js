@@ -131,7 +131,7 @@ exports.initBattle = async function (p, setting) {
 	let count = await p.query(sql);
 	let pgid = count[1][0];
 	if (!pgid) {
-		p.errorMsg(', You don\'t have a team! Set one with `owo team add {animal}`!');
+		p.errorMsg(", You don't have a team! Set one with `owo team add {animal}`!");
 		return;
 	}
 	pgid = pgid.pgid;
@@ -542,7 +542,7 @@ async function executeBattle(p, msg, action, setting) {
 
 	/* tie */
 	if (enemyWin && playerWin) {
-		await finishBattle(msg, p, battle, 6381923, 'It\'s a tie!', playerWin, enemyWin, null, setting);
+		await finishBattle(msg, p, battle, 6381923, "It's a tie!", playerWin, enemyWin, null, setting);
 
 		/* enemy wins */
 	} else if (enemyWin) {
@@ -598,7 +598,7 @@ let calculateAll = (exports.calculateAll = function (p, battle, logs = []) {
 	if (enemyWin || playerWin) {
 		/* tie */
 		let color = 6381923;
-		let text = 'It\'s a tie in ' + logs.length + ' turns!';
+		let text = "It's a tie in " + logs.length + ' turns!';
 
 		/* enemy wins */
 		if (enemyWin && !playerWin) {
@@ -622,7 +622,7 @@ let calculateAll = (exports.calculateAll = function (p, battle, logs = []) {
 			enemy: true,
 			player: true,
 			color: 6381923,
-			text: 'Battle was too long! It\'s a tie!',
+			text: "Battle was too long! It's a tie!",
 		});
 		return logs;
 	}
@@ -840,7 +840,7 @@ function initSqlSaveBuffs(team) {
 	return result.length == 0
 		? ''
 		: `INSERT INTO pet_team_battle_buff (pgid,pid,bfid,duration,qualities,pfrom) VALUES ${result.join(
-			','
+				','
 		  )} ON DUPLICATE KEY UPDATE duration=VALUES(duration),qualities=VALUES(qualities);`;
 }
 

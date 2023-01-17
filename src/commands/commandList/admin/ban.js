@@ -47,12 +47,13 @@ module.exports = new CommandInterface({
 		const sql = `INSERT INTO timeout (id,time,count,penalty) VALUES ${sqlUsers.join(
 			','
 		)} ON DUPLICATE KEY UPDATE time = NOW(), count=count+1, penalty = ${time};`;
-		const rows = await p.query(sql);
+		await p.query(sql);
 
 		const success = [];
 		const successGuild = [];
 		const dmFailed = [];
 		const failed = [];
+		let userObj, guildObj;
 		for (let user of users) {
 			try {
 				if (

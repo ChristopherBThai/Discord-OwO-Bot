@@ -7,22 +7,22 @@
 
 exports.alter = function (id, text, opt) {
 	switch (id) {
-	case '408371860246364183':
-		return lanre(text, opt);
-	case '565212326291308545':
-		return eliza(text, opt);
-	case '413344554247258112':
-		return ameodssbxiw(text, opt);
-	case '427296171883626496':
-		return lIlIIIll(text, opt);
-	default:
-		return text;
+		case '408371860246364183':
+			return lanre(text, opt);
+		case '565212326291308545':
+			return eliza(text, opt);
+		case '413344554247258112':
+			return ameodssbxiw(text, opt);
+		case '427296171883626496':
+			return lIlIIIll(text, opt);
+		default:
+			return text;
 	}
 };
 
 function lanre(text, opt) {
 	text.description = opt.desc;
-	text.author.name = 'Senko\'s Stronghold';
+	text.author.name = "Senko's Stronghold";
 	text.image = {
 		url: 'https://cdn.discordapp.com/attachments/757362062421655603/788818074706247690/image0.gif',
 	};

@@ -9,28 +9,28 @@ const blank = '<:blank:427371936482328596>';
 
 exports.alter = function (p, id, text, info) {
 	switch (id) {
-	case '456598711590715403':
-		return lexx(p, info);
-	case '605994815317999635':
-		return rhine(p, info);
-	case '379213399973953537':
-		return king(p, info);
-	case '816005571575808000':
-		return jayyy(p, info);
-	default:
-		return checkReceive(p, text, info);
+		case '456598711590715403':
+			return lexx(p, info);
+		case '605994815317999635':
+			return rhine(p, info);
+		case '379213399973953537':
+			return king(p, info);
+		case '816005571575808000':
+			return jayyy(p, info);
+		default:
+			return checkReceive(p, text, info);
 	}
 };
 
 function checkReceive(p, text, info) {
 	info.receiver = true;
 	switch (info.to.id) {
-	case '816005571575808000':
-		return jayyy(p, info);
-	case '605994815317999635':
-		return rhine(p, info);
-	default:
-		return text;
+		case '816005571575808000':
+			return jayyy(p, info);
+		case '605994815317999635':
+			return rhine(p, info);
+		default:
+			return text;
 	}
 }
 

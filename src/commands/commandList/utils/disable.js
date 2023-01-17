@@ -41,13 +41,13 @@ module.exports = new CommandInterface({
 
 		// If the user wants to disable all commands
 		if (commands.includes('all')) {
-			let list = '(' + p.msg.channel.id + ',\'all\'),';
+			let list = '(' + p.msg.channel.id + ",'all'),";
 			for (let key in p.mcommands) {
 				if (key != 'disable' && key != 'enable')
-					list += '(' + p.msg.channel.id + ',\'' + key + '\'),';
+					list += '(' + p.msg.channel.id + ",'" + key + "'),";
 			}
 			for (let key in p.commandGroups) {
-				if (key != 'undefined') list += '(' + p.msg.channel.id + ',\'' + key + '\'),';
+				if (key != 'undefined') list += '(' + p.msg.channel.id + ",'" + key + "'),";
 			}
 			list = list.slice(0, -1);
 			let sql = 'INSERT IGNORE INTO disabled (channel,command) VALUES ' + list + ';';
@@ -65,7 +65,7 @@ module.exports = new CommandInterface({
 			if (!command && p.commandGroups[commands[i]]) command = commands[i];
 			if (command && command != 'disabled' && command != 'enable' && command != 'undefined') {
 				validCommand = true;
-				sql += '(' + p.msg.channel.id + ',\'' + command + '\'),';
+				sql += '(' + p.msg.channel.id + ",'" + command + "'),";
 			}
 		}
 		sql = sql.slice(0, -1) + ';';

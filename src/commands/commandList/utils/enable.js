@@ -75,9 +75,9 @@ module.exports = new CommandInterface({
 			await p.query(
 				'DELETE FROM disabled WHERE channel = ' +
 					p.msg.channel.id +
-					' AND command IN (\'all\',\'' +
-					Array.from(remove).join('\',\'') +
-					'\');'
+					" AND command IN ('all','" +
+					Array.from(remove).join("','") +
+					"');"
 			);
 		}
 

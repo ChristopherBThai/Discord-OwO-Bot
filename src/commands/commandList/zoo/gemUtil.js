@@ -138,9 +138,9 @@ exports.desc = async function (p, id) {
 	const sql =
 		'SELECT * FROM user NATURAL JOIN user_gem NATURAL JOIN gem WHERE id = ' +
 		p.msg.author.id +
-		' AND gname = \'' +
+		" AND gname = '" +
 		gem.key +
-		'\';';
+		"';";
 	const result = await p.query(sql);
 	if (!result[0]) {
 		p.errorMsg(', you do not have this item!', 3000);

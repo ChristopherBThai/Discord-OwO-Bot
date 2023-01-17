@@ -42,7 +42,7 @@ exports.grab = function (p, ptype, ftype, text, notsfw, retry) {
 				this.grab(p, ptype, ftype == 'jpg' ? 'png' : 'jpg', text, notsfw, false);
 			} else
 				p.errorMsg(
-					', I couldn\'t find that image type! :c\nType `owo help gif` for the list of types!',
+					", I couldn't find that image type! :c\nType `owo help gif` for the list of types!",
 					3000
 				);
 		});

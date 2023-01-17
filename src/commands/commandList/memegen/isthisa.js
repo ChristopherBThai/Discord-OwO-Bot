@@ -16,7 +16,7 @@ module.exports = new CommandInterface({
 
 	args: '{bottomText} | {butterflyText|@user|emoji} | {personText|@user|emoji}',
 
-	desc: 'Creates a \'is this a ___?\' meme! You can also tag a user to use their image!',
+	desc: "Creates a 'is this a ___?' meme! You can also tag a user to use their image!",
 
 	example: ['owo isthisa Is this an AI? | @OwO | me'],
 

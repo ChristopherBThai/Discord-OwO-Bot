@@ -67,11 +67,11 @@ module.exports = new CommandInterface({
 					palette = await Vibrant.from(url).getPalette();
 				} catch (err) {
 					p.errorMsg(
-						'... sowwy, I couldnt parse the average color of ' + user.username + '\'s profile!',
+						'... sowwy, I couldnt parse the average color of ' + user.username + "'s profile!",
 						3000
 					);
 				}
-				title = ', here is the prominent color for ' + user.username + '\'s profile picture!';
+				title = ', here is the prominent color for ' + user.username + "'s profile picture!";
 				colors = [];
 				for (let i in palette) {
 					let values = parseRGB(palette[i]._rgb);
@@ -136,7 +136,7 @@ module.exports = new CommandInterface({
 				color.b > 255 ||
 				!/[0-9,A-F]{6}/g.test(color.hex))
 		) {
-			p.errorMsg(', that\'s an invalid color!', 3000);
+			p.errorMsg(", that's an invalid color!", 3000);
 			return;
 		}
 
@@ -346,24 +346,24 @@ function randHSL(p, args) {
 	for (let i in args) {
 		let arg = args[i].replace(/[:=]/gi, '').toUpperCase();
 		switch (arg.charAt(0)) {
-		case 'H':
-			h = parsePercent(arg);
-			if (h == -1) return;
-			break;
-		case 'S':
-			s = parsePercent(arg);
-			if (s == -1) return;
-			break;
-		case 'V':
-			l = parsePercent(arg);
-			if (l == -1) return;
-			break;
-		case 'L':
-			l = parsePercent(arg);
-			if (l == -1) return;
-			break;
-		default:
-			return;
+			case 'H':
+				h = parsePercent(arg);
+				if (h == -1) return;
+				break;
+			case 'S':
+				s = parsePercent(arg);
+				if (s == -1) return;
+				break;
+			case 'V':
+				l = parsePercent(arg);
+				if (l == -1) return;
+				break;
+			case 'L':
+				l = parsePercent(arg);
+				if (l == -1) return;
+				break;
+			default:
+				return;
 		}
 	}
 
@@ -410,15 +410,15 @@ function rgbToHsl(r, g, b) {
 		let d = max - min;
 		s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
 		switch (max) {
-		case r:
-			h = (g - b) / d + (g < b ? 6 : 0);
-			break;
-		case g:
-			h = (b - r) / d + 2;
-			break;
-		case b:
-			h = (r - g) / d + 4;
-			break;
+			case r:
+				h = (g - b) / d + (g < b ? 6 : 0);
+				break;
+			case g:
+				h = (b - r) / d + 2;
+				break;
+			case b:
+				h = (r - g) / d + 4;
+				break;
 		}
 		h /= 6;
 	}
