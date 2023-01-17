@@ -37,10 +37,18 @@ module.exports = new CommandInterface({
 	execute: async function (p) {
 		let msg = p.msg;
 
-		let sql =
-			'SELECT money,IF(patreonAnimal = 1 OR (TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths),1,0) as patreon FROM cowoncy LEFT JOIN user ON cowoncy.id = user.id LEFT JOIN patreons ON user.uid = patreons.uid WHERE cowoncy.id = ' +
-			msg.author.id +
-			';';
+		let sql = `SELECT
+				money,
+				IF(
+					patreonAnimal = 1
+					OR (TIMESTAMPDIFF(MONTH, patreonTimer, NOW()) < patreonMonths)
+					OR (endDate > NOW()),
+				1,0) as patreon
+			FROM cowoncy
+				LEFT JOIN user ON cowoncy.id = user.id
+				LEFT JOIN patreons ON user.uid = patreons.uid
+				LEFT JOIN patreon_wh ON user.uid = patreon_wh.uid
+			WHERE cowoncy.id = ${msg.author.id};`;
 		sql += `SELECT name,nickname,animal.pid,MAX(tmp.pgid) AS active
 			FROM user u
 				INNER JOIN pet_team ON u.uid = pet_team.uid

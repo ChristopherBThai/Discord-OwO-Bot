@@ -191,10 +191,15 @@ async function getUserInfo(p, uid) {
 	let sql = `SELECT
 				daily,
 				daily_streak,
-				IF (patreonDaily = 1 OR ((TIMESTAMPDIFF(MONTH, patreonTimer, NOW()) < patreonMonths) AND patreonType = 3), 1, 0) as patreon 
+				IF (
+					patreonDaily = 1
+					OR ((TIMESTAMPDIFF(MONTH, patreonTimer, NOW()) < patreonMonths) AND patreons.patreonType = 3)
+					OR (endDate > NOW() AND patreon_wh.patreonType = 3)
+				, 1, 0) as patreon 
 			FROM cowoncy
 				LEFT JOIN user ON cowoncy.id = user.id
 				LEFT JOIN patreons ON user.uid = patreons.uid
+				LEFT JOIN patreon_wh ON user.uid = patreon_wh.uid
 			WHERE cowoncy.id = ${p.msg.author.id};`;
 	sql += `SELECT *
 			FROM user_announcement

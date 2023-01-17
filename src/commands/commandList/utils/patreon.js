@@ -32,8 +32,15 @@ module.exports = new CommandInterface({
 		patreonUtil.checkPatreon(p, p.msg.author.id);
 
 		let animalPerk, dailyPerk;
-		let sql = `SELECT patreonDaily,patreonAnimal FROM user WHERE id = ${p.msg.author.id};`;
-		sql += `SELECT patreonMonths,patreonTimer,TIMESTAMPDIFF(MONTH,patreonTimer,NOW()) AS monthsPassed,patreonType FROM user INNER JOIN patreons ON user.uid = patreons.uid WHERE id = ${p.msg.author.id}`;
+		let sql = `SELECT patreonDaily, patreonAnimal FROM user WHERE id = ${p.msg.author.id};`;
+		sql += `SELECT
+				patreonMonths,
+				patreonTimer,
+				TIMESTAMPDIFF(MONTH, patreonTimer, NOW()) AS monthsPassed,
+				patreonType
+			FROM user INNER JOIN patreons ON user.uid = patreons.uid
+			WHERE id = ${p.msg.author.id};`;
+		sql += `SELECT patreonType, endDate FROM patreon_wh INNER JOIN user ON user.uid = patreon_wh.uid WHERE id = ${p.msg.author.id};`;
 		let result = await p.query(sql);
 
 		if (result[0][0]) {
@@ -49,8 +56,18 @@ module.exports = new CommandInterface({
 			if (parsed) {
 				if (parsed.animal && !parsed.cowoncy) stat = 'You are currently a **Patreon**';
 				else stat = 'You are currently a **Patreon+**';
+				const timestamp = this.global.toDiscordTimestamp(parsed.expireDate, 'f');
 				stat +=
-					'\n**<:blank:427371936482328596> |** until: **' + parsed.expireDate.toString() + '**';
+					'\n**<:blank:427371936482328596> |** until: **' + timestamp + '**';
+			}
+		} else if (result[2][0]) {
+			let parsed = patreonUtil.parseSecondPatreon(result[2][0]);
+			if (parsed) {
+				if (parsed.animal && !parsed.cowoncy) stat = 'You are currently a **Patreon**';
+				else stat = 'You are currently a **Patreon+**';
+				const timestamp = this.global.toDiscordTimestamp(parsed.expireDate, 'f');
+				stat +=
+					'\n**<:blank:427371936482328596> |** until: **' + timestamp + '**';
 			}
 		}
 
