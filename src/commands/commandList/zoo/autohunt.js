@@ -63,10 +63,16 @@ async function claim(p, msg, con, query, bot) {
 	//Get Total essence
 	let totalGain = Math.floor(autohuntutil.getLvl(query.gain, 0, 'gain').stat * duration);
 
-	let sql =
-		'SELECT IF(patreonAnimal = 1 OR (TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths),1,0) as patreon FROM user LEFT JOIN patreons ON user.uid = patreons.uid WHERE user.id = ' +
-		msg.author.id +
-		';';
+	let sql = `SELECT
+		IF(
+			patreonAnimal = 1
+			OR (TIMESTAMPDIFF(MONTH, patreonTimer, NOW()) < patreonMonths)
+			OR (endDate > NOW())
+		,1,0) as patreon
+		FROM user
+			LEFT JOIN patreons ON user.uid = patreons.uid
+			LEFT JOIN patreon_wh ON user.uid = patreon_wh.uid
+		WHERE user.id = ${msg.author.id};`;
 	sql +=
 		'UPDATE autohunt SET huntmin = 0,huntcount=0,essence = essence +' +
 		totalGain +

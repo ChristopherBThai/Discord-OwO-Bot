@@ -336,11 +336,11 @@ exports.replacer = function (text, replacer) {
 	return text;
 };
 
-exports.toDiscordTimestamp = function (date) {
+exports.toDiscordTimestamp = function (date, flag = 'R') {
 	if (typeof date === 'number' || isInt(date)) {
-		return `<t:${Math.trunc(+date / 1000)}:R>`;
+		return `<t:${Math.trunc(+date / 1000)}:${flag}>`;
 	}
-	return `<t:${Math.trunc(date.valueOf() / 1000)}:R>`;
+	return `<t:${Math.trunc(date.valueOf() / 1000)}:${flag}>`;
 };
 
 exports.getChannelMessages = async function (channel, options, before, after, around) {

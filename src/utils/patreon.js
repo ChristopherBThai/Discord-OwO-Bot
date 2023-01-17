@@ -42,6 +42,29 @@ exports.parsePatreon = function (query) {
 	return { animal, cowoncy, expireDate };
 };
 
+exports.parseSecondPatreon = function (query) {
+	const expireDate = new Date(query.endDate);
+	let animal = false;
+	let cowoncy = false;
+
+	if (expireDate < new Date()) return null;
+
+	// parse benefits
+	switch (query.patreonType) {
+	case 1:
+		animal = true;
+		break;
+	case 3:
+		animal = true;
+		cowoncy = true;
+		break;
+	default:
+		return null;
+	}
+	
+	return { animal, cowoncy, expireDate };
+}
+
 exports.update = function (guild, oldMember, newMember) {
 	if (guild.id != '420104212895105044') return;
 
