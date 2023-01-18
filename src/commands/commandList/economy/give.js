@@ -153,9 +153,9 @@ function log(user, amount) {
 async function confirmation(user, amount) {
 	let embed = {
 		description:
-			`Both users must hit the ${agree} agree button to send cowoncy.` +
-			`\nEither user can hit the ${decline} decline button to stop the transaction.` +
-			`\n\n${this.config.emoji.warning} *It is against our rules to trade cowoncy for anything of monetary value. This includes real money, crypto, nitro, or anything similar. You will be* ***banned*** *if caught doing so.*`,
+			`${this.msg.author.username}#${this.msg.author.discriminator} must hit the ${agree} agree button to send cowoncy.` +
+			`\nYou can hit the ${decline} decline button to stop the transaction.` +
+			`\n\n${this.config.emoji.warning} *It is against our rules to trade cowoncy for anything of monetary value. This includes real money, crypto, nitro, or anything similar. You will be* ***banned*** *for doing so.*`,
 		color: this.config.embed_color,
 		timestamp: new Date(),
 		author: {
@@ -203,7 +203,7 @@ async function confirmation(user, amount) {
 	let message = await this.send(content);
 	let filter = (componentName, reactionUser) =>
 		['give_accept', 'give_decline'].includes(componentName) &&
-		[this.msg.author.id, user.id].includes(reactionUser.id);
+		[this.msg.author.id].includes(reactionUser.id);
 	let collector = this.interactionCollector.create(message, filter, {
 		time: 900000,
 		idle: 120000,
@@ -211,7 +211,7 @@ async function confirmation(user, amount) {
 
 	return new Promise((res, _rej) => {
 		const accepted = {};
-		collector.on('collect', async (component, reactionUser, ack, err) => {
+		collector.on('collect', async (component, reactionUser, ack, _err) => {
 			if (component === 'give_decline') {
 				collector.stop('done');
 				content.embed.color = this.config.fail_color;
@@ -222,7 +222,6 @@ async function confirmation(user, amount) {
 				res(false);
 			} else {
 				if (accepted[reactionUser.id]) {
-					err(`${this.config.emoji.error} **|** You already accepted the transaction!`);
 					return;
 				}
 				accepted[reactionUser.id] = true;
@@ -238,7 +237,7 @@ async function confirmation(user, amount) {
 					text: usernames.join(' and ') + ' accepted!',
 				};
 
-				if (accepted[user.id] && accepted[this.msg.author.id]) {
+				if (accepted[this.msg.author.id]) {
 					collector.stop('done');
 					content.embed.color = this.config.success_color;
 					content.components[0].components[0].disabled = true;
