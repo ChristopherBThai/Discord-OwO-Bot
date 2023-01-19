@@ -153,13 +153,13 @@ function log(user, amount) {
 async function confirmation(user, amount) {
 	let embed = {
 		description:
-			`${this.msg.author.username}#${this.msg.author.discriminator} must hit the ${agree} agree button to send cowoncy.` +
-			`\nYou can hit the ${decline} decline button to stop the transaction.` +
+			`\nTo confirm this transaction, click ${agree} Confirm.` +
+			`\nTo cancel this transaction, click ${decline} Cancel.` +
 			`\n\n${this.config.emoji.warning} *It is against our rules to trade cowoncy for anything of monetary value. This includes real money, crypto, nitro, or anything similar. You will be* ***banned*** *for doing so.*`,
 		color: this.config.embed_color,
 		timestamp: new Date(),
 		author: {
-			name: `${this.msg.author.username} wants to send cowoncy to ${user.username}!`,
+			name: `${this.msg.author.username}#${this.msg.author.discriminator}, you are about to give cowoncy to ${user.username}#${user.discriminator}`,
 			icon_url: this.msg.author.avatarURL,
 		},
 		fields: [
@@ -177,7 +177,7 @@ async function confirmation(user, amount) {
 			components: [
 				{
 					type: 2,
-					label: 'Agree',
+					label: 'Confirm',
 					style: 3,
 					custom_id: 'give_accept',
 					emoji: {
@@ -187,7 +187,7 @@ async function confirmation(user, amount) {
 				},
 				{
 					type: 2,
-					label: 'Decline',
+					label: 'Cancel',
 					style: 4,
 					custom_id: 'give_decline',
 					emoji: {
