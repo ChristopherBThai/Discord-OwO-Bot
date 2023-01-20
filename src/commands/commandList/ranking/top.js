@@ -887,12 +887,12 @@ function getShardRanking(globalRank, con, msg, count, p) {
 function getMarriageRanking(globalRank, con, msg, count, p) {
 	let sql;
 	if (globalRank) {
-		sql = 'SELECT uid1 AS id,uid2 AS id2,dailies FROM marriage ORDER BY dailies DESC LIMIT ' + count + ';';
-		sql += 'SELECT uid1 AS id,uid2 AS id2,dailies,(SELECT COUNT(*)+1 FROM marriage WHERE dailies > u.dailies ) AS rank FROM marriage u WHERE u.uid1 = ' + msg.author.id + ' OR u.uid2 = ' + msg.author.id + ';';
+		sql = 'SELECT u.id AS id,uu.id AS id2,dailies FROM marriage INNER JOIN user u ON uid1 = u.uid INNER JOIN user uu ON uid2 = uu.uid ORDER BY dailies DESC LIMIT ' + count + ';';
+		sql += 'SELECT u.id AS id,uu.id AS id2,dailies,(SELECT COUNT(*)+1 FROM marriage WHERE dailies > m.dailies ) AS rank FROM marriage m INNER JOIN user u ON uid1 = u.uid INNER JOIN user uu ON uid2 = uu.uid WHERE u.id = ' + msg.author.id + ' OR uu.id = ' + msg.author.id + ';';
 	} else {
 		let users = global.getids(msg.channel.guild.members);
-		sql = 'SELECT uid1 AS id,uid2 AS id2,dailies FROM marriage WHERE uid1 IN (' + users + ') OR uid2 IN (' + users + ') ORDER BY dailies DESC LIMIT ' + count + ';';
-		sql += 'SELECT uid1 AS id,uid2 AS id2,dailies,(SELECT COUNT(*)+1 FROM marriage WHERE (uid1 IN (' + users + ') OR uid2 IN (' + users + ')) AND dailies > u.dailies ) AS rank FROM marriage u WHERE u.uid1 = ' + msg.author.id + ' OR u.uid2 = ' + msg.author.id + ';';
+		sql = 'SELECT u.id AS id, uu.id AS id2, marriage.dailies FROM marriage INNER JOIN user u ON marriage.uid1 = u.uid INNER JOIN user uu ON marriage.uid2 = uu.uid WHERE u.id IN (' + users + ') OR uu.id IN (' + users + ') ORDER BY dailies DESC LIMIT ' + count + ';';
+		sql += 'SELECT u.id AS id, uu.id AS id2, m.dailies, (SELECT COUNT(*)+1 FROM marriage mm INNER JOIN user u3 ON mm.uid1 = u3.uid INNER JOIN user u4 ON mm.uid2 = u4.uid WHERE (u3.id IN (' + users + ') OR u4.id IN (' + users + ')) AND mm.dailies > m.dailies ) AS rank FROM marriage m INNER JOIN user u ON m.uid1 = u.uid INNER JOIN user uu ON m.uid2 = uu.uid WHERE u.id = ' + msg.author.id + ' OR uu.id = ' + msg.author.id + ';';
 	}
 
 	displayRanking(con, msg, count, globalRank, sql,
