@@ -898,8 +898,8 @@ function getMarriageRanking(globalRank, con, msg, count, p) {
 	displayRanking(con, msg, count, globalRank, sql,
 		'Top ' + count + ' ' + ((globalRank) ? 'Global Marriage Rankings' : 'Marriage Rankings for ' + msg.channel.guild.name),
 		function (query, rank) {
-			if (rank == 0) return '>\t\Dailies Collected Together: ' + global.toFancyNum(query.dailies) + '\n\n';
-			else return '\n\t\Dailies Collected Together: ' + global.toFancyNum(query.dailies) + '\n';
+			if (rank == 0) return '>\tDailies Collected Together: ' + global.toFancyNum(query.dailies) + '\n\n';
+			else return '\n\tDailies Collected Together: ' + global.toFancyNum(query.dailies) + '\n';
 		}
 		, p);
 }
