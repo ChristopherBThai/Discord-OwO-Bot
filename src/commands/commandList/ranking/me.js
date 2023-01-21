@@ -1238,14 +1238,14 @@ function getShardRanking(globalRank, con, msg, p) {
 function getMarriageRanking(globalRank, con, msg, p) {
 	let sql;
 	if (globalRank) {
-		sql = 'SELECT uid1 AS id,uid2 AS id2,dailies FROM marriage WHERE dailies > (SELECT dailies FROM marriage WHERE uid1 = ' + msg.author.id + ' OR uid2 = ' + msg.author.id + ' LIMIT 1) ORDER BY dailies ASC LIMIT 2;';
-		sql += 'SELECT uid1 AS id,uid2 AS id2,dailies FROM marriage WHERE dailies < (SELECT dailies FROM marriage WHERE uid1 = ' + msg.author.id + ' OR uid2 = ' + msg.author.id + ' LIMIT 1) ORDER BY dailies DESC LIMIT 2;';
-		sql += 'SELECT uid1 AS id,uid2 AS id2,dailies,(SELECT COUNT(*)+1 FROM marriage WHERE dailies > u.dailies ) AS rank FROM marriage u WHERE u.uid1 = ' + msg.author.id + ' OR u.uid2 = ' + msg.author.id + ';';
+		sql = 'SELECT u.id AS id, uu.id AS id2, m.dailies FROM marriage m INNER JOIN user u ON u.uid = m.uid1 INNER JOIN user uu ON uu.uid = m.uid2 WHERE m.dailies > (SELECT mm.dailies FROM marriage mm INNER JOIN user u3 ON u3.uid = mm.uid1 INNER JOIN user u4 ON u4.uid = mm.uid2 WHERE u3.id = ' + msg.author.id + ' OR u4.id = ' + msg.author.id + ' LIMIT 1) ORDER BY m.dailies ASC LIMIT 2;';
+		sql += 'SELECT u.id AS id, uu.id AS id2, m.dailies FROM marriage m INNER JOIN user u ON u.uid = m.uid1 INNER JOIN user uu ON uu.uid = m.uid2 WHERE m.dailies < (SELECT mm.dailies FROM marriage mm INNER JOIN user u3 ON u3.uid = mm.uid1 INNER JOIN user u4 ON u4.uid = mm.uid2 WHERE u3.id = ' + msg.author.id + ' OR u4.id = ' + msg.author.id + ' LIMIT 1) ORDER BY m.dailies DESC LIMIT 2;';
+		sql += 'SELECT u.id AS id, uu.id AS id2, m.dailies, (SELECT COUNT(*)+1 FROM marriage WHERE dailies > m.dailies) AS rank FROM marriage m INNER JOIN user u ON u.uid = m.uid1 INNER JOIN user uu ON uu.uid = m.uid2 WHERE u.id = ' + msg.author.id + ' OR uu.id = ' + msg.author.id + ';';
 	} else {
 		let users = global.getids(msg.channel.guild.members);
-		sql = 'SELECT uid1 AS id,uid2 AS id2,dailies FROM marriage WHERE (uid1 IN (' + users + ') OR uid2 IN (' + users + ')) AND dailies > (SELECT dailies FROM marriage WHERE uid1 = ' + msg.author.id + ' OR uid2 = ' + msg.author.id + ' LIMIT 1) ORDER BY dailies ASC LIMIT 2;';
-		sql += 'SELECT uid1 AS id,uid2 AS id2,dailies FROM marriage WHERE (uid1 IN (' + users + ') OR uid2 IN (' + users + ')) dailies < (SELECT dailies FROM marriage WHERE uid1 = ' + msg.author.id + ' OR uid2 = ' + msg.author.id + ' LIMIT 1) ORDER BY dailies DESC LIMIT 2;';
-		sql += 'SELECT uid1 AS id,uid2 AS id2,dailies,(SELECT COUNT(*)+1 FROM marriage WHERE (uid1 IN (' + users + ') OR uid2 IN (' + users + ')) AND dailies > u.dailies ) AS rank FROM marriage u WHERE u.uid1 = ' + msg.author.id + ' OR u.uid2 = ' + msg.author.id + ';';
+		sql = 'SELECT u.id AS id, uu.id AS id2, m.dailies FROM marriage m INNER JOIN user u ON u.uid = m.uid1 INNER JOIN user uu ON uu.uid = m.uid2 WHERE (u.id IN (' + users + ') OR uu.id IN (' + users + ')) AND m.dailies > (SELECT mm.dailies FROM marriage mm INNER JOIN user u3 ON u3.uid = mm.uid1 INNER JOIN user u4 ON u4.uid = mm.uid2 WHERE u3.id = ' + msg.author.id + ' OR u4.id = ' + msg.author.id + ' LIMIT 1) ORDER BY m.dailies ASC LIMIT 2;';
+		sql += 'SELECT u.id AS id, uu.id AS id2, m.dailies FROM marriage m INNER JOIN user u ON u.uid = m.uid1 INNER JOIN user uu ON uu.uid = m.uid2 WHERE (u.id IN (' + users + ') OR uu.id IN (' + users + ')) AND m.dailies < (SELECT mm.dailies FROM marriage mm INNER JOIN user u3 ON u3.uid = mm.uid1 INNER JOIN user u4 ON u4.uid = mm.uid2 WHERE u3.id = ' + msg.author.id + ' OR u4.id = ' + msg.author.id + ' LIMIT 1) ORDER BY m.dailies DESC LIMIT 2;';
+		sql += 'SELECT u.id AS id, uu.id AS id2, m.dailies, (SELECT COUNT(*)+1 FROM marriage mm INNER JOIN user u3 ON u3.uid = mm.uid1 INNER JOIN user u4 ON u4.uid = mm.uid2 WHERE (u3.id IN (' + users + ') OR u4.id IN (' + users + ')) AND mm.dailies > m.dailies) AS rank FROM marriage m INNER JOIN user u ON u.uid = m.uid1 INNER JOIN user uu ON uu.uid = m.uid2 WHERE u.id = ' + msg.author.id + ' OR uu.id = ' + msg.author.id + ';';
 	}
 
 	displayRanking(con, msg, sql,
