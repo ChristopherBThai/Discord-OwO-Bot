@@ -203,6 +203,14 @@ async function displayRanking(con, msg, sql, title, subText, p) {
 	let uname;
 	if ((uname = await p.fetch.getUser(me.id, true))) uname = uname.username;
 	else uname = 'you';
+	if ('id2' in me) {
+		// used for marriage leaderboard
+		let user2 = await p.fetch.getUser(String(me.id2), true);
+		if (!user2)
+			uname += ' & User Left Bot';
+		else
+			uname += ' & ' + user2.username;
+	}
 	uname = uname.replace('discord.gg', 'discord,gg').replace(/(```)/g, '`\u200b``');
 	embed += '< ' + rank + '   ' + uname + ' >\n' + subText(me) + '\n';
 	rank++;
@@ -1251,7 +1259,7 @@ function getMarriageRanking(globalRank, con, msg, p) {
 	displayRanking(con, msg, sql,
 		((globalRank) ? 'Global Marriage Rankings' : 'Marriage Rankings for ' + msg.channel.guild.name),
 		function (query) {
-			return '\n\t\Dailies Collected Together: ' + global.toFancyNum(query.dailies);
+			return '\t\tDailies Collected Together: ' + global.toFancyNum(query.dailies);
 		}
 		, p);
 }
