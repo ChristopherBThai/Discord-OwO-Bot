@@ -172,13 +172,7 @@ exports.buy = async function (p, id) {
 	await redis.hmset(redisKey + 'Purchased', redisValue);
 	await p.replyMsg(
 		cartEmoji,
-		', you purchased ' +
-			weaponEmojis +
-			' for **' +
-			weapon.shardPrice +
-			' ' +
-			shardEmoji +
-			' Weapon Shards**!'
+		`, you purchased **${weapon.shopID}** ${weaponEmojis} for **${weapon.shardPrice} ${shardEmoji} Weapon Shards**!`
 	);
 };
 
