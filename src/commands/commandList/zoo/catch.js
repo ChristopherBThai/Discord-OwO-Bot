@@ -142,7 +142,7 @@ module.exports = new CommandInterface({
 			p.quest('hunt');
 			p.quest('find', 1, animal.typeCount);
 			p.quest('xp', animal.xp);
-			p.send(text);
+			await p.send(text);
 			p.event.getEventItem.bind(this)();
 		}
 	},
