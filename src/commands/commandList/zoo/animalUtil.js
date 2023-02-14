@@ -56,6 +56,7 @@ function setSpecialRates() {
 	const d = new Date();
 	const h = new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours() + 1, 0, 1, 0);
 	const diff = h - d;
+	console.log('Special Rates: ' + JSON.stringify(specialRatesManual, null, 2));
 	setTimeout(setSpecialRates, diff);
 }
 

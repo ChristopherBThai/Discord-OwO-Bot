@@ -144,6 +144,7 @@ function setActiveEvents() {
 			activeEvents[key] = events[key];
 		}
 	}
+	console.log('Active Events: ' + JSON.stringify(activeEvents, null, 2));
 }
 
 function getCurrentActive() {
