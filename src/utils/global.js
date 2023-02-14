@@ -319,6 +319,16 @@ exports.getUid = async function (id) {
 	return result.insertId;
 };
 
+exports.getUserUid = async function (user) {
+	if (user.uid) {
+		return user.uid;
+	} else {
+		const uid = await this.getUid(user.id);
+		user.uid = uid;
+		return uid;
+	}
+}
+
 exports.getEmojiURL = function (emoji) {
 	let id = emoji.match(/:[0-9]+>$/gi);
 	if (!id || !id[0]) return;

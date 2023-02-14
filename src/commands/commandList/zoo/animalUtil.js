@@ -20,19 +20,60 @@ setTimeout(() => {
 	enableDistortedTier = false;
 }, 21600000);
 
-const specialRatesManual = animals.specialRates;
+let specialRatesManual = [];
 let specialRatesHuntbot = [];
 let specialPercentManual = 0;
 let specialPercentHuntbot = 0;
-if (specialRatesManual && specialRatesManual.length) {
-	for (let i in specialRatesManual) {
-		specialPercentManual += specialRatesManual[i].rate;
-		specialRatesHuntbot[i] = { ...specialRatesManual[i] };
-		specialRatesHuntbot[i].rate = specialRatesHuntbot[i].rate / 4;
-		specialPercentHuntbot += specialRatesHuntbot[i].rate;
+setSpecialRates();
+
+function setSpecialRates () {
+	specialRatesManual = [];
+	specialRatesHuntbot = [];
+	specialPercentManual = 0;
+	specialPercentHuntbot = 0;
+
+	if (animals.specialRates && animals.specialRates.length) {
+		for (let i in animals.specialRates) {
+			const special = animals.specialRates[i];
+			const rate = getRate(special);
+
+			if (rate) {
+				specialRatesManual.push({
+					animal: special.animal,
+					rate: rate
+				});
+				specialPercentManual += rate;
+
+				specialRatesHuntbot.push({ 
+					animal: special.animal,
+					rate: rate / 4
+				});
+				specialPercentHuntbot += rate / 4;
+			}
+		}
 	}
+
+	const d = new Date()
+	const h = new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours() + 1, 0, 1, 0);
+	const diff = h - d;
+	setTimeout(setSpecialRates, diff);
 }
 
+function getRate(special) {
+	const start = (new Date(special.startDate)).getTime();
+	const end = (new Date(special.endDate)).getTime();
+	const diff = end - start;
+	let rate = special.minRate;
+	const now = Date.now();
+
+	if (end < now || now < start) {
+		return 0;
+	}
+
+	const percentDiff = (now - start) / diff;
+	rate += (special.maxRate - special.minRate) * percentDiff;
+	return rate;
+}
 /**
  * Picks a random animal from secret json file
  */

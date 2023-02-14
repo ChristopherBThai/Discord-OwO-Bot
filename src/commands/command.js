@@ -272,6 +272,7 @@ function initParam(msg, command, args, main, context) {
 		sender: main.sender,
 		macro: main.macro,
 		global: main.global,
+		event: main.event,
 		aliasToCommand: aliasToCommand,
 		commandAlias: aliasToCommand[command],
 		commands: commands,

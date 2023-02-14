@@ -74,6 +74,8 @@ class OwO extends Base {
 		this.global = require('./utils/global.js');
 		this.global.init(this);
 
+		this.event = require('./utils/eventUtil.js');
+
 		// Message sender helper methods
 		this.sender = require('./utils/sender.js');
 		this.sender.init(this);

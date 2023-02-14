@@ -1,0 +1,63 @@
+{
+	"valentine": {
+		"start2": 1676361600000,
+		"start": 1676355679508,
+		"end": 1677139200000,
+		"emoji": "💌",
+		"item": {
+			"id": "love_letter",
+			"name": "Love Letter",
+			"emoji": "💌",
+			"openEmoji": "💌",
+			"chance": 0.55,
+			"foundText": "?emoji? **|** OwO! You found a **love letter**! <3",
+			"rewards": [
+				{
+					"type": "wallpaper",
+					"id": 82,
+					"chance": 25
+				},
+				{
+					"type": "wallpaper",
+					"id": 83,
+					"chance": 25
+				},
+				{
+					"type": "wallpaper",
+					"id": 84,
+					"chance": 25
+				},
+				{
+					"type": "wallpaper",
+					"id": 85,
+					"chance": 25
+				},
+				{
+					"type": "animal",
+					"id": "2023val_day",
+					"chance": 20 
+				},
+				{
+					"type": "animal",
+					"id": "2023val_night",
+					"chance": 20 
+				},
+				{
+					"type": "lb",
+					"count": 1,
+					"chance": 20
+				},
+				{
+					"type": "wc",
+					"count": 1,
+					"chance": 20
+				},
+				{
+					"type": "flb",
+					"count": 1,
+					"chance": 1
+				}
+			]
+		}
+	}
+}
