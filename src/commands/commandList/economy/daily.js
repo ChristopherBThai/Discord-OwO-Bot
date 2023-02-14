@@ -277,7 +277,9 @@ async function doubleCheckMarriage(p, afterMid, marriage) {
 											(${marriage.uid2}, '${event.item.id}', 1, '2017-01-01', 0)
 										ON DUPLICATE KEY UPDATE
 											count = count + 1; `;
-						text = `${valEmoji} **|** Happy Valentines, You got a ${event.item.emoji} **${event.item.name}** and some extra rewards! <3\n` + text;
+						text =
+							`${valEmoji} **|** Happy Valentines, You got a ${event.item.emoji} **${event.item.name}** and some extra rewards! <3\n` +
+							text;
 						count += 1;
 					}
 					if (Math.random() < 0.5) {
@@ -406,7 +408,9 @@ async function checkMarriage(p, marriage) {
 							(${marriage.uid2}, '${event.item.id}', 1, '2017-01-01', 0)
 						ON DUPLICATE KEY UPDATE
 							count = count + 1; `;
-		text = `\n${valEmoji} **|** Happy Valentines, You got a ${event.item.emoji} **${event.item.name}** and some extra rewards! <3` + text;
+		text =
+			`\n${valEmoji} **|** Happy Valentines, You got a ${event.item.emoji} **${event.item.name}** and some extra rewards! <3` +
+			text;
 		count += 1;
 	}
 	if (Math.random() < 0.5) {

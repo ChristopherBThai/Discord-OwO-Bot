@@ -35,8 +35,8 @@ const items = {
 		emoji: event.valentine.item.emoji,
 		column: event.valentine.item.id,
 		untradeable: true,
-		desc: 'Happy Valentines Day! This item was given out on Feb 2023. Open the letter to receive some special stuff!'
-	}
+		desc: 'Happy Valentines Day! This item was given out on Feb 2023. Open the letter to receive some special stuff!',
+	},
 };
 
 exports.getItems = async function (p) {
@@ -73,7 +73,7 @@ exports.use = async function (id, p) {
 			await useCommonTicket(item, p);
 			break;
 		case 18:
-			await p.event.useItem.bind(p)(item)
+			await p.event.useItem.bind(p)(item);
 			break;
 		default:
 			await p.errorMsg(', something went wrong using this item... :(');

@@ -15,7 +15,7 @@ for (const key in events) {
 let activeEvents = {};
 setActiveEvents();
 
-exports.useItem = async function(item) {
+exports.useItem = async function (item) {
 	const event = getEventByItem(item.column);
 	const uid = await this.global.getUserUid(this.msg.author);
 	const con = await this.startTransaction();
@@ -32,10 +32,12 @@ exports.useItem = async function(item) {
 			await con.rollback();
 			try {
 				await this.errorMsg(`, you don't have a **${item.name}**!`, 3000);
-			} catch (err) {/* empty */}
+			} catch (err) {
+				/* empty */
+			}
 			return;
 		}
-		
+
 		reward = await getRandomReward.bind(this)(event.item.rewards, con);
 
 		await con.query(reward.sql);
@@ -49,15 +51,15 @@ exports.useItem = async function(item) {
 
 	let text = `${event.item.openEmoji} **|** You open the **${item.name}** and received **${reward.text}**!`;
 	this.send(text);
-}
+};
 
-exports.getEventItem = async function() {
+exports.getEventItem = async function () {
 	const event = getCurrentActive();
 	if (!event) return;
 
 	// Cache if user is done today
-	let today = new Date()
-	today = today.toLocaleDateString()
+	let today = new Date();
+	today = today.toLocaleDateString();
 	if (this.msg.author.eventItemDone) {
 		const date = this.msg.author.eventItemDone;
 		if (date === today) {
@@ -104,32 +106,31 @@ exports.getEventItem = async function() {
 	}
 
 	const item = itemUtil.getByName(event.item.id);
-	const text = event.item.foundText
-		.replaceAll('?emoji?', event.item.emoji)
-		+ ` \`[${claimed}/3]\`\n${this.config.emoji.blank} **|** To use this item, type \`owo use ${item.id}\``;
+	const text =
+		event.item.foundText.replaceAll('?emoji?', event.item.emoji) +
+		` \`[${claimed}/3]\`\n${this.config.emoji.blank} **|** To use this item, type \`owo use ${item.id}\``;
 
 	this.send(text);
-}
+};
 
-exports.isValentines = function() {
+exports.isValentines = function () {
 	// TODO remove next year
 	if (Date.now() < 1676448000000) {
 		return false;
 	}
 	return isEventActive(events['valentine']);
-}
+};
 
-exports.getValentines = function() {
+exports.getValentines = function () {
 	return events['valentine'];
-}
+};
 
 function isEventActive(event) {
 	if (!event) {
-		console.error(`No event with name: ${eventName}`);
 		return false;
 	}
 	if (!event.start || !event.end) {
-		console.error(`No event start/end with name: ${eventName}`);
+		console.error(`No event start/end with name: ${event.id}`);
 		return false;
 	}
 	const now = Date.now();
@@ -140,13 +141,13 @@ function setActiveEvents() {
 	activeEvents = {};
 	for (const key in events) {
 		if (Date.now() < events[key].end) {
-			activeEvents[key] = events[key]
+			activeEvents[key] = events[key];
 		}
 	}
 }
 
 function getCurrentActive() {
-	const resetActive = false;
+	let resetActive = false;
 	for (const key in activeEvents) {
 		if (isEventActive(activeEvents[key])) {
 			return activeEvents[key];
@@ -160,7 +161,7 @@ function getCurrentActive() {
 }
 
 function getEventByItem(itemName) {
-	return itemToEvents[itemName]
+	return itemToEvents[itemName];
 }
 
 async function getRandomReward(rewards, con) {
@@ -170,7 +171,7 @@ async function getRandomReward(rewards, con) {
 	let result;
 	const newRewards = [];
 
-	rewards.forEach(reward => {
+	rewards.forEach((reward) => {
 		chance += reward.chance;
 		if (!result && rand < chance) {
 			result = reward;
@@ -179,7 +180,7 @@ async function getRandomReward(rewards, con) {
 		}
 	});
 	if (!result) {
-		throw "No reward found";
+		throw 'No reward found';
 	}
 
 	result = await parseReward.bind(this)(result, con);
@@ -191,54 +192,49 @@ async function getRandomReward(rewards, con) {
 
 async function parseReward(reward, con) {
 	const uid = await this.global.getUserUid(this.msg.author);
-	let sql, result, name;
+	let sql, result, name, animal;
 	switch (reward.type) {
 		case 'wallpaper':
-				// Check if user has reward
-				sql = `SELECT * FROM backgrounds WHERE bid = ${reward.id};
+			// Check if user has reward
+			sql = `SELECT * FROM backgrounds WHERE bid = ${reward.id};
 					SELECT * FROM user_backgrounds WHERE uid = ${uid} AND bid = ${reward.id};`;
-				result = await con.query(sql);
-				if (result[1][0]) {
-					return null;
-				}
-				name = result[0][0].bname;
-				return {
-					text: `a ${this.config.emoji.wallpaper} "${name}" Wallpaper`,
-					sql: `INSERT INTO user_backgrounds (uid, bid) VALUES (${uid}, ${reward.id}); `
-				}
-				
-			break;
+			result = await con.query(sql);
+			if (result[1][0]) {
+				return null;
+			}
+			name = result[0][0].bname;
+			return {
+				text: `a ${this.config.emoji.wallpaper} "${name}" Wallpaper`,
+				sql: `INSERT INTO user_backgrounds (uid, bid) VALUES (${uid}, ${reward.id}); `,
+			};
+
 		case 'animal':
-			let animal = this.global.validAnimal(reward.id);
+			animal = this.global.validAnimal(reward.id);
 			return {
 				text: `a ${animal.value} ${animal.name}`,
 				sql: `INSERT INTO animal (count, totalcount, id, name) VALUES (1,1,${this.msg.author.id},'${animal.value}')
 						ON DUPLICATE KEY UPDATE count = count + 1, totalcount = totalcount + 1;
 						INSERT INTO animal_count (id, ${animal.rank}) VALUES (${this.msg.author.id}, 1)
-						ON DUPLICATE KEY UPDATE ${animal.rank} = ${animal.rank} + 1;`
-			}
-			break;
+						ON DUPLICATE KEY UPDATE ${animal.rank} = ${animal.rank} + 1;`,
+			};
 		case 'lb':
 			return {
 				text: `a ${this.config.emoji.lootbox} Lootbox`,
 				sql: `INSERT INTO lootbox (id,boxcount,claimcount,claim) VALUES (${this.msg.author.id},${reward.count},0,'2017-01-01')
-						ON DUPLICATE KEY UPDATE boxcount = boxcount + ${reward.count};`
-			}
-			break;
+						ON DUPLICATE KEY UPDATE boxcount = boxcount + ${reward.count};`,
+			};
 		case 'flb':
 			return {
 				text: `a ${this.config.emoji.fabledLootbox} Fabled Lootbox`,
 				sql: `INSERT INTO lootbox (id,fbox,claimcount,claim) VALUES (${this.msg.author.id},${reward.count},0,'2017-01-01')
-						ON DUPLICATE KEY UPDATE fbox = fbox + ${reward.count};`
-			}
-			break;
+						ON DUPLICATE KEY UPDATE fbox = fbox + ${reward.count};`,
+			};
 		case 'wc':
 			return {
 				text: `a ${this.config.emoji.crate} Weapon Crate`,
 				sql: `INSERT INTO crate (uid,cratetype,boxcount,claimcount,claim) VALUES (${uid},0,${reward.count},0,'2017-01-01')
-						ON DUPLICATE KEY UPDATE boxcount = boxcount + ${reward.count};`
-			}
-			break;
+						ON DUPLICATE KEY UPDATE boxcount = boxcount + ${reward.count};`,
+			};
 		default:
 			throw 'Invalid reward type: ' + reward.type;
 	}
