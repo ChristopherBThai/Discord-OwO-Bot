@@ -1068,6 +1068,7 @@ async function finishBattle(msg, p, battle, color, text, playerWin, enemyWin, lo
 
 		/* battle quests */
 		p.quest('battle');
+		p.event.getEventItem.bind(p)();
 
 		/* An error occured */
 		if (!playerWin && !enemyWin) return;

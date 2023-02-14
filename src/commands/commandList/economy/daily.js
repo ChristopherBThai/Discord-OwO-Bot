@@ -16,6 +16,7 @@ const levels = require('../../../utils/levels.js');
 const rings = require('../../../data/rings.json');
 const moneyEmoji = '💰';
 const surveyEmoji = '📝';
+const valEmoji = '💌';
 
 module.exports = new CommandInterface({
 	alias: ['daily'],
@@ -252,7 +253,7 @@ async function doubleCheckMarriage(p, afterMid, marriage) {
 			const u2Date = p.dateUtil.afterMidnight(marriage.daily2);
 
 			if (!u1Date.after && !u2Date.after) {
-				const totalGain = calculateMarriageBonus(marriage);
+				const totalGain = calculateMarriageBonus(p, marriage);
 				let sql = `UPDATE marriage SET claimDate = ${afterMid.sql}, dailies = dailies + 1 WHERE uid1 = ${marriage.uid1} AND uid2 = ${marriage.uid2} AND dailies = ${marriage.dailies};`;
 				const result = await p.query(sql);
 
@@ -264,15 +265,35 @@ async function doubleCheckMarriage(p, afterMid, marriage) {
 					const ring = rings[marriage.rid];
 					let text = `${ring.emoji} **|** You and ${so ? so.username : 'your partner'} received ${
 						p.config.emoji.cowoncy
-					} **${totalGain} Cowoncy** and a `;
+					} **${totalGain} Cowoncy** and `;
 
 					sql = `UPDATE cowoncy SET money = money + ${totalGain} WHERE id IN (${marriage.id1}, ${marriage.id2});`;
+
+					let count = 1;
+					if (p.event.isValentines()) {
+						const event = p.event.getValentines();
+						sql += `INSERT INTO user_item (uid, name, count, claim_reset, claim_count) VALUES 
+											(${marriage.uid1}, '${event.item.id}', 1, '2017-01-01', 0),
+											(${marriage.uid2}, '${event.item.id}', 1, '2017-01-01', 0)
+										ON DUPLICATE KEY UPDATE
+											count = count + 1; `;
+						text = `${valEmoji} **|** Happy Valentines, You got a ${event.item.emoji} **${event.item.name}** and some extra rewards! <3\n` + text;
+						count += 1;
+					}
 					if (Math.random() < 0.5) {
-						sql += `INSERT INTO lootbox (id, boxcount, claimcount, claim) VALUES (${marriage.id2}, 1, 0, '2017-01-01'), (${marriage.id2}, 1, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;`;
-						text += `${p.config.emoji.lootbox} **lootbox**!`;
+						sql += `INSERT INTO lootbox (id, boxcount, claimcount, claim) VALUES (${marriage.id2}, ${count}, 0, '2017-01-01'), (${marriage.id2}, ${count}, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
+						if (count > 1) {
+							text += `${p.config.emoji.lootbox} **${count} lootboxes**!`;
+						} else {
+							text += `a ${p.config.emoji.lootbox} **lootbox**!`;
+						}
 					} else {
-						sql += `INSERT INTO crate (uid, cratetype, boxcount, claimcount, claim) VALUES ((SELECT uid FROM user WHERE id = ${marriage.id1}), 0, 1, 0, '2017-01-01'), ((SELECT uid FROM user WHERE id = ${marriage.id2}), 0, 1, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;`;
-						text += `${p.config.emoji.crate} **weapon crate**!`;
+						sql += `INSERT INTO crate (uid, cratetype, boxcount, claimcount, claim) VALUES ((SELECT uid FROM user WHERE id = ${marriage.id1}), 0, ${count}, 0, '2017-01-01'), ((SELECT uid FROM user WHERE id = ${marriage.id2}), 0, ${count}, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
+						if (count > 1) {
+							text += `${p.config.emoji.crate} **${count} weapon crates**!`;
+						} else {
+							text += `a ${p.config.emoji.crate} **weapon crate**!`;
+						}
 					}
 					await p.query(sql);
 					p.send(text);
@@ -286,10 +307,13 @@ async function doubleCheckMarriage(p, afterMid, marriage) {
 	);
 }
 
-function calculateMarriageBonus(marriage) {
+function calculateMarriageBonus(p, marriage) {
 	let totalStreak = marriage.streak1 + marriage.streak2;
 	let totalGain = Math.round(100 + Math.floor(Math.random() * 100) + totalStreak * 12.5);
 	if (totalGain > 1000) totalGain = 1000;
+	if (p.event.isValentines()) {
+		totalGain *= 2;
+	}
 	return totalGain;
 }
 
@@ -364,7 +388,7 @@ async function checkMarriage(p, marriage) {
 		return;
 	}
 
-	const totalGain = calculateMarriageBonus(marriage);
+	const totalGain = calculateMarriageBonus(p, marriage);
 	let sql = `UPDATE cowoncy SET money = money + ${totalGain} WHERE id IN (${soID}, ${p.msg.author.id});`;
 	sql += `UPDATE marriage SET claimDate = ${afterMid.sql}, dailies = dailies + 1 WHERE uid1 = ${marriage.uid1} AND uid2 = ${marriage.uid2};`;
 
@@ -372,14 +396,33 @@ async function checkMarriage(p, marriage) {
 	let ring = rings[marriage.rid];
 	let text = `\n${ring.emoji}** |** You and ${
 		so ? so.username : 'your partner'
-	} received <:cowoncy:416043450337853441> **${totalGain} Cowoncy** and a `;
+	} received <:cowoncy:416043450337853441> **${totalGain} Cowoncy** and `;
 
+	let count = 1;
+	if (p.event.isValentines()) {
+		const event = p.event.getValentines();
+		sql += `INSERT INTO user_item (uid, name, count, claim_reset, claim_count) VALUES 
+							(${marriage.uid1}, '${event.item.id}', 1, '2017-01-01', 0),
+							(${marriage.uid2}, '${event.item.id}', 1, '2017-01-01', 0)
+						ON DUPLICATE KEY UPDATE
+							count = count + 1; `;
+		text = `\n${valEmoji} **|** Happy Valentines, You got a ${event.item.emoji} **${event.item.name}** and some extra rewards! <3` + text;
+		count += 1;
+	}
 	if (Math.random() < 0.5) {
-		sql += `INSERT INTO lootbox (id, boxcount, claimcount, claim) VALUES (${p.msg.author.id}, 1, 0, '2017-01-01'), (${soID}, 1, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;`;
-		text += `${p.config.emoji.lootbox} **lootbox**!`;
+		sql += `INSERT INTO lootbox (id, boxcount, claimcount, claim) VALUES (${p.msg.author.id}, ${count}, 0, '2017-01-01'), (${soID}, ${count}, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
+		if (count > 1) {
+			text += `${p.config.emoji.lootbox} **${count} lootboxes**!`;
+		} else {
+			text += `a ${p.config.emoji.lootbox} **lootbox**!`;
+		}
 	} else {
-		sql += `INSERT INTO crate (uid, cratetype, boxcount, claimcount, claim) VALUES (${marriage.uid1}, 0, 1, 0, '2017-01-01'), (${marriage.uid2}, 0, 1, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;`;
-		text += `${p.config.emoji.crate} **weapon crate**!`;
+		sql += `INSERT INTO crate (uid, cratetype, boxcount, claimcount, claim) VALUES (${marriage.uid1}, 0, ${count}, 0, '2017-01-01'), (${marriage.uid2}, 0, ${count}, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
+		if (count > 1) {
+			text += `${p.config.emoji.crate} **${count} weapon crates**!`;
+		} else {
+			text += `a ${p.config.emoji.crate} **weapon crate**!`;
+		}
 	}
 
 	return { sql, text };

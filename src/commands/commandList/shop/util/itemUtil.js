@@ -6,6 +6,7 @@
  */
 
 const config = require('../../../../data/config.json');
+const event = require('../../../../data/event.json');
 const thumbsup = '👍';
 const thumbsdown = '👎';
 const items = {
@@ -28,6 +29,14 @@ const items = {
 		untradeable: true,
 		desc: 'You can use this item to redeem 1 month of common tier perks by typing `owo use 14`.',
 	},
+	love_letter: {
+		id: 18,
+		name: 'Love Letter',
+		emoji: event.valentine.item.emoji,
+		column: event.valentine.item.id,
+		untradeable: true,
+		desc: 'Happy Valentines Day! This item was given out on Feb 2023. Open the letter to receive some special stuff!'
+	}
 };
 
 exports.getItems = async function (p) {
@@ -63,6 +72,9 @@ exports.use = async function (id, p) {
 		case 14:
 			await useCommonTicket(item, p);
 			break;
+		case 18:
+			await p.event.useItem.bind(p)(item)
+			break;
 		default:
 			await p.errorMsg(', something went wrong using this item... :(');
 	}
@@ -72,6 +84,11 @@ function getById(id) {
 	return Object.values(items).find((item) => item.id == id);
 }
 exports.getById = getById;
+
+function getByName(name) {
+	return items[name];
+}
+exports.getByName = getByName;
 
 async function useCommonTicket(ticket, p) {
 	let count = p.args[1];
