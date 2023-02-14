@@ -26,7 +26,7 @@ let specialPercentManual = 0;
 let specialPercentHuntbot = 0;
 setSpecialRates();
 
-function setSpecialRates () {
+function setSpecialRates() {
 	specialRatesManual = [];
 	specialRatesHuntbot = [];
 	specialPercentManual = 0;
@@ -40,28 +40,28 @@ function setSpecialRates () {
 			if (rate) {
 				specialRatesManual.push({
 					animal: special.animal,
-					rate: rate
+					rate: rate,
 				});
 				specialPercentManual += rate;
 
-				specialRatesHuntbot.push({ 
+				specialRatesHuntbot.push({
 					animal: special.animal,
-					rate: rate / 4
+					rate: rate / 4,
 				});
 				specialPercentHuntbot += rate / 4;
 			}
 		}
 	}
 
-	const d = new Date()
+	const d = new Date();
 	const h = new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours() + 1, 0, 1, 0);
 	const diff = h - d;
 	setTimeout(setSpecialRates, diff);
 }
 
 function getRate(special) {
-	const start = (new Date(special.startDate)).getTime();
-	const end = (new Date(special.endDate)).getTime();
+	const start = new Date(special.startDate).getTime();
+	const end = new Date(special.endDate).getTime();
 	const diff = end - start;
 	let rate = special.minRate;
 	const now = Date.now();

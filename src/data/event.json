@@ -35,12 +35,12 @@
 				{
 					"type": "animal",
 					"id": "2023val_day",
-					"chance": 20 
+					"chance": 20
 				},
 				{
 					"type": "animal",
 					"id": "2023val_night",
-					"chance": 20 
+					"chance": 20
 				},
 				{
 					"type": "lb",

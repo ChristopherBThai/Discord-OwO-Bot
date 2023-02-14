@@ -327,7 +327,7 @@ exports.getUserUid = async function (user) {
 		user.uid = uid;
 		return uid;
 	}
-}
+};
 
 exports.getEmojiURL = function (emoji) {
 	let id = emoji.match(/:[0-9]+>$/gi);
