@@ -69,11 +69,12 @@ exports.getEventItem = async function() {
 	const uid = await this.global.getUserUid(this.msg.author);
 
 	const con = await this.startTransaction();
+	let claimed;
 	try {
 		let rand = Math.random();
 		let sql = `SELECT * FROM user_item WHERE uid = ${uid} AND name = '${event.item.id}';`;
 		const result = await con.query(sql);
-		let claimed = (result[0]?.claim_count || 0) + 1;
+		claimed = (result[0]?.claim_count || 0) + 1;
 
 		const reset = this.dateUtil.afterMidnight(result[0]?.claim_reset);
 		if (result[0] && result[0]?.claim_count >= 3 && !reset.after) {
@@ -105,7 +106,7 @@ exports.getEventItem = async function() {
 	const item = itemUtil.getByName(event.item.id);
 	const text = event.item.foundText
 		.replaceAll('?emoji?', event.item.emoji)
-		+ `\n${this.config.emoji.blank} **|** To use this item, type \`owo use ${item.id}\``;
+		+ ` \`[${claimed}/3]\`\n${this.config.emoji.blank} **|** To use this item, type \`owo use ${item.id}\``;
 
 	this.send(text);
 }
