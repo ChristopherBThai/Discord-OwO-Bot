@@ -9,7 +9,7 @@
 			"name": "Love Letter",
 			"emoji": "💌",
 			"openEmoji": "💌",
-			"chance": 0.55,
+			"chance": 0.05,
 			"foundText": "?emoji? **|** OwO! You found a **love letter**! <3",
 			"rewards": [
 				{
