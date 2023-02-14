@@ -1068,7 +1068,6 @@ async function finishBattle(msg, p, battle, color, text, playerWin, enemyWin, lo
 
 		/* battle quests */
 		p.quest('battle');
-		p.event.getEventItem.bind(p)();
 
 		/* An error occured */
 		if (!playerWin && !enemyWin) return;
@@ -1110,6 +1109,7 @@ async function finishBattle(msg, p, battle, color, text, playerWin, enemyWin, lo
 
 	/* send message for crate reward */
 	if (crate && crate.text) await p.send(crate.text);
+	p.event.getEventItem.bind(p)();
 }
 
 /* finish friendly battle */
