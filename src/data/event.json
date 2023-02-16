@@ -33,6 +33,11 @@
 					"chance": 25
 				},
 				{
+					"type": "wallpaper",
+					"id": 86,
+					"chance": 10
+				},
+				{
 					"type": "animal",
 					"id": "2023val_day",
 					"chance": 20
