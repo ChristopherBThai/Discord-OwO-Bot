@@ -69,7 +69,7 @@ module.exports = new CommandInterface({
 				' GROUP BY id;';
 		} else if (p.args[0] && (p.args[0].toLowerCase() == 'nocustompatreon' || p.args[0].toLowerCase() == 'nocp' ||p.args[0].toLowerCase() == 'n')){
 			sql +=
-				'SELECT common,uncommon,rare,epic,mythical,gem,legendary,fabled,patreon,cpatreon,hidden,special,bot,distorted,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = ' +
+				'SELECT common,uncommon,rare,epic,mythical,gem,legendary,fabled,patreon,hidden,special,bot,distorted,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = ' +
 				msg.author.id +
 				' GROUP BY id;';
 		} else {
