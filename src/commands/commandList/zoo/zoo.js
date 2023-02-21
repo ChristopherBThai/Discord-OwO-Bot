@@ -38,7 +38,7 @@ module.exports = new CommandInterface({
 
 	desc: "Displays your zoo! Some animals are rarer than others! Use the 'display' args to display all your animals from your history!",
 
-	example: ['owo zoo', 'owo zoo display'],
+	example: ['owo zoo', 'owo zoo display', 'owo zoo nocustompatreondisplay', 'owo zoo nocustompatreon'],
 
 	related: ['owo hunt', 'owo sell'],
 
@@ -61,9 +61,15 @@ module.exports = new CommandInterface({
 				'SELECT common,uncommon,rare,epic,mythical,gem,legendary,fabled,patreon,cpatreon,hidden,special,bot,distorted,MAX(totalcount) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = ' +
 				msg.author.id +
 				' GROUP BY id;';
-		} else if (p.args[0] && (p.args[0].toLowerCase() == 'nocustompatreon' || p.args[0].toLowerCase() == 'nocp' ||p.args[0].toLowerCase() == 'n')) {
+		} else if (p.args[0] && (p.args[0].toLowerCase() == 'nocustompatreondisplay' || p.args[0].toLowerCase() == 'nocpd' ||p.args[0].toLowerCase() == 'nd')) {
+			sql = 'SELECT (totalcount) as count,name FROM animal WHERE id = ' + msg.author.id + ';';
 			sql +=
-				'SELECT common,uncommon,rare,epic,mythical,gem,legendary,fabled,patreon,hidden,special,bot,distorted,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = ' +
+				'SELECT common,uncommon,rare,epic,mythical,gem,legendary,fabled,patreon,hidden,special,bot,distorted,MAX(totalcount) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = ' +
+				msg.author.id +
+				' GROUP BY id;';
+		} else if (p.args[0] && (p.args[0].toLowerCase() == 'nocustompatreon' || p.args[0].toLowerCase() == 'nocp' ||p.args[0].toLowerCase() == 'n')){
+			sql +=
+				'SELECT common,uncommon,rare,epic,mythical,gem,legendary,fabled,patreon,cpatreon,hidden,special,bot,distorted,MAX(count) AS biggest FROM animal NATURAL JOIN animal_count WHERE id = ' +
 				msg.author.id +
 				' GROUP BY id;';
 		} else {
