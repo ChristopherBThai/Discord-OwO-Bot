@@ -367,9 +367,11 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	let desc = '';
 	let fieldText;
 	let fields = [];
+	const user_weapons_2 = [];
 	for (let key in user_weapons) {
 		let weapon = parseWeapon(user_weapons[key]);
 		if (weapon) {
+			user_weapons_2.push(weapon);
 			let row = '';
 			let emoji = `${weapon.rank.emoji}${weapon.emoji}`;
 			for (let i = 0; i < weapon.passives.length; i++) {
@@ -430,9 +432,11 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	else if (sort === 3) embed.footer.text += 'Sorting by equipped';
 
 	embed = alterWeapon.alter(user.id, embed, {
+		...opt,
 		page: page + 1,
 		descHelp: descHelp,
 		desc: desc,
+		weapons: user_weapons_2,
 	});
 
 	return { sql, embed, totalCount, nextPage, prevPage, maxPage };

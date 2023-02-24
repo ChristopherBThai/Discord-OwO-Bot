@@ -49,27 +49,29 @@ function lexx(p, info) {
 }
 
 function rhine(p, info) {
+	const smile = '<a:smile:1078625522839457924>';
+	const blossom = '<a:blossom2:1078625520419348481>';
+	const thanks = '<a:thank:1078625521778298901>';
 	let embed;
 	if (info.receiver) {
 		embed = {
-			color: 16758235,
+			color: 16762075,
 			image: {
-				url: 'https://media.discordapp.net/attachments/886547029478768640/963001595472261140/ezgif-3-1f6690830d.gif',
+				url: 'https://media.discordapp.net/attachments/826119648868040775/1060107451321569280/ezgif-4-44fc74e5e7.gif',
 			},
 			description:
-				`🌸 | "Thank you so much, **${info.from.username}**!"` +
-				`\n👛 | **${info.to.username}** has received **${info.amount} cowoncy**!`,
+				`${blossom} **${info.to.username}** received a cherry blossoms tree with **${info.amount} blossoms** in her garden!` +
+				`\n${thanks} "Thank you so much, **${info.from.username}**"`
 		};
 	} else {
 		embed = {
-			color: 16758232,
+			color: 16762075,
 			image: {
-				url: 'https://media.discordapp.net/attachments/886547029478768640/963001595472261140/ezgif-3-1f6690830d.gif',
+				url: 'https://media.discordapp.net/attachments/826119648868040775/1060105165945970719/main-qimg-4ebf09188c61866237c4420e1ea7cd2f.gif',
 			},
 			description:
-				`💬 **|** **${info.from.username}** says: "Save money and money will save you."` +
-				`\n💵 **|** sent **${info.amount} cowoncy**` +
-				`\n🌸 **|** to **${info.to.username}**`,
+				`${smile} "Hi, **${info.to.username}**!"` +
+				`\n${blossom} **${info.from.username}** planted a cherry blossoms tree in your garden and it now has **${info.amount} blossoms** on it!`
 		};
 	}
 	return { embed };
