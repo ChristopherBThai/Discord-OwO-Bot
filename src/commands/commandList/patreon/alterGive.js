@@ -61,7 +61,7 @@ function rhine(p, info) {
 			},
 			description:
 				`${blossom} **${info.to.username}** received a cherry blossoms tree with **${info.amount} blossoms** in her garden!` +
-				`\n${thanks} "Thank you so much, **${info.from.username}**"`
+				`\n${thanks} "Thank you so much, **${info.from.username}**"`,
 		};
 	} else {
 		embed = {
@@ -71,7 +71,7 @@ function rhine(p, info) {
 			},
 			description:
 				`${smile} "Hi, **${info.to.username}**!"` +
-				`\n${blossom} **${info.from.username}** planted a cherry blossoms tree in your garden and it now has **${info.amount} blossoms** on it!`
+				`\n${blossom} **${info.from.username}** planted a cherry blossoms tree in your garden and it now has **${info.amount} blossoms** on it!`,
 		};
 	}
 	return { embed };
