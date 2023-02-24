@@ -47,16 +47,16 @@ class Lxv extends Collectible {
 				msg =
 					"<:846997443278274610:1055044684382208010> **| ?user?**, you currently have ?count? ?emoji? lxv. Don't forget to take care of them!\n<:1039236830022868992:1055044688979185664> **|** Hedge has collected ?mergeCount? **lovesick** for you!";
 			} else {
-				if (args.mergeCount > 0) {
-					await p.redis.hincrby(`data_${p.msg.author.id}`, this.manualMergeData, -1);
-					args.mergeCount -= 1;
+				if (args.count > 0) {
+					await p.redis.hincrby(`data_${p.msg.author.id}`, this.data, -1);
+					args.count -= 1;
 					await p.redis.hset(`data_${p.msg.author.id}`, `${this.data}_reset`, afterMid.now);
 					msg =
 						"<:846997478246318080:1055044685153972225> **| ?user?**, you currently have ?count? ?emoji? lxv. One of them ran away because you didn't take care of it..." +
 						'\n<:1039236830022868992:1055044688979185664> **|** Hedge has collected ?mergeCount? **lovesick** for you!';
 				} else {
 					msg =
-						'<:846997443278274610:1055044684382208010> **| ?user?**, you currently have ?count? ?emoji? lxv.' +
+						'<:846997443278274610:1055044684382208010> **| ?user?**, you currently have ?count? ?emoji? lxv. Don\'t forget to take care of them!' +
 						'\n<:1039236830022868992:1055044688979185664> **|** Hedge has collected ?mergeCount? **lovesick** for you!';
 				}
 			}
@@ -86,7 +86,7 @@ class Lxv extends Collectible {
 			return;
 		}
 
-		if (Math.random() < 0.05) {
+		if (Math.random() < 0.03) {
 			super.manualMerge(p);
 		} else {
 			p.send(

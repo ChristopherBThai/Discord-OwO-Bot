@@ -126,9 +126,6 @@ for (let dataName in collectibles) {
 
 		if (checkFailed.bind(this)(user)) return;
 
-		if (trackDate) {
-			await this.redis.hset(`data_${user.id}`, `${data}_time`, Date.now());
-		}
 		let selectedGiveMsg = giveMsg;
 		if (Array.isArray(giveMsg)) {
 			selectedGiveMsg = giveMsg[Math.floor(Math.random() * giveMsg.length)];
@@ -153,6 +150,9 @@ for (let dataName in collectibles) {
 		let msg = '';
 		for (let i in users) {
 			let user = users[i];
+			if (trackDate) {
+				await this.redis.hset(`data_${user.id}`, `${data}_time`, Date.now());
+			}
 			let result = await this.redis.hincrby(`data_${user.id}`, data, giveAmount);
 			if (hasMerge && (result % mergeNeeded) - giveAmount < 0) {
 				msg += mergeMsg

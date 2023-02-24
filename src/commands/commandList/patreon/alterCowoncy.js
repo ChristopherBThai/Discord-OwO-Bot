@@ -17,13 +17,13 @@ exports.alter = function (p, id, text, info) {
 };
 
 function rhine(p, info) {
-	const cashEmoji = '🏦';
+	const cashEmoji = '<a:blossom:1078625518817128448>';
 	const embed = {
-		color: 16758232,
+		color: 16762075,
 		image: {
-			url: 'https://media.discordapp.net/attachments/886547029478768640/886950643074486272/rich_3.gif',
+			url: 'https://media.discordapp.net/attachments/886547029478768640/969854561760206848/ezgif-3-7bbcfd4a0b.gif',
 		},
-		description: `${cashEmoji} **| ${info.user.username}**, you currently have **${info.money} cowoncy**!`,
+		description: `${cashEmoji} **${info.user.username}** has 88 cherry blossoms with **${info.money} blossoms** in total!`,
 	};
 	return { embed };
 }
