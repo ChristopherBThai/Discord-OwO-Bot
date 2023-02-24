@@ -56,7 +56,7 @@ class Lxv extends Collectible {
 						'\n<:1039236830022868992:1055044688979185664> **|** Hedge has collected ?mergeCount? **lovesick** for you!';
 				} else {
 					msg =
-						'<:846997443278274610:1055044684382208010> **| ?user?**, you currently have ?count? ?emoji? lxv. Don\'t forget to take care of them!' +
+						"<:846997443278274610:1055044684382208010> **| ?user?**, you currently have ?count? ?emoji? lxv. Don't forget to take care of them!" +
 						'\n<:1039236830022868992:1055044688979185664> **|** Hedge has collected ?mergeCount? **lovesick** for you!';
 				}
 			}
