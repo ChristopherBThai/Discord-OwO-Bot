@@ -13,7 +13,7 @@ class Bee extends Collectible {
 
 		this.key = 'bee';
 		this.alias = ['honey'];
-		this.data2 = "bee_honey"
+		this.data2 = 'bee_honey';
 		this.emoji = '<:bee:1079710526982074429>';
 		this.emoji2 = '<:honey:1079710528005488690>';
 		this.owners = ['460987842961866762'];
@@ -22,11 +22,12 @@ class Bee extends Collectible {
 		this.giveAmount = 1;
 		this.description =
 			"A busy buzzing bee that loves flowers will bring you sweet honey.\nWill you will bee mine, I think I've found my honey.";
-		this.displayMsg = '?emoji? **| ?user?**, your beehive currently has ?count? bee?plural? ?emoji?'
-				+ '\n?mergeEmoji? **|** The bees have collected ?mergeCount? honey pot ' + this.emoji2;
+		this.displayMsg =
+			'?emoji? **| ?user?**, your beehive currently has ?count? bee?plural? ?emoji?' +
+			'\n?mergeEmoji? **|** The bees have collected ?mergeCount? honey pot ' +
+			this.emoji2;
 		this.brokeMsg = ', you do not have any bees! >:c';
-		this.giveMsg =
-			'?emoji? **| ?receiver?**, have this busy buzzing ?emoji? bee.';
+		this.giveMsg = '?emoji? **| ?receiver?**, have this busy buzzing ?emoji? bee.';
 
 		this.hasManualMerge = true;
 		this.manualMergeData = 'honey_pot';
@@ -51,8 +52,8 @@ class Bee extends Collectible {
 			msg = `${this.emoji2} **|** Oh sugar! **?receiver?**, your bees have collected you ${this.emoji2} honey!`;
 		}
 
-		let count = await p.redis.hget(`data_${user.id}`, this.data) || 0;
-		let count2 = await p.redis.hget(`data_${user.id}`, this.data2) || 0;
+		let count = (await p.redis.hget(`data_${user.id}`, this.data)) || 0;
+		let count2 = (await p.redis.hget(`data_${user.id}`, this.data2)) || 0;
 
 		if (count > 0 && count2 > 0) {
 			msg += `\n?mergeEmoji? **|** You now have 1 honey pot!`;

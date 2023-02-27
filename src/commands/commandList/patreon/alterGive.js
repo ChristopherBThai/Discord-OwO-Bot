@@ -129,12 +129,14 @@ function leila(p, info) {
 	const sparkle2 = '<a:sparkle2:1079721490108387358>';
 
 	if (info.receiver) {
-		const msg = `${star1} **| ${info.from.username}** just sent ${star3} **${info.amount} stars** to **${info.to.username}**`
-				+ `\n${sparkle2} **|** Thank you for completing my galaxy ${sparkle2}`;
+		const msg =
+			`${star1} **| ${info.from.username}** just sent ${star3} **${info.amount} stars** to **${info.to.username}**` +
+			`\n${sparkle2} **|** Thank you for completing my galaxy ${sparkle2}`;
 		return msg;
 	} else {
-		const msg = `${star1} **| ${info.from.username}** just sent **${star2} ${info.amount} stars** to **${info.to.username}**!`
-				+ `\n${sparkle1} **|** You're a part of my galaxy ${sparkle1}`;
+		const msg =
+			`${star1} **| ${info.from.username}** just sent **${star2} ${info.amount} stars** to **${info.to.username}**!` +
+			`\n${sparkle1} **|** You're a part of my galaxy ${sparkle1}`;
 		return msg;
 	}
 }
