@@ -562,34 +562,6 @@
 		"mergeMsg": "",
 		"manualMergeData": ""
 	},
-	"poison": {
-		"alias": [],
-		"emoji": "<a:poison:1033642058637910066>",
-		"owners": ["665417324949405706"],
-		"pluralName": "",
-		"singleName": "",
-		"fullControl": true,
-		"ownerOnly": false,
-		"dailyOnly": true,
-		"giveAmount": 2,
-		"description": "Love could be labeled poison and we'd drink it anyways.",
-		"displayMsg": "?emoji? **| ?user?**, you currently have ?count? poison?plural?!",
-		"mergeDisplayMsg": "",
-		"brokeMsg": ", you do not have any poison to give >:c",
-		"giveMsg": [
-			"?emoji? **| ?receiver?**, you got fooled by a poison in a pretty bottle.",
-			"?emoji? **| ?giver?** poisoned **?receiver?**. There is no antidote for a person like you.",
-			"?emoji? **| ?giver?**, you have given poison to **?receiver?**. \"Pick your poison\" they said. And I choose you.",
-			"?emoji? **| ?receiver?**, you are the poison I'm addicted to."
-		],
-		"hasMerge": false,
-		"hasManualMerge": false,
-		"manualMergeCommands": [],
-		"mergeNeeded": 3,
-		"mergeEmoji": "",
-		"mergeMsg": "",
-		"manualMergeData": ""
-	},
 	"ghost": {
 		"alias": [],
 		"emoji": "<a:ghost:1033642052338061342>",

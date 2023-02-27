@@ -18,19 +18,21 @@ class Poison extends Collectible {
 		this.ownerOnly = false;
 		this.dailyReceiveOnly = true;
 		this.giveAmount = 2;
-		this.description = 'Love could be labeled poison and we\'d drink it anyways.\n\nSubcommands: owo poison mix, owo poison list';
+		this.description =
+			"Love could be labeled poison and we'd drink it anyways.\n\nSubcommands: owo poison mix, owo poison list";
 		this.displayMsg = [
 			'?emoji? **| ?user?**, you currently have ?count? poison?plural? ?emoji? and ?mergeCount? poison ivy ?mergeEmoji?! Toxins are running through your veins.',
-			'?emoji? **| ?user?**, you currently have ?count? poison?plural? ?emoji? and ?mergeCount? poison ivy ?mergeEmoji?! Oh you poor thing! Are you still okay?'
+			'?emoji? **| ?user?**, you currently have ?count? poison?plural? ?emoji? and ?mergeCount? poison ivy ?mergeEmoji?! Oh you poor thing! Are you still okay?',
 		];
 		this.brokeMsg = ', you do not have any poison to give! >:c';
 		this.giveMsg = [
-			"?emoji? **| ?receiver?**, you got fooled by a poison in a pretty bottle.",
-			"?emoji? **| ?giver?** poisoned **?receiver?**. There is no antidote for a person like you.",
-			"?emoji? **| ?giver?**, you have given poison to **?receiver?**. \"Pick your poison\" they said. And I choose you.",
-			"?emoji? **| ?receiver?**, you are the poison I'm addicted to."
+			'?emoji? **| ?receiver?**, you got fooled by a poison in a pretty bottle.',
+			'?emoji? **| ?giver?** poisoned **?receiver?**. There is no antidote for a person like you.',
+			'?emoji? **| ?giver?**, you have given poison to **?receiver?**. "Pick your poison" they said. And I choose you.',
+			"?emoji? **| ?receiver?**, you are the poison I'm addicted to.",
 		];
-		this.dailyLimitMsg = '<:poison:1079735825127964702> **|** ?user? has already been poisoned today. Have some mercy and find another target!';
+		this.dailyLimitMsg =
+			'<:poison:1079735825127964702> **|** ?user? has already been poisoned today. Have some mercy and find another target!';
 
 		this.hasManualMerge = true;
 		this.manualMergeCommands = ['mix'];

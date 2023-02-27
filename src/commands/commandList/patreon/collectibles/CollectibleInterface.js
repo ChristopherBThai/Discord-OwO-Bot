@@ -221,7 +221,7 @@ class Collectible {
 		p.send(msg);
 	}
 
-	async getGiveMsg(p, result, user, msgOverride, dataOverride) {
+	async getGiveMsg(p, result, user, msgOverride, _dataOverride) {
 		let selectedGiveMsg = this.giveMsg;
 		if (Array.isArray(this.giveMsg)) {
 			selectedGiveMsg = this.giveMsg[Math.floor(Math.random() * this.giveMsg.length)];

@@ -42,6 +42,8 @@ function estee(p, info) {
 function leila(p, info) {
 	const star = '<:star:1079724334022676551>';
 	const moon = '<:moon:1079724332047151176>';
-	return `${star} **| ${info.user.username}**, your galaxy has **__${info.money}__** **stars!**`
-			+ `\n${p.config.emoji.blank} **|** You're the star in my galaxy ${moon}`;
+	return (
+		`${star} **| ${info.user.username}**, your galaxy has **__${info.money}__** **stars!**` +
+		`\n${p.config.emoji.blank} **|** You're the star in my galaxy ${moon}`
+	);
 }
