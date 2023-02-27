@@ -17,6 +17,8 @@ exports.alter = function (p, id, text, info) {
 			return king(p, info);
 		case '816005571575808000':
 			return jayyy(p, info);
+		case '692146302284202134':
+			return leila(p, info);
 		default:
 			return checkReceive(p, text, info);
 	}
@@ -29,6 +31,8 @@ function checkReceive(p, text, info) {
 			return jayyy(p, info);
 		case '605994815317999635':
 			return rhine(p, info);
+		case '692146302284202134':
+			return leila(p, info);
 		default:
 			return text;
 	}
@@ -61,7 +65,7 @@ function rhine(p, info) {
 			},
 			description:
 				`${blossom} **${info.to.username}** received a cherry blossoms tree with **${info.amount} blossoms** in her garden!` +
-				`\n${thanks} "Thank you so much, **${info.from.username}**"`,
+				`\n${thanks} "Thank you so much, **${info.from.username}**!"`,
 		};
 	} else {
 		embed = {
@@ -114,5 +118,23 @@ function jayyy(p, info) {
 				`\n<:snow4:1034776448759771176> **| ${info.from.username}** hopes you can make a cute **Snowman**<a:snow5:1034776450160676876> now!! <:snow6:1034776455491637258><:snow6:1034776455491637258>`,
 		};
 		return { embed };
+	}
+}
+
+function leila(p, info) {
+	const star1 = '<:star1:1079721491148587028>';
+	const star2 = '<:star2:1079721494520811520>';
+	const star3 = '<:star3:1079721493564510278>';
+	const sparkle1 = '<a:sparkle:1079721492587229204>';
+	const sparkle2 = '<a:sparkle2:1079721490108387358>';
+
+	if (info.receiver) {
+		const msg = `${star1} **| ${info.from.username}** just sent ${star3} **${info.amount} stars** to **${info.to.username}**`
+				+ `\n${sparkle2} **|** Thank you for completing my galaxy ${sparkle2}`;
+		return msg;
+	} else {
+		const msg = `${star1} **| ${info.from.username}** just sent **${star2} ${info.amount} stars** to **${info.to.username}**!`
+				+ `\n${sparkle1} **|** You're a part of my galaxy ${sparkle1}`;
+		return msg;
 	}
 }
