@@ -98,12 +98,12 @@ function lIlIIIll(p, info) {
 
 function estee(p, info) {
 	const embed = {
-		color: p.config.embed_color,
+		color: 8421504,
 		author: {
 			name: "꧁•⊹٭𝙴𝚜𝚝𝚎𝚎'𝚜 𝚂𝚎𝚌𝚛𝚎𝚝 𝚃𝚛𝚎𝚊𝚜𝚞𝚛𝚎𝚜٭⊹•꧂",
 		},
 		image: {
-			url: 'https://i.imgur.com/eK7F8Gv.gif',
+			url: 'https://imgur.com/YNXAIZC.gif',
 		},
 		description: info.inv,
 	};
