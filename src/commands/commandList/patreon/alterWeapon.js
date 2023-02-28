@@ -161,13 +161,13 @@ function quincey(text, opt) {
 			break;
 		case 16:
 			image =
-				'https://cdn.discordapp.com/attachments/718562499703603251/1074743192299253860/20230124_154008.png';
-			text.color = 6765494;
+				'https://cdn.discordapp.com/attachments/718562499703603251/1074743382196363306/20230126_144402.png';
+			text.color = 15957525;
 			break;
 		case 17:
 			image =
-				'https://cdn.discordapp.com/attachments/718562499703603251/1074743382196363306/20230126_144402.png';
-			text.color = 15957525;
+				'https://cdn.discordapp.com/attachments/718562499703603251/1074743192299253860/20230124_154008.png';
+			text.color = 6765494;
 			break;
 	}
 	text.image = {
