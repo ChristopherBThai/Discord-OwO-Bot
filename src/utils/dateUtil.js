@@ -7,7 +7,7 @@
 
 /* Utility to check/parse dates */
 
-const overrideWithinDay = true;
+const overrideWithinDay = false;
 
 /* Checks if the given date is past midnight */
 exports.afterMidnight = function (date) {
