@@ -61,7 +61,7 @@ const getRandomWeapon = (exports.getRandomWeapon = function (wid) {
 
 	if (wid) {
 		weapon = weapons[wid];
-		if (!weapon) throw "No weapon with id: " + wid;
+		if (!weapon) throw 'No weapon with id: ' + wid;
 	} else {
 		/* Grab a random weapon */
 		let keys = Object.keys(availableWeapons);

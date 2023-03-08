@@ -14,7 +14,7 @@ module.exports = class CRune extends WeaponInterface {
 		this.disabled = true;
 		this.name = 'Rune of Celebration';
 		this.basicDesc =
-			'This item was available to find on OwO Bot\'s 3 million server event.\nThis item will restore teammate\'s health and mana over time.';
+			"This item was available to find on OwO Bot's 3 million server event.\nThis item will restore teammate's health and mana over time.";
 		this.emojis = [
 			'<:ccrune:1080441103129509899>',
 			'<:ucrune:1080441115922153513>',

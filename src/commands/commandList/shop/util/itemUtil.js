@@ -41,8 +41,8 @@ for (let key in event) {
 		emoji: eventItem.emoji,
 		column: eventItem.id,
 		untradeable: true,
-		desc: eventItem.description
-	}
+		desc: eventItem.description,
+	};
 	eventItemId++;
 }
 

@@ -31,7 +31,7 @@ module.exports = class AttackUp extends BuffInterface {
 		super.bind(animal, duration, tags);
 	}
 
-	attack(animal, attackee, damage, _type, _last){
+	attack(animal, attackee, damage, _type, _last) {
 		if (this.markedForDeath) return;
 
 		let logs = new Logs();
