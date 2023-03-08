@@ -5,6 +5,7 @@
  * For more information, see README.md and LICENSE
  */
 const events = require('../data/event.json');
+const weaponUtil = require('../commands/commandList/battle/util/weaponUtil.js');
 const itemUtil = require('../commands/commandList/shop/util/itemUtil.js');
 const itemToEvents = {};
 for (const key in events) {
@@ -40,7 +41,9 @@ exports.useItem = async function (item) {
 
 		reward = await getRandomReward.bind(this)(event.item.rewards, con);
 
-		await con.query(reward.sql);
+		if (reward.sql) {
+			await con.query(reward.sql);
+		}
 		await con.commit();
 	} catch (err) {
 		console.error(err);
@@ -236,6 +239,18 @@ async function parseReward(reward, con) {
 				sql: `INSERT INTO crate (uid,cratetype,boxcount,claimcount,claim) VALUES (${uid},0,${reward.count},0,'2017-01-01')
 						ON DUPLICATE KEY UPDATE boxcount = boxcount + ${reward.count};`,
 			};
+		case 'weapon':
+			let weapon = weaponUtil.getRandomWeapons(uid, 1, reward.id)[0];
+			const result = await con.query(weapon.weaponSql);
+			const uwid = result.insertId
+			weapon.uwid = uwid;
+			let uwidList = [];
+			for (let j = 0; j < weapon.passives.length; j++) uwidList.push(uwid);
+			await con.query(weapon.passiveSql, uwidList);
+			const weaponId = weaponUtil.shortenUWID(weapon.uwid);
+			return {
+				text: `a(n) \`${weaponId}\` ${weapon.rank.emoji} ${weapon.emoji} ${weapon.rank.name} ${weapon.name}`
+			}
 		default:
 			throw 'Invalid reward type: ' + reward.type;
 	}

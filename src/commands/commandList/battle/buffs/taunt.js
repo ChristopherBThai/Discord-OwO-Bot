@@ -19,9 +19,8 @@ module.exports = class Taunt extends BuffInterface {
 		this.qualityList = [[30, 50]];
 	}
 
-	enemyChooseAttack(animal, attacker, attackee, _ally, _enemy) {
+	enemyChooseAttack(animal, attacker, _ally, _enemy) {
 		if (animal.stats.hp[0] > 0) return animal;
-		return attackee;
 	}
 
 	attacked(animal, attacker, damage, _type, _last) {

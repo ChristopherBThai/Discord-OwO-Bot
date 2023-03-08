@@ -56,12 +56,18 @@ setTimeout(() => {
 	}
 }, 0);
 
-const getRandomWeapon = (exports.getRandomWeapon = function () {
-	/* Grab a random weapon */
-	let keys = Object.keys(availableWeapons);
-	let random = keys[Math.floor(Math.random() * keys.length)];
+const getRandomWeapon = (exports.getRandomWeapon = function (wid) {
+	let weapon;
 
-	let weapon = availableWeapons[random];
+	if (wid) {
+		weapon = weapons[wid];
+		if (!weapon) throw "No weapon with id: " + wid;
+	} else {
+		/* Grab a random weapon */
+		let keys = Object.keys(availableWeapons);
+		let random = keys[Math.floor(Math.random() * keys.length)];
+		weapon = availableWeapons[random];
+	}
 
 	/* Initialize random stats */
 	weapon = new weapon();
@@ -69,10 +75,10 @@ const getRandomWeapon = (exports.getRandomWeapon = function () {
 	return weapon;
 });
 
-exports.getRandomWeapons = function (uid, count) {
+exports.getRandomWeapons = function (uid, count, wid) {
 	let randomWeapons = [];
 	for (let i = 0; i < count; i++) {
-		let tempWeapon = getRandomWeapon();
+		let tempWeapon = getRandomWeapon(wid);
 		let weaponSql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${uid ? uid : '?'},${
 			tempWeapon.id
 		},'${tempWeapon.sqlStat}',${tempWeapon.avgQuality});`;

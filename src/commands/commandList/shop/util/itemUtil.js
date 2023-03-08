@@ -29,15 +29,22 @@ const items = {
 		untradeable: true,
 		desc: 'You can use this item to redeem 1 month of common tier perks by typing `owo use 14`.',
 	},
-	love_letter: {
-		id: 18,
-		name: 'Love Letter',
-		emoji: event.valentine.item.emoji,
-		column: event.valentine.item.id,
-		untradeable: true,
-		desc: 'Happy Valentines Day! This item was given out on Feb 2023. Open the letter to receive some special stuff!',
-	},
 };
+
+let lowestEventId = 18;
+let eventItemId = lowestEventId;
+for (let key in event) {
+	const eventItem = event[key].item;
+	items[eventItem.id] = {
+		id: eventItemId,
+		name: eventItem.name,
+		emoji: eventItem.emoji,
+		column: eventItem.id,
+		untradeable: true,
+		desc: eventItem.description
+	}
+	eventItemId++;
+}
 
 exports.getItems = async function (p) {
 	let sql = `SELECT ui.* FROM user_item ui INNER JOIN user u ON ui.uid = u.uid WHERE u.id = ${p.msg.author.id};`;
@@ -72,11 +79,12 @@ exports.use = async function (id, p) {
 		case 14:
 			await useCommonTicket(item, p);
 			break;
-		case 18:
-			await p.event.useItem.bind(p)(item);
-			break;
 		default:
-			await p.errorMsg(', something went wrong using this item... :(');
+			if (eventItemId > item?.id && item?.id >= lowestEventId) {
+				await p.event.useItem.bind(p)(item);
+			} else {
+				await p.errorMsg(', this item does not exist! :(');
+			}
 	}
 };
 
