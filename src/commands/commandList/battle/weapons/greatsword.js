@@ -27,7 +27,7 @@ module.exports = class GreatSword extends WeaponInterface {
 		this.availablePassives = 'all';
 		this.passiveCount = 1;
 		this.qualityList = [[35, 55]];
-		this.manaRange = [250, 150];
+		this.manaRange = [200, 100];
 	}
 
 	attackWeapon(me, team, enemy) {

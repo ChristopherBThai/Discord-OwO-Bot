@@ -96,9 +96,7 @@ module.exports = class BuffInterface {
 	postReplenished(animal, healer, amount, tag) {}
 
 	/* when an enemy chooses an opponent */
-	enemyChooseAttack(animal, attacker, attackee, ally, enemy) {
-		return attackee;
-	}
+	enemyChooseAttack(animal, attacker, ally, enemy) {}
 
 	/* If the passive owner is allowed to attack */
 	canAttack(me, ally, enemy, action, result) {}
