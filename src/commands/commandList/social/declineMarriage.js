@@ -3,50 +3,52 @@
  * Copyright (C) 2019 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
+ */
 
 const CommandInterface = require('../../CommandInterface.js');
 
 const declineEmoji = '💔';
 
 module.exports = new CommandInterface({
+	alias: ['declinemarriage', 'dm'],
 
-	alias:["declinemarriage","dm"],
+	args: '',
 
-	args:"",
+	desc: 'Decline a marriage proposal.',
 
-	desc:"Decline a marriage proposal.",
+	example: [],
 
-	example:[],
+	related: ['owo marry', 'owo am'],
 
-	related:["owo marry","owo am"],
+	permissions: ['sendMessages', 'embedLinks', 'addReactions'],
 
-	permissions:["sendMessages","embedLinks","addReactions"],
+	group: ['social'],
 
-	group:["social"],
+	cooldown: 3000,
 
-	cooldown:3000,
-
-	execute: async function(p){
+	execute: async function (p) {
 		// Get and delete a proposal request
 		let sql = `SELECT * FROM propose WHERE sender = ${p.msg.author.id} OR receiver = ${p.msg.author.id}; 
 			DELETE FROM propose WHERE sender = ${p.msg.author.id} OR receiver = ${p.msg.author.id};`;
 		let result = await p.query(sql);
 
 		// If there is one...
-		if(result[0].length>0&&result[1].affectedRows>0){
+		if (result[0].length > 0 && result[1].affectedRows > 0) {
 			// Tell the user we have declined the marriage request
 			let user = result[0][0].sender;
-			let preposition = "from";
-			if(user==p.msg.author.id){ 
+			let preposition = 'from';
+			if (user == p.msg.author.id) {
 				user = result[0][0].receiver;
-				preposition = "to";
+				preposition = 'to';
 			}
 			user = await p.fetch.getUser(user);
-			if(!user){
-				p.replyMsg(declineEmoji,", you have declined a marriage request!");
-			}else{
-				p.replyMsg(declineEmoji,", you have declined a marriage request "+preposition+" "+user.username+"!");
+			if (!user) {
+				p.replyMsg(declineEmoji, ', you have declined a marriage request!');
+			} else {
+				p.replyMsg(
+					declineEmoji,
+					', you have declined a marriage request ' + preposition + ' ' + user.username + '!'
+				);
 			}
 
 			// Give the ring back to the sender
@@ -54,8 +56,8 @@ module.exports = new CommandInterface({
 			let ringId = result[0][0].rid;
 			sql = `INSERT INTO user_ring (uid,rid,rcount) VALUES ((SELECT uid FROM user WHERE id = ${sender}),${ringId},1) ON DUPLICATE KEY UPDATE rcount = rcount + 1;`;
 			await p.query(sql);
-		}else{
-			p.errorMsg(", you do not have any pending marriage proposals!",3000);
+		} else {
+			p.errorMsg(', you do not have any pending marriage proposals!', 3000);
 		}
-	}
+	},
 });

@@ -1,28 +1,28 @@
 {
-	"sharder":{
+	"sharder": {
 		"path": "/src/owo.js",
 		"name": "OwO Bot"
 	},
-	
-	"eris":{
-		"clientOptions":{
-			"autoreconnect":true,
-			"compress":false,
-			"disableEvents":{
-				"TYPING_START":true,
-				"VOICE_SERVER_UPDATE":true,
-				"VOICE_STATE_UPDATE":true,
-				"USER_NOTE_UPDATE":true,
-				"CHANNEL_PINS_UPDATE":true,
-				"MESSAGE_UPDATE":true,
-				"RELATIONSHIP_ADD":true,
-				"RELATIONSHIP_REMOVE":true
+
+	"eris": {
+		"clientOptions": {
+			"autoreconnect": true,
+			"compress": false,
+			"disableEvents": {
+				"TYPING_START": true,
+				"VOICE_SERVER_UPDATE": true,
+				"VOICE_STATE_UPDATE": true,
+				"USER_NOTE_UPDATE": true,
+				"CHANNEL_PINS_UPDATE": true,
+				"MESSAGE_UPDATE": true,
+				"RELATIONSHIP_ADD": true,
+				"RELATIONSHIP_REMOVE": true
 			},
-			"disableEveryone":true,
-			"messageLimit":1,
+			"disableEveryone": true,
+			"messageLimit": 1,
 			"defaultImageFormat": "png",
-			"defaultImageSize":128,
-			"restMode":true,
+			"defaultImageSize": 128,
+			"restMode": true,
 			"allowedMentions": {
 				"everyone": false,
 				"roles": false
@@ -35,11 +35,11 @@
 	"success_color": 65280,
 	"fail_color": 16711680,
 	"timeout_color": 6381923,
-	"emoji":{
+	"emoji": {
 		"cowoncy": "<:cowoncy:416043450337853441>",
 		"blank": "<:blank:427371936482328596>",
 		"invalid": "🚫",
-		"error":"🚫",
+		"error": "🚫",
 		"crate": "<:crate:523771259302182922>",
 		"lootbox": "<:box:427352600476647425>",
 		"cookie": "<a:cookieeat:423020737364885525>",
@@ -53,13 +53,27 @@
 		"check_box": "<:check_box:808212600277958667>",
 		"cross_box": "<:cross_box:808212600331829259>",
 		"warning": "⚠️",
+		"gear": "⚙️",
+		"wallpaper": "🖼",
 		"perkTicket": {
-			"common": "<:cticket:815767124680114206>"
+			"common": "<:cticket:815767124680114206>",
+			"wcommon": "<:wcticket:930641266159517726>"
 		}
 	},
+	"role": {
+		"admin": ["420112323278143489"],
+		"manager": ["959380828838850590"],
+		"helper": ["729574996556382298"]
+	},
+	"modChannels": [
+		"471579186059018241",
+		"596220958730223619",
+		"645501936036216862",
+		"759637235237650440"
+	],
+	"owner": "184587051943985152",
 	"guildlink": "https://discord.com/invite/owobot",
 	"invitelink": "https://discordapp.com/oauth2/authorize?client_id=408785106942164992&permissions=1074120776&scope=bot",
-	"blacklist": {
-	},
+	"blacklist": {},
 	"debug": true
 }

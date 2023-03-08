@@ -3,38 +3,42 @@
  * Copyright (C) 2019 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
+ */
 
 const CommandInterface = require('../../CommandInterface.js');
+const alterCowoncy = require('../patreon/alterCowoncy.js');
 
 module.exports = new CommandInterface({
+	alias: ['cowoncy', 'money', 'currency', 'cash', 'credit', 'balance'],
 
-	alias:["cowoncy","money","currency","cash","credit","balance"],
+	args: '',
 
-	args:"",
+	desc: 'Check your cowoncy balance! You can earn more cowoncy by saying owo, dailies, and voting!',
 
-	desc:"Check your cowoncy balance! You can earn more cowoncy by saying owo, dailies, and voting!",
+	example: [],
 
-	example:[],
+	related: ['owo give', 'owo daily', 'owo vote', 'owo my money'],
 
-	related:["owo give","owo daily","owo vote","owo my money"],
+	permissions: ['sendMessages'],
 
-	permissions:["sendMessages"],
+	group: ['economy'],
 
-	group:["economy"],
+	cooldown: 5000,
+	half: 100,
+	six: 500,
 
-	cooldown:5000,
-	half:100,
-	six:500,
+	execute: async function () {
+		const sql = `SELECT money FROM cowoncy WHERE id = ${this.msg.author.id};`;
+		const result = await this.query(sql);
 
-	execute: async function(p){
-		let sql = "SELECT money FROM cowoncy WHERE id = "+p.msg.author.id+";";
+		const money = result[0] ? this.global.toFancyNum(result[0].money) : '0';
+		let text = `${this.config.emoji.cowoncy} **| ${this.msg.author.username}**, you currently have **__${money}__ cowoncy!**`;
 
-		let result = await p.query(sql);
-		if(!result[0])
-			p.replyMsg("<:cowoncy:416043450337853441>",", you currently have **__0__ cowoncy!**");
-		else
-			p.replyMsg("<:cowoncy:416043450337853441>",", you currently have **__"+(p.global.toFancyNum(result[0].money))+"__ cowoncy!**");
-	}
+		text = alterCowoncy.alter(this, this.msg.author.id, text, {
+			user: this.msg.author,
+			money: money,
+		});
 
-})
+		await this.send(text);
+	},
+});

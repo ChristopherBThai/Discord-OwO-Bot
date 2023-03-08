@@ -3,31 +3,30 @@
  * Copyright (C) 2020 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
+ */
 
 const CommandInterface = require('../../CommandInterface.js');
 
 const giftEmoji = '🎁';
 
 module.exports = new CommandInterface({
+	alias: ['claim', 'reward', 'compensation'],
 
-	alias:["claim", "reward", "compensation"],
+	args: '',
 
-	args:"",
+	desc: 'Claim rewards! (If there are any c:)',
 
-	desc:"Claim rewards! (If there are any c:)",
+	example: [],
 
-	example:[],
+	related: [],
 
-	related:[],
+	permissions: ['sendMessages', 'embedLinks'],
 
-	permissions:["sendMessages", "embedLinks"],
+	group: ['economy'],
 
-	group:["economy"],
+	cooldown: 15000,
 
-	cooldown:15000,
-
-	execute: async function(p){
+	execute: async function (p) {
 		// Fetch user and compensation info
 		let sql = ` SELECT c.*
 			FROM compensation c
@@ -43,13 +42,13 @@ module.exports = new CommandInterface({
 
 		// No rewards available
 		if (!result[0].length) {
-			p.errorMsg(", there are no rewards available at this time!", 5000);
+			p.errorMsg(', there are no rewards available at this time!', 5000);
 			return;
 		}
 
 		const uid = result[1][0].uid;
 		if (!uid) {
-			p.errorMsg(", Failed to claim rewards", 5000);
+			p.errorMsg(', Failed to claim rewards', 5000);
 			return;
 		}
 
@@ -60,7 +59,7 @@ module.exports = new CommandInterface({
 		let totalFabledLootbox = 0;
 		let totalWeaponCrate = 0;
 		for (let i in result[0]) {
-			let row = result[0][i]
+			let row = result[0][i];
 			sql = `INSERT IGNORE INTO user_compensation (uid, cid) VALUES (${uid}, ${row.id});`;
 			let result2 = await p.query(sql);
 
@@ -68,7 +67,7 @@ module.exports = new CommandInterface({
 				sql = '';
 				totalRewards++;
 				const rewards = row.reward.split(',');
-				rewards.forEach(reward => {
+				rewards.forEach((reward) => {
 					const type = reward.charAt(0);
 					const count = parseInt(reward.substring(1));
 					switch (type) {
@@ -95,12 +94,12 @@ module.exports = new CommandInterface({
 		}
 
 		if (!totalRewards) {
-			p.errorMsg(", Failed to claim rewards", 5000);
+			p.errorMsg(', Failed to claim rewards', 5000);
 			return;
 		}
-		let txt = `, You claimed ${totalRewards} reward(s)! 🎉\n`
+		let txt = `, You claimed ${totalRewards} reward(s)! 🎉\n`;
 		txt += `${p.config.emoji.blank} **|** `;
-		rewardTxt = [];
+		let rewardTxt = [];
 		if (totalCowoncy) {
 			rewardTxt.push(`+${totalCowoncy} ${p.config.emoji.cowoncy}`);
 		}
@@ -115,6 +114,5 @@ module.exports = new CommandInterface({
 		}
 		txt += rewardTxt.join(',');
 		await p.replyMsg(giftEmoji, txt);
-	}
-
-})
+	},
+});
