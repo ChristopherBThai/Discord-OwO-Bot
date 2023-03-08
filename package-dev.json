@@ -1,0 +1,28 @@
+{
+	"name": "owobot",
+	"version": "1.0.0",
+	"description": "a discord bot!",
+	"main": "index.js",
+	"scripts": {
+		"lint": "npx eslint .",
+		"lint:fix": "npx eslint --fix",
+		"prettier": "npx prettier --check .",
+		"prettier:fix": "npx prettier --write .",
+		"format": "npm run lint:fix && npm run prettier:fix"
+	},
+	"dependencies": {
+		"eslint": "^8.29.0",
+		"eslint-config-prettier": "^8.5.0",
+		"prettier": "^2.8.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ChristopherBThai/Discord-OwO-Bot.git"
+	},
+	"author": "Christopher Thai",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/ChristopherBThai/Discord-OwO-Bot/issues"
+	},
+	"homepage": "https://github.com/ChristopherBThai/Discord-OwO-Bot#readme"
+}

@@ -3,22 +3,18 @@
  * Copyright (C) 2019 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
+ */
 
 const Base = require('eris-sharder').Base;
 const EventHandler = require('./eventHandlers/EventHandler.js');
 
-// Secret file
-const auth = require('../../tokens/owo-auth.json');
-
 // Discordbots.org api
-const DBL = require("dblapi.js");
-const dbl = new DBL(auth.dbl);
+const DBL = require('dblapi.js');
+const dbl = new DBL(process.env.DBL_TOKEN);
 
-class OwO extends Base{
-	constructor(bot){
+class OwO extends Base {
+	constructor(bot) {
 		super(bot);
-		this.auth = auth;
 		this.dbl = dbl;
 
 		// Mysql connection
@@ -39,8 +35,9 @@ class OwO extends Base{
 		// Creates a pageable message
 		this.PagedMessage = require('./utils/PagedMessage.js');
 
-		// Websocket connection to our emulator server
-		this.socketio = new (require('./utils/socketio.js'))(this);
+		// Websockets
+		this.streamSocket = new (require('./utils/streamSocket.js'))(this);
+		this.snailSocket = new (require('./utils/snailSocket.js'))(this);
 
 		// Logger
 		this.logger = require('./utils/logger.js');
@@ -49,24 +46,35 @@ class OwO extends Base{
 		this.config = require('./data/config.json');
 		this.debug = this.config.debug;
 		this.prefix = this.config.prefix;
+		this.optOut = {};
+		this.setOptOut();
 
-		// Ban check 
+		// Ban check
 		this.ban = require('./utils/ban.js');
 
-		// Cooldown check 
+		// Cooldown check
 		this.cooldown = require('./utils/cooldown.js');
 
 		// Quest Handler
-		this.questHandler = new (require("./botHandlers/questHandler.js"))();
+		this.questHandler = new (require('./botHandlers/questHandler.js'))();
 
 		// Mysql Query Handler
-		this.mysqlhandler = require("./botHandlers/mysqlHandler.js")
+		this.mysqlhandler = require('./botHandlers/mysqlHandler.js');
 		this.query = this.mysqlhandler.query;
+
+		try {
+			this.animals = require('./../../tokens/owo-animals.json');
+		} catch (err) {
+			console.error('Could not find owo-animals.json, attempting to use ./secret file...');
+			this.animals = require('../secret/owo-animals.json');
+			console.log('Found owo-animals.json file in secret folder!');
+		}
 
 		// Global helper methods
 		this.global = require('./utils/global.js');
-		this.global.client(this.bot);
-		this.global.con(this.mysql.con);
+		this.global.init(this);
+
+		this.event = require('./utils/eventUtil.js');
 
 		// Message sender helper methods
 		this.sender = require('./utils/sender.js');
@@ -76,8 +84,14 @@ class OwO extends Base{
 		this.dateUtil = require('./utils/dateUtil.js');
 
 		// Hidden macro detection file
-		this.macro = require('./../../tokens/macro.js');
-		this.macro.bind(this,require('merge-images'),require('canvas'));
+		try {
+			this.macro = require('./../../tokens/macro.js');
+		} catch (err) {
+			console.error('Could not find macro.js, attempting to use ./secret file...');
+			this.macro = require('../secret/macro.js');
+			console.log('Found macro.js file in secret folder!');
+		}
+		this.macro.bind(this, require('merge-images'), require('canvas'));
 		this.cooldown.setMacro(this.macro);
 
 		// Allows me to check catch before any fetch requests (reduces api calls)
@@ -99,16 +113,31 @@ class OwO extends Base{
 		this.patreon = require('./utils/patreon.js');
 		this.patreon.init(this);
 
+		try {
+			this.badwords = require('./../../tokens/badwords.json');
+		} catch (err) {
+			console.error('Could not find badwords.json, attempting to use ./secret file...');
+			this.badwords = require('../secret/badwords.json');
+			console.log('Found badwords.json file in secret folder!');
+		}
+
 		// Create commands
 		this.command = new (require('./commands/command.js'))(this);
 	}
 
-	launch(){
-		// Bind bot events 
+	launch() {
+		// Bind bot events
 		this.eventHandler = new EventHandler(this);
 
 		// sends info to our main server every X seconds
 		this.InfoUpdater = new (require('./utils/InfoUpdater.js'))(this);
+	}
+
+	async setOptOut() {
+		const ids = await this.redis.hgetall('optOut');
+		for (let id in ids) {
+			this.optOut[id] = true;
+		}
 	}
 }
 

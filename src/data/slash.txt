@@ -1,0 +1,107 @@
+// Battle
+{
+	"name": "battle",
+	"description": "Fight with your team of animals!",
+	"options": [
+		{
+			"type": 6,
+			"name": "user",
+			"description": "Fight a friend."
+		}
+	]
+}
+
+// Weapon Crate
+{
+	"name": "crate",
+	"description": "Open a weapon crate",
+	"options": [
+		{
+			"type": 4,
+			"name": "count",
+			"description": "Number of weapon crates"
+		}
+	]
+}
+
+// Team commands
+{
+  "name": "team",
+  "description": "Create a strong team of pets to fight!",
+  "options": [
+    {
+      "type": 1,
+      "name": "pets",
+      "description": "Displays all of your pets"
+    },
+    {
+      "type": 2,
+      "name": "rename",
+      "description": "Rename your team and pets",
+      "options": [
+        {
+          "type": 1,
+          "name": "animal",
+          "description": "Rename an animal",
+          "options": [
+            {
+              "type": 3,
+              "name": "name",
+              "description": "Name of your animal",
+              "required": true
+            }
+          ]
+        },
+        {
+          "type": 1,
+          "name": "team",
+          "description": "Rename your current team",
+          "options": [
+            {
+              "type": 3,
+              "name": "name",
+              "description": "Name of your team",
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": 1,
+      "name": "display",
+      "description": "Show your current team"
+    },
+    {
+      "type": 1,
+      "name": "add",
+      "description": "Add a pet to your team",
+      "options": [
+        {
+          "type": 3,
+          "name": "animal",
+          "description": "Animal name",
+          "required": true
+        },
+        {
+          "type": 4,
+          "name": "position",
+          "description": "Where to place the animal in your team"
+        }
+      ]
+    },
+    {
+      "type": 1,
+      "name": "remove",
+      "description": "Remove a pet from the team",
+      "options": [
+        {
+          "type": 3,
+          "name": "animal",
+          "description": "Animal name or position",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

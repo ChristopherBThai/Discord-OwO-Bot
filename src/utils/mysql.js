@@ -3,19 +3,19 @@
  * Copyright (C) 2019 Christopher Thai
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
-  */
-	
+ */
+
 const mysql = require('mysql');
 
-config = {
+const config = {
 	host: process.env.MYSQL_HOST,
 	user: process.env.MYSQL_USER,
 	password: process.env.MYSQL_PASS,
-	database: "owo",
+	database: 'owo',
 	supportBigNumbers: true,
 	multipleStatements: true,
-	charset: "utf8mb4",
-	connectionLimit: 10
+	charset: 'utf8mb4',
+	connectionLimit: 10,
 };
 
 const pool = mysql.createPool(config);
