@@ -21,7 +21,7 @@ module.exports = class Flame extends BuffInterface {
 			' MAG at the end of the turn. Applying flame on a target that already has flame will explode and deal **?%** damage to the target.';
 		this.qualityList = [
 			[20, 40],
-			[40, 60],
+			[60, 80],
 		];
 	}
 
@@ -51,6 +51,7 @@ module.exports = class Flame extends BuffInterface {
 	postTurn(animal, ally, enemy, action) {
 		if (!this.from) return;
 		if (animal.stats.hp[0] <= 0) return;
+    if (this.markedForDeath) return;
 
 		let logs = new Logs();
 
