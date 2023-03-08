@@ -505,7 +505,7 @@ module.exports = class WeaponInterface {
 				if (noBuff && WeaponInterface.hasBuff(team[i], noBuff)) {
 					/* blank */
 				} else if (!lowest) {
-						lowest = team[i];
+					lowest = team[i];
 				} else {
 					let lowestHp = lowest.stats.hp[0] / (lowest.stats.hp[1] + lowest.stats.hp[3]);
 					let animalHp = team[i].stats.hp[0] / (team[i].stats.hp[1] + team[i].stats.hp[3]);

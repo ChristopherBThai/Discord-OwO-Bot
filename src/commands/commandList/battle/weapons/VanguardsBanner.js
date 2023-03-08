@@ -76,11 +76,10 @@ module.exports = class VanguardsBanner extends WeaponInterface {
 		// Grab buff and bind it to our animal
 		let buffLogs = new Logs();
 
-    for (let i = 0; i < ally.length; i++) {
-    
+		for (let i = 0; i < ally.length; i++) {
 			// Add new buff
 			let buff = this.getBuffs(animal)[newBuff];
-			buffLogs.push(buff.bind(ally[i],3,{me:ally[i],allies:ally,enemies:enemy}));
+			buffLogs.push(buff.bind(ally[i], 3, { me: ally[i], allies: ally, enemies: enemy }));
 
 			// Remove old buff
 			if (oldBuffId) {

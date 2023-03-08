@@ -16,7 +16,10 @@ module.exports = class Celebration extends BuffInterface {
 		this.debuff = false;
 		this.emoji = '<:celebration:1080450615806803968>';
 		this.statDesc = `At the end of every turn, heal **?%** of your ${WeaponInterface.prEmoji}PR as ${WeaponInterface.hpEmoji}HP and restore **?%** of your ${WeaponInterface.mrEmoji}MR as ${WeaponInterface.wpEmoji}WP.`;
-		this.qualityList = [[20, 50], [15, 40]];
+		this.qualityList = [
+			[20, 50],
+			[15, 40],
+		];
 	}
 
 	postTurn(animal, ally, enemy, action) {
@@ -38,8 +41,14 @@ module.exports = class Celebration extends BuffInterface {
 			allies: ally,
 			enemies: enemy,
 		});
-		logs.push(`[CELEB] ${this.from.nickname} healed ${animal.nickname} for ${heal.amount} HP`, heal.logs);
-		logs.push(`[CELEB] ${this.from.nickname} replenished ${animal.nickname} for ${wp.amount} WP`, wp.logs);
+		logs.push(
+			`[CELEB] ${this.from.nickname} healed ${animal.nickname} for ${heal.amount} HP`,
+			heal.logs
+		);
+		logs.push(
+			`[CELEB] ${this.from.nickname} replenished ${animal.nickname} for ${wp.amount} WP`,
+			wp.logs
+		);
 
 		super.postTurn(animal, ally, enemy, action);
 

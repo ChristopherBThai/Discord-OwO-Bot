@@ -196,7 +196,7 @@ async function getRandomReward(rewards, con) {
 
 async function parseReward(reward, con) {
 	const uid = await this.global.getUserUid(this.msg.author);
-	let sql, result, name, animal;
+	let sql, result, name, animal, weapon, uwid, weaponId, uwidList;
 	switch (reward.type) {
 		case 'wallpaper':
 			// Check if user has reward
@@ -240,17 +240,17 @@ async function parseReward(reward, con) {
 						ON DUPLICATE KEY UPDATE boxcount = boxcount + ${reward.count};`,
 			};
 		case 'weapon':
-			let weapon = weaponUtil.getRandomWeapons(uid, 1, reward.id)[0];
-			const result = await con.query(weapon.weaponSql);
-			const uwid = result.insertId
+			weapon = weaponUtil.getRandomWeapons(uid, 1, reward.id)[0];
+			result = await con.query(weapon.weaponSql);
+			uwid = result.insertId;
 			weapon.uwid = uwid;
-			let uwidList = [];
+			uwidList = [];
 			for (let j = 0; j < weapon.passives.length; j++) uwidList.push(uwid);
 			await con.query(weapon.passiveSql, uwidList);
-			const weaponId = weaponUtil.shortenUWID(weapon.uwid);
+			weaponId = weaponUtil.shortenUWID(weapon.uwid);
 			return {
-				text: `a(n) \`${weaponId}\` ${weapon.rank.emoji} ${weapon.emoji} ${weapon.rank.name} ${weapon.name}`
-			}
+				text: `a(n) \`${weaponId}\` ${weapon.rank.emoji} ${weapon.emoji} ${weapon.rank.name} ${weapon.name}`,
+			};
 		default:
 			throw 'Invalid reward type: ' + reward.type;
 	}

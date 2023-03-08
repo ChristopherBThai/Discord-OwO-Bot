@@ -32,7 +32,7 @@ module.exports = class AttackUp extends BuffInterface {
 	}
 
 	attack(animal, attackee, damage, _type, _last) {
-    if (this.markedForDeath) return;
+		if (this.markedForDeath) return;
 		let logs = new Logs();
 
 		let bonus = damage[0] * (this.stats[0] / 100);

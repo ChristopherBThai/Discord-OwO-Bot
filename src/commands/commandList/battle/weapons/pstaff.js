@@ -26,7 +26,10 @@ module.exports = class PStaff extends WeaponInterface {
 		this.statDesc = `Remove a buff from an enemy. If successful, deal **?%** of your ${WeaponInterface.magEmoji}MAG to them. Remove a debuff from an ally. If successful, heal **?%** of your ${WeaponInterface.strEmoji}STR to them.`;
 		this.availablePassives = 'all';
 		this.passiveCount = 1;
-		this.qualityList = [[50, 100], [50, 100]];
+		this.qualityList = [
+			[50, 100],
+			[50, 100],
+		];
 		this.manaRange = [200, 125];
 	}
 
@@ -67,7 +70,10 @@ module.exports = class PStaff extends WeaponInterface {
 				enemies: enemy,
 			});
 
-			logs.push(`[PSTAFF] ${me.nickname} removed ${removedBuff[0].name} from ${attacking.nickname} and damaged for ${damage.amount} HP`, damage.logs);
+			logs.push(
+				`[PSTAFF] ${me.nickname} removed ${removedBuff[0].name} from ${attacking.nickname} and damaged for ${damage.amount} HP`,
+				damage.logs
+			);
 		}
 
 		/* Remove a debuff from an ally */
@@ -94,7 +100,10 @@ module.exports = class PStaff extends WeaponInterface {
 				enemies: enemy,
 			});
 
-			logs.push(`[PSTAFF] ${me.nickname} removed ${removedBuff[0].name} from ${ally.nickname} and healed for ${heal.amount} HP`, heal.logs);
+			logs.push(
+				`[PSTAFF] ${me.nickname} removed ${removedBuff[0].name} from ${ally.nickname} and healed for ${heal.amount} HP`,
+				heal.logs
+			);
 		}
 
 		/* deplete weapon points*/
