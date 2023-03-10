@@ -1187,6 +1187,11 @@ function calculateXP(team, enemy, currentStreak = 0) {
 		bonus += bonusXP(currentStreak);
 	}
 
+	if (shouldStopStreak()) {
+		addStreak = false;
+		resetStreak = false;
+	}
+
 	return { total: xp + bonus, bonus, xp, resetStreak, addStreak };
 }
 
