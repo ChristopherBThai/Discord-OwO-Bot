@@ -23,6 +23,10 @@ exports.attack = attack;
 const weapon = '🗡';
 exports.weapon = weapon;
 const numEmojis = ['1⃣', '2⃣', '3⃣'];
+const stopStreak = {
+	start: 1678435200000,
+	end: 1679122800000
+}
 
 function teamFilter(userId) {
 	return `SELECT pt2.pgid FROM user u2
@@ -1087,7 +1091,21 @@ async function finishBattle(msg, p, battle, color, text, playerWin, enemyWin, lo
 		text += ` Your team gained ${pXP.xp} xp`;
 		if (pXP) {
 			opt.xp = pXP.xp;
-			if (pXP.resetStreak) {
+			if (shouldStopStreak()) {
+				if (pXP.bonus) {
+					text += ` + ${pXP.bonus} bonus xp`;
+				}
+				const timeUntil = p.global.getTimeUntil(stopStreak.end);
+				let timeUntilString = `${timeUntil.minutes}M`;
+				if (timeUntil.hours) {
+					timeUntilString = `${timeUntil.hours}H${timeUntilString}`;
+				}
+				if (timeUntil.days) {
+					timeUntilString = `${timeUntil.days}D${timeUntilString}`;
+				}
+				text += `! Streaks are currently frozen until ${timeUntilString}`;
+				opt.streak = battle.player.streak;
+			} else if (pXP.resetStreak) {
 				text += `! You lost your streak of ${battle.player.streak} wins...`;
 				opt.streak = battle.player.streak;
 			} else if (pXP.addStreak) {
@@ -1174,6 +1192,9 @@ function calculateXP(team, enemy, currentStreak = 0) {
 
 /* Bonus xp depending on the streak */
 function bonusXP(streak) {
+	if (shouldStopStreak()) {
+		return 100;
+	}
 	let bonus = 0;
 	if (streak % 1000 === 0) bonus = 25 * (Math.sqrt(streak / 100) * 100 + 500);
 	else if (streak % 500 === 0) bonus = 10 * (Math.sqrt(streak / 100) * 100 + 500);
@@ -1374,4 +1395,12 @@ async function createLogUUID(logs, battle) {
 	} catch (err) {
 		return;
 	}
+}
+
+function shouldStopStreak() {
+	const now = Date.now();
+	if (!stopStreak || !stopStreak.start || !stopStreak.end) {
+		return;
+	}
+	return stopStreak.start < now && now < stopStreak.end;
 }
