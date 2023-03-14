@@ -94,14 +94,10 @@ exports.left = async function (guild, member) {
 	let sql =
 		'UPDATE IGNORE user SET patreonDaily = 0,patreonAnimal = 0 WHERE id = ' + member.id + ';';
 	let result = await mysql.query(sql);
-	if (result.changedRows > 0)
-		sender.msgUser(
-			member.id,
-			'Just a heads up! Your Patreon benefits will not work if you leave the guild!'
-		);
 };
 
 function messageUser(user) {
+	return;
 	sender.msgUser(
 		user.id,
 		'Thank you for supporting owo bot! Every dollar counts and I appreciate your donation!! If you encounter any problems, let me know!\n\nXOXO,\n**Scuttler#0001**'
@@ -122,10 +118,6 @@ async function gainedDaily(user) {
 async function lostDaily(user) {
 	let sql = 'UPDATE IGNORE user SET patreonDaily = 0 WHERE id = ' + user.id + ';';
 	await mysql.query(sql);
-	sender.msgUser(
-		user.id,
-		'Your patreon donation has expired! Thank you **so** much for supporting OwO bot! <3\n\nXOXO,\n**Scuttler#0001**'
-	);
 }
 
 async function gainedAnimal(user) {
@@ -142,10 +134,6 @@ async function gainedAnimal(user) {
 async function lostAnimal(user) {
 	let sql = 'UPDATE IGNORE user SET patreonAnimal = 0 WHERE id = ' + user.id + ';';
 	await mysql.query(sql);
-	sender.msgUser(
-		user.id,
-		'Your patreon donation has expired! Thank you **so** much for supporting OwO bot! <3\n\nXOXO,\n**Scuttler#0001**'
-	);
 }
 
 exports.checkPatreon = function (p, userID) {
