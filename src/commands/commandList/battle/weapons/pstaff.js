@@ -41,7 +41,7 @@ module.exports = class PStaff extends WeaponInterface {
 
 		/* Grab enemy with buff and ally with debuff */
 		let attacking = WeaponInterface.getAttacking(me, team, enemy, { hasBuff: true });
-		let ally = WeaponInterface.getRandomAnimal(team, { hasDebuff: true });
+		let ally = WeaponInterface.getRandomAnimal(team, { hasDebuff: true, isAlive: true });
 		if (!attacking && !ally) return this.attackPhysical(me, team, enemy);
 
 		let logs = new Logs();
