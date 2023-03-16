@@ -31,6 +31,7 @@ module.exports = class CRune extends WeaponInterface {
 		this.qualityList = [];
 		this.manaRange = [200, 100];
 		this.buffList = [10];
+                this.unsellable = true;
 	}
 
 	attackWeapon(me, team, enemy) {
