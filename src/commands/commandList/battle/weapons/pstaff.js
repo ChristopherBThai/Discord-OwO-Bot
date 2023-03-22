@@ -46,6 +46,17 @@ module.exports = class PStaff extends WeaponInterface {
 
 		let logs = new Logs();
 
+		/* deplete weapon points*/
+		let mana = WeaponInterface.useMana(me, this.manaCost, me, {
+			me,
+			allies: team,
+			enemies: enemy,
+		});
+		let manaLogs = new Logs();
+		manaLogs.push(`[PSTAFF] ${me.nickname} used ${mana.amount} WP`, mana.logs);
+
+		logs.addSubLogs(manaLogs);
+
 		/* Remove a buff from an enemy */
 		if (attacking) {
 			/* Remove buff */
@@ -106,16 +117,6 @@ module.exports = class PStaff extends WeaponInterface {
 			);
 		}
 
-		/* deplete weapon points*/
-		let mana = WeaponInterface.useMana(me, this.manaCost, me, {
-			me,
-			allies: team,
-			enemies: enemy,
-		});
-		let manaLogs = new Logs();
-		manaLogs.push(`[PSTAFF] ${me.nickname} used ${mana.amount} WP`, mana.logs);
-
-		logs.addSubLogs(manaLogs);
 		return logs;
 	}
 };
