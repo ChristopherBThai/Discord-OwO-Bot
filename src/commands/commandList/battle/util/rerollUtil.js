@@ -118,7 +118,7 @@ async function getWeapon(p, uwid) {
 			4000
 		);
 		return;
-	} else if (weapon.unsellable) {
+	} else if (weapon.unrerollable) {
 		p.errorMsg(", I can't reroll this weapon!", 4000);
 		return;
 	}

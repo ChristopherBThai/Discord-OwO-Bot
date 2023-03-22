@@ -31,6 +31,7 @@ module.exports = class Rune extends WeaponInterface {
 		this.passiveCount = 0;
 		this.qualityList = [[5, 15]];
 		this.unsellable = true;
+		this.unrerollable = true;
 	}
 
 	alterStats(stats) {
