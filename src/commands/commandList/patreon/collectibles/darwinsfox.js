@@ -13,7 +13,7 @@ class DarwinsFox extends Collectible {
 
 		this.key = 'darwinsfox';
 		this.emoji = '<:fox:1079718256748793856>';
-		this.owners = ['963635559266390066'];
+		this.owners = ['384202884553768961'];
 		this.pluralName = 'Foxes';
 		this.singleName = 'Fox';
 		this.fullControl = true;
