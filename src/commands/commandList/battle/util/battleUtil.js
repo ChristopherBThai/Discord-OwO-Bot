@@ -25,8 +25,8 @@ exports.weapon = weapon;
 const numEmojis = ['1⃣', '2⃣', '3⃣'];
 const stopStreak = {
 	start: 1678435200000,
-	end: 1679122800000
-}
+	end: 1679122800000,
+};
 
 function teamFilter(userId) {
 	return `SELECT pt2.pgid FROM user u2
