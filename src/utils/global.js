@@ -360,7 +360,7 @@ exports.getChannelMessages = async function (channel, options, before, after, ar
 	});
 };
 
-exports.getTimeUntil = function(date) {
+exports.getTimeUntil = function (date) {
 	let diff = date - Date.now();
 	if (diff < 0) {
 		return {
@@ -368,7 +368,7 @@ exports.getTimeUntil = function(date) {
 			hours: 0,
 			minutes: 0,
 			seconds: 0,
-		}
+		};
 	}
 
 	diff = Math.trunc(diff / 1000);
@@ -381,4 +381,4 @@ exports.getTimeUntil = function(date) {
 	let days = diff;
 
 	return { days, hours, minutes, seconds };
-}
+};

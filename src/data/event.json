@@ -120,5 +120,47 @@
 				}
 			]
 		}
+	},
+	"aprilfirst": {
+		"start": 1680332400000,
+		"end": 1681023600000,
+		"emoji": "🐌",
+		"item": {
+			"id": "fake_lootbox",
+			"name": "Fake Lootbox",
+			"emoji": "<:fakelb:1091643848146559008>",
+			"openEmoji": "<:fakelb:1091643848146559008>",
+			"chance": 0.05,
+			"foundText": "?emoji? **|** You found a **Lootbox**...?",
+			"description": "Opens a lootbox! Check how many you have in 'owo inv'!\nApril Fools! This item was given out in April 2023.",
+			"rewards": [
+				{
+					"type": "cowoncy",
+					"count": 1,
+					"chance": 25
+				},
+				{
+					"type": "item",
+					"id": "fake_lootbox",
+					"count": 2,
+					"chance": 25
+				},
+				{
+					"type": "lb",
+					"count": 1,
+					"chance": 25
+				},
+				{
+					"type": "wc",
+					"count": 1,
+					"chance": 25
+				},
+				{
+					"type": "flb",
+					"count": 1,
+					"chance": 1
+				}
+			]
+		}
 	}
 }
