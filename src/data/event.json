@@ -1,7 +1,6 @@
 {
 	"valentine": {
-		"start2": 1676361600000,
-		"start": 1676355679508,
+		"start": 1676361600000,
 		"end": 1677139200000,
 		"emoji": "💌",
 		"item": {
@@ -11,6 +10,7 @@
 			"openEmoji": "💌",
 			"chance": 0.05,
 			"foundText": "?emoji? **|** OwO! You found a **love letter**! <3",
+			"description": "Happy Valentines Day! This item was given out on Feb 2023. Open the letter to receive some special stuff!",
 			"rewards": [
 				{
 					"type": "wallpaper",
@@ -46,6 +46,62 @@
 					"type": "animal",
 					"id": "2023val_night",
 					"chance": 20
+				},
+				{
+					"type": "lb",
+					"count": 1,
+					"chance": 20
+				},
+				{
+					"type": "wc",
+					"count": 1,
+					"chance": 20
+				},
+				{
+					"type": "flb",
+					"count": 1,
+					"chance": 1
+				}
+			]
+		}
+	},
+	"anniversary1": {
+		"start": 1678435200000,
+		"end": 1679122800000,
+		"emoji": "🎉",
+		"item": {
+			"id": "anniversary_present",
+			"name": "Anniversary Present",
+			"emoji": "<:present:1082490947952201808>",
+			"openEmoji": "<:present:1082490947952201808>",
+			"chance": 0.05,
+			"foundText": "?emoji? **|** OwO! You found a **Anniversary Present**! 🎉",
+			"description": "It's OwO's anniversary! This item was given out on March 2023. Open the present to receive some special stuff!",
+			"rewards": [
+				{
+					"type": "wallpaper",
+					"id": 87,
+					"chance": 20
+				},
+				{
+					"type": "wallpaper",
+					"id": 88,
+					"chance": 20
+				},
+				{
+					"type": "wallpaper",
+					"id": 89,
+					"chance": 20
+				},
+				{
+					"type": "weapon",
+					"id": 18,
+					"chance": 15
+				},
+				{
+					"type": "animal",
+					"id": "2023bday_owo",
+					"chance": 15
 				},
 				{
 					"type": "lb",

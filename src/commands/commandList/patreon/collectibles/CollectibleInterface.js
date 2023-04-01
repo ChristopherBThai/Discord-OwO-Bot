@@ -30,6 +30,8 @@ class Collectible {
 		this.costAmount = 1;
 		// If user can only give daily
 		this.dailyOnly = false;
+		// If user can only receive daily
+		this.dailyReceiveOnly = false;
 
 		// Display collectible message
 		this.displayMsg;
@@ -111,9 +113,13 @@ class Collectible {
 	}
 
 	async getDisplayMsg(p, { count, mergeCount, receiveDate }, msgOverride) {
+		let selectedDisplayMsg = this.displayMsg;
+		if (Array.isArray(this.displayMsg)) {
+			selectedDisplayMsg = this.displayMsg[Math.floor(Math.random() * this.displayMsg.length)];
+		}
 		if (msgOverride) {
 			return msgOverride
-				.replaceAll('?displayMsg?', this.displayMsg)
+				.replaceAll('?displayMsg?', selectedDisplayMsg)
 				.replaceAll('?count?', count || 0)
 				.replaceAll('?mergeCount?', mergeCount || 0)
 				.replaceAll('?mergeEmoji?', this.mergeEmoji)
@@ -144,7 +150,7 @@ class Collectible {
 					.replaceAll('?blank?', p.config.emoji.blank)
 					.replaceAll('?user?', p.msg.author.username);
 			} else {
-				return this.displayMsg
+				return selectedDisplayMsg
 					.replaceAll('?count?', count || 0)
 					.replaceAll('?plural?', count > 1 ? 's' : '')
 					.replaceAll('?pluralName?', count > 1 ? this.pluralName : this.singleName)
@@ -160,8 +166,8 @@ class Collectible {
 					.replaceAll('?user?', p.msg.author.username);
 			}
 		} else {
-			return (this.mergeDisplayMsg || this.displayMsg)
-				.replaceAll('?displayMsg?', this.displayMsg)
+			return (this.mergeDisplayMsg || selectedDisplayMsg)
+				.replaceAll('?displayMsg?', selectedDisplayMsg)
 				.replaceAll('?count?', count || 0)
 				.replaceAll('?mergeCount?', mergeCount || 0)
 				.replaceAll('?plural?', count > 1 ? 's' : '')
@@ -182,6 +188,9 @@ class Collectible {
 		const data = dataOverride || this.data;
 		if (!this.owners.includes(p.msg.author.id)) {
 			if (this.dailyOnly && !(await this.checkDaily(p, user))) {
+				return;
+			}
+			if (this.dailyReceiveOnly && !(await this.checkReceiveDaily(p, user))) {
 				return;
 			}
 			let take = 1;
@@ -208,11 +217,11 @@ class Collectible {
 			await p.redis.hset(`data_${user.id}`, `${data}_time`, Date.now());
 		}
 
-		const msg = await this.getGiveMsg(p, result, user);
+		const msg = await this.getGiveMsg(p, result, user, null, dataOverride);
 		p.send(msg);
 	}
 
-	async getGiveMsg(p, result, user, msgOverride) {
+	async getGiveMsg(p, result, user, msgOverride, _dataOverride) {
 		let selectedGiveMsg = this.giveMsg;
 		if (Array.isArray(this.giveMsg)) {
 			selectedGiveMsg = this.giveMsg[Math.floor(Math.random() * this.giveMsg.length)];
@@ -245,6 +254,28 @@ class Collectible {
 	async checkDaily(p, user) {
 		const { redis, msg, config } = p;
 		let reset = await redis.hget(`data_${msg.author.id}`, `${this.data}_reset`);
+		let afterMid = p.dateUtil.afterMidnight(reset);
+		if (!afterMid.after) {
+			if (!this.dailyLimitMsg) {
+				p.errorMsg(', you can only send this item once per day.', 3000);
+			} else {
+				const msg = this.dailyLimitMsg
+					.replaceAll('?user?', msg.author.username)
+					.replaceAll('?giver?', user.username)
+					.replaceAll('?emoji?', this.emoji)
+					.replaceAll('?blank?', config.emoji.blank)
+					.replaceAll('?error?', config.emoji.error);
+				p.send(msg);
+			}
+			return false;
+		}
+		await redis.hset(`data_${msg.author.id}`, `${this.data}_reset`, afterMid.now);
+		return true;
+	}
+
+	async checkReceiveDaily(p, user) {
+		const { redis, msg, config } = p;
+		let reset = await redis.hget(`data_${user.id}`, `${this.data}_reset`);
 		let afterMid = p.dateUtil.afterMidnight(reset);
 		if (!afterMid.after) {
 			if (!this.dailyLimitMsg) {
@@ -303,7 +334,7 @@ class Collectible {
 		);
 	}
 
-	async manualMerge(p) {
+	async manualMerge(p, msgOverride) {
 		let result = await p.redis.hincrby(`data_${p.msg.author.id}`, this.data, -1 * this.mergeNeeded);
 		if (result == null || result < 0) {
 			if (result < 0) p.redis.hincrby(`data_${p.msg.author.id}`, this.data, this.mergeNeeded);
@@ -317,7 +348,7 @@ class Collectible {
 		if (Array.isArray(this.giveMsg)) {
 			selectedGiveMsg = this.giveMsg[Math.floor(Math.random() * this.giveMsg.length)];
 		}
-		const msg = this.mergeMsg
+		const msg = (msgOverride || this.mergeMsg)
 			.replaceAll('?giveMsg?', selectedGiveMsg)
 			.replaceAll('?user?', p.msg.author.username)
 			.replaceAll('?emoji?', this.emoji)
