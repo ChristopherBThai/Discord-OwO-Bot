@@ -72,6 +72,7 @@ module.exports = new CommandInterface({
 		let text = '**<:patreon:449705754522419222> |** Donate to OwO Bot for special benefits!\n';
 		text += '**<:blank:427371936482328596> |** ' + stat + '\n';
 		text += '**<:blank:427371936482328596> |** https://www.patreon.com/OwOBot';
+		text += '\n**<:blank:427371936482328596> |** https://owobot.com/store';
 		p.send(text);
 	},
 });
