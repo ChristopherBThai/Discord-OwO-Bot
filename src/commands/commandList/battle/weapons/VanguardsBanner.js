@@ -75,7 +75,12 @@ module.exports = class VanguardsBanner extends WeaponInterface {
 
 		// Grab buff and bind it to our animal
 		let buffLogs = new Logs();
+
 		for (let i = 0; i < ally.length; i++) {
+			// Add new buff
+			let buff = this.getBuffs(animal)[newBuff];
+			buffLogs.push(buff.bind(ally[i], 3, { me: ally[i], allies: ally, enemies: enemy }));
+
 			// Remove old buff
 			if (oldBuffId) {
 				for (let j in ally[i].buffs) {
@@ -84,10 +89,6 @@ module.exports = class VanguardsBanner extends WeaponInterface {
 					}
 				}
 			}
-
-			// Add new buff
-			let buff = this.getBuffs(animal)[newBuff];
-			buffLogs.push(buff.bind(ally[i], 3, { me: ally[i], allies: ally, enemies: enemy }));
 		}
 		logs.push(`[VBAN] ${animal.nickname} applied ${newBuffName} to all allies`);
 

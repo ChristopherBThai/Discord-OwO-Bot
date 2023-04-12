@@ -4,7 +4,9 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
  */
+const pluralize = require('pluralize');
 const events = require('../data/event.json');
+const weaponUtil = require('../commands/commandList/battle/util/weaponUtil.js');
 const itemUtil = require('../commands/commandList/shop/util/itemUtil.js');
 const itemToEvents = {};
 for (const key in events) {
@@ -40,7 +42,9 @@ exports.useItem = async function (item) {
 
 		reward = await getRandomReward.bind(this)(event.item.rewards, con);
 
-		await con.query(reward.sql);
+		if (reward.sql) {
+			await con.query(reward.sql);
+		}
 		await con.commit();
 	} catch (err) {
 		console.error(err);
@@ -193,7 +197,7 @@ async function getRandomReward(rewards, con) {
 
 async function parseReward(reward, con) {
 	const uid = await this.global.getUserUid(this.msg.author);
-	let sql, result, name, animal;
+	let sql, result, name, animal, weapon, uwid, weaponId, uwidList, item;
 	switch (reward.type) {
 		case 'wallpaper':
 			// Check if user has reward
@@ -235,6 +239,32 @@ async function parseReward(reward, con) {
 				text: `a ${this.config.emoji.crate} Weapon Crate`,
 				sql: `INSERT INTO crate (uid,cratetype,boxcount,claimcount,claim) VALUES (${uid},0,${reward.count},0,'2017-01-01')
 						ON DUPLICATE KEY UPDATE boxcount = boxcount + ${reward.count};`,
+			};
+		case 'cowoncy':
+			return {
+				text: `${this.global.toFancyNum(reward.count)} ${this.config.emoji.cowoncy} Cowoncy`,
+				sql: `INSERT INTO cowoncy (id,money) VALUES (${this.msg.author.id}, ${reward.count})
+						ON DUPLICATE KEY UPDATE money = money + ${reward.count};`,
+			};
+		case 'item':
+			item = itemUtil.getByName(reward.id);
+			return {
+				text: `${reward.count} ${item.emoji} ${pluralize(item.name, reward.count)}`,
+				sql: `INSERT INTO user_item (uid, name, count) VALUES 
+						(${uid}, '${reward.id}', ${reward.count}) ON DUPLICATE KEY UPDATE
+						count = count + ${reward.count}`,
+			};
+		case 'weapon':
+			weapon = weaponUtil.getRandomWeapons(uid, 1, reward.id)[0];
+			result = await con.query(weapon.weaponSql);
+			uwid = result.insertId;
+			weapon.uwid = uwid;
+			uwidList = [];
+			for (let j = 0; j < weapon.passives.length; j++) uwidList.push(uwid);
+			await con.query(weapon.passiveSql, uwidList);
+			weaponId = weaponUtil.shortenUWID(weapon.uwid);
+			return {
+				text: `a(n) \`${weaponId}\` ${weapon.rank.emoji} ${weapon.emoji} ${weapon.rank.name} ${weapon.name}`,
 			};
 		default:
 			throw 'Invalid reward type: ' + reward.type;

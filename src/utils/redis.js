@@ -158,6 +158,15 @@ exports.expire = function (key, timer = 259200) {
 	});
 };
 
+exports.zrem = function (table, key) {
+	return new Promise(function (res, rej) {
+		client.zrem(table, key, function (err, reply) {
+			if (err) rej(err);
+			else res(reply);
+		});
+	});
+};
+
 client.on('connect', function () {
 	//console.log('Redis connected');
 });

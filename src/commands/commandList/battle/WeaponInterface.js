@@ -184,7 +184,7 @@ module.exports = class WeaponInterface {
 	static getAlive(team) {
 		let alive = [];
 		for (let i in team) {
-			if (team[i].stats.hp[0] > 0) alive.push(i);
+			if (team[i].stats.hp[0] > 0) alive.push(team[i]);
 		}
 		return alive;
 	}
@@ -231,15 +231,45 @@ module.exports = class WeaponInterface {
 	}
 
 	/* Get an enemy to attack */
-	static getAttacking(me, team, enemy) {
+	static getAttacking(me, team, enemy, { hasBuff } = {}) {
 		let alive = WeaponInterface.getAlive(enemy);
-		let attacking = enemy[alive[Math.trunc(Math.random() * alive.length)]];
+
+		let hasBuffOverride = false;
 		for (let i in enemy) {
-			if (enemy[i].stats.hp[0] > 0)
-				for (let j in enemy[i].buffs)
-					attacking = enemy[i].buffs[j].enemyChooseAttack(enemy[i], me, attacking, team, enemy);
+			if (enemy[i].stats.hp[0] > 0) {
+				for (let j in enemy[i].buffs) {
+					let animal = enemy[i].buffs[j].enemyChooseAttack(enemy[i], me, team, enemy);
+					if (animal) {
+						hasBuffOverride = true;
+						if (hasBuff) {
+							if (WeaponInterface.hasGoodBuff(animal)) {
+								return animal;
+							}
+						} else {
+							return animal;
+						}
+					}
+				}
+			}
 		}
-		return attacking;
+		if (hasBuffOverride) return;
+
+		let enemyList = alive;
+		if (hasBuff) {
+			enemyList = alive.filter(WeaponInterface.hasGoodBuff);
+		}
+		return enemyList[Math.trunc(Math.random() * enemyList.length)];
+	}
+
+	/* Get a random animal */
+	static getRandomAnimal(team, { hasDebuff, isAlive } = {}) {
+		let list = (isAlive && WeaponInterface.getAlive(team)) || team;
+
+		if (hasDebuff) {
+			list = list.filter(WeaponInterface.hasBadBuff);
+		}
+
+		return list[Math.trunc(Math.random() * list.length)];
 	}
 
 	/* Calculate the damage output (Either mag or att) */
@@ -468,16 +498,23 @@ module.exports = class WeaponInterface {
 	}
 
 	/* Get lowest hp animal */
-	static getLowestHp(team) {
+	static getLowestHp(team, { noBuff } = {}) {
 		let lowest = undefined;
-		for (let i = 0; i < team.length; i++)
-			if (team[i].stats.hp[0] > 0)
-				if (
-					!lowest ||
-					lowest.stats.hp[0] / (lowest.stats.hp[1] + lowest.stats.hp[3]) >
-						team[i].stats.hp[0] / (team[i].stats.hp[1] + team[i].stats.hp[3])
-				)
+		for (let i = 0; i < team.length; i++) {
+			if (team[i].stats.hp[0] > 0) {
+				if (noBuff && WeaponInterface.hasBuff(team[i], noBuff)) {
+					/* blank */
+				} else if (!lowest) {
 					lowest = team[i];
+				} else {
+					let lowestHp = lowest.stats.hp[0] / (lowest.stats.hp[1] + lowest.stats.hp[3]);
+					let animalHp = team[i].stats.hp[0] / (team[i].stats.hp[1] + team[i].stats.hp[3]);
+					if (lowestHp > animalHp) {
+						lowest = team[i];
+					}
+				}
+			}
+		}
 		return lowest;
 	}
 
@@ -493,6 +530,33 @@ module.exports = class WeaponInterface {
 				)
 					lowest = team[i];
 		return lowest;
+	}
+
+	static hasBuff(animal, buffId) {
+		for (let i in animal.buffs) {
+			if (animal.buffs[i].id === buffId) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	static hasGoodBuff(animal) {
+		for (let i in animal.buffs) {
+			if (!animal.buffs[i].debuff) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	static hasBadBuff(animal) {
+		for (let i in animal.buffs) {
+			if (animal.buffs[i].debuff) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/* Gets a dead animal */
@@ -573,6 +637,12 @@ module.exports = class WeaponInterface {
 	}
 	static get wpEmoji() {
 		return '<:wp:531620120976687114>';
+	}
+	static get prEmoji() {
+		return '<:pr:531616156222488606>';
+	}
+	static get mrEmoji() {
+		return '<:mr:531616156226945024>';
 	}
 	static get getID() {
 		return new this(null, null, true).id;

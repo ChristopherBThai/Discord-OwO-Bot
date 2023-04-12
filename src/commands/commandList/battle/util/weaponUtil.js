@@ -56,12 +56,18 @@ setTimeout(() => {
 	}
 }, 0);
 
-const getRandomWeapon = (exports.getRandomWeapon = function () {
-	/* Grab a random weapon */
-	let keys = Object.keys(availableWeapons);
-	let random = keys[Math.floor(Math.random() * keys.length)];
+const getRandomWeapon = (exports.getRandomWeapon = function (wid) {
+	let weapon;
 
-	let weapon = availableWeapons[random];
+	if (wid) {
+		weapon = weapons[wid];
+		if (!weapon) throw 'No weapon with id: ' + wid;
+	} else {
+		/* Grab a random weapon */
+		let keys = Object.keys(availableWeapons);
+		let random = keys[Math.floor(Math.random() * keys.length)];
+		weapon = availableWeapons[random];
+	}
 
 	/* Initialize random stats */
 	weapon = new weapon();
@@ -69,10 +75,10 @@ const getRandomWeapon = (exports.getRandomWeapon = function () {
 	return weapon;
 });
 
-exports.getRandomWeapons = function (uid, count) {
+exports.getRandomWeapons = function (uid, count, wid) {
 	let randomWeapons = [];
 	for (let i = 0; i < count; i++) {
-		let tempWeapon = getRandomWeapon();
+		let tempWeapon = getRandomWeapon(wid);
 		let weaponSql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${uid ? uid : '?'},${
 			tempWeapon.id
 		},'${tempWeapon.sqlStat}',${tempWeapon.avgQuality});`;
@@ -367,9 +373,11 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	let desc = '';
 	let fieldText;
 	let fields = [];
+	const user_weapons_2 = [];
 	for (let key in user_weapons) {
 		let weapon = parseWeapon(user_weapons[key]);
 		if (weapon) {
+			user_weapons_2.push(weapon);
 			let row = '';
 			let emoji = `${weapon.rank.emoji}${weapon.emoji}`;
 			for (let i = 0; i < weapon.passives.length; i++) {
@@ -430,9 +438,11 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	else if (sort === 3) embed.footer.text += 'Sorting by equipped';
 
 	embed = alterWeapon.alter(user.id, embed, {
+		...opt,
 		page: page + 1,
 		descHelp: descHelp,
 		desc: desc,
+		weapons: user_weapons_2,
 	});
 
 	return { sql, embed, totalCount, nextPage, prevPage, maxPage };

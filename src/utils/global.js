@@ -359,3 +359,26 @@ exports.getChannelMessages = async function (channel, options, before, after, ar
 		return !main.optOut[msg.author.id];
 	});
 };
+
+exports.getTimeUntil = function (date) {
+	let diff = date - Date.now();
+	if (diff < 0) {
+		return {
+			days: 0,
+			hours: 0,
+			minutes: 0,
+			seconds: 0,
+		};
+	}
+
+	diff = Math.trunc(diff / 1000);
+	let seconds = diff % 60;
+	diff = Math.trunc(diff / 60);
+	let minutes = diff % 60;
+	diff = Math.trunc(diff / 60);
+	let hours = diff % 24;
+	diff = Math.trunc(diff / 24);
+	let days = diff;
+
+	return { days, hours, minutes, seconds };
+};
