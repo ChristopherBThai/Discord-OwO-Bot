@@ -13,7 +13,7 @@ module.exports = new CommandInterface({
 
 	args: '',
 
-	desc: 'Check your cowoncy balance! You can earn more cowoncy by saying owo, dailies, and voting!',
+	desc: 'Check your cowoncy balance! You can earn more cowoncy through dailies and voting!',
 
 	example: [],
 
