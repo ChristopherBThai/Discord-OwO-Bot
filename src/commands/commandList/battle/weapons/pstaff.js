@@ -41,10 +41,21 @@ module.exports = class PStaff extends WeaponInterface {
 
 		/* Grab enemy with buff and ally with debuff */
 		let attacking = WeaponInterface.getAttacking(me, team, enemy, { hasBuff: true });
-		let ally = WeaponInterface.getRandomAnimal(team, { hasDebuff: true });
+		let ally = WeaponInterface.getRandomAnimal(team, { hasDebuff: true, isAlive: true });
 		if (!attacking && !ally) return this.attackPhysical(me, team, enemy);
 
 		let logs = new Logs();
+
+		/* deplete weapon points*/
+		let mana = WeaponInterface.useMana(me, this.manaCost, me, {
+			me,
+			allies: team,
+			enemies: enemy,
+		});
+		let manaLogs = new Logs();
+		manaLogs.push(`[PSTAFF] ${me.nickname} used ${mana.amount} WP`, mana.logs);
+
+		logs.addSubLogs(manaLogs);
 
 		/* Remove a buff from an enemy */
 		if (attacking) {
@@ -106,16 +117,6 @@ module.exports = class PStaff extends WeaponInterface {
 			);
 		}
 
-		/* deplete weapon points*/
-		let mana = WeaponInterface.useMana(me, this.manaCost, me, {
-			me,
-			allies: team,
-			enemies: enemy,
-		});
-		let manaLogs = new Logs();
-		manaLogs.push(`[PSTAFF] ${me.nickname} used ${mana.amount} WP`, mana.logs);
-
-		logs.addSubLogs(manaLogs);
 		return logs;
 	}
 };
