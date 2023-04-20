@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 5.7.37, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.40, for Linux (x86_64)
 --
 -- Host: localhost    Database: owo
 -- ------------------------------------------------------
@@ -494,6 +494,24 @@ CREATE TABLE `gem` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `giveaway`
+--
+
+DROP TABLE IF EXISTS `giveaway`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `giveaway` (
+  `cid` bigint(20) unsigned NOT NULL,
+  `mid` bigint(20) unsigned DEFAULT NULL,
+  `rewards` varchar(255) NOT NULL,
+  `endDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `winners` int(11) NOT NULL DEFAULT '1',
+  `active` tinyint(4) NOT NULL,
+  PRIMARY KEY (`cid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `guild`
 --
 
@@ -658,6 +676,24 @@ CREATE TABLE `marriage` (
   CONSTRAINT `marriage_ibfk_2` FOREIGN KEY (`uid2`) REFERENCES `user` (`uid`),
   CONSTRAINT `marriage_ibfk_3` FOREIGN KEY (`rid`) REFERENCES `ring` (`rid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `patreon_wh`
+--
+
+DROP TABLE IF EXISTS `patreon_wh`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `patreon_wh` (
+  `pid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `endDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `patreonType` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`pid`),
+  KEY `uid` (`uid`),
+  CONSTRAINT `patreon_wh_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1203,6 +1239,23 @@ CREATE TABLE `user_gem` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `user_giveaway`
+--
+
+DROP TABLE IF EXISTS `user_giveaway`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_giveaway` (
+  `uid` int(11) NOT NULL,
+  `cid` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`uid`,`cid`),
+  KEY `cid` (`cid`),
+  CONSTRAINT `user_giveaway_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`),
+  CONSTRAINT `user_giveaway_ibfk_2` FOREIGN KEY (`cid`) REFERENCES `giveaway` (`cid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `user_item`
 --
 
@@ -1215,6 +1268,8 @@ CREATE TABLE `user_item` (
   `count` int(10) unsigned NOT NULL DEFAULT '0',
   `daily_reset` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `daily_count` int(10) unsigned NOT NULL DEFAULT '0',
+  `claim_reset` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `claim_count` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`uid`,`name`),
   KEY `name` (`name`),
   CONSTRAINT `user_item_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`),
@@ -1539,4 +1594,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-27 22:55:35
+-- Dump completed on 2023-04-14  0:53:53

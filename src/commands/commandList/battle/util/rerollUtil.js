@@ -142,7 +142,7 @@ async function sendMessage(p, oldWeapon, newWeapon, rrType, msg) {
 		[yesEmoji, noEmoji, retryEmoji].includes(emoji.name) && p.msg.author.id == userID;
 	let collector = p.reactionCollector.create(msg, filter, {
 		time: 900000,
-		idle: 120000,
+		idle: 300000,
 	});
 
 	collector.on('collect', async (emoji) => {
