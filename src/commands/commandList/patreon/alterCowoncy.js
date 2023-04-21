@@ -27,7 +27,7 @@ function rhine(p, info) {
 		image: {
 			url: 'https://media.discordapp.net/attachments/886547029478768640/969854561760206848/ezgif-3-7bbcfd4a0b.gif',
 		},
-		description: `${cashEmoji} **${info.user.username}** has 88 cherry blossoms with **${info.money} blossoms** in total!`,
+		description: `${cashEmoji} **${info.user.username}** has 88 cherry blossoms trees with **${info.money} blossoms** in total!`,
 	};
 	return { embed };
 }

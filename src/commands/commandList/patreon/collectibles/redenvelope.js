@@ -20,16 +20,16 @@ class RedEnvelope extends Collectible {
 		this.giveAmount = 1;
 		this.description = `Red envelope is small red and gold packets, containing money as a symbol of good luck.\n\nCollect 8 Red Envelopes to get a Gold!`;
 		this.displayMsg =
-			'?emoji? **| ?user?**, you currently have ?count? red envelope?plural? and ?mergeCount? gold?plural? ?mergeEmoji? ! Wishing you lots of luck!';
+			'?emoji? **| ?user?**, you currently have ?count? ?emoji? Red Envelope?plural? and ?mergeCount? ?mergeEmoji? Gold?plural?! Wishing you lots of luck!';
 		this.brokeMsg = ', you do not have any Red Envelopes! >:c';
 		this.giveMsg =
-			'?emoji? **| ?receiver?**, you have received 1 Red Envelope from ?giver?! Best of luck!';
+			'?emoji? **| ?receiver?**, you have received 1 ?emoji? Red Envelope from **?giver?**! Best of luck!';
 
 		this.hasMerge = true;
 		this.mergeNeeded = 8;
 		this.mergeEmoji = '<:gold:1080076845124427806>';
 		this.mergeMsg =
-			'?giveMsg?\n?blank? **|** Your eight red envelopes combined and turned into a gold! ?mergeEmoji?';
+			'?giveMsg?\n?mergeEmoji? **|** Your eight red envelopes combined and turned into a Gold!';
 
 		this.init();
 	}

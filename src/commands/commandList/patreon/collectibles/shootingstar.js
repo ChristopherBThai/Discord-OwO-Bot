@@ -12,34 +12,50 @@ class ShootingStar extends Collectible {
 		super();
 
 		this.key = 'shootingstar';
-		this.emoji = '<a:shootingstar2:1067095593912119296>';
-		this.owners = ['370709798020448257'];
+		this.alias = ['shootingstar', 'ss'];
+		this.emoji = '<a:shootingstar:1080027054688440350>';
+		this.owners = [
+			'370709798020448257',
+			'412812867348463636',
+			'692146302284202134',
+			'417214768970203136',
+		];
 		this.fullControl = true;
 		this.ownerOnly = true;
 		this.giveAmount = 1;
 		this.description = `Give out a shooting star! Merge 2 to create a wish.`;
 		this.displayMsg =
-			'**<a:1_starpurple:898464431594422323><a:dp_star:1067095702041284608> Make a wish! <a:1_starpurple:898464431594422323><a:dp_star:1067095702041284608>' +
-			'\n✧<:LGA_dash1:1067375962909585478><:LGA_dash1:1067375962909585478><:LGA_dash1:1067375962909585478><:LGA_dash1:1067375962909585478><:LGA_dash1:1067375962909585478><:LGA_dash1:1067375962909585478><:LGA_dash1:1067375962909585478>✧' +
+			'**<a:purplestar:1080027292102823966><a:pinkstars:1080026894436667402> Make a wish! <a:purplestar:1080027292102823966><a:pinkstar:1080027395295285368>' +
+			'\n✧<:dash:1080027541466783825><:dash:1080027541466783825><:dash:1080027541466783825><:dash:1080027541466783825><:dash:1080027541466783825><:dash:1080027541466783825><:dash:1080027541466783825>✧' +
 			'\n?emoji? Shooting stars: ?count?' +
 			'\n?mergeEmoji? Wishes: ?mergeCount?**';
 		this.brokeMsg = ', you do not have any Shooting Stars! >:c';
 		this.giveMsg =
-			'<:starfrens:1067095520985751563> ooh, your **wish** <a:21glitter:1067368203971481660> came true! the universe has listened to your dream, you got **1 shooting star**! ?emoji?';
+			'<:starfrens:1067095520985751563> ooh, your **wish** <a:glitter:1080026999327834122> came true! the universe has listened to your dream, you got **1 shooting star**! ?emoji?';
 
 		this.failChance = 0.8;
 		this.failMsg =
-			'**<:starfrens:1067095520985751563> Sadly...maybe a dream is just meant to be a dream <a:p_stars1:828388719848849450>**';
+			'**<:starfrens:1067095520985751563> Sadly...maybe a dream is just meant to be a dream <a:pinkstars:1080026894436667402>**';
 
 		this.hasManualMerge = true;
 		this.manualMergeData = 'shootingstar_wish';
 		this.manualMergeCommands = ['unite'];
 		this.mergeNeeded = 2;
-		this.mergeEmoji = '<a:angelWZsparkleheart:1067370628690231306>';
+		this.mergeEmoji = '<a:pinkheart:1080027639152119818>';
 		this.mergeMsg =
-			'<a:shootingstar2:1067095593912119296> 2 **shooting stars** have turned into 1 **wish**. <a:_sparkles3:1067369146456743948>Dream on, my dear friend, and your wishes will be fulfilled <a:YMb_MoonXPink:747305132596920401>';
+			'<a:shootingstar:1080027054688440350> 2 **shooting stars** have turned into 1 **wish**. <a:pinkheart:1080027639152119818>Dream on, my dear friend, and your wishes will be fulfilled <a:moon:1080027213388333107>';
 
 		this.init();
+	}
+
+	async checkFailed(p, user) {
+		if (typeof this.failChance !== 'number' || this.failChance <= 0) return false;
+		if (!this.owners.includes(user.id) && Math.random() <= this.failChance) {
+			const msg = await this.getFailMsg(p, user);
+			p.send(msg);
+			return true;
+		}
+		return false;
 	}
 }
 
