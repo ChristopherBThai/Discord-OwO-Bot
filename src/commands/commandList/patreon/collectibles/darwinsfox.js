@@ -23,9 +23,9 @@ class DarwinsFox extends Collectible {
 			"Darwin's Fox (Lycalpoex fulvipes), also known as Zorro Chilote, is an endangered canid.  It is not a true fox." +
 			'It was first discovered by the naturalist Charles Darwin in 1834.' +
 			'There are two populations of Darwin’s fox. The location of the first population is in protected areas on an island off the coast of Chile,  with an estimated 227 individuals on the mainland and 412 on Chiloé Island.';
-		this.displayMsg = '?emoji? **| ?user?**, you currently have ?count? Darwin ?pluralName?!';
-		this.brokeMsg = ', you do not have any Darwin Foxes! >:c';
-		this.giveMsg = '?emoji? **| ?receiver?**, ?giver? gave you 1 Darwin Fox!';
+		this.displayMsg = "?emoji? **| ?user?**, you currently have ?count? Darwin's ?pluralName?!";
+		this.brokeMsg = ", you do not have any Darwin's Foxes! >:c";
+		this.giveMsg = "?emoji? **| ?receiver?**, ?giver? gave you 1 Darwin's Fox!";
 
 		this.init();
 	}
