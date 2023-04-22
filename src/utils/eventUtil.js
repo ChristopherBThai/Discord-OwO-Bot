@@ -4,10 +4,9 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
  */
-const pluralize = require('pluralize');
 const events = require('../data/event.json');
-const weaponUtil = require('../commands/commandList/battle/util/weaponUtil.js');
 const itemUtil = require('../commands/commandList/shop/util/itemUtil.js');
+const rewardUtil = require('./rewardUtil.js');
 const itemToEvents = {};
 for (const key in events) {
 	const event = events[key];
@@ -197,76 +196,5 @@ async function getRandomReward(rewards, con) {
 
 async function parseReward(reward, con) {
 	const uid = await this.global.getUserUid(this.msg.author);
-	let sql, result, name, animal, weapon, uwid, weaponId, uwidList, item;
-	switch (reward.type) {
-		case 'wallpaper':
-			// Check if user has reward
-			sql = `SELECT * FROM backgrounds WHERE bid = ${reward.id};
-					SELECT * FROM user_backgrounds WHERE uid = ${uid} AND bid = ${reward.id};`;
-			result = await con.query(sql);
-			if (result[1][0]) {
-				return null;
-			}
-			name = result[0][0].bname;
-			return {
-				text: `a ${this.config.emoji.wallpaper} "${name}" Wallpaper`,
-				sql: `INSERT INTO user_backgrounds (uid, bid) VALUES (${uid}, ${reward.id}); `,
-			};
-
-		case 'animal':
-			animal = this.global.validAnimal(reward.id);
-			return {
-				text: `a ${animal.value} ${animal.name}`,
-				sql: `INSERT INTO animal (count, totalcount, id, name) VALUES (1,1,${this.msg.author.id},'${animal.value}')
-						ON DUPLICATE KEY UPDATE count = count + 1, totalcount = totalcount + 1;
-						INSERT INTO animal_count (id, ${animal.rank}) VALUES (${this.msg.author.id}, 1)
-						ON DUPLICATE KEY UPDATE ${animal.rank} = ${animal.rank} + 1;`,
-			};
-		case 'lb':
-			return {
-				text: `a ${this.config.emoji.lootbox} Lootbox`,
-				sql: `INSERT INTO lootbox (id,boxcount,claimcount,claim) VALUES (${this.msg.author.id},${reward.count},0,'2017-01-01')
-						ON DUPLICATE KEY UPDATE boxcount = boxcount + ${reward.count};`,
-			};
-		case 'flb':
-			return {
-				text: `a ${this.config.emoji.fabledLootbox} Fabled Lootbox`,
-				sql: `INSERT INTO lootbox (id,fbox,claimcount,claim) VALUES (${this.msg.author.id},${reward.count},0,'2017-01-01')
-						ON DUPLICATE KEY UPDATE fbox = fbox + ${reward.count};`,
-			};
-		case 'wc':
-			return {
-				text: `a ${this.config.emoji.crate} Weapon Crate`,
-				sql: `INSERT INTO crate (uid,cratetype,boxcount,claimcount,claim) VALUES (${uid},0,${reward.count},0,'2017-01-01')
-						ON DUPLICATE KEY UPDATE boxcount = boxcount + ${reward.count};`,
-			};
-		case 'cowoncy':
-			return {
-				text: `${this.global.toFancyNum(reward.count)} ${this.config.emoji.cowoncy} Cowoncy`,
-				sql: `INSERT INTO cowoncy (id,money) VALUES (${this.msg.author.id}, ${reward.count})
-						ON DUPLICATE KEY UPDATE money = money + ${reward.count};`,
-			};
-		case 'item':
-			item = itemUtil.getByName(reward.id);
-			return {
-				text: `${reward.count} ${item.emoji} ${pluralize(item.name, reward.count)}`,
-				sql: `INSERT INTO user_item (uid, name, count) VALUES 
-						(${uid}, '${reward.id}', ${reward.count}) ON DUPLICATE KEY UPDATE
-						count = count + ${reward.count}`,
-			};
-		case 'weapon':
-			weapon = weaponUtil.getRandomWeapons(uid, 1, reward.id)[0];
-			result = await con.query(weapon.weaponSql);
-			uwid = result.insertId;
-			weapon.uwid = uwid;
-			uwidList = [];
-			for (let j = 0; j < weapon.passives.length; j++) uwidList.push(uwid);
-			await con.query(weapon.passiveSql, uwidList);
-			weaponId = weaponUtil.shortenUWID(weapon.uwid);
-			return {
-				text: `a(n) \`${weaponId}\` ${weapon.rank.emoji} ${weapon.emoji} ${weapon.rank.name} ${weapon.name}`,
-			};
-		default:
-			throw 'Invalid reward type: ' + reward.type;
-	}
+	return rewardUtil.getReward(this.msg.author.id, uid, con, reward.type, reward.id, reward.count);
 }
