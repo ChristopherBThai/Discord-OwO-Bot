@@ -7,13 +7,15 @@
 
 /* Utility to check/parse dates */
 
+const global = require('./global.js');
+
 const overrideWithinDay = false;
 
 /* Checks if the given date is past midnight */
 exports.afterMidnight = function (date) {
 	/* Grab current time */
 	let now = new Date();
-	let sqlNow = toMySQL(now);
+	let sqlNow = global.toMySQL(now);
 	let midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 	const nextMidnight = new Date(midnight.valueOf() + 86400000);
 
@@ -83,21 +85,3 @@ exports.afterMidnight = function (date) {
 			now,
 		};
 };
-
-function toMySQL(date) {
-	return (
-		"'" +
-		date.getFullYear() +
-		'-' +
-		('00' + (date.getMonth() + 1)).slice(-2) +
-		'-' +
-		('00' + date.getDate()).slice(-2) +
-		' ' +
-		('00' + date.getHours()).slice(-2) +
-		':' +
-		('00' + date.getMinutes()).slice(-2) +
-		':' +
-		('00' + date.getSeconds()).slice(-2) +
-		"'"
-	);
-}

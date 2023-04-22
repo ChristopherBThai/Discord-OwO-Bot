@@ -294,6 +294,7 @@ function initParam(msg, command, args, main, context) {
 		PagedMessage: main.PagedMessage,
 		dateUtil: main.dateUtil,
 		neo4j: main.neo4j,
+		giveaway: main.giveaway,
 	};
 	param.setCooldown = function (cooldown) {
 		main.cooldown.setCooldown(param, aliasToCommand[command], cooldown);

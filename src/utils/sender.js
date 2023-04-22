@@ -176,6 +176,8 @@ exports.msgChannel = async function (channel, msg, options) {
 			await message.addReaction(options.react[i]);
 		}
 	}
+
+	return message;
 };
 
 exports.msgLogChannel = async function (msg) {
@@ -186,6 +188,11 @@ exports.msgLogChannel = async function (msg) {
 exports.msgModLogChannel = async function (msg) {
 	if (!msg) return;
 	client.createMessage(modLogChannel, msg);
+};
+
+exports.editMsg = async function (cid, mid, msg) {
+	if (!msg || !mid || !cid) return;
+	client.editMessage(cid, mid, msg);
 };
 
 exports.init = function (main) {
