@@ -11,10 +11,14 @@ const emotes = [
 	'https://cdn.discordapp.com/attachments/581509910848864265/889613545023615016/psyduck-bonk.gif',
 	'https://cdn.discordapp.com/attachments/581509910848864265/889613544553865236/bonk-anime.gif',
 	'https://cdn.discordapp.com/attachments/581509910848864265/889613551843545118/sugiura-bonk.gif',
+	'https://cdn.discordapp.com/attachments/581509910848864265/1097420521223757915/minmi-bonk.gif',
+	'https://cdn.discordapp.com/attachments/581509910848864265/1097420520783364107/bh187-minion.gif',
+	'https://media.discordapp.net/attachments/581509910848864265/1097417876526333962/powerful-head-slap.gif',
 ];
 const bonkComments = ['Ouch!', 'Gotta hurt!'];
 const noBonkComments = ['Woah!', 'Better luck next time!'];
 const owner = '423166705477353472';
+const immunity = ['423166705477353472', '635873165758824449', '665648471340220430'];
 
 module.exports = new CommandInterface({
 	alias: ['bonk', 'bomk'],
@@ -54,8 +58,8 @@ module.exports = new CommandInterface({
 		let emote;
 
 		let text;
-		if (target.id == owner) {
-			if (Math.random() < 0.1) {
+		if (immunity.includes(target.id)) {
+			if (Math.random() < 0.01) {
 				let comment = bonkComments[Math.trunc(Math.random() * bonkComments.length)];
 				text = `${target.username} got bonked by ${p.msg.author.username}! ${comment}`;
 				emote = emotes[Math.trunc(Math.random() * emotes.length)];

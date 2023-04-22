@@ -233,6 +233,8 @@ class Collectible {
 				.replaceAll('?receiver?', user.username)
 				.replaceAll('?emoji?', this.emoji)
 				.replaceAll('?blank?', p.config.emoji.blank)
+				.replaceAll('?count?', result)
+				.replaceAll('?plural?', result > 1 ? 's' : '')
 				.replaceAll('?mergeEmoji?', this.mergeEmoji);
 		} else if (this.hasMerge && (result % this.mergeNeeded) - this.giveAmount < 0) {
 			return this.mergeMsg
@@ -247,13 +249,15 @@ class Collectible {
 				.replaceAll('?giver?', p.msg.author.username)
 				.replaceAll('?receiver?', user.username)
 				.replaceAll('?blank?', p.config.emoji.blank)
+				.replaceAll('?count?', result)
+				.replaceAll('?plural?', result > 1 ? 's' : '')
 				.replaceAll('?emoji?', this.emoji);
 		}
 	}
 
 	async checkDaily(p, user) {
 		const { redis, msg, config } = p;
-		let reset = await redis.hget(`data_${msg.author.id}`, `${this.data}_reset`);
+		let reset = await redis.hget(`data_${msg.author.id}`, `${this.data}_give_reset`);
 		let afterMid = p.dateUtil.afterMidnight(reset);
 		if (!afterMid.after) {
 			if (!this.dailyLimitMsg) {
@@ -269,17 +273,17 @@ class Collectible {
 			}
 			return false;
 		}
-		await redis.hset(`data_${msg.author.id}`, `${this.data}_reset`, afterMid.now);
+		await redis.hset(`data_${msg.author.id}`, `${this.data}_give_reset`, afterMid.now);
 		return true;
 	}
 
 	async checkReceiveDaily(p, user) {
 		const { redis, msg, config } = p;
-		let reset = await redis.hget(`data_${user.id}`, `${this.data}_reset`);
+		let reset = await redis.hget(`data_${user.id}`, `${this.data}_receive_reset`);
 		let afterMid = p.dateUtil.afterMidnight(reset);
 		if (!afterMid.after) {
 			if (!this.dailyLimitMsg) {
-				p.errorMsg(', you can only send this item once per day.', 3000);
+				p.errorMsg(', you can only receive this item once per day.', 3000);
 			} else {
 				const msg = this.dailyLimitMsg
 					.replaceAll('?user?', msg.author.username)
@@ -291,7 +295,7 @@ class Collectible {
 			}
 			return false;
 		}
-		await redis.hset(`data_${msg.author.id}`, `${this.data}_reset`, afterMid.now);
+		await redis.hset(`data_${msg.author.id}`, `${this.data}_receive_reset`, afterMid.now);
 		return true;
 	}
 
