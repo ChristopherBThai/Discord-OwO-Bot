@@ -30,7 +30,8 @@ module.exports = class Enrage extends PassiveInterface {
 		let maxHP = animal.stats.hp[1] + animal.stats.hp[3];
 		let currentHP = animal.stats.hp[0];
 		if (currentHP >= maxHP) return;
-
+                if (currentHP <= 0) return;
+		
 		let logs = new Log();
 
 		let percentMissing = (1 - currentHP / maxHP) * (100 / 10);
