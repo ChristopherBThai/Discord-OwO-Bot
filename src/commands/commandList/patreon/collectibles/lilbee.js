@@ -12,7 +12,7 @@ class Lilbee extends Collectible {
 		super();
 
 		this.key = 'lilbee';
-		this.alias = ['lilbee', 'lb'];
+		this.alias = ['lilbee'];
 		this.emoji = '<:lilbee:1099451252955418735>';
 		this.owners = ['635873165758824449', '423166705477353472'];
 		this.fullControl = true;
