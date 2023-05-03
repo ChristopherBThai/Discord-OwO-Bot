@@ -19,6 +19,6 @@ exports.handle = async function (data, ack, err) {
 	const uid = await this.global.getUid(data.member.user.id);
 	exists.giveawayCount = await this.giveaway.addUser(exists.channelId, uid);
 
-	const content = this.giveaway.createContent(exists);
+	const content = await this.giveaway.createContent(exists);
 	await ack(content);
 };

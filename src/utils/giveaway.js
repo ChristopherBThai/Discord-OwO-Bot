@@ -80,13 +80,14 @@ exports.createContent = function (giveaway) {
 
 exports.checkGiveawayTimeout = async function (_owo) {
 	owo = _owo;
-	if (_owo.debug) {
-		console.log('Ignoring giveaways for debug mode...');
-		return;
-	}
 	const sql = `SELECT * from giveaway WHERE active = 1;`;
 	const result = await mysql.query(sql);
 	result.forEach((giveaway) => {
+		if (_owo.debug && giveaway.cid !== '420713232265641985') {
+			console.log(`Ignoring giveaways for debug mode: ${giveaway.cid}`);
+			return;
+		}
+
 		if (owo.bot.channelGuildMap[giveaway.cid]) {
 			const diff = new Date(giveaway.endDate) - Date.now();
 			console.log(`Found giveaway timeout for: ${giveaway.cid} ${diff}ms`);
@@ -131,7 +132,7 @@ async function selectWinners(channelId) {
 
 			const messageId = result[0][0].mid;
 			if (messageId) {
-				let content = createMessage(giveaway, [], true);
+				let content = await createMessage(giveaway, [], true);
 				await sender.editMsg(channelId, result[0][0].mid, content);
 			}
 			return;
@@ -148,7 +149,7 @@ async function selectWinners(channelId) {
 	}
 
 	try {
-		let content = createMessage(giveaway, winners);
+		let content = await createMessage(giveaway, winners);
 		await sender.editMsg(channelId, result[0][0].mid, content);
 		msgWinners(winners, channelId, result[0][0].mid);
 	} catch (err) {
@@ -195,7 +196,7 @@ async function saveGiveaway({ channelId, winners, rewards, endDate }) {
 	await mysql.query(sql);
 }
 
-function createMessage(
+async function createMessage(
 	{ winners, rewards, endDate, giveawayCount = 0 },
 	userWinners = [],
 	noWinners
@@ -244,10 +245,16 @@ function createMessage(
 		} else {
 			embed.description += `\nGiveaway ended **${global.toDiscordTimestamp(
 				endDate
-			)}**\nCongrats to the following players for winning!`;
-			userWinners.forEach((winner) => {
-				embed.description += `\n<@${winner.id}>`;
-			});
+			)}**\nCongrats to the following players for winning!\n`;
+			for (let i in userWinners) {
+				const winner = userWinners[i];
+				const user = await owo.fetch.getUser(winner.id, false);
+				if (user) {
+					embed.description += `\n${user.username}#${user.discriminator} • <@${winner.id}>`;
+				} else {
+					embed.description += `\nUnknown User • <@${winner.id}>`;
+				}
+			}
 		}
 	} else {
 		embed.description += `\nGiveaway will end **${global.toDiscordTimestamp(
@@ -267,7 +274,7 @@ async function msgWinners(winners, channelId, messageId) {
 }
 
 async function sendMessage(giveaway) {
-	const content = createMessage(giveaway);
+	const content = await createMessage(giveaway);
 	return await sender.msgChannel(giveaway.channelId, content);
 }
 
