@@ -5,7 +5,6 @@
  * For more information, see README.md and LICENSE
  */
 
-const global = require('../../../utils/global.js');
 const box = '<:box:427352600476647425>';
 const fbox = '<a:flootbox:725570544065445919>';
 const tempGem = require('../../../data/gems.json');
@@ -18,9 +17,9 @@ const ranks = {
 	l: 'Legendary',
 	f: 'Fabled',
 };
-var gems = {};
-for (var key in tempGem.gems) {
-	var temp = tempGem.gems[key];
+const gems = {};
+for (let key in tempGem.gems) {
+	let temp = tempGem.gems[key];
 	temp.key = key;
 	if (!gems[temp.type]) gems[temp.type] = [];
 	let rank = ranks[key[0]];
@@ -28,7 +27,13 @@ for (var key in tempGem.gems) {
 	temp.rank = rank;
 	gems[temp.type].push(temp);
 }
-var typeCount = Object.keys(gems).length;
+const availableGems = {};
+for (let key in gems) {
+	if (!['Patreon'].includes(key)) {
+		availableGems[key] = gems[key];
+	}
+}
+const availableTypeCount = Object.keys(availableGems).length;
 
 exports.getItems = async function (p) {
 	let sql = `SELECT boxcount,fbox FROM lootbox WHERE id = ${p.msg.author.id};`;
@@ -49,25 +54,8 @@ exports.getItems = async function (p) {
 };
 
 function getRandomGem({ tier } = {}) {
-	let rand = Math.trunc(Math.random() * (typeCount - 1));
-	let count = 0;
-	let type = 'Hunting';
-
-	for (let key in gems) {
-		// Disable patreon gems
-		if (key == 'Patreon') {
-			count++;
-			rand++;
-		} else if (count == rand) {
-			type = key;
-			count++;
-		} else {
-			count++;
-		}
-	}
-
-	if (global.isInt(type)) type = Object.keys(gems)[0];
-	type = gems[type];
+	let rand = Math.trunc(Math.random() * availableTypeCount);
+	const type = Object.values(availableGems)[rand];
 
 	let gem;
 	if (!tier) {

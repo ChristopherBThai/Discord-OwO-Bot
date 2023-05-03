@@ -24,6 +24,10 @@ let specialRatesManual = [];
 let specialRatesHuntbot = [];
 let specialPercentManual = 0;
 let specialPercentHuntbot = 0;
+let doubleSpecialRatesManual = [];
+let doubleSpecialRatesHuntbot = [];
+let doubleSpecialPercentManual = 0;
+let doubleSpecialPercentHuntbot = 0;
 setSpecialRates();
 
 function setSpecialRates() {
@@ -31,6 +35,10 @@ function setSpecialRates() {
 	specialRatesHuntbot = [];
 	specialPercentManual = 0;
 	specialPercentHuntbot = 0;
+	doubleSpecialRatesManual = [];
+	doubleSpecialRatesHuntbot = [];
+	doubleSpecialPercentManual = 0;
+	doubleSpecialPercentHuntbot = 0;
 
 	if (animals.specialRates && animals.specialRates.length) {
 		for (let i in animals.specialRates) {
@@ -49,6 +57,18 @@ function setSpecialRates() {
 					rate: rate / 4,
 				});
 				specialPercentHuntbot += rate / 4;
+
+				doubleSpecialRatesManual.push({
+					animal: special.animal,
+					rate: rate * 2,
+				});
+				doubleSpecialPercentManual += rate * 2;
+
+				doubleSpecialRatesHuntbot.push({
+					animal: special.animal,
+					rate: rate / 2,
+				});
+				doubleSpecialPercentHuntbot += rate / 2;
 			}
 		}
 	}
@@ -75,16 +95,23 @@ function getRate(special) {
 	rate += (special.maxRate - special.minRate) * percentDiff;
 	return rate;
 }
+
 /**
  * Picks a random animal from secret json file
  */
-exports.randAnimal = function ({ patreon, gem, lucky, huntbot, manual } = {}) {
+exports.randAnimal = function ({ patreon, gem, lucky, special, huntbot, manual } = {}) {
 	let rand = Math.random();
 	let result = [];
 
 	/* Calculate percentage */
-	const specialRates = huntbot ? specialRatesHuntbot : specialRatesManual;
-	const specialPercent = huntbot ? specialPercentHuntbot : specialPercentManual;
+	let specialRates, specialPercent;
+	if (special) {
+		specialRates = huntbot ? doubleSpecialRatesHuntbot : doubleSpecialRatesManual;
+		specialPercent = huntbot ? doubleSpecialPercentHuntbot : doubleSpecialPercentManual;
+	} else {
+		specialRates = huntbot ? specialRatesHuntbot : specialRatesManual;
+		specialPercent = huntbot ? specialPercentHuntbot : specialPercentManual;
+	}
 	// If user has patreon
 	let patreonPercent = animals.cpatreon[0] + animals.patreon[0];
 	if (!patreon) patreonPercent = 0;
@@ -224,4 +251,8 @@ exports.zooScore = function (zoo) {
 	text += 'U-' + zoo.uncommon + ', ';
 	text += 'C-' + zoo.common;
 	return text;
+};
+
+exports.hasSpecials = function () {
+	return specialPercentManual !== 0;
 };
