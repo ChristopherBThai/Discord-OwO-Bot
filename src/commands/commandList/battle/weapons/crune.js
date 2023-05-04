@@ -41,9 +41,15 @@ module.exports = class CRune extends WeaponInterface {
 
 		let logs = new Logs();
 
+		let lowest = undefined;
 		/* Grab lowest hp without buff*/
-		let lowest = WeaponInterface.getLowestHp(team, { noBuff: this.buffList[0] });
-		if (!lowest || WeaponInterface.isMaxHp(lowest)) return this.attackPhysical(me, team, enemy);
+		let lowestHp = WeaponInterface.getLowestHp(team, { noBuff: this.buffList[0] });
+		/* Check if lowestHp is at maxHp, if so then grab lowest wp */
+		if (!lowestHp || WeaponInterface.isMaxHp(lowestHp)) let lowestWp = WeaponInterface.getLowestWp(team, { noBuff: this.buffList[0] });
+		else lowest = lowestHp;
+		/* Check if lowestWp is at max Wp, if so then attack*/
+		if (!lowest || !lowestWp || WeaponInterface.isMaxWp(lowestWp) ) return this.attackPhysical(me, team, enemy);
+		else lowest = lowestWp;
 
 		/* Grab buff and bind it to our animal */
 		let buff = this.getBuffs(me)[0];

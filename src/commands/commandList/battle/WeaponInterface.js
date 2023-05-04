@@ -519,16 +519,23 @@ module.exports = class WeaponInterface {
 	}
 
 	/* Get lowest wp animal */
-	static getLowestWp(team) {
+	static getLowestWp(team, { noBuff } = {}) {
 		let lowest = undefined;
-		for (let i = 0; i < team.length; i++)
-			if (team[i].stats.hp[0] > 0)
-				if (
-					!lowest ||
-					lowest.stats.wp[0] / (lowest.stats.wp[1] + lowest.stats.wp[3]) >
-						team[i].stats.wp[0] / (team[i].stats.wp[1] + team[i].stats.wp[3])
-				)
+		for (let i = 0; i < team.length; i++){
+			if (team[i].stats.hp[0] > 0){
+				if (noBuff && WeaponInterface.hasBuff(team[i], noBuff)) {
+					/* blank */
+				} else if (!lowest) {
 					lowest = team[i];
+				} else {
+					let lowestWp = lowest.stats.wp[0] / (lowest.stats.wp[1] + lowest.stats.wp[3]);
+					let animalWp = team[i].stats.wp[0] / (team[i].stats.wp[1] + team[i].stats.wp[3]);
+					if (lowestWp > animalWp) {
+						lowest = team[i];
+					}
+				}
+			}
+		}
 		return lowest;
 	}
 
