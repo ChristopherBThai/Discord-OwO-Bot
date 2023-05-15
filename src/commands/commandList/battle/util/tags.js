@@ -6,11 +6,11 @@
  */
 
 module.exports = class Tags {
-	constructor({ me, allies, enemies }) {
+	constructor({ me, allies, enemies }, tags = {}) {
 		this._me = me;
 		this._allies = allies;
 		this._enemies = enemies;
-		this.tags = {};
+		this.tags = tags;
 	}
 
 	add(tag, animal) {
@@ -27,8 +27,26 @@ module.exports = class Tags {
 		return false;
 	}
 
+	copy({ me, allies, enemies }) {
+		return new Tags({ me, allies, enemies }, this.tags);
+	}
+
 	get allies() {
 		return this._allies;
+	}
+
+	getAnimalAllies(animal) {
+		for (let i in this.allies) {
+			if (animal.pid === this.allies[i].pid) {
+				return this.allies;
+			}
+		}
+		for (let i in this.enemies) {
+			if (animal.pid === this.enemies[i].pid) {
+				return this.enemies;
+			}
+		}
+		return [];
 	}
 
 	get me() {
@@ -37,5 +55,19 @@ module.exports = class Tags {
 
 	get enemies() {
 		return this._enemies;
+	}
+
+	getAnimalEnemies(animal) {
+		for (let i in this.allies) {
+			if (animal.pid === this.allies[i].pid) {
+				return this.enemies;
+			}
+		}
+		for (let i in this.enemies) {
+			if (animal.pid === this.enemies[i].pid) {
+				return this.allies;
+			}
+		}
+		return [];
 	}
 };

@@ -29,11 +29,12 @@ module.exports = class Thorns extends PassiveInterface {
 		this.qualityList = [[15, 35]];
 	}
 
-	postAttacked(animal, attacker, damage, type, tags) {
+	postAttacked(animal, attacker, totalDamage, type, tags) {
 		/* Ignore if tags.thorns flag is true */
 		if (tags.has('thorns', animal)) return;
-		let totalDamage = (damage.reduce((a, b) => a + b, 0) * this.stats[0]) / 100;
-		if (totalDamage < 1) return;
+		if (animal.stats.hp[0] <= 0) return;
+		let damage = (totalDamage * this.stats[0]) / 100;
+		if (damage < 1) return;
 
 		let logs = new Log();
 
@@ -41,7 +42,7 @@ module.exports = class Thorns extends PassiveInterface {
 		let dmg = WeaponInterface.inflictDamage(
 			animal,
 			attacker,
-			totalDamage,
+			damage,
 			WeaponInterface.TRUE,
 			tags
 		);

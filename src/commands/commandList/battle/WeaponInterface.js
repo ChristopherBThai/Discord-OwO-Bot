@@ -297,6 +297,11 @@ module.exports = class WeaponInterface {
 		return Math.round(multiplier * (stat[0] + stat[1]) + (Math.random() * 100 - 50));
 	}
 
+	/* Calculate the damage output (Either hp or wp) */
+	static getDamageFromHpWp(stat, multiplier = 1) {
+		return Math.round(multiplier * (stat[1] + stat[3]) + (Math.random() * 100 - 50));
+	}
+
 	/* Get mixed damage */
 	static getMixedDamage(stat1, percent1, stat2, percent2) {
 		return Math.round(
@@ -346,7 +351,11 @@ module.exports = class WeaponInterface {
 					attacker.weapon.passives[i].attack(attacker, attackee, totalDamage, type, tags)
 				);
 
-		/* After bonus damage calculation */
+		totalDamage = totalDamage.reduce((a, b) => a + b, 0);
+		if (totalDamage < 0) totalDamage = 0;
+		attackee.stats.hp[0] -= totalDamage;
+
+		/* After bonus damage calculation, should not alter damage */
 		/* Event for attackee */
 		for (let i in attackee.buffs)
 			subLogs.push(attackee.buffs[i].postAttacked(attackee, attacker, totalDamage, type, tags));
@@ -363,10 +372,6 @@ module.exports = class WeaponInterface {
 				subLogs.push(
 					attacker.weapon.passives[i].postAttack(attacker, attackee, totalDamage, type, tags)
 				);
-
-		totalDamage = totalDamage.reduce((a, b) => a + b, 0);
-		if (totalDamage < 0) totalDamage = 0;
-		attackee.stats.hp[0] -= totalDamage;
 		return { amount: Math.round(totalDamage), logs: subLogs };
 	}
 

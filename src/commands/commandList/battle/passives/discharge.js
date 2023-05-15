@@ -36,7 +36,9 @@ module.exports = class Discharge extends PassiveInterface {
 		let logs = new Log();
 
 		/* Grab an enemy that I'm attacking */
-		let attacking = WeaponInterface.getAttacking(animal, tags.allies, tags.enemies);
+		const enemies = tags.getAnimalEnemies(animal);
+		const allies = tags.getAnimalAllies(animal);
+		let attacking = WeaponInterface.getAttacking(animal, allies, enemies);
 		if (!attacking) return;
 
 		tags.add('discharge', animal);
