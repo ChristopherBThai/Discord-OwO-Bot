@@ -79,23 +79,31 @@ exports.getRandomWeapons = function (uid, count, wid) {
 	let randomWeapons = [];
 	for (let i = 0; i < count; i++) {
 		let tempWeapon = getRandomWeapon(wid);
-		let weaponSql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${uid ? uid : '?'},${
-			tempWeapon.id
-		},'${tempWeapon.sqlStat}',${tempWeapon.avgQuality});`;
-		let passiveSql = 'INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES ';
-		for (let j = 0; j < tempWeapon.passives.length; j++) {
-			let tempPassive = tempWeapon.passives[j];
-			passiveSql += `(?,${j},${tempPassive.id},'${tempPassive.sqlStat}'),`;
-		}
-		passiveSql = `${passiveSql.slice(0, -1)};`;
-
-		tempWeapon.weaponSql = weaponSql;
-		tempWeapon.passiveSql = passiveSql;
+		let sql = toSql(uid, tempWeapon);
+		tempWeapon.weaponSql = sql.weapon;
+		tempWeapon.passiveSql = sql.passive;
 		randomWeapons.push(tempWeapon);
 	}
 
 	return randomWeapons;
 };
+
+const toSql = (exports.toSql = function (uid, weapon) {
+	let weaponSql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${uid ? uid : '?'},${
+		weapon.id
+	},'${weapon.sqlStat}',${weapon.avgQuality});`;
+	let passiveSql = 'INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES ';
+	for (let j = 0; j < weapon.passives.length; j++) {
+		let tempPassive = weapon.passives[j];
+		passiveSql += `(?,${j},${tempPassive.id},'${tempPassive.sqlStat}'),`;
+	}
+	passiveSql = `${passiveSql.slice(0, -1)};`;
+
+	return {
+		weapon: weaponSql,
+		passive: passiveSql,
+	};
+});
 
 exports.getItems = async function (p) {
 	let sql = `SELECT wid,count(uwid) AS count FROM user_weapon WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) GROUP BY wid`;

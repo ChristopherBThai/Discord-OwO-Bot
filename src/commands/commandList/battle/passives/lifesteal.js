@@ -30,14 +30,15 @@ module.exports = class Lifesteal extends PassiveInterface {
 	}
 
 	postAttack(animal, attackee, damage, type, tags) {
-		if (tags.lifesteal || tags.kamikaze || animal.stats.hp[0] <= 0) return;
+		if (tags.has('lifesteal', animal) || tags.has('kamikaze', animal) || animal.stats.hp[0] <= 0)
+			return;
+
 		let logs = new Log();
 		let totalDamage = damage.reduce((a, b) => a + b, 0);
 		let heal = (totalDamage * this.stats[0]) / 100;
-		heal = WeaponInterface.heal(animal, heal, animal, {
-			...tags,
-			lifesteal: true,
-		});
+		tags.add('lifesteal', animal);
+		heal = WeaponInterface.heal(animal, heal, animal, tags);
+
 		logs.push(`[LIFESTEAL] ${animal.nickname} heals for ${heal.amount} HP`, heal.logs);
 		return logs;
 	}

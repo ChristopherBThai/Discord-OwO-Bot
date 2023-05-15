@@ -23,13 +23,12 @@ module.exports = class Absolve extends PassiveInterface {
 			'<:labsolve:562175424747143209>',
 			'<:fabsolve:562175424965115914>',
 		];
-		this.statDesc = 'When healed, deal **?%** of the healed amount to a random enemy as MAG damage';
+		this.statDesc = `When healed, deal **?%** of the healed amount to a random enemy as ${WeaponInterface.magEmoji}MAG damage`;
 		this.qualityList = [[60, 80]];
 	}
 
 	postHealed(animal, healer, amount, tags) {
-		/* Ignore if tags.thorns flag is true */
-		if (tags.absolve) return;
+		if (tags.has('absolve', animal)) return;
 		let totalDamage = (amount.reduce((a, b) => a + b, 0) * this.stats[0]) / 100;
 		if (totalDamage < 1) return;
 
@@ -39,12 +38,13 @@ module.exports = class Absolve extends PassiveInterface {
 		let attacking = WeaponInterface.getAttacking(animal, tags.allies, tags.enemies);
 		if (!attacking) return;
 
+		tags.add('absolve', animal);
 		let dmg = WeaponInterface.inflictDamage(
 			animal,
 			attacking,
 			totalDamage,
 			WeaponInterface.MAGICAL,
-			{ ...tags, absolve: true }
+			tags
 		);
 
 		logs.push(

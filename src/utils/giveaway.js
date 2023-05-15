@@ -28,7 +28,7 @@ const maxTime = 3 * 24 * 60 * 60 * 1000;
 // 6 Hours
 const minTime = 6 * 60 * 60 * 1000;
 const maxWinners = 50;
-const minWinners = 10;
+const minWinners = 5;
 
 async function createGiveaway(channelId) {
 	const { endDate, diff } = getEndDate();

@@ -23,12 +23,12 @@ module.exports = class Safeguard extends PassiveInterface {
 			'<:lsafeguard:562175425061715978>',
 			'<:fsafeguard:562175424793411586>',
 		];
-		this.statDesc = 'Negate **?**% of the damage dealt to you with WP';
+		this.statDesc = `Negate **?**% of the damage dealt to you with ${WeaponInterface.wpEmoji}WP`;
 		this.qualityList = [[20, 40]];
 	}
 
 	attacked(animal, attacker, damage, type, tags) {
-		if (tags.safeguard) return;
+		if (tags.has('safeguard', animal)) return;
 
 		let negate = (damage[0] * this.stats[0]) / 100;
 
@@ -38,10 +38,8 @@ module.exports = class Safeguard extends PassiveInterface {
 
 		let logs = new Log();
 
-		let mana = WeaponInterface.useMana(animal, negate, animal, {
-			...tags,
-			safeguard: true,
-		});
+		tags.add('safeguard', animal);
+		let mana = WeaponInterface.useMana(animal, negate, animal, tags);
 		damage[1] -= mana.amount;
 
 		logs.push(`[SGUARD] ${animal.nickname} used mana to negate ${mana.amount} damage`, mana.logs);
