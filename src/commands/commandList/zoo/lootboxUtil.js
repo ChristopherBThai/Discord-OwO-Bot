@@ -29,7 +29,7 @@ for (let key in tempGem.gems) {
 }
 const availableGems = {};
 for (let key in gems) {
-	if (!['Patreon'].includes(key)) {
+	if (!['Special', 'Patreon'].includes(key)) {
 		availableGems[key] = gems[key];
 	}
 }

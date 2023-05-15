@@ -6,6 +6,7 @@
  */
 
 const PassiveInterface = require('../PassiveInterface.js');
+const WeaponInterface = require('../WeaponInterface.js');
 
 /* +[5~20%] increase in strength */
 
@@ -23,7 +24,7 @@ module.exports = class Strength extends PassiveInterface {
 			'<:latt:535290420029030400>',
 			'<:fatt:535290419903463436>',
 		];
-		this.statDesc = 'Increases your <:att:531616155450998794>STR by **?%**';
+		this.statDesc = `Increases your ${WeaponInterface.strEmoji}STR by **?%**`;
 		this.qualityList = [[5, 20]];
 	}
 

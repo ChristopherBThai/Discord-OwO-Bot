@@ -6,6 +6,7 @@
  */
 
 const PassiveInterface = require('../PassiveInterface.js');
+const WeaponInterface = require('../WeaponInterface.js');
 
 /* +[5~20%] increase in magical resistance*/
 
@@ -23,7 +24,7 @@ module.exports = class MagicalResistance extends PassiveInterface {
 			'<:lmr:535290422688219146>',
 			'<:fmr:535290422252273675>',
 		];
-		this.statDesc = 'Increases your <:mr:531616156226945024>MR by **?%**';
+		this.statDesc = `Increases your ${WeaponInterface.mrEmoji}MR by **?%**`;
 		this.qualityList = [[15, 35]];
 	}
 

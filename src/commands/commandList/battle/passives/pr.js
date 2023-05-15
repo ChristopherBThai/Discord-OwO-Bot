@@ -6,6 +6,7 @@
  */
 
 const PassiveInterface = require('../PassiveInterface.js');
+const WeaponInterface = require('../WeaponInterface.js');
 
 /* +[5~20%] increase in physical resistance*/
 
@@ -23,7 +24,7 @@ module.exports = class PhysicalResistance extends PassiveInterface {
 			'<:lpr:535290422554001410>',
 			'<:fpr:535290422793338880>',
 		];
-		this.statDesc = 'Increases your <:pr:531616156222488606>PR by **?%**';
+		this.statDesc = `Increases your ${WeaponInterface.prEmoji}PR by **?%**`;
 		this.qualityList = [[15, 35]];
 	}
 

@@ -45,10 +45,10 @@ let clusters = 60;
 			lastShardID = parseInt(result['lastShardID']);
 		}
 		if (debug) {
-			shards = 2;
+			shards = 1;
 			firstShardID = 0;
-			lastShardID = 1;
-			clusters = 2;
+			lastShardID = 0;
+			clusters = 1;
 		}
 
 		console.log(

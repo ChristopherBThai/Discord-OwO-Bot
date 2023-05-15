@@ -31,16 +31,20 @@ module.exports = class Thorns extends PassiveInterface {
 
 	postAttacked(animal, attacker, damage, type, tags) {
 		/* Ignore if tags.thorns flag is true */
-		if (tags.thorns) return;
+		if (tags.has('thorns', animal)) return;
 		let totalDamage = (damage.reduce((a, b) => a + b, 0) * this.stats[0]) / 100;
 		if (totalDamage < 1) return;
 
 		let logs = new Log();
 
-		let dmg = WeaponInterface.inflictDamage(animal, attacker, totalDamage, WeaponInterface.TRUE, {
-			...tags,
-			thorns: true,
-		});
+		tags.add('thorns', animal);
+		let dmg = WeaponInterface.inflictDamage(
+			animal,
+			attacker,
+			totalDamage,
+			WeaponInterface.TRUE,
+			tags
+		);
 
 		logs.push(
 			`[THORNS] ${animal.nickname} damaged ${attacker.nickname} for ${dmg.amount} HP`,

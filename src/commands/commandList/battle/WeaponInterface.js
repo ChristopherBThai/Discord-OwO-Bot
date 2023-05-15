@@ -7,6 +7,7 @@
 /* eslint-disable no-unused-vars */
 
 const Logs = require('./util/logUtil.js');
+const Tags = require('./util/tags.js');
 const requireDir = require('require-dir');
 const ranks = [
 	[0.2, 'Common', '<:common:416520037713838081>'],
@@ -20,7 +21,7 @@ const ranks = [
 
 module.exports = class WeaponInterface {
 	/* Constructor */
-	constructor(cpassives, qualities, noCreate) {
+	constructor(cpassives, qualities, noCreate, opt = {}) {
 		this.init();
 		if (this.availablePassives === 'all') {
 			this.availablePassives = [];
@@ -44,9 +45,13 @@ module.exports = class WeaponInterface {
 		/* Mana will also have a quality (always last in quality array) */
 		if (this.manaRange) this.qualityList.push(this.manaRange);
 
+		/* Overrides */
+		const statOverride = opt.statOverride;
+		if (opt.passives) cpassives = this.determinedPassives(opt.passives, statOverride);
+
 		/* Get random vars if not present */
-		if (!cpassives) cpassives = this.randomPassives();
-		if (!qualities) qualities = this.randomQualities();
+		if (!cpassives) cpassives = this.randomPassives(statOverride);
+		if (!qualities) qualities = this.randomQualities(statOverride);
 
 		/* Construct stats */
 		let stats = this.toStats(qualities);
@@ -113,7 +118,7 @@ module.exports = class WeaponInterface {
 	}
 
 	/* Grabs a random passive(s) */
-	randomPassives() {
+	randomPassives(statOverride) {
 		let randPassives = [];
 		for (let i = 0; i < this.passiveCount; i++) {
 			let rand = Math.floor(Math.random() * this.availablePassives.length);
@@ -123,16 +128,24 @@ module.exports = class WeaponInterface {
 				throw (
 					'Could not get passive[' + this.availablePassives[rand] + '] for weapon[' + this.id + ']'
 				);
-			randPassives.push(new passive());
+			randPassives.push(new passive(null, null, { statOverride }));
 		}
 		return randPassives;
 	}
 
+	/* Grab predetermined passive(s) */
+	determinedPassives(passiveList, statOverride) {
+		return passiveList.map((pid) => {
+			let passive = passives[pid];
+			return new passive(null, null, { statOverride });
+		});
+	}
+
 	/* Inits random qualities */
-	randomQualities() {
+	randomQualities(statOverride) {
 		let qualities = [];
 		for (let i = 0; i < this.qualityList.length; i++)
-			qualities.push(Math.trunc(Math.random() * 101));
+			qualities.push(statOverride || Math.trunc(Math.random() * 101));
 		return qualities;
 	}
 
@@ -191,6 +204,13 @@ module.exports = class WeaponInterface {
 
 	/* Uses mana */
 	static useMana(me, amount, from, tags) {
+		if (!(tags instanceof Tags)) {
+			tags = new Tags({
+				me: tags.me,
+				allies: tags.allies,
+				enemies: tags.enemies,
+			});
+		}
 		let logs = new Logs();
 
 		me.stats.wp[0] -= amount;
@@ -287,7 +307,14 @@ module.exports = class WeaponInterface {
 	}
 
 	/* Deals damage to an opponent */
-	static inflictDamage(attacker, attackee, damage, type, tags = {}) {
+	static inflictDamage(attacker, attackee, damage, type, tags) {
+		if (!(tags instanceof Tags)) {
+			tags = new Tags({
+				me: tags.me,
+				allies: tags.allies,
+				enemies: tags.enemies,
+			});
+		}
 		let totalDamage = 0;
 		if (type == WeaponInterface.PHYSICAL)
 			totalDamage = damage * (1 - WeaponInterface.resToPercent(attackee.stats.pr));
@@ -344,7 +371,14 @@ module.exports = class WeaponInterface {
 	}
 
 	/* heals */
-	static heal(me, amount, from, tags = {}) {
+	static heal(me, amount, from, tags) {
+		if (!(tags instanceof Tags)) {
+			tags = new Tags({
+				me: tags.me,
+				allies: tags.allies,
+				enemies: tags.enemies,
+			});
+		}
 		let max = me.stats.hp[1] + me.stats.hp[3];
 		/* Full health */
 		if (!me || me.stats.hp[0] >= max) return { amount: 0 };
@@ -401,7 +435,15 @@ module.exports = class WeaponInterface {
 	}
 
 	/* replenishes mana*/
-	static replenish(me, amount, from, tags = {}) {
+	static replenish(me, amount, from, tags) {
+		if (!(tags instanceof Tags)) {
+			tags = new Tags({
+				me: tags.me,
+				allies: tags.allies,
+				enemies: tags.enemies,
+			});
+		}
+
 		let max = me.stats.wp[1] + me.stats.wp[3];
 		/* Full mana */
 		if (!me || me.stats.wp[0] >= max) return { amount: 0 };
@@ -567,7 +609,7 @@ module.exports = class WeaponInterface {
 	/* Check if the animal is at max or higher health */
 	static isMaxHp(animal) {
 		let hp = animal.stats.hp;
-		return hp[0] >= hp[1] + hp[3];
+		return hp[0] + 1 >= hp[1] + hp[3];
 	}
 
 	/* Check if the animal is at max or higher health */

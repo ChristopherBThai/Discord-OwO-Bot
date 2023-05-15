@@ -8,11 +8,14 @@
 
 const ranks = [0.2, 0.2, 0.2, 0.2, 0.14, 0.05, 0.01];
 module.exports = class PassiveInterface {
-	constructor(qualities, noCreate) {
+	constructor(qualities, noCreate, opt = {}) {
 		this.init();
 		if (noCreate) return;
 
-		if (!qualities) qualities = this.randomQualities();
+		/* Overrides */
+		const statOverride = opt.statOverride;
+
+		if (!qualities) qualities = this.randomQualities(statOverride);
 
 		let avgQuality = qualities.reduce((a, b) => a + b, 0) / qualities.length;
 		let emoji = this.getEmoji(avgQuality);
@@ -34,10 +37,10 @@ module.exports = class PassiveInterface {
 		this.sqlStat = qualities.join(',');
 	}
 
-	randomQualities() {
+	randomQualities(statOverride) {
 		let qualities = [];
 		for (let i = 0; i < this.qualityList.length; i++)
-			qualities.push(Math.trunc(Math.random() * 101));
+			qualities.push(statOverride || Math.trunc(Math.random() * 101));
 		return qualities;
 	}
 

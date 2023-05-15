@@ -6,6 +6,7 @@
  */
 
 const PassiveInterface = require('../PassiveInterface.js');
+const WeaponInterface = require('../WeaponInterface.js');
 
 /* +[5~20%] increase in magic*/
 
@@ -23,7 +24,7 @@ module.exports = class Magic extends PassiveInterface {
 			'<:lmag:535290422893871114>',
 			'<:fmag:535290422852059138>',
 		];
-		this.statDesc = 'Increases your <:mag:531616156231139338>MAG by **?%**';
+		this.statDesc = `Increases your ${WeaponInterface.magEmoji}MAG by **?%**`;
 		this.qualityList = [[5, 20]];
 	}
 
