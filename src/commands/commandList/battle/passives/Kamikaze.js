@@ -29,15 +29,14 @@ module.exports = class Kamikaze extends PassiveInterface {
 		this.qualityList = [[50, 75]];
 	}
 
-	postAttacked(animal, attacker, damage, type, tags) {
+	postAttacked(animal, attacker, totalDamage, type, tags) {
 		if (tags.has('kamikaze', animal)) return;
-		// Ignore if this doesnt kill the animal
-		let totalDamage = damage.reduce((a, b) => a + b, 0);
-		if (totalDamage < animal.stats.hp[0]) return;
+		// Only active when dead
+		if (animal.stats.hp[0] > 0) return;
 
 		let logs = new Log();
 
-		let dmg = ((animal.stats.hp[1] + animal.stats.hp[3]) * this.stats[0]) / 100;
+		let dmg = WeaponInterface.getDamageFromHpWp(animal.stats.hp, this.stats[0] / 100);
 		tags.add('kamikaze', animal);
 		dmg = WeaponInterface.inflictDamage(animal, attacker, dmg, WeaponInterface.MAGICAL, tags);
 
