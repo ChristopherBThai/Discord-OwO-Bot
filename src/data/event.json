@@ -162,5 +162,86 @@
 				}
 			]
 		}
+	},
+	"3m": {
+		"start": 1680332400000,
+		"end": 1781023600000,
+		"emoji": "🎉",
+		"item": {
+			"id": "3m_present",
+			"name": "3M Present",
+			"emoji": "<:3m_present:1103218140323794954>",
+			"openEmoji": "<:3m_present:1103218140323794954>",
+			"chance": 0.05,
+			"foundText": "?emoji? **|** OwO! You found a **3M Present**! 🎉",
+			"description": "OwO Bot hit 3 million users, it's time to celebrate! This item was given out on May 2023. Open the present to receive some special stuff!",
+			"rewards": [
+				{
+					"type": "gem",
+					"id": 79,
+					"chance": 4
+				},
+				{
+					"type": "gem",
+					"id": 80,
+					"chance": 4
+				},
+				{
+					"type": "gem",
+					"id": 81,
+					"chance": 3
+				},
+				{
+					"type": "gem",
+					"id": 82,
+					"chance": 3
+				},
+				{
+					"type": "gem",
+					"id": 83,
+					"chance": 3
+				},
+				{
+					"type": "gem",
+					"id": 84,
+					"chance": 2
+				},
+				{
+					"type": "gem",
+					"id": 85,
+					"chance": 1 
+				},
+				{
+					"type": "wallpaper",
+					"id": 90,
+					"chance": 20
+				},
+				{
+					"type": "weapon",
+					"id": 18,
+					"chance": 20
+				},
+				{
+					"type": "lb",
+					"count": 1,
+					"chance": 10
+				},
+				{
+					"type": "wc",
+					"count": 1,
+					"chance": 10
+				},
+				{
+					"type": "flb",
+					"count": 1,
+					"chance": 1
+				},
+				{
+					"type": "animal",
+					"id": "2023bday_owo",
+					"chance": 15
+				}
+			]
+		}
 	}
 }
