@@ -117,7 +117,7 @@ class InteractionEventEmitter extends EventEmitter {
 			});
 		}
 
-		this.emit('collect', component.custom_id, user, ack, err);
+		this.emit('collect', component.custom_id, user, ack, err, component.values);
 
 		if (this.idleTimeout) {
 			clearTimeout(this.idle);

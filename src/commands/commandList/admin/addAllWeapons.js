@@ -10,7 +10,7 @@ const WeaponInterface = require('../battle/WeaponInterface.js');
 const weaponUtil = require('../battle/util/weaponUtil.js');
 
 module.exports = new CommandInterface({
-	alias: ['addallweapons'],
+	alias: ['addallweapons', 'aaw'],
 
 	owner: true,
 
