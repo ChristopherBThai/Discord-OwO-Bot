@@ -38,7 +38,10 @@ module.exports = class Leech extends BuffInterface {
 		tagCopy.add('leech', animal);
 		const heal = WeaponInterface.heal(this.from, stolen, this.from, tagCopy);
 
-		logs.push(`[LECH] ${this.from.nickname} stole ${Math.round(stolen)} healing from ${animal.nickname}`, heal.logs);
+		logs.push(
+			`[LECH] ${this.from.nickname} stole ${Math.round(stolen)} healing from ${animal.nickname}`,
+			heal.logs
+		);
 		return logs;
 	}
 
@@ -46,7 +49,7 @@ module.exports = class Leech extends BuffInterface {
 		if (tag.has('leech', animal)) return;
 		let logs = new Logs();
 
-		let stolen= amount[0] * (this.stats[1] / 100);
+		let stolen = amount[0] * (this.stats[1] / 100);
 		amount[1] -= stolen;
 
 		const tagCopy = tag.copy({
@@ -57,7 +60,12 @@ module.exports = class Leech extends BuffInterface {
 		tagCopy.add('leech', animal);
 		const replenish = WeaponInterface.replenish(this.from, stolen, this.from, tagCopy);
 
-		logs.push(`[LECH] ${this.from.nickname} stole ${Math.round(stolen)} replenishing from ${animal.nickname}`, replenish.logs);
+		logs.push(
+			`[LECH] ${this.from.nickname} stole ${Math.round(stolen)} replenishing from ${
+				animal.nickname
+			}`,
+			replenish.logs
+		);
 		return logs;
 	}
 };

@@ -376,7 +376,7 @@ module.exports = class WeaponInterface {
 	}
 
 	/* heals */
-	static heal(me, amount, from, tags) {
+	static heal(me, amount, from, tags, { overheal } = {}) {
 		if (!(tags instanceof Tags)) {
 			tags = new Tags({
 				me: tags.me,
@@ -385,6 +385,9 @@ module.exports = class WeaponInterface {
 			});
 		}
 		let max = me.stats.hp[1] + me.stats.hp[3];
+		if (overheal) {
+			max *= 1.5;
+		}
 		/* Full health */
 		if (!me || me.stats.hp[0] >= max) return { amount: 0 };
 
@@ -440,7 +443,7 @@ module.exports = class WeaponInterface {
 	}
 
 	/* replenishes mana*/
-	static replenish(me, amount, from, tags) {
+	static replenish(me, amount, from, tags, { overreplenish } = {}) {
 		if (!(tags instanceof Tags)) {
 			tags = new Tags({
 				me: tags.me,
@@ -450,6 +453,9 @@ module.exports = class WeaponInterface {
 		}
 
 		let max = me.stats.wp[1] + me.stats.wp[3];
+		if (overreplenish) {
+			max *= 1.5;
+		}
 		/* Full mana */
 		if (!me || me.stats.wp[0] >= max) return { amount: 0 };
 
@@ -612,15 +618,23 @@ module.exports = class WeaponInterface {
 	}
 
 	/* Check if the animal is at max or higher health */
-	static isMaxHp(animal) {
+	static isMaxHp(animal, { overheal } = {}) {
 		let hp = animal.stats.hp;
-		return hp[0] + 1 >= hp[1] + hp[3];
+		let max = hp[1] + hp[3];
+		if (overheal) {
+			max *= 1.5;
+		}
+		return hp[0] + 1 >= max;
 	}
 
 	/* Check if the animal is at max or higher health */
-	static isMaxWp(animal) {
-		let wp = animal.stats.wp;
-		return wp[0] >= wp[1] + wp[3];
+	static isMaxWp(animal, { overreplenish } = {}) {
+		const wp = animal.stats.wp;
+		let max = wp[1] + wp[3];
+		if (overreplenish) {
+			max *= 1.5;
+		}
+		return wp[0] + 1 >= max;
 	}
 
 	/* Checks if the animal can attack or not */

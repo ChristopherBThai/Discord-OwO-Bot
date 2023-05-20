@@ -26,8 +26,8 @@ module.exports = class Sacrifice extends PassiveInterface {
 		this.statDesc = `When this animal dies, heal your teammates for **?%** of its Max ${WeaponInterface.hpEmoji}HP and replenish for **?%** of its Max ${WeaponInterface.wpEmoji}WP`;
 
 		this.qualityList = [
-			[65, 90],
-			[65, 90],
+			[50, 75],
+			[50, 75],
 		];
 	}
 

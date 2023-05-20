@@ -14,7 +14,7 @@ const weaponUtil = require('../commands/commandList/battle/util/weaponUtil.js');
 const lootboxUtil = require('../commands/commandList/zoo/lootboxUtil.js');
 
 exports.getReward = async function (id, uid, con, rewardType, rewardId, rewardCount) {
-	let sql, result, name, animal, weapon, uwid, weaponId, uwidList, item, ring;
+	let sql, result, name, animal, weapon, uwid, weaponId, uwidList, item, ring, gem;
 	switch (rewardType) {
 		case 'wallpaper':
 			// Check if user has reward
@@ -83,7 +83,9 @@ exports.getReward = async function (id, uid, con, rewardType, rewardId, rewardCo
 			await con.query(weapon.passiveSql, uwidList);
 			weaponId = weaponUtil.shortenUWID(weapon.uwid);
 			return {
-				text: `${global.getA(weapon.rank.name)} \`${weaponId}\` ${weapon.rank.emoji} ${weapon.emoji} ${weapon.rank.name} ${weapon.name}`,
+				text: `${global.getA(weapon.rank.name)} \`${weaponId}\` ${weapon.rank.emoji} ${
+					weapon.emoji
+				} ${weapon.rank.name} ${weapon.name}`,
 			};
 		case 'ws':
 			return {
@@ -105,12 +107,11 @@ exports.getReward = async function (id, uid, con, rewardType, rewardId, rewardCo
 				sql: `INSERT INTO user_ring (uid,rid,rcount) VALUES (${uid},${rewardId},${rewardCount}) ON DUPLICATE KEY UPDATE rcount = rcount + ${rewardCount};`,
 			};
 		case 'gem':
-			let gem = lootboxUtil.getRandomGems(uid, 1, { gid: rewardId });
-			const gemSql = gem.sql;
+			gem = lootboxUtil.getRandomGems(uid, 1, { gid: rewardId });
 			gem = Object.values(gem.gems)[0].gem;
 			return {
 				text: `${global.getA(gem.rank)} ${gem.emoji} ${gem.rank} ${gem.type} Gem`,
-				sql: gemSql,
+				sql: gem.sql,
 			};
 		default:
 			throw 'Invalid reward type: ' + rewardType;

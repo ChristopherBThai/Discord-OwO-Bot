@@ -27,10 +27,10 @@ module.exports = class LeechingScythe extends WeaponInterface {
 		this.availablePassives = 'all';
 		this.passiveCount = 1;
 		this.qualityList = [
-			[70, 100],
-			[20, 30],
+			[50, 80],
+			[40, 60],
 		];
-		this.manaRange = [200, 100];
+		this.manaRange = [220, 120];
 		this.buffList = [11];
 	}
 
