@@ -21,9 +21,10 @@ module.exports = class Snail extends PassiveInterface {
 			'<:esnail:1107928496187133992>',
 			'<:msnail:1107928521130643466>',
 			'<:lsnail:1107928501148975125>',
-			'<:fsnail:1107928499202818118>'
+			'<:fsnail:1107928499202818118>',
 		];
-		this.statDesc = 'Your pet snail fights with you. Whenever you attack an animal, snail will slap a random enemy for **?%** of the damage dealt.';
+		this.statDesc =
+			'Your pet snail fights with you. Whenever you attack an animal, snail will slap a random enemy for **?%** of the damage dealt.';
 		this.qualityList = [[10, 20]];
 	}
 
@@ -31,7 +32,7 @@ module.exports = class Snail extends PassiveInterface {
 		if (tags.has('snail', animal)) return;
 		let logs = new Log();
 
-		let snailDamage = (damage * this.stats[0]) / 100
+		let snailDamage = (damage * this.stats[0]) / 100;
 
 		/* Grab an enemy that I'm attacking */
 		const allies = tags.getAnimalAllies(animal);
@@ -42,7 +43,7 @@ module.exports = class Snail extends PassiveInterface {
 		const snailTags = tags.copy({
 			me: animal,
 			allies: tags.allies,
-			enemies: tags.enemies
+			enemies: tags.enemies,
 		});
 		tags.add('snail', animal);
 		snailDamage = WeaponInterface.inflictDamage(animal, attackee, snailDamage, type, snailTags);
