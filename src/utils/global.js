@@ -338,6 +338,16 @@ exports.getEmojiURL = function (emoji) {
 	return `https://cdn.discordapp.com/emojis/${id}.${format}`;
 };
 
+exports.parseEmoji = function (emoji) {
+	let id = emoji.match(/:[0-9]+>$/gi);
+	if (!id || !id[0]) return;
+	id = id[0].match(/[0-9]+/gi)[0];
+	let name = emoji.match(/:[\w]+:/gi);
+	if (!name || !name[0]) return;
+	name = emoji.slice(1, -1);
+	return { id, name };
+};
+
 exports.replacer = function (text, replacer) {
 	if (!text) return text;
 	for (let key in replacer) {
