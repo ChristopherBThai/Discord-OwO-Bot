@@ -18,6 +18,7 @@ const ranks = {
 	f: 'Fabled',
 };
 const gems = {};
+const idToGems = {};
 for (let key in tempGem.gems) {
 	let temp = tempGem.gems[key];
 	temp.key = key;
@@ -26,6 +27,7 @@ for (let key in tempGem.gems) {
 	if (!rank) throw 'Missing rank type for gems';
 	temp.rank = rank;
 	gems[temp.type].push(temp);
+	idToGems[temp.id] = temp;
 }
 const availableGems = {};
 for (let key in gems) {
@@ -53,7 +55,11 @@ exports.getItems = async function (p) {
 	return items;
 };
 
-function getRandomGem({ tier } = {}) {
+function getRandomGem({ tier, gid } = {}) {
+	if (idToGems[gid]) {
+		return idToGems[gid];
+	}
+
 	let rand = Math.trunc(Math.random() * availableTypeCount);
 	const type = Object.values(availableGems)[rand];
 

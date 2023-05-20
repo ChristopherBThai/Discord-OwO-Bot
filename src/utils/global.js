@@ -410,3 +410,8 @@ exports.toMySQL = function (date) {
 		"'"
 	);
 };
+
+exports.getA = function (text) {
+	text = text.replace(/\*/gi, '');
+	return ['a', 'e', 'i', 'o', 'u'].includes(text[0].toLowerCase()) ? 'an' : 'a';
+}
