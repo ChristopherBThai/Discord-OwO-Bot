@@ -273,11 +273,15 @@ module.exports = class WeaponInterface {
 	}
 
 	/* Get a random animal */
-	static getRandomAnimal(team, { hasDebuff, isAlive, excludeBuffs } = {}) {
+	static getRandomAnimal(team, { hasBuff, hasDebuff, isAlive, excludeBuffs } = {}) {
 		let list = (isAlive && WeaponInterface.getAlive(team)) || team;
 
 		if (hasDebuff) {
 			list = list.filter(WeaponInterface.hasBadBuff);
+		}
+
+		if (hasBuff) {
+			list = list.filter(WeaponInterface.hasGoodBuff);
 		}
 
 		if (excludeBuffs) {
