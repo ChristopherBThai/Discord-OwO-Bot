@@ -41,7 +41,9 @@ module.exports = class GlacialAxe extends WeaponInterface {
 		if (me.stats.wp[0] < this.manaCost) return this.attackPhysical(me, team, enemy);
 
 		/* Grab an enemy that I'm attacking */
-		let attacking = WeaponInterface.getAttacking(me, team, enemy);
+		let attacking = WeaponInterface.getAttacking(me, team, enemy, {
+			excludeBuff: [this.buffList[0]]
+		});
 		if (!attacking) return;
 
 		if (attacking.buffs.findIndex((buff) => buff.id === this.buffList[0]) >= 0) return this.attackPhysical(me, team, enemy);

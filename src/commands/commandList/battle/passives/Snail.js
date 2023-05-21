@@ -25,7 +25,7 @@ module.exports = class Snail extends PassiveInterface {
 		];
 		this.statDesc =
 			'Your pet snail fights with you. Whenever you attack an animal, snail will slap a random enemy for **?%** of the damage dealt.';
-		this.qualityList = [[10, 20]];
+		this.qualityList = [[9, 17]];
 	}
 
 	postAttack(animal, attackee, damage, type, tags) {

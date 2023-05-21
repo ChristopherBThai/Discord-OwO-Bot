@@ -251,7 +251,7 @@ module.exports = class WeaponInterface {
 	}
 
 	/* Get an enemy to attack */
-	static getAttacking(me, team, enemy, { hasBuff } = {}) {
+	static getAttacking(me, team, enemy, opt) {
 		let alive = WeaponInterface.getAlive(enemy);
 
 		let hasBuffOverride = false;
@@ -260,33 +260,30 @@ module.exports = class WeaponInterface {
 				for (let j in enemy[i].buffs) {
 					let animal = enemy[i].buffs[j].enemyChooseAttack(enemy[i], me, team, enemy);
 					if (animal) {
-						hasBuffOverride = true;
-						if (hasBuff) {
-							if (WeaponInterface.hasGoodBuff(animal)) {
-								return animal;
-							}
-						} else {
+						animal = WeaponInterface.getRandomAnimal([animal], opt);
+						if (animal) {
 							return animal;
 						}
 					}
 				}
 			}
 		}
-		if (hasBuffOverride) return;
 
-		let enemyList = alive;
-		if (hasBuff) {
-			enemyList = alive.filter(WeaponInterface.hasGoodBuff);
-		}
-		return enemyList[Math.trunc(Math.random() * enemyList.length)];
+		return WeaponInterface.getRandomAnimal(alive, opt);
 	}
 
 	/* Get a random animal */
-	static getRandomAnimal(team, { hasDebuff, isAlive } = {}) {
+	static getRandomAnimal(team, { hasDebuff, isAlive, excludeBuffs } = {}) {
 		let list = (isAlive && WeaponInterface.getAlive(team)) || team;
 
 		if (hasDebuff) {
 			list = list.filter(WeaponInterface.hasBadBuff);
+		}
+
+		if (excludeBuffs) {
+			list = list .filter((animal) => {
+				return WeaponInterface.hasExcludeBuffs(animal, excludeBuffs);
+			});
 		}
 
 		return list[Math.trunc(Math.random() * list.length)];
@@ -610,6 +607,15 @@ module.exports = class WeaponInterface {
 			}
 		}
 		return false;
+	}
+
+	static hasExcludeBuffs(animal, buffIds) {
+		for (let i in animal.buffs) {
+			if (buffIds.includes(animal.buffs[i].id)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/* Gets a dead animal */

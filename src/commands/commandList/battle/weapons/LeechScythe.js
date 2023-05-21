@@ -30,7 +30,7 @@ module.exports = class LeechingScythe extends WeaponInterface {
 			[50, 80],
 			[40, 60],
 		];
-		this.manaRange = [220, 120];
+		this.manaRange = [230, 130];
 		this.buffList = [11];
 	}
 
