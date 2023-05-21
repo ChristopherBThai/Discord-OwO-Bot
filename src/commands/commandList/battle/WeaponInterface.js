@@ -281,7 +281,7 @@ module.exports = class WeaponInterface {
 		}
 
 		if (excludeBuffs) {
-			list = list .filter((animal) => {
+			list = list.filter((animal) => {
 				return WeaponInterface.hasExcludeBuffs(animal, excludeBuffs);
 			});
 		}
