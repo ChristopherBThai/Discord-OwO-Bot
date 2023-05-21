@@ -7,6 +7,7 @@
 const events = require('../data/event.json');
 const itemUtil = require('../commands/commandList/shop/util/itemUtil.js');
 const rewardUtil = require('./rewardUtil.js');
+const dailyMax = 5;
 const itemToEvents = {};
 for (const key in events) {
 	const event = events[key];
@@ -82,7 +83,7 @@ exports.getEventItem = async function () {
 		claimed = (result[0]?.claim_count || 0) + 1;
 
 		const reset = this.dateUtil.afterMidnight(result[0]?.claim_reset);
-		if (result[0] && result[0]?.claim_count >= 3 && !reset.after) {
+		if (result[0] && result[0]?.claim_count >= dailyMax && !reset.after) {
 			this.msg.author.eventItemDone = today;
 			con.rollback();
 			return;
@@ -111,7 +112,7 @@ exports.getEventItem = async function () {
 	const item = itemUtil.getByName(event.item.id);
 	const text =
 		event.item.foundText.replaceAll('?emoji?', event.item.emoji) +
-		` \`[${claimed}/3]\`\n${this.config.emoji.blank} **|** To use this item, type \`owo use ${item.id}\``;
+		` \`[${claimed}/${dailyMax}]\`\n${this.config.emoji.blank} **|** To use this item, type \`owo use ${item.id}\``;
 
 	this.send(text);
 };
