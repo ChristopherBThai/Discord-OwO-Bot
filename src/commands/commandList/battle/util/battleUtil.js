@@ -24,7 +24,7 @@ const weapon = '🗡';
 exports.weapon = weapon;
 const numEmojis = ['1⃣', '2⃣', '3⃣'];
 const stopStreak = {
-	start: 1684738800000,
+	start: 1684652400000,
 	end: 1685430000000,
 };
 
