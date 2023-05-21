@@ -451,7 +451,7 @@ let reactionCollector = (exports.reactionCollector = async function (
 		} else {
 			actions = actions.split('');
 			if (actions.length >= team.length) {
-				action = {};
+				let action = {};
 				for (let i = 0; i < actions.length; i++) {
 					if (actions[i] == 'w') action[i] = weapon;
 					else action[i] = attack;
