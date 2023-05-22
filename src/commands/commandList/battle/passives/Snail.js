@@ -46,7 +46,10 @@ module.exports = class Snail extends PassiveInterface {
 			enemies: tags.enemies,
 		});
 		tags.add('snail', animal);
-		snailDamage = WeaponInterface.inflictDamage(animal, attackee, snailDamage, type, snailTags);
+		// damage variable already has res applied, no need to recalculate res twice.
+		snailDamage = WeaponInterface.inflictDamage(animal, attackee, snailDamage, type, snailTags, {
+			bypassRes: true,
+		});
 		logs.push(
 			`[SNAIL] ${animal.nickname}'s pet snail slapped ${attackee.nickname} for ${snailDamage.amount} HP`,
 			snailDamage.logs
