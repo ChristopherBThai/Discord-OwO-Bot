@@ -14,7 +14,7 @@ const weaponUtil = require('../commands/commandList/battle/util/weaponUtil.js');
 const lootboxUtil = require('../commands/commandList/zoo/lootboxUtil.js');
 
 exports.getReward = async function (id, uid, con, rewardType, rewardId, rewardCount) {
-	let sql, result, name, animal, weapon, uwid, weaponId, uwidList, item, ring, gem;
+	let sql, result, name, animal, weapon, uwid, weaponId, uwidList, item, ring, gem, gemSql;
 	switch (rewardType) {
 		case 'wallpaper':
 			// Check if user has reward
@@ -65,8 +65,6 @@ exports.getReward = async function (id, uid, con, rewardType, rewardId, rewardCo
 			};
 		case 'item':
 			item = itemUtil.getByName(rewardId);
-			console.log(rewardId);
-			console.log(item);
 			return {
 				text: `${rewardCount} ${item.emoji} ${pluralize(item.name, rewardCount)}`,
 				sql: `INSERT INTO user_item (uid, name, count) VALUES 
@@ -108,10 +106,11 @@ exports.getReward = async function (id, uid, con, rewardType, rewardId, rewardCo
 			};
 		case 'gem':
 			gem = lootboxUtil.getRandomGems(uid, 1, { gid: rewardId });
+			gemSql = gem.sql
 			gem = Object.values(gem.gems)[0].gem;
 			return {
 				text: `${global.getA(gem.rank)} ${gem.emoji} ${gem.rank} ${gem.type} Gem`,
-				sql: gem.sql,
+				sql: gemSql,
 			};
 		default:
 			throw 'Invalid reward type: ' + rewardType;
