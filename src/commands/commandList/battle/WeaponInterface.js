@@ -313,7 +313,7 @@ module.exports = class WeaponInterface {
 	}
 
 	/* Deals damage to an opponent */
-	static inflictDamage(attacker, attackee, damage, type, tags) {
+	static inflictDamage(attacker, attackee, damage, type, tags, { bypassRes } = {}) {
 		if (!(tags instanceof Tags)) {
 			tags = new Tags({
 				me: tags.me,
@@ -322,7 +322,8 @@ module.exports = class WeaponInterface {
 			});
 		}
 		let totalDamage = 0;
-		if (type == WeaponInterface.PHYSICAL)
+		if (bypassRes) totalDamage = damage;
+		else if (type == WeaponInterface.PHYSICAL)
 			totalDamage = damage * (1 - WeaponInterface.resToPercent(attackee.stats.pr));
 		else if (type == WeaponInterface.MAGICAL)
 			totalDamage = damage * (1 - WeaponInterface.resToPercent(attackee.stats.mr));
