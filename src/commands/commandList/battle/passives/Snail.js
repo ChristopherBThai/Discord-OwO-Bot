@@ -28,7 +28,7 @@ module.exports = class Snail extends PassiveInterface {
 		this.qualityList = [[5, 15]];
 	}
 
-	postAttack(animal, attackee, damage, type, tags) {
+	postAttack(animal, _attackee, damage, type, tags) {
 		if (tags.has('snail', animal)) return;
 		let logs = new Log();
 
@@ -47,11 +47,11 @@ module.exports = class Snail extends PassiveInterface {
 		});
 		tags.add('snail', animal);
 		// damage variable already has res applied, no need to recalculate res twice.
-		snailDamage = WeaponInterface.inflictDamage(animal, attackee, snailDamage, type, snailTags, {
+		snailDamage = WeaponInterface.inflictDamage(animal, attacking, snailDamage, type, snailTags, {
 			bypassRes: true,
 		});
 		logs.push(
-			`[SNAIL] ${animal.nickname}'s pet snail slapped ${attackee.nickname} for ${snailDamage.amount} HP`,
+			`[SNAIL] ${animal.nickname}'s pet snail slapped ${attacking.nickname} for ${snailDamage.amount} HP`,
 			snailDamage.logs
 		);
 
