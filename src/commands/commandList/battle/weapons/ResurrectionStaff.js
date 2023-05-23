@@ -63,9 +63,10 @@ module.exports = class ResurrectionStaff extends WeaponInterface {
 			enemies: enemy,
 		});
 		
+		/* remove debuffs */
 		for (const i in dead.buffs) {
 			if (dead.buffs[i].debuff) {
-				dead.buffs.splice(i, 1)
+				dead.buffs.splice(i, 1);
 			}
 		}
 		
