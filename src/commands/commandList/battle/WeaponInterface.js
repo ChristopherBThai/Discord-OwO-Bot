@@ -251,7 +251,7 @@ module.exports = class WeaponInterface {
 	}
 
 	/* Get an enemy to attack */
-	static getAttacking(me, team, enemy, opt) {
+	static getAttacking(me, team, enemy, opt = {}) {
 		let alive = WeaponInterface.getAlive(enemy);
 
 		if (!opt.ignoreChoose) {
