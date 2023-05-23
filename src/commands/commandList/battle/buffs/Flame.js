@@ -8,6 +8,7 @@
 const BuffInterface = require('../BuffInterface.js');
 const WeaponInterface = require('../WeaponInterface.js');
 const Logs = require('../util/logUtil.js');
+const Tags = require('../util/tags.js');
 
 module.exports = class Flame extends BuffInterface {
 	init() {
@@ -27,16 +28,27 @@ module.exports = class Flame extends BuffInterface {
 
 	// Override
 	bind(animal, duration, tags) {
-		if (tags.flame) return;
+		if (!(tags instanceof Tags)) {
+			tags = new Tags({
+				me: tags.me,
+				allies: tags.allies,
+				enemies: tags.enemies,
+			});
+		}
+		if (tags.has('flame', animal)) return;
 		let logs = new Logs();
 		for (let i in animal.buffs) {
 			if (animal.buffs[i].id == this.id && !animal.buffs[i].markedForDeath) {
 				animal.buffs[i].markedForDeath = true;
 				let damage = WeaponInterface.getDamage(this.from.stats.mag, this.stats[1] / 100);
-				damage = WeaponInterface.inflictDamage(this.from, animal, damage, WeaponInterface.MAGICAL, {
-					...tags,
-					flame: true,
-				});
+				tags.add('flame', animal);
+				damage = WeaponInterface.inflictDamage(
+					this.from,
+					animal,
+					damage,
+					WeaponInterface.MAGICAL,
+					tags
+				);
 				logs.push(
 					`[FLAME] Exploded and damaged ${animal.nickname} for ${damage.amount} HP`,
 					damage.logs

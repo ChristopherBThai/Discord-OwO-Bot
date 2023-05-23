@@ -53,7 +53,7 @@ module.exports = class CullingScythe extends WeaponInterface {
 			enemies: enemy,
 		});
 		let manaLogs = new Logs();
-		manaLogs.push(`[SCYTH] ${me.nickname} used ${mana.amount} WP`, mana.logs);
+		manaLogs.push(`[CSYTH] ${me.nickname} used ${mana.amount} WP`, mana.logs);
 
 		/* Calculate damage */
 		let damage = WeaponInterface.getDamage(me.stats.att, this.stats[0] / 100);
@@ -71,7 +71,7 @@ module.exports = class CullingScythe extends WeaponInterface {
 			enemies: enemy,
 		});
 		logs.push(
-			`[SCYTH] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP and applied Mortality`,
+			`[CSYTH] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP and applied Mortality`,
 			damage.logs
 		);
 		logs.addSubLogs(buffLogs);

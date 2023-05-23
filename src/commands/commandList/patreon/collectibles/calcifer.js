@@ -73,7 +73,7 @@ class Calcifer extends Collectible {
 			result = await p.redis.hincrby(`data_${p.msg.author.id}`, data, -1);
 			msgOverride =
 				'<a:c_sad:1099443725677113424> **| ?giver?**, Oh no! You have lost Calcifer! “Here’s another curse for you…May all your bacon burn!”' +
-				`\n?blank? **| You have ${count} Calcifer(s)! “They say the best blaze burns brightest when circumstances are at their worst!”`;
+				`\n?blank? **|** You have ${count} Calcifer(s)! “They say the best blaze burns brightest when circumstances are at their worst!”`;
 		}
 
 		const msg = await this.getGiveMsg(p, result, user, msgOverride, dataOverride);

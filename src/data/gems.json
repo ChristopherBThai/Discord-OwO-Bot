@@ -209,6 +209,55 @@
 			"type": "Lucky",
 			"length": 1000,
 			"amount": 7
+		},
+		"cgem5": {
+			"emoji": "<:cstar:1101731000721096744>",
+			"id": 79,
+			"chance": 0.22,
+			"type": "Special",
+			"length": 50
+		},
+		"ugem5": {
+			"emoji": "<:ustar:1101731011236220998>",
+			"id": 80,
+			"chance": 0.22,
+			"type": "Special",
+			"length": 100
+		},
+		"rgem5": {
+			"emoji": "<:rstar:1101731009684328479>",
+			"id": 81,
+			"chance": 0.2,
+			"type": "Special",
+			"length": 250
+		},
+		"egem5": {
+			"emoji": "<:estar:1101731002021330974>",
+			"id": 82,
+			"chance": 0.2,
+			"type": "Special",
+			"length": 450
+		},
+		"mgem5": {
+			"emoji": "<:mstar:1101731007918526524>",
+			"id": 83,
+			"chance": 0.1,
+			"type": "Special",
+			"length": 525
+		},
+		"lgem5": {
+			"emoji": "<a:lstar:1101731005473230880>",
+			"id": 84,
+			"chance": 0.05,
+			"type": "Special",
+			"length": 800
+		},
+		"fgem5": {
+			"emoji": "<a:fstar:1101735557001908274>",
+			"id": 85,
+			"chance": 0.01,
+			"type": "Special",
+			"length": 1000
 		}
 	}
 }

@@ -6,6 +6,7 @@
  */
 
 const PassiveInterface = require('../PassiveInterface.js');
+const WeaponInterface = require('../WeaponInterface.js');
 
 /* +[5~20%] increase in wp*/
 
@@ -23,7 +24,7 @@ module.exports = class WeaponPoint extends PassiveInterface {
 			'<:lwp:535290421887369216>',
 			'<:fwp:535290421237252107>',
 		];
-		this.statDesc = 'Increases your <:wp:531620120976687114>WP by **?%**';
+		this.statDesc = `Increases your ${WeaponInterface.wpEmoji}WP by **?%**`;
 		this.qualityList = [[10, 30]];
 	}
 
