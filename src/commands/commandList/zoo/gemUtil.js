@@ -125,6 +125,8 @@ function getUseGemText(gem) {
 		text += 'animals will be doubled! It can stack with Hunting gems!';
 	else if (gem.type == 'Lucky')
 		text += `animals will have a +${gem.amount}x higher chance of finding gem tiers!`;
+	else if (gem.type == 'Special')
+		text += `animals will have a +2x higher chance of finding special tiers!`;
 	else text += 'ERROR!';
 	return text;
 }
@@ -180,6 +182,13 @@ exports.desc = async function (p, id) {
 			'x for the next ' +
 			gem.length +
 			' animals!\nCannot stack with other Lucky gems.';
+	else if (gem.type == 'Special')
+		text +=
+			'A(n) ' +
+			ranks[gem.key[0]] +
+			' Special Gem!\nWhen activated, this gem will increase your chance of finding special pets by 2x for the next  ' +
+			gem.length +
+			' hunts!\nThis gem will not be active if there are no special pets available.';
 	const embed = {
 		color: p.config.embed_color,
 		fields: [

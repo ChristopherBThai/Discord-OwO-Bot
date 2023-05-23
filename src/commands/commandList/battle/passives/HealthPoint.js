@@ -6,6 +6,7 @@
  */
 
 const PassiveInterface = require('../PassiveInterface.js');
+const WeaponInterface = require('../WeaponInterface.js');
 
 /* +[5~20%] increase in hp*/
 
@@ -23,7 +24,7 @@ module.exports = class HealthPoint extends PassiveInterface {
 			'<:lhp:535290422147153930>',
 			'<:fhp:535290422306799616>',
 		];
-		this.statDesc = 'Increases your <:hp:531620120410456064>HP by **?%**';
+		this.statDesc = `Increases your ${WeaponInterface.hpEmoji}HP by **?%**`;
 		this.qualityList = [[5, 20]];
 	}
 

@@ -23,29 +23,31 @@ module.exports = class Discharge extends PassiveInterface {
 			'<:ldischarge:572285187023699988>',
 			'<:fdischarge:572285187002466364>',
 		];
-		this.statDesc =
-			'When WP is replenished, deal **?%** of the replenished amount to a random enemy as MAG damage';
+		this.statDesc = `When ${WeaponInterface.wpEmoji}WP is replenished, deal **?%** of the replenished amount to a random enemy as ${WeaponInterface.magEmoji}MAG damage`;
 		this.qualityList = [[100, 140]];
 	}
 
 	postReplenished(animal, from, amount, tags) {
 		/* Ignore if tags.thorns flag is true */
-		if (tags.discharge) return;
+		if (tags.has('discharge', animal)) return;
 		let totalDamage = (amount.reduce((a, b) => a + b, 0) * this.stats[0]) / 100;
 		if (totalDamage < 1) return;
 
 		let logs = new Log();
 
 		/* Grab an enemy that I'm attacking */
-		let attacking = WeaponInterface.getAttacking(animal, tags.allies, tags.enemies);
+		const enemies = tags.getAnimalEnemies(animal);
+		const allies = tags.getAnimalAllies(animal);
+		let attacking = WeaponInterface.getAttacking(animal, allies, enemies);
 		if (!attacking) return;
 
+		tags.add('discharge', animal);
 		let dmg = WeaponInterface.inflictDamage(
 			animal,
 			attacking,
 			totalDamage,
 			WeaponInterface.MAGICAL,
-			{ ...tags, discharge: true }
+			tags
 		);
 
 		logs.push(

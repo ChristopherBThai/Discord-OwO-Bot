@@ -23,12 +23,11 @@ module.exports = class HealStaff extends WeaponInterface {
 			'<:fhealstaff:535283617019068426>',
 		];
 		this.defaultEmoji = '<:healstaff:538196865410138125>';
-		this.statDesc =
-			'Heals **?%** of your ' + WeaponInterface.magEmoji + 'MAG to the lowest health ally';
+		this.statDesc = `Heals **?%** of your ${WeaponInterface.magEmoji}MAG to the lowest health ally. This weapon can overheal up to 50% of max ${WeaponInterface.hpEmoji}HP.`;
 		this.availablePassives = 'all';
 		this.passiveCount = 1;
 		this.qualityList = [[100, 150]];
-		this.manaRange = [200, 125];
+		this.manaRange = [225, 150];
 	}
 
 	attackWeapon(me, team, enemy) {
@@ -41,7 +40,8 @@ module.exports = class HealStaff extends WeaponInterface {
 
 		/* Grab lowest hp */
 		let lowest = WeaponInterface.getLowestHp(team);
-		if (!lowest || WeaponInterface.isMaxHp(lowest)) return this.attackPhysical(me, team, enemy);
+		if (!lowest || WeaponInterface.isMaxHp(lowest, { overheal: true }))
+			return this.attackPhysical(me, team, enemy);
 
 		/* Calculate heal */
 		let heal = WeaponInterface.getDamage(me.stats.mag, this.stats[0] / 100);
@@ -56,11 +56,17 @@ module.exports = class HealStaff extends WeaponInterface {
 		manaLogs.push(`[HSTAFF] ${me.nickname} used ${mana.amount} WP`, mana.logs);
 
 		/* Heal ally */
-		heal = WeaponInterface.heal(lowest, heal, me, {
+		heal = WeaponInterface.heal(
+			lowest,
+			heal,
 			me,
-			allies: team,
-			enemies: enemy,
-		});
+			{
+				me,
+				allies: team,
+				enemies: enemy,
+			},
+			{ overheal: true }
+		);
 		logs.push(`[HSTAFF] ${me.nickname} healed ${lowest.nickname} for ${heal.amount} HP`, heal.logs);
 
 		logs.addSubLogs(manaLogs);

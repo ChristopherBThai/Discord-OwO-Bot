@@ -8,6 +8,7 @@
 const WeaponInterface = require('../WeaponInterface.js');
 const alterWeapon = require('../../patreon/alterWeapon.js');
 const alterWeaponDisplay = require('../../patreon/alterWeaponDisplay.js');
+const global = require('../../../../utils/global.js');
 
 const prices = {
 	Common: 100,
@@ -43,7 +44,6 @@ const nextPageEmoji = '➡️';
 const prevPageEmoji = '⬅️';
 const rewindEmoji = '⏪';
 const fastForwardEmoji = '⏩';
-const sortEmoji = '🔃';
 
 /* All weapons */
 let weapons = {};
@@ -79,23 +79,31 @@ exports.getRandomWeapons = function (uid, count, wid) {
 	let randomWeapons = [];
 	for (let i = 0; i < count; i++) {
 		let tempWeapon = getRandomWeapon(wid);
-		let weaponSql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${uid ? uid : '?'},${
-			tempWeapon.id
-		},'${tempWeapon.sqlStat}',${tempWeapon.avgQuality});`;
-		let passiveSql = 'INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES ';
-		for (let j = 0; j < tempWeapon.passives.length; j++) {
-			let tempPassive = tempWeapon.passives[j];
-			passiveSql += `(?,${j},${tempPassive.id},'${tempPassive.sqlStat}'),`;
-		}
-		passiveSql = `${passiveSql.slice(0, -1)};`;
-
-		tempWeapon.weaponSql = weaponSql;
-		tempWeapon.passiveSql = passiveSql;
+		let sql = toSql(uid, tempWeapon);
+		tempWeapon.weaponSql = sql.weapon;
+		tempWeapon.passiveSql = sql.passive;
 		randomWeapons.push(tempWeapon);
 	}
 
 	return randomWeapons;
 };
+
+const toSql = (exports.toSql = function (uid, weapon) {
+	let weaponSql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${uid ? uid : '?'},${
+		weapon.id
+	},'${weapon.sqlStat}',${weapon.avgQuality});`;
+	let passiveSql = 'INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES ';
+	for (let j = 0; j < weapon.passives.length; j++) {
+		let tempPassive = weapon.passives[j];
+		passiveSql += `(?,${j},${tempPassive.id},'${tempPassive.sqlStat}'),`;
+	}
+	passiveSql = `${passiveSql.slice(0, -1)};`;
+
+	return {
+		weapon: weaponSql,
+		passive: passiveSql,
+	};
+});
 
 exports.getItems = async function (p) {
 	let sql = `SELECT wid,count(uwid) AS count FROM user_weapon WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) GROUP BY wid`;
@@ -177,6 +185,10 @@ let parseWeaponQuery = (exports.parseWeaponQuery = function (query) {
 /* Displays weapons with multiple pages */
 let display = (exports.display = async function (p, pageNum = 0, sort = 0, opt) {
 	if (!opt) opt = {};
+	if (opt.wid) {
+		opt.widList = [opt.wid.toString()];
+		delete opt.wid;
+	}
 	let { users, msg, user } = opt;
 	if (!users) users = [];
 	if (!user) user = p.msg.author;
@@ -187,50 +199,54 @@ let display = (exports.display = async function (p, pageNum = 0, sort = 0, opt) 
 	if (!page) return;
 
 	/* Send msg and add reactions */
-	if (!msg) msg = await p.send({ embed: page.embed });
-	else await msg.edit({ embed: page.embed });
+	if (!msg) msg = await p.send(page.embed);
+	else await msg.edit(page.embed);
 
-	if (page.maxPage > 19) await msg.addReaction(rewindEmoji);
-	await msg.addReaction(prevPageEmoji);
-	await msg.addReaction(nextPageEmoji);
-	if (page.maxPage > 19) await msg.addReaction(fastForwardEmoji);
-	await msg.addReaction(sortEmoji);
-	let filter = (emoji, userID) =>
-		[sortEmoji, nextPageEmoji, prevPageEmoji, rewindEmoji, fastForwardEmoji].includes(emoji.name) &&
-		users.includes(userID);
-	let collector = p.reactionCollector.create(msg, filter, {
+	let filter = (componentName, user) =>
+		['prev', 'next', 'rewind', 'forward', 'sort', 'filter'].includes(componentName) &&
+		users.includes(user.id);
+	let collector = p.interactionCollector.create(msg, filter, {
 		time: 900000,
 		idle: 120000,
 	});
 
-	let handler = async function (emoji) {
+	let handler = async function (component, _user, ack, _err, values) {
 		try {
 			if (page) {
 				/* Save the animal's action */
-				if (emoji.name === nextPageEmoji) {
+				if (component === 'next') {
 					if (pageNum + 1 < page.maxPage) pageNum++;
 					else pageNum = 0;
 					page = await getDisplayPage(p, user, pageNum, sort, opt);
-					if (page) await msg.edit({ embed: page.embed });
-				} else if (emoji.name === prevPageEmoji) {
+					if (page) await ack(page.embed);
+				} else if (component === 'prev') {
 					if (pageNum > 0) pageNum--;
 					else pageNum = page.maxPage - 1;
 					page = await getDisplayPage(p, user, pageNum, sort, opt);
-					if (page) await msg.edit({ embed: page.embed });
-				} else if (emoji.name === sortEmoji) {
-					sort = (sort + 1) % 4;
+					if (page) await ack(page.embed);
+				} else if (component === 'sort') {
+					sort = values[0];
 					page = await getDisplayPage(p, user, pageNum, sort, opt);
-					if (page) await msg.edit({ embed: page.embed });
-				} else if (emoji.name === rewindEmoji) {
+					if (page) await ack(page.embed);
+				} else if (component === 'rewind') {
 					pageNum -= 5;
 					if (pageNum < 0) pageNum = 0;
 					page = await getDisplayPage(p, user, pageNum, sort, opt);
-					if (page) await msg.edit({ embed: page.embed });
-				} else if (emoji.name === fastForwardEmoji) {
+					if (page) await ack(page.embed);
+				} else if (component === 'forward') {
 					pageNum += 5;
 					if (pageNum >= page.maxPage) pageNum = page.maxPage - 1;
 					page = await getDisplayPage(p, user, pageNum, sort, opt);
-					if (page) await msg.edit({ embed: page.embed });
+					if (page) await ack(page.embed);
+				} else if (component === 'filter') {
+					pageNum = 0;
+					if (values && values.length) {
+						opt.widList = values;
+					} else {
+						opt.widList = undefined;
+					}
+					page = await getDisplayPage(p, user, pageNum, sort, opt);
+					if (page) await ack(page.embed);
 				}
 			}
 		} catch (err) {
@@ -239,13 +255,11 @@ let display = (exports.display = async function (p, pageNum = 0, sort = 0, opt) 
 	};
 
 	collector.on('collect', handler);
-	collector.on('end', async function (_collected) {
+	collector.on('end', async (_reason) => {
 		if (page) {
-			page.embed.color = 6381923;
-			await msg.edit({
-				content: 'This message is now inactive',
-				embed: page.embed,
-			});
+			page.embed.embed.color = 6381923;
+			page.embed.content = 'This message is now inactive';
+			await msg.edit(page.embed);
 		}
 	});
 });
@@ -321,7 +335,7 @@ exports.askDisplay = async function (p, id, opt = {}) {
 
 /* Gets a single page */
 let getDisplayPage = async function (p, user, page, sort, opt = {}) {
-	let { wid } = opt;
+	let { wid, widList } = opt;
 	/* Query all weapons */
 	let sql = `SELECT temp.*,user_weapon_passive.wpid,user_weapon_passive.pcount,user_weapon_passive.stat as pstat
 		FROM
@@ -331,12 +345,16 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 				LEFT JOIN animal ON animal.pid = user_weapon.pid
 			WHERE
 				user.id = ${user.id} `;
-	if (wid) sql += `AND user_weapon.wid = ${wid} `;
+	if (wid) {
+		sql += `AND user_weapon.wid = ${wid} `;
+	} else if (widList) {
+		sql += `AND user_weapon.wid IN (${widList.join(',')}) `;
+	}
 	sql += 'ORDER BY ';
 
-	if (sort === 1) sql += 'user_weapon.avg DESC,';
-	else if (sort === 2) sql += 'user_weapon.wid DESC, user_weapon.avg DESC,';
-	else if (sort === 3) sql += 'user_weapon.pid DESC,';
+	if (sort === 'rarity') sql += 'user_weapon.avg DESC,';
+	else if (sort === 'type') sql += 'user_weapon.wid DESC, user_weapon.avg DESC,';
+	else if (sort === 'equipped') sql += 'user_weapon.pid DESC,';
 
 	sql += ` user_weapon.uwid DESC
 			LIMIT ${weaponPerPage}
@@ -348,7 +366,11 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 			INNER JOIN user_weapon ON user.uid = user_weapon.uid
 		WHERE
 			user.id = ${user.id} `;
-	if (wid) sql += `AND user_weapon.wid = ${wid} `;
+	if (wid) {
+		sql += `AND user_weapon.wid = ${wid} `;
+	} else if (widList) {
+		sql += `AND user_weapon.wid IN (${widList.join(',')}) `;
+	}
 	sql += ';';
 	let result = await p.query(sql);
 
@@ -369,7 +391,7 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 
 	/* Parse actual weapon data for each weapon */
 	let descHelp =
-		'Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nReroll: `owo w rr {weaponID} [passive|stat]`\nSell: `owo sell {weaponID|commonweapons,rareweapons...}`\nDismantle: `owo dismantle {weaponID|commonweapons,rareweapons...}`\n';
+		'Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nReroll: `owo w rr {weaponID} [passive|stat]`\nSell: `owo sell {weaponID|cw,rw,uw...}`\nDismantle: `owo dismantle {weaponID|cw,rw,uw...}`\n';
 	let desc = '';
 	let fieldText;
 	let fields = [];
@@ -384,11 +406,11 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 				let passive = weapon.passives[i];
 				emoji += passive.emoji;
 			}
-			row += `\n\`${user_weapons[key].uwid}\` ${emoji} **${weapon.name}** | Quality: ${weapon.avgQuality}%`;
+			row += `\n\`${user_weapons[key].uwid}\` ${emoji} **${weapon.name}** ${weapon.avgQuality}%`;
 			if (user_weapons[key].animal.name) {
 				let animal = p.global.validAnimal(user_weapons[key].animal.name);
 				row += p.replaceMentions(
-					` | ${animal.uni ? animal.uni : animal.value} ${
+					` ➤  ${animal.uni ? animal.uni : animal.value} ${
 						user_weapons[key].animal.nickname ? user_weapons[key].animal.nickname : ''
 					}`
 				);
@@ -432,10 +454,10 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 		fields,
 	};
 
-	if (sort === 0) embed.footer.text += 'Sorting by id';
-	else if (sort === 1) embed.footer.text += 'Sorting by rarity';
-	else if (sort === 2) embed.footer.text += 'Sorting by type';
-	else if (sort === 3) embed.footer.text += 'Sorting by equipped';
+	if (sort === 'id') embed.footer.text += 'Sorting by id';
+	else if (sort === 'rarity') embed.footer.text += 'Sorting by rarity';
+	else if (sort === 'type') embed.footer.text += 'Sorting by type';
+	else if (sort === 'equipped') embed.footer.text += 'Sorting by equipped';
 
 	embed = alterWeapon.alter(user.id, embed, {
 		...opt,
@@ -445,8 +467,126 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 		weapons: user_weapons_2,
 	});
 
+	embed = {
+		embed,
+		components: getDisplayComponents(maxPage > 19, sort, opt.widList),
+	};
+
 	return { sql, embed, totalCount, nextPage, prevPage, maxPage };
 };
+
+function getDisplayComponents(showExtraButtons, sort, widList = []) {
+	const components = [
+		{
+			type: 1,
+			components: [
+				{
+					type: 3,
+					custom_id: 'sort',
+					placeholder: 'Sort by...',
+					options: [
+						{
+							label: 'Weapon ID',
+							value: 'id',
+							description: 'Sorty by weapon id',
+							default: sort === 'id',
+						},
+						{
+							label: 'Rarity',
+							value: 'rarity',
+							description: 'Sorty by weapon rarity',
+							default: sort === 'rarity',
+						},
+						{
+							label: 'Type',
+							value: 'type',
+							description: 'Sort by weapon type',
+							default: sort === 'type',
+						},
+						{
+							label: 'Equipped',
+							value: 'equipped',
+							description: 'Show equipped weapons',
+							default: sort === 'equipped',
+						},
+					],
+				},
+			],
+		},
+		{
+			type: 1,
+			components: [
+				{
+					type: 3,
+					custom_id: 'filter',
+					placeholder: 'Filter by...',
+					min_values: 0,
+					max_values: Math.min(Object.keys(WeaponInterface.weapons).length, 25),
+					options: [],
+				},
+			],
+		},
+		{
+			type: 1,
+			components: [
+				{
+					type: 2,
+					style: 1,
+					custom_id: 'prev',
+					emoji: {
+						id: null,
+						name: prevPageEmoji,
+					},
+				},
+				{
+					type: 2,
+					style: 1,
+					custom_id: 'next',
+					emoji: {
+						id: null,
+						name: nextPageEmoji,
+					},
+				},
+			],
+		},
+	];
+	if (showExtraButtons) {
+		components[2].components.unshift({
+			type: 2,
+			style: 1,
+			custom_id: 'rewind',
+			emoji: {
+				id: null,
+				name: rewindEmoji,
+			},
+		});
+		components[2].components.push({
+			type: 2,
+			style: 1,
+			custom_id: 'forward',
+			emoji: {
+				id: null,
+				name: fastForwardEmoji,
+			},
+		});
+	}
+
+	for (let wid in WeaponInterface.weapons) {
+		const weapon = new WeaponInterface.weapons[wid](null, null, true);
+		const emoji = global.parseEmoji(weapon.defaultEmoji);
+		components[1].components[0].options.push({
+			label: weapon.name,
+			value: weapon.id,
+			emoji: {
+				name: emoji.name,
+				id: emoji.id,
+			},
+			default: widList.includes(weapon.id.toString()),
+		});
+	}
+
+	return components;
+}
 
 exports.describe = async function (p, uwid) {
 	uwid = expandUWID(uwid);

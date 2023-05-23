@@ -27,7 +27,8 @@ const multigiveChance = 0.2;
 const maxTime = 3 * 24 * 60 * 60 * 1000;
 // 6 Hours
 const minTime = 6 * 60 * 60 * 1000;
-const maxWinners = 35;
+const maxWinners = 50;
+const minWinners = 5;
 
 async function createGiveaway(channelId) {
 	const { endDate, diff } = getEndDate();
@@ -35,7 +36,7 @@ async function createGiveaway(channelId) {
 		channelId: channelId,
 		rewards: getRandomGiveaways(),
 		endDate: endDate,
-		winners: 1 + Math.floor(Math.random() * maxWinners),
+		winners: minWinners + Math.floor(Math.random() * (maxWinners - minWinners)),
 	};
 
 	await saveGiveaway(giveaway);
