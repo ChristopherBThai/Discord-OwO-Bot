@@ -254,11 +254,10 @@ module.exports = class WeaponInterface {
 	static getAttacking(me, team, enemy, opt) {
 		let alive = WeaponInterface.getAlive(enemy);
 
-		let hasBuffOverride = false;
-		for (let i in enemy) {
-			if (enemy[i].stats.hp[0] > 0) {
-				for (let j in enemy[i].buffs) {
-					let animal = enemy[i].buffs[j].enemyChooseAttack(enemy[i], me, team, enemy);
+		if (!opt.ignoreChoose) {
+			for (let i in alive) {
+				for (let j in alive[i].buffs) {
+					let animal = alive[i].buffs[j].enemyChooseAttack(alive[i], me, team, enemy);
 					if (animal) {
 						animal = WeaponInterface.getRandomAnimal([animal], opt);
 						if (animal) {
