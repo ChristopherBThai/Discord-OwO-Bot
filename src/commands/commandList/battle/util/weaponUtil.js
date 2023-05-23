@@ -243,7 +243,7 @@ let display = (exports.display = async function (p, pageNum = 0, sort = 0, opt) 
 					if (values && values.length) {
 						opt.widList = values;
 					} else {
-						opt.widList = null;
+						opt.widList = undefined;
 					}
 					page = await getDisplayPage(p, user, pageNum, sort, opt);
 					if (page) await ack(page.embed);
@@ -520,7 +520,7 @@ function getDisplayComponents(showExtraButtons, sort, widList = []) {
 					type: 3,
 					custom_id: 'filter',
 					placeholder: 'Filter by...',
-					min_values: 1,
+					min_values: 0,
 					max_values: Math.min(Object.keys(WeaponInterface.weapons).length, 25),
 					options: [],
 				},
