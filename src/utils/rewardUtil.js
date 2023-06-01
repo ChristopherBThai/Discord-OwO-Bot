@@ -12,9 +12,10 @@ const global = require('./global.js');
 const itemUtil = require('../commands/commandList/shop/util/itemUtil.js');
 const weaponUtil = require('../commands/commandList/battle/util/weaponUtil.js');
 const lootboxUtil = require('../commands/commandList/zoo/lootboxUtil.js');
+const beehiveUtil = require('../commands/commandList/social/util/beehiveUtil.js');
 
 exports.getReward = async function (id, uid, con, rewardType, rewardId, rewardCount) {
-	let sql, result, name, animal, weapon, uwid, weaponId, uwidList, item, ring, gem, gemSql;
+	let sql, result, name, animal, weapon, uwid, weaponId, uwidList, item, ring, gem, gemSql, bee;
 	switch (rewardType) {
 		case 'wallpaper':
 			// Check if user has reward
@@ -106,12 +107,23 @@ exports.getReward = async function (id, uid, con, rewardType, rewardId, rewardCo
 			};
 		case 'gem':
 			gem = lootboxUtil.getRandomGems(uid, 1, { gid: rewardId });
-			gemSql = gem.sql
+			gemSql = gem.sql;
 			gem = Object.values(gem.gems)[0].gem;
 			return {
 				text: `${global.getA(gem.rank)} ${gem.emoji} ${gem.rank} ${gem.type} Gem`,
 				sql: gemSql,
 			};
+		case 'bee':
+			bee = await beehiveUtil.addBee(id, rewardId);
+			return {
+				text: `${global.getA(bee.bee.name)} ${bee.bee.name} Bee`,
+				nextLine: `${bee.bee.emoji} **|** "*${bee.bee.text}*"${
+					bee.count > 1
+						? ''
+						: `\n${config.emoji.blank} **|** Type \`owo beehive\` to view your bees!`
+				}`,
+			};
+
 		default:
 			throw 'Invalid reward type: ' + rewardType;
 	}

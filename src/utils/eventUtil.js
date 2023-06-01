@@ -54,6 +54,9 @@ exports.useItem = async function (item) {
 	}
 
 	let text = `${event.item.openEmoji} **|** You open the **${item.name}** and received **${reward.text}**!`;
+	if (reward.nextLine) {
+		text += `\n${reward.nextLine}`;
+	}
 	this.send(text);
 };
 
