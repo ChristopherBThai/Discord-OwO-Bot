@@ -37,6 +37,5 @@ exports.addBee = async function (id, beeId) {
 	}
 	const count = await redis.hincrby(`bees_${id}`, bee.id, 1);
 	const totalcount = await redis.incr(`bee_rank`, id, 1);
-	console.log(totalcount);
 	return { count, bee, totalcount };
 };
