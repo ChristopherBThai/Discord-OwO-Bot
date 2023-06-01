@@ -1,0 +1,32 @@
+{
+	"agender": {
+		"emoji": "<:agenderbee:1113712635343536189>",
+		"text": "Was finding me on your agenda?",
+		"name": "Agender"
+	},
+	"lesbian": {
+		"emoji": "<:lesbee:1113712742805811241>",
+		"text": "Lesbee workers for the same hive!",
+		"name": "Lesbian"
+	},
+	"omnisexual": {
+		"emoji": "<:omnisexualbee:1113712757821407313>",
+		"text": "I’m omni-way to being in your collection!",
+		"name": "Omnisexual"
+	},
+	"pansexual": {
+		"emoji": "<:panbee:1113712772639895632>",
+		"text": "Happy to ex-pan-d the worker hive!",
+		"name": "Pansexual"
+	},
+	"transgender": {
+		"emoji": "<:transbee:1113712787894583317>",
+		"text": "No need for trans-port, I know where your hive is!",
+		"name": "Transgender"
+	},
+	"pride": {
+		"emoji": "<:pridebee:1113712802486550529>",
+		"text": "I now pronoun-ce you, the proud owner of this bee!",
+		"name": "Pride"
+	}
+}
