@@ -103,12 +103,12 @@ module.exports = new CommandInterface({
 					INSERT INTO rep (id,count) VALUES (${p.msg.author.id},1) ON DUPLICATE KEY UPDATE count = count + 1;
 					INSERT INTO shards (uid,count) VALUES (${uid},100) ON DUPLICATE KEY UPDATE count = count + 100`;
 			result = await p.query(sql);
-			p.quest('cookieBy', 1, p.msg.author);
+			p.quest('cookieBy', 1, p.msg.member || p.msg.author);
 		}
 
 		let embed = {
 			author: {
-				name: p.msg.author.username + "'s Checklist",
+				name: this.getName() + "'s Checklist",
 				icon_url: p.msg.author.avatarURL,
 			},
 			color: p.config.embed_color,

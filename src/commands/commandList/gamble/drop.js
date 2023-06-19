@@ -64,7 +64,7 @@ async function drop(p) {
 	p.logger.decr('cowoncy', -1 * amount, { type: 'drop' }, p.msg);
 	p.send(
 		'**💰 | ' +
-			p.msg.author.username +
+			p.getName() +
 			'** dropped **' +
 			p.global.toFancyNum(amount) +
 			'** cowoncy!\n**<:blank:427371936482328596> |** Use `owo pickup` to pick it up! ',
@@ -96,22 +96,18 @@ async function pickup(p) {
 	let result = await p.query(sql);
 	//Not enough money
 	if (!result[1][0] || result[1][0].money < amount) {
-		p.send('**🚫 | ' + p.msg.author.username + '**, you can only pick up as much as you have!');
+		p.send('**🚫 | ' + p.getName() + '**, you can only pick up as much as you have!');
 		return;
 	} else if (result[0][0] && amount <= result[0][0].amount && amount <= result[1][0].money) {
 		p.send(
-			'**💰 | ' +
-				p.msg.author.username +
-				'**, you picked up **' +
-				amount +
-				'** cowoncy from this channel!'
+			'**💰 | ' + p.getName() + '**, you picked up **' + amount + '** cowoncy from this channel!'
 		);
 		p.neo4j.pickup(p.msg, amount);
 		p.logger.incr('cowoncy', amount, { type: 'drop' }, p.msg);
 	} else {
 		p.send(
 			'**💰 | ' +
-				p.msg.author.username +
+				p.getName() +
 				"**, there's not enough cowoncy on the floor!\n**<:blank:427371936482328596> |** You felt nice so you dropped **" +
 				amount +
 				'** cowoncy!',
@@ -125,7 +121,7 @@ async function pickup(p) {
 async function handleWarning(p) {
 	let embed = {
 		author: {
-			name: '⚠️ Hold on there, ' + p.msg.author.username + '!',
+			name: '⚠️ Hold on there, ' + p.getName() + '!',
 			icon_url: p.msg.author.avatarURL,
 		},
 		description:
@@ -142,7 +138,7 @@ async function handleWarning(p) {
 		collector.stop('done');
 		p.redis.hincrby('data_' + p.msg.author.id, key, 1);
 		embed.color = 65280;
-		embed.author.name = "✅ You're all set, " + p.msg.author.username + '!';
+		embed.author.name = "✅ You're all set, " + p.getName() + '!';
 		embed.description =
 			'**' + acceptEmoji + ' |** The **pickup** command is now enabled for you! Good luck!';
 		msg.edit({ embed });

@@ -32,7 +32,9 @@ module.exports = new CommandInterface({
 		const result = await this.query(sql);
 
 		const money = result[0] ? this.global.toFancyNum(result[0].money) : '0';
-		let text = `${this.config.emoji.cowoncy} **| ${this.msg.author.username}**, you currently have **__${money}__ cowoncy!**`;
+		let text = `${
+			this.config.emoji.cowoncy
+		} **| ${this.getName()}**, you currently have **__${money}__ cowoncy!**`;
 
 		text = alterCowoncy.alter(this, this.msg.author.id, text, {
 			user: this.msg.author,

@@ -75,7 +75,7 @@ class Poison extends Collectible {
 		}
 
 		const msg = msgOverride
-			.replaceAll('?user?', p.msg.author.username)
+			.replaceAll('?user?', p.getName())
 			.replaceAll('?emoji?', this.emoji)
 			.replaceAll('?blank?', p.config.emoji.blank)
 			.replaceAll('?mergeCount?', result2)

@@ -63,7 +63,7 @@ module.exports = new CommandInterface({
 			'./src/data/images/tradeoffer.jpg',
 			function (err, ctx, canvas, _image) {
 				if (err) {
-					p.send('**🚫 | ' + p.msg.author.username + '**, Uh oh.. this command is broken!', 3000);
+					p.send('**🚫 | ' + p.getName() + '**, Uh oh.. this command is broken!', 3000);
 					return;
 				}
 
@@ -93,14 +93,14 @@ module.exports = new CommandInterface({
 							textArgs.imageSize = 165;
 							canvasUtil.addText(textArgs, p, ctx, canvas, function () {
 								let buf = canvas.toBuffer();
-								p.send('**🖼 | ' + p.msg.author.username + '** generated a meme!', null, {
+								p.send('**🖼 | ' + p.getName() + '** generated a meme!', null, {
 									file: buf,
 									name: 'meme.png',
 								});
 							});
 						} else {
 							let buf = canvas.toBuffer();
-							p.send('**🖼 | ' + p.msg.author.username + '** generated a meme!', null, {
+							p.send('**🖼 | ' + p.getName() + '** generated a meme!', null, {
 								file: buf,
 								name: 'meme.png',
 							});

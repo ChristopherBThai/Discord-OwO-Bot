@@ -123,7 +123,8 @@ module.exports = new CommandInterface({
 
 			//Alter text for legendary tier patreons
 			text = await alterHunt.alter(p, p.msg.author.id, text, {
-				author: p.msg.author,
+				author: p.msg.member || p.msg.author,
+				name: p.getName(),
 				lootboxText: lootbox ? lootbox.text : '',
 				petText,
 				animalXp,
@@ -299,7 +300,7 @@ function getAnimals(p, result, gems, uid) {
 	let animalText = global.unicodeAnimal(animal[0][1]);
 	let text =
 		'**🌱 | ' +
-		p.msg.author.username +
+		p.getName() +
 		'** spent 5 <:cowoncy:416043450337853441> and caught a ' +
 		animal[0][0] +
 		' ' +
@@ -309,7 +310,7 @@ function getAnimals(p, result, gems, uid) {
 	if (animal[0][0].charAt(2) == 'u' || animal[0][0].charAt(2) == 'e')
 		text = text.replace(' a ', ' an ');
 	if (gemLength > 0) {
-		text = '**🌱 | ' + p.msg.author.username + '**, hunt is empowered by ';
+		text = '**🌱 | ' + p.getName() + '**, hunt is empowered by ';
 		gemText = '';
 		for (let i in gems) {
 			let remaining = gems[i].activecount;

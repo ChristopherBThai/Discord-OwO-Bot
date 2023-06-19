@@ -51,7 +51,7 @@ async function addUser(args, p, ctx, canvas, callback) {
 	let text = args.text;
 	let url = await p.getMention(text);
 	if (!url) {
-		p.send('**🚫 | ' + p.msg.author.username + '**, I could not find that user', 3000);
+		p.send('**🚫 | ' + p.getName() + '**, I could not find that user', 3000);
 		return;
 	}
 
@@ -79,7 +79,7 @@ async function addUser(args, p, ctx, canvas, callback) {
 
 	url = url.avatarURL.replace('.jpg', '.png').replace('.gif', '.png');
 	if (!url) {
-		p.send('**🚫 | ' + p.msg.author.username + '**, I could not find that user', 3000);
+		p.send('**🚫 | ' + p.getName() + '**, I could not find that user', 3000);
 		return;
 	}
 
@@ -87,7 +87,7 @@ async function addUser(args, p, ctx, canvas, callback) {
 		await request.get(url, callbackImage(p, ctx, x, y, args.imageSize, callback));
 	} catch (err) {
 		console.error(err);
-		p.send('**🚫 | ' + p.msg.author.username + '**, could not grab the image', 3000);
+		p.send('**🚫 | ' + p.getName() + '**, could not grab the image', 3000);
 	}
 }
 
@@ -95,7 +95,7 @@ async function addEmoji(args, p, ctx, canvas, callback) {
 	let text = args.text;
 	let url = text.match(/:[0-9]+>/gi);
 	if (!url || !url[0]) {
-		p.send('**🚫 | ' + p.msg.author.username + '**, I could not grab the emoji', 3000);
+		p.send('**🚫 | ' + p.getName() + '**, I could not grab the emoji', 3000);
 		return;
 	}
 	url = 'https://cdn.discordapp.com/emojis/' + url[0].slice(1, url[0].length - 1) + '.png';
@@ -108,7 +108,7 @@ async function addEmoji(args, p, ctx, canvas, callback) {
 		request.get(url, callbackImage(p, ctx, x, y, args.imageSize, callback));
 	} catch (err) {
 		console.error(err);
-		p.send('**🚫 | ' + p.msg.author.username + '**, could not grab the image', 3000);
+		p.send('**🚫 | ' + p.getName() + '**, could not grab the image', 3000);
 	}
 }
 
@@ -121,7 +121,7 @@ function callbackImage(p, ctx, x, y, size, callback) {
 				callback();
 			};
 			img.onerror = function () {
-				p.send('**🚫 | ' + p.msg.author.username + '**, I could not grab the image', 3000);
+				p.send('**🚫 | ' + p.getName() + '**, I could not grab the image', 3000);
 			};
 			img.src = body;
 		} else console.error(err);
@@ -151,7 +151,7 @@ function addText(args, p, ctx, canvas, callback) {
 	let measure = ctx.measureText(text);
 	let height = Math.abs(measure.actualBoundingBoxAscent - measure.actualBoundingBoxDescent);
 	if (measure.width > args.width || height > args.height) {
-		p.send('**🚫 | ' + p.msg.author.username + '**, The text is too long!', 3000);
+		p.send('**🚫 | ' + p.getName() + '**, The text is too long!', 3000);
 		return;
 	}
 

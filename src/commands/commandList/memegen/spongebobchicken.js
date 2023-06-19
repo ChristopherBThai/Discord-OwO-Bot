@@ -59,14 +59,14 @@ module.exports = new CommandInterface({
 			let lines = text.split(/\r\n|\r|\n/).length - 1;
 			// te = ctx.measureText(text);
 			if (lines > 4) {
-				p.send('**🚫 | ' + p.msg.author.username + '**, The text is too long!');
+				p.send('**🚫 | ' + p.getName() + '**, The text is too long!');
 				p.setCooldown(5);
 				return;
 			}
 			ctx.fillText(text, 10, 80 - lines * 15);
 
 			let buf = canvas.toBuffer();
-			p.send('**🖼 | ' + p.msg.author.username + '** generated a meme!', null, {
+			p.send('**🖼 | ' + p.getName() + '** generated a meme!', null, {
 				file: buf,
 				name: 'meme.png',
 			});

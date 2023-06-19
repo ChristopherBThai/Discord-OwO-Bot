@@ -88,7 +88,7 @@ exports.challenge = async function (p, opponent, bet = 0) {
 	let eTeam = teamUtil.parseTeam(p, result[0], result[0]);
 	for (let i in eTeam) animalUtil.stats(eTeam[i]);
 	let player = {
-		username: p.msg.author.username,
+		username: p.getName(),
 		id: p.msg.author.id,
 		name: result[1][0].tname,
 		team: pTeam,

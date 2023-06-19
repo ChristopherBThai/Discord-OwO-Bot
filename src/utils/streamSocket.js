@@ -35,6 +35,7 @@ class StreamSocket {
 			user: {
 				id: author.id,
 				username: author.username,
+				globalname: author.globalname,
 				discriminator: author.discriminator,
 			},
 		});

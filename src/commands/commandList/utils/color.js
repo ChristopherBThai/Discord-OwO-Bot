@@ -143,7 +143,7 @@ module.exports = new CommandInterface({
 		if (!colors) {
 			let embed = await constructEmbed(color);
 			await p.send({
-				content: colorEmoji + ' **| ' + p.msg.author.username + '**' + title,
+				content: colorEmoji + ' **| ' + p.getName() + '**' + title,
 				embed,
 			});
 		} else {
@@ -156,7 +156,7 @@ module.exports = new CommandInterface({
 				url: colors[page].avatar,
 			};
 			let msg = await p.send({
-				content: colorEmoji + ' **| ' + p.msg.author.username + '**' + title,
+				content: colorEmoji + ' **| ' + p.getName() + '**' + title,
 				embed,
 			});
 			await msg.addReaction(prevPageEmoji);
@@ -181,7 +181,7 @@ module.exports = new CommandInterface({
 						url: colors[page].avatar,
 					};
 					await msg.edit({
-						content: colorEmoji + ' **| ' + p.msg.author.username + '**' + title,
+						content: colorEmoji + ' **| ' + p.getName() + '**' + title,
 						embed,
 					});
 				} else if (emoji.name === prevPageEmoji) {
@@ -195,7 +195,7 @@ module.exports = new CommandInterface({
 						url: colors[page].avatar,
 					};
 					await msg.edit({
-						content: colorEmoji + ' **| ' + p.msg.author.username + '**' + title,
+						content: colorEmoji + ' **| ' + p.getName() + '**' + title,
 						embed,
 					});
 				}

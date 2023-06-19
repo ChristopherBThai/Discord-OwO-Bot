@@ -90,7 +90,7 @@ class Lxv extends Collectible {
 			super.manualMerge(p);
 		} else {
 			p.send(
-				`${this.emoji} **| ${p.msg.author.username}** pats the hedge. But it seems to have made them mad...` +
+				`${this.emoji} **| ${p.getName()}** pats the hedge. But it seems to have made them mad...` +
 					'\n<:826054135518199818:1055044683396562984> **|** They are very angry now. Mind your fingers!'
 			);
 		}

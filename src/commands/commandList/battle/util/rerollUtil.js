@@ -211,7 +211,7 @@ function fetchNewWeapon(p, weapon, type) {
 function createEmbed(p, oldWeapon, newWeapon) {
 	const embed = {
 		author: {
-			name: p.msg.author.username + ' spent ' + rerollPrice + ' Weapon Shards to reroll!',
+			name: p.getName() + ' spent ' + rerollPrice + ' Weapon Shards to reroll!',
 			icon_url: p.msg.author.dynamicAvatarURL(),
 		},
 		footer: {

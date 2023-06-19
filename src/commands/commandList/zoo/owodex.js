@@ -84,38 +84,38 @@ module.exports = new CommandInterface({
 				desc = desc
 					.replace(
 						' ?' + descID + '? \n\n',
-						tempUser ? '* ***' + tempUser.username + '*** \n*' : '* ***A User*** \n\n*'
+						tempUser ? '* ***' + p.getName(tempUser) + '*** \n*' : '* ***A User*** \n\n*'
 					)
 					.replace(
 						' ?' + descID + '?\n\n',
-						tempUser ? '* ***' + tempUser.username + '*** \n*' : '* ***A User*** \n\n*'
+						tempUser ? '* ***' + p.getName(tempUser) + '*** \n*' : '* ***A User*** \n\n*'
 					)
 					.replace(
 						' ?' + descID + '? \n',
-						tempUser ? '* ***' + tempUser.username + '*** \n*' : '* ***A User*** \n*'
+						tempUser ? '* ***' + p.getName(tempUser) + '*** \n*' : '* ***A User*** \n*'
 					)
 					.replace(
 						' ?' + descID + '?\n',
-						tempUser ? '* ***' + tempUser.username + '*** \n*' : '* ***A User*** \n*'
+						tempUser ? '* ***' + p.getName(tempUser) + '*** \n*' : '* ***A User*** \n*'
 					)
 					.replace(
 						' ?' + descID + '? ',
-						tempUser ? '* ***' + tempUser.username + '*** *' : '* ***A User*** *'
+						tempUser ? '* ***' + p.getName(tempUser) + '*** *' : '* ***A User*** *'
 					)
 					.replace(
 						' ?' + descID + '?*',
-						tempUser ? '* ***' + tempUser.username + '***' : '* ***A User***'
+						tempUser ? '* ***' + p.getName(tempUser) + '***' : '* ***A User***'
 					)
 					.replace(
 						' ?' + descID + '?,',
-						tempUser ? '* ***' + tempUser.username + '*** *,' : '* ***A User*** *,'
+						tempUser ? '* ***' + p.getName(tempUser) + '*** *,' : '* ***A User*** *,'
 					);
 			}
 			ids = desc.match(/\?[0-9]+\!/g);
 			for (let i in ids) {
 				let descID = ids[i].match(/[0-9]+/);
 				let tempUser = await p.fetch.getUser(descID[0]);
-				const username = tempUser ? tempUser.username + '#' + tempUser.discriminator : 'A User';
+				const username = tempUser ? p.getUniqueName(tempUser) : 'A User';
 				desc = desc
 					.replace(' ?' + descID + '! \n\n', '* ***' + username + '*** \n\n*')
 					.replace(' ?' + descID + '!\n\n', '* ***' + username + '*** \n\n*')

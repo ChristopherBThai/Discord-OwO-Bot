@@ -72,7 +72,7 @@ module.exports = new CommandInterface({
 				console.error(err);
 				return;
 			}
-			let header = '🌿 🌱 🌳** ' + msg.author.username + "'s zoo! **🌳 🌿 🌱\n";
+			let header = '🌿 🌱 🌳** ' + p.getName() + "'s zoo! **🌳 🌿 🌱\n";
 			let text = display;
 			var additional0 = '';
 			var additional = '';

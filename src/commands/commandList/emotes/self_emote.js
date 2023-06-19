@@ -37,7 +37,7 @@ module.exports = new CommandInterface({
 		if (emote == undefined) return;
 		if (emote.alt != undefined) emote = emotes[emote.alt];
 		let text = emote.msg[Math.floor(Math.random() * emote.msg.length)];
-		text = text.replace(/\?/, p.msg.author.username);
+		text = text.replace(/\?/, p.getName());
 		weeb.grab(p, emote.name, 'gif', text);
 	},
 });

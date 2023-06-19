@@ -37,10 +37,10 @@ module.exports = new CommandInterface({
 		}
 
 		let userObj = await p.macro.getUser(user.id);
-		const reason = 'requested by ' + p.msg.author.username;
+		const reason = 'requested by ' + p.getName();
 		await p.macro.humanCheck(userObj, p, penalty, reason, user, type);
 		await p.macro.setUser(user.id, userObj);
 
-		p.send('Sent verification to ' + user.username + '#' + user.discriminator);
+		p.send('Sent verification to ' + p.getUniqueName(user));
 	},
 });

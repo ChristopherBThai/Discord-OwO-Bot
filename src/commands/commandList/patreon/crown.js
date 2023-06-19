@@ -77,6 +77,8 @@ async function give(p, user) {
 
 	await p.redis.incr('crown', user.id, 2);
 	p.send(
-		`${crownEmoji} **| ${user.username}**, See that Shiny Crown? It has your name on it! Thanks to ${p.msg.author.username}, you have received 2 of these priceless relics ${crownEmoji} ${crownCat}`
+		`${crownEmoji} **| ${
+			user.username
+		}**, See that Shiny Crown? It has your name on it! Thanks to ${p.getName()}, you have received 2 of these priceless relics ${crownEmoji} ${crownCat}`
 	);
 }

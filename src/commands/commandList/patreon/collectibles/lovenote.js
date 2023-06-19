@@ -97,7 +97,7 @@ class LoveNote extends Collectible {
 		}
 		const msg = this.mergeMsg
 			.replaceAll('?giveMsg?', selectedGiveMsg)
-			.replaceAll('?user?', p.msg.author.username)
+			.replaceAll('?user?', p.getName())
 			.replaceAll('?emoji?', this.emoji)
 			.replaceAll('?blank?', p.config.emoji.blank)
 			.replaceAll('?mergeCount?', result3)

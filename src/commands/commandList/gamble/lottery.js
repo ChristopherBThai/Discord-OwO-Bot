@@ -7,7 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const maxBet = 150000;
+const maxBet = 250000;
 
 module.exports = new CommandInterface({
 	alias: ['lottery', 'bet', 'lotto'],
@@ -107,7 +107,7 @@ async function bet(con, msg, args, global, p) {
 				text: '*Percentage and jackpot may change over time',
 			},
 			author: {
-				name: msg.author.username + "'s Lottery Submission",
+				name: p.getName() + "'s Lottery Submission",
 			},
 			fields: [
 				{
@@ -175,7 +175,7 @@ async function display(con, msg, p) {
 			text: '*Percentage and jackpot may change over time',
 		},
 		author: {
-			name: msg.author.username + "'s Lottery Status",
+			name: p.getName() + "'s Lottery Status",
 		},
 		fields: [
 			{

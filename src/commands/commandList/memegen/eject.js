@@ -43,7 +43,7 @@ module.exports = new CommandInterface({
 			const url = `${process.env.GEN_HOST}/img/${uuid}.gif`;
 			const data = await p.DataResolver.urlToBuffer(url);
 			await p.send(
-				`${rocketEmoji} **| ${p.msg.author.username}** decided to vote off ${user.username}`,
+				`${rocketEmoji} **| ${p.getName()}** decided to vote off ${p.getName(user)}`,
 				null,
 				{ file: data, name: 'eject.gif' }
 			);
@@ -56,7 +56,7 @@ module.exports = new CommandInterface({
 
 function fetchImage(p, user) {
 	const info = {
-		username: user.username,
+		username: p.getName(user),
 		avatarLink: user.dynamicAvatarURL('png'),
 		password: process.env.GEN_PASS,
 	};

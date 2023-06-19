@@ -210,17 +210,17 @@ async function autohunt(p, msg, con, args, global, send) {
 	if (password) password = password.toLowerCase();
 
 	if (!cowoncy && !length) {
-		send('**🚫 | ' + msg.author.username + '**, Wrong syntax!', 3000);
+		send('**🚫 | ' + p.getName() + '**, Wrong syntax!', 3000);
 		return;
 	}
 
 	if (cowoncy <= 0 && !length) {
-		send('**🚫 | ' + msg.author.username + '**, Invalid cowoncy amount!', 3000);
+		send('**🚫 | ' + p.getName() + '**, Invalid cowoncy amount!', 3000);
 		return;
 	}
 
 	if (length != null && length <= 0) {
-		send('**🚫 | ' + msg.author.username + '**, Invalid duration!', 3000);
+		send('**🚫 | ' + p.getName() + '**, Invalid duration!', 3000);
 		return;
 	}
 
@@ -266,7 +266,7 @@ async function autohunt(p, msg, con, args, global, send) {
 
 	//Check if enough cowoncy
 	if (!result[1][0] || result[1][0].money < cowoncy) {
-		send('**🚫 | ' + msg.author.username + "**, You don't have enough cowoncy!", 3000);
+		send('**🚫 | ' + p.getName() + "**, You don't have enough cowoncy!", 3000);
 		return;
 	}
 
@@ -294,7 +294,7 @@ async function autohunt(p, msg, con, args, global, send) {
 			'**' +
 			bot +
 			' | ' +
-			msg.author.username +
+			p.getName() +
 			'**, Here is your password!\n**<:blank:427371936482328596> |** Use the command `owo autohunt ' +
 			cowoncy +
 			' {password}`';
@@ -307,7 +307,7 @@ async function autohunt(p, msg, con, args, global, send) {
 		if (!password)
 			send(
 				'**🚫 | ' +
-					msg.author.username +
+					p.getName() +
 					'**, Please include your password! The command is `owo autohunt ' +
 					cowoncy +
 					' {password}`!\n**<:blank:427371936482328596> |** Password will reset in ' +
@@ -317,7 +317,7 @@ async function autohunt(p, msg, con, args, global, send) {
 		else
 			send(
 				'**🚫 | ' +
-					msg.author.username +
+					p.getName() +
 					'**, Wrong password! The command is `owo autohunt ' +
 					cowoncy +
 					' {password}`!\n**<:blank:427371936482328596> |** Password will reset in ' +
@@ -380,7 +380,7 @@ async function autohunt(p, msg, con, args, global, send) {
 		'**' +
 		bot +
 		' |** `BEEP BOOP. `**`' +
-		msg.author.username +
+		p.getName() +
 		'`**`, YOU SPENT ' +
 		global.toFancyNum(cowoncy) +
 		' cowoncy`\n**<:blank:427371936482328596> |** `I WILL BE BACK IN ' +
@@ -452,7 +452,7 @@ async function display(p, msg, con) {
 	let embed = {
 		color: p.config.embed_color,
 		author: {
-			name: msg.author.username + "'s HuntBot",
+			name: p.getName() + "'s HuntBot",
 			icon_url: msg.author.avatarURL,
 		},
 		fields: [

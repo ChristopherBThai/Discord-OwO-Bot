@@ -88,8 +88,7 @@ async function generateJson(p, user) {
 		},
 		user: {
 			avatarURL,
-			name: user.username,
-			discriminator: user.discriminator,
+			name: p.getName(user),
 			title,
 		},
 		aboutme,
@@ -137,8 +136,7 @@ async function getMarriage(p, user) {
 	let tag = '';
 	if (!so) so = 'Someone';
 	else {
-		tag = '#' + so.discriminator;
-		so = so.username;
+		so = p.getName(so);
 	}
 	return { img: 'ring_' + ring.id + '.png', text: so, tag };
 }

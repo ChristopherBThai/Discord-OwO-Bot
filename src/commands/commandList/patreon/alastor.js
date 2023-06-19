@@ -94,16 +94,16 @@ async function feed(p) {
 	const afterMid = dateUtil.afterMidnight(lasttime);
 
 	let streak = 1;
-	let title = p.msg.author.username + "'s Alastor";
+	let title = p.getName() + "'s Alastor";
 	if (afterMid.after) {
 		await p.redis.hset('cd_' + p.msg.author.id, table, afterMid.now);
 		await p.redis.expire('cd_' + p.msg.author.id);
 		if (afterMid.withinDay || !lasttime) {
 			streak = await p.redis.hincrby(p.msg.author.id, table);
-			title = p.msg.author.username + ' fed Alastor!';
+			title = p.getName() + ' fed Alastor!';
 		} else {
 			await p.redis.hset(p.msg.author.id, table, 1);
-			title = p.msg.author.username + ', Alastor has stopped broadcasting';
+			title = p.getName() + ', Alastor has stopped broadcasting';
 		}
 	} else {
 		streak = await p.redis.hget(p.msg.author.id, table);
@@ -130,7 +130,7 @@ async function display(p, title, gif) {
 	const lasttime = await p.redis.hget('cd_' + p.msg.author.id, table);
 	const afterMid = dateUtil.afterMidnight(lasttime);
 	const streak = await p.redis.hget(p.msg.author.id, table);
-	if (!title) title = p.msg.author.username + "'s Alastor";
+	if (!title) title = p.getName() + "'s Alastor";
 	if (!gif) gif = gif2;
 
 	const embed = {

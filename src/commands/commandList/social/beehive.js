@@ -39,7 +39,11 @@ module.exports = new CommandInterface({
 		}
 
 		const digits = getDigits(bees);
-		let text = `**${honeyEmoji} ${this.msg.author.username}'s Beehive ${honeyEmoji}**\n${this.config.emoji.blank} ${combEmoji} ${combEmoji} ${combEmoji} ${combEmoji} ${combEmoji} ${this.config.emoji.blank}\n${combEmoji}  `;
+		let text = `**${honeyEmoji} ${this.getName()}'s Beehive ${honeyEmoji}**\n${
+			this.config.emoji.blank
+		} ${combEmoji} ${combEmoji} ${combEmoji} ${combEmoji} ${combEmoji} ${
+			this.config.emoji.blank
+		}\n${combEmoji}  `;
 
 		let count = 0;
 		for (let i in bees) {

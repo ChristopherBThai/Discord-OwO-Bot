@@ -138,12 +138,12 @@ async function sellAnimal(p, msg, con, animal, count, send, global) {
 
 	if (count == 'all') {
 		if (!result[0][0] || result[0][0].count <= 0) {
-			send('**🚫 | ' + msg.author.username + "**, You don't have enough animals! >:c", 3000);
+			send('**🚫 | ' + p.getName() + "**, You don't have enough animals! >:c", 3000);
 		} else {
 			count = result[0][0].count;
 			send(
 				'**🔪 | ' +
-					msg.author.username +
+					p.getName() +
 					'** sacrificed **' +
 					global.unicodeAnimal(animal.value) +
 					'x' +
@@ -159,7 +159,7 @@ async function sellAnimal(p, msg, con, animal, count, send, global) {
 	} else if (result[1] && result[1].affectedRows > 0) {
 		send(
 			'**🔪 | ' +
-				msg.author.username +
+				p.getName() +
 				'** sacrificed **' +
 				global.unicodeAnimal(animal.value) +
 				'x' +
@@ -172,10 +172,7 @@ async function sellAnimal(p, msg, con, animal, count, send, global) {
 		);
 		p.logger.incr('essence', count * animal.essence, { type: 'sacrifice' }, p.msg);
 	} else {
-		send(
-			'**🚫 | ' + msg.author.username + "**, You can't sacrifice more than you have silly! >:c",
-			3000
-		);
+		send('**🚫 | ' + p.getName() + "**, You can't sacrifice more than you have silly! >:c", 3000);
 	}
 }
 
@@ -210,13 +207,13 @@ async function sellRank(p, msg, con, rank, send, global) {
 
 	result = await p.query(sql);
 	if (result[1].affectedRows <= 0) {
-		send('**🚫 | ' + msg.author.username + "**, You don't have enough animals! >:c", 3000);
+		send('**🚫 | ' + p.getName() + "**, You don't have enough animals! >:c", 3000);
 	} else {
 		let count = 0;
 		for (let i in result[0]) count += result[0][i].count;
 		send(
 			'**🔪 | ' +
-				msg.author.username +
+				p.getName() +
 				'** sacrificed **' +
 				rank.emoji +
 				'x' +
@@ -289,7 +286,7 @@ async function sellRanks(p, msg, con, ranks, send, global) {
 		sold = sold.slice(0, -1);
 		send(
 			'**🔪 | ' +
-				msg.author.username +
+				p.getName() +
 				'** sacrificed **' +
 				sold +
 				'** for **' +
@@ -309,5 +306,5 @@ async function sellRanks(p, msg, con, ranks, send, global) {
 			}
 			count++;
 		}
-	} else send('**🚫 | ' + msg.author.username + "**, You don't have enough animals! >:c", 3000);
+	} else send('**🚫 | ' + p.getName() + "**, You don't have enough animals! >:c", 3000);
 }

@@ -92,15 +92,17 @@ exports.use = async function (p, ids) {
 	let text = '';
 	if (ids.length === 1) {
 		if (!results || results.changedRows == 0) {
-			text = `**🚫 | ${p.msg.author.username}**, you already have an active ${gems[0].type} gem or you do not own this gem!`;
+			text = `**🚫 | ${p.getName()}**, you already have an active ${
+				gems[0].type
+			} gem or you do not own this gem!`;
 		} else {
 			text =
-				`**${gems[0].emoji} | ${p.msg.author.username}**, you activated a(n) **${
-					ranks[gems[0].key[0]]
-				} ${gems[0].type} Gem**!\n` + getUseGemText(gems[0]);
+				`**${gems[0].emoji} | ${p.getName()}**, you activated a(n) **${ranks[gems[0].key[0]]} ${
+					gems[0].type
+				} Gem**!\n` + getUseGemText(gems[0]);
 		}
 	} else {
-		text = `**✨ | ${p.msg.author.username}**, you activated the following gems:`;
+		text = `**✨ | ${p.getName()}**, you activated the following gems:`;
 		for (let i = 0; i < results.length; i++) {
 			if (!results[i] || results[i].changedRows == 0) {
 				text += `\r\n**🚫 |** you already have an active ${gems[i].type} gem or you do not own this gem!`;

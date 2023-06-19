@@ -89,7 +89,7 @@ async function createPage(p, page, totalPages) {
 
 	let embed = {
 		author: {
-			name: p.msg.author.username + "'s wallpapers",
+			name: p.getName() + "'s wallpapers",
 			icon_url: p.msg.author.avatarURL,
 		},
 		color: p.config.embed_color,

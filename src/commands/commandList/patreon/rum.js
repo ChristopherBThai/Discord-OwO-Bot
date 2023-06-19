@@ -79,6 +79,8 @@ async function give(p, user) {
 
 	await p.redis.incr('rum', user.id, 2);
 	p.send(
-		`${rumEmoji} **| ${user.username}**, you have received two tankards of rum from ${p.msg.author.username}! Yarrrr!`
+		`${rumEmoji} **| ${
+			user.username
+		}**, you have received two tankards of rum from ${p.getName()}! Yarrrr!`
 	);
 }

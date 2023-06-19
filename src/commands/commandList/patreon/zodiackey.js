@@ -121,7 +121,7 @@ module.exports = new CommandInterface({
 
 async function display(p) {
 	let counts = await p.redis.hmget('data_' + p.msg.author.id, dataNames);
-	let text = `**${p.msg.author.username}**, you currently have:\n`;
+	let text = `**${p.getName()}**, you currently have:\n`;
 	let hasKeys = false;
 	let keyArray = Object.keys(keys);
 	for (let i in keyArray) {
@@ -156,6 +156,6 @@ async function give(p, key, user) {
 
 	await p.redis.hincrby('data_' + user.id, dataName, 2);
 	p.send(
-		`${key.emoji} **| ${user.username}** has gained 2 ${key.name} keys from **${p.msg.author.username}**!`
+		`${key.emoji} **| ${user.username}** has gained 2 ${key.name} keys from **${p.getName()}**!`
 	);
 }

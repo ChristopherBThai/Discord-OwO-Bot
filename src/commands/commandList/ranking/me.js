@@ -167,7 +167,7 @@ async function displayRanking(con, msg, sql, title, subText, p) {
 			let user = await p.fetch.getUser(id, true);
 			let name = '';
 			if (user === undefined || user.username === undefined) name = 'User Left Discord';
-			else name = '' + user.username;
+			else name = '' + p.getUniqueName(user);
 			name = name.replace('discord.gg', 'discord,gg').replace(/(```)/g, '`\u200b``');
 			embed += '#' + rank + '\t' + name + '\n' + subText(ele) + '\n';
 			rank++;
@@ -176,7 +176,7 @@ async function displayRanking(con, msg, sql, title, subText, p) {
 
 	//Current user
 	let uname;
-	if ((uname = await p.fetch.getUser(me.id, true))) uname = uname.username;
+	if ((uname = await p.fetch.getUser(me.id, true))) uname = p.getUniqueName(uname);
 	else uname = 'you';
 	uname = uname.replace('discord.gg', 'discord,gg').replace(/(```)/g, '`\u200b``');
 	embed += '< ' + rank + '   ' + uname + ' >\n' + subText(me) + '\n';
@@ -189,7 +189,7 @@ async function displayRanking(con, msg, sql, title, subText, p) {
 			var user = await p.fetch.getUser(id, true);
 			var name = '';
 			if (user === undefined || user.username === undefined) name = 'User Left Discord';
-			else name = '' + user.username;
+			else name = '' + p.getUniqueName(user);
 			name = name.replace('discord.gg', 'discord,gg');
 			embed += '#' + rank + '\t' + name + '\n' + subText(ele) + '\n';
 			rank++;
@@ -1068,7 +1068,7 @@ async function getLevelRanking(global, p) {
 		ranking = await levels.getNearbyXP(userRank);
 		text =
 			'```md\n< ' +
-			p.msg.author.username +
+			p.getUniqueName() +
 			"'s Global Level Ranking >\n> Your Rank: " +
 			p.global.toFancyNum(userRank) +
 			'\n>\t\tLvl ' +
@@ -1082,7 +1082,7 @@ async function getLevelRanking(global, p) {
 		ranking = await levels.getNearbyServerXP(userRank, p.msg.channel.guild.id);
 		text =
 			'```md\n< ' +
-			p.msg.author.username +
+			p.getUniqueName() +
 			"'s Level Ranking for " +
 			p.msg.channel.guild.name +
 			' >\n> Your Rank: ' +
@@ -1104,12 +1104,12 @@ async function getLevelRanking(global, p) {
 			text += '\t\tLvl ' + tempLevel.level + ' ' + tempLevel.currentxp + 'xp\n';
 		} else {
 			if (ranking[i] == p.msg.author.id) {
-				let user = p.msg.author.username;
+				let user = p.getUniqueName();
 				text += '< ' + counter + '\t' + user + ' >\n';
 			} else {
 				let user = await p.fetch.getUser(ranking[i]);
 				if (!user) user = 'User Left Discord';
-				else user = user.username;
+				else user = p.getUniquename(user);
 				text += '#' + counter + '\t' + user + '\n';
 			}
 			counter++;
