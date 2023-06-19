@@ -149,16 +149,13 @@ async function propose(p, user, ringId) {
 				name: 'Once you have accepted, you will receive an extra lootbox or weapon crate when you both complete your daily!',
 				value:
 					'`owo am` to accept  |  `owo dm` to decline\nYou can divorce anytime with `owo divorce` or upgrade your marriage ring with `owo marry @' +
-					user.username +
-					'#' +
-					user.discriminator +
+					p.getUniqueName(user) +
 					' {ringID}`',
 			},
 		],
 		color: p.config.embed_color,
 		author: {
-			name:
-				p.msg.author.username + ' has proposed to ' + user.username + ' with a ' + ring.name + '!',
+			name: p.getName() + ' has proposed to ' + p.getName(user) + ' with a ' + ring.name + '!',
 			icon_url: p.msg.author.avatarURL,
 		},
 		timestamp: new Date(),
@@ -197,7 +194,7 @@ async function upgradeRing(p, user, ringId, result, ringResult) {
 	let embed = {
 		description:
 			'**' +
-			p.msg.author.username +
+			p.getName() +
 			'**, are you sure you want to change your **' +
 			currentRing.name +
 			'** to a' +
@@ -302,11 +299,7 @@ async function display(p) {
 	// Display marriage info
 	let embed = {
 		author: {
-			name:
-				p.msg.author.username +
-				', you are happily married to ' +
-				(so ? so.username : 'someone') +
-				'!',
+			name: p.getName() + ', you are happily married to ' + (so ? so.username : 'someone') + '!',
 			icon_url: p.msg.author.avatarURL,
 		},
 		description:

@@ -128,7 +128,5 @@ async function reset() {
 		}
 	}
 	await this.redis.hset('data_' + user.id, data, 0);
-	await this.send(
-		`⚙️ **| ${this.msg.author.username}**, I have reset the numbers for **${user.username}**`
-	);
+	await this.send(`⚙️ **| ${this.getName()}**, I have reset the numbers for **${user.username}**`);
 }

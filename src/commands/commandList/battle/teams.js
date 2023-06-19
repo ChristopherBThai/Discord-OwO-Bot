@@ -140,7 +140,7 @@ async function displayTeams(p) {
 		if (!teams[i]) {
 			teams[i] = {
 				author: {
-					name: p.msg.author.username + "'s team",
+					name: p.getName() + "'s team",
 					icon_url: p.msg.author.avatarURL,
 				},
 				description:

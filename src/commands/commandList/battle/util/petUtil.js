@@ -33,7 +33,7 @@ exports.getAnimals = async function (p) {
 exports.getDisplay = function (p, animals) {
 	let embed = {
 		author: {
-			name: p.msg.author.username + "'s pets",
+			name: p.getName() + "'s pets",
 			icon_url: p.msg.author.avatarURL,
 		},
 		color: p.config.embed_color,

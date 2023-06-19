@@ -74,8 +74,7 @@ async function generateJson(p, user, opt) {
 		},
 		user: {
 			avatarURL,
-			name: user.username,
-			discriminator: user.discriminator,
+			name: p.getName(user),
 			title,
 		},
 		aboutme,

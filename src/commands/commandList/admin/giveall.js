@@ -20,6 +20,6 @@ module.exports = new CommandInterface({
 		let sql =
 			'UPDATE IGNORE cowoncy SET money = money + ' + amount + ' WHERE id IN (' + users + ');';
 		await p.query(sql);
-		p.send('**💎 |** ' + p.msg.author.username + ' gave @everyone ' + amount + ' cowoncy!!!');
+		p.send('**💎 |** ' + p.getName() + ' gave @everyone ' + amount + ' cowoncy!!!');
 	},
 });

@@ -43,11 +43,7 @@ module.exports = new CommandInterface({
 		let embed = {
 			fields: [
 				{
-					name:
-						user.username +
-						'#' +
-						user.discriminator +
-						(user.bot ? ' <:bot:489278383646048286>' : ''),
+					name: p.getUniqueName(user) + (user.bot ? ' <:bot:489278383646048286>' : ''),
 					value: '`ID: ' + user.id + '`',
 				},
 			],

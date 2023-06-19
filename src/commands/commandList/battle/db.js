@@ -55,6 +55,6 @@ module.exports = new CommandInterface({
 		user = await p.fetch.getUser(user);
 		if (!user) user = 'an opponent';
 
-		p.replyMsg('⚔', `, You have declined your battle with **${user.username}**`);
+		p.replyMsg('⚔️', `, You have declined your battle with **${user.username}**`);
 	},
 });

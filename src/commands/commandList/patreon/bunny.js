@@ -78,6 +78,6 @@ async function give(p, user) {
 
 	await p.redis.hincrby('data_' + user.id, data, 2);
 	p.send(
-		`${emoji} **| ${p.msg.author.username}** gave ${user.username} 2 bunnies from their garden! owo ${emoji}`
+		`${emoji} **| ${p.getName()}** gave ${user.username} 2 bunnies from their garden! owo ${emoji}`
 	);
 }

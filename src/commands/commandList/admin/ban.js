@@ -76,7 +76,7 @@ module.exports = new CommandInterface({
 
 		let text = `${banEmoji} **|** I have banned ${success.length} users:\n`;
 		success.forEach((user) => {
-			text += `[${user.id}] ${user.username}#${user.discriminator}\n`;
+			text += `[${user.id}] ${p.getUniqueName(user)}\n`;
 		});
 		if (successGuild.length) {
 			text += `\n${banEmoji} **|** I have banned ${successGuild.length} guilds:\n`;
@@ -88,7 +88,7 @@ module.exports = new CommandInterface({
 			text += `\n${banEmoji} **|** I could not DM these users:\n`;
 			text += failed.join('\n') + '\n';
 			dmFailed.forEach((user) => {
-				text += `[${user.id}] ${user.username}#${user.discriminator}\n`;
+				text += `[${user.id}] ${p.getUniqueName(user)}\n`;
 			});
 		}
 		if (reason) {

@@ -50,8 +50,7 @@ exports.buy = async function (p, id) {
 	// Send reply
 	let embed = {
 		author: {
-			name:
-				p.msg.author.username + ', you have successfully purchased "' + result[0][0].bname + '"!',
+			name: p.getName() + ', you have successfully purchased "' + result[0][0].bname + '"!',
 			icon_url: p.msg.author.avatarURL,
 		},
 		color: p.config.embed_color,

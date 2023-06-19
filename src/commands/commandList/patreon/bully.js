@@ -55,7 +55,7 @@ module.exports = new CommandInterface({
 			return;
 		}
 		if (p.msg.author.id == target.id) {
-			let text = '**' + p.msg.author.username + "**! Don't bully yourself!";
+			let text = '**' + this.getName() + "**! Don't bully yourself!";
 			p.send(text);
 			return;
 		}
@@ -68,7 +68,7 @@ module.exports = new CommandInterface({
 				url: emote,
 			},
 			author: {
-				name: p.msg.author.username + ' bullies ' + target.username + '! ' + comment,
+				name: this.getName() + ' bullies ' + this.getName(target) + '! ' + comment,
 				url: emote,
 				icon_url: p.msg.author.avatarURL,
 			},

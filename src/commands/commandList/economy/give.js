@@ -82,11 +82,11 @@ async function parseArgs() {
 	} else if (user.id == this.msg.author.id) {
 		this.send(
 			'**💳 | ' +
-				this.msg.author.username +
+				this.getName() +
 				'** sent **' +
 				this.global.toFancyNum(amount) +
 				' cowoncy** to... **' +
-				user.username +
+				this.getName(user) +
 				'**... *but... why?*'
 		);
 		return { error: true };
@@ -128,9 +128,9 @@ async function sendMoney(user, amount) {
 }
 
 async function sendMsg(user, amount, message) {
-	let text = `**💳 | ${this.msg.author.username}** sent **${this.global.toFancyNum(
+	let text = `**💳 | ${this.getName()}** sent **${this.global.toFancyNum(
 		amount
-	)} cowoncy** to **${user.username}**!`;
+	)} cowoncy** to **${this.getName(user)}**!`;
 	text = alterGive.alter(this, this.msg.author.id, text, {
 		from: this.msg.author,
 		to: user,
@@ -155,20 +155,15 @@ async function confirmation(user, amount) {
 		description:
 			`\nTo confirm this transaction, click ${agree} Confirm.` +
 			`\nTo cancel this transaction, click ${decline} Cancel.` +
-			`\n\n${this.config.emoji.warning} *It is against our rules to trade cowoncy for anything of monetary value. This includes real money, crypto, nitro, or anything similar. You will be* ***banned*** *for doing so.*`,
+			`\n\n${this.config.emoji.warning} *It is against our rules to trade cowoncy for anything of monetary value. This includes real money, crypto, nitro, or anything similar. You will be* ***banned*** *for doing so.*` +
+			`\n\n**<@${this.msg.author.id}> will give <@${user.id}>:**` +
+			`\n\`\`\`fix\n${this.global.toFancyNum(amount)} cowoncy${spacer}\n\`\`\``,
 		color: this.config.embed_color,
 		timestamp: new Date(),
 		author: {
-			name: `${this.msg.author.username}#${this.msg.author.discriminator}, you are about to give cowoncy to ${user.username}#${user.discriminator}`,
+			name: `${this.getName()}, you are about to give cowoncy to ${this.getName(user)}`,
 			icon_url: this.msg.author.avatarURL,
 		},
-		fields: [
-			{
-				name: `${this.msg.author.username}#${this.msg.author.discriminator} will give ${user.username}#${user.discriminator}:`,
-				value: `\`\`\`fix\n${this.global.toFancyNum(amount)} cowoncy${spacer}\n\`\`\``,
-				inline: true,
-			},
-		],
 	};
 
 	let components = [
@@ -211,26 +206,26 @@ async function confirmation(user, amount) {
 
 	return new Promise((res, _rej) => {
 		const accepted = {};
-		collector.on('collect', async (component, reactionUser, ack, _err) => {
+		collector.on('collect', async (component, reactionMember, ack, _err) => {
 			if (component === 'give_decline') {
 				collector.stop('done');
 				content.embed.color = this.config.fail_color;
 				content.components[0].components[0].disabled = true;
 				content.components[0].components[1].disabled = true;
-				content.content = `**${reactionUser.username}** declined the transaction`;
+				content.content = `**${this.getName(reactionMember)}** declined the transaction`;
 				await ack(content);
 				res(false);
 			} else {
-				if (accepted[reactionUser.id]) {
+				if (accepted[reactionMember.id]) {
 					return;
 				}
-				accepted[reactionUser.id] = true;
+				accepted[reactionMember.id] = true;
 				const usernames = [];
 				for (let key in accepted) {
 					if (key === this.msg.author.id) {
-						usernames.push(this.msg.author.username + '#' + this.msg.author.discriminator);
+						usernames.push(this.getName());
 					} else if (key === user.id) {
-						usernames.push(user.username + '#' + user.discriminator);
+						usernames.push(this.getName(user));
 					}
 				}
 				content.embed.footer = {

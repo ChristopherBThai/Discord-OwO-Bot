@@ -91,9 +91,9 @@ async function give(p, con, msg, args, global, send) {
 	result = await p.query(sql);
 	let text =
 		'**<a:cookieeat:423020737364885525> | ' +
-		user.username +
+		p.getName() +
 		'**! You got a cookie from **' +
-		msg.author.username +
+		p.getName() +
 		'**! *nom nom nom c:<*';
 	text = alterCookie.alter(p.msg.author.id, text, {
 		from: p.msg.author,
@@ -127,7 +127,7 @@ async function display(p) {
 
 	let text =
 		'**<a:cookieeat:423020737364885525> | ' +
-		p.msg.author.username +
+		p.getName() +
 		'**! You currently have **' +
 		count +
 		'** cookies! Yummy! c:<\n**<:blank:427371936482328596> |** ' +

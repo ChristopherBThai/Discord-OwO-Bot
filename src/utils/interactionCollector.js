@@ -24,9 +24,10 @@ class InteractionCollector {
 	}
 
 	interact({ member, message, data, id, token }) {
+		member.id = member.user.id;
 		const listener = this.listeners[message.id] || this.listeners[message.interaction?.id];
 		if (listener) {
-			listener.interact(data, member.user, id, token);
+			listener.interact(data, member, id, token);
 		} else {
 			const url = `https://discord.com/api/v8/interactions/${id}/${token}/callback`;
 			const content = {

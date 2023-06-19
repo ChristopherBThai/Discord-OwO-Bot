@@ -91,7 +91,7 @@ async function checkDb(p, id, text, info) {
 	if (info.gemText) {
 		type = 'gems';
 		replacers = {
-			username: p.msg.author.username,
+			username: p.getName(),
 			discriminator: p.msg.author.discriminator,
 			blank: p.config.emoji.blank,
 			gems: info.gemText,
@@ -103,7 +103,7 @@ async function checkDb(p, id, text, info) {
 		type = 'nogems';
 		const animal = p.global.validAnimal(info.animal[0][1]);
 		replacers = {
-			username: p.msg.author.username,
+			username: p.getName(),
 			discriminator: p.msg.author.discriminator,
 			blank: p.config.emoji.blank,
 			pets: info.petText || '',

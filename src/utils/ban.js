@@ -115,9 +115,7 @@ exports.banCommand = async function (p, user, command, reason) {
 		await p.sender.msgModLogChannel(
 			skullEmoji +
 				' **⚠ | ' +
-				user.username +
-				'#' +
-				user.discriminator +
+				p.getUniqueName() +
 				'** is banned from using `' +
 				command +
 				'` forever.\n' +
@@ -137,9 +135,7 @@ exports.banCommand = async function (p, user, command, reason) {
 	await p.sender.msgModLogChannel(
 		skullEmoji +
 			' **| ' +
-			user.username +
-			'#' +
-			user.discriminator +
+			p.getUniqueName() +
 			'** is banned from using `' +
 			command +
 			'` forever.\n' +
@@ -168,9 +164,7 @@ exports.liftCommand = async function (p, user, command) {
 			await p.send(
 				liftEmoji +
 					' **⚠ | ' +
-					user.username +
-					'#' +
-					user.discriminator +
+					p.getUniqueName() +
 					"**'s ban on `" +
 					command +
 					'` has been lifted!\n' +
@@ -186,9 +180,7 @@ exports.liftCommand = async function (p, user, command) {
 		await p.send(
 			liftEmoji +
 				' **| ' +
-				user.username +
-				'#' +
-				user.discriminator +
+				p.getUniqueName() +
 				"**'s ban on `" +
 				command +
 				'` has been lifted!\n' +
@@ -197,14 +189,6 @@ exports.liftCommand = async function (p, user, command) {
 				user.id
 		);
 	} else {
-		await p.errorMsg(
-			', **' +
-				user.username +
-				'#' +
-				user.discriminator +
-				'** does not have a ban on `' +
-				command +
-				'`!'
-		);
+		await p.errorMsg(', **' + p.getUniqueName() + '** does not have a ban on `' + command + '`!');
 	}
 };

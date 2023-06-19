@@ -69,14 +69,14 @@ function car(p) {
 		let lines = text.split(/\r\n|\r|\n/).length - 1;
 		// te = ctx.measureText(text);
 		if (lines > 4) {
-			p.send('**🚫 | ' + p.msg.author.username + '**, The text is too long!', 3000);
+			p.send('**🚫 | ' + p.getName() + '**, The text is too long!', 3000);
 			p.setCooldown(5);
 			return;
 		}
 		ctx.fillText(text, 10, 80 - lines * 15);
 
 		let buf = canvas.toBuffer();
-		p.send('**🖼 | ' + p.msg.author.username + '** generated a meme!', null, {
+		p.send('**🖼 | ' + p.getName() + '** generated a meme!', null, {
 			file: buf,
 			name: 'meme.png',
 		});
@@ -91,7 +91,7 @@ function user(p) {
 		}
 		let url = await p.getMention(p.args[p.args.length - 1]);
 		if (!url) {
-			p.send('**🚫 | ' + p.msg.author.username + '**, I could not find that user', 3000);
+			p.send('**🚫 | ' + p.getName() + '**, I could not find that user', 3000);
 			return;
 		}
 		url = url.avatarURL.replace('.jpg', '.png').replace('.gif', '.png');
@@ -125,23 +125,23 @@ function user(p) {
 					let lines = text.split(/\r\n|\r|\n/).length - 1;
 					// te = ctx.measureText(text);
 					if (lines > 4) {
-						p.send('**🚫 | ' + p.msg.author.username + '**, The text is too long!');
+						p.send('**🚫 | ' + p.getName() + '**, The text is too long!');
 						p.setCooldown(5);
 						return;
 					}
 					ctx.fillText(text, 10, 80 - lines * 15);
 
 					let buf = canvas.toBuffer();
-					p.send('**🖼 | ' + p.msg.author.username + '** generated a meme!', null, {
+					p.send('**🖼 | ' + p.getName() + '** generated a meme!', null, {
 						file: buf,
 						name: 'meme.png',
 					});
 				};
 				img2.onerror = function () {
-					p.send('**🚫 | ' + p.msg.author.username + '**, I could not grab the image', 3000);
+					p.send('**🚫 | ' + p.getName() + '**, I could not grab the image', 3000);
 				};
 				img2.src = body;
-			} else p.send('**🚫 | ' + p.msg.author.username + '**, I could not grab the image', 3000);
+			} else p.send('**🚫 | ' + p.getName() + '**, I could not grab the image', 3000);
 		});
 	});
 }
@@ -155,7 +155,7 @@ function emoji(p) {
 
 		let url = p.args[p.args.length - 1].match(/:[0-9]+>/gi);
 		if (!url || !url[0]) {
-			p.send('**🚫 | ' + p.msg.author.username + '**, I could not grab the emoji', 3000);
+			p.send('**🚫 | ' + p.getName() + '**, I could not grab the emoji', 3000);
 			p.setCooldown(5);
 			return;
 		}
@@ -190,23 +190,23 @@ function emoji(p) {
 					let lines = text.split(/\r\n|\r|\n/).length - 1;
 					// te = ctx.measureText(text);
 					if (lines > 4) {
-						p.send('**🚫 | ' + p.msg.author.username + '**, The text is too long!');
+						p.send('**🚫 | ' + p.getName() + '**, The text is too long!');
 						p.setCooldown(5);
 						return;
 					}
 					ctx.fillText(text, 10, 80 - lines * 15);
 
 					let buf = canvas.toBuffer();
-					p.send('**🖼 | ' + p.msg.author.username + '** generated a meme!', null, {
+					p.send('**🖼 | ' + p.getName() + '** generated a meme!', null, {
 						file: buf,
 						name: 'meme.png',
 					});
 				};
 				img2.onerror = function () {
-					p.send('**🚫 | ' + p.msg.author.username + '**, I could not grab the image', 3000);
+					p.send('**🚫 | ' + p.getName() + '**, I could not grab the image', 3000);
 				};
 				img2.src = body;
-			} else p.send('**🚫 | ' + p.msg.author.username + '**, I could not grab the image', 3000);
+			} else p.send('**🚫 | ' + p.getName() + '**, I could not grab the image', 3000);
 		});
 	});
 }

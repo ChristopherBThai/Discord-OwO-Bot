@@ -251,7 +251,7 @@ async function createMessage(
 				const winner = userWinners[i];
 				const user = await owo.fetch.getUser(winner.id, false);
 				if (user) {
-					embed.description += `\n${user.username}#${user.discriminator} • <@${winner.id}>`;
+					embed.description += `\n${global.getUniqueName(user)} • <@${winner.id}>`;
 				} else {
 					embed.description += `\nUnknown User • <@${winner.id}>`;
 				}

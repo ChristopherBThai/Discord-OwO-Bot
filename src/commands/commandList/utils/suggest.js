@@ -64,7 +64,7 @@ async function suggest(message) {
 	const embed = {
 		color: this.config.embed_color,
 		author: {
-			name: this.msg.author.username + "'s suggestion",
+			name: this.getName() + "'s suggestion",
 			icon_url: this.msg.author.avatarURL,
 		},
 		description: message,
@@ -172,7 +172,7 @@ async function confirmSuggestion(message) {
 		color: this.config.embed_color,
 		timestamp: new Date(),
 		author: {
-			name: this.msg.author.username + "'s suggestion",
+			name: this.getName() + "'s suggestion",
 			icon_url: this.msg.author.avatarURL,
 		},
 		description: message,

@@ -77,7 +77,7 @@ for (let dataName in collectibles) {
 					.replaceAll('?pluralName?', count > 1 ? pluralName : singleName)
 					.replaceAll('?emoji?', emoji)
 					.replaceAll('?date?', receiveDate)
-					.replaceAll('?user?', this.msg.author.username);
+					.replaceAll('?user?', this.getName());
 			} else {
 				msg = displayMsg
 					.replaceAll('?count?', count || 0)
@@ -85,7 +85,7 @@ for (let dataName in collectibles) {
 					.replaceAll('?pluralName?', count > 1 ? pluralName : singleName)
 					.replaceAll('?emoji?', emoji)
 					.replaceAll('?date?', receiveDate)
-					.replaceAll('?user?', this.msg.author.username);
+					.replaceAll('?user?', this.getName());
 			}
 		} else {
 			msg = mergeDisplayMsg
@@ -97,7 +97,7 @@ for (let dataName in collectibles) {
 				.replaceAll('?mergePlural?', mergeCount > 1 ? 's' : '')
 				.replaceAll('?emoji?', emoji)
 				.replaceAll('?mergeEmoji?', mergeEmoji)
-				.replaceAll('?user?', this.msg.author.username);
+				.replaceAll('?user?', this.getName());
 		}
 		this.send(msg);
 	};
@@ -157,14 +157,14 @@ for (let dataName in collectibles) {
 			if (hasMerge && (result % mergeNeeded) - giveAmount < 0) {
 				msg += mergeMsg
 					.replaceAll('?giveMsg?', selectedGiveMsg)
-					.replaceAll('?giver?', this.msg.author.username)
+					.replaceAll('?giver?', this.getName())
 					.replaceAll('?receiver?', user.username)
 					.replaceAll('?emoji?', emoji)
 					.replaceAll('?blank?', this.config.emoji.blank)
 					.replaceAll('?mergeEmoji?', mergeEmoji);
 			} else {
 				msg += selectedGiveMsg
-					.replaceAll('?giver?', this.msg.author.username)
+					.replaceAll('?giver?', this.getName())
 					.replaceAll('?receiver?', user.username)
 					.replaceAll('?emoji?', emoji);
 			}
@@ -177,7 +177,7 @@ for (let dataName in collectibles) {
 		if (typeof failChance !== 'number' || failChance <= 0) return false;
 		if (Math.random() <= failChance) {
 			const msg = failMessage
-				.replaceAll('?giver?', this.msg.author.username)
+				.replaceAll('?giver?', this.getName())
 				.replaceAll('?receiver?', user.username)
 				.replaceAll('?emoji?', emoji);
 			this.send(msg);
@@ -194,7 +194,7 @@ for (let dataName in collectibles) {
 				this.errorMsg(', you can only send this item once per day.', 3000);
 			} else {
 				const msg = dailyLimitMsg
-					.replaceAll('?user?', this.msg.author.username)
+					.replaceAll('?user?', this.getName())
 					.replaceAll('?giver?', user.username)
 					.replaceAll('?emoji?', emoji)
 					.replaceAll('?blank?', this.config.emoji.blank)
@@ -224,7 +224,7 @@ for (let dataName in collectibles) {
 		}
 
 		await this.send(
-			`⚙️ **| ${this.msg.author.username}**, I have reset the numbers for **${user.username}**`
+			`⚙️ **| ${this.getName()}**, I have reset the numbers for **${user.username}**`
 		);
 	};
 
@@ -244,7 +244,7 @@ for (let dataName in collectibles) {
 		}
 		const msg = mergeMsg
 			.replaceAll('?giveMsg?', selectedGiveMsg)
-			.replaceAll('?user?', this.msg.author.username)
+			.replaceAll('?user?', this.getName())
 			.replaceAll('?emoji?', emoji)
 			.replaceAll('?blank?', this.config.emoji.blank)
 			.replaceAll('?mergeCount?', result2)
@@ -293,7 +293,7 @@ for (let dataName in collectibles) {
 					if (ownerOnly && !owners.includes(this.msg.author.id)) {
 						if (ownerOnlyErrorMsg) {
 							const msg = ownerOnlyErrorMsg
-								.replaceAll('?user?', this.msg.author.username)
+								.replaceAll('?user?', this.getName())
 								.replaceAll('?emoji?', emoji)
 								.replaceAll('?blank?', this.config.emoji.blank)
 								.replaceAll('?error?', this.config.emoji.error);
@@ -307,7 +307,7 @@ for (let dataName in collectibles) {
 					if (!owners.includes(this.msg.author.id) && user.id === this.msg.author.id) {
 						if (selfErrorMsg) {
 							const msg = selfErrorMsg
-								.replaceAll('?user?', this.msg.author.username)
+								.replaceAll('?user?', this.getName())
 								.replaceAll('?emoji?', emoji)
 								.replaceAll('?blank?', this.config.emoji.blank)
 								.replaceAll('?error?', this.config.emoji.error);

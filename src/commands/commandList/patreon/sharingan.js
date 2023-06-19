@@ -67,6 +67,8 @@ async function give(p, user) {
 	}
 	await p.redis.incr('sharingan2', user.id, 2);
 	p.send(
-		`${sharinganEmoji} **| ${user.username}**, you have received two Sharingans ${sharinganEmoji} from ${p.msg.author.username}'s stash! Beware of Danzo and Obito!`
+		`${sharinganEmoji} **| ${
+			user.username
+		}**, you have received two Sharingans ${sharinganEmoji} from ${p.getName()}'s stash! Beware of Danzo and Obito!`
 	);
 }

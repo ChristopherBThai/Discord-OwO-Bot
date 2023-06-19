@@ -415,3 +415,25 @@ exports.getA = function (text) {
 	text = text.replace(/\*/gi, '');
 	return ['a', 'e', 'i', 'o', 'u'].includes(text[0].toLowerCase()) ? 'an' : 'a';
 };
+
+exports.getName = function (user) {
+	return (
+		user?.nick ||
+		user?.globalname ||
+		user?.global_name ||
+		user?.user?.globalname ||
+		user?.user?.global_name ||
+		user?.username ||
+		user?.user?.username ||
+		'User'
+	);
+};
+
+exports.getUniqueName = function (user) {
+	user = user.user || user;
+	if (user.discriminator && user.discriminator !== '0') {
+		return `${user.username}#${user.discriminator}`;
+	} else {
+		return `@${user.username}`;
+	}
+};

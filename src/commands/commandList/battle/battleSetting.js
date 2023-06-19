@@ -48,7 +48,7 @@ async function display(p) {
 	let embed = {
 		color: p.config.embed_color,
 		author: {
-			name: p.msg.author.username + "'s battle settings",
+			name: p.getName() + "'s battle settings",
 			icon_url: p.msg.author.avatarURL,
 		},
 		description: text,

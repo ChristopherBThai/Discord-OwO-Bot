@@ -132,7 +132,7 @@ class Collectible {
 				.replaceAll('?mergePlural?', mergeCount > 1 ? 's' : '')
 				.replaceAll('?emoji?', this.emoji)
 				.replaceAll('?blank?', p.config.emoji.blank)
-				.replaceAll('?user?', p.msg.author.username);
+				.replaceAll('?user?', p.getName());
 		} else if (!mergeCount) {
 			if (!count && this.displayNoneMsg) {
 				return this.displayNoneMsg
@@ -148,7 +148,7 @@ class Collectible {
 					.replaceAll('?mergeEmoji?', this.mergeEmoji)
 					.replaceAll('?date?', receiveDate)
 					.replaceAll('?blank?', p.config.emoji.blank)
-					.replaceAll('?user?', p.msg.author.username);
+					.replaceAll('?user?', p.getName());
 			} else {
 				return selectedDisplayMsg
 					.replaceAll('?count?', count || 0)
@@ -163,7 +163,7 @@ class Collectible {
 					.replaceAll('?mergeEmoji?', this.mergeEmoji)
 					.replaceAll('?date?', receiveDate)
 					.replaceAll('?blank?', p.config.emoji.blank)
-					.replaceAll('?user?', p.msg.author.username);
+					.replaceAll('?user?', p.getName());
 			}
 		} else {
 			return (this.mergeDisplayMsg || selectedDisplayMsg)
@@ -180,7 +180,7 @@ class Collectible {
 				.replaceAll('?emoji?', this.emoji)
 				.replaceAll('?blank?', p.config.emoji.blank)
 				.replaceAll('?mergeEmoji?', this.mergeEmoji)
-				.replaceAll('?user?', p.msg.author.username);
+				.replaceAll('?user?', p.getName());
 		}
 	}
 
@@ -229,7 +229,7 @@ class Collectible {
 		if (msgOverride) {
 			return msgOverride
 				.replaceAll('?giveMsg?', selectedGiveMsg)
-				.replaceAll('?giver?', p.msg.author.username)
+				.replaceAll('?giver?', p.getName())
 				.replaceAll('?receiver?', user.username)
 				.replaceAll('?emoji?', this.emoji)
 				.replaceAll('?blank?', p.config.emoji.blank)
@@ -239,14 +239,14 @@ class Collectible {
 		} else if (this.hasMerge && (result % this.mergeNeeded) - this.giveAmount < 0) {
 			return this.mergeMsg
 				.replaceAll('?giveMsg?', selectedGiveMsg)
-				.replaceAll('?giver?', p.msg.author.username)
+				.replaceAll('?giver?', p.getName())
 				.replaceAll('?receiver?', user.username)
 				.replaceAll('?emoji?', this.emoji)
 				.replaceAll('?blank?', p.config.emoji.blank)
 				.replaceAll('?mergeEmoji?', this.mergeEmoji);
 		} else {
 			return selectedGiveMsg
-				.replaceAll('?giver?', p.msg.author.username)
+				.replaceAll('?giver?', p.getName())
 				.replaceAll('?receiver?', user.username)
 				.replaceAll('?blank?', p.config.emoji.blank)
 				.replaceAll('?count?', result)
@@ -264,7 +264,7 @@ class Collectible {
 				p.errorMsg(', you can only send this item once per day.', 3000);
 			} else {
 				const msg = this.dailyLimitMsg
-					.replaceAll('?user?', msg.author.username)
+					.replaceAll('?user?', p.getName())
 					.replaceAll('?giver?', user.username)
 					.replaceAll('?emoji?', this.emoji)
 					.replaceAll('?blank?', config.emoji.blank)
@@ -286,7 +286,7 @@ class Collectible {
 				p.errorMsg(', you can only receive this item once per day.', 3000);
 			} else {
 				const msg = this.dailyLimitMsg
-					.replaceAll('?user?', msg.author.username)
+					.replaceAll('?user?', p.getName())
 					.replaceAll('?giver?', user.username)
 					.replaceAll('?emoji?', this.emoji)
 					.replaceAll('?blank?', config.emoji.blank)
@@ -312,7 +312,7 @@ class Collectible {
 	async getFailMsg(p, user, msgOverride) {
 		const msg = msgOverride || this.failMsg;
 		return msg
-			.replaceAll('?giver?', p.msg.author.username)
+			.replaceAll('?giver?', p.getName())
 			.replaceAll('?receiver?', user.username)
 			.replaceAll('?emoji?', this.emoji);
 	}
@@ -333,9 +333,7 @@ class Collectible {
 			await p.redis.hset(`data_${user.id}`, this.manualMergeData, 0);
 		}
 
-		await p.send(
-			`⚙️ **| ${p.msg.author.username}**, I have reset the numbers for **${user.username}**`
-		);
+		await p.send(`⚙️ **| ${p.getName()}**, I have reset the numbers for **${user.username}**`);
 	}
 
 	async manualMerge(p, msgOverride) {
@@ -354,7 +352,7 @@ class Collectible {
 		}
 		const msg = (msgOverride || this.mergeMsg)
 			.replaceAll('?giveMsg?', selectedGiveMsg)
-			.replaceAll('?user?', p.msg.author.username)
+			.replaceAll('?user?', p.getName())
 			.replaceAll('?emoji?', this.emoji)
 			.replaceAll('?blank?', p.config.emoji.blank)
 			.replaceAll('?mergeCount?', result2)
@@ -366,7 +364,7 @@ class Collectible {
 	async ownerOnlyMsg(p) {
 		if (this.ownerOnlyErrorMsg) {
 			const msg = this.ownerOnlyErrorMsg
-				.replaceAll('?user?', p.msg.author.username)
+				.replaceAll('?user?', p.getName())
 				.replaceAll('?emoji?', this.emoji)
 				.replaceAll('?blank?', p.config.emoji.blank)
 				.replaceAll('?error?', p.config.emoji.error);
@@ -380,7 +378,7 @@ class Collectible {
 	async selfOnlyMsg(p) {
 		if (this.selfErrorMsg) {
 			const msg = this.selfErrorMsg
-				.replaceAll('?user?', p.msg.author.username)
+				.replaceAll('?user?', p.getName())
 				.replaceAll('?emoji?', this.emoji)
 				.replaceAll('?blank?', p.config.emoji.blank)
 				.replaceAll('?error?', p.config.emoji.error);

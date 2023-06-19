@@ -79,6 +79,6 @@ async function combine(p) {
 
 	this.redis.hincrby('data_' + this.msg.author.id, data, 1);
 	p.send(
-		`${emoji} **| ${p.msg.author.username}**, you combined a bat, witch, ghost, and a spider to create a haunted house!`
+		`${emoji} **| ${p.getName()}**, you combined a bat, witch, ghost, and a spider to create a haunted house!`
 	);
 }

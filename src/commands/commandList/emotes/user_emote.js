@@ -53,13 +53,13 @@ module.exports = new CommandInterface({
 		if (emote.alt != undefined) emote = emotes[emote.alt];
 		if (msg.author.id == target.id) {
 			let text = emote.self[Math.floor(Math.random() * emote.self.length)];
-			text = text.replace(/\?/, msg.author.username);
+			text = text.replace(/\?/, this.getName());
 			p.send(text);
 			return;
 		}
 		let text = emote.msg[Math.floor(Math.random() * emote.msg.length)];
-		text = text.replace(/\?/, msg.author.username);
-		text = text.replace(/\?/, target.username);
+		text = text.replace(/\?/, this.getName());
+		text = text.replace(/\?/, this.getName(target));
 		weeb.grab(p, emote.name, 'gif', text);
 		p.quest('emoteTo');
 		p.quest('emoteBy', 1, target);

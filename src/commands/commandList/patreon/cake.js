@@ -83,7 +83,7 @@ async function give(p, user) {
 		p.replyMsg(
 			cupcakeEmoji,
 			', you gave one slice of cake to **' +
-				user.username +
+				p.global.getName(user) +
 				'**! ' +
 				words[Math.floor(Math.random() * words.length)]
 		);
@@ -92,7 +92,7 @@ async function give(p, user) {
 		p.replyMsg(
 			sliceEmoji,
 			', you gave two slices of cake to **' +
-				user.username +
+				p.global.getName(user) +
 				'**! ' +
 				words[Math.floor(Math.random() * words.length)]
 		);
@@ -101,7 +101,7 @@ async function give(p, user) {
 		p.replyMsg(
 			cakeEmoji,
 			', you gave three slices of cake to **' +
-				user.username +
+				p.global.getName(user) +
 				'**! ' +
 				words[Math.floor(Math.random() * words.length)]
 		);

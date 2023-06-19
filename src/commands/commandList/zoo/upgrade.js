@@ -144,9 +144,7 @@ module.exports = new CommandInterface({
 			await p.query(sql);
 		}
 
-		let text = `**🛠 | ${
-			msg.author.username
-		}**, You successfully upgraded \`${trait}\` with  **${p.global.toFancyNum(
+		let text = `**🛠 | ${p.getName()}**, You successfully upgraded \`${trait}\` with  **${p.global.toFancyNum(
 			count
 		)} Animal Essence** ${essence}!`;
 		text += `\n**<:blank:427371936482328596> |** \`${trait}: ${stat.stat + stat.prefix} -  Lvl ${

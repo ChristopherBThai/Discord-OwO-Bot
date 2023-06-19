@@ -56,6 +56,6 @@ module.exports = new CommandInterface({
 			result +
 			'**!';
 
-		p.send('**🎲 | ' + p.msg.author.username + '** rolls a ' + sides + '-sided die.\n' + result);
+		p.send('**🎲 | ' + p.getName() + '** rolls a ' + sides + '-sided die.\n' + result);
 	},
 });

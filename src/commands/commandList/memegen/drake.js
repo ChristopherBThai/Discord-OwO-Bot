@@ -46,7 +46,7 @@ module.exports = new CommandInterface({
 		}
 		canvasUtil.loadBackground('./src/data/images/drake.jpg', function (err, ctx, canvas, _image) {
 			if (err) {
-				p.send('**🚫 | ' + p.msg.author.username + '**, Uh oh.. this command is broken!', 3000);
+				p.send('**🚫 | ' + p.getName() + '**, Uh oh.. this command is broken!', 3000);
 				return;
 			}
 
@@ -67,7 +67,7 @@ module.exports = new CommandInterface({
 				textArgs.y = 410;
 				canvasUtil.addText(textArgs, p, ctx, canvas, function () {
 					let buf = canvas.toBuffer();
-					p.send('**🖼 | ' + p.msg.author.username + '** generated a meme!', null, {
+					p.send('**🖼 | ' + p.getName() + '** generated a meme!', null, {
 						file: buf,
 						name: 'meme.png',
 					});

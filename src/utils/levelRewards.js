@@ -107,7 +107,7 @@ exports.distributeRewards = async function (msg) {
 			INSERT INTO lootbox(id,boxcount) VALUES (${msg.author.id},${lootbox}) ON DUPLICATE KEY UPDATE boxcount = boxcount + ${lootbox};`;
 
 	// Set up reply text
-	let text = levelupEmoji + ' **| ' + msg.author.username + '** leveled up!';
+	let text = levelupEmoji + ' **| ' + global.getName(msg.member || msg.author) + '** leveled up!';
 	if (level - plevel > 1)
 		text += '\n<:blank:427371936482328596> **|** Extra rewards were added for missing levels';
 	if (!plevel)
@@ -141,7 +141,7 @@ async function generateImage(msg, reward) {
 		},
 		user: {
 			avatarURL,
-			name: msg.author.username,
+			name: global.getName(msg.author),
 		},
 		level: reward.level,
 		rewards: [

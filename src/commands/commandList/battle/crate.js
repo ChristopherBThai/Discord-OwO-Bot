@@ -101,14 +101,14 @@ async function openCrate(p, count = 1) {
 		text1 =
 			p.config.emoji.blank +
 			' **| ' +
-			p.msg.author.username +
+			p.getName() +
 			'** opens a weapon crate\n' +
 			crateShake +
 			' **|** and finds a ...';
 		text2 =
 			weapon.emoji +
 			' **| ' +
-			p.msg.author.username +
+			p.getName() +
 			'** opens a weapon crate\n' +
 			crateOpen +
 			' **|** and finds a `' +
@@ -132,7 +132,7 @@ async function openCrate(p, count = 1) {
 		text1 =
 			p.config.emoji.blank +
 			' **| ' +
-			p.msg.author.username +
+			p.getName() +
 			'** opens ' +
 			count +
 			' weapon crates\n' +
@@ -141,7 +141,7 @@ async function openCrate(p, count = 1) {
 		text2 =
 			p.config.emoji.blank +
 			' **| ' +
-			p.msg.author.username +
+			p.getName() +
 			'** opens ' +
 			count +
 			' weapon crates\n' +

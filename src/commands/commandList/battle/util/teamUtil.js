@@ -351,7 +351,7 @@ const createTeamEmbed = (exports.createTeamEmbed = function (p, team, other = {}
 	/* Construct msg */
 	return {
 		author: {
-			name: p.msg.author.username + "'s " + p.replaceMentions(other.tname),
+			name: p.getName() + "'s " + p.replaceMentions(other.tname),
 			icon_url: p.msg.author.avatarURL,
 		},
 		description:

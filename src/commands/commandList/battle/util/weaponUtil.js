@@ -290,7 +290,7 @@ exports.askDisplay = async function (p, id, opt = {}) {
 
 	let embed = {
 		author: {
-			name: user.username + ', ' + p.msg.author.username + ' wants to see your weapons!',
+			name: p.getName(user) + ', ' + p.getName() + ' wants to see your weapons!',
 			icon_url: p.msg.author.avatarURL,
 		},
 		description: 'Do you give permission for this user to view your weapons?',
@@ -440,7 +440,7 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	}
 
 	/* Construct msg */
-	let title = user.username + "'s " + (wid ? weapons[wid].name : 'weapons');
+	let title = p.getName(user) + "'s " + (wid ? weapons[wid].name : 'weapons');
 	let embed = {
 		author: {
 			name: title,
@@ -637,7 +637,7 @@ exports.describe = async function (p, uwid) {
 	// Grab user
 	let user = await p.fetch.getUser(result[0].id);
 	let username = 'A User';
-	if (user) username = user.username;
+	if (user) username = p.getUniqueName(user);
 
 	/* Make description */
 	let desc = `**Name:** ${weapon.name}\n`;
@@ -663,7 +663,7 @@ exports.describe = async function (p, uwid) {
 	/* Construct embed */
 	let embed = {
 		author: {
-			name: username + "'s " + weapon.name,
+			name: p.getName(user) + "'s " + weapon.name,
 		},
 		color: p.config.embed_color,
 		thumbnail: {

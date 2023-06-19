@@ -124,7 +124,7 @@ function getPage(p, currentPage, shards, _shardID) {
 	desc += '```';
 	let embed = {
 		author: {
-			name: p.msg.author.username + ", here are the bot's shards!",
+			name: p.getName() + ", here are the bot's shards!",
 			icon_url: p.msg.author.avatarURL,
 		},
 		description: desc,

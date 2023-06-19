@@ -58,7 +58,7 @@ module.exports = new CommandInterface({
 
 				canvasUtil.addText(textArgs, p, ctx, canvas, function () {
 					let buf = canvas.toBuffer();
-					p.send('**🖼 | ' + p.msg.author.username + '** generated a meme!', null, {
+					p.send('**🖼 | ' + p.getName() + '** generated a meme!', null, {
 						file: buf,
 						name: 'meme.png',
 					});

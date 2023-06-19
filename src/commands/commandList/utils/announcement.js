@@ -39,7 +39,7 @@ async function announcement(p) {
 	else {
 		let embed = {
 			author: {
-				name: p.msg.author.username + ', here is the latest announcement!',
+				name: p.getName() + ', here is the latest announcement!',
 				icon_url: p.msg.author.avatarURL,
 			},
 			color: p.config.embed_color,
@@ -59,18 +59,14 @@ async function announcementSetting(p) {
 		p.query(sql, [BigInt(p.msg.author.id)])
 			.then(() => {
 				p.send(
-					'**📮 | ' +
-						p.msg.author.username +
-						'** You will now receive announcements in your daily command!'
+					'**📮 | ' + p.getName() + '** You will now receive announcements in your daily command!'
 				);
 			})
 			.catch(() => {
 				sql = 'INSERT IGNORE INTO user (id,count) VALUES (?,0);' + sql;
 				p.query(sql, [BigInt(p.msg.author.id), BigInt(p.msg.author.id)]).then(() => {
 					p.send(
-						'**📮 | ' +
-							p.msg.author.username +
-							'** You will now receive announcements in your daily command!'
+						'**📮 | ' + p.getName() + '** You will now receive announcements in your daily command!'
 					);
 				});
 			});
@@ -79,12 +75,12 @@ async function announcementSetting(p) {
 			'INSERT INTO user_announcement (uid,aid,disabled) values ((SELECT uid FROM user WHERE id = ?),(SELECT aid FROM announcement ORDER BY aid ASC LIMIT 1),1) ON DUPLICATE KEY UPDATE disabled = 1;';
 		p.query(sql, [BigInt(p.msg.author.id)])
 			.then(() => {
-				p.send('**📮 | ' + p.msg.author.username + '** You have disabled announcements!');
+				p.send('**📮 | ' + p.getName() + '** You have disabled announcements!');
 			})
 			.catch(() => {
 				sql = 'INSERT IGNORE INTO user (id,count) VALUES (?,0);' + sql;
 				p.query(sql, [BigInt(p.msg.author.id), BigInt(p.msg.author.id)]).then(() => {
-					p.send('**📮 | ' + p.msg.author.username + '** You have disabled announcements!');
+					p.send('**📮 | ' + p.getName() + '** You have disabled announcements!');
 				});
 			});
 	}

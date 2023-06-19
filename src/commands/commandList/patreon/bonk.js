@@ -50,7 +50,7 @@ module.exports = new CommandInterface({
 			return;
 		}
 		if (p.msg.author.id == target.id) {
-			let text = '**' + p.msg.author.username + "**, you can't bonk yourself!";
+			let text = '**' + this.getName() + "**, you can't bonk yourself!";
 			p.send(text);
 			return;
 		}
@@ -61,20 +61,20 @@ module.exports = new CommandInterface({
 		if (immunity.includes(target.id)) {
 			if (Math.random() < 0.01) {
 				let comment = bonkComments[Math.trunc(Math.random() * bonkComments.length)];
-				text = `${target.username} got bonked by ${p.msg.author.username}! ${comment}`;
+				text = `${this.getName(target)} got bonked by ${this.getName()}! ${comment}`;
 				emote = emotes[Math.trunc(Math.random() * emotes.length)];
 			} else {
 				let comment = noBonkComments[Math.trunc(Math.random() * noBonkComments.length)];
-				text = `${target.username} dodged ${p.msg.author.username}! ${comment}`;
+				text = `${this.getName(target)} dodged ${this.getName()}! ${comment}`;
 			}
 		} else {
 			if (Math.random() < 0.9) {
 				let comment = bonkComments[Math.trunc(Math.random() * bonkComments.length)];
-				text = `${target.username} got bonked by ${p.msg.author.username}! ${comment}`;
+				text = `${this.getName(target)} got bonked by ${this.getName()}! ${comment}`;
 				emote = emotes[Math.trunc(Math.random() * emotes.length)];
 			} else {
 				let comment = noBonkComments[Math.trunc(Math.random() * noBonkComments.length)];
-				text = `${target.username} dodged ${p.msg.author.username}! ${comment}`;
+				text = `${this.getName(target)} dodged ${this.getName()}! ${comment}`;
 			}
 		}
 

@@ -91,7 +91,7 @@ async function give(p, user) {
 	}
 
 	let result = await p.redis.hincrby('data_' + user.id, data, 2);
-	let text = `${emoji} **| ${user.username}** has received a rose from ${p.msg.author.username}. How cute!`;
+	let text = `${emoji} **| ${user.username}** has received a rose from ${p.getName()}. How cute!`;
 	if ((result % 5) - 2 < 0) {
 		text +=
 			'\n' +

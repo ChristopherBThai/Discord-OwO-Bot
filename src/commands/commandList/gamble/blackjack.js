@@ -7,7 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const maxBet = 150000;
+const maxBet = 250000;
 const deck = [
 	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
 	28, 29, 30, 31, 32, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
@@ -45,11 +45,11 @@ module.exports = new CommandInterface({
 		if (p.global.isInt(args[0])) amount = parseInt(args[0]);
 		if (args[0] == 'all') amount = 'all';
 		else if (amount == undefined) {
-			p.send('**🚫 | ' + msg.author.username + '**, Invalid arguments!', 3000);
+			p.send('**🚫 | ' + p.getName() + '**, Invalid arguments!', 3000);
 			p.setCooldown(5);
 			return;
 		} else if (amount <= 0) {
-			p.send('**🚫 | ' + msg.author.username + "**, You can't bet that much silly!", 3000);
+			p.send('**🚫 | ' + p.getName() + "**, You can't bet that much silly!", 3000);
 			p.setCooldown(5);
 			return;
 		}
@@ -95,15 +95,15 @@ module.exports = new CommandInterface({
 			if (maxBet && money > maxBet) money = maxBet;
 			if (amount == 'all') {
 				if (money <= 0)
-					p.send('**🚫 | ' + msg.author.username + '**, You do not have enough cowoncy!', 3000);
+					p.send('**🚫 | ' + p.getName() + '**, You do not have enough cowoncy!', 3000);
 				else await initBlackjack(p, money);
 			} else {
 				if (money < amount)
-					p.send('**🚫 | ' + msg.author.username + '**, You do not have enough cowoncy!', 3000);
+					p.send('**🚫 | ' + p.getName() + '**, You do not have enough cowoncy!', 3000);
 				else await initBlackjack(p, amount);
 			}
 		} else {
-			p.send('**🚫 | ' + msg.author.username + '**, You do not have enough cowoncy!', 3000);
+			p.send('**🚫 | ' + p.getName() + '**, You do not have enough cowoncy!', 3000);
 		}
 	},
 });

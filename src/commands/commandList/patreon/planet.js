@@ -123,7 +123,7 @@ module.exports = new CommandInterface({
 async function display(p) {
 	let items = await p.redis.hget('data_' + p.msg.author.id, data);
 	items = JSON.parse(items) || {};
-	let text = `<:title1:1031470768820863076> <:title2:1031470777704402954> <:title3:1031470787712008192> **${p.msg.author.username} galaxy!** <:title3:1031470787712008192> <:title2:1031470777704402954> <:title1:1031470768820863076>\n`;
+	let text = `<:title1:1031470768820863076> <:title2:1031470777704402954> <:title3:1031470787712008192> **${p.getName()} galaxy!** <:title3:1031470787712008192> <:title2:1031470777704402954> <:title1:1031470768820863076>\n`;
 	text +=
 		'<:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366><:bar:1031470778941710366>\n';
 	let biggest = 1;
@@ -189,7 +189,5 @@ async function reset() {
 	}
 
 	await this.redis.hset('data_' + user.id, data, '{}');
-	await this.send(
-		`⚙️ **| ${this.msg.author.username}**, I have reset the numbers for **${user.username}**`
-	);
+	await this.send(`⚙️ **| ${this.getName()}**, I have reset the numbers for **${user.username}**`);
 }

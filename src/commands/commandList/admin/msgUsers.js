@@ -34,7 +34,7 @@ module.exports = new CommandInterface({
 				if (!user) {
 					this.errorMsg(', could not message: ' + key);
 				} else {
-					usernames.push('`' + user.username + '#' + user.discriminator + '`');
+					usernames.push('`' + this.global.getUniqueName(user) + '`');
 				}
 			} catch (err) {
 				console.error(err);

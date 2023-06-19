@@ -36,11 +36,10 @@ module.exports = new CommandInterface({
 			const uuid = await fetchImage(p, p.msg.author);
 			const url = `${process.env.GEN_HOST}/img/${uuid}.gif`;
 			const data = await p.DataResolver.urlToBuffer(url);
-			await p.send(
-				`${rocketEmoji} **| ${p.msg.author.username}** called an emergency meeting!`,
-				null,
-				{ file: data, name: 'eject.gif' }
-			);
+			await p.send(`${rocketEmoji} **| ${p.getName()}** called an emergency meeting!`, null, {
+				file: data,
+				name: 'eject.gif',
+			});
 		} catch (err) {
 			console.error(err);
 			p.errorMsg(', Failed to generate gif. Try again later.', 3000);

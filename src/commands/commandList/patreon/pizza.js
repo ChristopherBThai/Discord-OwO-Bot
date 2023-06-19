@@ -90,7 +90,7 @@ async function give(p, user) {
 	p.replyMsg(
 		pizzaEmoji,
 		', you gave two pizzas to **' +
-			user.username +
+			p.global.getName(user) +
 			'**! ' +
 			words[Math.floor(Math.random() * words.length)]
 	);

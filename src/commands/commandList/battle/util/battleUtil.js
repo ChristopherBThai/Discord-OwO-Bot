@@ -267,7 +267,7 @@ let display = (exports.display = async function (
 	let embed = {
 		color: p.config.embed_color,
 		author: {
-			name: title ? title : p.msg.author.username + ' goes into battle!',
+			name: title ? title : p.getName() + ' goes into battle!',
 			icon_url: p.msg.author.avatarURL,
 		},
 		fields: [
@@ -317,7 +317,7 @@ let displayText = (exports.displayText = async function (
 	let embed = {
 		color: p.config.embed_color,
 		author: {
-			name: title ? title : p.msg.author.username + ' goes into battle!',
+			name: title ? title : p.getName() + ' goes into battle!',
 			icon_url: p.msg.author.avatarURL,
 		},
 		fields: [],
@@ -380,7 +380,7 @@ let displayCompact = (exports.displayCompact = async function (
 	let embed = {
 		color: p.config.embed_color,
 		author: {
-			name: title ? title : p.msg.author.username + ' goes into battle!',
+			name: title ? title : p.getName() + ' goes into battle!',
 			icon_url: p.msg.author.avatarURL,
 		},
 		fields: [],

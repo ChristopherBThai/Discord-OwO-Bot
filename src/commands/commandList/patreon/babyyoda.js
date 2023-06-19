@@ -91,16 +91,16 @@ async function feed(p) {
 	const afterMid = dateUtil.afterMidnight(lasttime);
 
 	let streak = 1;
-	let title = p.msg.author.username + "'s Baby Yoda";
+	let title = p.getName() + "'s Baby Yoda";
 	if (afterMid.after) {
 		await p.redis.hset('cd_' + p.msg.author.id, cdFeed, afterMid.now);
 		await p.redis.expire('cd_' + p.msg.author.id);
 		if (afterMid.withinDay || !lasttime) {
 			streak = await p.redis.hincrby('data_' + p.msg.author.id, table, 1);
-			title = p.msg.author.username + ' fed Baby Yoda!';
+			title = p.getName() + ' fed Baby Yoda!';
 		} else {
 			await p.redis.hset('data_' + p.msg.author.id, table, 1);
-			title = p.msg.author.username + ' you missed a day!';
+			title = p.getName() + ' you missed a day!';
 		}
 	} else {
 		streak = await p.redis.hget('data_' + p.msg.author.id, table);
@@ -127,7 +127,7 @@ async function display(p, title, gif = gif2) {
 	const lasttime = await p.redis.hget('cd_' + p.msg.author.id, cdFeed);
 	const afterMid = dateUtil.afterMidnight(lasttime);
 	const streak = (await p.redis.hget('data_' + p.msg.author.id, table)) || 0;
-	if (!title) title = p.msg.author.username + "'s Baby Yoda";
+	if (!title) title = p.getName() + "'s Baby Yoda";
 
 	const embed = {
 		author: {

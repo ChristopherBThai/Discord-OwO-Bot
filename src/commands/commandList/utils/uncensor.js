@@ -28,11 +28,11 @@ module.exports = new CommandInterface({
 
 	execute: async function (p) {
 		if (!p.msg.member.permissions.has('manageChannels')) {
-			p.send('**🚫 | ' + p.msg.author.username + '**, You are not an admin!', 3000);
+			p.send('**🚫 | ' + p.getName() + '**, You are not an admin!', 3000);
 			return;
 		}
 		if (p.args.length > 0) {
-			p.send('**🚫 | ' + p.msg.author.username + '**, Invalid Arguments!', 3000);
+			p.send('**🚫 | ' + p.getName() + '**, Invalid Arguments!', 3000);
 			return;
 		}
 
