@@ -91,7 +91,7 @@ async function give(p, con, msg, args, global, send) {
 	result = await p.query(sql);
 	let text =
 		'**<a:cookieeat:423020737364885525> | ' +
-		p.getName() +
+		p.global.getName(user) +
 		'**! You got a cookie from **' +
 		p.getName() +
 		'**! *nom nom nom c:<*';
