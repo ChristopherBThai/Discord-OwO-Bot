@@ -9,7 +9,7 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const alterChecklist = require('../patreon/alterChecklist.js');
 const dateUtil = require('../../../utils/dateUtil.js');
-const check = '☑';
+const check = '☑️';
 const box = '⬛';
 const tada = '🎉';
 
@@ -260,19 +260,19 @@ function crates(p) {
 							' weapon crate' +
 							(claimed == 2 ? ' ' : 's ') +
 							'can be found from battling!',
-						emoji: '⚔',
+						emoji: p.config.emoji.battle,
 					};
 				else
 					return {
 						done: true,
 						desc: 'You have found all weapon crates!',
-						emoji: '⚔',
+						emoji: p.config.emoji.battle,
 					};
 			} else
 				return {
 					done: false,
 					desc: '3 weapon crates can be found from battling!',
-					emoji: '⚔',
+					emoji: p.config.emoji.battle,
 				};
 		},
 	};
