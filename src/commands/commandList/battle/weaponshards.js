@@ -91,7 +91,9 @@ async function dismantleRank(p, rankLoc) {
 		FROM user
 			LEFT JOIN user_weapon a ON user.uid = a.uid
 			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
-		WHERE user.id = ${p.msg.author.id} AND avg > ${min} AND avg <= ${max} AND a.pid IS NULL LIMIT 500;`;
+		WHERE user.id = ${p.msg.author.id} AND avg >${
+		min === 0 ? '=' : ''
+	} ${min} AND avg <= ${max} AND a.pid IS NULL LIMIT 500;`;
 
 	let result = await p.query(sql);
 
