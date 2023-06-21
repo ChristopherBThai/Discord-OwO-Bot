@@ -12,7 +12,7 @@ class Luv extends Collectible {
 		super();
 
 		this.key = 'luv';
-		this.alias = ['luv', 'lovely'];
+		this.alias = ['luv', 'lovey'];
 		this.emoji = '<a:roolove:1099238718533017641>';
 		this.owners = ['486604819545587723'];
 		this.fullControl = true;

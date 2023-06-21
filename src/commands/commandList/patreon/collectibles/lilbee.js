@@ -17,7 +17,7 @@ class Lilbee extends Collectible {
 		this.owners = ['635873165758824449', '423166705477353472'];
 		this.fullControl = true;
 		this.ownerOnly = false;
-		this.giveAmount = 1;
+		this.giveAmount = 2;
 		this.description = `Created by Lil and Bee to celebrate 1000 days of Owo marriage!`;
 		this.displayMsg = '?emoji? **| ?user?**, you have **?count? Lil Bee?plural?**';
 		this.brokeMsg = ', you do not have any Lil bees! >:c';

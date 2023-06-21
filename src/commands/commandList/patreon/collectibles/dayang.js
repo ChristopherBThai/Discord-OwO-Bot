@@ -11,13 +11,14 @@ class Dayang extends Collectible {
 	constructor() {
 		super();
 
-		this.key = 'dayang';
+		this.key = 'dayang2';
+		this.alias = ['dayang', 'bunga', 'indonesia'];
 		this.emoji = '<a:dayang:1098860750891655219>';
 		this.owners = ['778204442411008021'];
 		this.fullControl = true;
 		this.ownerOnly = true;
 		this.giveAmount = 1;
-		this.description = `Hallo...!!\nI am dayang🌷 from Indonesia\n\nWhen you have 𝖈𝖎𝖓𝖙𝖆, 𝖐𝖆𝖘𝖎𝖍 and 𝖘𝖆𝖞𝖆𝖓𝖌, you can get my 𝖇𝖚𝖓𝖌𝖆 as a present from me...♡\n\n♧ OwOd cinta ♧ OwOd kasih ♧ OwOd sayang ♧\n♧ find me in .gg/direwolf`;
+		this.description = `Hallo...!!\nI am dayang🌷 from Indonesia\n\nWhen you have 𝖈𝖎𝖓𝖙𝖆, 𝖐𝖆𝖘𝖎𝖍 and 𝖘𝖆𝖞𝖆𝖓𝖌, you can get my 𝖇𝖚𝖓𝖌𝖆 as a present from me...♡\n\n♧ OwOd cinta ♧ OwOd kasih ♧ OwOd sayang ♧\n♧ find me in .gg/direwolf & .gg/hns`;
 		this.displayMsg =
 			'?emoji? **| ?user?**, you currently have **?count? ?emoji? Dayang?plural?!**';
 		this.brokeMsg = ', you do not have any Dayangs! >:c';

@@ -143,13 +143,13 @@ module.exports = new CommandInterface({
 
 			//Display slots
 			let machine =
-				'**  `___SLOTS___`**\n\` \` ' +
+				'**  `___SLOTS___`**\n` ` ' +
 				moving +
 				' ' +
 				moving +
 				' ' +
 				moving +
-				' \` \` ' +
+				' ` ` ' +
 				p.getName() +
 				' bet <:cowoncy:416043450337853441> ' +
 				p.global.toFancyNum(amount) +
@@ -158,13 +158,13 @@ module.exports = new CommandInterface({
 			let message = await p.send(machine);
 			setTimeout(async function () {
 				machine =
-					'**  `___SLOTS___`**\n\` \` ' +
+					'**  `___SLOTS___`**\n` ` ' +
 					rslots[0] +
 					' ' +
 					moving +
 					' ' +
 					moving +
-					' \` \` ' +
+					' ` ` ' +
 					p.getName() +
 					' bet <:cowoncy:416043450337853441> ' +
 					p.global.toFancyNum(amount) +
@@ -173,13 +173,13 @@ module.exports = new CommandInterface({
 				await message.edit(machine);
 				setTimeout(async function () {
 					machine =
-						'**  `___SLOTS___`**\n\` \` ' +
+						'**  `___SLOTS___`**\n` ` ' +
 						rslots[0] +
 						' ' +
 						moving +
 						' ' +
 						rslots[2] +
-						' \` \` ' +
+						' ` ` ' +
 						p.getName() +
 						' bet <:cowoncy:416043450337853441> ' +
 						p.global.toFancyNum(amount) +
@@ -188,13 +188,13 @@ module.exports = new CommandInterface({
 					await message.edit(machine);
 					setTimeout(async function () {
 						machine =
-							'**  `___SLOTS___`**\n\` \` ' +
+							'**  `___SLOTS___`**\n` ` ' +
 							rslots[0] +
 							' ' +
 							rslots[1] +
 							' ' +
 							rslots[2] +
-							' \` \` ' +
+							' ` ` ' +
 							p.getName() +
 							' bet <:cowoncy:416043450337853441> ' +
 							p.global.toFancyNum(amount) +
