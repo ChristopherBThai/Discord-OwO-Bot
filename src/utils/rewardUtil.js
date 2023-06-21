@@ -16,6 +16,7 @@ const beehiveUtil = require('../commands/commandList/social/util/beehiveUtil.js'
 
 exports.getReward = async function (id, uid, con, rewardType, rewardId, rewardCount) {
 	let sql, result, name, animal, weapon, uwid, weaponId, uwidList, item, ring, gem, gemSql, bee;
+
 	switch (rewardType) {
 		case 'wallpaper':
 			// Check if user has reward
