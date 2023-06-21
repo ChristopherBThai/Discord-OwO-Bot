@@ -12,8 +12,8 @@ const emotes = [
 	'https://cdn.discordapp.com/attachments/581509910848864265/889613544553865236/bonk-anime.gif',
 	'https://cdn.discordapp.com/attachments/581509910848864265/889613551843545118/sugiura-bonk.gif',
 	'https://cdn.discordapp.com/attachments/581509910848864265/1097420521223757915/minmi-bonk.gif',
-	'https://cdn.discordapp.com/attachments/581509910848864265/1097420520783364107/bh187-minion.gif',
-	'https://media.discordapp.net/attachments/581509910848864265/1097417876526333962/powerful-head-slap.gif',
+	'https://cdn.discordapp.com/attachments/581509910848864265/1106475137622102016/bomk2.gif',
+	'https://cdn.discordapp.com/attachments/581509910848864265/1106474719672283196/bomk.gif',
 ];
 const bonkComments = ['Ouch!', 'Gotta hurt!'];
 const noBonkComments = ['Woah!', 'Better luck next time!'];

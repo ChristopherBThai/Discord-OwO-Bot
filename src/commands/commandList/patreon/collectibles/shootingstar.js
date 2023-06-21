@@ -25,7 +25,7 @@ class ShootingStar extends Collectible {
 		this.giveAmount = 1;
 		this.description = `Give out a shooting star! Merge 2 to create a wish.`;
 		this.displayMsg =
-			'**<a:purplestar:1080027292102823966><a:pinkstars:1080026894436667402> Make a wish! <a:purplestar:1080027292102823966><a:pinkstar:1080027395295285368>' +
+			'**<a:purplestar:1080027292102823966><a:pinkstar:1080027395295285368> Make a wish! <a:purplestar:1080027292102823966><a:pinkstar:1080027395295285368>' +
 			'\n✧<:dash:1080027541466783825><:dash:1080027541466783825><:dash:1080027541466783825><:dash:1080027541466783825><:dash:1080027541466783825><:dash:1080027541466783825><:dash:1080027541466783825>✧' +
 			'\n?emoji? Shooting stars: ?count?' +
 			'\n?mergeEmoji? Wishes: ?mergeCount?**';

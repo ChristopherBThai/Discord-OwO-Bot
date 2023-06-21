@@ -14,7 +14,7 @@ class Calcifer extends Collectible {
 		this.key = 'calcifer';
 		this.alias = ['calcifer', 'cal'];
 		this.emoji = '<a:c_happy:1099443730781577226>';
-		this.owners = ['665648471340220430', '665648471340220430'];
+		this.owners = ['665648471340220430', '228381909678292992'];
 		this.fullControl = true;
 		this.ownerOnly = false;
 		this.giveAmount = 1;
