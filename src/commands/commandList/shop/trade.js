@@ -139,7 +139,7 @@ async function sendMessage(p, { item, user, price, count }) {
 			url: p.global.getEmojiURL(item.emoji),
 		},
 		author: {
-			name: `${p.getName()} wants to trade with ${user.username}!`,
+			name: `${p.getName()} wants to trade with ${p.getName(user)}!`,
 			icon_url: p.msg.author.avatarURL,
 		},
 		fields: [
@@ -149,7 +149,7 @@ async function sendMessage(p, { item, user, price, count }) {
 				inline: true,
 			},
 			{
-				name: `${p.getUniqueName()} will give:`,
+				name: `${p.getUniqueName(user)} will give:`,
 				value: `\`\`\`fix\n${p.global.toFancyNum(count * price)} cowoncy${spacer}\n\`\`\``,
 				inline: true,
 			},
