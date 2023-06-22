@@ -98,7 +98,7 @@ async function bet(con, msg, args, global, p) {
 		if (chance >= 0.01) chance = Math.trunc(chance * 100) / 100;
 
 		let embed = {
-			description: 'Lottery ends once a day! The maximum lottery submission is 150K cowoncy!',
+			description: 'Lottery ends once a day! The maximum lottery submission is 250k cowoncy!',
 			color: p.config.embed_color,
 			timestamp: new Date(),
 			footer: {
