@@ -206,11 +206,12 @@ function sellAnimal(msg, con, animal, count, send, global, p) {
 }
 
 function sellRank(msg, con, rank, send, global, p) {
-	//TODO remove
+	/*
 	if (rank.rank == 'special') {
 		p.errorMsg(', there is an issue selling specials. We are currently fixing the issue');
 		return;
 	}
+	*/
 	let animals = "('" + rank.animals.join("','") + "')";
 	let sql =
 		'SELECT SUM(count) AS total FROM animal WHERE id = ' +
