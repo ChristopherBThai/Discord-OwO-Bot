@@ -93,7 +93,7 @@ async function give(p, con, msg, args, global, send) {
 		'**<a:cookieeat:423020737364885525> | ' +
 		p.getName() +
 		'**! You got a cookie from **' +
-		p.getName() +
+		p.getName(user) +
 		'**! *nom nom nom c:<*';
 	text = alterCookie.alter(p.msg.author.id, text, {
 		from: p.msg.author,
