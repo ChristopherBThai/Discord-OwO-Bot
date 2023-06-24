@@ -69,12 +69,12 @@ module.exports = new CommandInterface({
 			let prayLine = prayLines[Math.floor(Math.random() * prayLines.length)];
 			if (user) {
 				text =
-					'**🙏 | ' + p.getName() + '** prays for **' + p.global.getName(user) + '**! ' + prayLine;
+					'**🙏 | ' + p.getTag() + '** prays for **' + p.getTag(user) + '**! ' + prayLine;
 				authorPoints = -1;
 				opponentPoints = 1;
 				quest = 'prayBy';
 			} else {
-				text = '**🙏 | ' + p.getName() + '** prays... ' + prayLine;
+				text = '**🙏 | ' + p.getTag() + '** prays... ' + prayLine;
 				authorPoints = 1;
 			}
 		} else {
@@ -82,16 +82,16 @@ module.exports = new CommandInterface({
 			if (user) {
 				text =
 					'**👻 | ' +
-					p.getName() +
+					p.getTag() +
 					'** puts a curse on **' +
-					p.global.getName(user) +
+					p.getTag(user) +
 					'**! ' +
 					curseLine;
 				authorPoints = 1;
 				opponentPoints = -1;
 				quest = 'curseBy';
 			} else {
-				text = '**👻 | ' + p.getName() + '** is now cursed. ' + curseLine;
+				text = '**👻 | ' + p.getTag() + '** is now cursed. ' + curseLine;
 				authorPoints = -1;
 			}
 		}

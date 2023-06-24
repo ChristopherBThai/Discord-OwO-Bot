@@ -82,11 +82,11 @@ async function parseArgs() {
 	} else if (user.id == this.msg.author.id) {
 		this.send(
 			'**💳 | ' +
-				this.getName() +
+				this.getTag() +
 				'** sent **' +
 				this.global.toFancyNum(amount) +
 				' cowoncy** to... **' +
-				this.getName(user) +
+				this.getTag(user) +
 				'**... *but... why?*'
 		);
 		return { error: true };
@@ -128,9 +128,9 @@ async function sendMoney(user, amount) {
 }
 
 async function sendMsg(user, amount, message) {
-	let text = `**💳 | ${this.getName()}** sent **${this.global.toFancyNum(
+	let text = `**💳 | ${this.getTag()}** sent **${this.global.toFancyNum(
 		amount
-	)} cowoncy** to **${this.getName(user)}**!`;
+	)} cowoncy** to **${this.getTag(user)}**!`;
 	text = alterGive.alter(this, this.msg.author.id, text, {
 		from: this.msg.author,
 		to: user,

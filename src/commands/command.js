@@ -347,6 +347,9 @@ function initParam(msg, command, args, main, context) {
 	param.getUniqueName = (user) => {
 		return param.global.getUniqueName(user || param.msg.author);
 	};
+	param.getTag = (user) => {
+		return param.global.getTag(user || param.msg.author);
+	};
 	return param;
 }
 
