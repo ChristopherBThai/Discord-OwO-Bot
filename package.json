@@ -20,7 +20,7 @@
 		"dblapi.js": "^2.4.0",
 		"dd-trace": "^0.31.4",
 		"dotenv": "^10.0.0",
-		"eris-sharder": "github:ChristopherBThai/eris-sharder#9412037cc5835b64a0b0bc1fbe55ba0a15f916be",
+		"eris-sharder": "github:ChristopherBThai/eris-sharder#9fe1ad54ec7d77be80364791cb8a7780b3baf9a6",
 		"erlpack": "github:abalabahaha/erlpack",
 		"eventemitter3": "^4.0.4",
 		"express": "^4.17.1",
