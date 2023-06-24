@@ -406,6 +406,7 @@ async function display(p, msg, con) {
 
 	//Get emoji
 	let bot = autohuntutil.getBot(result[1][0]);
+	let rank = result[1][0]?.rank || result[1][0]?.total;
 
 	let hunting;
 	if (result[0][0] && result[0][0].huntmin != 0) {
@@ -455,9 +456,15 @@ async function display(p, msg, con) {
 			name: p.getName() + "'s HuntBot",
 			icon_url: msg.author.avatarURL,
 		},
+		thumbnail: {
+			url: p.global.getEmojiURL(bot),
+		},
+		footer: {
+			text: `Rank #${p.global.toFancyNum(rank)}`,
+		},
 		fields: [
 			{
-				name: bot + ' `BEEP. BOOP. I AM HUNTBOT. I WILL HUNT FOR YOU MASTER.`',
+				name: `\`BEEP. BOOP. HELLO ${p.msg.author.id}. I AM HUNTBOT. I WILL HUNT FOR YOU MASTER.\``,
 				value:
 					'Use the command `owo autohunt {cowoncy}` to get started.\nYou can use `owo upgrade {trait} {count}` to upgrade the traits below.\nTo obtain more essence, use `owo sacrifice {animal} {count}`.\n\n',
 				inline: false,

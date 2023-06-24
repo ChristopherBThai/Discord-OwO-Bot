@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
  */
 
-var macro;
+let macro;
 try {
 	macro = require('../../../../../tokens/macro.js');
 } catch (e) {
@@ -33,6 +33,7 @@ const bots = [
 	'<:ebot:459996050174902272>',
 	'<:mbot:459996049784963073>',
 	'<a:lbot:459996050883608576>',
+	'<a:fbot:1122059611206328350>',
 ];
 //test(traits.efficiency);
 //test(traits.duration);
@@ -48,7 +49,7 @@ exports.getLvl = function (xp, gain, traitName) {
 	let prevlvl = 0;
 	const trait = traits[traitName];
 
-	for (var i = 1; i <= trait.max + 1; i++) {
+	for (let i = 1; i <= trait.max + 1; i++) {
 		let lvlxp = Math.trunc(trait.inc * Math.pow(i, trait.pow));
 		totalxp += lvlxp;
 		if (!hit && totalxp > xp) {
@@ -81,10 +82,10 @@ exports.getMaxXp = function (lvl, trait) {
 
 /* eslint-disable-next-line */
 function test(trait) {
-	var total = 0;
-	var result = trait.base;
-	for (var i = 1; i <= trait.max; i++) {
-		var xp = Math.trunc(trait.inc * Math.pow(i, trait.pow));
+	let total = 0;
+	let result = trait.base;
+	for (let i = 1; i <= trait.max; i++) {
+		let xp = Math.trunc(trait.inc * Math.pow(i, trait.pow));
 		total += xp;
 		result += trait.upg;
 		console.log(
@@ -109,25 +110,28 @@ exports.captcha = async function (p, word, text) {
 exports.getBot = function (result) {
 	if (result == undefined) return bots[0];
 
-	var rank = result.rank;
-	var total = result.total;
-	if (rank == undefined || total == undefined) return bots[0];
-	if (rank <= 1) return bots[5];
+	let rank = result.rank;
+	let total = result.total;
+	if (!rank || total == undefined) return bots[0];
+	if (rank <= 1) return bots[6];
 
-	var percent = (rank / total) * 100;
+	let percent = ((total - rank) / total) * 100;
 
-	if (percent >= 61)
-		// Common 39%
+	if (percent <= 43.85)
+		// Common 43.85%
 		return bots[0];
-	else if (percent >= 31)
-		// Uncommon 30%
+	else if (percent <= 78.85)
+		// Uncommon 35%
 		return bots[1];
-	else if (percent >= 11)
+	else if (percent <= 98.85)
 		// Rare 20%
 		return bots[2];
-	else if (percent >= 1)
-		// Epic 10%
+	else if (percent <= 99.85)
+		// Epic 1%
 		return bots[3];
-	// Mythic 1%
-	else return bots[4];
+	else if (percent <= 99.95)
+		// Mythical 0.1%
+		return bots[4];
+	// Legendary 0.05%
+	else return bots[5];
 };

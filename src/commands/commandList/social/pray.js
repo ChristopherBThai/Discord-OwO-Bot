@@ -68,8 +68,7 @@ module.exports = new CommandInterface({
 		if (p.command == 'pray') {
 			let prayLine = prayLines[Math.floor(Math.random() * prayLines.length)];
 			if (user) {
-				text =
-					'**🙏 | ' + p.getTag() + '** prays for **' + p.getTag(user) + '**! ' + prayLine;
+				text = '**🙏 | ' + p.getTag() + '** prays for **' + p.getTag(user) + '**! ' + prayLine;
 				authorPoints = -1;
 				opponentPoints = 1;
 				quest = 'prayBy';
@@ -81,12 +80,7 @@ module.exports = new CommandInterface({
 			let curseLine = curseLines[Math.floor(Math.random() * curseLines.length)];
 			if (user) {
 				text =
-					'**👻 | ' +
-					p.getTag() +
-					'** puts a curse on **' +
-					p.getTag(user) +
-					'**! ' +
-					curseLine;
+					'**👻 | ' + p.getTag() + '** puts a curse on **' + p.getTag(user) + '**! ' + curseLine;
 				authorPoints = 1;
 				opponentPoints = -1;
 				quest = 'curseBy';

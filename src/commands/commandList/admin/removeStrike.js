@@ -27,12 +27,15 @@ module.exports = new CommandInterface({
 			strikes = await this.macro.removeStrike(user.id);
 		} else {
 			if (!this.global.isInt(this.args[1])) {
-				return this.errorMsg(", invalid strike count!", 3000);
+				return this.errorMsg(', invalid strike count!', 3000);
 			}
 			strikes = parseInt(this.args[1]);
 			strikes = await this.macro.setStrike(user.id, strikes);
 		}
 
-		this.replyMsg(this.config.emoji.gear, `, I set ${this.getUniqueName(user)}'s strike to \`${strikes}\``);
+		this.replyMsg(
+			this.config.emoji.gear,
+			`, I set ${this.getUniqueName(user)}'s strike to \`${strikes}\``
+		);
 	},
 });

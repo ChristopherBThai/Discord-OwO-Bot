@@ -16,7 +16,7 @@ module.exports = new CommandInterface({
 
 	execute: async function () {
 		let channelId = this.args[0];
-		let message = this.args.splice(1).join(" ").trim();
+		let message = this.args.splice(1).join(' ').trim();
 
 		if (!channelId) {
 			this.errorMsg(', please include a channel id', 3000);
@@ -28,20 +28,27 @@ module.exports = new CommandInterface({
 
 		let embed;
 		try {
-			embed = JSON.parse(message)
-		} catch (error) { }
+			embed = JSON.parse(message);
+		} catch (error) {
+			/* no-op */
+		}
 
 		if (!embed) {
 			await this.client.createMessage(channelId, message);
 		} else {
-   		try {
+			try {
 				await this.client.createMessage(channelId, { embed });
 			} catch (error) {
-				await this.errorMsg(", please provide data in atleast one of the embed following embed fields! `Description` `Thumbnail Url` `Title` `Author Name`");
+				await this.errorMsg(
+					', please provide data in atleast one of the embed following embed fields! `Description` `Thumbnail Url` `Title` `Author Name`'
+				);
 				return;
 			}
 		}
 
-		this.replyMsg(this.config.emoji.gear, `${this.getName()}, I have sent the message to \`${channelId}\``);
+		this.replyMsg(
+			this.config.emoji.gear,
+			`${this.getName()}, I have sent the message to \`${channelId}\``
+		);
 	},
 });
