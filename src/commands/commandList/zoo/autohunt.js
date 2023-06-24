@@ -460,11 +460,11 @@ async function display(p, msg, con) {
 			url: p.global.getEmojiURL(bot),
 		},
 		footer: {
-			text: `Rank #${p.global.toFancyNum(rank)}`,
+			text: `Rank #${p.global.toFancyNum(rank)} • ${p.getUniqueName(msg.author)}`,
 		},
 		fields: [
 			{
-				name: `\`BEEP. BOOP. HELLO ${p.msg.author.id}. I AM HUNTBOT. I WILL HUNT FOR YOU MASTER.\``,
+				name: `\`BEEP. BOOP. I AM HUNTBOT. I WILL HUNT FOR YOU MASTER.\``,
 				value:
 					'Use the command `owo autohunt {cowoncy}` to get started.\nYou can use `owo upgrade {trait} {count}` to upgrade the traits below.\nTo obtain more essence, use `owo sacrifice {animal} {count}`.\n\n',
 				inline: false,

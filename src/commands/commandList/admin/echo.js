@@ -19,11 +19,11 @@ module.exports = new CommandInterface({
 		let message = this.args.splice(1).join(' ').trim();
 
 		if (!channelId) {
-			this.errorMsg(', please include a channel id', 3000);
+			return this.errorMsg(', please include a channel id', 3000);
 		}
 
 		if (!message) {
-			this.errorMsg(', please include a message', 3000);
+			return this.errorMsg(', please include a message', 3000);
 		}
 
 		let embed;
