@@ -442,5 +442,4 @@ exports.getTag = function (user) {
 	const id = user?.id || user?.user?.id;
 	if (!id) return 'User';
 	return `<@${id}>`;
-
-}
+};

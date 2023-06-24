@@ -16,7 +16,7 @@ module.exports = new CommandInterface({
 	execute: async function () {
 		const setting = {
 			link: true,
-			image: true
+			image: true,
 		};
 
 		switch (this.command) {
@@ -34,6 +34,9 @@ module.exports = new CommandInterface({
 		}
 
 		this.pubsub.publish('updateCaptcha', setting);
-		this.replyMsg(this.config.emoji.gear, `, I changed the captcha settings: ${JSON.stringify(setting)}`);
+		this.replyMsg(
+			this.config.emoji.gear,
+			`, I changed the captcha settings: ${JSON.stringify(setting)}`
+		);
 	},
 });

@@ -391,7 +391,9 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 
 	/* Parse actual weapon data for each weapon */
 	let descHelp =
-		'Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nReroll: `owo w rr {weaponID} [passive|stat]`\nSell: `owo sell {weaponID|cw,rw,uw...}`\nDismantle: `owo dismantle {weaponID|cw,rw,uw...}`\n';
+		'These weapons belong to <@' +
+		user.id +
+		'>\nDescription: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nReroll: `owo w rr {weaponID} [passive|stat]`\nSell: `owo sell {weaponID|cw,rw,uw...}`\nDismantle: `owo dismantle {weaponID|cw,rw,uw...}`\n';
 	let desc = '';
 	let fieldText;
 	let fields = [];
