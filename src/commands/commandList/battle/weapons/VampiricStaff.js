@@ -22,6 +22,15 @@ module.exports = class VampStaff extends WeaponInterface {
 			'<:lvampstaff:562175261496442880>',
 			'<:fvampstaff:562175261173612555>',
 		];
+		this.pristineEmojis = [
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+		]
 		this.defaultEmoji = '<:vampstaff:562175262075387904>';
 		this.statDesc =
 			'Deal **?%** of your ' +

@@ -22,6 +22,15 @@ module.exports = class ResurrectionStaff extends WeaponInterface {
 			'<:lrstaff:618001309756555275>',
 			'<:frstaff:618001309307633665>',
 		];
+		this.pristineEmojis = [
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+		]
 		this.defaultEmoji = '<:rstaff:618001309483925504>';
 		this.statDesc =
 			'Revive a dead ally and heal them for **?%** of your ' + WeaponInterface.magEmoji + 'MAG';
