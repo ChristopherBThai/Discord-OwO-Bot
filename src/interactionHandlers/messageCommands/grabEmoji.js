@@ -14,6 +14,18 @@ exports.handle = async function (interaction) {
 		const msg = messages[id];
 		content += msg.content;
 		content += JSON.stringify(msg.embeds);
+		content += JSON.stringify(msg.reactions);
+		if (msg.reactions?.length) {
+			msg.reactions.forEach((reaction) => {
+				const emoji = reaction.emoji;
+				content += `<${emoji.animated ? 'a' : ''}:${emoji.name}:${emoji.id}>`;
+			});
+		}
+		if (msg.sticker_items?.length) {
+			msg.sticker_items.forEach((sticker) => {
+				content += `<s:${sticker.name}:${sticker.id}>`;
+			});
+		}
 	}
 
 	interaction.args = [content];

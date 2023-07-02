@@ -22,15 +22,7 @@ module.exports = class SpiritStaff extends WeaponInterface {
 			'<:lsstaff:572984069726404639>',
 			'<:fsstaff:572984070234046465>',
 		];
-		this.pristineEmojis = [
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-		]
+		this.pristineEmojis = ['', '', '', '', '', '', ''];
 		this.defaultEmoji = '<:sstaff:572984070158680088>';
 		this.statDesc =
 			'Heal all allies for **?%** of your ' +

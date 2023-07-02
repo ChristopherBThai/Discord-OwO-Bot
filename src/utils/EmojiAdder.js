@@ -5,11 +5,14 @@
  * For more information, see README.md and LICENSE
  */
 
+const snailEmoji = '�';
+
 module.exports = class EmojiAdder {
-	constructor(p, name, url) {
+	constructor(p, emoji) {
 		this.p = p;
-		this.name = name;
-		this.url = url;
+		this.name = emoji.name;
+		this.url = emoji.url;
+		this.isSticker = emoji.isSticker;
 		this.progress = new Set();
 		this.success = new Set();
 		this.failure = new Set();
@@ -33,13 +36,33 @@ module.exports = class EmojiAdder {
 		// Add emoji to guild
 		try {
 			if (!this.buffer) {
-				this.buffer = await this.p.DataResolver.urlToBufferString(this.url);
+				if (this.isSticker) {
+					this.buffer = await this.p.DataResolver.urlToBuffer(this.url);
+				} else {
+					this.buffer = await this.p.DataResolver.urlToBufferString(this.url);
+				}
 			}
-			await this.p.client.createGuildEmoji(
-				guildId,
-				{ name: this.name, image: this.buffer },
-				`Requested by ${userId}`
-			);
+			if (this.isSticker) {
+				await this.p.client.createGuildSticker(
+					guildId,
+					{
+						description: `Added by ${userId}`,
+						file: {
+							file: this.buffer,
+							name: 'sticker.png',
+						},
+						name: this.name,
+						tags: snailEmoji,
+					},
+					`Requested by ${userId}`
+				);
+			} else {
+				await this.p.client.createGuildEmoji(
+					guildId,
+					{ name: this.name, image: this.buffer },
+					`Requested by ${userId}`
+				);
+			}
 		} catch (err) {
 			this.failure.add(userId);
 			this.progress.delete(userId);

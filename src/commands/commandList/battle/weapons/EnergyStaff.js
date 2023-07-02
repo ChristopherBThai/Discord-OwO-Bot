@@ -22,15 +22,7 @@ module.exports = class EnergyStaff extends WeaponInterface {
 			'<:lestaff:572984070007423006>',
 			'<:festaff:572984069512757249>',
 		];
-		this.pristineEmojis = [
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-		]
+		this.pristineEmojis = ['', '', '', '', '', '', ''];
 		this.defaultEmoji = '<:estaff:572983470465220608>';
 		this.statDesc =
 			'Sends a wave of energy and deals **?%** of your ' +

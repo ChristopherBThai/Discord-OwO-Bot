@@ -22,15 +22,7 @@ module.exports = class LeechingScythe extends WeaponInterface {
 			'<:llsyth:1107927034308612097>',
 			'<:flsyth:1107927033222279268>',
 		];
-		this.pristineEmojis = [
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-		]
+		this.pristineEmojis = ['', '', '', '', '', '', ''];
 		this.defaultEmoji = '<:lsyth:1107927037190090804>';
 		this.statDesc = `Deal **?%** of your ${WeaponInterface.strEmoji}STR to a random enemy and apply **Leech** for 3 turns. If the **Leech** debuff is already on the target, deal **+?%** more damage.`;
 		this.availablePassives = 'all';
