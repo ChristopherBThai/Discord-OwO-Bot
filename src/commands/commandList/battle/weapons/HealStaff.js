@@ -22,15 +22,7 @@ module.exports = class HealStaff extends WeaponInterface {
 			'<:lhealstaff:535283616209567764>',
 			'<:fhealstaff:535283617019068426>',
 		];
-		this.pristineEmojis = [
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-		]
+		this.pristineEmojis = ['', '', '', '', '', '', ''];
 		this.defaultEmoji = '<:healstaff:538196865410138125>';
 		this.statDesc = `Heals **?%** of your ${WeaponInterface.magEmoji}MAG to the lowest health ally. This weapon can overheal up to 50% of max ${WeaponInterface.hpEmoji}HP.`;
 		this.availablePassives = 'all';

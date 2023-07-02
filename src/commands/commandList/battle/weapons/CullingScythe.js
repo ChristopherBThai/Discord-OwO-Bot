@@ -22,15 +22,7 @@ module.exports = class CullingScythe extends WeaponInterface {
 			'<:lsythe:618001308607184896>',
 			'<:fsythe:618001308196012042>',
 		];
-		this.pristineEmojis = [
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-		]
+		this.pristineEmojis = ['', '', '', '', '', '', ''];
 		this.defaultEmoji = '<:sythe:618001309622337566>';
 		this.statDesc =
 			'Deals **?%** of your ' +

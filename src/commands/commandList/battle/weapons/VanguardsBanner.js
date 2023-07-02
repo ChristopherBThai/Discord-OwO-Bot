@@ -23,15 +23,7 @@ module.exports = class VanguardsBanner extends WeaponInterface {
 			'<:lvban:618001308284354561>',
 			'<:fvban:618001308544270337>',
 		];
-		this.pristineEmojis = [
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-		]
+		this.pristineEmojis = ['', '', '', '', '', '', ''];
 		this.defaultEmoji = '<:vban:618001308837740545>';
 		this.statDesc =
 			'Apply **Attack Up** to all allies for 2 turns. If the user has enough WP when the buff expires, the buff will be recasted with a stronger version.';

@@ -22,15 +22,7 @@ module.exports = class ArcaneScepter extends WeaponInterface {
 			'<:lascept:618001309773201409>',
 			'<:fascept:618001309156769793>',
 		];
-		this.pristineEmojis = [
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-		]
+		this.pristineEmojis = ['', '', '', '', '', '', ''];
 		this.defaultEmoji = '<:ascept:618001305692274698>';
 		this.statDesc = `Replenish **?%** of your ${WeaponInterface.magEmoji}MAG as ${WeaponInterface.wpEmoji}WP to an ally with the lowest ${WeaponInterface.wpEmoji}WP. This weapon can overreplenish up to 50% of max ${WeaponInterface.wpEmoji}WP.`;
 		this.availablePassives = 'all';

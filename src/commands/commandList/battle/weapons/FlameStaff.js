@@ -22,15 +22,7 @@ module.exports = class FStaff extends WeaponInterface {
 			'<:lfstaff:572663875904733186>',
 			'<:ffstaff:572663876110254090>',
 		];
-		this.pristineEmojis = [
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-		]
+		this.pristineEmojis = ['', '', '', '', '', '', ''];
 		this.defaultEmoji = '<:fstaff:572663875749675018>';
 		this.statDesc =
 			'Deals **?%** of your ' +
