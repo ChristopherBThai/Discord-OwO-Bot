@@ -22,6 +22,15 @@ module.exports = class GlacialAxe extends WeaponInterface {
 			'<:lgaxe:618389129817882625>',
 			'<:fgaxe:618389128396013598>',
 		];
+		this.pristineEmojis = [
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+		]
 		this.defaultEmoji = '<:gaxe:618389128043692043>';
 		this.statDesc =
 			'Deals **?%** of your ' +

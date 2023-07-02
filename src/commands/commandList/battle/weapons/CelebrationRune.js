@@ -24,6 +24,15 @@ module.exports = class CRune extends WeaponInterface {
 			'<:lcrune:1080441110876397568>',
 			'<:fcrune:1080441108775059456>',
 		];
+		this.pristineEmojis = [
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+		];
 		this.defaultEmoji = '<:crune:1080441105117614142>';
 		this.statDesc = 'Apply **Celebration** to an ally with the lowest health for 3 turns.';
 		this.availablePassives = 'all';

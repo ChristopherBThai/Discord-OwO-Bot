@@ -22,6 +22,15 @@ module.exports = class AbsorbWand extends WeaponInterface {
 			'<:lawand:572620164655480847>',
 			'<:fawand:572620164588240896>',
 		];
+		this.pristineEmojis = [
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+		]
 		this.defaultEmoji = '<:awand:572620163434676265>';
 		this.statDesc =
 			'Deal **?%** of your ' +

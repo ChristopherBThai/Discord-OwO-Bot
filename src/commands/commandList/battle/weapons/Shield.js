@@ -23,6 +23,15 @@ module.exports = class Shield extends WeaponInterface {
 			'<:lshield:546552083353174026>',
 			'<:fshield:546552026084016149>',
 		];
+		this.pristineEmojis = [
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+		]
 		this.defaultEmoji = '<:shield:546552900986601493>';
 		this.statDesc = 'Adds a **taunt** buff to your animal for 2 turns';
 		this.availablePassives = 'all';
