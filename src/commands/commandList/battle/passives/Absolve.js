@@ -37,7 +37,7 @@ module.exports = class Absolve extends PassiveInterface {
 		/* Grab an enemy that I'm attacking */
 		const enemies = tags.getAnimalEnemies(animal);
 		const allies = tags.getAnimalAllies(animal);
-		let attacking = WeaponInterface.getAttacking(animal, allies, enemies);
+		let attacking = WeaponInterface.getAttacking(animal, allies, enemies, { ignoreChoose: true });
 		if (!attacking) return;
 
 		tags.add('absolve', animal);
