@@ -339,5 +339,76 @@
 				}
 			]
 		}
+	},
+	"summer_basket": {
+		"start": 1688454000000,
+		"end": 1689058800000,
+		"emoji": "<:basket:1125580957571891230>",
+		"item": {
+			"id": "summer_basket",
+			"name": "Summer Basket",
+			"emoji": "<:basket:1125580957571891230>",
+			"openEmoji": "<:basket:1125580957571891230>",
+			"chance": 0.05,
+			"foundText": "?emoji? **|** Come on, we are going for a picnic! Can you carry the basket?",
+			"description": "Summer is here! Take this basket full of goodies on your picnic! This item was given out on July 2023 for Summer!",
+			"rewards": [
+				{
+					"type": "gem",
+					"id": 79,
+					"chance": 4
+				},
+				{
+					"type": "gem",
+					"id": 80,
+					"chance": 4
+				},
+				{
+					"type": "gem",
+					"id": 81,
+					"chance": 3
+				},
+				{
+					"type": "gem",
+					"id": 82,
+					"chance": 3
+				},
+				{
+					"type": "gem",
+					"id": 83,
+					"chance": 3
+				},
+				{
+					"type": "gem",
+					"id": 84,
+					"chance": 2
+				},
+				{
+					"type": "gem",
+					"id": 85,
+					"chance": 1
+				},
+				{
+					"type": "lb",
+					"count": 1,
+					"chance": 10
+				},
+				{
+					"type": "wc",
+					"count": 1,
+					"chance": 10
+				},
+				{
+					"type": "flb",
+					"count": 1,
+					"chance": 1
+				},
+				{
+					"type": "cowoncy",
+					"count": 10000,
+					"chance": 5
+				}
+			]
+		}
 	}
 }
