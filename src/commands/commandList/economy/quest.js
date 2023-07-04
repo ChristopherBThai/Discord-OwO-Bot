@@ -219,7 +219,7 @@ function constructEmbed(p, afterMid, quests) {
 			name: `${p.getName()}'s Quest Log`,
 			icon_url: p.msg.author.avatarURL,
 		},
-		description: quests.text,
+		description: `These quests belong to ${p.getTag()}\n${quests.text}`,
 	};
 }
 
@@ -289,7 +289,7 @@ function parseQuests(id, result, afterMid, quest) {
 	for (let i = 0; i < result.length; i++) {
 		const texts = parseQuest(result[i]);
 		text += `**${i + 1}. ${texts.text}**`;
-		text += `\n<:blank:427371936482328596>\`‣ Reward:\` ${texts.reward}`;
+		text += `<:blank:427371936482328596>\`‣ Reward:\` ${texts.reward}`;
 		text += `\n<:blank:427371936482328596>\`‣ Progress: [${texts.progress}]\`\n`;
 		if (texts.locked) {
 			text += '<:blank:427371936482328596>`‣ 🔒 Locked`\n';
