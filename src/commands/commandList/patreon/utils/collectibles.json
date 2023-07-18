@@ -24,7 +24,7 @@
 		"ownerOnly": false,
 		"dailyOnly": false,
 		"giveAmount": 2,
-		"description": "Give two ginsengs to someone! You can only gain one if you receive it!",
+		"description": "Give two ginsengs to someone! You can only gain one if you receive it!\nGinseng is the root of plants in the genus Panax, characterized by the presence of  ginsenosides and gintonin, notable for its healing properties.\nOne of the first written texts covering the use of ginseng as a medicinal herb was written in China in 196 AD.",
 		"displayMsg": "?emoji? **| ?user?**, you currently have ?count? ginseng?plural?!",
 		"brokeMsg": ", you do not have any ginsengs! >:c",
 		"giveMsg": "?emoji? **| ?giver?** sent **?receiver?** 2 ginsengs!",
