@@ -54,7 +54,7 @@ function lexx(p, info) {
 
 function rhine(p, info) {
 	const smile = '<a:smile:1078625522839457924>';
-	const blossom = '<a:blossom2:1078625520419348481>';
+	const blossom = '<a:rhn_cherrytree:1124358034848743555>';
 	const thanks = '<a:thank:1078625521778298901>';
 	let embed;
 	if (info.receiver) {
