@@ -5,6 +5,7 @@
  * For more information, see README.md and LICENSE
  */
 
+const mysql = require('../../../botHandlers/mysqlHandler.js');
 let macro;
 try {
 	macro = require('../../../../../tokens/macro.js');
@@ -35,6 +36,11 @@ const bots = [
 	'<a:lbot:459996050883608576>',
 	'<a:fbot:1122059611206328350>',
 ];
+
+let totalBots = 4000000;
+setInterval(updateTotal, 60 * 60 * 1000);
+updateTotal();
+
 //test(traits.efficiency);
 //test(traits.duration);
 //test(traits.cost);
@@ -111,11 +117,10 @@ exports.getBot = function (result) {
 	if (result == undefined) return bots[0];
 
 	let rank = result.rank;
-	let total = result.total;
-	if (!rank || total == undefined) return bots[0];
+	if (!rank || totalBots == undefined) return bots[0];
 	if (rank <= 1) return bots[6];
 
-	let percent = ((total - rank) / total) * 100;
+	let percent = ((totalBots - rank) / totalBots) * 100;
 
 	if (percent <= 43.85)
 		// Common 43.85%
@@ -135,3 +140,16 @@ exports.getBot = function (result) {
 	// Legendary 0.05%
 	else return bots[5];
 };
+
+exports.getTotalBots = function () {
+	return totalBots;
+}
+
+async function updateTotal() {
+	//Update total bots every hour
+	const sql = `SELECT COUNT(id) AS total FROM autohunt;`;
+	const result = await mysql.query(sql);
+	if (result[0]?.total) {
+		totalBots = result[0].total;
+	}
+}
