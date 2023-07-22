@@ -12,8 +12,7 @@ const autohuntutil = require('./autohuntutil.js');
 const animalUtil = require('./animalUtil.js');
 const global = require('../../../utils/global.js');
 const letters = 'abcdefghijklmnopqrstuvwxyz';
-const botrank =
-	'SELECT (COUNT(*)) AS rank, (SELECT COUNT(*) FROM autohunt) AS total FROM autohunt WHERE autohunt.total >= (SELECT autohunt.total FROM autohunt WHERE id = ';
+const botrank = `SELECT COUNT(id) AS rank FROM autohunt WHERE autohunt.total >= (SELECT autohunt.total FROM autohunt WHERE id = `;
 const logger = require('../../../utils/logger.js');
 const parse = require('parse-duration');
 
@@ -137,6 +136,8 @@ async function claim(p, msg, con, query, bot) {
 		totalExp +
 		' EXPERIENCE`';
 	let tempText = [];
+	let animalSql = [];
+	let animalCountSql = {};
 	for (let animal in total) {
 		let animalString = animal + animalUtil.toSmallNum(total[animal].count, digits) + '  ';
 		let animalLoc = p.animals.order.indexOf(total[animal].rank);
@@ -145,35 +146,28 @@ async function claim(p, msg, con, query, bot) {
 				tempText[animalLoc] = ' \n' + p.animals.ranks[p.animals.order[animalLoc]] + ' **|**';
 			tempText[animalLoc] += ' ' + animalString;
 		}
-		sql +=
-			'INSERT INTO animal (id,name,count,totalcount) VALUES (' +
-			msg.author.id +
-			",'" +
-			animal +
-			"'," +
-			total[animal].count +
-			',' +
-			total[animal].count +
-			') ON DUPLICATE KEY UPDATE count = count + ' +
-			total[animal].count +
-			',totalcount = totalcount + ' +
-			total[animal].count +
-			';';
-		sql +=
-			'INSERT INTO animal_count (id,' +
-			total[animal].rank +
-			') VALUES (' +
-			msg.author.id +
-			',' +
-			total[animal].count +
-			') ON DUPLICATE KEY UPDATE ' +
-			total[animal].rank +
-			' = ' +
-			total[animal].rank +
-			'+' +
-			total[animal].count +
-			';';
+		animalSql.push(`(${msg.author.id}, '${animal}', ${total[animal].count}, ${total[animal].count})`);
+		if (!animalCountSql[total[animal].rank])
+			animalCountSql[total[animal].rank] = {
+				rank: total[animal].rank,
+				count: 0
+			}
+		animalCountSql[total[animal].rank].count += total[animal].count;
 	}
+	animalCountSql = Object.values(animalCountSql);
+
+	sql += `INSERT INTO animal (id, name, count, totalcount)
+			VALUES ${animalSql.join(',')}
+			ON DUPLICATE KEY UPDATE
+				count = count + VALUES(count),
+				totalcount = totalcount + VALUES(totalcount);`
+	sql += `INSERT INTO animal_count (id, ${animalCountSql.map(animalCount => animalCount.rank).join(',')})
+			VALUES (${msg.author.id}, ${animalCountSql.map(animalCount => animalCount.count).join(',')})
+			ON DUPLICATE KEY UPDATE
+				${animalCountSql.map(animalCount => {
+					return `${animalCount.rank} = ${animalCount.rank} + ${animalCount.count}`
+				}).join(',')};
+			`;
 
 	for (let i = 0; i < tempText.length; i++) if (tempText[i]) text += tempText[i];
 
@@ -406,7 +400,7 @@ async function display(p, msg, con) {
 
 	//Get emoji
 	let bot = autohuntutil.getBot(result[1][0]);
-	let rank = result[1][0]?.rank || result[1][0]?.total;
+	let rank = result[1][0]?.rank || autohuntutil.getTotalBots();
 
 	let hunting;
 	if (result[0][0] && result[0][0].huntmin != 0) {
