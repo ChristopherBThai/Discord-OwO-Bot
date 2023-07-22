@@ -22,7 +22,15 @@ module.exports = class PDagger extends WeaponInterface {
 			'<:lpdagger:572285296188850176>',
 			'<:fpdagger:572285296184393738>',
 		];
-		this.pristineEmojis = ['', '', '', '', '', '', ''];
+		this.pristineEmojis = [
+			'<:pcpdag:1132227952772403210>',
+			'<:pupdag:1132229528685662250>',
+			'<:prpdag:1132229384393203762>',
+			'<:pepdag:1132228202694197330>',
+			'<:pmpdag:1132229064506212433>',
+			'<:plpdag:1132228933031571476>',
+			'<:pfpdag:1132228361222115359>',
+		];
 		this.defaultEmoji = '<:pdagger:572285296272736256>';
 		this.statDesc =
 			'Deals **?%** of your ' +
