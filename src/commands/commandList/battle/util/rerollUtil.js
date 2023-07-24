@@ -34,7 +34,7 @@ exports.reroll = async function (p) {
 	}
 
 	// Get rerolled weapon
-	let newWeapon = fetchNewWeapon(p, weapon, rrType);
+	let newWeapon = await fetchNewWeapon(p, weapon, rrType);
 
 	// Send message
 	await sendMessage(p, weapon, newWeapon, rrType);
@@ -169,7 +169,7 @@ async function sendMessage(p, oldWeapon, newWeapon, rrType, msg) {
 					embed,
 				});
 			} else {
-				newWeapon = fetchNewWeapon(p, oldWeapon, rrType);
+				newWeapon = await fetchNewWeapon(p, oldWeapon, rrType);
 				sendMessage(p, oldWeapon, newWeapon, rrType, msg);
 			}
 		}
@@ -194,7 +194,7 @@ async function useShards(p) {
 	return false;
 }
 
-function fetchNewWeapon(p, weapon, type) {
+async function fetchNewWeapon(p, weapon, type) {
 	/* Get new weapon */
 	let newWeapon;
 	if (type == 'p') newWeapon = weapon.rerollPassives();
@@ -205,6 +205,8 @@ function fetchNewWeapon(p, weapon, type) {
 	for (let i in weapon.passives) {
 		newWeapon.passives[i].pcount = weapon.passives[i].pcount;
 	}
+	let sql = `UPDATE user_weapon SET rrcount = rrcount + 1 WHERE uwid = ${weapon.ruwid};`
+	await p.query(sql);
 	return newWeapon;
 }
 
