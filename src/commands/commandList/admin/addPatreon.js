@@ -20,7 +20,7 @@ module.exports = new CommandInterface({
 			let { user, date } = await addPatreon(p, p.args[0], p.args[1], p.args[2]);
 			await p.replyMsg(
 				tada,
-				`, Updated **${user.username + '#' + user.discriminator}** patreon perks until **${date}**`
+				`, Updated **${p.getUniqueName(user)}** patreon perks until **${date}**`
 			);
 		} else {
 			await addPatreons(p);
@@ -40,7 +40,7 @@ async function addPatreons(p) {
 		try {
 			let result = await addPatreon(p, args[0], args[1], args[2]);
 			if (result) {
-				success += `\`${result.user.username}#${result.user.discriminator} -> ${result.date}\`\n`;
+				success += `\`${p.getUniqueName(result.user)} -> ${result.date}\`\n`;
 			} else {
 				failed += `\`failed for [${args.join(', ')}]\`\n`;
 			}

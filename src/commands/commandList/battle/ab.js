@@ -31,7 +31,7 @@ module.exports = new CommandInterface({
 	six: 500,
 
 	execute: async function (p) {
-		const author = p.opt?.author || p.msg.author;
+		const author = p.opt?.member || p.opt?.author || p.msg.member || p.msg.author;
 		let sql = `SELECT (SELECT id FROM user WHERE uid = sender) AS sender,bet,flags,channel
 			FROM user_battle JOIN
 				(SELECT uid FROM user WHERE id = ${author.id}) AS user
@@ -68,7 +68,7 @@ module.exports = new CommandInterface({
 
 		/* Get opponent name */
 		let sender = result[0][0].sender;
-		sender = await p.fetch.getUser(sender);
+		sender = await p.fetch.getMember(p.msg.channel.guild.id, sender);
 		if (!sender) {
 			p.errorMsg(', I could not find your opponent!', 3000);
 			return;
@@ -101,15 +101,15 @@ module.exports = new CommandInterface({
 		let msg = 'There are no winners!';
 		let winner, loser;
 		if (outcome.player && !outcome.enemy) {
-			if (bet > 0) msg = author.username + ' wins ' + bet + ' cowoncy!';
-			else msg = author.username + ' wins!';
+			if (bet > 0) msg = this.getName(author) + ' wins ' + bet + ' cowoncy!';
+			else msg = this.getName(author) + ' wins!';
 			if (user1 == author.id) winColumn = 'win1';
 			else winColumn = 'win2';
 			winner = author;
 			loser = sender;
 		} else if (outcome.enemy && !outcome.player) {
-			if (bet > 0) msg = sender.username + ' wins ' + bet + ' cowoncy!';
-			else msg = sender.username + ' wins!';
+			if (bet > 0) msg = this.getName(sender) + ' wins ' + bet + ' cowoncy!';
+			else msg = this.getName(sender) + ' wins!';
 			if (user1 == sender.id) winColumn = 'win1';
 			else winColumn = 'win2';
 			winner = sender;
@@ -140,7 +140,7 @@ module.exports = new CommandInterface({
 			display: flags.display ? flags.display : 'image',
 			speed: flags.log ? 'instant' : 'short',
 			instant: flags.log ? true : false,
-			title: author.username + ' vs ' + sender.username,
+			title: this.getName(author) + ' vs ' + this.getName(sender),
 			showLogs: flags.link ? 'link' : flags.log ? true : false,
 		};
 
@@ -200,12 +200,12 @@ async function parseTeams(p, user, sender, flags) {
 	let eTeam = teamUtil.parseTeam(p, result[1], result[1]);
 	for (let i in eTeam) animalUtil.stats(eTeam[i], flags);
 	let player = {
-		username: user.username,
+		username: p.getName(user),
 		name: result[0][0].tname,
 		team: pTeam,
 	};
 	let enemy = {
-		username: sender.username,
+		username: p.getName(sender),
 		name: result[1][0].tname,
 		team: eTeam,
 	};

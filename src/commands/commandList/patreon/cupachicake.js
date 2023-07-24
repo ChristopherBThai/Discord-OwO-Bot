@@ -77,6 +77,10 @@ async function give(p, user) {
 
 	await p.redis.incr('cpc', user.id, 2);
 	p.send(
-		`${cpcEmoji1} **| ${user.username}**, you have received two cupachicakes from ${p.msg.author.username}!\n${p.config.emoji.blank} **|** Cupcakes are sweet and they're even sweeter when shared. So I hope this cupcake bakes your day ${cpcEmoji2}`
+		`${cpcEmoji1} **| ${
+			user.username
+		}**, you have received two cupachicakes from ${p.getName()}!\n${
+			p.config.emoji.blank
+		} **|** Cupcakes are sweet and they're even sweeter when shared. So I hope this cupcake bakes your day ${cpcEmoji2}`
 	);
 }

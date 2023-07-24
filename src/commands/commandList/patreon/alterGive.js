@@ -54,7 +54,7 @@ function lexx(p, info) {
 
 function rhine(p, info) {
 	const smile = '<a:smile:1078625522839457924>';
-	const blossom = '<a:blossom2:1078625520419348481>';
+	const blossom = '<a:rhn_cherrytree:1124358034848743555>';
 	const thanks = '<a:thank:1078625521778298901>';
 	let embed;
 	if (info.receiver) {
@@ -98,24 +98,24 @@ function king(p, info) {
 function jayyy(p, info) {
 	if (info.receiver) {
 		const embed = {
-			color: 11455218,
+			color: 15509716,
 			image: {
-				url: 'https://cdn.discordapp.com/attachments/921261347688308766/1032283209062416394/GIF-221019_175021.gif',
+				url: 'https://cdn.discordapp.com/attachments/921261347688308766/1103640755291037767/20230430_213350.gif',
 			},
 			description:
-				`<:snow1:1034776453348335646> **| ${info.to.username}** receives **${info.amount} Snowballs** <a:snow2:1034776454476603473> from **${info.from.username}**! <a:snow3:1034776452169728000><a:snow3:1034776452169728000>` +
-				`\n<:snow4:1034776448759771176> **| ${info.to.username}**:Happy Winters Cutie!! <:snow6:1034776455491637258><:snow6:1034776455491637258>`,
+				`<:heart:1120280184684294164> **| ${info.to.username}** receives **${info.amount} Blossoms** <:flower:1120280186051625020> from **${info.from.username}**! <:heart2:1120280187389620275><:heart2:1120280187389620275>` +
+				`\n<:heart3:1120280182595538954> **| ${info.to.username}** hopes these **Blossoms** bring serenity in you!!<a:bud:1120280188899557476><a:bud:1120280188899557476>`,
 		};
 		return { embed };
 	} else {
 		const embed = {
-			color: 11254221,
+			color: 15509716,
 			image: {
-				url: 'https://cdn.discordapp.com/attachments/921261347688308766/1032286989619314809/GIF-221019_190636.gif',
+				url: 'https://cdn.discordapp.com/attachments/921261347688308766/1103640366109950002/20230504_160739_1.gif',
 			},
 			description:
-				`<:snow1:1034776453348335646> **| ${info.from.username}** shares **${info.amount} Snowballs** <a:snow2:1034776454476603473> with **${info.to.username}**! <a:snow3:1034776452169728000><a:snow3:1034776452169728000>` +
-				`\n<:snow4:1034776448759771176> **| ${info.from.username}** hopes you can make a cute **Snowman**<a:snow5:1034776450160676876> now!! <:snow6:1034776455491637258><:snow6:1034776455491637258>`,
+				`<:heart:1120280184684294164> **| ${info.from.username}** shares **${info.amount} Blossoms** <:flower:1120280186051625020> with **${info.to.username}**! <:heart2:1120280187389620275><:heart2:1120280187389620275>` +
+				`\n<:heart3:1120280182595538954> **| ${info.from.username}** hopes these **Blossoms** bring serenity in you!!<a:bud:1120280188899557476><a:bud:1120280188899557476>`,
 		};
 		return { embed };
 	}

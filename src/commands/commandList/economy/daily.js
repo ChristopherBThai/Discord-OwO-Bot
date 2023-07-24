@@ -106,7 +106,7 @@ function finalizeText(
 		sql += `INSERT INTO user_announcement (uid, aid) VALUES (${uid}, (SELECT aid FROM announcement ORDER BY aid DESC LIMIT 1)) ON DUPLICATE KEY UPDATE aid = (SELECT aid FROM announcement ORDER BY aid DESC LIMIT 1);`;
 	}
 
-	let text = `${moneyEmoji} **| ${p.msg.author.username}**, Here is your daily **<:cowoncy:416043450337853441> ${gain} Cowoncy**!`;
+	let text = `${moneyEmoji} **| ${p.getName()}**, Here is your daily **<:cowoncy:416043450337853441> ${gain} Cowoncy**!`;
 
 	if (streak - 1 > 0)
 		text += `\n${p.config.emoji.blank} **|** You're on a **${streak - 1} daily streak**!`;
@@ -305,7 +305,9 @@ async function doubleCheckMarriage(p, afterMid, marriage) {
 		}
 	}
 	p.send(
-		`**⏱ |** Nu! **${p.msg.author.username}**! You need to wait **${afterMid.hours}H ${afterMid.minutes}M ${afterMid.seconds}S**`
+		`**⏱ |** Nu! **${p.getName()}**! You need to wait **${afterMid.hours}H ${afterMid.minutes}M ${
+			afterMid.seconds
+		}S**`
 	);
 }
 

@@ -338,6 +338,16 @@ exports.getEmojiURL = function (emoji) {
 	return `https://cdn.discordapp.com/emojis/${id}.${format}`;
 };
 
+exports.parseEmoji = function (emoji) {
+	let id = emoji.match(/:[0-9]+>$/gi);
+	if (!id || !id[0]) return;
+	id = id[0].match(/[0-9]+/gi)[0];
+	let name = emoji.match(/:[\w]+:/gi);
+	if (!name || !name[0]) return;
+	name = emoji.slice(1, -1);
+	return { id, name };
+};
+
 exports.replacer = function (text, replacer) {
 	if (!text) return text;
 	for (let key in replacer) {
@@ -381,4 +391,55 @@ exports.getTimeUntil = function (date) {
 	let days = diff;
 
 	return { days, hours, minutes, seconds };
+};
+
+exports.toMySQL = function (date) {
+	return (
+		"'" +
+		date.getFullYear() +
+		'-' +
+		('00' + (date.getMonth() + 1)).slice(-2) +
+		'-' +
+		('00' + date.getDate()).slice(-2) +
+		' ' +
+		('00' + date.getHours()).slice(-2) +
+		':' +
+		('00' + date.getMinutes()).slice(-2) +
+		':' +
+		('00' + date.getSeconds()).slice(-2) +
+		"'"
+	);
+};
+
+exports.getA = function (text) {
+	text = text.replace(/\*/gi, '');
+	return ['a', 'e', 'i', 'o', 'u'].includes(text[0].toLowerCase()) ? 'an' : 'a';
+};
+
+exports.getName = function (user) {
+	return (
+		user?.nick ||
+		user?.globalname ||
+		user?.global_name ||
+		user?.user?.globalname ||
+		user?.user?.global_name ||
+		user?.username ||
+		user?.user?.username ||
+		'User'
+	);
+};
+
+exports.getUniqueName = function (user) {
+	user = user.user || user;
+	if (user.discriminator && user.discriminator !== '0') {
+		return `${user.username}#${user.discriminator}`;
+	} else {
+		return `@${user.username}`;
+	}
+};
+
+exports.getTag = function (user) {
+	const id = user?.id || user?.user?.id;
+	if (!id) return 'User';
+	return `<@${id}>`;
 };

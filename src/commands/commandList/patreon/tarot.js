@@ -114,7 +114,7 @@ module.exports = new CommandInterface({
 		const embed = {
 			color: p.config.embed_color,
 			author: {
-				name: `${p.msg.author.username} chose ${count} tarot card(s)`,
+				name: `${p.getName()} chose ${count} tarot card(s)`,
 				icon_url: p.msg.author.avatarURL,
 			},
 			description: `*${question}*`,

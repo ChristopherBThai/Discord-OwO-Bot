@@ -22,7 +22,7 @@ module.exports = class Quest {
 	async increment(msg, questName, count = 1, extra) {
 		/* parse id and username */
 		let id = msg.author.id;
-		let username = msg.author.username;
+		let username = global.getName(msg.member || msg.author);
 		if (questBy.includes(questName)) {
 			id = extra.id;
 			username = extra.username;

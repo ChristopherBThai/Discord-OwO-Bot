@@ -121,6 +121,9 @@ class OwO extends Base {
 			console.log('Found badwords.json file in secret folder!');
 		}
 
+		this.giveaway = require('./utils/giveaway.js');
+		this.giveaway.checkGiveawayTimeout(this);
+
 		// Create commands
 		this.command = new (require('./commands/command.js'))(this);
 	}

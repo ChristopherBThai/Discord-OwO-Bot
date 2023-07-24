@@ -33,7 +33,7 @@ async function parseUsers(p) {
 			try {
 				let result = await addPerk(p, id);
 				if (result) {
-					success += `\`[${result.user.id}] ${result.user.username}#${result.user.discriminator}\`\n`;
+					success += `\`[${result.user.id}] ${p.getUniqueName(result.user)}\`\n`;
 				} else {
 					failed += `\`failed for [${id}]\`\n`;
 				}

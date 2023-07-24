@@ -39,7 +39,7 @@ module.exports = new CommandInterface({
 			return;
 		}
 		if (p.msg.author.id == target.id) {
-			let text = '**' + p.msg.author.username + "**! You can't kiss yourself!";
+			let text = '**' + this.getName() + "**! You can't kiss yourself!";
 			p.send(text);
 			return;
 		}
@@ -51,7 +51,7 @@ module.exports = new CommandInterface({
 				url: emote,
 			},
 			author: {
-				name: p.msg.author.username + ' kisses ' + target.username + '!',
+				name: this.getName() + ' kisses ' + this.getName(target) + '!',
 				url: emote,
 				icon_url: p.msg.author.avatarURL,
 			},

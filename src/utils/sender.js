@@ -5,7 +5,7 @@
  * For more information, see README.md and LICENSE
  */
 
-let client;
+let client, global;
 const logChannel = '739393782805692476';
 const modLogChannel = '471579186059018241';
 
@@ -86,7 +86,7 @@ async function createMessage(msg, content, file, del, opt = {}) {
  */
 exports.reply = function (msg) {
 	return function (emoji, content, del, file, opt) {
-		let username = this.opt?.author?.username || msg.author.username;
+		let username = global.getName(this.opt?.author || msg.member || msg.author);
 		let tempContent = {};
 		if (typeof content === 'string') tempContent.content = `**${emoji} | ${username}**${content}`;
 		else {
@@ -123,7 +123,7 @@ exports.reply = function (msg) {
  */
 exports.error = function (errorEmoji, msg) {
 	return function (content, del, file, opt) {
-		let username = msg.author.username;
+		let username = global.getName(this.opt?.author || msg.member || msg.author);
 		let emoji = errorEmoji;
 		let tempContent = {};
 		if (typeof content === 'string') {
@@ -158,6 +158,7 @@ exports.msgUser = async function (id, msg) {
 			dmError: true,
 			id: user.id,
 			username: user.username,
+			globalname: user.globalname,
 			discriminator: user.discriminator,
 		};
 	}
@@ -176,6 +177,8 @@ exports.msgChannel = async function (channel, msg, options) {
 			await message.addReaction(options.react[i]);
 		}
 	}
+
+	return message;
 };
 
 exports.msgLogChannel = async function (msg) {
@@ -188,8 +191,14 @@ exports.msgModLogChannel = async function (msg) {
 	client.createMessage(modLogChannel, msg);
 };
 
+exports.editMsg = async function (cid, mid, msg) {
+	if (!msg || !mid || !cid) return;
+	client.editMessage(cid, mid, msg);
+};
+
 exports.init = function (main) {
 	client = main.bot;
+	global = main.global;
 };
 
 function cleanContent(content) {

@@ -135,7 +135,8 @@ class Command {
 			user &&
 			(user.username !== rawUser.username ||
 				user.avatar !== rawUser.avatar ||
-				user.discriminator !== rawUser.discriminator)
+				user.discriminator !== rawUser.discriminator ||
+				user.globalname !== rawUser.global_name)
 		) {
 			update = true;
 		}
@@ -294,6 +295,7 @@ function initParam(msg, command, args, main, context) {
 		PagedMessage: main.PagedMessage,
 		dateUtil: main.dateUtil,
 		neo4j: main.neo4j,
+		giveaway: main.giveaway,
 	};
 	param.setCooldown = function (cooldown) {
 		main.cooldown.setCooldown(param, aliasToCommand[command], cooldown);
@@ -306,6 +308,11 @@ function initParam(msg, command, args, main, context) {
 		for (let i in param.msg.mentions) {
 			let tempUser = param.msg.mentions[i];
 			if (tempUser.id == id) {
+				let tempMember = param.msg.channel?.guild?.members.get(tempUser.id);
+				if (tempMember) {
+					tempMember.bot = tempUser.bot;
+					return tempMember;
+				}
 				return tempUser;
 			}
 		}
@@ -333,6 +340,15 @@ function initParam(msg, command, args, main, context) {
 			if (role) text = text.replace(mention, '@' + role.name);
 		}
 		return text;
+	};
+	param.getName = (user) => {
+		return param.global.getName(user || param.msg.member || param.msg.author);
+	};
+	param.getUniqueName = (user) => {
+		return param.global.getUniqueName(user || param.msg.author);
+	};
+	param.getTag = (user) => {
+		return param.global.getTag(user || param.msg.author);
 	};
 	return param;
 }

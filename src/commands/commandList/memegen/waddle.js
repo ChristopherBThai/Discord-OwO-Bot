@@ -38,7 +38,7 @@ module.exports = new CommandInterface({
 			name = user.username;
 		} else if (!user && !p.args.length) {
 			link = p.msg.author.dynamicAvatarURL('png', 128);
-			name = p.msg.author.username;
+			name = p.getName();
 		} else if (!user && p.global.isEmoji(p.args[0])) {
 			link = p.args[0].match(/:[0-9]+>/gi)[0];
 			link = `https://cdn.discordapp.com/emojis/${link.slice(1, link.length - 1)}.png`;

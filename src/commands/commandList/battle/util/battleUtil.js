@@ -24,8 +24,8 @@ const weapon = '🗡';
 exports.weapon = weapon;
 const numEmojis = ['1⃣', '2⃣', '3⃣'];
 const stopStreak = {
-	start: 1678435200000,
-	end: 1679122800000,
+	start: 1684652400000,
+	end: 1685430000000,
 };
 
 function teamFilter(userId) {
@@ -267,7 +267,7 @@ let display = (exports.display = async function (
 	let embed = {
 		color: p.config.embed_color,
 		author: {
-			name: title ? title : p.msg.author.username + ' goes into battle!',
+			name: title ? title : p.getName() + ' goes into battle!',
 			icon_url: p.msg.author.avatarURL,
 		},
 		fields: [
@@ -317,7 +317,7 @@ let displayText = (exports.displayText = async function (
 	let embed = {
 		color: p.config.embed_color,
 		author: {
-			name: title ? title : p.msg.author.username + ' goes into battle!',
+			name: title ? title : p.getName() + ' goes into battle!',
 			icon_url: p.msg.author.avatarURL,
 		},
 		fields: [],
@@ -380,7 +380,7 @@ let displayCompact = (exports.displayCompact = async function (
 	let embed = {
 		color: p.config.embed_color,
 		author: {
-			name: title ? title : p.msg.author.username + ' goes into battle!',
+			name: title ? title : p.getName() + ' goes into battle!',
 			icon_url: p.msg.author.avatarURL,
 		},
 		fields: [],
@@ -451,7 +451,7 @@ let reactionCollector = (exports.reactionCollector = async function (
 		} else {
 			actions = actions.split('');
 			if (actions.length >= team.length) {
-				action = {};
+				let action = {};
 				for (let i = 0; i < actions.length; i++) {
 					if (actions[i] == 'w') action[i] = weapon;
 					else action[i] = attack;

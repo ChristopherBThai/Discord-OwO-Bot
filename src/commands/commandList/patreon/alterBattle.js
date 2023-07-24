@@ -106,7 +106,7 @@ async function checkDb(p, id, text, info) {
 			break;
 	}
 	const replacers = {
-		username: p.msg.author.username,
+		username: p.getName(),
 		discriminator: p.msg.author.discriminator,
 		blank: p.config.emoji.blank,
 		streak: info.streak,

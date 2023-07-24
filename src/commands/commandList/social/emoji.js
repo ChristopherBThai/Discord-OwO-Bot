@@ -8,6 +8,7 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const baseURL = 'https://cdn.discordapp.com/emojis/';
+const stickerUrl = 'https://media.discordapp.net/stickers/';
 const stealEmoji = '🕵️';
 
 module.exports = new CommandInterface({
@@ -45,8 +46,20 @@ module.exports = new CommandInterface({
 			}
 			let emojis = '';
 			for (let i in msgs) {
-				emojis += msgs[i].content;
-				emojis += JSON.stringify(msgs[i].embeds);
+				const msg = msgs[i];
+				emojis += msg.content;
+				emojis += JSON.stringify(msg.embeds);
+				if (msg.reactions) {
+					for (let name in msg.reactions) {
+						const emoji = msg.reactions[name];
+						emojis += `<${emoji.animated ? 'a' : ''}:${name}>`;
+					}
+				}
+				if (msg.stickerItems?.length) {
+					msg.stickerItems.forEach((sticker) => {
+						emojis += `<s:${sticker.name}:${sticker.id}>`;
+					});
+				}
 			}
 
 			emojis = parseIDs(emojis);
@@ -77,21 +90,31 @@ module.exports = new CommandInterface({
 function parseIDs(text) {
 	let emojis = [];
 
-	let parsedEmojis = text.match(/<a?:[a-z0-9_]+:[0-9]+>/gi);
+	let parsedEmojis = text.match(/<[as]?:[a-z0-9_ ]+:[0-9]+>/gi);
 
 	for (let i in parsedEmojis) {
 		let emoji = parsedEmojis[i];
-		let name = emoji
-			.match(/:[a-z0-9_]+:/gi)[0]
-			.substr(1)
-			.slice(0, -1);
 		let id = emoji
 			.match(/:[0-9]+>/gi)[0]
 			.substr(1)
 			.slice(0, -1);
-		let gif = emoji.match(/<a:/gi) ? true : false;
-		let url = baseURL + id + (gif ? '.gif' : '.png');
-		emojis.push({ name, id, gif, url });
+		let isSticker = emoji.match(/<s:/gi) ? true : false;
+		if (isSticker) {
+			let name = emoji
+				.match(/:[a-z0-9_ ]+:/gi)[0]
+				.substr(1)
+				.slice(0, -1);
+			let url = `${stickerUrl}${id}.png`;
+			emojis.push({ name, id, url, isSticker });
+		} else {
+			let name = emoji
+				.match(/:[a-z0-9_]+:/gi)[0]
+				.substr(1)
+				.slice(0, -1);
+			let gif = emoji.match(/<a:/gi) ? true : false;
+			let url = baseURL + id + (gif ? '.gif' : '.png');
+			emojis.push({ name, id, gif, url, isSticker });
+		}
 	}
 
 	return emojis;
@@ -104,11 +127,13 @@ async function display(p, emojis) {
 
 		const embed = {
 			author: {
-				name: 'Enlarged Emojis!',
+				name: `Enlarged ${emoji.isSticker ? 'Sticker' : 'Emoji'}!`,
 				url: emoji.url,
 				icon_url: p.msg.author.avatarURL,
 			},
-			description: `\`${emoji.name}\` \`${emoji.id}\``,
+			description: `**${emoji.isSticker ? 'STICKER' : 'EMOJI'}**: \`${emoji.name}\` \`${
+				emoji.id
+			}\``,
 			color: p.config.embed_color,
 			image: { url: emoji.url },
 			url: emoji.url,
@@ -144,8 +169,7 @@ async function display(p, emojis) {
 	pagedMsg.on('button', async (component, user, ack, { currentPage, maxPage }) => {
 		if (component === 'steal') {
 			const emoji = emojis[currentPage];
-			if (!emojiAdders[currentPage])
-				emojiAdders[currentPage] = new p.EmojiAdder(p, emoji.name, emoji.url);
+			if (!emojiAdders[currentPage]) emojiAdders[currentPage] = new p.EmojiAdder(p, emoji);
 			try {
 				if (await emojiAdders[currentPage].addEmoji(user.id)) {
 					await ack({ embed: createEmbed(currentPage, maxPage) });
@@ -166,7 +190,7 @@ async function getStealButton(p) {
 		return [
 			{
 				type: 2,
-				label: 'Steal Emoji',
+				label: 'Steal',
 				style: 1,
 				custom_id: 'steal',
 				emoji: {

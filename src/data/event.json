@@ -162,5 +162,253 @@
 				}
 			]
 		}
+	},
+	"3m": {
+		"start": 1684738800000,
+		"end": 1685430000000,
+		"emoji": "🎉",
+		"item": {
+			"id": "3m_present",
+			"name": "3M Present",
+			"emoji": "<:3m_present:1103218140323794954>",
+			"openEmoji": "<:3m_present:1103218140323794954>",
+			"chance": 0.05,
+			"foundText": "?emoji? **|** OwO! You found a **3M Present**! 🎉",
+			"description": "OwO Bot hit 3 million users, it's time to celebrate! This item was given out on May 2023. Open the present to receive some special stuff!",
+			"rewards": [
+				{
+					"type": "gem",
+					"id": 79,
+					"chance": 4
+				},
+				{
+					"type": "gem",
+					"id": 80,
+					"chance": 4
+				},
+				{
+					"type": "gem",
+					"id": 81,
+					"chance": 3
+				},
+				{
+					"type": "gem",
+					"id": 82,
+					"chance": 3
+				},
+				{
+					"type": "gem",
+					"id": 83,
+					"chance": 3
+				},
+				{
+					"type": "gem",
+					"id": 84,
+					"chance": 2
+				},
+				{
+					"type": "gem",
+					"id": 85,
+					"chance": 1
+				},
+				{
+					"type": "wallpaper",
+					"id": 90,
+					"chance": 20
+				},
+				{
+					"type": "weapon",
+					"id": 18,
+					"chance": 20
+				},
+				{
+					"type": "lb",
+					"count": 1,
+					"chance": 10
+				},
+				{
+					"type": "wc",
+					"count": 1,
+					"chance": 10
+				},
+				{
+					"type": "flb",
+					"count": 1,
+					"chance": 1
+				},
+				{
+					"type": "animal",
+					"id": "3m_owo",
+					"chance": 15
+				}
+			]
+		}
+	},
+	"pride_hive": {
+		"start": 1685602800000,
+		"end": 1686898800000,
+		"emoji": "🌈",
+		"item": {
+			"id": "pride_hive",
+			"name": "Pride Hive",
+			"emoji": "<:pridehive:1113710060590346270>",
+			"openEmoji": "<:pridehive:1113710060590346270>",
+			"chance": 0.05,
+			"foundText": "?emoji? **|** You hear a bustling bee hive overhead brimming with activity!",
+			"description": "You hear a bustling bee hive overhead brimming with activity! This item was given out on June 2023 for Pride Month! Open them to greet a bee!",
+			"rewards": [
+				{
+					"type": "gem",
+					"id": 79,
+					"chance": 4
+				},
+				{
+					"type": "gem",
+					"id": 80,
+					"chance": 4
+				},
+				{
+					"type": "gem",
+					"id": 81,
+					"chance": 3
+				},
+				{
+					"type": "gem",
+					"id": 82,
+					"chance": 3
+				},
+				{
+					"type": "gem",
+					"id": 83,
+					"chance": 3
+				},
+				{
+					"type": "gem",
+					"id": 84,
+					"chance": 2
+				},
+				{
+					"type": "gem",
+					"id": 85,
+					"chance": 1
+				},
+				{
+					"type": "lb",
+					"count": 1,
+					"chance": 5
+				},
+				{
+					"type": "wc",
+					"count": 1,
+					"chance": 5
+				},
+				{
+					"type": "flb",
+					"count": 1,
+					"chance": 1
+				},
+				{
+					"type": "bee",
+					"id": "agender",
+					"chance": 8
+				},
+				{
+					"type": "bee",
+					"id": "lesbian",
+					"chance": 8
+				},
+				{
+					"type": "bee",
+					"id": "omnisexual",
+					"chance": 8
+				},
+				{
+					"type": "bee",
+					"id": "pansexual",
+					"chance": 8
+				},
+				{
+					"type": "bee",
+					"id": "transgender",
+					"chance": 8
+				},
+				{
+					"type": "bee",
+					"id": "pride",
+					"chance": 3
+				}
+			]
+		}
+	},
+	"summer_basket": {
+		"start": 1688454000000,
+		"end": 1689231600000,
+		"emoji": "<:basket:1125580957571891230>",
+		"item": {
+			"id": "summer_basket",
+			"name": "Summer Basket",
+			"emoji": "<:basket:1125580957571891230>",
+			"openEmoji": "<:basket:1125580957571891230>",
+			"chance": 0.05,
+			"foundText": "?emoji? **|** Come on, we are going for a picnic! Can you carry the basket?",
+			"description": "Summer is here! Take this basket full of goodies on your picnic! This item was given out on July 2023 for Summer!",
+			"rewards": [
+				{
+					"type": "gem",
+					"id": 79,
+					"chance": 4
+				},
+				{
+					"type": "gem",
+					"id": 80,
+					"chance": 4
+				},
+				{
+					"type": "gem",
+					"id": 81,
+					"chance": 3
+				},
+				{
+					"type": "gem",
+					"id": 82,
+					"chance": 3
+				},
+				{
+					"type": "gem",
+					"id": 83,
+					"chance": 3
+				},
+				{
+					"type": "gem",
+					"id": 84,
+					"chance": 2
+				},
+				{
+					"type": "gem",
+					"id": 85,
+					"chance": 1
+				},
+				{
+					"type": "lb",
+					"count": 1,
+					"chance": 10
+				},
+				{
+					"type": "wc",
+					"count": 1,
+					"chance": 10
+				},
+				{
+					"type": "flb",
+					"count": 1,
+					"chance": 1
+				},
+				{
+					"type": "cowoncy",
+					"count": 10000,
+					"chance": 5
+				}
+			]
+		}
 	}
 }

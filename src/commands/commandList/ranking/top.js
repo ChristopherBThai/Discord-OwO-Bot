@@ -169,7 +169,7 @@ function displayRanking(con, msg, count, globalRank, sql, title, subText, p) {
 
 			let user = await p.fetch.getUser(id, true);
 			if (!user) name = 'User Left Bot';
-			else name = '' + user.username;
+			else name = '' + p.getUniqueName(user);
 
 			name = name.replace('discord.gg', 'discord,gg').replace(/(```)/g, '`\u200b``');
 			embed += '#' + rank + '\t' + name + subText(ele, rank);
@@ -780,7 +780,7 @@ async function getLevelRanking(global, p, count) {
 			counter++;
 			let user = await p.fetch.getUser(ranking[i]);
 			if (!user) user = 'User Left Discord';
-			else user = user.username;
+			else user = p.getUniqueName(user);
 			text += '#' + counter + '\t' + user + '\n';
 		}
 	}

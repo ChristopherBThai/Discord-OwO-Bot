@@ -127,7 +127,7 @@ async function useCommonTicket(ticket, p) {
 	}
 
 	const embed = {
-		description: `**${p.msg.author.username}**, are you sure you want to redeem **${count}** ${
+		description: `**${p.getName()}**, are you sure you want to redeem **${count}** ${
 			ticket.emoji
 		} **${ticket.name}${count > 1 ? 's' : ''}**?`,
 		color: p.config.embed_color,
@@ -156,7 +156,9 @@ async function useCommonTicket(ticket, p) {
 			if (!result.changedRows) {
 				await con.rollback();
 				try {
-					embed.description = `${p.config.emoji.error} **| ${p.msg.author.username}**, you do not have enough tickets silly!`;
+					embed.description = `${
+						p.config.emoji.error
+					} **| ${p.getName()}**, you do not have enough tickets silly!`;
 					msg.edit({ embed });
 				} catch (err) {
 					/* empty */
@@ -192,9 +194,7 @@ async function useCommonTicket(ticket, p) {
 			con.rollback();
 			return;
 		}
-		embed.description = `**${
-			p.msg.author.username
-		}**, your patreon has been extended by **${count} month${
+		embed.description = `**${p.getName()}**, your patreon has been extended by **${count} month${
 			count > 1 ? 's' : ''
 		}**!\nExpires on: **${date}**`;
 		await msg.edit({ embed });

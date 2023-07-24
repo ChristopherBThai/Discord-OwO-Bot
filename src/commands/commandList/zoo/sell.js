@@ -49,10 +49,7 @@ module.exports = new CommandInterface({
 
 		/* If no args */
 		if (args.length == 0) {
-			p.send(
-				'**🚫 | ' + msg.author.username + '**, Please specify what rank/animal to sell!',
-				3000
-			);
+			p.send('**🚫 | ' + p.getName() + '**, Please specify what rank/animal to sell!', 3000);
 			return;
 
 			/* if arg0 is a count */
@@ -78,7 +75,7 @@ module.exports = new CommandInterface({
 			for (let i = 0; i < args.length; i++) {
 				let tempRank = global.validRank(args[i].toLowerCase());
 				if (!tempRank) {
-					p.send('**🚫 | ' + msg.author.username + '**, Invalid arguments!', 3000);
+					p.send('**🚫 | ' + p.getName() + '**, Invalid arguments!', 3000);
 					return;
 				}
 				if (!(tempRank in ranks)) {
@@ -100,7 +97,7 @@ module.exports = new CommandInterface({
 			else
 				p.send(
 					'**🚫 | ' +
-						msg.author.username +
+						p.getName() +
 						'**, The correct syntax for selling ranks is `owo sell {animal} {count}`!',
 					3000
 				);
@@ -110,7 +107,7 @@ module.exports = new CommandInterface({
 			if (args.length != 1)
 				p.send(
 					'**🚫 | ' +
-						msg.author.username +
+						p.getName() +
 						'**, The correct syntax for selling ranks is `owo sell {rank}`!',
 					3000
 				);
@@ -171,12 +168,12 @@ function sellAnimal(msg, con, animal, count, send, global, p) {
 		}
 		if (count == 'all') {
 			if (result[1].affectedRows <= 0) {
-				send('**🚫 | ' + msg.author.username + "**, You don't have enough animals! >:c", 3000);
+				send('**🚫 | ' + p.getName() + "**, You don't have enough animals! >:c", 3000);
 			} else {
 				count = result[0][0].count;
 				send(
 					'**🔪 | ' +
-						msg.author.username +
+						p.getName() +
 						'** sold **' +
 						global.unicodeAnimal(animal.value) +
 						'x' +
@@ -191,7 +188,7 @@ function sellAnimal(msg, con, animal, count, send, global, p) {
 		} else if (result.affectedRows > 0) {
 			send(
 				'**🔪 | ' +
-					msg.author.username +
+					p.getName() +
 					'** sold **' +
 					global.unicodeAnimal(animal.value) +
 					'x' +
@@ -203,20 +200,18 @@ function sellAnimal(msg, con, animal, count, send, global, p) {
 			p.logger.incr('cowoncy', count * animal.price, { type: 'sell' }, p.msg);
 			// TODO neo4j
 		} else {
-			send(
-				'**🚫 | ' + msg.author.username + "**, You can't sell more than you have silly! >:c",
-				3000
-			);
+			send('**🚫 | ' + p.getName() + "**, You can't sell more than you have silly! >:c", 3000);
 		}
 	});
 }
 
 function sellRank(msg, con, rank, send, global, p) {
-	//TODO remove
+	/*
 	if (rank.rank == 'special') {
 		p.errorMsg(', there is an issue selling specials. We are currently fixing the issue');
 		return;
 	}
+	*/
 	let animals = "('" + rank.animals.join("','") + "')";
 	let sql =
 		'SELECT SUM(count) AS total FROM animal WHERE id = ' +
@@ -242,12 +237,12 @@ function sellRank(msg, con, rank, send, global, p) {
 			return;
 		}
 		if (result[1].affectedRows <= 0) {
-			send('**🚫 | ' + msg.author.username + "**, You don't have enough animals! >:c", 3000);
+			send('**🚫 | ' + p.getName() + "**, You don't have enough animals! >:c", 3000);
 		} else {
 			let count = result[0][0].total;
 			send(
 				'**🔪 | ' +
-					msg.author.username +
+					p.getName() +
 					'** sold **' +
 					rank.emoji +
 					'x' +
@@ -307,7 +302,7 @@ async function sellRanks(msg, con, ranks, send, global, p) {
 		sold = sold.slice(0, -1);
 		send(
 			'**🔪 | ' +
-				msg.author.username +
+				p.getName() +
 				'** sold **' +
 				sold +
 				'** for a total of **<:cowoncy:416043450337853441> ' +
@@ -317,6 +312,6 @@ async function sellRanks(msg, con, ranks, send, global, p) {
 		p.logger.incr('cowoncy', total, { type: 'sell' }, p.msg);
 		// TODO neo4j
 	} else {
-		send('**🚫 | ' + msg.author.username + "**, You don't have enough animals! >:c", 3000);
+		send('**🚫 | ' + p.getName() + "**, You don't have enough animals! >:c", 3000);
 	}
 }

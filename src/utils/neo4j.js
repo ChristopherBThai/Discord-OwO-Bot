@@ -1,13 +1,14 @@
 const request = require('request');
+const global = require('./global');
 const disabled = true;
 
 exports.give = function (msg, receiver, amount) {
 	if (disabled) return;
 	const info = {
 		senderId: msg.author.id,
-		senderName: `${msg.author.username}#${msg.author.discriminator}`,
+		senderName: global.getUniqueName(msg.author),
 		receiverId: receiver.id,
-		receiverName: `${receiver.username}#${receiver.discriminator}`,
+		receiverName: global.getUniqueName(receiver),
 		serverId: msg.channel.guild.id,
 		serverName: msg.channel.guild.name,
 		channelId: msg.channel.id,
@@ -33,9 +34,9 @@ exports.battle = function (msg, sender, receiver, amount) {
 	if (disabled) return;
 	const info = {
 		senderId: sender.id,
-		senderName: `${sender.username}#${sender.discriminator}`,
+		senderName: global.getUniqueName(sender),
 		receiverId: receiver.id,
-		receiverName: `${receiver.username}#${receiver.discriminator}`,
+		receiverName: global.getUniqueName(receiver),
 		serverId: msg.channel.guild.id,
 		serverName: msg.channel.guild.name,
 		channelId: msg.channel.id,
@@ -61,7 +62,7 @@ exports.drop = function (msg, amount) {
 	if (disabled) return;
 	const info = {
 		senderId: msg.author.id,
-		senderName: `${msg.author.username}#${msg.author.discriminator}`,
+		senderName: global.getUniqueName(msg.author),
 		serverId: msg.channel.guild.id,
 		serverName: msg.channel.guild.name,
 		channelId: msg.channel.id,
@@ -87,7 +88,7 @@ exports.pickup = function (msg, amount) {
 	if (disabled) return;
 	const info = {
 		senderId: msg.author.id,
-		senderName: `${msg.author.username}#${msg.author.discriminator}`,
+		senderName: global.getUniqueName(msg.author),
 		serverId: msg.channel.guild.id,
 		serverName: msg.channel.guild.name,
 		channelId: msg.channel.id,

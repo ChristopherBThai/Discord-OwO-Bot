@@ -8,42 +8,35 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 module.exports = new CommandInterface({
-	alias: ['disablecaptcha', 'enablecaptcha'],
+	alias: ['disablecaptcha', 'enablecaptcha', 'setcaptcha'],
 
 	owner: true,
 	admin: true,
 
 	execute: async function () {
-		const enableCaptcha = this.command === 'enablecaptcha';
-		let changeLink = true,
-			changeImage = true;
-		if (this.args[0] === 'link') {
-			changeImage = false;
-		} else if (this.args[0] === 'image') {
-			changeLink = false;
+		const setting = {
+			link: true,
+			image: true,
+		};
+
+		switch (this.command) {
+			case 'disablecaptcha':
+				setting.link = false;
+				setting.image = false;
+				break;
+			case 'setcaptcha':
+				if (this.args[0] === 'link') {
+					setting.image = false;
+				} else if (this.args[0] === 'image') {
+					setting.link = false;
+				}
+				break;
 		}
 
-		if (changeLink && changeImage) {
-			this.macro.setCaptcha(enableCaptcha);
-			if (enableCaptcha) {
-				this.replyMsg(this.config.emoji.gear, ', I **enabled** all captchas');
-			} else {
-				this.replyMsg(this.config.emoji.gear, ', I **disabled** all captchas');
-			}
-		} else if (changeLink) {
-			this.macro.setCaptchaLink(enableCaptcha);
-			if (enableCaptcha) {
-				this.replyMsg(this.config.emoji.gear, ', I **enabled** `link` captchas');
-			} else {
-				this.replyMsg(this.config.emoji.gear, ', I **disabled** `link` captchas');
-			}
-		} else if (changeImage) {
-			this.macro.setCaptchaImage(enableCaptcha);
-			if (enableCaptcha) {
-				this.replyMsg(this.config.emoji.gear, ', I **enabled** `image` captchas');
-			} else {
-				this.replyMsg(this.config.emoji.gear, ', I **disabled** `image` captchas');
-			}
-		}
+		this.pubsub.publish('updateCaptcha', setting);
+		this.replyMsg(
+			this.config.emoji.gear,
+			`, I changed the captcha settings: ${JSON.stringify(setting)}`
+		);
 	},
 });

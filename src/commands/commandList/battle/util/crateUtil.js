@@ -48,7 +48,7 @@ exports.crateFromBattle = function (p, query, crateReset) {
 				'\n**' +
 				crate +
 				' | ' +
-				p.msg.author.username +
+				p.getName() +
 				'**, You found a **weapon crate**! `[' +
 				count +
 				'/3] RESETS IN: ' +

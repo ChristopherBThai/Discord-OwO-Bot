@@ -37,7 +37,7 @@ exports.buy = async function (p, id) {
 	// TODO neo4j
 	p.logger.decr('cowoncy', -1 * ring.price, { type: 'ring' }, p.msg);
 	let an = p.global.isVowel(ring.name) ? 'n' : '';
-	let text = `${cart} **| ${p.msg.author.username}**, you bought a${an} ${ring.emoji} **${
+	let text = `${cart} **| ${p.getName()}**, you bought a${an} ${ring.emoji} **${
 		ring.name
 	}** for **${p.global.toFancyNum(ring.price)}** ${p.config.emoji.cowoncy}!`;
 	text = alterBuy.alter(p, text, {

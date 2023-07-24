@@ -139,17 +139,17 @@ async function sendMessage(p, { item, user, price, count }) {
 			url: p.global.getEmojiURL(item.emoji),
 		},
 		author: {
-			name: `${p.msg.author.username} wants to trade with ${user.username}!`,
+			name: `${p.getName()} wants to trade with ${p.getName(user)}!`,
 			icon_url: p.msg.author.avatarURL,
 		},
 		fields: [
 			{
-				name: `${p.msg.author.username}#${p.msg.author.discriminator} will give:`,
+				name: `${p.getUniqueName()} will give:`,
 				value: `\`\`\`fix\n${count} ${item.name}${count > 1 ? 's' : ''}${spacer}\n\`\`\``,
 				inline: true,
 			},
 			{
-				name: `${user.username}#${user.discriminator} will give:`,
+				name: `${p.getUniqueName(user)} will give:`,
 				value: `\`\`\`fix\n${p.global.toFancyNum(count * price)} cowoncy${spacer}\n\`\`\``,
 				inline: true,
 			},
@@ -228,7 +228,9 @@ async function executeTransaction(p, msg, embed, { item, user, price, count }) {
 			if (count > item.tradeLimit) {
 				embed.color = p.config.fail_color;
 				msg.edit({
-					content: `${p.config.emoji.error} **| ${p.msg.author.username}**, you can only trade this item ${item.tradeLimit}x per day!`,
+					content: `${p.config.emoji.error} **| ${p.getName()}**, you can only trade this item ${
+						item.tradeLimit
+					}x per day!`,
 					embed,
 				});
 				return await con.rollback();
@@ -245,7 +247,9 @@ async function executeTransaction(p, msg, embed, { item, user, price, count }) {
 				if (result[0].daily_count >= item.tradeLimit) {
 					embed.color = p.config.fail_color;
 					msg.edit({
-						content: `${p.config.emoji.error} **| ${p.msg.author.username}**, you can only trade this item ${item.tradeLimit}x per day!`,
+						content: `${p.config.emoji.error} **| ${p.getName()}**, you can only trade this item ${
+							item.tradeLimit
+						}x per day!`,
 						embed,
 					});
 					return await con.rollback();
@@ -253,7 +257,9 @@ async function executeTransaction(p, msg, embed, { item, user, price, count }) {
 					const diff = item.tradeLimit - result[0].daily_count;
 					embed.color = p.config.fail_color;
 					msg.edit({
-						content: `${p.config.emoji.error} **| ${p.msg.author.username}**, you can only trade this item ${diff} more times today!`,
+						content: `${
+							p.config.emoji.error
+						} **| ${p.getName()}**, you can only trade this item ${diff} more times today!`,
 						embed,
 					});
 					return await con.rollback();
@@ -278,7 +284,7 @@ async function executeTransaction(p, msg, embed, { item, user, price, count }) {
 		if (!item.giveOnly && !result[0].changedRows) {
 			embed.color = p.config.fail_color;
 			msg.edit({
-				content: `${p.config.emoji.error} **| ${user.username}** does not have enough money!`,
+				content: `${p.config.emoji.error} **| ${p.getName(user)}** does not have enough money!`,
 				embed,
 			});
 			await con.rollback();
@@ -286,7 +292,9 @@ async function executeTransaction(p, msg, embed, { item, user, price, count }) {
 		} else if (!item.giveOnly && !result[1].changedRows) {
 			embed.color = p.config.fail_color;
 			msg.edit({
-				content: `${p.config.emoji.error} **|** I could not give money to **${p.msg.author.username}**. Please try again later.`,
+				content: `${
+					p.config.emoji.error
+				} **|** I could not give money to **${p.getName()}**. Please try again later.`,
 				embed,
 			});
 			await con.rollback();
@@ -294,7 +302,9 @@ async function executeTransaction(p, msg, embed, { item, user, price, count }) {
 		} else if (!result[2].changedRows) {
 			embed.color = p.config.fail_color;
 			msg.edit({
-				content: `${p.config.emoji.error} **| ${p.msg.author.username}** does not have enough ${item.emoji} **${item.name}s**!`,
+				content: `${p.config.emoji.error} **| ${p.getName()}** does not have enough ${
+					item.emoji
+				} **${item.name}s**!`,
 				embed,
 			});
 			await con.rollback();

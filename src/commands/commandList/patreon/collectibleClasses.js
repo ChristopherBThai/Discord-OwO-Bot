@@ -65,7 +65,7 @@ function addCommand(coll) {
 					}
 
 					if (!coll.owners.includes(this.msg.author.id) && user.id === this.msg.author.id) {
-						coll.noSelfMsg(this);
+						coll.selfOnlyMsg(this);
 						return;
 					}
 

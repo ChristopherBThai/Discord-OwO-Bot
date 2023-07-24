@@ -5,6 +5,7 @@
  * For more information, see README.md and LICENSE
  */
 /* eslint-disable no-unused-vars */
+const Tags = require('./util/tags.js');
 
 module.exports = class BuffInterface {
 	/* Constructor */
@@ -64,7 +65,14 @@ module.exports = class BuffInterface {
 	}
 
 	/* Bind this buff to an animal */
-	bind(animal, duration, tags = {}) {
+	bind(animal, duration, tags) {
+		if (!(tags instanceof Tags)) {
+			tags = new Tags({
+				me: tags.me,
+				allies: tags.allies,
+				enemies: tags.enemies,
+			});
+		}
 		if (duration) this.duration = duration;
 		animal.buffs.push(this);
 		this.justCreated = true;

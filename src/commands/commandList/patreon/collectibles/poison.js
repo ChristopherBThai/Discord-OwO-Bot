@@ -13,13 +13,13 @@ class Poison extends Collectible {
 
 		this.key = 'poison';
 		this.emoji = '<a:poison:1033642058637910066>';
-		this.owners = ['665417324949405706', '184587051943985152'];
+		this.owners = ['665417324949405706'];
 		this.fullControl = true;
 		this.ownerOnly = false;
-		this.dailyReceiveOnly = true;
+		this.dailyOnly = true;
 		this.giveAmount = 2;
 		this.description =
-			"Love could be labeled poison and we'd drink it anyways.\n\nSubcommands: owo poison mix, owo poison list";
+			"Love could be labeled poison and we'd drink it anyways.\n\nSubcommands: owo poison mix";
 		this.displayMsg = [
 			'?emoji? **| ?user?**, you currently have ?count? poison?plural? ?emoji? and ?mergeCount? poison ivy ?mergeEmoji?! Toxins are running through your veins.',
 			'?emoji? **| ?user?**, you currently have ?count? poison?plural? ?emoji? and ?mergeCount? poison ivy ?mergeEmoji?! Oh you poor thing! Are you still okay?',
@@ -32,16 +32,16 @@ class Poison extends Collectible {
 			"?emoji? **| ?receiver?**, you are the poison I'm addicted to.",
 		];
 		this.dailyLimitMsg =
-			'<:poison:1079735825127964702> **|** ?user? has already been poisoned today. Have some mercy and find another target!';
+			'<:poison:1079735825127964702> **| ?user?** has already been poisoned today. Have some mercy and find another target!';
 
 		this.hasManualMerge = true;
 		this.manualMergeCommands = ['mix'];
 		this.mergeNeeded = 3;
 		this.mergeEmoji = '<:ivy:1079729952351584306>';
 		this.mergeMsg = [
-			'?merge? **|** You have collected 3 poisons and turned them into a Poison Ivy ?mergeEmoji? "Leaves of three, let it be"',
-			'?merge? **|** You have saved yourself from further intoxication. 3 of your poisons turned into a Poison Ivy ?mergeEmoji?',
-			'?merge? **|** Your bottles of poison got knocked over and it spilled all over the floor <:skull:1079730834799607888> Better luck next time.',
+			'?mergeEmoji? **|** You have collected 3 poisons and turned them into a Poison Ivy ?mergeEmoji? "Leaves of three, let it be"',
+			'?mergeEmoji? **|** You have saved yourself from further intoxication. 3 of your poisons turned into a Poison Ivy ?mergeEmoji?',
+			'?mergeEmoji? **|** Your bottles of poison got knocked over and it spilled all over the floor <:skull:1079730834799607888> Better luck next time.',
 		];
 		this.manualMergeData = 'poison_ivy';
 
@@ -75,7 +75,7 @@ class Poison extends Collectible {
 		}
 
 		const msg = msgOverride
-			.replaceAll('?user?', p.msg.author.username)
+			.replaceAll('?user?', p.getName())
 			.replaceAll('?emoji?', this.emoji)
 			.replaceAll('?blank?', p.config.emoji.blank)
 			.replaceAll('?mergeCount?', result2)

@@ -79,16 +79,11 @@ async function openBox(p) {
 	let firstGem = gem.gems[Object.keys(gem.gems)[0]].gem;
 	let gemName = firstGem.rank + ' ' + firstGem.type + ' Gem';
 	let text1 =
-		blank +
-		' **| ' +
-		p.msg.author.username +
-		'** opens a lootbox\n' +
-		boxShake +
-		' **|** and finds a ...';
+		blank + ' **| ' + p.getName() + '** opens a lootbox\n' + boxShake + ' **|** and finds a ...';
 	let text2 =
 		firstGem.emoji +
 		' **| ' +
-		p.msg.author.username +
+		p.getName() +
 		'** opens a lootbox\n' +
 		boxOpen +
 		' **|** and finds a' +
@@ -142,7 +137,7 @@ async function openMultiple(p, count) {
 	let text1 =
 		blank +
 		' **| ' +
-		p.msg.author.username +
+		p.getName() +
 		'** opens ' +
 		count +
 		' lootboxes\n' +
@@ -151,7 +146,7 @@ async function openMultiple(p, count) {
 	let text2 =
 		blank +
 		' **| ' +
-		p.msg.author.username +
+		p.getName() +
 		'** opens ' +
 		count +
 		' lootboxes\n' +
@@ -195,14 +190,14 @@ async function openFabledBox(p) {
 	let text1 =
 		blank +
 		' **| ' +
-		p.msg.author.username +
+		p.getName() +
 		'** opens a Fabled lootbox\n' +
 		fboxShake +
 		' **|** and finds a ...';
 	let text2 =
 		firstGem.emoji +
 		' **| ' +
-		p.msg.author.username +
+		p.getName() +
 		'** opens a Fabled lootbox\n' +
 		fboxOpen +
 		' **|** and finds a' +

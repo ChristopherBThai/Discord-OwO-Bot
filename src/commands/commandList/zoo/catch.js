@@ -80,11 +80,13 @@ module.exports = new CommandInterface({
 			let uid = undefined;
 			for (let i = 0; i < result[3].length; i++) {
 				let tempGem = gemUtil.getGem(result[3][i].gname);
-				tempGem.uid = result[3][i].uid;
-				tempGem.activecount = result[3][i].activecount;
-				tempGem.gname = result[3][i].gname;
-				gems[tempGem.type] = tempGem;
-				uid = result[3][i].uid;
+				if (!(tempGem.type === 'Special' && !animalUtil.hasSpecials())) {
+					tempGem.uid = result[3][i].uid;
+					tempGem.activecount = result[3][i].activecount;
+					tempGem.gname = result[3][i].gname;
+					gems[tempGem.type] = tempGem;
+					uid = result[3][i].uid;
+				}
 			}
 
 			//Get animal
@@ -121,7 +123,8 @@ module.exports = new CommandInterface({
 
 			//Alter text for legendary tier patreons
 			text = await alterHunt.alter(p, p.msg.author.id, text, {
-				author: p.msg.author,
+				author: p.msg.member || p.msg.author,
+				name: p.getName(),
 				lootboxText: lootbox ? lootbox.text : '',
 				petText,
 				animalXp,
@@ -172,6 +175,7 @@ function getAnimals(p, result, gems, uid) {
 				patreon: patreon || patreonGem,
 				gem: true,
 				lucky: gems['Lucky'],
+				special: gems['Special'],
 				manual: true,
 			}),
 		];
@@ -180,7 +184,7 @@ function getAnimals(p, result, gems, uid) {
 				animalUtil.randAnimal({
 					patreon: true,
 					gem: true,
-					lucky: gems['Lucky'],
+					special: gems['Special'],
 					manual: true,
 				})
 			);
@@ -192,6 +196,7 @@ function getAnimals(p, result, gems, uid) {
 					patreon: patreon,
 					gem: true,
 					lucky: gems['Lucky'],
+					special: gems['Special'],
 					manual: true,
 				})
 			);
@@ -276,12 +281,26 @@ function getAnimals(p, result, gems, uid) {
 			gems['Lucky'].gname +
 			"';";
 	}
+	if (gems['Special']) {
+		// make special gems last twice as long if you're running all 3 gems
+		let specialSubtract =
+			huntingActive && empoweringActive ? Math.trunc(animal.length / 2) : animal.length;
+
+		sql +=
+			'UPDATE user_gem SET activecount = GREATEST(activecount - ' +
+			specialSubtract +
+			', 0) WHERE uid = ' +
+			uid +
+			" AND gname = '" +
+			gems['Special'].gname +
+			"';";
+	}
 
 	/* Construct output message for user */
 	let animalText = global.unicodeAnimal(animal[0][1]);
 	let text =
 		'**🌱 | ' +
-		p.msg.author.username +
+		p.getName() +
 		'** spent 5 <:cowoncy:416043450337853441> and caught a ' +
 		animal[0][0] +
 		' ' +
@@ -291,17 +310,21 @@ function getAnimals(p, result, gems, uid) {
 	if (animal[0][0].charAt(2) == 'u' || animal[0][0].charAt(2) == 'e')
 		text = text.replace(' a ', ' an ');
 	if (gemLength > 0) {
-		text = '**🌱 | ' + p.msg.author.username + '**, hunt is empowered by ';
+		text = '**🌱 | ' + p.getName() + '**, hunt is empowered by ';
 		gemText = '';
 		for (let i in gems) {
-			let remaining =
-				gems[i].activecount -
-				(gems[i].type == 'Patreon' || gems[i].type == 'Hunting'
-					? 1
-					: gems[i].type == 'Empowering' ||
-					  (gems[i].type == 'Lucky' && huntingActive && empoweringActive)
-					? Math.trunc(animal.length / 2)
-					: animal.length);
+			let remaining = gems[i].activecount;
+			let subtract = 1;
+			if (gems[i].type == 'Patreon' || gems[i].type == 'Hunting') {
+				subtract = 1;
+			} else if (gems[i].type == 'Empowering') {
+				subtract = Math.trunc(animal.length / 2);
+			} else if (['Lucky', 'Special'].includes(gems[i].type) && huntingActive && empoweringActive) {
+				subtract = Math.trunc(animal.length / 2);
+			} else {
+				subtract = animal.length;
+			}
+			remaining -= subtract;
 			if (remaining < 0) remaining = 0;
 			gemText += gems[i].emoji + '`[' + remaining + '/' + gems[i].length + ']` ';
 		}

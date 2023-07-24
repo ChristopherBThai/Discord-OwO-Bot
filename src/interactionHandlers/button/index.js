@@ -22,10 +22,39 @@ class InteractionHandler {
 	emit(name, data) {
 		if (this.listeners[name]) {
 			const url = `https://discord.com/api/v8/interactions/${data.id}/${data.token}/callback`;
-			const ack = () => {
-				return axios.post(url, { type: 6 });
+			const ack = (content) => {
+				if (content) {
+					if (typeof content === 'string') {
+						content = { content };
+					}
+					const newContent = { ...content };
+					if (newContent.embed) {
+						newContent.embeds = [newContent.embed];
+						delete newContent.embed;
+					}
+					return axios.post(url, {
+						type: 7,
+						data: newContent,
+					});
+				} else {
+					return axios.post(url, { type: 1 });
+				}
 			};
-			this.listeners[name](data, ack);
+			const err = (content) => {
+				if (typeof content === 'string') {
+					content = { content };
+				}
+				if (content.embed) {
+					content.embeds = [content.embed];
+					delete content.embed;
+				}
+				content.flags = 64;
+				return axios.post(url, {
+					type: 4,
+					data: content,
+				});
+			};
+			this.listeners[name](data, ack, err);
 			return true;
 		}
 		return false;

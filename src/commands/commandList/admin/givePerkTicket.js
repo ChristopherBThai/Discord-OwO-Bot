@@ -30,7 +30,7 @@ async function parseUsers(p) {
 		try {
 			let result = await giveTicket(p, args[0], args[1], args[2]);
 			if (result) {
-				success += `\`[${result.count}] [${result.user.id}] ${result.user.username}#${result.user.discriminator}\`\n`;
+				success += `\`[${result.count}] [${result.user.id}] ${p.getUniqueName(result.user)}\`\n`;
 			} else {
 				failed += `\`failed for [${args.join(', ')}]\`\n`;
 			}

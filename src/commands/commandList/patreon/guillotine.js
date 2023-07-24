@@ -43,7 +43,7 @@ module.exports = new CommandInterface({
 			return;
 		}
 		if (p.msg.author.id == target.id) {
-			let text = '**' + p.msg.author.username + "**! You can't guillotine yourself!";
+			let text = '**' + this.getName() + "**! You can't guillotine yourself!";
 			p.send(text);
 			return;
 		}
@@ -56,9 +56,9 @@ module.exports = new CommandInterface({
 			},
 			author: {
 				name:
-					p.msg.author.username +
+					this.getName() +
 					' uses a guillotine on ' +
-					target.username +
+					this.getName(target) +
 					'! Off with their head!',
 				url: emote,
 				icon_url: p.msg.author.avatarURL,

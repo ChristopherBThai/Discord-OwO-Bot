@@ -112,7 +112,7 @@ function lexx(text, info) {
 				description: text,
 				color: 8240363,
 				thumbnail: {
-					url: 'https://cdn.discordapp.com/attachments/696878982758531152/808638583644356618/Cursed.gif',
+					url: 'https://cdn.discordapp.com/attachments/696878982758531152/1094391576001786067/Professor_Farnsworth.png',
 				},
 			},
 		};

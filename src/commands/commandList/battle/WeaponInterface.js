@@ -7,6 +7,7 @@
 /* eslint-disable no-unused-vars */
 
 const Logs = require('./util/logUtil.js');
+const Tags = require('./util/tags.js');
 const requireDir = require('require-dir');
 const ranks = [
 	[0.2, 'Common', '<:common:416520037713838081>'],
@@ -20,7 +21,7 @@ const ranks = [
 
 module.exports = class WeaponInterface {
 	/* Constructor */
-	constructor(cpassives, qualities, noCreate) {
+	constructor(cpassives, qualities, noCreate, opt = {}) {
 		this.init();
 		if (this.availablePassives === 'all') {
 			this.availablePassives = [];
@@ -44,15 +45,20 @@ module.exports = class WeaponInterface {
 		/* Mana will also have a quality (always last in quality array) */
 		if (this.manaRange) this.qualityList.push(this.manaRange);
 
+		/* Overrides */
+		const statOverride = opt.statOverride;
+		if (opt.passives) cpassives = this.determinedPassives(opt.passives, statOverride);
+
 		/* Get random vars if not present */
-		if (!cpassives) cpassives = this.randomPassives();
-		if (!qualities) qualities = this.randomQualities();
+		if (!cpassives) cpassives = this.randomPassives(statOverride);
+		if (!qualities) qualities = this.randomQualities(statOverride);
 
 		/* Construct stats */
 		let stats = this.toStats(qualities);
 
 		/* Check if it has enough emojis */
 		if (this.emojis.length != 7) throw `[${this.id}] does not have 7 emojis`;
+		if (this.pristineEmojis.length != 7) throw `[${this.id}] does not have 7 pristine emojis`;
 
 		/* Get the quality of the weapon */
 		let avgQuality = 0;
@@ -113,7 +119,7 @@ module.exports = class WeaponInterface {
 	}
 
 	/* Grabs a random passive(s) */
-	randomPassives() {
+	randomPassives(statOverride) {
 		let randPassives = [];
 		for (let i = 0; i < this.passiveCount; i++) {
 			let rand = Math.floor(Math.random() * this.availablePassives.length);
@@ -123,16 +129,24 @@ module.exports = class WeaponInterface {
 				throw (
 					'Could not get passive[' + this.availablePassives[rand] + '] for weapon[' + this.id + ']'
 				);
-			randPassives.push(new passive());
+			randPassives.push(new passive(null, null, { statOverride }));
 		}
 		return randPassives;
 	}
 
+	/* Grab predetermined passive(s) */
+	determinedPassives(passiveList, statOverride) {
+		return passiveList.map((pid) => {
+			let passive = passives[pid];
+			return new passive(null, null, { statOverride });
+		});
+	}
+
 	/* Inits random qualities */
-	randomQualities() {
+	randomQualities(statOverride) {
 		let qualities = [];
 		for (let i = 0; i < this.qualityList.length; i++)
-			qualities.push(Math.trunc(Math.random() * 101));
+			qualities.push(statOverride || Math.trunc(Math.random() * 101));
 		return qualities;
 	}
 
@@ -191,6 +205,13 @@ module.exports = class WeaponInterface {
 
 	/* Uses mana */
 	static useMana(me, amount, from, tags) {
+		if (!(tags instanceof Tags)) {
+			tags = new Tags({
+				me: tags.me,
+				allies: tags.allies,
+				enemies: tags.enemies,
+			});
+		}
 		let logs = new Logs();
 
 		me.stats.wp[0] -= amount;
@@ -231,42 +252,42 @@ module.exports = class WeaponInterface {
 	}
 
 	/* Get an enemy to attack */
-	static getAttacking(me, team, enemy, { hasBuff } = {}) {
+	static getAttacking(me, team, enemy, opt = {}) {
 		let alive = WeaponInterface.getAlive(enemy);
 
-		let hasBuffOverride = false;
-		for (let i in enemy) {
-			if (enemy[i].stats.hp[0] > 0) {
-				for (let j in enemy[i].buffs) {
-					let animal = enemy[i].buffs[j].enemyChooseAttack(enemy[i], me, team, enemy);
+		if (!opt.ignoreChoose) {
+			for (let i in alive) {
+				for (let j in alive[i].buffs) {
+					let animal = alive[i].buffs[j].enemyChooseAttack(alive[i], me, team, enemy);
 					if (animal) {
-						hasBuffOverride = true;
-						if (hasBuff) {
-							if (WeaponInterface.hasGoodBuff(animal)) {
-								return animal;
-							}
-						} else {
+						animal = WeaponInterface.getRandomAnimal([animal], opt);
+						if (animal) {
 							return animal;
 						}
 					}
 				}
 			}
 		}
-		if (hasBuffOverride) return;
 
-		let enemyList = alive;
-		if (hasBuff) {
-			enemyList = alive.filter(WeaponInterface.hasGoodBuff);
-		}
-		return enemyList[Math.trunc(Math.random() * enemyList.length)];
+		return WeaponInterface.getRandomAnimal(alive, opt);
 	}
 
 	/* Get a random animal */
-	static getRandomAnimal(team, { hasDebuff, isAlive } = {}) {
+	static getRandomAnimal(team, { hasBuff, hasDebuff, isAlive, excludeBuffs } = {}) {
 		let list = (isAlive && WeaponInterface.getAlive(team)) || team;
 
 		if (hasDebuff) {
 			list = list.filter(WeaponInterface.hasBadBuff);
+		}
+
+		if (hasBuff) {
+			list = list.filter(WeaponInterface.hasGoodBuff);
+		}
+
+		if (excludeBuffs) {
+			list = list.filter((animal) => {
+				return WeaponInterface.hasExcludeBuffs(animal, excludeBuffs);
+			});
 		}
 
 		return list[Math.trunc(Math.random() * list.length)];
@@ -275,6 +296,11 @@ module.exports = class WeaponInterface {
 	/* Calculate the damage output (Either mag or att) */
 	static getDamage(stat, multiplier = 1) {
 		return Math.round(multiplier * (stat[0] + stat[1]) + (Math.random() * 100 - 50));
+	}
+
+	/* Calculate the damage output (Either hp or wp) */
+	static getDamageFromHpWp(stat, multiplier = 1) {
+		return Math.round(multiplier * (stat[1] + stat[3]) + (Math.random() * 100 - 50));
 	}
 
 	/* Get mixed damage */
@@ -287,9 +313,17 @@ module.exports = class WeaponInterface {
 	}
 
 	/* Deals damage to an opponent */
-	static inflictDamage(attacker, attackee, damage, type, tags = {}) {
+	static inflictDamage(attacker, attackee, damage, type, tags, { bypassRes } = {}) {
+		if (!(tags instanceof Tags)) {
+			tags = new Tags({
+				me: tags.me,
+				allies: tags.allies,
+				enemies: tags.enemies,
+			});
+		}
 		let totalDamage = 0;
-		if (type == WeaponInterface.PHYSICAL)
+		if (bypassRes) totalDamage = damage;
+		else if (type == WeaponInterface.PHYSICAL)
 			totalDamage = damage * (1 - WeaponInterface.resToPercent(attackee.stats.pr));
 		else if (type == WeaponInterface.MAGICAL)
 			totalDamage = damage * (1 - WeaponInterface.resToPercent(attackee.stats.mr));
@@ -319,7 +353,11 @@ module.exports = class WeaponInterface {
 					attacker.weapon.passives[i].attack(attacker, attackee, totalDamage, type, tags)
 				);
 
-		/* After bonus damage calculation */
+		totalDamage = totalDamage.reduce((a, b) => a + b, 0);
+		if (totalDamage < 0) totalDamage = 0;
+		attackee.stats.hp[0] -= totalDamage;
+
+		/* After bonus damage calculation, should not alter damage */
 		/* Event for attackee */
 		for (let i in attackee.buffs)
 			subLogs.push(attackee.buffs[i].postAttacked(attackee, attacker, totalDamage, type, tags));
@@ -336,16 +374,22 @@ module.exports = class WeaponInterface {
 				subLogs.push(
 					attacker.weapon.passives[i].postAttack(attacker, attackee, totalDamage, type, tags)
 				);
-
-		totalDamage = totalDamage.reduce((a, b) => a + b, 0);
-		if (totalDamage < 0) totalDamage = 0;
-		attackee.stats.hp[0] -= totalDamage;
 		return { amount: Math.round(totalDamage), logs: subLogs };
 	}
 
 	/* heals */
-	static heal(me, amount, from, tags = {}) {
+	static heal(me, amount, from, tags, { overheal } = {}) {
+		if (!(tags instanceof Tags)) {
+			tags = new Tags({
+				me: tags.me,
+				allies: tags.allies,
+				enemies: tags.enemies,
+			});
+		}
 		let max = me.stats.hp[1] + me.stats.hp[3];
+		if (overheal) {
+			max *= 1.5;
+		}
 		/* Full health */
 		if (!me || me.stats.hp[0] >= max) return { amount: 0 };
 
@@ -401,8 +445,19 @@ module.exports = class WeaponInterface {
 	}
 
 	/* replenishes mana*/
-	static replenish(me, amount, from, tags = {}) {
+	static replenish(me, amount, from, tags, { overreplenish } = {}) {
+		if (!(tags instanceof Tags)) {
+			tags = new Tags({
+				me: tags.me,
+				allies: tags.allies,
+				enemies: tags.enemies,
+			});
+		}
+
 		let max = me.stats.wp[1] + me.stats.wp[3];
+		if (overreplenish) {
+			max *= 1.5;
+		}
 		/* Full mana */
 		if (!me || me.stats.wp[0] >= max) return { amount: 0 };
 
@@ -559,21 +614,38 @@ module.exports = class WeaponInterface {
 		return false;
 	}
 
+	static hasExcludeBuffs(animal, buffIds) {
+		for (let i in animal.buffs) {
+			if (buffIds.includes(animal.buffs[i].id)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	/* Gets a dead animal */
 	static getDead(team) {
 		for (let i = 0; i < team.length; i++) if (team[i].stats.hp[0] <= 0) return team[i];
 	}
 
 	/* Check if the animal is at max or higher health */
-	static isMaxHp(animal) {
+	static isMaxHp(animal, { overheal } = {}) {
 		let hp = animal.stats.hp;
-		return hp[0] >= hp[1] + hp[3];
+		let max = hp[1] + hp[3];
+		if (overheal) {
+			max *= 1.5;
+		}
+		return hp[0] + 1 >= max;
 	}
 
 	/* Check if the animal is at max or higher health */
-	static isMaxWp(animal) {
-		let wp = animal.stats.wp;
-		return wp[0] >= wp[1] + wp[3];
+	static isMaxWp(animal, { overreplenish } = {}) {
+		const wp = animal.stats.wp;
+		let max = wp[1] + wp[3];
+		if (overreplenish) {
+			max *= 1.5;
+		}
+		return wp[0] + 1 >= max;
 	}
 
 	/* Checks if the animal can attack or not */

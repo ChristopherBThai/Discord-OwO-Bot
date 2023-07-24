@@ -36,13 +36,13 @@ module.exports = new CommandInterface({
 		);
 		if (user && !user.dmError && cowoncy) {
 			p.send(
-				`📨 **|** Successfully reset cowoncy for **${user.username + '#' + user.discriminator}**\n${
+				`📨 **|** Successfully reset cowoncy for **${p.getUniqueName(user)}**\n${
 					p.config.emoji.blank
 				} **|** Previously had: ${cowoncy} cowoncy`
 			);
 		} else if (cowoncy) {
 			p.send(
-				`⚠ **|** Successfully reset cowoncy for **${user.username + '#' + user.discriminator}**\n${
+				`⚠ **|** Successfully reset cowoncy for **${p.getUniqueName(user)}**\n${
 					p.config.emoji.blank
 				} **|** Previously had: ${cowoncy} cowoncy**\n${
 					p.config.emoji.blank

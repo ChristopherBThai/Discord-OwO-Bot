@@ -36,13 +36,24 @@ module.exports = new CommandInterface({
 		} else if (p.args.length == 0) {
 			display.bind(p)(p);
 			p.setCooldown(5);
+		} else {
+			let user = p.getMention(p.args[0]);
+			if (!user) {
+				user = await p.fetch.getMember(p.msg.channel.guild, p.args[0]);
+				if (!user) {
+					p.errorMsg(', Invalid syntax! Please tag a user!', 3000);
+					p.setCooldown(5);
+					return;
+				}
+			}
+			give(p, user);
 		}
 	},
 });
 
 async function display() {
 	let count = await this.redis.hget('data_' + this.msg.author.id, data);
-	const displayMsg = ', you have ?count? haunetd house?plural?.';
+	const displayMsg = ', you have ?count? haunted house?plural?.';
 	const msg = displayMsg.replace('?count?', count || 0).replace('?plural?', count > 1 ? 's' : '');
 	this.replyMsg(emoji, msg);
 }
@@ -79,6 +90,21 @@ async function combine(p) {
 
 	this.redis.hincrby('data_' + this.msg.author.id, data, 1);
 	p.send(
-		`${emoji} **| ${p.msg.author.username}**, you combined a bat, witch, ghost, and a spider to create a haunted house!`
+		`${emoji} **| ${p.getName()}**, you combined a bat, witch, ghost, and a spider to create a haunted house!`
 	);
+}
+
+async function give(p, user) {
+	let result = await p.redis.hincrby('data_' + p.msg.author.id, data, -1);
+
+	// Error checking
+	if (result == null || result < 0) {
+		if (result < 0) p.redis.hincrby('data_' + p.msg.author.id, data, 1);
+		p.errorMsg(', you do not have any haunted houses to give! >:c', 3000);
+		p.setCooldown(5);
+		return;
+	}
+
+	await p.redis.hincrby('data_' + user.id, data, 1);
+	p.send(`${emoji} **| ${p.getName(user)}**, **${p.getName()}** gave you 1 haunted house!`);
 }

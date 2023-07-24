@@ -1,0 +1,78 @@
+{
+	"lb": {
+		"name": "Lootboxes",
+		"chance": 10,
+		"emoji": "<:box:427352600476647425>",
+		"count": {
+			"values": [5, 10, 15, 20, 50],
+			"chances": [20, 30, 20, 10, 1]
+		}
+	},
+	"wc": {
+		"name": "Weapon Crates",
+		"chance": 10,
+		"emoji": "<:crate:523771259302182922>",
+		"count": {
+			"values": [5, 10, 15, 20, 50],
+			"chances": [20, 30, 20, 10, 1]
+		}
+	},
+	"flb": {
+		"name": "Fabled Lootboxes",
+		"chance": 1,
+		"emoji": "<a:flootbox:725570544065445919>",
+		"count": {
+			"values": [3, 5, 7, 10],
+			"chances": [3, 2, 1, 1]
+		}
+	},
+	"ws": {
+		"name": "Weapon Shards",
+		"chance": 4,
+		"emoji": "<:weaponshard:655902978712272917>",
+		"count": {
+			"values": [1000, 2000, 3000, 5000, 20000],
+			"chances": [30, 30, 20, 10, 1]
+		}
+	},
+	"essence": {
+		"name": "Animal Essences",
+		"chance": 4,
+		"emoji": "<a:essence:451638978299428875>",
+		"count": {
+			"values": [3000, 6000, 10000, 20000, 50000],
+			"chances": [30, 30, 20, 10, 1]
+		}
+	},
+	"common_tickets": {
+		"name": "Common Perk Tickets",
+		"type": "item",
+		"rewardId": "common_tickets",
+		"chance": 3,
+		"emoji": "<:cticket:815767124680114206>",
+		"count": {
+			"values": [1, 2, 3, 4, 5],
+			"chances": [30, 20, 20, 10, 1]
+		}
+	},
+	"cowoncy": {
+		"name": "Cowoncy",
+		"chance": 5,
+		"emoji": "<:cowoncy:416043450337853441>",
+		"count": {
+			"values": [10000, 20000, 50000, 75000, 100000, 500000],
+			"chances": [50, 40, 30, 20, 10, 1]
+		}
+	},
+	"fring": {
+		"name": "Fabled Ring",
+		"type": "ring",
+		"rewardId": 7,
+		"chance": 1,
+		"emoji": "<a:fring:590393335915479040>",
+		"count": {
+			"values": [1],
+			"chances": [1]
+		}
+	}
+}

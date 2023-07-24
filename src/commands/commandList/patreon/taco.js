@@ -78,6 +78,8 @@ async function give(p, user) {
 
 	await p.redis.hincrby('data_' + user.id, data, 3);
 	p.send(
-		`${emoji} **| ${user.username}**, **${p.msg.author.username}** gave you 3 tacos. One for sharing and two to keep because... Tacos ❤️`
+		`${emoji} **| ${
+			user.username
+		}**, **${p.getName()}** gave you 3 tacos. One for sharing and two to keep because... Tacos ❤️`
 	);
 }

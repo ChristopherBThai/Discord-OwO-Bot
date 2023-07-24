@@ -60,10 +60,7 @@ module.exports = new CommandInterface({
 		let embed = {
 			author: {
 				name:
-					p.msg.author.username +
-					', are you sure you want to divorce' +
-					(so ? ' ' + so.username : '') +
-					'?',
+					p.getName() + ', are you sure you want to divorce' + (so ? ' ' + so.username : '') + '?',
 				icon_url: p.msg.author.avatarURL,
 			},
 			description:

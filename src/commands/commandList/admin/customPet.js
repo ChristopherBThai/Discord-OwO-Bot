@@ -65,7 +65,7 @@ async function msgUsers(p) {
 		try {
 			let result = await msgUser(p, args[0]);
 			if (result) {
-				success += `\`${result.user.username}#${result.user.discriminator}\`\n`;
+				success += `\`${p.getUniqueName(result.user)}\`\n`;
 			} else {
 				failed += `\`failed for [${args.join(', ')}]\`\n`;
 			}
