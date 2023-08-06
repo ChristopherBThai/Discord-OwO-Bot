@@ -265,7 +265,7 @@ const getTeam = (exports.getTeam = async function (p) {
 				ORDER BY pt_act.pgid DESC, pt2.pgid ASC
 				LIMIT 1)
 		ORDER BY pos ASC;`;
-	sql += `SELECT uw.pid,uw.uwid,uw.wid,uw.stat,uwp.pcount,uwp.wpid,uwp.stat as pstat,a.name,a.nickname
+	sql += `SELECT uw.pid,uw.uwid,uw.wid,uw.stat,uw.rrcount,uw.rrattempt,uw.is_prisstine,uwp.pcount,uwp.wpid,uwp.stat as pstat,a.name,a.nickname
 		FROM user u
 			INNER JOIN user_weapon uw
 				ON u.uid = uw.uid
@@ -285,6 +285,60 @@ const getTeam = (exports.getTeam = async function (p) {
 						LIMIT 1);`;
 	return await p.query(sql);
 });
+
+exports.getBattleTeam = async function ({ id, pgid }, level, notActive) {
+	let pgidQuery = `(SELECT pt2.pgid FROM user u2
+			INNER JOIN pet_team pt2
+				ON pt2.uid = u2.uid
+			LEFT JOIN pet_team_active pt_act
+				ON pt2.pgid = pt_act.pgid
+		WHERE u2.id = ${id}
+		ORDER BY pt_act.pgid DESC, pt2.pgid ASC
+		LIMIT 1)`;
+	if (id && notActive) {
+		pgidQuery = `(SELECT pt2.pgid FROM user u2
+			INNER JOIN pet_team pt2
+				ON pt2.uid = u2.uid
+			LEFT JOIN pet_team_active pt_act
+				ON pt2.pgid = pt_act.pgid
+		WHERE u2.id = ${id}
+			AND pt2.pgid NOT IN (
+			  SELECT pgid FROM pet_team_active pt_act
+					WHERE pt_act.uid = u2.uid
+			)
+		ORDER BY pt_act.pgid DESC, pt2.pgid ASC
+		LIMIT 1)`;
+	} else if (pgid) {
+		pgidQuery = pgid;
+	}
+	const sql = `SELECT pet_team.censor as ptcensor, streak, highest_streak, animal.offensive as acensor,
+			pet_team.pgid, tname, pos, animal.name, animal.nickname, animal.pid, animal.xp, user_weapon.uwid,
+			user_weapon.wid, user_weapon.stat, user_weapon_passive.pcount, user_weapon_passive.wpid,
+			user_weapon_passive.stat as pstat
+		FROM pet_team
+			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
+			INNER JOIN animal ON pet_team_animal.pid = animal.pid
+			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
+			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
+		WHERE pet_team.pgid = ${pgidQuery}
+		ORDER BY pos ASC;`;
+	let result = await this.query(sql);
+
+	if (!result[0]) {
+		return null;
+	}
+	pgid = result[0].pgid;
+
+	let team = parseTeam(this, result, result);
+	team.forEach((animal) => animalUtil.stats(animal, level));
+	return {
+		pgid: pgid,
+		name: result[0].tname,
+		streak: result[0].streak,
+		highestStreak: result[0].highest_streak,
+		team: team,
+	};
+};
 
 /* eslint-disable-next-line */
 const createTeamEmbed = (exports.createTeamEmbed = function (p, team, other = {}) {

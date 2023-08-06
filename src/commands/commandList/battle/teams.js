@@ -8,7 +8,6 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const teamUtil = require('./util/teamUtil.js');
-const battleUtil = require('./util/battleUtil.js');
 const battleFriendUtil = require('./util/battleFriendUtil.js');
 const maxTeams = 2;
 const starEmoji = '⭐';
@@ -55,7 +54,7 @@ async function displayTeams(p) {
 				ON pet_team_animal.pid = animal.pid
 		WHERE user.id = ${p.msg.author.id}
 		ORDER BY pgid ASC, pos ASC;`;
-	sql += `SELECT DISTINCT a.pid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
+	sql += `SELECT DISTINCT a.pid,a.uwid,a.wid,a.stat,a.rrcount,a.rrattempt,a.is_pristine,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
 		FROM user u
 			INNER JOIN pet_team pt
 				ON u.uid = pt.uid
@@ -209,14 +208,7 @@ async function setTeam(p, teamNum, dontDisplay) {
 		return;
 	}
 
-	// You cant change teams if in battle
-	if (await battleUtil.inBattle(p)) {
-		p.errorMsg(
-			", You cannot change your team while you're in battle! Please finish your `owo battle`!",
-			3000
-		);
-		return;
-	} else if (await battleFriendUtil.inBattle(p)) {
+	if (await battleFriendUtil.inBattle(p)) {
 		p.errorMsg(
 			', You cannot change your team while you have a pending battle! Use `owo db` to decline',
 			3000

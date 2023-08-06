@@ -18,6 +18,7 @@ const ranks = [
 	[0.05, 'Legendary', '<a:legendary:417955061801680909>'],
 	[0.01, 'Fabled', '<a:fabled:438857004493307907>'],
 ];
+const pristineBuff = 50;
 
 module.exports = class WeaponInterface {
 	/* Constructor */
@@ -30,6 +31,9 @@ module.exports = class WeaponInterface {
 			}
 		}
 		if (noCreate) return;
+
+		/* Pristine weaopns give +1 to all qualities */
+		this.isPristine = !!opt.isPristine;
 
 		/* Keep track of quality list length for buff quality purposes */
 		this.initialQualityListLength = this.qualityList.length;
@@ -51,6 +55,7 @@ module.exports = class WeaponInterface {
 
 		/* Get random vars if not present */
 		if (!cpassives) cpassives = this.randomPassives(statOverride);
+		else cpassives.forEach((passive) => passive.setPristine(this.isPristine));
 		if (!qualities) qualities = this.randomQualities(statOverride);
 
 		/* Construct stats */
@@ -74,24 +79,14 @@ module.exports = class WeaponInterface {
 			avgQuality = qualities.reduce((a, b) => a + b, 0) / qualities.length;
 		}
 		avgQuality = Math.trunc(avgQuality);
+		if (this.isPristine) {
+			avgQuality += WeaponInterface.pristineBuff;
+		}
 
 		let emoji = this.getEmoji(avgQuality);
 
 		/* Determine rank */
-		let rank = 0;
-		for (let i = 0; i < ranks.length; i++) {
-			rank += ranks[i][0];
-			if (avgQuality / 100 <= rank) {
-				rank = ranks[i];
-				i = ranks.length;
-			} else if (i == ranks.length - 1) {
-				rank = ranks[0];
-			}
-		}
-		rank = {
-			name: rank[1],
-			emoji: rank[2],
-		};
+		let rank = WeaponInterface.getRank(avgQuality);
 
 		/* Construct desc */
 		let desc = this.statDesc;
@@ -129,7 +124,7 @@ module.exports = class WeaponInterface {
 				throw (
 					'Could not get passive[' + this.availablePassives[rand] + '] for weapon[' + this.id + ']'
 				);
-			randPassives.push(new passive(null, null, { statOverride }));
+			randPassives.push(new passive(null, null, { statOverride, isPristine: this.isPristine }));
 		}
 		return randPassives;
 	}
@@ -138,7 +133,7 @@ module.exports = class WeaponInterface {
 	determinedPassives(passiveList, statOverride) {
 		return passiveList.map((pid) => {
 			let passive = passives[pid];
-			return new passive(null, null, { statOverride });
+			return new passive(null, null, { statOverride, isPristine: this.isPristine });
 		});
 	}
 
@@ -159,6 +154,7 @@ module.exports = class WeaponInterface {
 			let quality = qualities[i];
 			if (quality > 100) quality = 100;
 			if (quality < 0) quality = 0;
+			if (this.isPristine) quality += WeaponInterface.pristineBuff;
 			let min = this.qualityList[i][0];
 			let max = this.qualityList[i][1];
 
@@ -176,7 +172,11 @@ module.exports = class WeaponInterface {
 			for (let i in this.buffList) {
 				let buff = buffs[this.buffList[i]];
 				let buffQualityLength = buff.getQualityList.length;
-				buffClasses.push(new buff(from, this.qualities.slice(index, index + buffQualityLength)));
+				buffClasses.push(
+					new buff(from, this.qualities.slice(index, index + buffQualityLength), null, null, {
+						isPristine: this.isPristine,
+					})
+				);
 				index += buffQualityLength;
 			}
 		}
@@ -518,16 +518,17 @@ module.exports = class WeaponInterface {
 			quality = parseInt(quality.split(','));
 			quality = quality.reduce((a, b) => a + b, 0) / quality.length;
 		}
-
 		quality /= 100;
+
+		const emojisList = this.isPristine ? this.pristineEmojis : this.emojis;
 
 		/* Get correct rank */
 		let count = 0;
 		for (let i = 0; i < ranks.length; i++) {
 			count += ranks[i][0];
-			if (quality <= count) return this.emojis[i];
+			if (quality <= count) return emojisList[i];
 		}
-		return this.emojis[0];
+		return emojisList[6];
 	}
 
 	rerollStats() {
@@ -550,6 +551,24 @@ module.exports = class WeaponInterface {
 		if (!WeaponClass) throw 'Weapon Not Found for reroll';
 
 		return new WeaponClass(null, this.qualities);
+	}
+
+	static getRank(avgQuality) {
+		let rank = 0;
+		avgQuality /= 100;
+		for (let i = 0; i < ranks.length; i++) {
+			rank += ranks[i][0];
+			if (avgQuality <= rank) {
+				rank = ranks[i];
+				i = ranks.length;
+			} else if (i == ranks.length - 1) {
+				rank = ranks[6];
+			}
+		}
+		return {
+			name: rank[1],
+			emoji: rank[2],
+		};
 	}
 
 	/* Get lowest hp animal */
@@ -733,6 +752,10 @@ module.exports = class WeaponInterface {
 	}
 	static get getEmoji() {
 		return new this(null, null, true).defaultEmoji;
+	}
+
+	static get pristineBuff() {
+		return pristineBuff;
 	}
 };
 

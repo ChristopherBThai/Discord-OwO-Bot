@@ -443,3 +443,9 @@ exports.getTag = function (user) {
 	if (!id) return 'User';
 	return `<@${id}>`;
 };
+
+exports.delay = function (delay) {
+	return new Promise((resolve) => {
+		setTimeout(resolve, delay);
+	});
+};

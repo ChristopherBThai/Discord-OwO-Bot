@@ -146,12 +146,14 @@ async function claim(p, msg, con, query, bot) {
 				tempText[animalLoc] = ' \n' + p.animals.ranks[p.animals.order[animalLoc]] + ' **|**';
 			tempText[animalLoc] += ' ' + animalString;
 		}
-		animalSql.push(`(${msg.author.id}, '${animal}', ${total[animal].count}, ${total[animal].count})`);
+		animalSql.push(
+			`(${msg.author.id}, '${animal}', ${total[animal].count}, ${total[animal].count})`
+		);
 		if (!animalCountSql[total[animal].rank])
 			animalCountSql[total[animal].rank] = {
 				rank: total[animal].rank,
-				count: 0
-			}
+				count: 0,
+			};
 		animalCountSql[total[animal].rank].count += total[animal].count;
 	}
 	animalCountSql = Object.values(animalCountSql);
@@ -160,13 +162,17 @@ async function claim(p, msg, con, query, bot) {
 			VALUES ${animalSql.join(',')}
 			ON DUPLICATE KEY UPDATE
 				count = count + VALUES(count),
-				totalcount = totalcount + VALUES(totalcount);`
-	sql += `INSERT INTO animal_count (id, ${animalCountSql.map(animalCount => animalCount.rank).join(',')})
-			VALUES (${msg.author.id}, ${animalCountSql.map(animalCount => animalCount.count).join(',')})
+				totalcount = totalcount + VALUES(totalcount);`;
+	sql += `INSERT INTO animal_count (id, ${animalCountSql
+		.map((animalCount) => animalCount.rank)
+		.join(',')})
+			VALUES (${msg.author.id}, ${animalCountSql.map((animalCount) => animalCount.count).join(',')})
 			ON DUPLICATE KEY UPDATE
-				${animalCountSql.map(animalCount => {
-					return `${animalCount.rank} = ${animalCount.rank} + ${animalCount.count}`
-				}).join(',')};
+				${animalCountSql
+					.map((animalCount) => {
+						return `${animalCount.rank} = ${animalCount.rank} + ${animalCount.count}`;
+					})
+					.join(',')};
 			`;
 
 	for (let i = 0; i < tempText.length; i++) if (tempText[i]) text += tempText[i];
