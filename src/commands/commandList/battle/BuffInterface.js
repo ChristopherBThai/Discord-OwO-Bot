@@ -6,12 +6,15 @@
  */
 /* eslint-disable no-unused-vars */
 const Tags = require('./util/tags.js');
+const WeaponInterface = require('./WeaponInterface.js');
 
 module.exports = class BuffInterface {
 	/* Constructor */
-	constructor(from, qualities, duration, noCreate) {
+	constructor(from, qualities, duration, noCreate, opt = {}) {
 		this.init();
 		if (noCreate) return;
+
+		this.isPristine = !!opt.isPristine;
 
 		/* Initialize random qualities if it doesnt have any */
 		if (!qualities) qualities = this.randomQualities();
@@ -19,6 +22,9 @@ module.exports = class BuffInterface {
 
 		/* Calculate avg quality of this buff */
 		let avgQuality = qualities.reduce((a, b) => a + b, 0) / qualities.length;
+		if (this.isPristine) {
+			avgQuality += WeaponInterface.pristineBuff;
+		}
 
 		/* Construct stats based on qualities */
 		let stats = this.toStats(qualities);
@@ -55,6 +61,7 @@ module.exports = class BuffInterface {
 			let quality = qualities[i];
 			if (quality > 100) quality = 100;
 			if (quality < 0) quality = 0;
+			if (this.isPristine) quality += WeaponInterface.pristineBuff;
 			let min = this.qualityList[i][0];
 			let max = this.qualityList[i][1];
 

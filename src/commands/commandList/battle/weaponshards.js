@@ -87,7 +87,7 @@ async function dismantleRank(p, rankLoc) {
 	max *= 100;
 
 	/* Grab the item we will sell */
-	let sql = `SELECT user.uid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat
+	let sql = `SELECT user.uid,a.uwid,a.wid,a.stat,a.rrcount,a.rrattempt,a.is_pristine,b.pcount,b.wpid,b.stat as pstat
 		FROM user
 			LEFT JOIN user_weapon a ON user.uid = a.uid
 			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
@@ -173,7 +173,7 @@ async function dismantleId(p, uwid) {
 	}
 
 	/* Grab the item we will dismantle */
-	let sql = `SELECT user.uid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
+	let sql = `SELECT user.uid,a.uwid,a.wid,a.stat,a.rrcount,a.rrattempt,a.is_pristine,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
 		FROM user
 			LEFT JOIN user_weapon a ON user.uid = a.uid
 			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid

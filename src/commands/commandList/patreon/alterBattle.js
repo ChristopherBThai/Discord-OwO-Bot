@@ -6,17 +6,37 @@
  */
 
 const _blank = '<:blank:427371936482328596>';
+const battleUtil = require('../battle/util/battleUtil.js');
 
-exports.alter = async function (p, user, text, type, setting) {
+exports.alter = async function (p, user, text, battleEvent) {
+	let type = {
+		turns: battleEvent.logs?.length || 0,
+		user: battleEvent.p.msg.author,
+		streak: battleEvent.player.streak,
+	};
+	const pXP = battleEvent.endResult.pXP;
+	if (pXP) {
+		type.xp = pXP.xp;
+		if (battleUtil.shouldStopStreak()) {
+			type.streak = battleEvent.player.streak;
+		} else if (pXP.resetStreak) {
+			type.streak = battleEvent.player.streak;
+		} else if (pXP.addStreak) {
+			if (pXP.bonus) {
+				type.xp += ` + ${pXP.bonus}`;
+			}
+			type.streak = battleEvent.player.streak + 1;
+		} else {
+			type.streak = battleEvent.player.streak;
+		}
+	}
 	const result = await checkDb(p, user.id, text, type);
 	if (result) return result;
 	switch (p.msg.channel.id) {
 		case '1054101525191995502':
-			return quincey(text, type, setting);
 		case '1056148694480715886':
-			return quincey(text, type, setting);
 		case '1056148656572596264':
-			return quincey(text, type, setting);
+			return quincey(text, type);
 	}
 	switch (user.id) {
 		case '176046069954641921':

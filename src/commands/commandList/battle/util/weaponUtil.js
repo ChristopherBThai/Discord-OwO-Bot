@@ -89,9 +89,9 @@ exports.getRandomWeapons = function (uid, count, wid) {
 };
 
 const toSql = (exports.toSql = function (uid, weapon) {
-	let weaponSql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${uid ? uid : '?'},${
-		weapon.id
-	},'${weapon.sqlStat}',${weapon.avgQuality});`;
+	let weaponSql = `INSERT INTO user_weapon (uid,wid,stat,avg,rrcount,rrattempt,is_pristine) VALUES (${
+		uid ? uid : '?'
+	},${weapon.id},'${weapon.sqlStat}',${weapon.avgQuality}, 0, 0, ${weapon.isPristine});`;
 	let passiveSql = 'INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES ';
 	for (let j = 0; j < weapon.passives.length; j++) {
 		let tempPassive = weapon.passives[j];
@@ -168,6 +168,7 @@ let parseWeaponQuery = (exports.parseWeaponQuery = function (query) {
 						nickname: query[i].nickname,
 					},
 					passives: [],
+					isPristine: query[i].isPristine,
 				};
 			}
 			if (query[i].wpid) {
@@ -339,7 +340,7 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	/* Query all weapons */
 	let sql = `SELECT temp.*,user_weapon_passive.wpid,user_weapon_passive.pcount,user_weapon_passive.stat as pstat
 		FROM
-			(SELECT user_weapon.uwid,user_weapon.wid,user_weapon.stat,animal.name,animal.nickname
+			(SELECT user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon.rrcount,user_weapon.rrattempt,user_weapon.is_pristine,animal.name,animal.nickname
 			FROM  user
 				INNER JOIN user_weapon ON user.uid = user_weapon.uid
 				LEFT JOIN animal ON animal.pid = user_weapon.pid
@@ -602,7 +603,7 @@ exports.describe = async function (p, uwid) {
 	}
 
 	/* sql query */
-	let sql = `SELECT user.id,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat FROM user INNER JOIN user_weapon a ON user.uid = a.uid LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid WHERE a.uwid = ${uwid};`;
+	let sql = `SELECT user.id,a.uwid,a.wid,a.stat,a.is_pristine,a.rrcount,a.rrattempt,b.pcount,b.wpid,b.stat as pstat FROM user INNER JOIN user_weapon a ON user.uid = a.uid LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid WHERE a.uwid = ${uwid};`;
 	let result = await p.query(sql);
 
 	/* Check if valid */
@@ -720,7 +721,7 @@ exports.equip = async function (p, uwid, pet) {
 			uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND
 			uwid = ${uwid} AND
 			${pid} IS NOT NULL;`;
-	sql += `SELECT animal.name,animal.nickname,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal ON a.pid = animal.pid WHERE a.uwid = ${uwid} AND uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
+	sql += `SELECT animal.name,animal.nickname,a.uwid,a.wid,a.stat,a.rrcount,a.rratempt,a.is_pristine,b.pcount,b.wpid,b.stat as pstat FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal ON a.pid = animal.pid WHERE a.uwid = ${uwid} AND uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
 	let result = await p.query(sql);
 
 	/* Success */
@@ -776,7 +777,7 @@ exports.unequip = async function (p, uwid) {
 		return;
 	}
 
-	let sql = `SELECT animal.name,animal.nickname,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal ON a.pid = animal.pid WHERE a.uwid = ${uwid} AND uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
+	let sql = `SELECT animal.name,animal.nickname,a.uwid,a.wid,a.stat,a.rrcount,a.rrattempt,a.is_pristine,b.pcount,b.wpid,b.stat as pstat FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal ON a.pid = animal.pid WHERE a.uwid = ${uwid} AND uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
 	sql += `UPDATE IGNORE user_weapon SET pid = NULL WHERE uwid = ${uwid} AND uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
 	let result = await p.query(sql);
 
@@ -830,7 +831,7 @@ exports.sell = async function (p, uwid) {
 	}
 
 	/* Grab the item we will sell */
-	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
+	let sql = `SELECT a.uwid,a.wid,a.stat,a.rrcount,a.rrattempt,a.is_pristine,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
 		FROM user
 			LEFT JOIN user_weapon a ON user.uid = a.uid
 			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
@@ -919,7 +920,7 @@ let sellRank = (exports.sellRank = async function (p, rankLoc) {
 	max *= 100;
 
 	/* Grab the item we will sell */
-	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat
+	let sql = `SELECT a.uwid,a.wid,a.stat,a.rrcount,a.rrattempt,a.is_pristine,b.pcount,b.wpid,b.stat as pstat
 		FROM user
 			LEFT JOIN user_weapon a ON user.uid = a.uid
 			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid

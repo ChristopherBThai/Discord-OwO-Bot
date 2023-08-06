@@ -5,6 +5,7 @@
  * For more information, see README.md and LICENSE
  */
 /* eslint-disable no-unused-vars */
+const WeaponInterface = require('./WeaponInterface.js');
 
 const ranks = [0.2, 0.2, 0.2, 0.2, 0.14, 0.05, 0.01];
 module.exports = class PassiveInterface {
@@ -14,10 +15,14 @@ module.exports = class PassiveInterface {
 
 		/* Overrides */
 		const statOverride = opt.statOverride;
+		this.isPristine = !!opt.isPristine;
 
 		if (!qualities) qualities = this.randomQualities(statOverride);
 
 		let avgQuality = qualities.reduce((a, b) => a + b, 0) / qualities.length;
+		if (this.isPristine) {
+			avgQuality += WeaponInterface.pristineBuff;
+		}
 		let emoji = this.getEmoji(avgQuality);
 		let stats = this.toStats(qualities);
 
@@ -70,6 +75,7 @@ module.exports = class PassiveInterface {
 			let quality = qualities[i];
 			if (quality > 100) quality = 100;
 			if (quality < 0) quality = 0;
+			if (this.isPristine) quality += WeaponInterface.pristineBuff;
 			let min = this.qualityList[i][0];
 			let max = this.qualityList[i][1];
 
@@ -77,6 +83,32 @@ module.exports = class PassiveInterface {
 			stats.push(Math.round((min + (max - min) * (quality / 100)) * 100) / 100);
 		}
 		return stats;
+	}
+
+	/**
+	 * Set passive to pristine or not.
+	 * Alters passive's avgQualit, emoji, stats, and desc
+	 */
+	setPristine(isPristine) {
+		this.isPristine = isPristine;
+
+		let avgQuality = this.qualities.reduce((a, b) => a + b, 0) / this.qualities.length;
+		if (this.isPristine) {
+			avgQuality += WeaponInterface.pristineBuff;
+		}
+		let emoji = this.getEmoji(avgQuality);
+		let stats = this.toStats(this.qualities);
+
+		/* Construct desc */
+		let desc = this.statDesc;
+		for (let i = 0; i < stats.length; i++) {
+			desc = desc.replace('?', stats[i]);
+		}
+
+		this.avgQuality = avgQuality;
+		this.emoji = emoji;
+		this.stats = stats;
+		this.desc = desc;
 	}
 
 	alterStats(stats) {}

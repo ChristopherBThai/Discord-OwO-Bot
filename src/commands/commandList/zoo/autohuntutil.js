@@ -143,7 +143,7 @@ exports.getBot = function (result) {
 
 exports.getTotalBots = function () {
 	return totalBots;
-}
+};
 
 async function updateTotal() {
 	//Update total bots every hour

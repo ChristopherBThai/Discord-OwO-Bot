@@ -7,6 +7,8 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
+const battleUtil = require('./util/battleUtil.js');
+
 module.exports = new CommandInterface({
 	alias: ['battlesetting', 'bs', 'battlesettings'],
 
@@ -33,16 +35,11 @@ module.exports = new CommandInterface({
 });
 
 async function display(p) {
-	let sql = `SELECT logs,auto,display,speed from user INNER JOIN battle_settings ON user.uid = battle_settings.uid WHERE id = ${p.msg.author.id};`;
-	let result = await p.query(sql);
-
-	let settings = parseSettings(result);
+	let settings = await battleUtil.getBattleSetting.bind(p)();
 
 	//let text = (settings.showLogs?"~~":"")+"**Auto = ** `"+settings.auto+"`"+(settings.showLogs?"~~":"")+"\n";
 	let text = '**Display = ** `' + settings.display + '`\n';
-	if (settings.showLogs || !settings.auto) text += '~~';
 	text += '**Speed = ** `' + settings.speed + '`';
-	if (settings.showLogs || !settings.auto) text += '~~';
 	text += '\n**Logs = ** `' + settings.showLogs + '`';
 
 	let embed = {
@@ -69,17 +66,7 @@ async function changeSettings(p) {
 	let field = '';
 	let setting = '';
 
-	/*if(args[0]=='auto'){
-		field = 'auto';
-		if(args[1]=='false'){
-			setting = 1;
-		}else if(args[1]=='true'){
-			setting = 0;
-		}else{
-			p.errorMsg(", the auto settings can only be `true`, or `false`!");
-			return;
-		}
-	}else*/ if (args[0] == 'display') {
+	if (args[0] == 'display') {
 		field = 'display';
 		if (args[1] == 'image') {
 			setting = "'image'";
@@ -133,24 +120,4 @@ async function changeSettings(p) {
 	}
 
 	display(p);
-}
-
-function parseSettings(query) {
-	let auto = true;
-	let display = 'image';
-	let speed = 'short';
-	let logs = false;
-
-	if (query[0]) {
-		//if(query[0].auto==1)
-		//auto = false;
-		if (query[0].display == 'text') display = 'text';
-		else if (query[0].display == 'compact') display = 'compact';
-		else if (query[0].display == 'log') display = 'log';
-		if (query[0].speed == 0) speed = 'instant';
-		else if (query[0].speed == 2) speed = 'lengthy';
-		if (query[0].logs == 1) logs = true;
-		else if (query[0].logs == 2) logs = 'link';
-	}
-	return { auto, display, speed, showLogs: logs };
 }
