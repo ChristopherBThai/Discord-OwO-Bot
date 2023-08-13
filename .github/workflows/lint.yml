@@ -6,9 +6,11 @@ on:
   push:
     branches:
       - master
+      - private
   pull_request:
     branches:
       - master
+      - private
 
 jobs:
   run-linters:
