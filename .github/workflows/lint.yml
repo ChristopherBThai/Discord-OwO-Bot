@@ -36,4 +36,4 @@ jobs:
           prettier: true
 
       - name: Run Cyclic Dependency check
-        run: dpdm --exit-code circular:1 ./src/owo.js
+        run: npm install -g dpdm && dpdm --exit-code circular:1 ./src/owo.js
