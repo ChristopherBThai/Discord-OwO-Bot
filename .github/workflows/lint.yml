@@ -32,3 +32,6 @@ jobs:
         with:
           eslint: true
           prettier: true
+
+      - name: Run Cyclic Dependency check
+        run: dpdm --exit-code circular:1 ./src/owo.js

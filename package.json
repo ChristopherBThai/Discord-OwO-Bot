@@ -62,6 +62,7 @@
 	},
 	"homepage": "https://github.com/ChristopherBThai/Discord-OwO-Bot#readme",
 	"devDependencies": {
+		"dpdm": "^3.13.1",
 		"eslint": "^8.29.0",
 		"eslint-config-prettier": "^8.5.0"
 	}
