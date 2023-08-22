@@ -40,14 +40,13 @@ module.exports = class Snail extends PassiveInterface {
 		let attacking = WeaponInterface.getAttacking(animal, allies, enemies, { ignoreChoose: true });
 		if (!attacking) return;
 
-		const snailTags = tags.copy({
+		const copyTags = tags.copyAdd('snail', animal, {
 			me: animal,
 			allies: tags.allies,
 			enemies: tags.enemies,
 		});
-		tags.add('snail', animal);
 		// damage variable already has res applied, no need to recalculate res twice.
-		snailDamage = WeaponInterface.inflictDamage(animal, attacking, snailDamage, type, snailTags, {
+		snailDamage = WeaponInterface.inflictDamage(animal, attacking, snailDamage, type, copyTags, {
 			bypassRes: true,
 		});
 		logs.push(

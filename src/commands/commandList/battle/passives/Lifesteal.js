@@ -35,8 +35,8 @@ module.exports = class Lifesteal extends PassiveInterface {
 
 		let logs = new Log();
 		let heal = (totalDamage * this.stats[0]) / 100;
-		tags.add('lifesteal', animal);
-		heal = WeaponInterface.heal(animal, heal, animal, tags);
+		const tagsCopy = tags.copyAdd('lifesteal', animal);
+		heal = WeaponInterface.heal(animal, heal, animal, tagsCopy);
 
 		logs.push(`[LIFESTEAL] ${animal.nickname} heals for ${heal.amount} HP`, heal.logs);
 		return logs;

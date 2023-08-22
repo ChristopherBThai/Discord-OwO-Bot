@@ -40,13 +40,13 @@ module.exports = class Absolve extends PassiveInterface {
 		let attacking = WeaponInterface.getAttacking(animal, allies, enemies, { ignoreChoose: true });
 		if (!attacking) return;
 
-		tags.add('absolve', animal);
+		const tagsCopy = tags.copyAdd('absolve', animal);
 		let dmg = WeaponInterface.inflictDamage(
 			animal,
 			attacking,
 			totalDamage,
 			WeaponInterface.MAGICAL,
-			tags
+			tagsCopy	
 		);
 
 		logs.push(

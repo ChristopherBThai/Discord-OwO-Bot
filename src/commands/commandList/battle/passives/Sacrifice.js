@@ -42,7 +42,16 @@ module.exports = class Sacrifice extends PassiveInterface {
 
 		let healAmount = WeaponInterface.getDamageFromHpWp(animal.stats.hp, this.stats[0] / 100);
 		let wpAmount = WeaponInterface.getDamageFromHpWp(animal.stats.wp, this.stats[1] / 100);
-		tags.add('sacrifice', animal);
+		const tagsCopy1 = tags.copyAdd('sacrifice', animal, {
+			me: animal,
+			allies: tags.allies,
+			enemies: tags.enemies,
+		});
+		const tagsCopy2 = tags.copyAdd('sacrifice', animal, {
+			me: animal,
+			allies: tags.allies,
+			enemies: tags.enemies,
+		});
 
 		let healLogText = `[SAC] ${animal.nickname} healed `;
 		let healSubLogs = new Log();
@@ -51,11 +60,11 @@ module.exports = class Sacrifice extends PassiveInterface {
 		for (let i in alive) {
 			let team = alive[i];
 			if (team.pid !== animal.pid) {
-				let heal = WeaponInterface.heal(team, healAmount, animal, tags);
+				let heal = WeaponInterface.heal(team, healAmount, animal, tagsCopy1);
 				healLogText += `${team.nickname} ${heal.amount} | `;
 				healSubLogs.push(heal.logs);
 
-				let wp = WeaponInterface.replenish(team, wpAmount, animal, tags);
+				let wp = WeaponInterface.replenish(team, wpAmount, animal, tagsCopy2);
 				repLogText += `${team.nickname} ${wp.amount} | `;
 				repSubLogs.push(wp.logs);
 			}

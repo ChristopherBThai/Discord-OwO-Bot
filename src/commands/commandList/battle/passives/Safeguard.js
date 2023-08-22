@@ -38,8 +38,8 @@ module.exports = class Safeguard extends PassiveInterface {
 
 		let logs = new Log();
 
-		tags.add('safeguard', animal);
-		let mana = WeaponInterface.useMana(animal, negate, animal, tags);
+		const tagsCopy = tags.copyAdd('safeguard', animal);
+		let mana = WeaponInterface.useMana(animal, negate, animal, tagsCopy);
 		damage[1] -= mana.amount;
 
 		logs.push(`[SGUARD] ${animal.nickname} used mana to negate ${mana.amount} damage`, mana.logs);
