@@ -41,13 +41,13 @@ module.exports = class Discharge extends PassiveInterface {
 		let attacking = WeaponInterface.getAttacking(animal, allies, enemies, { ignoreChoose: true });
 		if (!attacking) return;
 
-		tags.add('discharge', animal);
+		const tagsCopy = tags.copyAdd('discharge', animal);
 		let dmg = WeaponInterface.inflictDamage(
 			animal,
 			attacking,
 			totalDamage,
 			WeaponInterface.MAGICAL,
-			tags
+			tagsCopy
 		);
 
 		logs.push(
