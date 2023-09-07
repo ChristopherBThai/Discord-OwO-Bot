@@ -12,10 +12,15 @@ const WeaponInterface = require('../WeaponInterface.js');
 /* get and parse animals from the database */
 exports.getAnimals = async function (p) {
 	/* Query animals and weapons */
-	let sql = `SELECT animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
+	let sql = `SELECT 
+			animal.name, animal.nickname, animal.pid, animal.xp,
+			user_weapon.uwid, user_weapon.wid, user_weapon.stat, user_weapon.wear,
+			user_weapon_passive.pcount, user_weapon_passive.wpid, user_weapon_passive.stat as pstat,
+			user_weapon_kills.uwid as tt, user_weapon_kills.kills
 		FROM animal
 			LEFT JOIN user_weapon ON user_weapon.pid = animal.pid
 			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
+			LEFT JOIN user_weapon_kills ON user_weapon.uwid = user_weapon_kills.uwid
 		WHERE animal.id = ${p.msg.author.id}
 			AND animal.xp > 0
 		ORDER BY xp DESC LIMIT 25;`;
@@ -23,7 +28,7 @@ exports.getAnimals = async function (p) {
 	let result = await p.query(sql);
 
 	/* Parse data */
-	let animals = teamUtil.parseTeam(p, result, result);
+	let animals = teamUtil.parseTeam(result, result);
 	for (let i in animals) animalUtil.stats(animals[i]);
 
 	return animals;

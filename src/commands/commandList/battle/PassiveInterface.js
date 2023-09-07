@@ -15,14 +15,13 @@ module.exports = class PassiveInterface {
 
 		/* Overrides */
 		const statOverride = opt.statOverride;
-		this.isPristine = !!opt.isPristine;
+		/* Good wear values give bonuses */
+		this.wear = WeaponInterface.getWear(opt.wear);
 
 		if (!qualities) qualities = this.randomQualities(statOverride);
 
 		let avgQuality = qualities.reduce((a, b) => a + b, 0) / qualities.length;
-		if (this.isPristine) {
-			avgQuality += WeaponInterface.pristineBuff;
-		}
+		avgQuality += this.wearBuff;
 		let emoji = this.getEmoji(avgQuality);
 		let stats = this.toStats(qualities);
 
@@ -75,7 +74,7 @@ module.exports = class PassiveInterface {
 			let quality = qualities[i];
 			if (quality > 100) quality = 100;
 			if (quality < 0) quality = 0;
-			if (this.isPristine) quality += WeaponInterface.pristineBuff;
+			quality += this.wearBuff;
 			let min = this.qualityList[i][0];
 			let max = this.qualityList[i][1];
 
@@ -86,16 +85,14 @@ module.exports = class PassiveInterface {
 	}
 
 	/**
-	 * Set passive to pristine or not.
+	 * Sets the wear of the passives
 	 * Alters passive's avgQualit, emoji, stats, and desc
 	 */
-	setPristine(isPristine) {
-		this.isPristine = isPristine;
+	setWear(wear) {
+		this.wear = WeaponInterface.getWear(wear);
 
 		let avgQuality = this.qualities.reduce((a, b) => a + b, 0) / this.qualities.length;
-		if (this.isPristine) {
-			avgQuality += WeaponInterface.pristineBuff;
-		}
+		avgQuality += this.wearBuff;
 		let emoji = this.getEmoji(avgQuality);
 		let stats = this.toStats(this.qualities);
 
@@ -109,6 +106,10 @@ module.exports = class PassiveInterface {
 		this.emoji = emoji;
 		this.stats = stats;
 		this.desc = desc;
+	}
+
+	get wearBuff() {
+		return this.wear?.buff || 0;
 	}
 
 	alterStats(stats) {}

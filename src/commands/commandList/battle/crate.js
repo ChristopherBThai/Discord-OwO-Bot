@@ -63,34 +63,22 @@ async function openCrate(p, count = 1) {
 
 	/* Decrement crate count */
 	let sql = `UPDATE crate INNER JOIN user ON crate.uid = user.uid SET crate.boxcount = crate.boxcount - ${count} WHERE user.id = ${p.msg.author.id} AND boxcount >= ${count};`;
-	sql += `SELECT uid FROM user WHERE id = ${p.msg.author.id};`;
 	let result = await p.query(sql);
 
-	if (result[0].changedRows == 0 || !result[1][0]) {
+	if (!result.changedRows) {
 		p.errorMsg(", You don't have any weapon crates!", 3000);
 		return;
 	}
 
-	let uid = result[1][0].uid;
-	if (!uid) {
-		p.errorMsg(', It looks like something went wrong...', 3000);
-		return;
-	}
-
-	let weaponsList = weaponUtil.getRandomWeapons(uid, count);
+	let weaponsList = weaponUtil.getRandomWeapons(count);
 
 	for (let i in weaponsList) {
-		let weapon = weaponsList[i];
-		result = await p.query(weapon.weaponSql);
-		let uwid = result.insertId;
-		if (!uwid) {
-			p.errorMsg(', Uh oh. Something went wrong! The weapon passive could not be applied');
-			console.error('Unable to add weapon passive to: ' + uwid);
-		} else {
-			weapon.uwid = uwid;
-			let uwidList = [];
-			for (let j = 0; j < weapon.passives.length; j++) uwidList.push(uwid);
-			await p.query(weapon.passiveSql, uwidList);
+		try {
+			let weapon = weaponsList[i];
+			await weapon.save(p.msg.author.id);
+		} catch (err) {
+			console.error(err);
+			p.errorMsg(', Uh oh. Something went wrong! The weapon passive could not be applied!');
 		}
 	}
 
@@ -112,7 +100,7 @@ async function openCrate(p, count = 1) {
 			'** opens a weapon crate\n' +
 			crateOpen +
 			' **|** and finds a `' +
-			weaponUtil.shortenUWID(weapon.uwid) +
+			weapon.shortenUWID +
 			'` ' +
 			weapon.rank.emoji +
 			' ' +

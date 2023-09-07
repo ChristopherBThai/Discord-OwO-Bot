@@ -14,7 +14,7 @@ module.exports = class BuffInterface {
 		this.init();
 		if (noCreate) return;
 
-		this.isPristine = !!opt.isPristine;
+		this.wear = WeaponInterface.getWear(opt.wear);
 
 		/* Initialize random qualities if it doesnt have any */
 		if (!qualities) qualities = this.randomQualities();
@@ -22,9 +22,7 @@ module.exports = class BuffInterface {
 
 		/* Calculate avg quality of this buff */
 		let avgQuality = qualities.reduce((a, b) => a + b, 0) / qualities.length;
-		if (this.isPristine) {
-			avgQuality += WeaponInterface.pristineBuff;
-		}
+		avgQuality += this.wearBuff;
 
 		/* Construct stats based on qualities */
 		let stats = this.toStats(qualities);
@@ -61,7 +59,7 @@ module.exports = class BuffInterface {
 			let quality = qualities[i];
 			if (quality > 100) quality = 100;
 			if (quality < 0) quality = 0;
-			if (this.isPristine) quality += WeaponInterface.pristineBuff;
+			quality += this.wearBuff;
 			let min = this.qualityList[i][0];
 			let max = this.qualityList[i][1];
 
@@ -136,5 +134,9 @@ module.exports = class BuffInterface {
 	}
 	static get getQualityList() {
 		return new this(null, null, null, true).qualityList;
+	}
+
+	get wearBuff() {
+		return this.wear?.buff || 0;
 	}
 };

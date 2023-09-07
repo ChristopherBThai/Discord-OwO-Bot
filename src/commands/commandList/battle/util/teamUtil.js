@@ -6,9 +6,12 @@
  */
 
 const battleEmoji = '🛋';
-const weaponUtil = require('./weaponUtil.js');
 const animalUtil = require('./animalUtil.js');
 const WeaponInterface = require('../WeaponInterface.js');
+const global = require('../../../../utils/global.js');
+const mysql = require('../../../../botHandlers/mysqlHandler.js');
+let weaponUtil;
+
 const filterTeams = `
 SELECT pt2.pgid
 FROM pet_team pt2
@@ -107,7 +110,7 @@ exports.addMember = async function (p, animal, pos) {
 		if (result[0][i].pos == pos || !result[0][i].pid) result[0].splice(i, 1);
 	}
 	result[0].splice(pos - 1, 0, { name: animal.value, pos: pos });
-	let team = parseTeam(p, result[0]);
+	let team = parseTeam(result[0]);
 	let text = '';
 	for (let i = 0; i < team.length; i++) {
 		text +=
@@ -177,7 +180,7 @@ exports.removeMember = async function (p, remove) {
 		return;
 	}
 
-	let team = parseTeam(p, result[1]);
+	let team = parseTeam(result[1]);
 	let text = '';
 	for (let i = 0; i < team.length; i++) {
 		text +=
@@ -245,47 +248,6 @@ exports.renameTeam = async function (p, teamName) {
 	}
 };
 
-/* eslint-disable-next-line */
-const getTeam = (exports.getTeam = async function (p) {
-	/* Query info */
-	let sql = `SELECT tname,pos,name,nickname,a.pid,xp,pt.streak,highest_streak
-		FROM user u
-			INNER JOIN pet_team pt
-				ON u.uid = pt.uid
-			LEFT JOIN pet_team_animal pt_ani 
-				ON pt.pgid = pt_ani.pgid
-			INNER JOIN animal a
-				ON pt_ani.pid = a.pid
-		WHERE u.id = ${p.msg.author.id}
-			AND pt.pgid = ( SELECT pt2.pgid
-				FROM pet_team pt2
-					LEFT JOIN pet_team_active pt_act
-						ON pt2.pgid = pt_act.pgid
-				WHERE u.uid = pt2.uid
-				ORDER BY pt_act.pgid DESC, pt2.pgid ASC
-				LIMIT 1)
-		ORDER BY pos ASC;`;
-	sql += `SELECT uw.pid,uw.uwid,uw.wid,uw.stat,uw.rrcount,uw.rrattempt,uw.is_prisstine,uwp.pcount,uwp.wpid,uwp.stat as pstat,a.name,a.nickname
-		FROM user u
-			INNER JOIN user_weapon uw
-				ON u.uid = uw.uid
-			LEFT JOIN user_weapon_passive uwp
-				ON uw.uwid = uwp.uwid
-			LEFT JOIN animal a
-				ON uw.pid = a.pid
-			LEFT JOIN pet_team_animal pt_ani
-				ON pt_ani.pid = a.pid
-			WHERE u.id = ${p.msg.author.id}
-				AND pt_ani.pgid = 
-					(SELECT pt.pgid FROM pet_team pt
-						LEFT JOIN pet_team_active pt_act
-							ON pt.pgid = pt_act.pgid
-						WHERE pt.uid = u.uid
-						ORDER BY pt_act.pgid DESC, pt.pgid ASC
-						LIMIT 1);`;
-	return await p.query(sql);
-});
-
 exports.getBattleTeam = async function ({ id, pgid }, level, notActive) {
 	let pgidQuery = `(SELECT pt2.pgid FROM user u2
 			INNER JOIN pet_team pt2
@@ -313,13 +275,15 @@ exports.getBattleTeam = async function ({ id, pgid }, level, notActive) {
 	}
 	const sql = `SELECT pet_team.censor as ptcensor, streak, highest_streak, animal.offensive as acensor,
 			pet_team.pgid, tname, pos, animal.name, animal.nickname, animal.pid, animal.xp, user_weapon.uwid,
-			user_weapon.wid, user_weapon.stat, user_weapon_passive.pcount, user_weapon_passive.wpid,
-			user_weapon_passive.stat as pstat
+			user_weapon.wid, user_weapon.stat, user_weapon.rrcount, user_weapon.rrattempt, user_weapon.wear,
+			user_weapon_passive.pcount, user_weapon_passive.wpid, user_weapon_passive.stat as pstat,
+			user_weapon_kills.uwid as tt, user_weapon_kills.kills
 		FROM pet_team
 			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
 			INNER JOIN animal ON pet_team_animal.pid = animal.pid
 			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
 			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
+			LEFT JOIN user_weapon_kills ON user_weapon.uwid = user_weapon_kills.uwid
 		WHERE pet_team.pgid = ${pgidQuery}
 		ORDER BY pos ASC;`;
 	let result = await this.query(sql);
@@ -329,7 +293,7 @@ exports.getBattleTeam = async function ({ id, pgid }, level, notActive) {
 	}
 	pgid = result[0].pgid;
 
-	let team = parseTeam(this, result, result);
+	let team = parseTeam(result, result);
 	team.forEach((animal) => animalUtil.stats(animal, level));
 	return {
 		pgid: pgid,
@@ -338,6 +302,36 @@ exports.getBattleTeam = async function ({ id, pgid }, level, notActive) {
 		highestStreak: result[0].highest_streak,
 		team: team,
 	};
+};
+
+exports.getBattleAnimal = async function ({ uwid, pid }, id) {
+	if (pid) {
+		throw 'pid not implemented yet';
+	}
+	let sql = `SELECT a.name, a.nickname, a.offensive as acensor, a.pid, a.xp,
+					uw.uwid, uw.wid, uw.stat, uw.rrcount, uw.rrattempt, uw.wear,
+					uwp.pcount, uwp.wpid, uwp.stat as pstat
+				FROM user_weapon uw
+					LEFT JOIN user_weapon_passive uwp
+						ON uw.uwid = uwp.uwid
+					LEFT JOIN animal a ON uw.pid = a.pid
+				WHERE uw.uwid = ${uwid}`;
+	if (id) {
+		const uid = await global.getUid(id);
+		sql += ` AND uw.uid = ${uid}`;
+	}
+	const result = await mysql.query(sql);
+	if (!result[0]?.pid) {
+		return {
+			error: {
+				animal: result[0]?.pid,
+				weapon: result[0]?.uwid,
+			},
+		};
+	}
+	let team = parseTeam(result, result);
+	team.forEach((animal) => animalUtil.stats(animal));
+	return team[0];
 };
 
 /* eslint-disable-next-line */
@@ -420,7 +414,7 @@ const createTeamEmbed = (exports.createTeamEmbed = function (p, team, other = {}
 
 /* Parses animals and weapons into json */
 exports.parseTeam = parseTeam;
-function parseTeam(p, animals, weapons, censor = false) {
+function parseTeam(animals, weapons, censor = false) {
 	let result = [];
 
 	/* get basic animal info */
@@ -429,7 +423,7 @@ function parseTeam(p, animals, weapons, censor = false) {
 		let animal = animals[i];
 		if (!used.includes(animal.pid)) {
 			used.push(animal.pid);
-			let animalObj = p.global.validAnimal(animal.name);
+			let animalObj = global.validAnimal(animal.name);
 			let nickname = censor && animal.acensor == 1 ? 'Censored' : animal.nickname;
 			if (!nickname) nickname = animalObj.name;
 			result.push({
@@ -514,4 +508,8 @@ exports.giveXP = async function (p, team, xp) {
 	if (resetStreak) sql += `UPDATE pet_team SET streak = 0 WHERE pgid = ${team.pgid};`;
 
 	return await p.query(sql);
+};
+
+exports.setWeaponUtil = function (util) {
+	weaponUtil = util;
 };

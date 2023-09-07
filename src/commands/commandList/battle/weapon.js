@@ -107,7 +107,13 @@ module.exports = new CommandInterface({
 				}
 			}
 
-			await weaponUtil.equip(p, uwid, pet);
+			if (!(await weaponUtil.equip(p, uwid, pet))) {
+				p.errorMsg(
+					', could not find that weapon or animal! The correct command is `owo weapon {weaponID} {animal}`\n' +
+						p.config.emoji.blank +
+						' **|** The weaponID can be found in the command `owo weapon`'
+				);
+			}
 
 			/* Else */
 		} else {

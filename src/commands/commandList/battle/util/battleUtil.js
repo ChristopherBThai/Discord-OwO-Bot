@@ -366,3 +366,14 @@ exports.getBattleSetting = async function (id) {
 
 	return bs;
 };
+
+exports.updateTT = function (battleTeam) {
+	const promises = [];
+	for (let key in battleTeam.team) {
+		const animal = battleTeam.team[key];
+		if (animal?.weapon?.hasTakedownTracker) {
+			promises.push(animal.weapon.saveTT());
+		}
+	}
+	return Promise.all(promises);
+};

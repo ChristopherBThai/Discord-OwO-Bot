@@ -169,6 +169,10 @@ module.exports = class BattleEvent {
 		await teamUtil.giveXP(this.p, this.player, this.endResult.pXP);
 		await teamUtil.giveXP(this.p, this.enemy, this.endResult.eXP.xp);
 
+		/* Update TT on weapons */
+		await battleUtil.updateTT.bind(this.p)(this.player);
+		await battleUtil.updateTT.bind(this.p)(this.enemy);
+
 		let sql = `SELECT * FROM user INNER JOIN crate ON user.uid = crate.uid WHERE id = ${this.p.msg.author.id};`;
 		let result = await this.p.query(sql);
 		/* Decide if user receives a crate */

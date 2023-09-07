@@ -38,6 +38,7 @@ let ranks = {};
 let rankAlias = {};
 let client, animaljson, main;
 let totalShards;
+const uidDict = {};
 
 /**
  * Checks if its an integer
@@ -309,13 +310,21 @@ exports.parseTime = function (diff) {
 /* gets uid from discord id */
 exports.getUid = async function (id) {
 	id = BigInt(id);
+	if (uidDict[id]) {
+		return uidDict[id];
+	}
 	let sql = 'SELECT uid FROM user where id = ?;';
 	let result = await mysql.query(sql, id);
 
-	if (result[0]?.uid) return result[0].uid;
+	if (result[0]?.uid) {
+		uidDict[id] = result[0].uid;
+		return result[0].uid;
+	}
 
 	sql = 'INSERT INTO user (id, count) VALUES (?, 0);';
 	result = await mysql.query(sql, id);
+
+	uidDict[id] = result.insertId;
 	return result.insertId;
 };
 

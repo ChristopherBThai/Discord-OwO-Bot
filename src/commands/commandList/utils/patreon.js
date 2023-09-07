@@ -40,7 +40,7 @@ module.exports = new CommandInterface({
 				patreonType
 			FROM user INNER JOIN patreons ON user.uid = patreons.uid
 			WHERE id = ${p.msg.author.id};`;
-		sql += `SELECT patreonType, endDate FROM patreon_wh INNER JOIN user ON user.uid = patreon_wh.uid WHERE id = ${p.msg.author.id};`;
+		sql += `SELECT patreonType, endDate FROM patreon_wh INNER JOIN user ON user.uid = patreon_wh.uid WHERE id = ${p.msg.author.id} ORDER BY endDate desc;`;
 		let result = await p.query(sql);
 
 		if (result[0][0]) {

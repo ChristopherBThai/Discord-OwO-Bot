@@ -54,7 +54,11 @@ async function displayTeams(p) {
 				ON pet_team_animal.pid = animal.pid
 		WHERE user.id = ${p.msg.author.id}
 		ORDER BY pgid ASC, pos ASC;`;
-	sql += `SELECT DISTINCT a.pid,a.uwid,a.wid,a.stat,a.rrcount,a.rrattempt,a.is_pristine,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
+	sql += `SELECT DISTINCT
+			a.pid, a.uwid, a.wid, a.stat, a.rrcount, a.rrattempt, a.wear,
+			b.pcount, b.wpid, b.stat as pstat,
+			c.name, c.nickname,
+			d.uwid as tt, d.kills
 		FROM user u
 			INNER JOIN pet_team pt
 				ON u.uid = pt.uid
@@ -66,6 +70,8 @@ async function displayTeams(p) {
 				ON pta.pid = a.pid
 			LEFT JOIN user_weapon_passive b
 				ON a.uwid = b.uwid
+			LEFT JOIN user_weapon_kills d
+				ON a.uwid = d.uwid
 		WHERE u.id = ${p.msg.author.id};`;
 	sql += `SELECT pet_team.pgid, pet_team_active.pgid AS active FROM user
 		INNER JOIN pet_team
@@ -124,7 +130,7 @@ async function displayTeams(p) {
 			highest_streak: team.animals[0].highest_streak,
 			tname: team.animals[0].tname || 'team',
 		};
-		team = teamUtil.parseTeam(p, team.animals, team.weapons);
+		team = teamUtil.parseTeam(team.animals, team.weapons);
 		const embed = teamUtil.createTeamEmbed(p, team, other);
 		const teamOrder = teamsOrder[pgid];
 		if (teamOrder == null) {

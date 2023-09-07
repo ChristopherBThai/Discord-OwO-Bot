@@ -41,9 +41,16 @@ module.exports = class WeaponPage extends PageClass {
 			for (let j in weapon.passives) {
 				emojis += weapon.passives[j].emoji;
 			}
+			let name = weapon.rank.name + ' ' + weapon.name;
+			if (weapon.wear.buff) {
+				name = `[${weapon.wearName.charAt(0)}] ${name}`;
+			}
+			if (weapon.hasTakedownTracker) {
+				name = `*${name}`;
+			}
 			result += this.toItem({
 				id: weapon.shopID,
-				name: weapon.rank.name + ' ' + weapon.name,
+				name: name,
 				emoji: emojis,
 				price: weapon.shardPrice,
 				priceEmoji: shardEmoji,

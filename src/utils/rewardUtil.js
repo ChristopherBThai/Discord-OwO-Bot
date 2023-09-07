@@ -15,7 +15,7 @@ const lootboxUtil = require('../commands/commandList/zoo/lootboxUtil.js');
 const beehiveUtil = require('../commands/commandList/social/util/beehiveUtil.js');
 
 exports.getReward = async function (id, uid, con, rewardType, rewardId, rewardCount) {
-	let sql, result, name, animal, weapon, uwid, weaponId, uwidList, item, ring, gem, gemSql, bee;
+	let sql, result, name, animal, weapon, item, ring, gem, gemSql, bee;
 
 	switch (rewardType) {
 		case 'wallpaper':
@@ -74,16 +74,10 @@ exports.getReward = async function (id, uid, con, rewardType, rewardId, rewardCo
 						count = count + ${rewardCount}`,
 			};
 		case 'weapon':
-			weapon = weaponUtil.getRandomWeapons(uid, 1, rewardId)[0];
-			result = await con.query(weapon.weaponSql);
-			uwid = result.insertId;
-			weapon.uwid = uwid;
-			uwidList = [];
-			for (let j = 0; j < weapon.passives.length; j++) uwidList.push(uwid);
-			await con.query(weapon.passiveSql, uwidList);
-			weaponId = weaponUtil.shortenUWID(weapon.uwid);
+			weapon = weaponUtil.getRandomWeapons(1, rewardId)[0];
+			await weapon.save(id);
 			return {
-				text: `${global.getA(weapon.rank.name)} \`${weaponId}\` ${weapon.rank.emoji} ${
+				text: `${global.getA(weapon.rank.name)} \`${weapon.shortenUWID}\` ${weapon.rank.emoji} ${
 					weapon.emoji
 				} ${weapon.rank.name} ${weapon.name}`,
 			};
