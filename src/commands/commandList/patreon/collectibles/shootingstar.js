@@ -23,7 +23,7 @@ class ShootingStar extends Collectible {
 		this.fullControl = true;
 		this.ownerOnly = true;
 		this.giveAmount = 1;
-		this.description = `Give out a shooting star! Merge 2 to create a wish.`;
+		this.description = `Give out a shooting star!\n\nMerge two shooting stars with \`owo shootingstar unite\`!`;
 		this.displayMsg =
 			'**<a:purplestar:1080027292102823966><a:pinkstar:1080027395295285368> Make a wish! <a:purplestar:1080027292102823966><a:pinkstar:1080027395295285368>' +
 			'\n✧<:dash:1080027541466783825><:dash:1080027541466783825><:dash:1080027541466783825><:dash:1080027541466783825><:dash:1080027541466783825><:dash:1080027541466783825><:dash:1080027541466783825>✧' +
@@ -33,7 +33,7 @@ class ShootingStar extends Collectible {
 		this.giveMsg =
 			'<:starfrens:1067095520985751563> ooh, your **wish** <a:glitter:1080026999327834122> came true! the universe has listened to your dream, you got **1 shooting star**! ?emoji?';
 
-		this.failChance = 0.8;
+		this.failChance = 0.55;
 		this.failMsg =
 			'**<:starfrens:1067095520985751563> Sadly...maybe a dream is just meant to be a dream <a:pinkstars:1080026894436667402>**';
 

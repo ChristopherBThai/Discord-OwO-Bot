@@ -6,103 +6,59 @@
  */
 
 const teamUtil = require('./teamUtil.js');
-const animalUtil = require('./animalUtil.js');
 const ab = require('../ab.js');
 const db = require('../db.js');
 
-exports.challenge = async function (p, opponent, bet = 0) {
-	let id = opponent.id;
+exports.challenge = async function (p, opponent) {
+	const bet = 0;
 	let user1 = p.msg.author.id;
 	let user2 = opponent.id;
 	if (p.msg.author.id > opponent.id) {
 		user1 = opponent.id;
 		user2 = p.msg.author.id;
 	}
+	const uid1 = await p.global.getUid(user1);
+	const uid2 = await p.global.getUid(user2);
+	const uid = await p.global.getUid(p.msg.author.id);
 
-	/* Query two teams */
-	let sql = `SELECT pet_team.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
-		FROM pet_team
-			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
-			INNER JOIN animal ON pet_team_animal.pid = animal.pid
-			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
-			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
-		WHERE pet_team.pgid = (
-			SELECT pt2.pgid FROM user u2
-				INNER JOIN pet_team pt2
-					ON pt2.uid = u2.uid
-				LEFT JOIN pet_team_active pt_act
-					ON pt2.pgid = pt_act.pgid
-			WHERE u2.id = ${id}
-			ORDER BY pt_act.pgid ${id === p.msg.author.id ? 'ASC' : 'DESC'}, pt2.pgid ASC
-			LIMIT 1)
-		ORDER BY pos ASC;`;
-	sql += `SELECT pet_team.pgid,tname,pos,animal.name,animal.nickname,animal.pid,animal.xp,user_weapon.uwid,user_weapon.wid,user_weapon.stat,user_weapon_passive.pcount,user_weapon_passive.wpid,user_weapon_passive.stat as pstat
-		FROM pet_team
-			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
-			INNER JOIN animal ON pet_team_animal.pid = animal.pid
-			LEFT JOIN user_weapon ON user_weapon.pid = pet_team_animal.pid
-			LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
-		WHERE pet_team.pgid = (
-			SELECT pt2.pgid FROM user u2
-				INNER JOIN pet_team pt2
-					ON pt2.uid = u2.uid
-				LEFT JOIN pet_team_active pt_act
-					ON pt2.pgid = pt_act.pgid
-			WHERE u2.id = ${p.msg.author.id}
-			ORDER BY pt_act.pgid DESC, pt2.pgid ASC
-			LIMIT 1)
-		ORDER BY pos ASC;`;
-	sql += `SELECT money from cowoncy where id = ${p.msg.author.id};`;
-	sql += `SELECT money from cowoncy where id = ${opponent.id};`;
-	sql += `SELECT * FROM user_battle WHERE (
-			user1 IN (SELECT uid FROM user WHERE id IN (${user2},${user1})) OR
-			user2 IN (SELECT uid FROM user WHERE id IN (${user2},${user1}))
+	let sql = `SELECT * FROM user_battle WHERE (
+			user1 IN (${uid1}, ${uid2}) OR
+			user2 IN (${uid1}, ${uid2})
 		) AND TIMESTAMPDIFF(MINUTE,time,NOW()) < 10;`;
 	sql += `SELECT win1,win2,tie FROM user_battle
-			LEFT JOIN user u1 ON user_battle.user1 = u1.uid
-			LEFT JOIN user u2 ON user_battle.user2 = u2.uid
-		WHERE u1.id = ${user1} AND u2.id = ${user2};`;
+		WHERE user1 = ${uid1} AND user2 = ${uid2};`;
 	let result = await p.query(sql);
 
-	/* Error check for teams */
-	if (!result[0][0]) {
-		p.errorMsg(", The opponent doesn't have a team!", 3000);
-		return;
-	} else if (!result[1][0]) {
-		p.errorMsg(", You don't have a team!", 3000);
-		return;
-	} else if (!result[2][0] || result[2][0].money < bet) {
-		p.errorMsg(", You don't have enough cowoncy!", 3000);
-		return;
-	} else if (!result[3][0] || result[3][0].money < bet) {
-		p.errorMsg(", The opponent doesn't have enough cowoncy!", 3000);
-		return;
-	} else if (result[4][0]) {
+	if (result[0][0]) {
 		p.errorMsg(', There is already a pending battle!', 3000);
 		return;
 	}
 
-	/* Parse teams */
-	let pTeam = teamUtil.parseTeam(p, result[1], result[1]);
-	for (let i in pTeam) animalUtil.stats(pTeam[i]);
-	let eTeam = teamUtil.parseTeam(p, result[0], result[0]);
-	for (let i in eTeam) animalUtil.stats(eTeam[i]);
-	let player = {
-		username: p.getName(),
-		id: p.msg.author.id,
-		name: result[1][0].tname,
-		team: pTeam,
-	};
-	let enemy = {
-		username: opponent.username,
-		id: opponent.id,
-		name: result[0][0].tname,
-		team: eTeam,
-	};
+	const player = await teamUtil.getBattleTeam.bind(p)({ id: p.msg.author.id });
+	player.username = p.getName();
+	player.id = p.msg.author.id;
+	// todo fix for self battles
+	const enemy = await teamUtil.getBattleTeam.bind(p)(
+		{ id: opponent.id },
+		null,
+		opponent.id === p.msg.author.id
+	);
+	enemy.username = p.getName(opponent);
+	enemy.id = opponent.id;
+
+	/* Error check for teams */
+	if (!enemy) {
+		p.errorMsg(", The opponent doesn't have a team!", 3000);
+		return;
+	} else if (!player) {
+		p.errorMsg(", You don't have a team!", 3000);
+		return;
+	}
+
 	let stats = {};
-	stats.tie = result[5][0] ? result[5][0].tie : 0;
-	stats[user1] = result[5][0] ? result[5][0].win1 : 0;
-	stats[user2] = result[5][0] ? result[5][0].win2 : 0;
+	stats.tie = result[1][0] ? result[1][0].tie : 0;
+	stats[user1] = result[1][0] ? result[1][0].win1 : 0;
+	stats[user2] = result[1][0] ? result[1][0].win2 : 0;
 
 	/* Parse flags */
 	let flags = p.args.slice(1);
@@ -110,7 +66,14 @@ exports.challenge = async function (p, opponent, bet = 0) {
 	flags = parseFlags(p, flags);
 
 	/* Insert challenge to database */
-	sql = `INSERT INTO user_battle (user1,user2,sender,bet,flags,channel) values ((SELECT uid FROM user WHERE id = ${user1}),(SELECT uid FROM user WHERE id = ${user2}),(SELECT uid FROM user WHERE id = ${p.msg.author.id}),${bet},'${flags}',${p.msg.channel.id}) ON DUPLICATE KEY UPDATE time = NOW(), sender = (SELECT uid FROM user WHERE id = ${p.msg.author.id}), bet = ${bet}, flags = '${flags}', channel = ${p.msg.channel.id};`;
+	sql = `INSERT INTO user_battle (user1, user2, sender, bet, flags, channel) VALUES
+			(${uid1}, ${uid2}, ${uid}, 0, '${flags}', ${p.msg.channel.id})
+		ON DUPLICATE KEY UPDATE
+			time = NOW(),
+			sender = ${uid},
+			bet = 0,
+			flags = '${flags}',
+			channel = ${p.msg.channel.id};`;
 	result = p.query(sql);
 
 	/* Send challenge request */

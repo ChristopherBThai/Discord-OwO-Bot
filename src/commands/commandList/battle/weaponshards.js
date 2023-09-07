@@ -87,10 +87,15 @@ async function dismantleRank(p, rankLoc) {
 	max *= 100;
 
 	/* Grab the item we will sell */
-	let sql = `SELECT user.uid,a.uwid,a.wid,a.stat,a.rrcount,a.rrattempt,a.is_pristine,b.pcount,b.wpid,b.stat as pstat
+	let sql = `SELECT
+			user.uid,
+			a.uwid, a.wid, a.stat, a.rrcount, a.rrattempt, a.wear,
+			b.pcount, b.wpid, b.stat as pstat,
+			c.uwid as tt, c.kills
 		FROM user
 			LEFT JOIN user_weapon a ON user.uid = a.uid
 			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
+			LEFT JOIN user_weapon_kills c ON a.uwid = c.uwid
 		WHERE user.id = ${p.msg.author.id} AND avg >${
 		min === 0 ? '=' : ''
 	} ${min} AND avg <= ${max} AND a.pid IS NULL LIMIT 500;`;
@@ -128,13 +133,19 @@ async function dismantleRank(p, rankLoc) {
 		return;
 	}
 
-	let uid = result[0].uid;
+	let uid = await p.global.getUid(p.msg.author.id);
 
 	sql = `DELETE user_weapon_passive FROM user
 		LEFT JOIN user_weapon ON user.uid = user_weapon.uid
 		LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
 		WHERE id = ${p.msg.author.id}
 			AND user_weapon_passive.uwid IN ${weaponsSQL}
+			AND user_weapon.pid IS NULL;`;
+	sql += `DELETE user_weapon_kills FROM user
+		LEFT JOIN user_weapon ON user.uid = user_weapon.uid
+		LEFT JOIN user_weapon_kills ON user_weapon.uwid = user_weapon_kills.uwid
+		WHERE id = ${p.msg.author.id}
+			AND user_weapon_kills.uwid IN ${weaponsSQL}
 			AND user_weapon.pid IS NULL;`;
 	sql += `DELETE user_weapon FROM user
 		LEFT JOIN user_weapon ON user.uid = user_weapon.uid
@@ -154,6 +165,7 @@ async function dismantleRank(p, rankLoc) {
 	price *= result[1].affectedRows;
 
 	sql = `INSERT INTO shards (uid,count) VALUES (${uid},${price}) ON DUPLICATE KEY UPDATE count = count + ${price};`;
+	console.log(sql);
 	result = await p.query(sql);
 
 	p.replyMsg(
@@ -172,36 +184,18 @@ async function dismantleId(p, uwid) {
 		return;
 	}
 
-	/* Grab the item we will dismantle */
-	let sql = `SELECT user.uid,a.uwid,a.wid,a.stat,a.rrcount,a.rrattempt,a.is_pristine,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
-		FROM user
-			LEFT JOIN user_weapon a ON user.uid = a.uid
-			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
-			LEFT JOIN animal c ON a.pid = c.pid
-		WHERE user.id = ${p.msg.author.id} AND a.uwid = ${uwid};`;
-
-	let result = await p.query(sql);
+	/* Grab the item we will sell */
+	const weapon = await weaponUtil.getWeapon(uwid, p.msg.author.id);
 
 	/* not a real weapon! */
-	if (!result[0]) {
+	if (!weapon) {
 		p.errorMsg(', you do not have a weapon with this id!', 3000);
 		return;
 	}
 
 	/* If an animal is using the weapon */
-	if (result[0] && result[0].name) {
+	if (weapon.animal?.name) {
 		p.errorMsg(', please unequip the weapon to dismantle it!', 3000);
-		return;
-	}
-
-	/* Parse stats to determine price */
-	let weapon = weaponUtil.parseWeaponQuery(result);
-	for (let key in weapon) {
-		weapon = weaponUtil.parseWeapon(weapon[key]);
-	}
-
-	if (!weapon) {
-		p.errorMsg(', you do not have a weapon with this id!', 3000);
 		return;
 	}
 
@@ -218,20 +212,28 @@ async function dismantleId(p, uwid) {
 		return;
 	}
 
-	let uid = result[0].uid;
+	let uid = await p.global.getUid(p.msg.author.id);
 
-	sql = `DELETE user_weapon_passive FROM user
+	let sql = `DELETE user_weapon_passive FROM user
 		LEFT JOIN user_weapon ON user.uid = user_weapon.uid
 		LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
 		WHERE id = ${p.msg.author.id}
 			AND user_weapon_passive.uwid = ${uwid}
 			AND user_weapon.pid IS NULL;`;
+	if (weapon.hasTakedownTracker) {
+		sql += `DELETE user_weapon_kills FROM user
+			LEFT JOIN user_weapon ON user.uid = user_weapon.uid
+			LEFT JOIN user_weapon_kills ON user_weapon.uwid = user_weapon_kills.uwid
+			WHERE id = ${p.msg.author.id}
+				AND user_weapon_kills.uwid = ${uwid}
+				AND user_weapon.pid IS NULL;`;
+	}
 	sql += `DELETE user_weapon FROM user
 		LEFT JOIN user_weapon ON user.uid = user_weapon.uid
 		WHERE id = ${p.msg.author.id}
 			AND user_weapon.uwid = ${uwid}
 			AND user_weapon.pid IS NULL;`;
-	result = await p.query(sql);
+	let result = await p.query(sql);
 
 	/* Check if deleted */
 	if (result[1].affectedRows == 0) {

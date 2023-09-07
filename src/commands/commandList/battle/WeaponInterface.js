@@ -6,9 +6,12 @@
  */
 /* eslint-disable no-unused-vars */
 
+const mysql = require('../../../botHandlers/mysqlHandler.js');
+const global = require('../../../utils/global.js');
 const Logs = require('./util/logUtil.js');
 const Tags = require('./util/tags.js');
 const requireDir = require('require-dir');
+let weaponUtil;
 const ranks = [
 	[0.2, 'Common', '<:common:416520037713838081>'],
 	[0.2, 'Uncommon', '<:uncommon:416520056269176842>'],
@@ -18,7 +21,39 @@ const ranks = [
 	[0.05, 'Legendary', '<a:legendary:417955061801680909>'],
 	[0.01, 'Fabled', '<a:fabled:438857004493307907>'],
 ];
-const pristineBuff = 50;
+const wearInfo = {
+	'pristine': {
+		name: 'Pristine',
+		id: 4,
+		chance: 0.01,
+		buff: 3,
+	},
+	'fine': {
+		name: 'Fine',
+		id: 3,
+		chance: 0.05,
+		buff: 2,
+	},
+	'decent': {
+		name: 'Decent',
+		id: 2,
+		chance: 0.1,
+		buff: 1,
+	},
+	'worn': {
+		name: 'Worn',
+		id: 1,
+		chance: 0,
+		buff: 0,
+	},
+	'unknown': {
+		name: 'Unknown',
+		id: 0,
+		chance: 0,
+		buff: 0,
+	},
+};
+const ttChance = 0.1;
 
 module.exports = class WeaponInterface {
 	/* Constructor */
@@ -30,10 +65,27 @@ module.exports = class WeaponInterface {
 				if (!passives[i].disabled) this.availablePassives.push(i);
 			}
 		}
+
 		if (noCreate) return;
 
-		/* Pristine weaopns give +1 to all qualities */
-		this.isPristine = !!opt.isPristine;
+		/* Good wear values give bonuses */
+		if (typeof opt.wear === 'number') {
+			this.setWear(opt.wear);
+		} else {
+			this.setRandomWear();
+		}
+		/* how many times the weapon tried to be rerolled */
+		this.rrAttempt = opt.rrAttempt || 0;
+		/* how many times the weapon has been rerolled */
+		this.rrCount = opt.rrCount || 0;
+		/* keeps track of kills this weapon has */
+		if (typeof opt.hasTT === 'boolean') {
+			this.hasTT = opt.hasTT;
+		} else {
+			this.setRandomTT();
+		}
+		this.kills = opt.kills || 0;
+		this.currKills = {};
 
 		/* Keep track of quality list length for buff quality purposes */
 		this.initialQualityListLength = this.qualityList.length;
@@ -55,7 +107,7 @@ module.exports = class WeaponInterface {
 
 		/* Get random vars if not present */
 		if (!cpassives) cpassives = this.randomPassives(statOverride);
-		else cpassives.forEach((passive) => passive.setPristine(this.isPristine));
+		else cpassives.forEach((passive) => passive.setWear(this.wear?.id));
 		if (!qualities) qualities = this.randomQualities(statOverride);
 
 		/* Construct stats */
@@ -79,9 +131,7 @@ module.exports = class WeaponInterface {
 			avgQuality = qualities.reduce((a, b) => a + b, 0) / qualities.length;
 		}
 		avgQuality = Math.trunc(avgQuality);
-		if (this.isPristine) {
-			avgQuality += WeaponInterface.pristineBuff;
-		}
+		avgQuality += this.wearBuff;
 
 		let emoji = this.getEmoji(avgQuality);
 
@@ -124,7 +174,7 @@ module.exports = class WeaponInterface {
 				throw (
 					'Could not get passive[' + this.availablePassives[rand] + '] for weapon[' + this.id + ']'
 				);
-			randPassives.push(new passive(null, null, { statOverride, isPristine: this.isPristine }));
+			randPassives.push(new passive(null, null, { statOverride, wear: this.wear?.id }));
 		}
 		return randPassives;
 	}
@@ -133,7 +183,7 @@ module.exports = class WeaponInterface {
 	determinedPassives(passiveList, statOverride) {
 		return passiveList.map((pid) => {
 			let passive = passives[pid];
-			return new passive(null, null, { statOverride, isPristine: this.isPristine });
+			return new passive(null, null, { statOverride, wear: this.wear?.id });
 		});
 	}
 
@@ -154,7 +204,7 @@ module.exports = class WeaponInterface {
 			let quality = qualities[i];
 			if (quality > 100) quality = 100;
 			if (quality < 0) quality = 0;
-			if (this.isPristine) quality += WeaponInterface.pristineBuff;
+			quality += this.wearBuff;
 			let min = this.qualityList[i][0];
 			let max = this.qualityList[i][1];
 
@@ -174,7 +224,7 @@ module.exports = class WeaponInterface {
 				let buffQualityLength = buff.getQualityList.length;
 				buffClasses.push(
 					new buff(from, this.qualities.slice(index, index + buffQualityLength), null, null, {
-						isPristine: this.isPristine,
+						wear: this.wear?.id,
 					})
 				);
 				index += buffQualityLength;
@@ -374,6 +424,8 @@ module.exports = class WeaponInterface {
 				subLogs.push(
 					attacker.weapon.passives[i].postAttack(attacker, attackee, totalDamage, type, tags)
 				);
+
+		WeaponInterface.checkTT(attacker, attackee);
 		return { amount: Math.round(totalDamage), logs: subLogs };
 	}
 
@@ -512,6 +564,27 @@ module.exports = class WeaponInterface {
 		return { amount: Math.round(total), logs: subLogs };
 	}
 
+	static checkTT(attacker, attackee) {
+		if (attackee.stats.hp[0] > 0) return;
+		if (attacker.weapon?.hasTT) {
+			attacker.weapon.addTTKill(attackee);
+		}
+	}
+
+	addTTKill(battleAnimal) {
+		this.currKills[battleAnimal.pid] = true;
+	}
+
+	saveTT() {
+		const currKills = Object.keys(this.currKills).length;
+		if (currKills) {
+			const sql = `UPDATE IGNORE user_weapon_kills
+					SET kills = kills + ${currKills}
+					WHERE uwid = ${this.ruwid};`;
+			return mysql.query(sql);
+		}
+	}
+
 	getEmoji(quality) {
 		/* If there are multiple quality, get avg */
 		if (typeof quality == 'string') {
@@ -520,7 +593,7 @@ module.exports = class WeaponInterface {
 		}
 		quality /= 100;
 
-		const emojisList = this.isPristine ? this.pristineEmojis : this.emojis;
+		const emojisList = this.wear?.buff ? this.pristineEmojis : this.emojis;
 
 		/* Get correct rank */
 		let count = 0;
@@ -543,14 +616,30 @@ module.exports = class WeaponInterface {
 			newPassives.push(new PassiveClass());
 		}
 
-		return new WeaponClass(newPassives, newQualities);
+		let newWear = this.wear.id;
+		if (newWear > 1) newWear--;
+		return new WeaponClass(newPassives, newQualities, null, {
+			rrAttempt: this.rrAttempt,
+			rrCount: this.rrCount + 1,
+			hasTT: this.hasTT,
+			kills: this.kills,
+			wear: newWear,
+		});
 	}
 
 	rerollPassives() {
 		let WeaponClass = weapons[this.id];
 		if (!WeaponClass) throw 'Weapon Not Found for reroll';
 
-		return new WeaponClass(null, this.qualities);
+		let newWear = this.wear.id;
+		if (newWear > 1) newWear--;
+		return new WeaponClass(null, this.qualities, null, {
+			rrAttempt: this.rrAttempt,
+			rrCount: this.rrCount + 1,
+			hasTT: this.hasTT,
+			kills: this.kills,
+			wear: newWear,
+		});
 	}
 
 	static getRank(avgQuality) {
@@ -696,6 +785,74 @@ module.exports = class WeaponInterface {
 		return Math.round(res * 100) + '%';
 	}
 
+	/** Saves weapon to the db and return uwid **/
+	async save(id) {
+		let wear = this.wear?.id || 0;
+
+		const weaponSql = `INSERT INTO user_weapon (uid, wid, stat, avg, rrcount, rrattempt, wear)
+				VALUES (${await global.getUid(id)}, ${this.id},'${this.sqlStat}',${
+			this.avgQuality
+		}, 0, 0, ${wear});`;
+
+		let result = await mysql.query(weaponSql);
+		let uwid = result.insertId;
+		if (!uwid) throw 'Could not save weapon!';
+		this.uwid = uwid;
+
+		let queryUid = [];
+		let passiveSql = '';
+		if (this.passives.length) {
+			passiveSql = 'INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES ';
+			for (let i = 0; i < this.passives.length; i++) {
+				let tempPassive = this.passives[i];
+				passiveSql += `(?,${i},${tempPassive.id},'${tempPassive.sqlStat}'),`;
+				queryUid.push(uwid);
+			}
+			passiveSql = `${passiveSql.slice(0, -1)};`;
+		}
+		let trackSql = '';
+		if (this.hasTT) {
+			trackSql = `INSERT INTO user_weapon_kills (uwid) VALUES (?);`;
+			queryUid.push(uwid);
+		}
+		if (queryUid.length) {
+			await mysql.query(passiveSql + trackSql, queryUid);
+		}
+		return uwid;
+	}
+
+	/** Update weapon in db **/
+	async update() {
+		// update rr count/attempt/wear
+		let sql = `UPDATE user_weapon
+				SET
+					stat = '${this.sqlStat}',
+					avg = ${this.avgQuality},
+					wear = ${this.wear.id},
+					rrattempt = ${this.rrAttempt},
+					rrcount = ${this.rrCount}
+				WHERE uwid = ${this.ruwid};`;
+		for (let i in this.passives) {
+			let passive = this.passives[i];
+			let stat = passive.sqlStat;
+			let pcount = passive.pcount;
+			let wpid = passive.id;
+			sql += `UPDATE user_weapon_passive SET stat = '${stat}', wpid = ${wpid} WHERE uwid = ${this.ruwid} AND pcount = ${pcount};`;
+		}
+
+		let result = await mysql.query(sql);
+		for (let i in result) {
+			if (result[i].affectedRows <= 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	get shortenUWID() {
+		return weaponUtil.shortenUWID(this.uwid);
+	}
+
 	static get allPassives() {
 		return passives;
 	}
@@ -753,9 +910,54 @@ module.exports = class WeaponInterface {
 	static get getEmoji() {
 		return new this(null, null, true).defaultEmoji;
 	}
+	static getWear(wear) {
+		return wears[wear] || wears[0];
+	}
+	get wearName() {
+		return this.wear?.name;
+	}
+	get wearBuff() {
+		return this.wear?.buff || 0;
+	}
+	get hasTakedownTracker() {
+		return this.hasTT;
+	}
+	get fullName() {
+		let name = this.name;
+		if (this.wear?.buff) {
+			name = `${this.wearName} ${name}`;
+		}
+		if (this.hasTakedownTracker) {
+			name = `${name} [${this.kills}]`;
+		}
+		return name;
+	}
 
-	static get pristineBuff() {
-		return pristineBuff;
+	setWear(wear = 0) {
+		this.wear = WeaponInterface.getWear(wear);
+	}
+	setRandomWear() {
+		const rand = Math.random();
+		let chance = 0;
+		for (let key in wears) {
+			const wear = wears[key];
+			chance += wear.chance;
+			if (rand <= chance) {
+				this.wear = wear;
+				return;
+			}
+		}
+		// Default wear
+		this.wear = wears[1];
+	}
+
+	setRandomTT() {
+		const rand = Math.random();
+		this.hasTT = rand <= ttChance;
+	}
+
+	static setWeaponUtil(util) {
+		weaponUtil = util;
 	}
 };
 
@@ -776,4 +978,9 @@ const weapons = {};
 for (let key in weaponDir) {
 	let weapon = weaponDir[key];
 	weapons[weapon.getID] = weapon;
+}
+const wears = {};
+for (let key in wearInfo) {
+	let wear = wearInfo[key];
+	wears[wear.id] = wear;
 }

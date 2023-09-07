@@ -30,23 +30,22 @@ module.exports = new CommandInterface({
 
 	execute: async function (p) {
 		const author = p.opt?.member || p.opt?.author || p.msg.member || p.msg.author;
+		const uid = await p.global.getUid(author.id);
 		let sql = `SELECT (SELECT id FROM user WHERE uid = sender) AS sender,bet,flags,channel
-			FROM user_battle JOIN
-				(SELECT uid FROM user WHERE id = ${author.id}) AS user
+			FROM user_battle
 			WHERE
 				TIMESTAMPDIFF(MINUTE,time,NOW()) < 10 AND (
-					user1 = user.uid OR
-					user2 = user.uid
+					user1 = ${uid} OR
+					user2 = ${uid}
 				) AND (
-					sender != user.uid OR
+					sender != ${uid} OR
 					user1 = user2
 				);`;
-		sql += `UPDATE user_battle JOIN
-				(SELECT uid FROM user WHERE id = ${author.id}) AS user
+		sql += `UPDATE user_battle 
 			SET time = '2018-01-01' WHERE
 			TIMESTAMPDIFF(MINUTE,time,NOW()) < 10 AND (
-				user1 = user.uid OR
-				user2 = user.uid
+				user1 = ${uid} OR
+				user2 = ${uid}
 			);`;
 		let result = await p.query(sql);
 

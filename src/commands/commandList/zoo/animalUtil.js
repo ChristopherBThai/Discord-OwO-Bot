@@ -5,6 +5,8 @@
  * For more information, see README.md and LICENSE
  */
 
+const mysql = require('../../../botHandlers/mysqlHandler.js');
+const global = require('../../../utils/global.js');
 let animals;
 try {
 	animals = require('../../../../../tokens/owo-animals.json');
@@ -255,4 +257,22 @@ exports.zooScore = function (zoo) {
 
 exports.hasSpecials = function () {
 	return specialPercentManual !== 0;
+};
+
+exports.getPid = async function (id, pet) {
+	const uid = await global.getUid(id);
+	let sql;
+	if (global.isInt(pet) && parseInt(pet) < 10) {
+		sql = `SELECT pt_ani.pid FROM pet_team pt
+					LEFT JOIN pet_team_animal pt_ani
+						ON pt.pgid = pt_ani.pgid
+					LEFT JOIN pet_team_active pt_act
+						ON pt.pgid = pt_act.pgid
+				WHERE pt.uid = ${uid} AND pos = ${pet}
+				ORDER BY pt_act.pgid DESC, pt.pgid ASC LIMIT 1;`;
+	} else {
+		sql = `SELECT pid FROM animal WHERE name = '${pet.value}' AND id = ${id}`;
+	}
+	const result = await mysql.query(sql);
+	return result[0]?.pid;
 };

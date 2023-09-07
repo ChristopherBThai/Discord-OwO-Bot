@@ -46,7 +46,7 @@ module.exports = class Absolve extends PassiveInterface {
 			attacking,
 			totalDamage,
 			WeaponInterface.MAGICAL,
-			tagsCopy	
+			tagsCopy
 		);
 
 		logs.push(
