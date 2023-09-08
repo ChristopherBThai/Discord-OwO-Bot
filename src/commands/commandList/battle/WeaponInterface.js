@@ -928,7 +928,7 @@ module.exports = class WeaponInterface {
 			name = `${this.wearName} ${name}`;
 		}
 		if (this.hasTakedownTracker) {
-			name = `${name} [${this.kills}]`;
+			name = `${name} [${global.toFancyNum(this.kills)}]`;
 		}
 		return name;
 	}
