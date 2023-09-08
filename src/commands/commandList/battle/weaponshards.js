@@ -85,6 +85,7 @@ async function dismantleRank(p, rankLoc) {
 	}
 	min *= 100;
 	max *= 100;
+	let lastRank = rankLoc == WeaponInterface.ranks.length - 1;
 
 	/* Grab the item we will sell */
 	let sql = `SELECT
@@ -96,9 +97,9 @@ async function dismantleRank(p, rankLoc) {
 			LEFT JOIN user_weapon a ON user.uid = a.uid
 			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
 			LEFT JOIN user_weapon_kills c ON a.uwid = c.uwid
-		WHERE user.id = ${p.msg.author.id} AND avg >${
-		min === 0 ? '=' : ''
-	} ${min} AND avg <= ${max} AND a.pid IS NULL LIMIT 500;`;
+		WHERE user.id = ${p.msg.author.id} AND avg >${min === 0 ? '=' : ''} ${min} ${
+		lastRank ? '' : `AND avg <= ${max}`
+	} AND a.pid IS NULL AND a.favorite != 1 LIMIT 500;`;
 
 	let result = await p.query(sql);
 
@@ -165,7 +166,6 @@ async function dismantleRank(p, rankLoc) {
 	price *= result[1].affectedRows;
 
 	sql = `INSERT INTO shards (uid,count) VALUES (${uid},${price}) ON DUPLICATE KEY UPDATE count = count + ${price};`;
-	console.log(sql);
 	result = await p.query(sql);
 
 	p.replyMsg(
@@ -202,6 +202,11 @@ async function dismantleId(p, uwid) {
 	/* Is this weapon sellable? */
 	if (weapon.unsellable) {
 		p.errorMsg(', This weapon cannot be dismantled!');
+		return;
+	}
+
+	if (weapon.favorite) {
+		p.errorMsg(', unfavorite this weapon to sell!');
 		return;
 	}
 

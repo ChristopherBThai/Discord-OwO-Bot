@@ -141,6 +141,7 @@ let parseWeapon = (exports.parseWeapon = function (data) {
 	weapon.pid = data.pid;
 	weapon.animal = data.animal;
 	weapon.userId = data.userId;
+	weapon.favorite = !!data.favorite;
 
 	return weapon;
 });
@@ -169,6 +170,7 @@ let parseWeaponQuery = (exports.parseWeaponQuery = function (query) {
 					kills: query[i].kills,
 					rrAttempt: query[i].rrattempt,
 					rrCount: query[i].rrcount,
+					favorite: query[i].favorite,
 				};
 			}
 			if (query[i].wpid) {
@@ -343,7 +345,7 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 			user_weapon_passive.wpid, user_weapon_passive.pcount, user_weapon_passive.stat as pstat,
 			uwk.uwid as tt, uwk.kills
 		FROM
-			(SELECT user_weapon.uwid, user_weapon.wid, user_weapon.stat, user_weapon.rrcount, user_weapon.rrattempt, user_weapon.wear,
+			(SELECT user_weapon.uwid, user_weapon.wid, user_weapon.stat, user_weapon.rrcount, user_weapon.rrattempt, user_weapon.wear, user_weapon.favorite,
 			  animal.name, animal.nickname
 			FROM  user
 				INNER JOIN user_weapon ON user.uid = user_weapon.uid
@@ -360,6 +362,7 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	if (sort === 'rarity') sql += 'user_weapon.avg DESC,';
 	else if (sort === 'type') sql += 'user_weapon.wid DESC, user_weapon.avg DESC,';
 	else if (sort === 'equipped') sql += 'user_weapon.pid DESC,';
+	else if (sort === 'favorite') sql += 'user_weapon.favorite DESC,';
 
 	sql += ` user_weapon.uwid DESC
 			LIMIT ${weaponPerPage}
@@ -408,12 +411,15 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 		if (weapon) {
 			user_weapons_2.push(weapon);
 			let row = '';
+
 			let emoji = `${weapon.rank.emoji}${weapon.emoji}`;
 			for (let i = 0; i < weapon.passives.length; i++) {
 				let passive = weapon.passives[i];
 				emoji += passive.emoji;
 			}
-			row += `\n\`${user_weapons[key].uwid}\` ${emoji} **${weapon.name}** ${weapon.avgQuality}%`;
+			row += `\n\`${user_weapons[key].uwid}\` ${emoji} ${
+				weapon.favorite ? p.config.emoji.star : ''
+			}**${weapon.fullName}** ${weapon.avgQuality}%`;
 			if (user_weapons[key].animal.name) {
 				let animal = p.global.validAnimal(user_weapons[key].animal.name);
 				row += p.replaceMentions(
@@ -465,6 +471,7 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	else if (sort === 'rarity') embed.footer.text += 'Sorting by rarity';
 	else if (sort === 'type') embed.footer.text += 'Sorting by type';
 	else if (sort === 'equipped') embed.footer.text += 'Sorting by equipped';
+	else if (sort === 'favorite') embed.footer.text += 'Sorting by favorited';
 
 	embed = alterWeapon.alter(user.id, embed, {
 		...opt,
@@ -492,6 +499,12 @@ function getDisplayComponents(showExtraButtons, sort, widList = []) {
 					custom_id: 'sort',
 					placeholder: 'Sort by...',
 					options: [
+						{
+							label: 'Favorite',
+							value: 'favorite',
+							description: 'Sorty by favorited weapons',
+							default: sort === 'favorite',
+						},
 						{
 							label: 'Weapon ID',
 							value: 'id',
@@ -666,7 +679,65 @@ exports.describe = async function (p, uwid) {
 			weapon,
 		});
 	}
-	p.send({ embed });
+
+	if (user.id !== p.msg.author.id) {
+		return p.send({ embed });
+	}
+
+	const components = [
+		{
+			type: 1,
+			components: [
+				{
+					type: 2,
+					label: weapon.favorite ? 'Unfavorite' : 'Favorite',
+					style: weapon.favorite ? 4 : 3,
+					custom_id: weapon.favorite ? 'weapon_unfavorite' : 'weapon_favorite',
+					emoji: {
+						id: null,
+						name: p.config.emoji.star,
+					},
+				},
+			],
+		},
+	];
+	const content = { embed, components };
+
+	const msg = await p.send(content);
+
+	let filter = (componentName, reactionUser) =>
+		['weapon_favorite', 'weapon_unfavorite'].includes(componentName) &&
+		[p.msg.author.id].includes(reactionUser.id);
+	let collector = p.interactionCollector.create(msg, filter, {
+		time: 900000,
+		idle: 300000,
+	});
+
+	const uid = await p.global.getUid(user.id);
+	collector.on('collect', async (component, _reactionMember, ack, _err) => {
+		if (component === 'weapon_favorite') {
+			let sql = `UPDATE user_weapon SET favorite = 1 WHERE uwid = ${weapon.ruwid} AND uid = ${uid}`;
+			await p.query(sql);
+			content.components[0].components[0].label = 'Unfavorite';
+			content.components[0].components[0].custom_id = 'weapon_unfavorite';
+			content.components[0].components[0].style = 4;
+			ack(content);
+		} else if (component === 'weapon_unfavorite') {
+			let sql = `UPDATE user_weapon SET favorite = 0 WHERE uwid = ${weapon.ruwid} AND uid = ${uid}`;
+			await p.query(sql);
+			content.components[0].components[0].label = 'Favorite';
+			content.components[0].components[0].custom_id = 'weapon_favorite';
+			content.components[0].components[0].style = 3;
+			ack(content);
+		}
+	});
+
+	collector.on('end', async (_reason) => {
+		content.embed.color = 6381923;
+		content.content = 'This message is now inactive';
+		content.components[0].components[0].disabled = true;
+		await msg.edit(content);
+	});
 };
 
 exports.equip = async function (p, uwid, pet) {
@@ -768,6 +839,11 @@ exports.sell = async function (p, uwid) {
 		return;
 	}
 
+	if (weapon.favorite) {
+		p.errorMsg(', unfavorite this weapon to sell!');
+		return;
+	}
+
 	/* Get weapon price */
 	let price = prices[weapon.rank.name];
 	if (!price) {
@@ -837,7 +913,7 @@ let sellRank = (exports.sellRank = async function (p, rankLoc) {
 			LEFT JOIN user_weapon_kills c ON a.uwid = c.uwid
 		WHERE user.id = ${p.msg.author.id} AND avg >${
 		min === 0 ? '=' : ''
-	} ${min} AND avg <= ${max} AND a.pid IS NULL LIMIT 500;`;
+	} ${min} AND avg <= ${max} AND a.pid IS NULL AND a.favorite != 1 LIMIT 500;`;
 
 	let result = await p.query(sql);
 
@@ -945,7 +1021,7 @@ exports.getWeapon = async function (uwid, id) {
 	/* sql query */
 	let sql = `SELECT
 				user.id,
-				a.uwid, a.wid, a.stat, a.wear, a.rrcount, a.rrattempt, a.pid,
+				a.uwid, a.wid, a.stat, a.wear, a.rrcount, a.rrattempt, a.pid, a.favorite,
 				b.pcount, b.wpid, b.stat as pstat,
 				c.uwid as tt, c.kills,
 				d.name, d.nickname
