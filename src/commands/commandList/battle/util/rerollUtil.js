@@ -193,19 +193,18 @@ function createContent(p, oldWeapon, newWeapon) {
 			icon_url: p.msg.author.dynamicAvatarURL(),
 		},
 		footer: {
-			text:
-				yesEmoji +
-				' to keep the changes | ' +
-				noEmoji +
-				' to discard the changes | ' +
-				retryEmoji +
-				' to try again',
+			text: `Reroll Changes: ${newWeapon.rrCount} | Reroll Attempts: ${newWeapon.rrAttempt}`
 		},
 		color: p.config.embed_color,
 		fields: [parseDescription('[CURRENT]', oldWeapon), parseDescription('[NEW]', newWeapon)],
 	};
-
 	embed.fields[0].value += '\n‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗';
+	embed.fields[1].value += `\n${p.config.emoji.blank}`;
+	if (oldWeapon.wear.id != newWeapon.wear.id) {
+		embed.description = `# ${p.config.emoji.warning} Your wear will change from \`${oldWeapon.wearName}\` to \`${newWeapon.wearName}\` ${p.config.emoji.warning}\n${p.config.emoji.blank}`;
+	} else {
+		embed.description = p.config.emoji.blank;
+	}
 
 	const components = [
 		{
