@@ -11,6 +11,8 @@ const global = require('../../../utils/global.js');
 const animalUtil = require('../battle/util/animalUtil.js');
 const animalUtil2 = require('../zoo/animalUtil.js');
 const levels = require('../../../utils/levels.js');
+const WeaponInterface = require('../battle/WeaponInterface.js');
+const weaponUtil = require('../battle/util/weaponUtil.js');
 let animals;
 try {
 	animals = require('../../../../../tokens/owo-animals.json');
@@ -20,10 +22,14 @@ try {
 	console.log('Found owo-animals.json file in secret folder!');
 }
 
+const weaponArgs = Object.keys(WeaponInterface.weapons).map(id => {
+	return 'w' + (100 + parseInt(id));
+});
+
 module.exports = new CommandInterface({
 	alias: ['my', 'me', 'guild'],
 
-	args: 'points|guild|zoo|money|cookie|pet|huntbot|luck|curse|daily|battle|level|shards [global]',
+	args: 'points|guild|zoo|money|cookie|pet|huntbot|luck|curse|battle|daily|level|shard|weapon|w{wid} [global]',
 
 	desc: 'Displays your ranking of each category!\nYou can choose you rank within the server or globally!\nYou can also shorten the command like in the example!',
 
@@ -35,7 +41,7 @@ module.exports = new CommandInterface({
 
 	group: ['rankings'],
 
-	cooldown: 60000,
+	cooldown: 0000,
 	half: 20,
 	six: 200,
 	bot: true,
@@ -61,8 +67,7 @@ async function display(p, con, msg, args) {
 	let money = false;
 	let rep = false;
 	let pet = false;
-	let team = false;
-	let huntbot, luck, curse, daily, battle, level, shard;
+	let huntbot, luck, curse, daily, battle, level, shard, tt;
 
 	for (var i = 0; i < args.length; i++) {
 		if (
@@ -75,11 +80,11 @@ async function display(p, con, msg, args) {
 			!huntbot &&
 			!luck &&
 			!curse &&
-			!team &&
 			!daily &&
 			!battle &&
 			!level &&
-			!shard
+			!shard &&
+			!tt
 		) {
 			if (args[i] === 'points' || args[i] === 'point' || args[i] === 'p') points = true;
 			else if (args[i] === 'guild' || args[i] === 'server' || args[i] === 'g' || args[i] === 's')
@@ -120,6 +125,8 @@ async function display(p, con, msg, args) {
 				args[i] === 'weaponshard'
 			)
 				shard = true;
+			else if (['tt', 'takedown', 'takdowntracker', 'tracker', 'weapon', 'w'].includes(args[i]) || weaponArgs.includes(args[i]))
+				tt = args[i];
 			else if (args[i] === 'global' || args[i] === 'g') aglobal = true;
 			else invalid = true;
 		} else if (args[i] === 'global' || args[i] === 'g') aglobal = true;
@@ -138,11 +145,11 @@ async function display(p, con, msg, args) {
 		else if (huntbot) getHuntbotRanking(aglobal, con, msg, p);
 		else if (luck) getLuckRanking(aglobal, con, msg, p);
 		else if (curse) getCurseRanking(aglobal, con, msg, p);
-		else if (team) getTeamRanking(aglobal, con, msg, p);
 		else if (battle) getBattleRanking(aglobal, con, msg, p);
 		else if (daily) getDailyRanking(aglobal, con, msg, p);
 		else if (level) await getLevelRanking(aglobal, p);
 		else if (shard) getShardRanking(aglobal, con, msg, p);
+		else if (tt) getTTRanking(aglobal, con, msg, p, tt);
 		else getPointRanking(aglobal, con, msg, p);
 	}
 }
@@ -169,7 +176,7 @@ async function displayRanking(con, msg, sql, title, subText, p) {
 			if (user === undefined || user.username === undefined) name = 'User Left Discord';
 			else name = '' + p.getUniqueName(user);
 			name = name.replace('discord.gg', 'discord,gg').replace(/(```)/g, '`\u200b``');
-			embed += '#' + rank + '\t' + name + '\n' + subText(ele) + '\n';
+			embed += '#' + p.global.toFancyNum(rank) + '\t' + name + '\n' + subText(ele) + '\n';
 			rank++;
 		} else if (rank == 0) rank = 1;
 	}
@@ -179,7 +186,7 @@ async function displayRanking(con, msg, sql, title, subText, p) {
 	if ((uname = await p.fetch.getUser(me.id, true))) uname = p.getUniqueName(uname);
 	else uname = 'you';
 	uname = uname.replace('discord.gg', 'discord,gg').replace(/(```)/g, '`\u200b``');
-	embed += '< ' + rank + '   ' + uname + ' >\n' + subText(me) + '\n';
+	embed += '< ' + p.global.toFancyNum(rank) + '   ' + uname + ' >\n' + subText(me) + '\n';
 	rank++;
 
 	//People below user
@@ -191,7 +198,7 @@ async function displayRanking(con, msg, sql, title, subText, p) {
 			if (user === undefined || user.username === undefined) name = 'User Left Discord';
 			else name = '' + p.getUniqueName(user);
 			name = name.replace('discord.gg', 'discord,gg');
-			embed += '#' + rank + '\t' + name + '\n' + subText(ele) + '\n';
+			embed += '#' + p.global.toFancyNum(rank) + '\t' + name + '\n' + subText(ele) + '\n';
 			rank++;
 		}
 	}
@@ -203,7 +210,7 @@ async function displayRanking(con, msg, sql, title, subText, p) {
 		"'s " +
 		title +
 		' >\n> Your rank is: ' +
-		userRank +
+		p.global.toFancyNum(userRank) +
 		'\n>' +
 		subText(rows[2][0]) +
 		'\n\n' +
@@ -230,41 +237,35 @@ async function displayRanking(con, msg, sql, title, subText, p) {
  * displays global ranking
  */
 function getPointRanking(globalRank, con, msg, p) {
-	let sql;
-	if (globalRank) {
-		sql =
-			'SELECT u.id,u.count,u1.id,u1.count FROM user AS u LEFT JOIN ( SELECT id,count FROM user ORDER BY count ASC ) AS u1 ON u1.count > u.count WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY u1.count ASC LIMIT 2;';
-		sql +=
-			'SELECT u.id,u.count,u1.id,u1.count FROM user AS u LEFT JOIN ( SELECT id,count FROM user ORDER BY count DESC ) AS u1 ON u1.count < u.count WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY u1.count DESC LIMIT 2;';
-		sql +=
-			'SELECT id,count,(SELECT COUNT(*)+1 FROM user WHERE count > u.count) AS rank FROM user u WHERE u.id = ' +
-			msg.author.id +
-			';';
-	} else {
-		let users = global.getids(msg.channel.guild.members);
-		sql =
-			'SELECT u.id,u.count,u1.id,u1.count FROM user AS u LEFT JOIN ( SELECT id,count FROM user WHERE id IN (' +
-			users +
-			') ORDER BY count ASC ) AS u1 ON u1.count > u.count WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY u1.count ASC LIMIT 2;';
-		sql +=
-			'SELECT u.id,u.count,u1.id,u1.count FROM user AS u LEFT JOIN ( SELECT id,count FROM user WHERE id IN (' +
-			users +
-			') ORDER BY count DESC ) AS u1 ON u1.count < u.count WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY u1.count DESC LIMIT 2;';
-		sql +=
-			'SELECT id,count,(SELECT COUNT(*)+1 FROM user WHERE count > u.count AND id IN (' +
-			users +
-			') ) AS rank FROM user u WHERE u.id = ' +
-			msg.author.id +
-			';';
-	}
+	let users = globalRank ? null : global.getids(msg.channel.guild.members);
+	let sql = `
+		SELECT id, count 
+		FROM user
+		WHERE count > (
+			SELECT count FROM user WHERE id = ${p.msg.author.id}
+		)
+			${globalRank ? '' : `AND id IN (${users})`}
+		ORDER BY count ASC LIMIT 2;
+	`;
+	sql += `
+		SELECT id,count  
+		FROM user
+		WHERE count < (
+			SELECT count FROM user WHERE id = ${p.msg.author.id}
+		)
+			${globalRank ? '' : `AND id IN (${users})`}
+		ORDER BY count DESC LIMIT 2;
+	`;
+	sql += `
+		SELECT id, count, (
+			SELECT COUNT(*)+1
+			FROM user
+			WHERE count > u.count
+				${globalRank ? '' : `AND user.id IN (${users})`}
+		) AS rank
+		FROM user u
+		WHERE u.id = ${p.msg.author.id};
+	`;
 
 	displayRanking(
 		con,
@@ -279,69 +280,35 @@ function getPointRanking(globalRank, con, msg, p) {
 }
 
 function getZooRanking(globalRank, con, msg, p) {
-	let sql;
-	if (globalRank) {
-		sql =
-			'SELECT a.id,a1.* FROM animal_count AS a LEFT JOIN ( SELECT *,' +
-			points +
-			' AS points FROM animal_count ORDER BY points ASC ) AS a1 ON a1.points > ' +
-			apoints +
-			' WHERE a.id = ' +
-			msg.author.id +
-			' ORDER BY a1.points ASC LIMIT 2;';
-		sql +=
-			'SELECT a.id,a1.* FROM animal_count AS a LEFT JOIN ( SELECT *,' +
-			points +
-			' AS points FROM animal_count ORDER BY points DESC ) AS a1 ON a1.points < ' +
-			apoints +
-			' WHERE a.id = ' +
-			msg.author.id +
-			' ORDER BY a1.points DESC LIMIT 2;';
-		sql +=
-			'SELECT *,' +
-			points +
-			' AS points,(SELECT COUNT(*)+1 FROM animal_count WHERE ' +
-			points +
-			' > ' +
-			apoints +
-			' ) AS rank FROM animal_count a WHERE a.id = ' +
-			msg.author.id +
-			';';
-	} else {
-		let users = global.getids(msg.channel.guild.members);
-		sql =
-			'SELECT a.id,a1.* FROM animal_count AS a LEFT JOIN ( SELECT *,' +
-			points +
-			' AS points FROM animal_count WHERE id IN (' +
-			users +
-			') ORDER BY points ASC ) AS a1 ON a1.points > ' +
-			apoints +
-			' WHERE a.id = ' +
-			msg.author.id +
-			' ORDER BY a1.points ASC LIMIT 2;';
-		sql +=
-			'SELECT a.id,a1.* FROM animal_count AS a LEFT JOIN ( SELECT *,' +
-			points +
-			' AS points FROM animal_count WHERE id IN (' +
-			users +
-			') ORDER BY points DESC ) AS a1 ON a1.points < ' +
-			apoints +
-			' WHERE a.id = ' +
-			msg.author.id +
-			' ORDER BY a1.points DESC LIMIT 2;';
-		sql +=
-			'SELECT *,' +
-			points +
-			' AS points,(SELECT COUNT(*)+1 FROM animal_count WHERE ' +
-			points +
-			' > ' +
-			apoints +
-			' AND id IN (' +
-			users +
-			') ) AS rank FROM animal_count a WHERE a.id = ' +
-			msg.author.id +
-			';';
-	}
+	let users = globalRank ? null : global.getids(msg.channel.guild.members);
+	let sql = `
+		SELECT *
+		FROM animal_count
+		WHERE total > (
+			SELECT total FROM animal_count WHERE id = ${p.msg.author.id}
+		)
+			${globalRank ? '' : `AND id IN (${users})`}
+		ORDER BY total ASC LIMIT 2;
+	`;
+	sql += `
+		SELECT *
+		FROM animal_count
+		WHERE total < (
+			SELECT total FROM animal_count WHERE id = ${p.msg.author.id}
+		)
+			${globalRank ? '' : `AND id IN (${users})`}
+		ORDER BY total DESC LIMIT 2;
+	`;
+	sql += `
+		SELECT *, (
+			SELECT COUNT(*)+1
+			FROM animal_count
+			WHERE total > u.total
+				${globalRank ? '' : `AND id IN (${users})`}
+		) AS rank
+		FROM animal_count u
+		WHERE u.id = ${p.msg.author.id};
+	`;
 
 	displayRanking(
 		con,
@@ -350,7 +317,7 @@ function getZooRanking(globalRank, con, msg, p) {
 		(globalRank ? 'Global ' : '') + 'Zoo Ranking',
 		function (query) {
 			return (
-				'\t\t' + global.toFancyNum(query.points) + ' zoo points: ' + animalUtil2.zooScore(query)
+				'\t\t' + global.toFancyNum(query.total) + ' zoo points: ' + animalUtil2.zooScore(query)
 			);
 		},
 		p
@@ -358,41 +325,35 @@ function getZooRanking(globalRank, con, msg, p) {
 }
 
 function getMoneyRanking(globalRank, con, msg, p) {
-	let sql;
-	if (globalRank) {
-		sql =
-			'SELECT u.id,u.money ,u1.id,u1.money FROM cowoncy AS u LEFT JOIN ( SELECT id,money FROM cowoncy ORDER BY money ASC ) AS u1 ON u1.money > u.money WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY u1.money ASC LIMIT 2;';
-		sql +=
-			'SELECT u.id,u.money ,u1.id,u1.money FROM cowoncy AS u LEFT JOIN ( SELECT id,money FROM cowoncy ORDER BY money DESC ) AS u1 ON u1.money < u.money WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY u1.money DESC LIMIT 2;';
-		sql +=
-			'SELECT id,money,(SELECT COUNT(*)+1 FROM cowoncy WHERE money > u.money ) AS rank FROM cowoncy u WHERE u.id = ' +
-			msg.author.id +
-			';';
-	} else {
-		let users = global.getids(msg.channel.guild.members);
-		sql =
-			'SELECT u.id,u.money ,u1.id,u1.money FROM cowoncy AS u LEFT JOIN ( SELECT id,money FROM cowoncy WHERE id IN (' +
-			users +
-			') ORDER BY money ASC ) AS u1 ON u1.money > u.money WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY u1.money ASC LIMIT 2;';
-		sql +=
-			'SELECT u.id,u.money ,u1.id,u1.money FROM cowoncy AS u LEFT JOIN ( SELECT id,money FROM cowoncy WHERE id IN (' +
-			users +
-			') ORDER BY money DESC ) AS u1 ON u1.money < u.money WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY u1.money DESC LIMIT 2;';
-		sql +=
-			'SELECT id,money,(SELECT COUNT(*)+1 FROM cowoncy WHERE money > u.money AND id IN (' +
-			users +
-			') ) AS rank FROM cowoncy u WHERE u.id = ' +
-			msg.author.id +
-			';';
-	}
+	let users = globalRank ? null : global.getids(msg.channel.guild.members);
+	let sql = `
+		SELECT id, money
+		FROM cowoncy
+		WHERE money > (
+			SELECT money FROM cowoncy WHERE id = ${p.msg.author.id}
+		)
+			${globalRank ? '' : `AND id IN (${users})`}
+		ORDER BY money ASC LIMIT 2;
+	`;
+	sql += `
+		SELECT id, money
+		FROM cowoncy 
+		WHERE money < (
+			SELECT money FROM cowoncy WHERE id = ${p.msg.author.id}
+		)
+			${globalRank ? '' : `AND id IN (${users})`}
+		ORDER BY money DESC LIMIT 2;
+	`;
+	sql += `
+		SELECT id, money, (
+			SELECT COUNT(*)+1
+			FROM cowoncy
+			WHERE money > u.money
+				${globalRank ? '' : `AND id IN (${users})`}
+		) AS rank
+		FROM cowoncy u
+		WHERE u.id = ${p.msg.author.id};
+	`;
 
 	displayRanking(
 		con,
@@ -407,41 +368,35 @@ function getMoneyRanking(globalRank, con, msg, p) {
 }
 
 function getRepRanking(globalRank, con, msg, p) {
-	let sql;
-	if (globalRank) {
-		sql =
-			'SELECT u.id,u.count ,u1.id,u1.count FROM rep AS u LEFT JOIN ( SELECT id,count FROM rep ORDER BY count ASC ) AS u1 ON u1.count > u.count WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY u1.count ASC LIMIT 2;';
-		sql +=
-			'SELECT u.id,u.count ,u1.id,u1.count FROM rep AS u LEFT JOIN ( SELECT id,count FROM rep ORDER BY count DESC ) AS u1 ON u1.count < u.count WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY u1.count DESC LIMIT 2;';
-		sql +=
-			'SELECT id,count,(SELECT COUNT(*)+1 FROM rep WHERE count > u.count ) AS rank FROM rep u WHERE u.id = ' +
-			msg.author.id +
-			';';
-	} else {
-		let users = global.getids(msg.channel.guild.members);
-		sql =
-			'SELECT u.id,u.count ,u1.id,u1.count FROM rep AS u LEFT JOIN ( SELECT id,count FROM rep WHERE id IN (' +
-			users +
-			') ORDER BY count ASC ) AS u1 ON u1.count > u.count WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY u1.count ASC LIMIT 2;';
-		sql +=
-			'SELECT u.id,u.count ,u1.id,u1.count FROM rep AS u LEFT JOIN ( SELECT id,count FROM rep WHERE id IN (' +
-			users +
-			') ORDER BY count DESC ) AS u1 ON u1.count < u.count WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY u1.count DESC LIMIT 2;';
-		sql +=
-			'SELECT id,count,(SELECT COUNT(*)+1 FROM rep WHERE count > u.count AND id IN (' +
-			users +
-			') ) AS rank FROM rep u WHERE u.id = ' +
-			msg.author.id +
-			';';
-	}
+	let users = globalRank ? null : global.getids(msg.channel.guild.members);
+	let sql = `
+		SELECT id, count
+		FROM rep
+		WHERE count > (
+			SELECT count FROM rep WHERE id = ${p.msg.author.id}
+		)
+			${globalRank ? '' : `AND id IN (${users})`}
+		ORDER BY count ASC LIMIT 2;
+	`;
+	sql += `
+		SELECT id, count
+		FROM rep 
+		WHERE count < (
+			SELECT count FROM rep WHERE id = ${p.msg.author.id}
+		)
+			${globalRank ? '' : `AND id IN (${users})`}
+		ORDER BY count DESC LIMIT 2;
+	`;
+	sql += `
+		SELECT id, count, (
+			SELECT COUNT(*)+1
+			FROM rep
+			WHERE count > u.count
+				${globalRank ? '' : `AND id IN (${users})`}
+		) AS rank
+		FROM rep u
+		WHERE u.id = ${p.msg.author.id};
+	`;
 
 	displayRanking(
 		con,
@@ -456,41 +411,36 @@ function getRepRanking(globalRank, con, msg, p) {
 }
 
 function getPetRanking(globalRank, con, msg, p) {
-	let sql;
-	if (globalRank) {
-		sql =
-			'SELECT * FROM animal WHERE (xp) > (SELECT xp FROM animal WHERE id = ' +
-			msg.author.id +
-			' ORDER BY xp DESC LIMIT 1) ORDER BY xp ASC LIMIT 2;';
-		sql +=
-			'SELECT * FROM animal WHERE (xp)  < (SELECT xp FROM animal WHERE id = ' +
-			msg.author.id +
-			' ORDER BY xp DESC LIMIT 1) ORDER BY xp DESC LIMIT 2;';
-		sql +=
-			'SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE (xp > c.xp)) AS rank FROM animal c WHERE c.id = ' +
-			msg.author.id +
-			' ORDER BY c.xp DESC LIMIT 1;';
-	} else {
-		let users = global.getids(msg.channel.guild.members);
-		sql =
-			'SELECT * FROM animal WHERE id IN (' +
-			users +
-			') AND (xp) > (SELECT xp FROM animal WHERE id = ' +
-			msg.author.id +
-			' ORDER BY xp DESC LIMIT 1) ORDER BY xp ASC LIMIT 2;';
-		sql +=
-			'SELECT * FROM animal WHERE id  IN (' +
-			users +
-			') AND (xp)  < (SELECT xp FROM animal WHERE id = ' +
-			msg.author.id +
-			' ORDER BY xp DESC LIMIT 1) ORDER BY xp DESC LIMIT 2;';
-		sql +=
-			'SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE id IN (' +
-			users +
-			') AND (xp > c.xp)) AS rank FROM animal c WHERE c.id = ' +
-			msg.author.id +
-			' ORDER BY c.xp DESC LIMIT 1;';
-	}
+	let users = globalRank ? null : global.getids(msg.channel.guild.members);
+	let sql = `
+		SELECT *
+		FROM animal
+		WHERE xp > (
+			SELECT xp FROM animal WHERE id = ${p.msg.author.id} ORDER BY xp DESC LIMIT 1
+		)
+			${globalRank ? '' : `AND id IN (${users})`}
+		ORDER BY xp ASC LIMIT 2;
+	`;
+	sql += `
+		SELECT *
+		FROM animal
+		WHERE xp < (
+			SELECT xp FROM animal WHERE id = ${p.msg.author.id} ORDER BY xp DESC LIMIT 1
+		)
+			${globalRank ? '' : `AND id IN (${users})`}
+		ORDER BY xp DESC LIMIT 2;
+	`;
+	sql += `
+		SELECT *, (
+			SELECT COUNT(*)+1
+			FROM animal
+			WHERE xp > u.xp
+				${globalRank ? '' : `AND id IN (${users})`}
+		) AS rank
+		FROM animal u
+		WHERE u.id = ${p.msg.author.id}
+		ORDER BY xp DESC LIMIT 1;
+	`;
 
 	displayRanking(
 		con,
@@ -509,41 +459,35 @@ function getPetRanking(globalRank, con, msg, p) {
 }
 
 function getHuntbotRanking(globalRank, con, msg, p) {
-	let sql;
-	if (globalRank) {
-		sql =
-			'SELECT id,total FROM autohunt WHERE total > (SELECT total FROM autohunt WHERE id = ' +
-			msg.author.id +
-			') ORDER BY total ASC LIMIT 2;';
-		sql +=
-			'SELECT id,total FROM autohunt WHERE total < (SELECT total FROM autohunt WHERE id = ' +
-			msg.author.id +
-			') ORDER BY total DESC LIMIT 2;';
-		sql +=
-			'SELECT id,total, (SELECT COUNT(*)+1 FROM autohunt WHERE autohunt.total > c.total) AS rank FROM autohunt c WHERE c.id = ' +
-			msg.author.id +
-			';';
-	} else {
-		let users = global.getids(msg.channel.guild.members);
-		sql =
-			'SELECT id,total FROM autohunt WHERE id IN (' +
-			users +
-			') AND total > (SELECT total FROM autohunt WHERE id = ' +
-			msg.author.id +
-			') ORDER BY total ASC LIMIT 2;';
-		sql +=
-			'SELECT id,total FROM autohunt WHERE id IN (' +
-			users +
-			') AND total < (SELECT total FROM autohunt WHERE id = ' +
-			msg.author.id +
-			') ORDER BY total DESC LIMIT 2;';
-		sql +=
-			'SELECT id,total, (SELECT COUNT(*)+1 FROM autohunt WHERE id IN (' +
-			users +
-			') AND autohunt.total > c.total) AS rank FROM autohunt c WHERE c.id = ' +
-			msg.author.id +
-			';';
-	}
+	let users = globalRank ? null : global.getids(msg.channel.guild.members);
+	let sql = `
+		SELECT id, total 
+		FROM autohunt
+		WHERE total > (
+			SELECT total FROM autohunt WHERE id = ${p.msg.author.id}
+		)
+			${globalRank ? '' : `AND id IN (${users})`}
+		ORDER BY total ASC LIMIT 2;
+	`;
+	sql += `
+		SELECT id, total
+		FROM autohunt
+		WHERE total < (
+			SELECT total FROM autohunt WHERE id = ${p.msg.author.id}
+		)
+			${globalRank ? '' : `AND id IN (${users})`}
+		ORDER BY total DESC LIMIT 2;
+	`;
+	sql += `
+		SELECT id, total, (
+			SELECT COUNT(*)+1
+			FROM autohunt
+			WHERE total > u.total
+				${globalRank ? '' : `AND id IN (${users})`}
+		) AS rank
+		FROM autohunt u
+		WHERE u.id = ${p.msg.author.id};
+	`;
 
 	displayRanking(
 		con,
@@ -558,41 +502,35 @@ function getHuntbotRanking(globalRank, con, msg, p) {
 }
 
 function getLuckRanking(globalRank, con, msg, p) {
-	let sql;
-	if (globalRank) {
-		sql =
-			'SELECT id,lcount FROM luck WHERE lcount > (SELECT lcount FROM luck WHERE id = ' +
-			msg.author.id +
-			') ORDER BY lcount ASC LIMIT 2;';
-		sql +=
-			'SELECT id,lcount FROM luck WHERE lcount < (SELECT lcount FROM luck WHERE id = ' +
-			msg.author.id +
-			') ORDER BY lcount DESC LIMIT 2;';
-		sql +=
-			'SELECT id,lcount,(SELECT COUNT(*)+1 FROM luck WHERE lcount > u.lcount ) AS rank FROM luck u WHERE u.id = ' +
-			msg.author.id +
-			';';
-	} else {
-		let users = global.getids(msg.channel.guild.members);
-		sql =
-			'SELECT id,lcount FROM luck WHERE id IN (' +
-			users +
-			') AND lcount > (SELECT lcount FROM luck WHERE id = ' +
-			msg.author.id +
-			') ORDER BY lcount ASC LIMIT 2;';
-		sql +=
-			'SELECT id,lcount FROM luck WHERE id IN (' +
-			users +
-			') AND lcount < (SELECT lcount FROM luck WHERE id = ' +
-			msg.author.id +
-			') ORDER BY lcount DESC LIMIT 2;';
-		sql +=
-			'SELECT id,lcount,(SELECT COUNT(*)+1 FROM luck WHERE lcount > u.lcount AND id IN (' +
-			users +
-			') ) AS rank FROM luck u WHERE u.id = ' +
-			msg.author.id +
-			';';
-	}
+	let users = globalRank ? null : global.getids(msg.channel.guild.members);
+	let sql = `
+		SELECT id, lcount 
+		FROM luck
+		WHERE lcount > (
+			SELECT lcount FROM luck WHERE id = ${p.msg.author.id}
+		)
+			${globalRank ? '' : `AND id IN (${users})`}
+		ORDER BY lcount ASC LIMIT 2;
+	`;
+	sql += `
+		SELECT id, lcount
+		FROM luck
+		WHERE lcount < (
+			SELECT lcount FROM luck WHERE id = ${p.msg.author.id}
+		)
+			${globalRank ? '' : `AND id IN (${users})`}
+		ORDER BY lcount DESC LIMIT 2;
+	`;
+	sql += `
+		SELECT id, lcount, (
+			SELECT COUNT(*)+1
+			FROM luck
+			WHERE lcount > u.lcount
+				${globalRank ? '' : `AND id IN (${users})`}
+		) AS rank
+		FROM luck u
+		WHERE u.id = ${p.msg.author.id};
+	`;
 
 	displayRanking(
 		con,
@@ -607,41 +545,35 @@ function getLuckRanking(globalRank, con, msg, p) {
 }
 
 function getCurseRanking(globalRank, con, msg, p) {
-	let sql;
-	if (globalRank) {
-		sql =
-			'SELECT id,lcount FROM luck WHERE lcount < (SELECT lcount FROM luck WHERE id = ' +
-			msg.author.id +
-			') ORDER BY lcount DESC LIMIT 2;';
-		sql +=
-			'SELECT id,lcount FROM luck WHERE lcount > (SELECT lcount FROM luck WHERE id = ' +
-			msg.author.id +
-			') ORDER BY lcount ASC LIMIT 2;';
-		sql +=
-			'SELECT id,lcount,(SELECT COUNT(*)+1 FROM luck WHERE lcount < u.lcount ) AS rank FROM luck u WHERE u.id = ' +
-			msg.author.id +
-			';';
-	} else {
-		let users = global.getids(msg.channel.guild.members);
-		sql =
-			'SELECT id,lcount FROM luck WHERE id IN (' +
-			users +
-			') AND lcount < (SELECT lcount FROM luck WHERE id = ' +
-			msg.author.id +
-			') ORDER BY lcount DESC LIMIT 2;';
-		sql +=
-			'SELECT id,lcount FROM luck WHERE id IN (' +
-			users +
-			') AND lcount > (SELECT lcount FROM luck WHERE id = ' +
-			msg.author.id +
-			') ORDER BY lcount ASC LIMIT 2;';
-		sql +=
-			'SELECT id,lcount,(SELECT COUNT(*)+1 FROM luck WHERE lcount < u.lcount AND id IN (' +
-			users +
-			') ) AS rank FROM luck u WHERE u.id = ' +
-			msg.author.id +
-			';';
-	}
+	let users = globalRank ? null : global.getids(msg.channel.guild.members);
+	let sql = `
+		SELECT id, lcount 
+		FROM luck
+		WHERE lcount < (
+			SELECT lcount FROM luck WHERE id = ${p.msg.author.id}
+		)
+			${globalRank ? '' : `AND id IN (${users})`}
+		ORDER BY lcount DESC LIMIT 2;
+	`;
+	sql += `
+		SELECT id, lcount
+		FROM luck
+		WHERE lcount > (
+			SELECT lcount FROM luck WHERE id = ${p.msg.author.id}
+		)
+			${globalRank ? '' : `AND id IN (${users})`}
+		ORDER BY lcount ASC LIMIT 2;
+	`;
+	sql += `
+		SELECT id, lcount, (
+			SELECT COUNT(*)+1
+			FROM luck
+			WHERE lcount < u.lcount
+				${globalRank ? '' : `AND id IN (${users})`}
+		) AS rank
+		FROM luck u
+		WHERE u.id = ${p.msg.author.id};
+	`;
 
 	displayRanking(
 		con,
@@ -785,58 +717,6 @@ function getGuildRanking(con, msg, id, p) {
 	});
 }
 
-function getTeamRanking(globalRank, con, msg, p) {
-	let sql;
-	if (globalRank) {
-		sql =
-			'SELECT * FROM animal WHERE (xp) > (SELECT xp FROM animal NATURAL JOIN cowoncy WHERE id = ' +
-			msg.author.id +
-			' AND pet = name) ORDER BY xp ASC LIMIT 2;';
-		sql +=
-			'SELECT * FROM animal WHERE (xp)  < (SELECT xp FROM animal NATURAL JOIN cowoncy WHERE id = ' +
-			msg.author.id +
-			' AND pet = name) ORDER BY xp DESC LIMIT 2;';
-		sql +=
-			'SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE (xp > c.xp)) AS rank FROM animal c NATURAL JOIN cowoncy WHERE c.id = ' +
-			msg.author.id +
-			' AND c.name = pet  ORDER BY xp DESC LIMIT 1;';
-	} else {
-		let users = global.getids(msg.channel.guild.members);
-		sql =
-			'SELECT * FROM animal WHERE id IN (' +
-			users +
-			') AND (lvl,xp) > (SELECT lvl,xp FROM animal NATURAL JOIN cowoncy WHERE id = ' +
-			msg.author.id +
-			' AND pet = name) ORDER BY lvl ASC, xp ASC LIMIT 2;';
-		sql +=
-			'SELECT * FROM animal WHERE id IN (' +
-			users +
-			') AND (lvl,xp) < (SELECT lvl,xp FROM animal NATURAL JOIN cowoncy WHERE id = ' +
-			msg.author.id +
-			' AND pet = name) ORDER BY lvl DESC, xp DESC LIMIT 2;';
-		sql +=
-			'SELECT *,(SELECT COUNT(*)+1 FROM animal WHERE id IN (' +
-			users +
-			') AND ((lvl > c.lvl) OR (lvl = c.lvl AND xp > c.xp))) AS rank FROM animal c NATURAL JOIN cowoncy WHERE c.id = ' +
-			msg.author.id +
-			' AND c.name = pet ORDER BY lvl DESC, xp DESC LIMIT 1;';
-	}
-
-	displayRanking(
-		con,
-		msg,
-		sql,
-		(globalRank ? 'Global ' : '') + 'Pet Ranking',
-		function (query) {
-			var result = '\t\t';
-			if (query.nickname) result += query.nickname + ' ';
-			result += 'Lvl:' + query.lvl + ' Att:' + query.att + ' Hp:' + query.hp;
-			return result;
-		},
-		p
-	);
-}
-
 function getBattleRanking(globalRank, con, msg, p) {
 	let sql;
 	const teamSql = `SELECT pt_tmp.pgid FROM user u_tmp
@@ -925,41 +805,35 @@ function getBattleRanking(globalRank, con, msg, p) {
 	);
 }
 function getDailyRanking(globalRank, con, msg, p) {
-	let sql;
-	if (globalRank) {
-		sql =
-			'SELECT u.id,u.daily_streak,u1.id,u1.daily_streak FROM cowoncy AS u LEFT JOIN ( SELECT id,daily_streak FROM cowoncy ORDER BY daily_streak ASC ) AS u1 ON u1.daily_streak > u.daily_streak WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY u1.daily_streak ASC LIMIT 2;';
-		sql +=
-			'SELECT u.id,u.daily_streak,u1.id,u1.daily_streak FROM cowoncy AS u LEFT JOIN ( SELECT id,daily_streak FROM cowoncy ORDER BY daily_streak DESC ) AS u1 ON u1.daily_streak < u.daily_streak WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY u1.daily_streak DESC LIMIT 2;';
-		sql +=
-			'SELECT id,daily_streak,(SELECT COUNT(*)+1 FROM cowoncy WHERE daily_streak > u.daily_streak) AS rank FROM cowoncy u WHERE u.id = ' +
-			msg.author.id +
-			';';
-	} else {
-		let users = global.getids(msg.channel.guild.members);
-		sql =
-			'SELECT u.id,u.daily_streak,u1.id,u1.daily_streak FROM cowoncy AS u LEFT JOIN ( SELECT id,daily_streak FROM cowoncy WHERE id IN (' +
-			users +
-			') ORDER BY daily_streak ASC ) AS u1 ON u1.daily_streak > u.daily_streak WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY u1.daily_streak ASC LIMIT 2;';
-		sql +=
-			'SELECT u.id,u.daily_streak ,u1.id,u1.daily_streak FROM cowoncy AS u LEFT JOIN ( SELECT id,daily_streak FROM cowoncy WHERE id IN (' +
-			users +
-			') ORDER BY daily_streak DESC ) AS u1 ON u1.daily_streak < u.daily_streak WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY u1.daily_streak DESC LIMIT 2;';
-		sql +=
-			'SELECT id,daily_streak ,(SELECT COUNT(*)+1 FROM cowoncy WHERE daily_streak > u.daily_streak AND id IN (' +
-			users +
-			') ) AS rank FROM cowoncy u WHERE u.id = ' +
-			msg.author.id +
-			';';
-	}
+	let users = globalRank ? null : global.getids(msg.channel.guild.members);
+	let sql = `
+		SELECT id, daily_streak
+		FROM cowoncy 
+		WHERE daily_streak > (
+			SELECT daily_streak FROM cowoncy WHERE id = ${p.msg.author.id}
+		)
+			${globalRank ? '' : `AND id IN (${users})`}
+		ORDER BY daily_streak ASC LIMIT 2;
+	`;
+	sql += `
+		SELECT id, daily_streak
+		FROM cowoncy 
+		WHERE daily_streak < (
+			SELECT daily_streak FROM cowoncy WHERE id = ${p.msg.author.id}
+		)
+			${globalRank ? '' : `AND id IN (${users})`}
+		ORDER BY daily_streak DESC LIMIT 2;
+	`;
+	sql += `
+		SELECT id, daily_streak, (
+			SELECT COUNT(*)+1
+			FROM cowoncy
+			WHERE daily_streak > u.daily_streak
+				${globalRank ? '' : `AND cowoncy.id IN (${users})`}
+		) AS rank
+		FROM cowoncy u
+		WHERE u.id = ${p.msg.author.id};
+	`;
 
 	displayRanking(
 		con,
@@ -972,93 +846,6 @@ function getDailyRanking(globalRank, con, msg, p) {
 		p
 	);
 }
-
-const points =
-	'(common*' +
-	animals.points.common +
-	'+' +
-	'uncommon*' +
-	animals.points.uncommon +
-	'+' +
-	'rare*' +
-	animals.points.rare +
-	'+' +
-	'epic*' +
-	animals.points.epic +
-	'+' +
-	'mythical*' +
-	animals.points.mythical +
-	'+' +
-	'special*' +
-	animals.points.special +
-	'+' +
-	'patreon*' +
-	animals.points.patreon +
-	'+' +
-	'cpatreon*' +
-	animals.points.cpatreon +
-	'+' +
-	'hidden*' +
-	animals.points.hidden +
-	'+' +
-	'gem*' +
-	animals.points.gem +
-	'+' +
-	'distorted*' +
-	animals.points.distorted +
-	'+' +
-	'bot*' +
-	animals.points.bot +
-	'+' +
-	'legendary*' +
-	animals.points.legendary +
-	'+' +
-	'fabled*' +
-	animals.points.fabled +
-	')';
-const apoints =
-	'(a.common*' +
-	animals.points.common +
-	'+' +
-	'a.uncommon*' +
-	animals.points.uncommon +
-	'+' +
-	'a.rare*' +
-	animals.points.rare +
-	'+' +
-	'a.epic*' +
-	animals.points.epic +
-	'+' +
-	'a.mythical*' +
-	animals.points.mythical +
-	'+' +
-	'a.special*' +
-	animals.points.special +
-	'+' +
-	'a.patreon*' +
-	animals.points.patreon +
-	'+' +
-	'a.cpatreon*' +
-	animals.points.cpatreon +
-	'+' +
-	'a.hidden*' +
-	animals.points.hidden +
-	'+' +
-	'a.gem*' +
-	animals.points.gem +
-	'+' +
-	'a.distorted*' +
-	animals.points.distorted +
-	'+' +
-	'a.bot*' +
-	animals.points.bot +
-	'+' +
-	'a.legendary*' +
-	animals.points.legendary +
-	'+' +
-	'a.fabled*' +
-	animals.points.fabled +
-	')';
 
 async function getLevelRanking(global, p) {
 	let userRank, userLevel, ranking, text;
@@ -1109,7 +896,7 @@ async function getLevelRanking(global, p) {
 			} else {
 				let user = await p.fetch.getUser(ranking[i]);
 				if (!user) user = 'User Left Discord';
-				else user = p.getUniquename(user);
+				else user = p.getUniqueName(user);
 				text += '#' + counter + '\t' + user + '\n';
 			}
 			counter++;
@@ -1132,59 +919,35 @@ async function getLevelRanking(global, p) {
 }
 
 function getShardRanking(globalRank, con, msg, p) {
-	let sql;
-	let table = 'user u INNER JOIN shards s ON u.uid = s.uid';
-	let table2 = 'user u2 INNER JOIN shards s2 ON u2.uid = s2.uid';
-	if (globalRank) {
-		sql =
-			'SELECT u.id,s.count, u1.id,u1.count FROM ' +
-			table +
-			' LEFT JOIN ( SELECT id,s2.count FROM ' +
-			table2 +
-			' ORDER BY s2.count ASC ) AS u1 ON u1.count > s.count WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY s.count ASC LIMIT 2;';
-		sql +=
-			'SELECT u.id,s.count, u1.id,u1.count FROM ' +
-			table +
-			' LEFT JOIN ( SELECT id,s2.count FROM ' +
-			table2 +
-			' ORDER BY s2.count DESC ) AS u1 ON u1.count < s.count WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY s.count DESC LIMIT 2;';
-		sql +=
-			'SELECT id,s.count,(SELECT COUNT(*)+1 FROM shards INNER JOIN user ON user.uid = shards.uid WHERE shards.count > s.count ) AS rank FROM shards s INNER JOIN user u ON u.uid = s.uid WHERE u.id = ' +
-			msg.author.id +
-			';';
-	} else {
-		let users = global.getids(msg.channel.guild.members);
-		sql =
-			'SELECT u.id,s.count, u1.id,u1.count FROM ' +
-			table +
-			' LEFT JOIN ( SELECT id,s2.count FROM ' +
-			table2 +
-			' WHERE id IN (' +
-			users +
-			') ORDER BY s2.count ASC ) AS u1 ON u1.count > s.count WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY s.count ASC LIMIT 2;';
-		sql +=
-			'SELECT u.id,s.count, u1.id,u1.count FROM ' +
-			table +
-			' LEFT JOIN ( SELECT id,s2.count FROM ' +
-			table2 +
-			' WHERE id IN (' +
-			users +
-			') ORDER BY s2.count DESC ) AS u1 ON u1.count < s.count WHERE u.id = ' +
-			msg.author.id +
-			' ORDER BY s.count DESC LIMIT 2;';
-		sql +=
-			'SELECT id,s.count,(SELECT COUNT(*)+1 FROM shards INNER JOIN user ON user.uid = shards.uid WHERE id IN (' +
-			users +
-			') AND shards.count > s.count ) AS rank FROM shards s INNER JOIN user u ON u.uid = s.uid WHERE u.id = ' +
-			msg.author.id +
-			';';
-	}
+	let users = globalRank ? null : global.getids(msg.channel.guild.members);
+	let sql = `
+		SELECT u.id, s.count 
+		FROM shards s INNER JOIN user u ON s.uid = u.uid
+		WHERE s.count > (
+			SELECT s2.count FROM shards s2 INNER JOIN user u2 ON s2.uid = u2.uid WHERE u2.id = ${p.msg.author.id}
+		)
+			${globalRank ? '' : `AND u.id IN (${users})`}
+		ORDER BY s.count ASC LIMIT 2;
+	`;
+	sql += `
+		SELECT u.id, s.count 
+		FROM shards s INNER JOIN user u ON s.uid = u.uid
+		WHERE s.count < (
+			SELECT s2.count FROM shards s2 INNER JOIN user u2 ON s2.uid = u2.uid WHERE u2.id = ${p.msg.author.id}
+		)
+			${globalRank ? '' : `AND u.id IN (${users})`}
+		ORDER BY s.count DESC LIMIT 2;
+	`;
+	sql += `
+		SELECT u.id, s.count, (
+			SELECT COUNT(*)+1
+			FROM shards s2 INNER JOIN user u2 ON s2.uid = u2.uid
+			WHERE s2.count > s.count
+				${globalRank ? '' : `AND u2.id IN (${users})`}
+		) AS rank
+		FROM shards s INNER JOIN user u ON s.uid = u.uid
+		WHERE u.id = ${p.msg.author.id};
+	`;
 
 	displayRanking(
 		con,
@@ -1193,6 +956,93 @@ function getShardRanking(globalRank, con, msg, p) {
 		(globalRank ? 'Global ' : '') + 'Weapon Shard Ranking',
 		function (query) {
 			return '\t\tShards: ' + global.toFancyNum(query.count);
+		},
+		p
+	);
+}
+
+function getTTRanking(globalRank, con, msg, p, tt) {
+	let wid;
+	const weaponRegex = new RegExp('^w\d{3}$', 'g');
+	if (/^w\d{3}$/gi.test(tt)) {
+		wid = parseInt(tt.substring(1)) - 100;
+	}
+	let users = globalRank ? null : global.getids(msg.channel.guild.members);
+	let sql = `
+		SELECT
+			u.id,
+			uwk.kills, uw.wid, uw.uwid, uw.avg, uw.wear
+		FROM user_weapon_kills uwk
+			LEFT JOIN user_weapon uw ON uwk.uwid = uw.uwid
+			LEFT JOIN user u ON uw.uid = u.uid
+		WHERE kills > (
+			SELECT uwk2.kills
+			FROM user_weapon_kills uwk2
+				LEFT JOIN user_weapon uw2 ON uwk2.uwid = uw2.uwid
+				LEFT JOIN user u2 ON uw2.uid = u2.uid
+			WHERE u2.id = ${p.msg.author.id}
+				${wid ? `AND uw2.wid = ${wid}` : ''}
+			ORDER by uwk2.kills DESC LIMIT 1
+		)
+			${globalRank ? '' : `AND u.id IN (${users})`}
+			${wid ? `AND uw.wid = ${wid}` : ''}
+		ORDER BY kills ASC LIMIT 2;
+	`;
+	sql += `
+		SELECT
+			u.id,
+			uwk.kills, uw.wid, uw.uwid, uw.avg, uw.wear
+		FROM user_weapon_kills uwk
+			LEFT JOIN user_weapon uw ON uwk.uwid = uw.uwid
+			LEFT JOIN user u ON uw.uid = u.uid
+		WHERE kills < (
+			SELECT uwk2.kills
+			FROM user_weapon_kills uwk2
+				LEFT JOIN user_weapon uw2 ON uwk2.uwid = uw2.uwid
+				LEFT JOIN user u2 ON uw2.uid = u2.uid
+			WHERE u2.id = ${p.msg.author.id}
+				${wid ? `AND uw2.wid = ${wid}` : ''}
+			ORDER by uwk2.kills DESC LIMIT 1
+		)
+			${globalRank ? '' : `AND u.id IN (${users})`}
+				${wid ? `AND uw.wid = ${wid}` : ''}
+		ORDER BY kills DESC LIMIT 2;
+	`;
+	sql += `
+		SELECT
+			uwk.kills,
+			uw.wid, uw.uwid, uw.avg, uw.wear,
+			u.id,
+			(SELECT COUNT(*) + 1
+				FROM user_weapon_kills
+					LEFT JOIN user_weapon ON user_weapon.uwid = user_weapon_kills.uwid
+					LEFT JOIN user ON user_weapon.uid = user.uid
+				WHERE user_weapon_kills.kills > uwk.kills
+					${globalRank ? '' : `AND user.id IN (${users})`}
+					${wid ? `AND user_weapon.wid = ${wid}` : ''}
+			) AS rank
+		FROM user_weapon_kills uwk
+			LEFT JOIN user_weapon uw ON uwk.uwid = uw.uwid
+			LEFT JOIN user u ON uw.uid = u.uid
+		WHERE u.id = ${p.msg.author.id}
+			${wid ? `AND wid = ${wid}` : ''}
+		ORDER BY uwk.kills DESC
+		LIMIT 1;
+	`;
+
+	displayRanking(
+		con,
+		msg,
+		sql,
+		(globalRank ? 'Global ' : '') + 'Weapon Takedown Ranking',
+		function (query) {
+			const weaponName = WeaponInterface.weapons[`${query.wid}`].getName;
+			const uwid = weaponUtil.shortenUWID(query.uwid);
+			const wear = query.wear > 1 ? WeaponInterface.getWear(query.wear).name + ' ' : '';
+			const kills = query.kills;
+			const avg = query.avg;
+
+			return `\t\t[${global.toFancyNum(query.kills)}][${uwid}] ${avg}% ${wear}${weaponName}`;
 		},
 		p
 	);
