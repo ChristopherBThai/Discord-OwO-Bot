@@ -193,7 +193,7 @@ function createContent(p, oldWeapon, newWeapon) {
 			icon_url: p.msg.author.dynamicAvatarURL(),
 		},
 		footer: {
-			text: `Reroll Changes: ${newWeapon.rrCount} | Reroll Attempts: ${newWeapon.rrAttempt}`
+			text: `Reroll Changes: ${newWeapon.rrCount} | Reroll Attempts: ${newWeapon.rrAttempt}`,
 		},
 		color: p.config.embed_color,
 		fields: [parseDescription('[CURRENT]', oldWeapon), parseDescription('[NEW]', newWeapon)],
