@@ -342,14 +342,16 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	/* Query all weapons */
 	let sql = `SELECT
 			temp.*,
-			user_weapon_passive.wpid, user_weapon_passive.pcount, user_weapon_passive.stat as pstat,
-			uwk.uwid as tt, uwk.kills
+			user_weapon_passive.wpid, user_weapon_passive.pcount, user_weapon_passive.stat as pstat
 		FROM
-			(SELECT user_weapon.uwid, user_weapon.wid, user_weapon.stat, user_weapon.rrcount, user_weapon.rrattempt, user_weapon.wear, user_weapon.favorite,
-			  animal.name, animal.nickname
+			(SELECT
+				user_weapon.uwid, user_weapon.wid, user_weapon.stat, user_weapon.rrcount, user_weapon.rrattempt, user_weapon.wear, user_weapon.favorite,
+			  animal.name, animal.nickname,
+				uwk.uwid as tt, uwk.kills
 			FROM  user
 				INNER JOIN user_weapon ON user.uid = user_weapon.uid
 				LEFT JOIN animal ON animal.pid = user_weapon.pid
+				LEFT JOIN user_weapon_kills uwk ON user_weapon.uwid = uwk.uwid
 			WHERE
 				user.id = ${user.id} `;
 	if (wid) {
@@ -362,13 +364,14 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	if (sort === 'rarity') sql += 'user_weapon.avg DESC,';
 	else if (sort === 'type') sql += 'user_weapon.wid DESC, user_weapon.avg DESC,';
 	else if (sort === 'equipped') sql += 'user_weapon.pid DESC,';
-	else if (sort === 'favorite') sql += 'user_weapon.favorite DESC,';
+	else if (sort === 'favorite') sql += 'user_weapon.favorite DESC, user_weapon.avg DESC,';
+	else if (sort === 'tt') sql += 'uwk.kills DESC,';
+	else if (sort === 'wear') sql += 'user_weapon.wear DESC, user_weapon.avg DESC,';
 
 	sql += ` user_weapon.uwid DESC
 			LIMIT ${weaponPerPage}
 			OFFSET ${page * weaponPerPage}) temp
 		LEFT JOIN user_weapon_passive ON temp.uwid = user_weapon_passive.uwid
-		LEFT JOIN user_weapon_kills uwk ON temp.uwid = uwk.uwid
 	;`;
 	sql += `SELECT COUNT(uwid) as count FROM user
 			INNER JOIN user_weapon ON user.uid = user_weapon.uid
@@ -472,6 +475,8 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	else if (sort === 'type') embed.footer.text += 'Sorting by type';
 	else if (sort === 'equipped') embed.footer.text += 'Sorting by equipped';
 	else if (sort === 'favorite') embed.footer.text += 'Sorting by favorited';
+	else if (sort === 'tt') embed.footer.text += 'Sorting by takedown tracker';
+	else if (sort === 'wear') embed.footer.text += 'Sorting by wear';
 
 	embed = alterWeapon.alter(user.id, embed, {
 		...opt,
@@ -526,8 +531,20 @@ function getDisplayComponents(showExtraButtons, sort, widList = []) {
 						{
 							label: 'Equipped',
 							value: 'equipped',
-							description: 'Show equipped weapons',
+							description: 'Sort by equipped weapons',
 							default: sort === 'equipped',
+						},
+						{
+							label: 'Takedown Tracker',
+							value: 'tt',
+							description: 'Sort by takedown tracker kills',
+							default: sort === 'tt',
+						},
+						{
+							label: 'Wear',
+							value: 'wear',
+							description: 'Sort by wear',
+							default: sort === 'wear',
 						},
 					],
 				},
@@ -671,6 +688,9 @@ exports.describe = async function (p, uwid) {
 			url: url,
 		},
 		description: desc,
+		footer: {
+			text: `Reroll Changes: ${weapon.rrCount} | Reroll Attempts: ${weapon.rrAttempt}`
+		},
 	};
 	if (user) {
 		embed.author.icon_url = user.avatarURL;

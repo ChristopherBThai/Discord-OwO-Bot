@@ -26,13 +26,13 @@ const wearInfo = {
 		name: 'Pristine',
 		id: 4,
 		chance: 0.01,
-		buff: 3,
+		buff: 5,
 	},
 	'fine': {
 		name: 'Fine',
 		id: 3,
 		chance: 0.05,
-		buff: 2,
+		buff: 3,
 	},
 	'decent': {
 		name: 'Decent',
