@@ -13,16 +13,8 @@ const animalUtil2 = require('../zoo/animalUtil.js');
 const levels = require('../../../utils/levels.js');
 const WeaponInterface = require('../battle/WeaponInterface.js');
 const weaponUtil = require('../battle/util/weaponUtil.js');
-let animals;
-try {
-	animals = require('../../../../../tokens/owo-animals.json');
-} catch (err) {
-	console.error('Could not find owo-animals.json, attempting to use ./secret file...');
-	animals = require('../../../../secret/owo-animals.json');
-	console.log('Found owo-animals.json file in secret folder!');
-}
 
-const weaponArgs = Object.keys(WeaponInterface.weapons).map(id => {
+const weaponArgs = Object.keys(WeaponInterface.weapons).map((id) => {
 	return 'w' + (100 + parseInt(id));
 });
 
@@ -41,7 +33,7 @@ module.exports = new CommandInterface({
 
 	group: ['rankings'],
 
-	cooldown: 0000,
+	cooldown: 60000,
 	half: 20,
 	six: 200,
 	bot: true,
@@ -128,7 +120,10 @@ async function display(p, con, msg, args) {
 				args[i] === 'weaponshard'
 			)
 				shard = true;
-			else if (['tt', 'takedown', 'takdowntracker', 'tracker', 'weapon', 'w'].includes(args[i]) || weaponArgs.includes(args[i]))
+			else if (
+				['tt', 'takedown', 'takdowntracker', 'tracker', 'weapon', 'w'].includes(args[i]) ||
+				weaponArgs.includes(args[i])
+			)
 				tt = args[i];
 			else if (args[i] === 'global' || args[i] === 'g') globala = true;
 			else if (global.isInt(args[i])) count = parseInt(args[i]);
@@ -840,7 +835,6 @@ function getShardRanking(globalRank, con, msg, count, p) {
  */
 function getTTRanking(globalRank, con, msg, count, p, tt) {
 	let wid;
-	const weaponRegex = new RegExp('^w\d{3}$', 'g');
 	if (/^w\d{3}$/gi.test(tt)) {
 		wid = parseInt(tt.substring(1)) - 100;
 	}
@@ -929,8 +923,9 @@ function getTTRanking(globalRank, con, msg, count, p, tt) {
 			const kills = query.kills;
 			const avg = query.avg;
 
-			if (rank == 0) return `>\t\t[${global.toFancyNum(query.kills)}][${uwid}] ${avg}% ${wear}${weaponName}\n\n`;
-			else return `\n\t\t[${global.toFancyNum(query.kills)}][${uwid}] ${avg}% ${wear}${weaponName}\n`;
+			if (rank == 0)
+				return `>\t\t[${global.toFancyNum(kills)}][${uwid}] ${avg}% ${wear}${weaponName}\n\n`;
+			else return `\n\t\t[${global.toFancyNum(kills)}][${uwid}] ${avg}% ${wear}${weaponName}\n`;
 		},
 		p
 	);

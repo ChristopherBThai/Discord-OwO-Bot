@@ -689,7 +689,7 @@ exports.describe = async function (p, uwid) {
 		},
 		description: desc,
 		footer: {
-			text: `Reroll Changes: ${weapon.rrCount} | Reroll Attempts: ${weapon.rrAttempt}`
+			text: `Reroll Changes: ${weapon.rrCount} | Reroll Attempts: ${weapon.rrAttempt}`,
 		},
 	};
 	if (user) {
@@ -930,9 +930,9 @@ let sellRank = (exports.sellRank = async function (p, rankLoc) {
 			LEFT JOIN user_weapon a ON user.uid = a.uid
 			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
 			LEFT JOIN user_weapon_kills c ON a.uwid = c.uwid
-		WHERE user.id = ${p.msg.author.id} AND avg >${
-		min === 0 ? '=' : ''
-	} ${min} ${lastRank ? '' : `AND avg <= ${max}`} AND a.pid IS NULL AND a.favorite != 1 LIMIT 500;`;
+		WHERE user.id = ${p.msg.author.id} AND avg >${min === 0 ? '=' : ''} ${min} ${
+		lastRank ? '' : `AND avg <= ${max}`
+	} AND a.pid IS NULL AND a.favorite != 1 LIMIT 500;`;
 
 	let result = await p.query(sql);
 

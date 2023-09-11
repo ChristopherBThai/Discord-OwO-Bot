@@ -5,7 +5,12 @@
  * For more information, see README.md and LICENSE
  */
 
-const whitelist = ['409959187229966337', '420104212895105044', '552384921914572802', '1149820261168849006'];
+const whitelist = [
+	'409959187229966337',
+	'420104212895105044',
+	'552384921914572802',
+	'1149820261168849006',
+];
 const levels = require('../utils/levels.js');
 /* eslint-disable-next-line */
 const blacklist = require('../utils/blacklist.js');
