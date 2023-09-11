@@ -157,13 +157,13 @@ async function dismantleRank(p, rankLoc) {
 	result = await p.query(sql);
 
 	/* Check if deleted */
-	if (result[1].affectedRows == 0) {
+	if (result[2].affectedRows == 0) {
 		p.errorMsg(', you do not have a weapon with this id!', 3000);
 		return;
 	}
 
 	/* calculate rewards */
-	price *= result[1].affectedRows;
+	price *= result[2].affectedRows;
 
 	sql = `INSERT INTO shards (uid,count) VALUES (${uid},${price}) ON DUPLICATE KEY UPDATE count = count + ${price};`;
 	result = await p.query(sql);
@@ -225,14 +225,12 @@ async function dismantleId(p, uwid) {
 		WHERE id = ${p.msg.author.id}
 			AND user_weapon_passive.uwid = ${uwid}
 			AND user_weapon.pid IS NULL;`;
-	if (weapon.hasTakedownTracker) {
-		sql += `DELETE user_weapon_kills FROM user
-			LEFT JOIN user_weapon ON user.uid = user_weapon.uid
-			LEFT JOIN user_weapon_kills ON user_weapon.uwid = user_weapon_kills.uwid
-			WHERE id = ${p.msg.author.id}
-				AND user_weapon_kills.uwid = ${uwid}
-				AND user_weapon.pid IS NULL;`;
-	}
+	sql += `DELETE user_weapon_kills FROM user
+		LEFT JOIN user_weapon ON user.uid = user_weapon.uid
+		LEFT JOIN user_weapon_kills ON user_weapon.uwid = user_weapon_kills.uwid
+		WHERE id = ${p.msg.author.id}
+			AND user_weapon_kills.uwid = ${uwid}
+			AND user_weapon.pid IS NULL;`;
 	sql += `DELETE user_weapon FROM user
 		LEFT JOIN user_weapon ON user.uid = user_weapon.uid
 		WHERE id = ${p.msg.author.id}
@@ -241,7 +239,7 @@ async function dismantleId(p, uwid) {
 	let result = await p.query(sql);
 
 	/* Check if deleted */
-	if (result[1].affectedRows == 0) {
+	if (result[2].affectedRows == 0) {
 		p.errorMsg(', you do not have a weapon with this id!', 3000);
 		return;
 	}

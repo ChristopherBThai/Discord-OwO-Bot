@@ -857,14 +857,12 @@ exports.sell = async function (p, uwid) {
 		WHERE id = ${p.msg.author.id}
 			AND user_weapon_passive.uwid = ${uwid}
 			AND user_weapon.pid IS NULL;`;
-	if (weapon.hasTakedownTracker) {
-		sql += `DELETE user_weapon_kills FROM user
-			LEFT JOIN user_weapon ON user.uid = user_weapon.uid
-			LEFT JOIN user_weapon_kills ON user_weapon.uwid = user_weapon_kills.uwid
-			WHERE id = ${p.msg.author.id}
-				AND user_weapon_kills.uwid = ${uwid}
-				AND user_weapon.pid IS NULL;`;
-	}
+	sql += `DELETE user_weapon_kills FROM user
+		LEFT JOIN user_weapon ON user.uid = user_weapon.uid
+		LEFT JOIN user_weapon_kills ON user_weapon.uwid = user_weapon_kills.uwid
+		WHERE id = ${p.msg.author.id}
+			AND user_weapon_kills.uwid = ${uwid}
+			AND user_weapon.pid IS NULL;`;
 	sql += `DELETE user_weapon FROM user
 		LEFT JOIN user_weapon ON user.uid = user_weapon.uid
 		WHERE id = ${p.msg.author.id}
@@ -874,7 +872,7 @@ exports.sell = async function (p, uwid) {
 	let result = await p.query(sql);
 
 	/* Check if deleted */
-	if (result[1].affectedRows == 0) {
+	if (result[2].affectedRows == 0) {
 		p.errorMsg(', you do not have a weapon with this id!', 3000);
 		return;
 	}
@@ -901,6 +899,7 @@ let sellRank = (exports.sellRank = async function (p, rankLoc) {
 	}
 	min *= 100;
 	max *= 100;
+	let lastRank = rankLoc == WeaponInterface.ranks.length - 1;
 
 	/* Grab the item we will sell */
 	let sql = `SELECT
@@ -913,7 +912,7 @@ let sellRank = (exports.sellRank = async function (p, rankLoc) {
 			LEFT JOIN user_weapon_kills c ON a.uwid = c.uwid
 		WHERE user.id = ${p.msg.author.id} AND avg >${
 		min === 0 ? '=' : ''
-	} ${min} AND avg <= ${max} AND a.pid IS NULL AND a.favorite != 1 LIMIT 500;`;
+	} ${min} ${lastRank ? '' : `AND avg <= ${max}`} AND a.pid IS NULL AND a.favorite != 1 LIMIT 500;`;
 
 	let result = await p.query(sql);
 
@@ -974,13 +973,13 @@ let sellRank = (exports.sellRank = async function (p, rankLoc) {
 	result = await p.query(sql);
 
 	/* Check if deleted */
-	if (result[1].affectedRows == 0) {
+	if (result[2].affectedRows == 0) {
 		p.errorMsg(', you do not have a weapon with this id!', 3000);
 		return;
 	}
 
 	/* calculate rewards */
-	price *= result[1].affectedRows;
+	price *= result[2].affectedRows;
 
 	/* Give cowoncy */
 	sql = `UPDATE cowoncy SET money = money + ${price} WHERE id = ${p.msg.author.id}`;
