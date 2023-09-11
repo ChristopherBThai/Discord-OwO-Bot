@@ -11,6 +11,8 @@ const global = require('../../../utils/global.js');
 const animalUtil = require('../battle/util/animalUtil.js');
 const animalUtil2 = require('../zoo/animalUtil.js');
 const levels = require('../../../utils/levels.js');
+const WeaponInterface = require('../battle/WeaponInterface.js');
+const weaponUtil = require('../battle/util/weaponUtil.js');
 let animals;
 try {
 	animals = require('../../../../../tokens/owo-animals.json');
@@ -20,10 +22,14 @@ try {
 	console.log('Found owo-animals.json file in secret folder!');
 }
 
+const weaponArgs = Object.keys(WeaponInterface.weapons).map(id => {
+	return 'w' + (100 + parseInt(id));
+});
+
 module.exports = new CommandInterface({
 	alias: ['top', 'rank', 'ranking'],
 
-	args: 'points|guild|zoo|money|cookie|pet|huntbot|luck|curse|battle|daily|level|shard [global] {count}',
+	args: 'points|guild|zoo|money|cookie|pet|huntbot|luck|curse|battle|daily|level|shard|w|w{wid} [global] {count}',
 
 	desc: 'Displays the top ranking of each category!',
 
@@ -35,7 +41,7 @@ module.exports = new CommandInterface({
 
 	group: ['rankings'],
 
-	cooldown: 60000,
+	cooldown: 0000,
 	half: 20,
 	six: 200,
 	bot: true,
@@ -61,7 +67,7 @@ async function display(p, con, msg, args) {
 	let zoo = false;
 	let rep = false;
 	let pet = false;
-	let huntbot, luck, curse, daily, battle, level, shard;
+	let huntbot, luck, curse, daily, battle, level, shard, tt;
 
 	let invalid = false;
 	let count = 5;
@@ -80,7 +86,8 @@ async function display(p, con, msg, args) {
 			!daily &&
 			!battle &&
 			!level &&
-			!shard
+			!shard &&
+			!tt
 		) {
 			if (args[i] === 'points' || args[i] === 'point' || args[i] === 'p') points = true;
 			else if (args[i] === 'guild' || args[i] === 'server' || args[i] === 's' || args[i] === 'g')
@@ -121,6 +128,8 @@ async function display(p, con, msg, args) {
 				args[i] === 'weaponshard'
 			)
 				shard = true;
+			else if (['tt', 'takedown', 'takdowntracker', 'tracker', 'weapon', 'w'].includes(args[i]) || weaponArgs.includes(args[i]))
+				tt = args[i];
 			else if (args[i] === 'global' || args[i] === 'g') globala = true;
 			else if (global.isInt(args[i])) count = parseInt(args[i]);
 			else invalid = true;
@@ -147,6 +156,7 @@ async function display(p, con, msg, args) {
 		else if (daily) getDailyRanking(globala, con, msg, count, p);
 		else if (level) await getLevelRanking(globala, p, count);
 		else if (shard) getShardRanking(globala, con, msg, count, p);
+		else if (tt) getTTRanking(globala, con, msg, count, p, tt);
 		else getRanking(globala, con, msg, count, p);
 	}
 }
@@ -238,47 +248,21 @@ function getRanking(globalRank, con, msg, count, p) {
  * displays zoo ranking
  */
 function getZooRanking(globalRank, con, msg, count, p) {
-	let sql;
-	if (globalRank) {
-		sql =
-			'SELECT *,' +
-			points +
-			' AS points FROM animal_count ORDER BY points DESC LIMIT ' +
-			count +
-			';';
-		sql +=
-			'SELECT *,' +
-			points +
-			' AS points,(SELECT COUNT(*)+1 FROM animal_count WHERE ' +
-			points +
-			' > ' +
-			apoints +
-			' ) AS rank FROM animal_count a WHERE a.id = ' +
-			msg.author.id +
-			';';
-	} else {
-		let users = global.getids(msg.channel.guild.members);
-		sql =
-			'SELECT *,' +
-			points +
-			' AS points FROM animal_count WHERE id IN (' +
-			users +
-			') ORDER BY points DESC LIMIT ' +
-			count +
-			';';
-		sql +=
-			'SELECT *,' +
-			points +
-			' AS points,(SELECT COUNT(*)+1 FROM animal_count WHERE ' +
-			points +
-			' > ' +
-			apoints +
-			' AND id IN (' +
-			users +
-			')) AS rank FROM animal_count a WHERE a.id = ' +
-			msg.author.id +
-			';';
-	}
+	let users = globalRank ? null : global.getids(msg.channel.guild.members);
+	let sql = `SELECT *
+		FROM animal_count
+		${globalRank ? '' : `WHERE id IN (${users})`}
+		ORDER BY total DESC
+		LIMIT ${count};`;
+	sql += `SELECT *,
+			(
+				SELECT COUNT(*) + 1
+				FROM animal_count
+				WHERE total > a.total
+					${globalRank ? '' : `AND id IN (${users})`}
+			) AS rank
+		FROM animal_count a
+		WHERE a.id = ${p.msg.author.id};`;
 
 	displayRanking(
 		con,
@@ -294,7 +278,7 @@ function getZooRanking(globalRank, con, msg, count, p) {
 			if (rank == 0)
 				return (
 					'>\t\t' +
-					global.toFancyNum(query.points) +
+					global.toFancyNum(query.total) +
 					' zoo points: ' +
 					animalUtil2.zooScore(query) +
 					'\n\n'
@@ -302,7 +286,7 @@ function getZooRanking(globalRank, con, msg, count, p) {
 			else
 				return (
 					'\n\t\t' +
-					global.toFancyNum(query.points) +
+					global.toFancyNum(query.total) +
 					' zoo points: ' +
 					animalUtil2.zooScore(query) +
 					'\n'
@@ -845,95 +829,109 @@ function getShardRanking(globalRank, con, msg, count, p) {
 				: 'Weapon Shard Rankings for ' + msg.channel.guild.name),
 		function (query, rank) {
 			if (rank == 0) return '>\t\tShards: ' + global.toFancyNum(query.count) + '\n\n';
-			else return '\n\tShards: ' + global.toFancyNum(query.count) + '\n';
+			else return '\n\t\tShards: ' + global.toFancyNum(query.count) + '\n';
 		},
 		p
 	);
 }
 
-const points =
-	'(common*' +
-	animals.points.common +
-	'+' +
-	'uncommon*' +
-	animals.points.uncommon +
-	'+' +
-	'rare*' +
-	animals.points.rare +
-	'+' +
-	'epic*' +
-	animals.points.epic +
-	'+' +
-	'mythical*' +
-	animals.points.mythical +
-	'+' +
-	'special*' +
-	animals.points.special +
-	'+' +
-	'patreon*' +
-	animals.points.patreon +
-	'+' +
-	'cpatreon*' +
-	animals.points.cpatreon +
-	'+' +
-	'hidden*' +
-	animals.points.hidden +
-	'+' +
-	'gem*' +
-	animals.points.gem +
-	'+' +
-	'distorted*' +
-	animals.points.distorted +
-	'+' +
-	'bot*' +
-	animals.points.bot +
-	'+' +
-	'legendary*' +
-	animals.points.legendary +
-	'+' +
-	'fabled*' +
-	animals.points.fabled +
-	')';
-const apoints =
-	'(a.common*' +
-	animals.points.common +
-	'+' +
-	'a.uncommon*' +
-	animals.points.uncommon +
-	'+' +
-	'a.rare*' +
-	animals.points.rare +
-	'+' +
-	'a.epic*' +
-	animals.points.epic +
-	'+' +
-	'a.mythical*' +
-	animals.points.mythical +
-	'+' +
-	'a.special*' +
-	animals.points.special +
-	'+' +
-	'a.patreon*' +
-	animals.points.patreon +
-	'+' +
-	'a.cpatreon*' +
-	animals.points.cpatreon +
-	'+' +
-	'a.hidden*' +
-	animals.points.hidden +
-	'+' +
-	'a.gem*' +
-	animals.points.gem +
-	'+' +
-	'a.distorted*' +
-	animals.points.distorted +
-	'+' +
-	'a.bot*' +
-	animals.points.bot +
-	'+' +
-	'a.legendary*' +
-	animals.points.legendary +
-	'+' +
-	'a.fabled*' +
-	animals.points.fabled +
-	')';
+/**
+ * displays weapon ranking
+ */
+function getTTRanking(globalRank, con, msg, count, p, tt) {
+	let wid;
+	const weaponRegex = new RegExp('^w\d{3}$', 'g');
+	if (/^w\d{3}$/gi.test(tt)) {
+		wid = parseInt(tt.substring(1)) - 100;
+	}
+	let sql;
+	if (globalRank) {
+		sql = `
+			SELECT
+				uwk.kills,
+				uw.wid, uw.uwid, uw.avg, uw.wear,
+				u.id
+			FROM user_weapon_kills uwk
+				LEFT JOIN user_weapon uw ON uwk.uwid = uw.uwid
+				LEFT JOIN user u ON uw.uid = u.uid
+			${wid ? `WHERE wid = ${wid}` : ''}
+			ORDER BY uwk.kills DESC
+			LIMIT ${count};
+		`;
+		sql += `
+			SELECT
+				uwk.kills,
+				uw.wid, uw.uwid, uw.avg, uw.wear,
+				u.id,
+				(SELECT COUNT(*) + 1 FROM user_weapon_kills WHERE user_weapon_kills.kills > uwk.kills) AS rank
+			FROM user_weapon_kills uwk
+				LEFT JOIN user_weapon uw ON uwk.uwid = uw.uwid
+				LEFT JOIN user u ON uw.uid = u.uid
+			WHERE u.id = ${p.msg.author.id}
+				${wid ? `AND wid = ${wid}` : ''}
+			ORDER BY uwk.kills DESC
+			LIMIT 1;
+		`;
+	} else {
+		let users = global.getids(msg.channel.guild.members);
+		sql = `
+			SELECT
+				uwk.kills,
+				uw.wid, uw.uwid, uw.avg, uw.wear,
+				u.id
+			FROM user_weapon_kills uwk
+				LEFT JOIN user_weapon uw ON uwk.uwid = uw.uwid
+				LEFT JOIN user u ON uw.uid = u.uid
+			WHERE u.id IN (${users})
+				${wid ? `AND wid = ${wid}` : ''}
+			ORDER BY uwk.kills DESC
+			LIMIT ${count};
+		`;
+		sql += `
+			SELECT
+				uwk.kills,
+				uw.wid, uw.uwid, uw.avg, uw.wear,
+				u.id,
+				(SELECT COUNT(*) + 1
+					FROM user_weapon_kills
+						LEFT JOIN user_weapon ON user_weapon.uwid = user_weapon_kills.uwid
+						LEFT JOIN user ON user_weapon.uid = user.uid
+					WHERE user_weapon_kills.kills > uwk.kills
+						AND user.id IN (${users})
+						${wid ? `AND user_weapon.wid = ${wid}` : ''}
+				) AS rank
+			FROM user_weapon_kills uwk
+				LEFT JOIN user_weapon uw ON uwk.uwid = uw.uwid
+				LEFT JOIN user u ON uw.uid = u.uid
+			WHERE u.id = ${p.msg.author.id}
+				${wid ? `AND wid = ${wid}` : ''}
+			ORDER BY uwk.kills DESC
+			LIMIT 1;
+		`;
+	}
+
+	displayRanking(
+		con,
+		msg,
+		count,
+		globalRank,
+		sql,
+		'Top ' +
+			count +
+			' ' +
+			(globalRank
+				? 'Global Weapon Takedown Rankings'
+				: 'Weapon Takedown Rankings for ' + msg.channel.guild.name),
+		function (query, rank) {
+			const weaponName = WeaponInterface.weapons[`${query.wid}`].getName;
+			const uwid = weaponUtil.shortenUWID(query.uwid);
+			const wear = query.wear > 1 ? WeaponInterface.getWear(query.wear).name + ' ' : '';
+			const kills = query.kills;
+			const avg = query.avg;
+
+			if (rank == 0) return `>\t\t[${global.toFancyNum(query.kills)}][${uwid}] ${avg}% ${wear}${weaponName}\n\n`;
+			else return `\n\t\t[${global.toFancyNum(query.kills)}][${uwid}] ${avg}% ${wear}${weaponName}\n`;
+		},
+		p
+	);
+}
