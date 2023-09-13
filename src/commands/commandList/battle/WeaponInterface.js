@@ -835,9 +835,10 @@ module.exports = class WeaponInterface {
 		for (let i in this.passives) {
 			let passive = this.passives[i];
 			let stat = passive.sqlStat;
-			let pcount = passive.pcount;
 			let wpid = passive.id;
-			sql += `UPDATE user_weapon_passive SET stat = '${stat}', wpid = ${wpid} WHERE uwid = ${this.ruwid} AND pcount = ${pcount};`;
+
+			sql += `INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES (${this.ruwid}, ${i}, ${wpid}, '${stat}')
+					ON DUPLICATE KEY UPDATE uwid = VALUES(uwid), pcount = VALUES(pcount), wpid = VALUES(wpid), stat = VALUES(stat);`;
 		}
 
 		let result = await mysql.query(sql);
