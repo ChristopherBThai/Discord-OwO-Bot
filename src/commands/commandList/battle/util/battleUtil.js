@@ -37,7 +37,7 @@ setInterval(() => {
 
 exports.getRandomPgid = async function () {
 	const rand = minPgid + Math.floor(Math.random() * (maxPgid - minPgid));
-	const sql = `SELECT pgid FROM pet_team WHERE pgid >= ${rand} limit 1;`;
+	const sql = `SELECT pt.pgid FROM pet_team pt LEFT JOIN pet_team_animal pta ON pt.pgid = pta.pgid WHERE pt.pgid >= ${rand} AND pta.pgid IS NOT NULL limit 1;`;
 	const result = await this.query(sql);
 	if (!result[0]) return 0;
 	return result[0].pgid;
