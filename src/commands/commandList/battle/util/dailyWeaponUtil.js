@@ -50,7 +50,7 @@ const getDailyWeapons = (exports.getDailyWeapons = async function (p) {
 		let weapon = WeaponInterface.weapons[weaponJson.wid];
 		weapon = new weapon(passives, weaponJson.qualities, null, {
 			wear: weaponJson.wear || 0,
-			hasTT: weaponJson.hasTT,
+			hasTT: weaponJson.hasTT || false,
 		});
 		weapon.shopID = i;
 		weapon.shardPrice = markupPrices[weapon.rank.name];
@@ -145,7 +145,7 @@ exports.buy = async function (p, id) {
 	let weapon = WeaponInterface.weapons[weaponJson.wid];
 	weapon = new weapon(passives, weaponJson.qualities, null, {
 		wear: weaponJson.wear || 0,
-		hasTT: weaponJson.hasTT,
+		hasTT: weaponJson.hasTT || false,
 	});
 	weapon.shopID = id;
 	weapon.shardPrice = markupPrices[weapon.rank.name];
