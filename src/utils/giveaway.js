@@ -29,8 +29,9 @@ const maxTime = 3 * 24 * 60 * 60 * 1000;
 const minTime = 6 * 60 * 60 * 1000;
 const maxWinners = 50;
 const minWinners = 5;
+const giveawayLogChannel = '1155790018598682624';
 
-async function createGiveaway(channelId) {
+async function createGiveaway(channelId, user, useTicket) {
 	const { endDate, diff } = getEndDate();
 	const giveaway = {
 		channelId: channelId,
@@ -39,10 +40,24 @@ async function createGiveaway(channelId) {
 		winners: minWinners + Math.floor(Math.random() * (maxWinners - minWinners)),
 	};
 
-	await saveGiveaway(giveaway);
+	if (await giveawayExistsInChannel(channelId)) {
+		this.errorMsg(', a giveaway already exists in this channel!');
+		return;
+	}
+	const result = await saveGiveaway.bind(this)(giveaway, user, useTicket);
+	if (!result) return;
 	createGiveawayTimeout(channelId, diff);
 	const msg = await sendMessage(giveaway);
 	await saveMsgId(channelId, msg);
+
+	let logText = `${this.config.emoji.gift} **| ${this.getUniqueName(
+		user
+	)}** created a giveaway in ${channelId}`;
+	if (channelId === this.msg.channel.id) {
+		logText += `\n${this.config.emoji.blank} **| Channel:** [${this.msg.channel.id}] ${this.msg.channel.name}`;
+		logText += `\n${this.config.emoji.blank} **| Guild:** [${this.msg.channel.guild.id}] ${this.msg.channel.guild.name}`;
+	}
+	this.sender.msgChannel(giveawayLogChannel, logText);
 }
 exports.createGiveaway = createGiveaway;
 
@@ -67,6 +82,12 @@ exports.giveawayExists = async function (channelId, userId) {
 		uid: result[0].uid,
 	};
 };
+
+async function giveawayExistsInChannel(channelId) {
+	let sql = `SELECT * FROM giveaway WHERE cid = ${channelId} AND active >= 1`;
+	let result = await mysql.query(sql);
+	return !!result[0];
+}
 
 exports.addUser = async function (channelId, uid) {
 	let sql = `INSERT IGNORE INTO user_giveaway (cid, uid) VALUES (${channelId}, ${uid}); `;
@@ -160,6 +181,9 @@ async function selectWinners(channelId) {
 	if (config.giveawayChannels.includes(channelId)) {
 		createGiveaway(channelId);
 	}
+
+	let logText = `${config.emoji.gift} **|** Giveaway ended in ${channelId} with ${winners.length} winner(s).`;
+	sender.msgChannel(giveawayLogChannel, logText);
 }
 
 function createGiveawayTimeout(channelId, diff) {
@@ -183,7 +207,7 @@ function parseRewards(rewardString) {
 	});
 }
 
-async function saveGiveaway({ channelId, winners, rewards, endDate }) {
+async function saveGiveaway({ channelId, winners, rewards, endDate }, user, useTicket) {
 	let rewardSql = rewards
 		.map((i) => {
 			return i.id + ':' + i.count;
@@ -194,7 +218,38 @@ async function saveGiveaway({ channelId, winners, rewards, endDate }) {
 		ON DUPLICATE KEY UPDATE
 			rewards = VALUES(rewards), endDate = VALUES(endDate), winners = VALUES(winners), active = 1; `;
 	sql += `DELETE FROM user_giveaway WHERE cid = ${channelId};`;
-	await mysql.query(sql);
+
+	let ticketSql = `UPDATE user_item
+				INNER JOIN user ON user_item.uid = user.uid
+			SET user_item.count = user_item.count - 1
+			WHERE user.id = ${user.id}
+				AND user_item.count >= 1
+				AND user_item.name = 'giveaway_tickets';`;
+
+	const con = await mysql.startTransaction();
+	try {
+		if (useTicket) {
+			let result = await con.query(ticketSql);
+			if (!result.changedRows) {
+				await con.rollback();
+				try {
+					await this?.errorMsg(`, you don't have a **Giveaway Ticket**!`, 3000);
+				} catch (err) {
+					console.log(err);
+					/* empty */
+				}
+				return;
+			}
+		}
+		await con.query(sql);
+		await con.commit();
+		return true;
+	} catch (err) {
+		console.error(err);
+		con.rollback();
+		this?.errorMsg(', failed to use item.', 3000);
+		return;
+	}
 }
 
 async function createMessage(
