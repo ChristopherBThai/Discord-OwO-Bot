@@ -15,7 +15,7 @@ module.exports = class Stinky extends BuffInterface {
 		this.name = 'Stinky';
 		this.debuff = true;
 		this.emoji = '<:stinky:1154636430937698364>';
-		this.statDesc = `Prevents any future buffs *AND* debuffs to be applied to this animal. On success, deal **?%** ${WeaponInterface.magEmoji}MAG to the animal.`;
+		this.statDesc = `Prevents any future buffs *AND* debuffs to be applied to this animal *AND* removes any existing ones. On successly preventing or removing a buff, deal **?%** ${WeaponInterface.magEmoji}MAG to the animal.`;
 		this.qualityList = [[20, 50]];
 	}
 
