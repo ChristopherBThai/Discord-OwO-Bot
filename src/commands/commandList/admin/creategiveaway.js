@@ -15,6 +15,6 @@ module.exports = new CommandInterface({
 	manager: true,
 
 	execute: async function () {
-		await this.giveaway.createGiveaway(this.msg.channel.id);
+		await this.giveaway.createGiveaway.bind(this)(this.msg.channel.id, this.msg.author, false);
 	},
 });
