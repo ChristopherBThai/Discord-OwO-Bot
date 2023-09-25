@@ -74,7 +74,7 @@ module.exports = class PDagger extends WeaponInterface {
 			enemies: enemy,
 		});
 		let buff = this.getBuffs(me)[0];
-		buff.bind(attacking, 3, { me, allies: team, enemies: enemy });
+		buff.attemptBind(attacking, 3, { me, allies: team, enemies: enemy });
 		logs.push(
 			`[PDAG] ${me.nickname} damaged ${attacking.nickname} for ${damage.amount} HP and applied poison`,
 			damage.logs

@@ -74,7 +74,7 @@ module.exports = class FStaff extends WeaponInterface {
 			enemies: enemy,
 		});
 		let buff = this.getBuffs(me)[0];
-		let buffLogs = buff.bind(attacking, 3, {
+		let buffLogs = buff.attemptBind(attacking, 3, {
 			me,
 			allies: team,
 			enemies: enemy,

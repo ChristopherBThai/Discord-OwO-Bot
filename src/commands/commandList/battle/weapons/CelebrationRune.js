@@ -56,7 +56,7 @@ module.exports = class CRune extends WeaponInterface {
 
 		/* Grab buff and bind it to our animal */
 		let buff = this.getBuffs(me)[0];
-		let buffLogs = buff.bind(lowest, 3, {
+		let buffLogs = buff.attemptBind(lowest, 3, {
 			me: me,
 			allies: team,
 			enemies: enemy,

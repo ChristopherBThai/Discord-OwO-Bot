@@ -74,7 +74,7 @@ module.exports = class SpiritStaff extends WeaponInterface {
 				subLogs.push(hl.logs);
 				// Apply buff
 				let buff = this.getBuffs(me)[0];
-				let buffLogs = buff.bind(team[i], 2, {
+				let buffLogs = buff.attemptBind(team[i], 2, {
 					me: team[i],
 					allies: team,
 					enemies: enemy,

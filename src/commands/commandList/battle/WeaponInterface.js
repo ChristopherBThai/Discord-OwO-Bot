@@ -960,6 +960,18 @@ module.exports = class WeaponInterface {
 	static setWeaponUtil(util) {
 		weaponUtil = util;
 	}
+
+	getBonusXPPassive() {
+		let bonus = 0;
+		for (let i in this.passives) {
+			const passive = this.passives[i];
+			// Knowledge passive
+			if (passive.id === 21) {
+				bonus += passive.stats[0] / 100;
+			}
+		}
+		return bonus;
+	}
 };
 
 const passiveDir = requireDir('./passives');

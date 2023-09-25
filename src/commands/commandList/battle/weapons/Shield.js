@@ -59,7 +59,7 @@ module.exports = class Shield extends WeaponInterface {
 
 		/* Grab buff and bind it to our animal */
 		let buff = this.getBuffs(animal)[0];
-		let buffLogs = buff.bind(animal, 2, {
+		let buffLogs = buff.attemptBind(animal, 2, {
 			me: animal,
 			allies: ally,
 			enemies: enemy,

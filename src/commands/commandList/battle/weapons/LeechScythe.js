@@ -69,7 +69,7 @@ module.exports = class LeechingScythe extends WeaponInterface {
 		if (attacking.buffs.findIndex((buff) => buff.id === this.buffList[0]) < 0) {
 			appliedLeech = true;
 			let buff = this.getBuffs(me)[0];
-			buffLogs = buff.bind(attacking, 3, {
+			buffLogs = buff.attemptBind(attacking, 3, {
 				me,
 				allies: team,
 				enemies: enemy,
