@@ -63,7 +63,7 @@ module.exports = class PassiveInterface {
 			count += ranks[i];
 			if (quality <= count) return this.emojis[i];
 		}
-		return this.emojis[0];
+		return this.emojis[6];
 	}
 
 	toStats(qualities) {

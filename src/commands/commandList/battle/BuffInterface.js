@@ -6,6 +6,7 @@
  */
 /* eslint-disable no-unused-vars */
 const Tags = require('./util/tags.js');
+const Logs = require('./util/logUtil.js');
 const WeaponInterface = require('./WeaponInterface.js');
 
 module.exports = class BuffInterface {
@@ -68,6 +69,36 @@ module.exports = class BuffInterface {
 		}
 		return stats;
 	}
+
+	attemptBind(animal, duration, tags) {
+		if (!(tags instanceof Tags)) {
+			tags = new Tags({
+				me: tags.me,
+				allies: tags.allies,
+				enemies: tags.enemies,
+			});
+		}
+
+		let logs = new Logs();
+		let preLogs = new Logs();
+		let dontBind = false;
+
+		for (let i in animal.buffs) {
+			const preBindResult = animal.buffs[i].preBind(animal, duration, tags, this) || {};
+			dontBind = dontBind || preBindResult.dontBind;
+			preLogs.push(preBindResult.logs);
+		}
+
+		if (!dontBind) {
+			logs.push(this.bind(animal, duration, tags));
+		}
+
+		logs.push(preLogs);
+		return logs;
+	}
+
+	/* before buff is binded */
+	preBind(animal, duration, tags) {}
 
 	/* Bind this buff to an animal */
 	bind(animal, duration, tags) {

@@ -41,13 +41,13 @@ module.exports = class Flame extends BuffInterface {
 			if (animal.buffs[i].id == this.id && !animal.buffs[i].markedForDeath) {
 				animal.buffs[i].markedForDeath = true;
 				let damage = WeaponInterface.getDamage(this.from.stats.mag, this.stats[1] / 100);
-				tags.add('flame', animal);
+				const tagsCopy = tags.copyAdd('flame', animal);
 				damage = WeaponInterface.inflictDamage(
 					this.from,
 					animal,
 					damage,
 					WeaponInterface.MAGICAL,
-					tags
+					tagsCopy
 				);
 				logs.push(
 					`[FLAME] Exploded and damaged ${animal.nickname} for ${damage.amount} HP`,

@@ -79,7 +79,7 @@ module.exports = class GlacialAxe extends WeaponInterface {
 			enemies: enemy,
 		});
 		let buff = this.getBuffs(me)[0];
-		let buffLogs = buff.bind(attacking, 2, {
+		let buffLogs = buff.attemptBind(attacking, 2, {
 			me,
 			allies: team,
 			enemies: enemy,

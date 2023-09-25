@@ -484,6 +484,7 @@ exports.giveXP = async function (p, team, xp) {
 		let lvl = team.team[i].stats.lvl;
 		if (lvl < highestLvl) mult = 2 + (highestLvl - lvl) / 10;
 		if (mult > 10) mult = 10;
+		mult += team.team[i].weapon?.getBonusXPPassive() || 0;
 		cases += ` WHEN animal.pid = ${team.team[i].pid} THEN ${Math.round(total * mult)}`;
 	}
 
