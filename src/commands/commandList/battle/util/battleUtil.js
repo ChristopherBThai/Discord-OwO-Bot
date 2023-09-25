@@ -15,7 +15,7 @@ const weapon = '🗡';
 exports.weapon = weapon;
 const stopStreak = {
 	start: 1684652400000,
-	end: 1685430000000,
+	end: 1696143600000,
 };
 
 let minPgid = 0;
