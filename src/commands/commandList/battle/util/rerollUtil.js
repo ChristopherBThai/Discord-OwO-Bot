@@ -25,6 +25,11 @@ exports.reroll = async function (p) {
 	let weapon = await getWeapon(p, uwid);
 	if (!weapon) return;
 
+	if (weapon.disableRR) {
+		p.errorMsg(', you cannot reroll this weapon!', 3000);
+		return;
+	}
+
 	// Check if enough shards
 	if (!(await useShards(p))) {
 		p.errorMsg(
