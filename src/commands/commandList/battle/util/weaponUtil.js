@@ -770,9 +770,16 @@ exports.equip = async function (p, uwid, pet) {
 
 	let sql = `UPDATE user_weapon SET pid = NULL WHERE pid = ${pid} AND uid = ${uid};`;
 	sql += `UPDATE user_weapon SET pid = ${pid} WHERE uid = ${uid} AND uwid = ${uwid};`;
-	const result = await p.query(sql);
-
-	if (result[1].changedRows <= 0 && result[1].affectedRows <= 0) {
+	const con = await p.startTransaction();
+	try {
+		const result = await con.query(sql);
+		if (result[1].changedRows <= 0 && result[1].affectedRows <= 0) {
+			await con.rollback();
+			return;
+		}
+		await con.commit();
+	} catch (err) {
+		con.rollback();
 		return;
 	}
 
