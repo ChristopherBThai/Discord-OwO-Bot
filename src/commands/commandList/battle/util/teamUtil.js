@@ -394,7 +394,6 @@ const createTeamEmbed = (exports.createTeamEmbed = function (p, team, other = {}
 					body += `[${weapon.kills}] `;
 				}
 				body += `${weapon.avgQuality}%`;
-				
 			}
 		}
 		fields.push({ name: title, value: body, inline: true });
