@@ -24,12 +24,12 @@ exports.alter = async function (p, id, text, info) {
 };
 
 async function checkDb(p, id, text, info) {
-	const type = "display";
+	const type = 'display';
 	const replacers = {
 		username: p.getName(info.user),
 		discriminator: info.user.discriminator,
 		blank: p.config.emoji.blank,
-		amount: info.money
+		amount: info.money,
 	};
 
 	return alterUtils.getAlterCommand('altercowoncy', info.user, type, replacers);

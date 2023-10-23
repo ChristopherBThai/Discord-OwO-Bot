@@ -64,7 +64,7 @@ async function checkSender(user, amount, con) {
 				error: `, you can only send **${this.global.toFancyNum(diff)}** more cowoncy today!`,
 				limit: this.global.toFancyNum(result[0].send),
 				limit_diff: this.global.toFancyNum(diff),
-				senderlimit: true
+				senderlimit: true,
 			};
 		} else {
 			return {

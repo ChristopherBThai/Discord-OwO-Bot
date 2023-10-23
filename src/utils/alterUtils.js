@@ -7,7 +7,7 @@
 const mysql = require('../botHandlers/mysqlHandler.js');
 const global = require('./global.js');
 
-exports.getAlterCommand = async function(dbName, user, type, replacers, appendText) {
+exports.getAlterCommand = async function (dbName, user, type, replacers, appendText) {
 	const sql = `SELECT ${dbName}.* from ${dbName} INNER JOIN user ON ${dbName}.uid = user.uid WHERE user.id = ${user.id} AND ${dbName}.type = '${type}'`;
 	console.log(sql);
 	const result = (await mysql.query(sql))[0];
@@ -44,4 +44,4 @@ exports.getAlterCommand = async function(dbName, user, type, replacers, appendTe
 	}
 
 	return content;
-}
+};
