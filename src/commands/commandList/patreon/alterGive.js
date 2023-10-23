@@ -11,7 +11,13 @@ const blank = '<:blank:427371936482328596>';
 exports.alter = async function (p, id, text, info) {
 	const result = await checkDb(p, info);
 	if (result) return result;
-	if (info.senderlimit || info.senderoverlimit || info.receivelimit || info.receiveoverlimit || info.none) {
+	if (
+		info.senderlimit ||
+		info.senderoverlimit ||
+		info.receivelimit ||
+		info.receiveoverlimit ||
+		info.none
+	) {
 		return;
 	}
 	switch (id) {
@@ -50,7 +56,7 @@ function checkDb(p, info) {
 	let type, replacers;
 	let user = info.from;
 	if (info.receiver) {
-		type = "receive";
+		type = 'receive';
 		replacers = {
 			sender: p.getName(info.from),
 			sender_tag: p.getTag(info.from),
@@ -58,10 +64,10 @@ function checkDb(p, info) {
 			receiver_tag: p.getTag(info.to),
 			blank: p.config.emoji.blank,
 			amount: info.amount,
-		}
+		};
 		user = info.to;
 	} else if (info.none) {
-		type = "none";
+		type = 'none';
 		replacers = {
 			sender: p.getName(info.from),
 			sender_tag: p.getTag(info.from),
@@ -69,9 +75,9 @@ function checkDb(p, info) {
 			receiver_tag: p.getTag(info.to),
 			blank: p.config.emoji.blank,
 			amount: info.amount,
-		}
+		};
 	} else if (info.senderlimit) {
-		type = "senderlimit";
+		type = 'senderlimit';
 		replacers = {
 			sender: p.getName(info.from),
 			sender_tag: p.getTag(info.from),
@@ -81,9 +87,9 @@ function checkDb(p, info) {
 			limit: info.limit,
 			limit_diff: info.limit_diff,
 			amount: info.amount,
-		}
+		};
 	} else if (info.senderoverlimit) {
-		type = "senderoverlimit";
+		type = 'senderoverlimit';
 		replacers = {
 			sender: p.getName(info.from),
 			sender_tag: p.getTag(info.from),
@@ -92,9 +98,9 @@ function checkDb(p, info) {
 			blank: p.config.emoji.blank,
 			limit: info.limit,
 			amount: info.amount,
-		}
+		};
 	} else if (info.receivelimit) {
-		type = "receivelimit";
+		type = 'receivelimit';
 		replacers = {
 			sender: p.getName(info.from),
 			sender_tag: p.getTag(info.from),
@@ -104,9 +110,9 @@ function checkDb(p, info) {
 			limit: info.limit,
 			limit_diff: info.limit_diff,
 			amount: info.amount,
-		}
+		};
 	} else if (info.receiveoverlimit) {
-		type = "receiveoverlimit";
+		type = 'receiveoverlimit';
 		replacers = {
 			sender: p.getName(info.from),
 			sender_tag: p.getTag(info.from),
@@ -115,9 +121,9 @@ function checkDb(p, info) {
 			blank: p.config.emoji.blank,
 			limit: info.limit,
 			amount: info.amount,
-		}
+		};
 	} else {
-		type = "give";
+		type = 'give';
 		replacers = {
 			sender: p.getName(info.from),
 			sender_tag: p.getTag(info.from),
@@ -125,7 +131,7 @@ function checkDb(p, info) {
 			receiver_tag: p.getTag(info.to),
 			blank: p.config.emoji.blank,
 			amount: info.amount,
-		}
+		};
 	}
 
 	return alterUtils.getAlterCommand('altergive', user, type, replacers);

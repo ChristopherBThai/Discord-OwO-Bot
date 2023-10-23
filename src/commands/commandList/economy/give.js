@@ -104,7 +104,7 @@ async function sendMoney(user, amount, message) {
 				from: this.msg.author,
 				to: user,
 				amount: this.global.toFancyNum(amount),
-				...canGive
+				...canGive,
 			});
 			if (text) {
 				if (text.embed) {
@@ -130,7 +130,7 @@ async function sendMoney(user, amount, message) {
 				from: this.msg.author,
 				to: user,
 				amount: this.global.toFancyNum(amount),
-				none: true
+				none: true,
 			});
 			if (text) {
 				if (text.embed) {
@@ -293,18 +293,18 @@ async function confirmation(user, amount) {
 async function checkLimit(user, amount) {
 	const canGive = await cowoncyUtils.canGive.bind(this)(this.msg.author, user, amount, this);
 	if (canGive.error) {
-			const text = await alterGive.alter(this, this.msg.author.id, null, {
-				from: this.msg.author,
-				to: user,
-				amount: this.global.toFancyNum(amount),
-				...canGive
-			});
-			if (text) {
-				this.send(text);
-			} else {
-				this.errorMsg(canGive.error);
-			}
-			return false;
+		const text = await alterGive.alter(this, this.msg.author.id, null, {
+			from: this.msg.author,
+			to: user,
+			amount: this.global.toFancyNum(amount),
+			...canGive,
+		});
+		if (text) {
+			this.send(text);
+		} else {
+			this.errorMsg(canGive.error);
 		}
+		return false;
+	}
 	return true;
 }
