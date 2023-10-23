@@ -43,7 +43,7 @@ module.exports = new CommandInterface({
 		const message = await confirmation.bind(this)(user, amount);
 		if (!message) return;
 
-		if (!(await sendMoney.bind(this)(user, amount))) return;
+		if (!(await sendMoney.bind(this)(user, amount, message))) return;
 
 		await sendMsg.bind(this)(user, amount, message);
 
@@ -95,12 +95,26 @@ async function parseArgs() {
 	return { user, amount };
 }
 
-async function sendMoney(user, amount) {
+async function sendMoney(user, amount, message) {
 	const con = await this.startTransaction();
 	try {
 		const canGive = await cowoncyUtils.canGive.bind(this)(this.msg.author, user, amount, con);
 		if (canGive.error) {
-			this.errorMsg(canGive.error);
+			const text = await alterGive.alter(this, this.msg.author.id, null, {
+				from: this.msg.author,
+				to: user,
+				amount: this.global.toFancyNum(amount),
+				...canGive
+			});
+			if (text) {
+				if (text.embed) {
+					message.edit({ content: '', embed: text.embed, components: [] });
+				} else {
+					message.edit({ content: text, embed: null, components: [] });
+				}
+			} else {
+				this.errorMsg(canGive.error);
+			}
 			await con.rollback();
 			return false;
 		}
@@ -112,7 +126,21 @@ async function sendMoney(user, amount) {
 		let result = await con.query(sql);
 
 		if (!result[0].changedRows) {
-			this.errorMsg(", you silly hooman! You don't have enough cowoncy!", 3000);
+			const text = await alterGive.alter(this, this.msg.author.id, null, {
+				from: this.msg.author,
+				to: user,
+				amount: this.global.toFancyNum(amount),
+				none: true
+			});
+			if (text) {
+				if (text.embed) {
+					message.edit({ content: '', embed: text.embed, components: [] });
+				} else {
+					message.edit({ content: text, embed: null, components: [] });
+				}
+			} else {
+				this.errorMsg(", you silly hooman! You don't have enough cowoncy!", 3000);
+			}
 			await con.rollback();
 			return false;
 		}
@@ -131,7 +159,7 @@ async function sendMsg(user, amount, message) {
 	let text = `**💳 | ${this.getTag()}** sent **${this.global.toFancyNum(
 		amount
 	)} cowoncy** to **${this.getTag(user)}**!`;
-	text = alterGive.alter(this, this.msg.author.id, text, {
+	text = await alterGive.alter(this, this.msg.author.id, text, {
 		from: this.msg.author,
 		to: user,
 		amount: this.global.toFancyNum(amount),
@@ -265,8 +293,18 @@ async function confirmation(user, amount) {
 async function checkLimit(user, amount) {
 	const canGive = await cowoncyUtils.canGive.bind(this)(this.msg.author, user, amount, this);
 	if (canGive.error) {
-		this.errorMsg(canGive.error);
-		return false;
-	}
+			const text = await alterGive.alter(this, this.msg.author.id, null, {
+				from: this.msg.author,
+				to: user,
+				amount: this.global.toFancyNum(amount),
+				...canGive
+			});
+			if (text) {
+				this.send(text);
+			} else {
+				this.errorMsg(canGive.error);
+			}
+			return false;
+		}
 	return true;
 }

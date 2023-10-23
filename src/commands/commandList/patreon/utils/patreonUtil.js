@@ -22,3 +22,21 @@ exports.giveCustomHunt = async function (p, id) {
 		((SELECT uid FROM user WHERE id = ${id}), 'nogems');`;
 	await p.query(sql);
 };
+
+exports.giveCustomCowoncy = async function (p, id) {
+	const sql = `INSERT INTO altercowoncy (uid, type) VALUES
+		((SELECT uid FROM user WHERE id = ${id}), 'display');`;
+	await p.query(sql);
+};
+
+exports.giveCustomGive = async function (p, id) {
+	const sql = `INSERT INTO altergive (uid, type) VALUES
+		((SELECT uid FROM user WHERE id = ${id}), 'give'),
+		((SELECT uid FROM user WHERE id = ${id}), 'none'),
+		((SELECT uid FROM user WHERE id = ${id}), 'senderlimit'),
+		((SELECT uid FROM user WHERE id = ${id}), 'senderoverlimit'),
+		((SELECT uid FROM user WHERE id = ${id}), 'receivelimit'),
+		((SELECT uid FROM user WHERE id = ${id}), 'receiveoverlimit'),
+		((SELECT uid FROM user WHERE id = ${id}), 'receive');`;
+	await p.query(sql);
+};

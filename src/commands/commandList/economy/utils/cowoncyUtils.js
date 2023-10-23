@@ -29,6 +29,7 @@ async function checkSender(user, amount, con) {
 	if (!result[0] || result[0].money < amount) {
 		return {
 			error: ", you silly hooman! You don't have enough cowoncy!",
+			none: true,
 		};
 	}
 
@@ -39,6 +40,8 @@ async function checkSender(user, amount, con) {
 		if (amount > limit) {
 			return {
 				error: `, you can only send **${this.global.toFancyNum(limit)}** more cowoncy today!`,
+				limit: this.global.toFancyNum(limit),
+				senderlimit: true,
 			};
 		}
 		return {
@@ -51,16 +54,23 @@ async function checkSender(user, amount, con) {
 			error: `, you already hit your daily cowoncy give limit of: **${this.global.toFancyNum(
 				result[0].send
 			)}**`,
+			limit: this.global.toFancyNum(result[0].send),
+			senderoverlimit: true,
 		};
 	} else if (result[0].send + amount > limit) {
 		const diff = limit - result[0].send;
 		if (diff > 0) {
 			return {
 				error: `, you can only send **${this.global.toFancyNum(diff)}** more cowoncy today!`,
+				limit: this.global.toFancyNum(result[0].send),
+				limit_diff: this.global.toFancyNum(diff),
+				senderlimit: true
 			};
 		} else {
 			return {
 				error: ', you cannot send any more cowoncy today.',
+				limit: this.global.toFancyNum(result[0].send),
+				senderoverlimit: true,
 			};
 		}
 	}
@@ -84,6 +94,8 @@ async function checkReceiver(user, amount, con) {
 				error: `, **${user.username}** can only receive **${this.global.toFancyNum(
 					limit
 				)}** more cowoncy today!`,
+				limit: this.global.toFancyNum(limit),
+				receivelimit: true,
 			};
 		}
 		return {
@@ -98,6 +110,8 @@ async function checkReceiver(user, amount, con) {
 			}** has already received the daily receive limit of: **${this.global.toFancyNum(
 				result[0].receive
 			)}**`,
+			limit: this.global.toFancyNum(result[0].receive),
+			receiveoverlimit: true,
 		};
 	} else if (result[0].receive + amount > limit) {
 		const diff = limit - result[0].receive;
@@ -106,10 +120,15 @@ async function checkReceiver(user, amount, con) {
 				error: `, **${user.username}** can only receive **${this.global.toFancyNum(
 					diff
 				)}** more cowoncy today!`,
+				limit: this.global.toFancyNum(result[0].receive),
+				limit_diff: this.global.toFancyNum(diff),
+				receivelimit: true,
 			};
 		} else {
 			return {
 				error: `, **${user.username}** cannot receive any more cowoncy today.`,
+				limit: this.global.toFancyNum(result[0].receive),
+				receiveoverlimit: true,
 			};
 		}
 	}
