@@ -67,7 +67,7 @@ function lexus(text, type) {
 			return text;
 		case 'progress':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, lunajump)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, lunajump)
 				.replace(
 					'BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN',
 					'Bork! I am still looking for friends. I will be back in'
@@ -77,11 +77,11 @@ function lexus(text, type) {
 				.replace('ANIMALS CAPTURED', 'friends made!');
 			return text;
 		case 'password':
-			text = text.replace(/<:[a-z]bot:[0-9]+>/gi, lunajump);
+			text = text.replace(/<a?:[a-z]bot:[0-9]+>/gi, lunajump);
 			return text;
 		case 'spent':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, lunawave)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, lunawave)
 				.replace('BEEP BOOP.', 'Arf!')
 				.replace('YOU SPENT', 'you spent')
 				.replace('I WILL BE BACK IN', 'I will be back in')
@@ -92,7 +92,7 @@ function lexus(text, type) {
 			return text;
 		case 'returned':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, lunawave)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, lunawave)
 				.replace('BEEP BOOP. I AM BACK WITH', 'Woof! I am back with')
 				.replace('ANIMALS', 'friends')
 				.replace('ESSENCE, AND', 'essence, and')
@@ -120,7 +120,7 @@ function shippig(text, type) {
 			return text;
 		case 'progress':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, '<a:roonyoom:566536940846055444>')
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, '<a:roonyoom:566536940846055444>')
 				.replace(
 					'BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN',
 					'Roo is still kidnapping and will be back in'
@@ -130,11 +130,11 @@ function shippig(text, type) {
 				.replace('ANIMALS CAPTURED', 'animals captured!');
 			return text;
 		case 'password':
-			text = text.replace(/<:[a-z]bot:[0-9]+>/gi, '<:pandabag:566537378303311872>');
+			text = text.replace(/<a?:[a-z]bot:[0-9]+>/gi, '<:pandabag:566537378303311872>');
 			return text;
 		case 'spent':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, '<a:roosellout:566537379670786048>')
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, '<a:roosellout:566537379670786048>')
 				.replace('`BEEP BOOP. `', '')
 				.replace('YOU SPENT', 'you payed roo')
 				.replace('I WILL BE BACK IN', 'and will be back in')
@@ -145,7 +145,7 @@ function shippig(text, type) {
 			return text;
 		case 'returned':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, '<:pandabag:566537378303311872>')
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, '<:pandabag:566537378303311872>')
 				.replace('BEEP BOOP. I AM BACK WITH', 'Roo kidnapped')
 				.replace('ANIMALS', 'animals')
 				.replace('ESSENCE, AND', 'essence, and')
@@ -201,7 +201,7 @@ function spotifybot(text, type) {
 			return text;
 		case 'progress':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, spotify)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, spotify)
 				.replace(
 					'BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN',
 					'Oops! Looks like the SPOTIFY Playlist is incomplete.`\n<:blank:427371936482328596> **|** `NEW SONGS ADDED IN'
@@ -209,18 +209,18 @@ function spotifybot(text, type) {
 				.replace('ANIMALS CAPTURED', 'SONGS ADDED!');
 			return text;
 		case 'password':
-			text = text.replace(/<:[a-z]bot:[0-9]+>/gi, spotify);
+			text = text.replace(/<a?:[a-z]bot:[0-9]+>/gi, spotify);
 			return text;
 		case 'spent':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, spotify)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, spotify)
 				.replace('`BEEP BOOP. `', '')
 				.replace('cowoncy', 'cowoncy AND GOT Spotify Premium!')
 				.replace('ANIMALS', 'SONGS');
 			return text;
 		case 'returned':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, spotify)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, spotify)
 				.replace('BEEP BOOP. I AM', 'SPOTIFY Playlist is ready! I AM')
 				.replace('ANIMALS', 'SONGS');
 			return text;
@@ -294,7 +294,7 @@ function elsa(text, type) {
 			return text;
 		case 'progress':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, shiryu1)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, shiryu1)
 				.replace(
 					'BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN',
 					"I'm still gathering knights. I'll be back in"
@@ -303,11 +303,11 @@ function elsa(text, type) {
 				.replace('ANIMALS CAPTURED', 'knights found');
 			return text;
 		case 'password':
-			text = text.replace(/<:[a-z]bot:[0-9]+>/gi, shiryu1);
+			text = text.replace(/<a?:[a-z]bot:[0-9]+>/gi, shiryu1);
 			return text;
 		case 'spent':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, shiryu1)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, shiryu1)
 				.replace(
 					/BEEP BOOP\. `\*\*`[^`]+`\*\*`, YOU SPENT/gi,
 					'As you wish, my mistress. You spent'
@@ -320,7 +320,7 @@ function elsa(text, type) {
 			return text;
 		case 'returned':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, shiryu2)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, shiryu2)
 				.replace('BEEP BOOP. I AM BACK WITH', 'Mistress, I have returned with')
 				.replace('ANIMALS', 'knights')
 				.replace('ESSENCE, AND', 'essence, and')
@@ -378,15 +378,15 @@ function dalu(text, type) {
 			return text;
 		case 'progress':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, foxbot)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, foxbot)
 				.replace('BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN', 'Estimated time to be back:');
 			return text;
 		case 'password':
-			text = text.split('\n')[0].replace(/<:[a-z]bot:[0-9]+>/gi, foxbot);
+			text = text.split('\n')[0].replace(/<a?:[a-z]bot:[0-9]+>/gi, foxbot);
 			return text;
 		case 'spent':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, foxbot)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, foxbot)
 				.replace('`BEEP BOOP. `', '')
 				.replace('YOU SPENT', 'you spent')
 				.replace('I WILL BE BACK IN', 'I will be back soon in')
@@ -398,7 +398,7 @@ function dalu(text, type) {
 			return text;
 		case 'returned':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, foxbot)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, foxbot)
 				.replace('BEEP BOOP. I AM BACK WITH', 'I am back with')
 				.replace('ANIMALS', 'animals')
 				.replace('AND', 'and')
@@ -442,7 +442,7 @@ function rikudou(text, type) {
 			return text;
 		case 'progress':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, emoji2)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, emoji2)
 				.replace(
 					'BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN',
 					'Sorry, Rikudou is still out on a mission! You may request Rikudou for another mission at a later time.`\n' +
@@ -451,11 +451,11 @@ function rikudou(text, type) {
 				);
 			return text;
 		case 'password':
-			text = text.split('\n')[0].replace(/<:[a-z]bot:[0-9]+>/gi, emoji1);
+			text = text.split('\n')[0].replace(/<a?:[a-z]bot:[0-9]+>/gi, emoji1);
 			return text;
 		case 'spent':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, emoji3)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, emoji3)
 				.replace('`BEEP BOOP. `', '')
 				.replace('YOU SPENT', 'you spent')
 				.replace('I WILL BE BACK IN', 'I will be back in')
@@ -467,7 +467,7 @@ function rikudou(text, type) {
 			return text;
 		case 'returned':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, emoji1)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, emoji1)
 				.replace('BEEP BOOP. I AM BACK WITH', 'I am back with')
 				.replace('ANIMALS', 'ninjas')
 				.replace('AND', 'and')
@@ -496,7 +496,7 @@ function kuma(text, type) {
 			return text;
 		case 'progress':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, bear)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, bear)
 				.replace(
 					'BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN',
 					"I'm still collecting minions, master. I'll be back in"
@@ -505,11 +505,11 @@ function kuma(text, type) {
 				.replace('ANIMALS CAPTURED', 'minions recruited');
 			return text;
 		case 'password':
-			text = text.split('\n')[0].replace(/<:[a-z]bot:[0-9]+>/gi, bear);
+			text = text.split('\n')[0].replace(/<a?:[a-z]bot:[0-9]+>/gi, bear);
 			return text;
 		case 'spent':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, bear)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, bear)
 				.replace('`BEEP BOOP. `', '')
 				.replace('YOU SPENT', 'you spent')
 				.replace('I WILL BE BACK IN', 'I will be back in')
@@ -521,7 +521,7 @@ function kuma(text, type) {
 			return text;
 		case 'returned':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, bear)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, bear)
 				.replace('BEEP BOOP. I AM BACK WITH', 'I am back with')
 				.replace('ANIMALS', 'minions')
 				.replace('AND', 'and')
@@ -588,7 +588,7 @@ function spotifybot2(text, type) {
 			return text;
 		case 'progress':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, rainbow)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, rainbow)
 				.replace(
 					'BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN',
 					'Awww.. ROSS isn’t done getting new friends yet!`\n' +
@@ -598,18 +598,18 @@ function spotifybot2(text, type) {
 				.replace('ANIMALS CAPTURED', 'FRIENDS ADDED');
 			return text;
 		case 'password':
-			text = text.split('\n')[0].replace(/<:[a-z]bot:[0-9]+>/gi, rainbow);
+			text = text.split('\n')[0].replace(/<a?:[a-z]bot:[0-9]+>/gi, rainbow);
 			return text;
 		case 'spent':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, rainbow)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, rainbow)
 				.replace('`BEEP BOOP. `', '')
 				.replace('cowoncy', 'cowoncy and you’re ready to find friends!')
 				.replace('ANIMALS', 'FRIENDS');
 			return text;
 		case 'returned':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, rainbow)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, rainbow)
 				.replace('BEEP BOOP. I AM BACK WITH', 'ROSS IS BACK WITH')
 				.replace('ANIMALS', 'FRIENDS');
 			return text;
@@ -679,7 +679,7 @@ function kirito(text, type) {
 			return text;
 		case 'progress':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, bot)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, bot)
 				.replace(
 					'BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN',
 					'Daaarling! I am still hunting down Klaxosaurs. I will return in'
@@ -688,11 +688,11 @@ function kirito(text, type) {
 				.replace('ANIMALS CAPTURED', 'Klaxosaurs Hunted');
 			return text;
 		case 'password':
-			text = text.split('\n')[0].replace(/<:[a-z]bot:[0-9]+>/gi, bot);
+			text = text.split('\n')[0].replace(/<a?:[a-z]bot:[0-9]+>/gi, bot);
 			return text;
 		case 'spent':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, bot)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, bot)
 				.replace('BEEP BOOP.', 'Daaarling!')
 				.replace('YOU SPENT', 'You spent')
 				.replace('I WILL BE BACK IN', 'I will return in')
@@ -703,7 +703,7 @@ function kirito(text, type) {
 			return text;
 		case 'returned':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, bot)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, bot)
 				.replace('BEEP BOOP. I AM BACK WITH', 'Daaarling! I am back with')
 				.replace('ANIMALS', 'Klaxosaurs')
 				.replace('ESSENCE, AND', 'Franxx Points, and')
@@ -810,7 +810,7 @@ function arichy(text, type) {
 			return text;
 		case 'progress':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, '<a:11_:839770046867439669>')
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, '<a:11_:839770046867439669>')
 				.replace(
 					'BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN',
 					'If you have something urgent, please leave a message. I will be back in'
@@ -863,7 +863,7 @@ function capz(text, type) {
 			return text;
 		case 'progress':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, '<:searching:993769508693090315>')
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, '<:searching:993769508693090315>')
 				.replace(
 					'BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN',
 					'Capz, I am still searching for pets! I will return in'
@@ -874,18 +874,18 @@ function capz(text, type) {
 			return text;
 		case 'returned':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, emoji1)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, emoji1)
 				.replace('BEEP BOOP. I AM BACK WITH', 'Capz, I have returned with')
 				.replace('ANIMALS', 'pets')
 				.replace('ESSENCE, AND', 'essence, and')
 				.replace('EXPERIENCE', 'experience.');
 			return text;
 		case 'password':
-			text = text.replace(/<:[a-z]bot:[0-9]+>/gi, emoji2);
+			text = text.replace(/<a?:[a-z]bot:[0-9]+>/gi, emoji2);
 			return text;
 		case 'spent':
 			text = text
-				.replace(/<:[a-z]bot:[0-9]+>/gi, emoji3)
+				.replace(/<a?:[a-z]bot:[0-9]+>/gi, emoji3)
 				.replace(/BEEP BOOP\. `\*\*`[^`]+`\*\*`, YOU SPENT/gi, 'Capz, you spent')
 				.replace('I WILL BE BACK IN', 'I will return in')
 				.replace('WITH', 'with')

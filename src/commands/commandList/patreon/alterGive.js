@@ -4,10 +4,16 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
  */
+const alterUtils = require('../../../utils/alterUtils.js');
 
 const blank = '<:blank:427371936482328596>';
 
-exports.alter = function (p, id, text, info) {
+exports.alter = async function (p, id, text, info) {
+	const result = await checkDb(p, info);
+	if (result) return result;
+	if (info.senderlimit || info.senderoverlimit || info.receivelimit || info.receiveoverlimit || info.none) {
+		return;
+	}
 	switch (id) {
 		case '456598711590715403':
 			return lexx(p, info);
@@ -20,12 +26,14 @@ exports.alter = function (p, id, text, info) {
 		case '692146302284202134':
 			return leila(p, info);
 		default:
-			return checkReceive(p, text, info);
+			return await checkReceive(p, text, info);
 	}
 };
 
-function checkReceive(p, text, info) {
+async function checkReceive(p, text, info) {
 	info.receiver = true;
+	const result = await checkDb(p, info);
+	if (result) return result;
 	switch (info.to.id) {
 		case '816005571575808000':
 			return jayyy(p, info);
@@ -36,6 +44,91 @@ function checkReceive(p, text, info) {
 		default:
 			return text;
 	}
+}
+
+function checkDb(p, info) {
+	let type, replacers;
+	let user = info.from;
+	if (info.receiver) {
+		type = "receive";
+		replacers = {
+			sender: p.getName(info.from),
+			sender_tag: p.getTag(info.from),
+			receiver: p.getName(info.to),
+			receiver_tag: p.getTag(info.to),
+			blank: p.config.emoji.blank,
+			amount: info.amount,
+		}
+		user = info.to;
+	} else if (info.none) {
+		type = "none";
+		replacers = {
+			sender: p.getName(info.from),
+			sender_tag: p.getTag(info.from),
+			receiver: p.getName(info.to),
+			receiver_tag: p.getTag(info.to),
+			blank: p.config.emoji.blank,
+			amount: info.amount,
+		}
+	} else if (info.senderlimit) {
+		type = "senderlimit";
+		replacers = {
+			sender: p.getName(info.from),
+			sender_tag: p.getTag(info.from),
+			receiver: p.getName(info.to),
+			receiver_tag: p.getTag(info.to),
+			blank: p.config.emoji.blank,
+			limit: info.limit,
+			limit_diff: info.limit_diff,
+			amount: info.amount,
+		}
+	} else if (info.senderoverlimit) {
+		type = "senderoverlimit";
+		replacers = {
+			sender: p.getName(info.from),
+			sender_tag: p.getTag(info.from),
+			receiver: p.getName(info.to),
+			receiver_tag: p.getTag(info.to),
+			blank: p.config.emoji.blank,
+			limit: info.limit,
+			amount: info.amount,
+		}
+	} else if (info.receivelimit) {
+		type = "receivelimit";
+		replacers = {
+			sender: p.getName(info.from),
+			sender_tag: p.getTag(info.from),
+			receiver: p.getName(info.to),
+			receiver_tag: p.getTag(info.to),
+			blank: p.config.emoji.blank,
+			limit: info.limit,
+			limit_diff: info.limit_diff,
+			amount: info.amount,
+		}
+	} else if (info.receiveoverlimit) {
+		type = "receiveoverlimit";
+		replacers = {
+			sender: p.getName(info.from),
+			sender_tag: p.getTag(info.from),
+			receiver: p.getName(info.to),
+			receiver_tag: p.getTag(info.to),
+			blank: p.config.emoji.blank,
+			limit: info.limit,
+			amount: info.amount,
+		}
+	} else {
+		type = "give";
+		replacers = {
+			sender: p.getName(info.from),
+			sender_tag: p.getTag(info.from),
+			receiver: p.getName(info.to),
+			receiver_tag: p.getTag(info.to),
+			blank: p.config.emoji.blank,
+			amount: info.amount,
+		}
+	}
+
+	return alterUtils.getAlterCommand('altergive', user, type, replacers);
 }
 
 function lexx(p, info) {

@@ -4,6 +4,7 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
  */
+const alterUtils = require('../../../utils/alterUtils.js');
 
 const blank = '<:blank:427371936482328596>';
 const huntEmoji = '🌱';
@@ -115,40 +116,8 @@ async function checkDb(p, id, text, info) {
 			animalName: animal.name,
 		};
 	}
-	const sql = `SELECT alterhunt.* from alterhunt INNER JOIN user ON alterhunt.uid = user.uid WHERE user.id = ${p.msg.author.id} AND alterhunt.type = '${type}'`;
-	const result = (await p.query(sql))[0];
-	if (!result || !result.text) return;
 
-	result.text += info.lootboxText || '';
-	result.text = p.global.replacer(result.text, replacers);
-	if (!result.isEmbed) {
-		return result.text;
-	}
-
-	const content = {
-		embed: {
-			description: result.text,
-			title: p.global.replacer(result.title, replacers),
-			color: result.color || 1,
-		},
-	};
-	if (result.sideImg) {
-		content.embed.thumbnail = { url: result.sideImg };
-	}
-	if (result.footer) {
-		content.embed.footer = { text: p.global.replacer(result.footer, replacers) };
-	}
-	if (result.bottomImg) {
-		content.embed.image = { url: result.bottomImg };
-	}
-	if (result.author) {
-		content.embed.author = {
-			name: p.global.replacer(result.author, replacers),
-			icon_url: result.showAvatar ? p.msg.author.avatarURL : null,
-		};
-	}
-
-	return content;
+	return alterUtils.getAlterCommand('alterhunt', p.msg.author, type, replacers, info.lootboxText);
 }
 
 function geist(text) {
