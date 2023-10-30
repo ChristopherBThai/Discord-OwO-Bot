@@ -4,9 +4,12 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
  */
+const alterUtils = require('../../../utils/alterUtils.js');
 
-exports.alter = function (id, text, opt) {
-	switch (id) {
+exports.alter = async function (p, user, text, opt) {
+	const result = await checkDb(p, user, opt);
+	if (result) return result;
+	switch (user.id) {
 		case '408371860246364183':
 			return lanre(text, opt);
 		case '565212326291308545':
@@ -21,6 +24,23 @@ exports.alter = function (id, text, opt) {
 			return text;
 	}
 };
+
+async function checkDb(p, user, info) {
+	const type = 'display';
+	const replacers = {
+		username: p.getName(user),
+		user_tag: p.getTag(user),
+		discriminator: user.discriminator,
+		blank: p.config.emoji.blank,
+		current_page: info.page,
+		total_pages: info.total,
+		help: info.descHelp,
+		weapons: info.desc,
+		sort: info.sort,
+	};
+
+	return alterUtils.getAlterCommand('weapon', user, type, replacers, null, true);
+}
 
 function lanre(text, opt) {
 	text.description = opt.desc;

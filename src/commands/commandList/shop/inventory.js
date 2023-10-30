@@ -51,7 +51,7 @@ module.exports = new CommandInterface({
 
 		let text = '**====== ' + p.getName() + "'s Inventory ======**\n" + inv;
 		if (inv == '') text = 'Your inventory is empty :c';
-		text = alterInventory.alter(p, text, { user: p.msg.author, inv });
+		text = await alterInventory.alter(p, text, { user: p.msg.author, inv });
 		p.send(text);
 	},
 });

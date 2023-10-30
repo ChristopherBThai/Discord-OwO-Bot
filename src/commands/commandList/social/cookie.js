@@ -95,7 +95,7 @@ async function give(p, con, msg, args, global, send) {
 		'**! You got a cookie from **' +
 		p.getTag() +
 		'**! *nom nom nom c:<*';
-	text = alterCookie.alter(p.msg.author.id, text, {
+	text = await alterCookie.alter(p, text, {
 		from: p.msg.author,
 		to: user,
 	});
@@ -132,6 +132,6 @@ async function display(p) {
 		count +
 		'** cookies! Yummy! c:<\n**<:blank:427371936482328596> |** ' +
 		again;
-	text = alterCookie.alter(p.msg.author.id, text, opt);
+	text = await alterCookie.alter(p, text, opt);
 	p.send(text);
 }

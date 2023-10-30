@@ -6,37 +6,85 @@
  */
 
 exports.giveCustomBattle = async function (p, id) {
+	const uid = await p.global.getUid(id);
 	const sql = `INSERT into alterbattle (uid, type, color, footer, author) VALUES
-		((SELECT uid FROM user WHERE id = ${id}), 'win', 65280,
+		(${uid}, 'win', 65280,
 			'You won in {turns} turns! Your team gained {xp} xp! Streak: {streak}', '{username} goes into battle'),
-		((SELECT uid FROM user WHERE id = ${id}), 'lose', 16711680,
+		(${uid}, 'lose', 16711680,
 			'You lost in {turns} turns! Your team gained {xp} xp! You lost your streak of {streak} wins...', '{username} goes into battle'),
-		((SELECT uid FROM user WHERE id = ${id}), 'tie', 6381923,
+		(${uid}, 'tie', 6381923,
 			"It\'s a tie in {turns} turns! Your team gained {xp} xp! Streak: {streak}", '{username} goes into battle');`;
 	await p.query(sql);
 };
 
 exports.giveCustomHunt = async function (p, id) {
+	const uid = await p.global.getUid(id);
 	const sql = `INSERT INTO alterhunt (uid, type) VALUES
-		((SELECT uid FROM user WHERE id = ${id}), 'gems'),
-		((SELECT uid FROM user WHERE id = ${id}), 'nogems');`;
+		(${uid}, 'gems'),
+		(${uid}, 'nogems');`;
 	await p.query(sql);
 };
 
 exports.giveCustomCowoncy = async function (p, id) {
-	const sql = `INSERT INTO altercowoncy (uid, type) VALUES
-		((SELECT uid FROM user WHERE id = ${id}), 'display');`;
+	const uid = await p.global.getUid(id);
+	const sql = `INSERT INTO \`alter\` (uid, command, type) VALUES
+		(${uid}, 'cowoncy', 'display');`;
 	await p.query(sql);
 };
 
 exports.giveCustomGive = async function (p, id) {
-	const sql = `INSERT INTO altergive (uid, type) VALUES
-		((SELECT uid FROM user WHERE id = ${id}), 'give'),
-		((SELECT uid FROM user WHERE id = ${id}), 'none'),
-		((SELECT uid FROM user WHERE id = ${id}), 'senderlimit'),
-		((SELECT uid FROM user WHERE id = ${id}), 'senderoverlimit'),
-		((SELECT uid FROM user WHERE id = ${id}), 'receivelimit'),
-		((SELECT uid FROM user WHERE id = ${id}), 'receiveoverlimit'),
-		((SELECT uid FROM user WHERE id = ${id}), 'receive');`;
+	const uid = await p.global.getUid(id);
+	const sql = `INSERT INTO \`alter\` (uid, command, type) VALUES
+		(${uid}, 'give', 'give'),
+		(${uid}, 'give',  'none'),
+		(${uid}, 'give',  'senderlimit'),
+		(${uid}, 'give',  'senderoverlimit'),
+		(${uid}, 'give',  'receivelimit'),
+		(${uid}, 'give',  'receiveoverlimit'),
+		(${uid}, 'give',  'receive');`;
+	await p.query(sql);
+};
+
+exports.giveCustomPray = async function (p, id) {
+	const uid = await p.global.getUid(id);
+	const sql = `INSERT INTO \`alter\` (uid, command, type) VALUES
+		(${uid}, 'pray', 'pray'),
+		(${uid}, 'pray', 'prayself'),
+		(${uid}, 'pray', 'receivepray'),
+		(${uid}, 'pray', 'curse'),
+		(${uid}, 'pray', 'curseself'),
+		(${uid}, 'pray',  'receivecurse');`;
+	await p.query(sql);
+};
+
+exports.giveCustomInventory = async function (p, id) {
+	const uid = await p.global.getUid(id);
+	const sql = `INSERT INTO \`alter\` (uid, command, type) VALUES
+		(${uid}, 'inventory',  'display');`;
+	await p.query(sql);
+};
+
+exports.giveCustomDaily = async function (p, id) {
+	const uid = await p.global.getUid(id);
+	const sql = `INSERT INTO \`alter\` (uid, command, type) VALUES
+		(${uid}, 'daily', 'display'),
+		(${uid}, 'daily', 'marriage')`;
+	await p.query(sql);
+};
+
+exports.giveCustomWeapon = async function (p, id) {
+	const uid = await p.global.getUid(id);
+	const sql = `INSERT INTO \`alter\` (uid, command, type) VALUES
+		(${uid}, 'weapon',  'display');`;
+	await p.query(sql);
+};
+
+exports.giveCustomCookie = async function (p, id) {
+	const uid = await p.global.getUid(id);
+	const sql = `INSERT INTO \`alter\` (uid, command, type) VALUES
+		(${uid}, 'cookie',  'ready'),
+		(${uid}, 'cookie',  'give'),
+		(${uid}, 'cookie',  'cooldown'),
+		(${uid}, 'cookie',  'receive');`;
 	await p.query(sql);
 };

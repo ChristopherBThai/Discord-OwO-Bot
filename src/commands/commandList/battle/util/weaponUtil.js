@@ -478,12 +478,14 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	else if (sort === 'tt') embed.footer.text += 'Sorting by takedown tracker';
 	else if (sort === 'wear') embed.footer.text += 'Sorting by wear';
 
-	embed = alterWeapon.alter(user.id, embed, {
+	embed = await alterWeapon.alter(p, user, embed, {
 		...opt,
 		page: page + 1,
 		descHelp: descHelp,
 		desc: desc,
 		weapons: user_weapons_2,
+		total: maxPage,
+		sort: sort,
 	});
 
 	embed = {

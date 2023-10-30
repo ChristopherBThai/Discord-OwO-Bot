@@ -6,6 +6,7 @@
  */
 
 const CommandInterface = require('../../CommandInterface.js');
+const alterDaily = require('../patreon/alterDaily.js');
 
 /*
  * Daily command.
@@ -60,7 +61,7 @@ module.exports = new CommandInterface({
 			const boxRewards = getRandomBox(p, uid);
 			const marriageRewards = await checkMarriage(p, marriage);
 
-			const { sql, text } = finalizeText(
+			const { sql, text, alterInfo } = finalizeText(
 				p,
 				uid,
 				generalRewards,
@@ -83,7 +84,8 @@ module.exports = new CommandInterface({
 				text,
 				showAnnouncement && cowoncy,
 				showSurvey,
-				generalRewards
+				generalRewards,
+				alterInfo
 			);
 		}
 	},
@@ -99,28 +101,42 @@ function finalizeText(
 	showSurvey,
 	afterMid
 ) {
+	let alterInfo = {
+		user: p.msg.author,
+		amount: gain,
+		streak: 0,
+	};
 	let sql = '';
 
 	if (showAnnouncement) {
 		sql += 'SELECT * FROM announcement ORDER BY aid DESC LIMIT 1;';
 		sql += `INSERT INTO user_announcement (uid, aid) VALUES (${uid}, (SELECT aid FROM announcement ORDER BY aid DESC LIMIT 1)) ON DUPLICATE KEY UPDATE aid = (SELECT aid FROM announcement ORDER BY aid DESC LIMIT 1);`;
+		alterInfo.announcement = true;
 	}
 
 	let text = `${moneyEmoji} **| ${p.getName()}**, Here is your daily **<:cowoncy:416043450337853441> ${gain} Cowoncy**!`;
 
-	if (streak - 1 > 0)
+	if (streak - 1 > 0) {
 		text += `\n${p.config.emoji.blank} **|** You're on a **${streak - 1} daily streak**!`;
-	if (extra > 0)
+		alterInfo.streak = streak - 1;
+	}
+	if (extra > 0) {
 		text += `\n${p.config.emoji.blank} **|** You got an extra **${extra} Cowoncy** for being a <:patreon:449705754522419222> Patreon!`;
+		alterInfo.amount += extra;
+	}
 
 	if (boxRewards) {
 		text += boxRewards.text;
 		sql += boxRewards.sql;
+		alterInfo.box_emoji = boxRewards.emoji;
+		alterInfo.box_name = boxRewards.name;
 	}
 
 	if (marriageRewards) {
 		sql += marriageRewards.sql;
 		text += marriageRewards.text;
+		alterInfo.marriage = true;
+		alterInfo = { ...alterInfo, ...marriageRewards.alterInfo };
 	}
 
 	if (showSurvey) {
@@ -130,12 +146,14 @@ function finalizeText(
 				sid = (SELECT sid FROM survey ORDER BY sid DESC LIMIT 1),
 				question_number = 1,
 				in_progress = 0;`;
-		text += `\n${surveyEmoji} **|** You have a survey available! Answer some questions for some cool rewards!`;
+		const surveyText = `${surveyEmoji} **|** You have a survey available! Answer some questions for some cool rewards!`;
+		alterInfo.surveyText = surveyText;
+		text += '\n' + surveyText;
 	}
 
-	text += `\n**⏱ |** Your next daily is in: ${afterMid.hours}H ${afterMid.minutes}M ${afterMid.seconds}S`;
+	text += `\n**⏱️ |** Your next daily is in: ${afterMid.hours}H ${afterMid.minutes}M ${afterMid.seconds}S`;
 
-	return { sql, text };
+	return { sql, text, alterInfo };
 }
 
 async function executeQuery(
@@ -145,7 +163,8 @@ async function executeQuery(
 	text,
 	showAnnouncement,
 	showSurvey,
-	{ gain, extra }
+	{ gain, extra },
+	alterInfo
 ) {
 	let rows = await p.query(cowoncySql);
 
@@ -183,7 +202,23 @@ async function executeQuery(
 			},
 		];
 	}
-	p.send({ content: text, embed, components });
+	let alterText = await alterDaily.alter(p, alterInfo);
+	if (alterText) {
+		if (typeof alterText === 'string') {
+			alterText = {
+				content: alterText,
+			};
+		}
+		if (components) {
+			alterText.components = components;
+		}
+		p.send(alterText);
+		if (showAnnouncement) {
+			p.send({ embed });
+		}
+	} else {
+		p.send({ content: text, embed, components });
+	}
 
 	levels.giveUserXP(p.msg.author.id, 100);
 }
@@ -352,11 +387,15 @@ function getRandomBox(p, uid) {
 		return {
 			sql: `INSERT INTO lootbox (id, boxcount, claimcount, claim) VALUES (${p.msg.author.id}, 1, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;`,
 			text: `\n**${p.config.emoji.lootbox} |** You received a **lootbox**!`,
+			emoji: p.config.emoji.lootbox,
+			name: 'lootbox',
 		};
 	} else {
 		return {
 			sql: `INSERT INTO crate(uid, cratetype, boxcount, claimcount, claim) VALUES (${uid}, 0, 1, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;`,
 			text: `\n**${p.config.emoji.crate} |** You received a **weapon crate**!`,
+			emoji: p.config.emoji.crate,
+			name: 'weapon crate',
 		};
 	}
 }
@@ -415,6 +454,12 @@ async function checkMarriage(p, marriage) {
 			text;
 		count += 1;
 	}
+	const alterInfo = {
+		partner: so,
+		ring_emoji: ring.emoji,
+		ring_name: ring.name,
+		marriage_amount: totalGain,
+	};
 	if (Math.random() < 0.5) {
 		sql += `INSERT INTO lootbox (id, boxcount, claimcount, claim) VALUES (${p.msg.author.id}, ${count}, 0, '2017-01-01'), (${soID}, ${count}, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
 		if (count > 1) {
@@ -422,6 +467,8 @@ async function checkMarriage(p, marriage) {
 		} else {
 			text += `a ${p.config.emoji.lootbox} **lootbox**!`;
 		}
+		alterInfo.marriage_box_emoji = p.config.emoji.lootbox;
+		alterInfo.marriage_box_name = 'lootbox';
 	} else {
 		sql += `INSERT INTO crate (uid, cratetype, boxcount, claimcount, claim) VALUES (${marriage.uid1}, 0, ${count}, 0, '2017-01-01'), (${marriage.uid2}, 0, ${count}, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
 		if (count > 1) {
@@ -429,7 +476,13 @@ async function checkMarriage(p, marriage) {
 		} else {
 			text += `a ${p.config.emoji.crate} **weapon crate**!`;
 		}
+		alterInfo.marriage_box_emoji = p.config.emoji.crate;
+		alterInfo.marriage_box_name = 'weapon crate';
 	}
 
-	return { sql, text };
+	return {
+		sql,
+		text,
+		alterInfo,
+	};
 }
