@@ -7,16 +7,20 @@
 const mysql = require('../botHandlers/mysqlHandler.js');
 const global = require('./global.js');
 
-exports.getAlterCommand = async function (dbName, user, type, replacers, appendText) {
-	const sql = `SELECT ${dbName}.* from ${dbName} INNER JOIN user ON ${dbName}.uid = user.uid WHERE user.id = ${user.id} AND ${dbName}.type = '${type}'`;
-	console.log(sql);
+exports.getAlterCommand = async function (dbName, user, type, replacers, appendText, forceEmbed) {
+	const uid = await global.getUid(user.id);
+	let sql;
+	if (dbName === 'alterhunt' || dbName === 'alterbattle') {
+		sql = `SELECT * FROM ${dbName} WHERE uid = ${uid} AND type = '${type}'`;
+	} else {
+		sql = `SELECT * FROM \`alter\` WHERE uid = ${uid} AND command = '${dbName}' AND type = '${type}'`;
+	}
 	const result = (await mysql.query(sql))[0];
-	console.log(result);
 	if (!result || !result.text) return;
 
 	result.text += appendText || '';
 	result.text = global.replacer(result.text, replacers);
-	if (!result.isEmbed) {
+	if (!forceEmbed && !result.isEmbed) {
 		return result.text;
 	}
 

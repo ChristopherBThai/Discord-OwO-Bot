@@ -4,21 +4,24 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
  */
+const alterUtils = require('../../../utils/alterUtils.js');
 
 const blank = '<:blank:427371936482328596>';
 const _cookie = '<a:cookieeat:423020737364885525>';
 
-exports.alter = function (id, text, info = {}) {
+exports.alter = async function (p, text, info = {}) {
 	let result;
-	if ((result = check(id, text, info))) {
+	if ((result = await check(p, p.msg.author.id, text, info))) {
 		return result;
-	} else if (info.to && (result = check(info.to.id, text, { ...info, receive: true }))) {
+	} else if (info.to && (result = await check(p, info.to.id, text, { ...info, receive: true }))) {
 		return result;
 	}
 	return text;
 };
 
-function check(id, text, info) {
+async function check(p, id, text, info) {
+	const result = await checkDb(p, info);
+	if (result) return result;
 	switch (id) {
 		case '250383887312748545':
 			return elsa(text, info);
@@ -27,6 +30,50 @@ function check(id, text, info) {
 		case '412812867348463636':
 			return erys(text, info);
 	}
+}
+
+async function checkDb(p, info) {
+	let user = info.from;
+	let type, replacers;
+	if (info.receive) {
+		user = info.to;
+		type = 'receive';
+		replacers = {
+			sender: p.getName(info.from),
+			sender_tag: p.getTag(info.from),
+			receiver: p.getName(info.to),
+			receiver_tag: p.getTag(info.to),
+			blank: p.config.emoji.blank,
+		};
+	} else if (info.ready) {
+		type = 'ready';
+		replacers = {
+			username: p.getName(info.from),
+			user_tag: p.getName(info.from),
+			blank: p.config.emoji.blank,
+			amount: info.count,
+		};
+	} else if (info.timer) {
+		type = 'cooldown';
+		replacers = {
+			username: p.getName(info.from),
+			user_tag: p.getName(info.from),
+			blank: p.config.emoji.blank,
+			amount: info.count,
+			cooldown: info.timer,
+		};
+	} else {
+		type = 'give';
+		replacers = {
+			sender: p.getName(info.from),
+			sender_tag: p.getTag(info.from),
+			receiver: p.getName(info.to),
+			receiver_tag: p.getTag(info.to),
+			blank: p.config.emoji.blank,
+		};
+	}
+
+	return alterUtils.getAlterCommand('cookie', user, type, replacers);
 }
 
 function elsa(text, _info) {

@@ -134,7 +134,7 @@ function checkDb(p, info) {
 		};
 	}
 
-	return alterUtils.getAlterCommand('altergive', user, type, replacers);
+	return alterUtils.getAlterCommand('give', user, type, replacers);
 }
 
 function lexx(p, info) {

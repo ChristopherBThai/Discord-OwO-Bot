@@ -6,10 +6,8 @@
  */
 const alterUtils = require('../../../utils/alterUtils.js');
 
-const _blank = '<:blank:427371936482328596>';
-
 exports.alter = async function (p, id, text, info) {
-	const result = await checkDb(p, id, text, info);
+	const result = await checkDb(p, info);
 	if (result) return result;
 	switch (id) {
 		case '605994815317999635':
@@ -32,7 +30,7 @@ async function checkDb(p, id, text, info) {
 		amount: info.money,
 	};
 
-	return alterUtils.getAlterCommand('altercowoncy', info.user, type, replacers);
+	return alterUtils.getAlterCommand('cowoncy', info.user, type, replacers);
 }
 
 function rhine(p, info) {

@@ -4,6 +4,7 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
  */
+const alterUtils = require('../../../utils/alterUtils.js');
 
 const _blank = '<:blank:427371936482328596>';
 const gems = require('../../../data/gems.json').gems;
@@ -17,7 +18,9 @@ for (let i in gems) {
 	emojis[i] = gems[i].emoji;
 }
 
-exports.alter = function (p, text, info) {
+exports.alter = async function (p, text, info) {
+	const result = await checkDb(p, info);
+	if (result) return result;
 	switch (p.msg.author.id) {
 		case '658299153042112512':
 			return grace(text);
@@ -35,6 +38,18 @@ exports.alter = function (p, text, info) {
 			return text;
 	}
 };
+
+async function checkDb(p, info) {
+	const type = 'display';
+	const replacers = {
+		username: p.getName(info.user),
+		discriminator: info.user.discriminator,
+		blank: p.config.emoji.blank,
+		inventory: info.inv,
+	};
+
+	return alterUtils.getAlterCommand('inventory', info.user, type, replacers);
+}
 
 function grace(text) {
 	let newEmojis = {

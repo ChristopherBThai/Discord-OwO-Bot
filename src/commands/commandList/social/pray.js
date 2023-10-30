@@ -133,13 +133,13 @@ module.exports = new CommandInterface({
 		result = await p.query(sql);
 		text +=
 			'\n**<:blank:427371936482328596> |** You have **' + result[1][0].lcount + '** luck point(s)!';
-		text = alterPray.alter(p.msg.author.id, text, {
+		const alterText = await alterPray.alter(p, text, {
 			command: p.command,
 			author: p.msg.author,
 			user,
 			luck: result[1][0].lcount,
 		});
-		p.send(text);
+		p.send(alterText || text);
 		if (user && quest) p.quest(quest, 1, user);
 		if (opponentPoints && user) {
 			p.logger.incr('pray', 1, { from: p.msg.author.id, to: user.id });
