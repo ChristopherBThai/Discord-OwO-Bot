@@ -43,15 +43,17 @@ let lowestEventId = 22;
 let eventItemId = lowestEventId;
 for (let key in event) {
 	const eventItem = event[key].item;
-	items[eventItem.id] = {
-		id: eventItemId,
-		name: eventItem.name,
-		emoji: eventItem.emoji,
-		column: eventItem.id,
-		untradeable: true,
-		desc: eventItem.description,
-	};
-	eventItemId++;
+	if (eventItem) {
+		items[eventItem.id] = {
+			id: eventItemId,
+			name: eventItem.name,
+			emoji: eventItem.emoji,
+			column: eventItem.id,
+			untradeable: true,
+			desc: eventItem.description,
+		};
+		eventItemId++;
+	}
 }
 
 exports.getItems = async function (p) {

@@ -21,7 +21,7 @@ exports.alter = async function (p, id, text, info) {
 	}
 };
 
-async function checkDb(p, id, text, info) {
+async function checkDb(p, info) {
 	const type = 'display';
 	const replacers = {
 		username: p.getName(info.user),
