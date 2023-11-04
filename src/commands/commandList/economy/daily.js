@@ -53,7 +53,7 @@ module.exports = new CommandInterface({
 		// If it's not past midnight
 		if (afterMid && !afterMid.after) {
 			/* double check marriage */
-			await doubleCheckMarriage(p, afterMid, marriage);
+			await doubleCheckMarriage(p, afterMid, marriage, cowoncy);
 
 			// Past midnight
 		} else {
@@ -151,7 +151,9 @@ function finalizeText(
 		text += '\n' + surveyText;
 	}
 
-	text += `\n**⏱️ |** Your next daily is in: ${afterMid.hours}H ${afterMid.minutes}M ${afterMid.seconds}S`;
+	const time = `${afterMid.hours}H ${afterMid.minutes}M ${afterMid.seconds}S`;
+	alterInfo.cooldown = time;
+	text += `\n**⏱️ |** Your next daily is in: ${time}`;
 
 	return { sql, text, alterInfo };
 }
@@ -278,7 +280,7 @@ async function getUserInfo(p, uid) {
 	};
 }
 
-async function doubleCheckMarriage(p, afterMid, marriage) {
+async function doubleCheckMarriage(p, afterMid, marriage, cowoncy) {
 	// Exists in database?
 	if (marriage && marriage.daily1 && marriage.daily2) {
 		const afterMid = p.dateUtil.afterMidnight(marriage.claimDate);
@@ -339,11 +341,16 @@ async function doubleCheckMarriage(p, afterMid, marriage) {
 			}
 		}
 	}
-	p.send(
-		`**⏱ |** Nu! **${p.getName()}**! You need to wait **${afterMid.hours}H ${afterMid.minutes}M ${
-			afterMid.seconds
-		}S**`
-	);
+	const time = `${afterMid.hours}H ${afterMid.minutes}M ${afterMid.seconds}S`;
+	const text = `**⏱ |** Nu! **${p.getName()}**! You need to wait **${time}**`;
+	const alterText = await alterDaily.alter(p, {
+		cooldown: time,
+		isCooldown: true,
+		user: p.msg.author,
+		cowoncyInfo: cowoncy,
+		marriageInfo: marriage,
+	});
+	p.send(alterText || text);
 }
 
 function calculateMarriageBonus(p, marriage) {
@@ -459,6 +466,7 @@ async function checkMarriage(p, marriage) {
 		ring_emoji: ring.emoji,
 		ring_name: ring.name,
 		marriage_amount: totalGain,
+		marriage_streak: marriage.dailies,
 	};
 	if (Math.random() < 0.5) {
 		sql += `INSERT INTO lootbox (id, boxcount, claimcount, claim) VALUES (${p.msg.author.id}, ${count}, 0, '2017-01-01'), (${soID}, ${count}, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
