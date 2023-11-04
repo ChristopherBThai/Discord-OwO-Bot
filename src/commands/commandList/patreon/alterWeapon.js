@@ -34,8 +34,8 @@ async function checkDb(p, user, info) {
 		blank: p.config.emoji.blank,
 		current_page: info.page,
 		total_pages: info.total,
-		help: info.descHelp,
-		weapons: info.desc,
+		help: info.descHelp.trim(),
+		weapons: info.desc.trim(),
 		sort: info.sort,
 	};
 

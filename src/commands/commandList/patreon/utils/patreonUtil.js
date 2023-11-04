@@ -68,6 +68,7 @@ exports.giveCustomDaily = async function (p, id) {
 	const uid = await p.global.getUid(id);
 	const sql = `INSERT INTO \`alter\` (uid, command, type) VALUES
 		(${uid}, 'daily', 'display'),
+		(${uid}, 'daily', 'cooldown'),
 		(${uid}, 'daily', 'marriage')`;
 	await p.query(sql);
 };

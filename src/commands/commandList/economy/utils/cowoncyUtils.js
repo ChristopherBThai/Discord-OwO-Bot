@@ -62,7 +62,7 @@ async function checkSender(user, amount, con) {
 		if (diff > 0) {
 			return {
 				error: `, you can only send **${this.global.toFancyNum(diff)}** more cowoncy today!`,
-				limit: this.global.toFancyNum(result[0].send),
+				limit: this.global.toFancyNum(limit),
 				limit_diff: this.global.toFancyNum(diff),
 				senderlimit: true,
 			};
@@ -120,7 +120,7 @@ async function checkReceiver(user, amount, con) {
 				error: `, **${user.username}** can only receive **${this.global.toFancyNum(
 					diff
 				)}** more cowoncy today!`,
-				limit: this.global.toFancyNum(result[0].receive),
+				limit: this.global.toFancyNum(limit),
 				limit_diff: this.global.toFancyNum(diff),
 				receivelimit: true,
 			};

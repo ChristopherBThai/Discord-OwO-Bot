@@ -401,10 +401,9 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	let user_weapons = parseWeaponQuery(result[0]);
 
 	/* Parse actual weapon data for each weapon */
+	let descUser = `These weapons belong to <@${user.id}>`;
 	let descHelp =
-		'These weapons belong to <@' +
-		user.id +
-		'>\nDescription: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nReroll: `owo w rr {weaponID} [passive|stat]`\nSell: `owo sell {weaponID|cw,rw,uw...}`\nDismantle: `owo dismantle {weaponID|cw,rw,uw...}`\n';
+		'Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nReroll: `owo w rr {weaponID} [passive|stat]`\nSell: `owo sell {weaponID|cw,rw,uw...}`\nDismantle: `owo dismantle {weaponID|cw,rw,uw...}`\n';
 	let desc = '';
 	let fieldText;
 	let fields = [];
@@ -441,7 +440,7 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 				} else {
 					fieldText += row;
 				}
-			} else if (descHelp.length + desc.length + row.length >= 4096) {
+			} else if (descUser.length + descHelp.length + desc.length + row.length >= 4096) {
 				fieldText = row;
 			} else {
 				desc += row;
@@ -462,7 +461,7 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 			name: title,
 			icon_url: user.avatarURL,
 		},
-		description: descHelp + desc,
+		description: descUser + '\n' + descHelp + desc,
 		color: p.config.embed_color,
 		footer: {
 			text: 'Page ' + (page + 1) + '/' + maxPage + ' | ',
@@ -487,6 +486,9 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 		total: maxPage,
 		sort: sort,
 	});
+	if (embed.embed) {
+		embed = embed.embed;
+	}
 
 	embed = {
 		embed,
