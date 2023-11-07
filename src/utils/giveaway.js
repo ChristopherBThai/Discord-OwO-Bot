@@ -222,7 +222,7 @@ async function saveGiveaway({ channelId, winners, rewards, endDate }, user, useT
 	let ticketSql = `UPDATE user_item
 				INNER JOIN user ON user_item.uid = user.uid
 			SET user_item.count = user_item.count - 1
-			WHERE user.id = ${user.id}
+			WHERE user.id = ${user?.id}
 				AND user_item.count >= 1
 				AND user_item.name = 'giveaway_tickets';`;
 
