@@ -89,7 +89,7 @@
 		"emoji": "<a:sonic:889369004739817522>",
 		"owners": ["384202884553768961"],
 		"fullControl": true,
-		"ownerOnly": false,
+		"ownerOnly": true,
 		"dailyOnly": false,
 		"giveAmount": 2,
 		"description": "Give two sonics to someone! You can only gain one if you receive it!",
@@ -449,7 +449,7 @@
 	"kfire": {
 		"alias": [],
 		"emoji": "<a:kfire:1016133894090788914>",
-		"owners": ["792369332654964746", "759412813617430619"],
+		"owners": ["759412813617430619", "778204442411008021"],
 		"dataOverride": "kfire3",
 		"pluralName": "",
 		"singleName": "",

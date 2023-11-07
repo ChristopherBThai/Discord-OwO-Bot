@@ -108,7 +108,12 @@ function quincey(text, opt) {
 	let image =
 		'https://cdn.discordapp.com/attachments/718562499703603251/1074740072399765707/20230212_191407.png';
 	text.color = 10183532;
-	switch (opt.wid) {
+
+	let wid = 'unknown';
+	if (opt.widList?.length === 1) {
+		wid = parseInt(opt.widList[0]);
+	}
+	switch (wid) {
 		case 1:
 			image =
 				'https://media.discordapp.net/attachments/718562499703603251/1074740362188435487/20230211_132513.png?width=767&height=192';
