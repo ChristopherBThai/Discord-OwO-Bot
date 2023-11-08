@@ -20,7 +20,8 @@ class Crossfox extends Collectible {
 		this.giveAmount = 1;
 		this.pluralName = 'Cross Foxes';
 		this.singleName = 'Cross Fox';
-		this.description = 'The cross fox is a variant of the red fox which has a long dark stripe running down its back, intersecting another stripe to form a cross over the shoulders.  Due to a rare condition called melanism, the commonly red fur comes with some dark stripe.';
+		this.description =
+			'The cross fox is a variant of the red fox which has a long dark stripe running down its back, intersecting another stripe to form a cross over the shoulders.  Due to a rare condition called melanism, the commonly red fur comes with some dark stripe.';
 		this.displayMsg = '?emoji? **| ?user?**, you currently have ?count? ?pluralName?!';
 		this.brokeMsg = ', you do not have any Cross Foxes! >:c';
 		this.giveMsg = '?emoji? **| ?receiver?**, ?giver? gave you 1 Cross Fox!';

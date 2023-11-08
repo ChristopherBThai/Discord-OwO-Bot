@@ -17,7 +17,8 @@ class Magoo extends Collectible {
 		this.fullControl = true;
 		this.ownerOnly = true;
 		this.giveAmount = 1;
-		this.description = 'Mr. Magoo is a fictional cartoon character voiced by Jim Backus.\nMr. Magoo is a wealthy elderly retiree who gets into comical situations as a result of his extreme near-sightedness, compounded by his stubborn refusal to admit the problem.';
+		this.description =
+			'Mr. Magoo is a fictional cartoon character voiced by Jim Backus.\nMr. Magoo is a wealthy elderly retiree who gets into comical situations as a result of his extreme near-sightedness, compounded by his stubborn refusal to admit the problem.';
 		this.displayMsg = '?emoji? **| ?user?**, you currently have ?count? Magoo?plural?!';
 		this.brokeMsg = ', you do not have any Magoos! >:c';
 		this.giveMsg = '?emoji? **| ?receiver?**, ?giver? gave you 1 Magoo!';
