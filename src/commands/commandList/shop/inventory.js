@@ -47,6 +47,7 @@ module.exports = new CommandInterface({
 			wallpaperUtil.getItems(p),
 			itemUtil.getItems(p),
 		]);
+		console.log(promises);
 		let inv = addToString(promises);
 
 		let text = '**====== ' + p.getName() + "'s Inventory ======**\n" + inv;
@@ -83,11 +84,13 @@ function addToString(items) {
 	let count = 0;
 	for (let i = 0; i < items.length; i++) {
 		let item = items[i];
+		let itemId = (item.id < 10 ? '0' : '') + (item.id < 100 ? '0' : '') + item.id;
+		if (item.id == 200) {
+			itemId = '2--';
+		}
 		text +=
 			'`' +
-			(item.id < 10 ? '0' : '') +
-			(item.id < 100 ? '0' : '') +
-			item.id +
+			itemId +
 			'`' +
 			item.emoji +
 			shopUtil.toSmallNum(item.count, digits);
