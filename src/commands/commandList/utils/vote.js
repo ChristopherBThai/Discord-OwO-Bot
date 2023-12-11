@@ -16,11 +16,11 @@ const voteComponent = [
 				type: 2,
 				label: 'Vote Now!',
 				style: 5,
-				url: 'https://top.gg/bot/408785106942164992/vote'
+				url: 'https://top.gg/bot/408785106942164992/vote',
 			},
 		],
 	},
-]
+];
 
 module.exports = new CommandInterface({
 	alias: ['vote'],
@@ -79,8 +79,7 @@ module.exports = new CommandInterface({
 				patreonMsg(patreonBonus) +
 				'\n';
 			if (weekend) {
-				text +=
-					`**${p.config.emoji.beach} |** It's the weekend! You also earned a bonus of **${weekendBonus}** cowoncy!\n`;
+				text += `**${p.config.emoji.beach} |** It's the weekend! You also earned a bonus of **${weekendBonus}** cowoncy!\n`;
 			}
 			text += box.text;
 			p.send({ content: text, components: voteComponent });
@@ -102,7 +101,9 @@ module.exports = new CommandInterface({
 				box.sql;
 			await this.query(sql);
 
-			let text = `**${p.config.emoji.check} |** You have received **${bonus}** cowoncy for voting!${patreonMsg(patreonBonus)}\n`;
+			let text = `**${
+				p.config.emoji.check
+			} |** You have received **${bonus}** cowoncy for voting!${patreonMsg(patreonBonus)}\n`;
 			if (weekend) {
 				text += `**${p.config.emoji.beach} |** It's the weekend! You also earned a bonus of **${weekendBonus}** cowoncy!\n`;
 			}

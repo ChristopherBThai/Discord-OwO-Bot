@@ -52,17 +52,17 @@ module.exports = new CommandInterface({
 						type: 2,
 						label: 'Patreon',
 						style: 5,
-						url: 'https://www.patreon.com/OwOBot'
+						url: 'https://www.patreon.com/OwOBot',
 					},
 					{
 						type: 2,
 						label: 'OwO Store',
 						style: 5,
-						url: 'https://owobot.com/store'
-					}
+						url: 'https://owobot.com/store',
+					},
 				],
 			},
-		]
+		];
 		p.send({ content, components });
 	},
 });
