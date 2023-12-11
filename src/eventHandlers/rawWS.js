@@ -34,7 +34,7 @@ function handleApplicationCommand(packet) {
 	switch (packet.d.data.type) {
 		// Slash commands
 		case 1:
-			this.command.executeInteraction(interaction);
+			// this.command.executeInteraction(interaction);
 			break;
 
 		// Message commands
