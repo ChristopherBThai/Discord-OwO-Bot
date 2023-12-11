@@ -81,7 +81,6 @@ async function claim(p, msg, con, query, bot) {
 	const supporter = await patreonUtil.getSupporterRank(p, p.msg.author);
 	let patreon = supporter.benefitRank > 0;
 
-
 	sql = '';
 	//Get total exp
 	let totalExp = Math.floor(autohuntutil.getLvl(query.exp, 0, 'exp').stat * duration);

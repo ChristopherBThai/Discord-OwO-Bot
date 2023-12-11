@@ -99,10 +99,10 @@ exports.getSupporterRank = async function (p, user) {
 		// Refresh if its past a day
 		if (updateDiff >= 1000 * 60 * 60 * 24) {
 			delete user.supporterRank;
-		// User supporter rank is already cached
+			// User supporter rank is already cached
 		} else if (user.supporterRank.endTime > now) {
 			return user.supporterRank;
-		// If user does not have supporter rank
+			// If user does not have supporter rank
 		} else {
 			user.supporterRank.endTime = null;
 			user.supporterRank.benefitRank = 0;
@@ -111,7 +111,7 @@ exports.getSupporterRank = async function (p, user) {
 			}
 		}
 	}
-	
+
 	const uid = await p.global.getUid(user.id);
 	const sql = `
 		SELECT * FROM patreons WHERE uid = ${uid};
@@ -123,16 +123,16 @@ exports.getSupporterRank = async function (p, user) {
 	const supporter = {
 		endTime: null,
 		benefitRank: 0,
-		updatedOn: new Date()
+		updatedOn: new Date(),
 	};
 	if (result[0][0]?.patreonTimer) {
 		const benefitRank = result[0][0].patreonType;
-		const startTime = new Date(result[0][0].patreonTimer)
+		const startTime = new Date(result[0][0].patreonTimer);
 		const endTime = new Date(startTime.setMonth(startTime.getMonth() + result[0][0].patreonMonths));
 		getBetterSupporterRank(supporter, benefitRank, endTime);
 	}
 	if (result[1].length) {
-		result[1].forEach(row => {
+		result[1].forEach((row) => {
 			const benefitRank = row.patreonType;
 			const endTime = new Date(row.endDate);
 			getBetterSupporterRank(supporter, benefitRank, endTime);
@@ -146,7 +146,7 @@ exports.getSupporterRank = async function (p, user) {
 
 	user.supporterRank = supporter;
 	return supporter;
-}
+};
 
 function getBetterSupporterRank(supporter, benefitRank, endTime) {
 	const now = new Date();
@@ -163,7 +163,7 @@ function getBetterSupporterRank(supporter, benefitRank, endTime) {
 	}
 }
 
-exports.handleDiscordUpdate = async function(entitlement) {
+exports.handleDiscordUpdate = async function (entitlement) {
 	let { userId, endDate, error } = parseEntitlment(entitlement);
 	if (error) {
 		console.error(error + ': ' + JSON.stringify(entitlement, null, 2));
@@ -187,13 +187,15 @@ exports.handleDiscordUpdate = async function(entitlement) {
 
 	if (!renewal) {
 		let txt = `${this.config.emoji.owo.woah} **|** Thank you for supporting OwO Bot! Your account should have access to supporter benefits.`;
-		txt += `\n${this.config.emoji.blank} **|** Your benefit will renew on: ${this.global.toDiscordTimestamp(endDate)}`;
+		txt += `\n${
+			this.config.emoji.blank
+		} **|** Your benefit will renew on: ${this.global.toDiscordTimestamp(endDate)}`;
 		txt += `\n${this.config.emoji.blank} **|** If you have any questions, please stop by our support server: ${this.config.guildlink}`;
 		this.sender.msgUser(userId, txt);
 	}
-}
+};
 
-exports.handleDiscordDelete = async function(entitlement) {
+exports.handleDiscordDelete = async function (entitlement) {
 	const userId = entitlement.user_id;
 	const uid = await this.global.getUid(entitlement.user_id);
 	const sql = `DELETE FROM patreon_discord WHERE uid = ${uid};`;
@@ -204,7 +206,7 @@ exports.handleDiscordDelete = async function(entitlement) {
 		txt += `\n${this.config.emoji.blank} **|** If you have any questions, please stop by our support server: ${this.config.guildlink}`;
 		this.sender.msgUser(userId, txt);
 	}
-}
+};
 
 function parseEntitlment(entitlment) {
 	if (entitlment.sku_id !== sku) {

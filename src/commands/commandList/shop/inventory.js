@@ -88,12 +88,7 @@ function addToString(items) {
 		if (item.id == 200) {
 			itemId = '2--';
 		}
-		text +=
-			'`' +
-			itemId +
-			'`' +
-			item.emoji +
-			shopUtil.toSmallNum(item.count, digits);
+		text += '`' + itemId + '`' + item.emoji + shopUtil.toSmallNum(item.count, digits);
 		count++;
 		if (count == 4) {
 			text += '\n';
