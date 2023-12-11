@@ -15,6 +15,7 @@ const letters = 'abcdefghijklmnopqrstuvwxyz';
 const botrank = `SELECT COUNT(id) AS rank FROM autohunt WHERE autohunt.total >= (SELECT autohunt.total FROM autohunt WHERE id = `;
 const logger = require('../../../utils/logger.js');
 const parse = require('parse-duration');
+const patreonUtil = require('../patreon/utils/patreonUtil.js');
 
 module.exports = new CommandInterface({
 	alias: ['autohunt', 'huntbot', 'hb', 'ah'],
@@ -62,17 +63,7 @@ async function claim(p, msg, con, query, bot) {
 	//Get Total essence
 	let totalGain = Math.floor(autohuntutil.getLvl(query.gain, 0, 'gain').stat * duration);
 
-	let sql = `SELECT
-		IF(
-			patreonAnimal = 1
-			OR (TIMESTAMPDIFF(MONTH, patreonTimer, NOW()) < patreonMonths)
-			OR (endDate > NOW())
-		,1,0) as patreon
-		FROM user
-			LEFT JOIN patreons ON user.uid = patreons.uid
-			LEFT JOIN patreon_wh ON user.uid = patreon_wh.uid
-		WHERE user.id = ${msg.author.id};`;
-	sql +=
+	let sql =
 		'UPDATE autohunt SET huntmin = 0,huntcount=0,essence = essence +' +
 		totalGain +
 		',total = total + ' +
@@ -82,13 +73,14 @@ async function claim(p, msg, con, query, bot) {
 		' AND huntmin > 0;';
 	let result = await p.query(sql);
 
-	if (result[1].changedRows <= 0) {
+	if (result.changedRows <= 0) {
 		return;
 	}
 
 	//Check if patreon
-	let patreon = false;
-	if (result[0][0] && result[0][0].patreon == 1) patreon = true;
+	const supporter = await patreonUtil.getSupporterRank(p, p.msg.author);
+	let patreon = supporter.benefitRank > 0;
+
 
 	sql = '';
 	//Get total exp

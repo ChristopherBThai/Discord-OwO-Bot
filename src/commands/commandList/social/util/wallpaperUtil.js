@@ -74,7 +74,7 @@ exports.getItems = async function (p) {
 	let items = {
 		'2--': {
 			emoji: wallpaperEmoji,
-			id: '2--',
+			id: 200,
 			count: result[0].count,
 		},
 	};
