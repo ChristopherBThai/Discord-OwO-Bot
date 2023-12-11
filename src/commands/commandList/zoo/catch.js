@@ -12,6 +12,7 @@ const dateUtil = require('../../../utils/dateUtil.js');
 const gemUtil = require('./gemUtil.js');
 const animalUtil = require('./animalUtil.js');
 const alterHunt = require('./../patreon/alterHunt.js');
+const patreonUtil = require('./../patreon/utils/patreonUtil.js');
 const lootboxChance = 0.05;
 
 module.exports = new CommandInterface({
@@ -37,17 +38,8 @@ module.exports = new CommandInterface({
 	execute: async function (p) {
 		let msg = p.msg;
 
-		let sql = `SELECT
-				money,
-				IF(
-					patreonAnimal = 1
-					OR (TIMESTAMPDIFF(MONTH, patreonTimer, NOW()) < patreonMonths)
-					OR (endDate > NOW()),
-				1,0) as patreon
+		let sql = `SELECT money
 			FROM cowoncy
-				LEFT JOIN user ON cowoncy.id = user.id
-				LEFT JOIN patreons ON user.uid = patreons.uid
-				LEFT JOIN patreon_wh ON user.uid = patreon_wh.uid
 			WHERE cowoncy.id = ${msg.author.id};`;
 		sql += `SELECT name,nickname,animal.pid,MAX(tmp.pgid) AS active
 			FROM user u
@@ -90,7 +82,7 @@ module.exports = new CommandInterface({
 			}
 
 			//Get animal
-			let animal = getAnimals(p, result, gems, uid);
+			let animal = await getAnimals(p, result, gems, uid);
 			let sql = animal.sql;
 			let text = animal.text;
 
@@ -151,9 +143,10 @@ module.exports = new CommandInterface({
 	},
 });
 
-function getAnimals(p, result, gems, uid) {
+async function getAnimals(p, result, gems, uid) {
 	/* Parse if user is a patreon */
-	let patreon = result[0][0].patreon == 1;
+	const supporter = await patreonUtil.getSupporterRank(p, p.msg.author);
+	let patreon = supporter.benefitRank > 0;
 	let patreonGem = gems['Patreon'] ? true : false;
 
 	/* If no gems */

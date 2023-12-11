@@ -5,6 +5,7 @@
  * For more information, see README.md and LICENSE
  */
 const User = require('../../node_modules/eris/lib/structures/User');
+const patreonUtil = require('../commands/commandList/patreon/utils/patreonUtil.js');
 const axios = require('axios');
 
 exports.handle = function (packet, _id) {
@@ -19,6 +20,12 @@ exports.handle = function (packet, _id) {
 				handleMessageComponent.bind(this)(packet);
 				break;
 		}
+	} else if (packet.t === 'ENTITLEMENT_CREATE') {
+		patreonUtil.handleDiscordUpdate.bind(this)(packet.d);
+	} else if (packet.t === 'ENTITLEMENT_UPDATE') {
+		patreonUtil.handleDiscordUpdate.bind(this)(packet.d);
+	} else if (packet.t === 'ENTITLEMENT_DELETE') {
+		patreonUtil.handleDiscordDelete.bind(this)(packet.d);
 	}
 };
 
@@ -27,7 +34,7 @@ function handleApplicationCommand(packet) {
 	switch (packet.d.data.type) {
 		// Slash commands
 		case 1:
-			// this.command.executeInteraction(interaction);
+			this.command.executeInteraction(interaction);
 			break;
 
 		// Message commands

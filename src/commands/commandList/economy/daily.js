@@ -7,6 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 const alterDaily = require('../patreon/alterDaily.js');
+const patreonUtil = require('../patreon/utils/patreonUtil.js');
 
 /*
  * Daily command.
@@ -57,7 +58,7 @@ module.exports = new CommandInterface({
 
 			// Past midnight
 		} else {
-			const generalRewards = getRewards(cowoncy, afterMid);
+			const generalRewards = await getRewards(p, cowoncy, afterMid);
 			const boxRewards = getRandomBox(p, uid);
 			const marriageRewards = await checkMarriage(p, marriage);
 
@@ -228,17 +229,9 @@ async function executeQuery(
 async function getUserInfo(p, uid) {
 	let sql = `SELECT
 				daily,
-				daily_streak,
-				IF (
-					patreonDaily = 1
-					OR ((TIMESTAMPDIFF(MONTH, patreonTimer, NOW()) < patreonMonths) AND patreons.patreonType = 3)
-					OR (endDate > NOW() AND patreon_wh.patreonType = 3)
-				, 1, 0) as patreon 
+				daily_streak
 			FROM cowoncy
-				LEFT JOIN user ON cowoncy.id = user.id
-				LEFT JOIN patreons ON user.uid = patreons.uid
-				LEFT JOIN patreon_wh ON user.uid = patreon_wh.uid
-			WHERE cowoncy.id = ${p.msg.author.id};`;
+			WHERE id = ${p.msg.author.id};`;
 	sql += `SELECT *
 			FROM user_announcement
 			WHERE
@@ -269,7 +262,7 @@ async function getUserInfo(p, uid) {
 						AND is_done = 1
 					)
 				);`;
-	sql += 'SELECT sid FROM survey ORDER BY sid DESC limit 1';
+	sql += 'SELECT sid FROM survey WHERE endDate > NOW() ORDER BY sid DESC limit 1';
 	const rows = await p.query(sql);
 
 	return {
@@ -363,13 +356,13 @@ function calculateMarriageBonus(p, marriage) {
 	return totalGain;
 }
 
-function getRewards(cowoncy, afterMid) {
+async function getRewards(p, cowoncy, afterMid) {
 	// Grab streak/patreon status
 	let streak = 0;
-	let patreon = false;
+	const supporter = await patreonUtil.getSupporterRank(p, p.msg.author);
+	let patreon = supporter.benefitRank >= 3;
 	if (cowoncy) {
 		streak = cowoncy.daily_streak;
-		if (cowoncy.patreon == 1) patreon = true;
 	}
 
 	//Calculate daily amount
