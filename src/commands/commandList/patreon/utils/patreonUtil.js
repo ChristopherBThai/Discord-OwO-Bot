@@ -235,8 +235,6 @@ function parseEntitlment(entitlment) {
 		return { error: 'Invalid User' };
 	}
 	let endDate = entitlment.ends_at;
-	// TODO delete
-	endDate = Date.now();
 	if (!endDate) {
 		return { error: 'Invalid End Time' };
 	}
