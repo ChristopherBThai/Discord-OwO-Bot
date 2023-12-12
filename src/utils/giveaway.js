@@ -106,7 +106,7 @@ exports.checkGiveawayTimeout = async function (_owo) {
 	const result = await mysql.query(sql);
 	result.forEach((giveaway) => {
 		if (_owo.debug && giveaway.cid !== '420713232265641985') {
-			console.log(`Ignoring giveaways for debug mode: ${giveaway.cid}`);
+			// console.log(`Ignoring giveaways for debug mode: ${giveaway.cid}`);
 			return;
 		}
 

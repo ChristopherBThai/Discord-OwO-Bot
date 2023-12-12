@@ -9,7 +9,6 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const teamUtil = require('./util/teamUtil.js');
 const battleFriendUtil = require('./util/battleFriendUtil.js');
-const maxTeams = 2;
 const starEmoji = '⭐';
 
 module.exports = new CommandInterface({
@@ -43,6 +42,7 @@ module.exports = new CommandInterface({
 });
 
 async function displayTeams(p) {
+	let maxTeams = await teamUtil.getMaxTeams.bind(p)(p.msg.author);
 	// Fetch all teams and weapons
 	let sql = `SELECT pet_team.pgid,tname,pos,name,nickname,animal.pid,xp,pet_team.streak,highest_streak
 		FROM user
@@ -52,7 +52,7 @@ async function displayTeams(p) {
 				ON pet_team.pgid = pet_team_animal.pgid 
 			INNER JOIN animal
 				ON pet_team_animal.pid = animal.pid
-		WHERE user.id = ${p.msg.author.id}
+		WHERE user.id = ${p.msg.author.id} AND pet_team.disabled = 0
 		ORDER BY pgid ASC, pos ASC;`;
 	sql += `SELECT DISTINCT
 			a.pid, a.uwid, a.wid, a.stat, a.rrcount, a.rrattempt, a.wear,
@@ -72,13 +72,13 @@ async function displayTeams(p) {
 				ON a.uwid = b.uwid
 			LEFT JOIN user_weapon_kills d
 				ON a.uwid = d.uwid
-		WHERE u.id = ${p.msg.author.id};`;
+		WHERE u.id = ${p.msg.author.id} AND pt.disabled = 0;`;
 	sql += `SELECT pet_team.pgid, pet_team_active.pgid AS active FROM user
 		INNER JOIN pet_team
 			ON user.uid = pet_team.uid
 		LEFT JOIN pet_team_active
 			ON pet_team.pgid = pet_team_active.pgid
-		WHERE user.id = ${p.msg.author.id}
+		WHERE user.id = ${p.msg.author.id} AND pet_team.disabled = 0
 		ORDER BY pgid ASC;`;
 	let result = await p.query(sql);
 
@@ -187,7 +187,7 @@ async function displayTeams(p) {
 	];
 	const additionalFilter = (componentName, user) =>
 		componentName === 'star' && user.id == p.msg.author.id;
-	const pagedMsg = new p.PagedMessage(p, createEmbed, teams.length - 1, {
+	const pagedMsg = new p.PagedMessage(p, createEmbed, maxTeams - 1, {
 		startingPage: activeTeam,
 		idle: 120000,
 		additionalFilter,
@@ -208,6 +208,7 @@ async function displayTeams(p) {
 }
 
 async function setTeam(p, teamNum, dontDisplay) {
+	let maxTeams = await teamUtil.getMaxTeams.bind(p)(p.msg.author);
 	// argument validation
 	if (!teamNum || teamNum < 1 || teamNum > maxTeams) {
 		p.errorMsg(', invalid team number!', 3000);
@@ -226,7 +227,7 @@ async function setTeam(p, teamNum, dontDisplay) {
 	let sql = `SELECT uid FROM user WHERE id = ${p.msg.author.id};
 		SELECT pgid FROM user LEFT JOIN pet_team ON user.uid = pet_team.uid WHERE id = ${
 			p.msg.author.id
-		} ORDER BY pgid LIMIT 1 OFFSET ${teamNum - 1}`;
+		} AND pet_team.disabled = 0 ORDER BY pgid LIMIT 1 OFFSET ${teamNum - 1}`;
 	let result = await p.query(sql);
 
 	if (!result[0]) {

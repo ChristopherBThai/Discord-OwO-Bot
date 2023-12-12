@@ -10,6 +10,8 @@ const animalUtil = require('./animalUtil.js');
 const WeaponInterface = require('../WeaponInterface.js');
 const global = require('../../../../utils/global.js');
 const mysql = require('../../../../botHandlers/mysqlHandler.js');
+const patreonUtil = require('../../patreon/utils/patreonUtil.js');
+const defaultMaxTeams = 2;
 let weaponUtil;
 
 const filterTeams = `
@@ -466,51 +468,138 @@ exports.isDead = function (team) {
 };
 
 /* Distributes xp to team */
-exports.giveXP = async function (p, team, xp) {
-	let isInt = p.global.isInt(xp);
-	let total = isInt ? xp : xp.total;
-	let addStreak = isInt ? false : xp.addStreak;
-	let resetStreak = isInt ? false : xp.resetStreak;
+exports.giveXP = async function (
+	p,
+	team,
+	xp,
+	{ updateStreak, ignoreBonus, secondary, currActive } = {}
+) {
+	if (!team) return;
+	let total = p.global.isInt(xp) ? xp : xp.total;
+	let addStreak = !updateStreak ? false : xp.addStreak;
+	let resetStreak = !updateStreak ? false : xp.resetStreak;
+	let hasTeam = !p.global.isInt(team);
+	let totalXp = !ignoreBonus ? total : xp.xp;
+	const pgid = hasTeam ? team.pgid : team;
 
 	let highestLvl = 1;
-	for (let i in team.team) {
-		let lvl = team.team[i].stats.lvl;
-		if (lvl > highestLvl) highestLvl = lvl;
+	let cases;
+	if (hasTeam) {
+		for (let i in team.team) {
+			let lvl = team.team[i].stats.lvl;
+			if (lvl > highestLvl) highestLvl = lvl;
+		}
+
+		cases = '';
+		for (let i in team.team) {
+			let mult = 1;
+			let lvl = team.team[i].stats.lvl;
+			if (lvl < highestLvl) mult = 2 + (highestLvl - lvl) / 10;
+			if (mult > 10) mult = 10;
+			mult += team.team[i].weapon?.getBonusXPPassive() || 0;
+			cases += ` WHEN animal.pid = ${team.team[i].pid} THEN ${Math.round(total * mult)}`;
+		}
 	}
 
-	let cases = '';
-	for (let i in team.team) {
-		let mult = 1;
-		let lvl = team.team[i].stats.lvl;
-		if (lvl < highestLvl) mult = 2 + (highestLvl - lvl) / 10;
-		if (mult > 10) mult = 10;
-		mult += team.team[i].weapon?.getBonusXPPassive() || 0;
-		cases += ` WHEN animal.pid = ${team.team[i].pid} THEN ${Math.round(total * mult)}`;
+	if (secondary) {
+		totalXp = Math.ceil(totalXp / 2);
+		if (currActive) {
+			// ignore giving xp to active team pets
+			cases = '';
+			for (let i in currActive.team) {
+				cases += ` WHEN animal.pid = ${currActive.team[i].pid} THEN 0`;
+			}
+		} else {
+			const uid = await p.global.getUid(p.msg.author.id);
+			let sql = `SELECT a.pid
+						FROM (
+							SELECT pt.pgid
+							FROM pet_team pt
+								LEFT JOIN pet_team_active pta ON pt.pgid = pta.pgid
+							WHERE pt.uid = ${uid}
+							ORDER BY pta.pgid DESC, pt.pgid ASC LIMIT 1
+						) temp
+						LEFT JOIN pet_team_animal a ON a.pgid = temp.pgid;`;
+			let result = await p.query(sql);
+			if (result.length) {
+				cases = '';
+				for (let i in result) {
+					cases += ` WHEN animal.pid = ${result[i].pid} THEN 0`;
+				}
+			}
+		}
 	}
+
+	await giveXpToPgid(p, pgid, totalXp, cases);
 
 	let sql = '';
-	if (isInt) {
-		sql = `UPDATE IGNORE pet_team
-			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
-			INNER JOIN animal ON pet_team_animal.pid = animal.pid
-		SET animal.xp = animal.xp + (CASE ${cases} ELSE ${Math.round(total / 2)} END)
-		WHERE pet_team.pgid = ${team.pgid};`;
-	} else {
-		sql = `UPDATE IGNORE user 
-			INNER JOIN pet_team ON user.uid = pet_team.uid
-			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
-			INNER JOIN animal ON pet_team_animal.pid = animal.pid
-		SET animal.xp = animal.xp + (CASE ${cases} ELSE ${Math.round(xp.xp / 2)} END)
-		WHERE user.id = ${p.msg.author.id};`;
+	if (addStreak) {
+		sql += `UPDATE pet_team SET highest_streak = IF(streak+1>highest_streak,streak+1,highest_streak), streak = streak + 1 WHERE pgid = ${pgid};`;
+	}
+	if (resetStreak) {
+		sql += `UPDATE pet_team SET streak = 0 WHERE pgid = ${pgid};`;
 	}
 
-	if (addStreak)
-		sql += `UPDATE pet_team SET highest_streak = IF(streak+1>highest_streak,streak+1,highest_streak), streak = streak + 1 WHERE pgid = ${team.pgid};`;
-	if (resetStreak) sql += `UPDATE pet_team SET streak = 0 WHERE pgid = ${team.pgid};`;
-
-	return await p.query(sql);
+	sql && (await p.query(sql));
 };
+
+exports.getSecondaryPgid = async function (p, user) {
+	const uid = await p.global.getUid(user.id);
+	const sql = `SELECT pt.pgid, pta.pgid AS active FROM pet_team pt
+			LEFT JOIN pet_team_active pta ON pt.pgid = pta.pgid
+		WHERE pt.disabled = 0
+			AND pt.uid = ${uid}
+		ORDER BY pt.pgid ASC`;
+	const result = await p.query(sql);
+	if (!result.length) {
+		return null;
+	}
+	const activeLoc =
+		result.findIndex((row) => {
+			return !!row.active;
+		}) || 0;
+	let nextLoc = (activeLoc + 1) % result.length;
+	return result[nextLoc]?.pgid;
+};
+
+exports.getPrimaryPgid = async function (p, user) {
+	const uid = await p.global.getUid(user.id);
+	const sql = `SELECT pt.pgid
+		FROM pet_team pt
+			LEFT JOIN pet_team_active pta ON pt.pgid = pta.pgid
+		WHERE pt.uid = ${uid}
+		ORDER BY pta.pgid DESC, pt.pgid ASC LIMIT 1`;
+	const result = await p.query(sql);
+	return result[0]?.pgid;
+};
+
+async function giveXpToPgid(p, pgid, xp, cases) {
+	let sql = '';
+	if (cases) {
+		sql = `UPDATE IGNORE pet_team
+				INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
+				INNER JOIN animal ON pet_team_animal.pid = animal.pid
+			SET animal.xp = animal.xp + (CASE ${cases} ELSE ${xp} END)
+			WHERE pet_team.pgid = ${pgid};`;
+	} else {
+		sql = `UPDATE IGNORE pet_team
+				INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
+				INNER JOIN animal ON pet_team_animal.pid = animal.pid
+			SET animal.xp = animal.xp + ${xp}
+			WHERE pet_team.pgid = ${pgid};`;
+	}
+	await p.query(sql);
+}
 
 exports.setWeaponUtil = function (util) {
 	weaponUtil = util;
+};
+
+exports.getMaxTeams = async function (user, patreonRank) {
+	let maxTeams = defaultMaxTeams;
+	let patreon = patreonRank || (await patreonUtil.getSupporterRank(this, user));
+	if (patreon?.benefitRank >= 3) {
+		maxTeams++;
+	}
+	return maxTeams;
 };

@@ -5,6 +5,7 @@
  * For more information, see README.md and LICENSE
  */
 
+const teamUtil = require('../../battle/util/teamUtil.js');
 const sku = '1164099862984400926';
 
 exports.giveCustomBattle = async function (p, id) {
@@ -142,6 +143,23 @@ exports.getSupporterRank = async function (p, user) {
 		const benefitRank = result[2][0].patreonType;
 		const endTime = new Date(result[2][0].endDate);
 		getBetterSupporterRank(supporter, benefitRank, endTime);
+	}
+
+	if (supporter.benefitRank >= 3) {
+		let sql = `UPDATE IGNORE pet_team SET disabled = 0 WHERE disabled = 1 AND uid = ${uid};`;
+		await p.query(sql);
+	} else {
+		let sql = `SELECT pt.*, pta.pgid AS active FROM pet_team pt LEFT JOIN pet_team_active pta  ON pt.pgid = pta.pgid WHERE pt.uid = ${uid} ORDER BY pt.pgid ASC;`;
+		console.log(sql);
+		const result = await p.query(sql);
+		const maxTeams = await teamUtil.getMaxTeams.bind(p)(p.msg.author, supporter);
+		if (result.length > maxTeams) {
+			const pgid = result[result.length - 1].pgid;
+			sql = `UPDATE pet_team SET disabled = 1 WHERE pgid = ${pgid};
+					DELETE FROM pet_team_active WHERE pgid = ${pgid};`;
+			console.log(sql);
+			await p.query(sql);
+		}
 	}
 
 	user.supporterRank = supporter;
