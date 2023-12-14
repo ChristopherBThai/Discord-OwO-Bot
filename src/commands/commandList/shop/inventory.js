@@ -47,7 +47,6 @@ module.exports = new CommandInterface({
 			wallpaperUtil.getItems(p),
 			itemUtil.getItems(p),
 		]);
-		console.log(promises);
 		let inv = addToString(promises);
 
 		let text = '**====== ' + p.getName() + "'s Inventory ======**\n" + inv;
