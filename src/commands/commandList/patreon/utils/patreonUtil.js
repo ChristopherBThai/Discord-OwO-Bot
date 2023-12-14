@@ -150,14 +150,12 @@ exports.getSupporterRank = async function (p, user) {
 		await p.query(sql);
 	} else {
 		let sql = `SELECT pt.*, pta.pgid AS active FROM pet_team pt LEFT JOIN pet_team_active pta  ON pt.pgid = pta.pgid WHERE pt.uid = ${uid} ORDER BY pt.pgid ASC;`;
-		console.log(sql);
 		const result = await p.query(sql);
 		const maxTeams = await teamUtil.getMaxTeams.bind(p)(p.msg.author, supporter);
 		if (result.length > maxTeams) {
 			const pgid = result[result.length - 1].pgid;
 			sql = `UPDATE pet_team SET disabled = 1 WHERE pgid = ${pgid};
 					DELETE FROM pet_team_active WHERE pgid = ${pgid};`;
-			console.log(sql);
 			await p.query(sql);
 		}
 	}
