@@ -85,10 +85,7 @@ async function claim(p, msg, con, query, bot) {
 	sql = '';
 	//Get total exp
 	let totalExp = Math.floor(autohuntutil.getLvl(query.exp, 0, 'exp').stat * duration);
-	const primaryPgid = await teamUtil.getPrimaryPgid(p, p.msg.author);
-	await teamUtil.giveXP(p, primaryPgid, totalExp);
-	const secondaryPgid = await teamUtil.getSecondaryPgid(p, p.msg.author);
-	await teamUtil.giveXP(p, secondaryPgid, totalExp, { secondary: true });
+	await teamUtil.giveXPToUserTeams(p, p.msg.author, totalExp);
 
 	//Get all animal
 	let total = {};

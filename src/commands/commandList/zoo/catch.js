@@ -13,6 +13,7 @@ const gemUtil = require('./gemUtil.js');
 const animalUtil = require('./animalUtil.js');
 const alterHunt = require('./../patreon/alterHunt.js');
 const patreonUtil = require('./../patreon/utils/patreonUtil.js');
+const teamUtil = require('../battle/util/teamUtil.js');
 const lootboxChance = 0.05;
 
 module.exports = new CommandInterface({
@@ -41,7 +42,7 @@ module.exports = new CommandInterface({
 		let sql = `SELECT money
 			FROM cowoncy
 			WHERE cowoncy.id = ${msg.author.id};`;
-		sql += `SELECT name,nickname,animal.pid,MAX(tmp.pgid) AS active
+		sql += `SELECT name,nickname,animal.pid,pet_team.pgid,MAX(tmp.pgid) AS active
 			FROM user u
 				INNER JOIN pet_team ON u.uid = pet_team.uid
 				INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
@@ -87,22 +88,26 @@ module.exports = new CommandInterface({
 			let text = animal.text;
 
 			//Get Xp
-			let petText, animalXp;
+			let petText, animalXp, pgid;
+			const activePids = [];
 			if (result[1][0]) {
 				text += `\n${p.config.emoji.blank} **|** `;
 				petText = '';
 				for (let i in result[1]) {
-					sql += `UPDATE animal SET xp = xp + ${
-						result[1][i].active ? animal.xp : Math.round(animal.xp / 2)
-					} WHERE pid = ${result[1][i].pid};`;
 					if (result[1][i].active) {
 						let pet = p.global.validAnimal(result[1][i].name);
 						petText += (pet.uni ? pet.uni : pet.value) + ' ';
+						pgid = result[1][i].pgid;
+						activePids.push(result[1][i].pid);
 					}
 				}
 				animalXp = animal.xp;
 				text += `${petText}gained **${animalXp}xp**!`;
 			}
+			await teamUtil.giveXPToUserTeams(p, p.msg.author, animalXp, {
+				activePgid: pgid,
+				activePids,
+			});
 
 			//Get Lootbox
 			let lbReset = dateUtil.afterMidnight(result[2][0] ? result[2][0].claim : undefined);

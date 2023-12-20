@@ -467,83 +467,43 @@ exports.isDead = function (team) {
 	return totalhp <= 0;
 };
 
-/* Distributes xp to team */
-exports.giveXP = async function (
+exports.giveXPToUserTeams = async function (
 	p,
-	team,
+	user,
 	xp,
-	{ updateStreak, ignoreBonus, secondary, currActive } = {}
+	{ xpOverrides, activePgid, activePids, secondaryPgid, ignoreSecondary } = {}
 ) {
-	if (!team) return;
-	let total = p.global.isInt(xp) ? xp : xp.total;
-	let addStreak = !updateStreak ? false : xp.addStreak;
-	let resetStreak = !updateStreak ? false : xp.resetStreak;
-	let hasTeam = !p.global.isInt(team);
-	let totalXp = !ignoreBonus ? total : xp.xp;
-	const pgid = hasTeam ? team.pgid : team;
+	const pgid = activePgid || (await getPrimaryPgid(p, user));
+	await giveXpToPgid(p, pgid, xp, xpOverrides);
 
-	let highestLvl = 1;
-	let cases;
-	if (hasTeam) {
-		for (let i in team.team) {
-			let lvl = team.team[i].stats.lvl;
-			if (lvl > highestLvl) highestLvl = lvl;
-		}
-
-		cases = '';
-		for (let i in team.team) {
-			let mult = 1;
-			let lvl = team.team[i].stats.lvl;
-			if (lvl < highestLvl) mult = 2 + (highestLvl - lvl) / 10;
-			if (mult > 10) mult = 10;
-			mult += team.team[i].weapon?.getBonusXPPassive() || 0;
-			cases += ` WHEN animal.pid = ${team.team[i].pid} THEN ${Math.round(total * mult)}`;
-		}
+	if (ignoreSecondary) {
+		return;
 	}
 
-	if (secondary) {
-		totalXp = Math.ceil(totalXp / 2);
-		if (currActive) {
-			// ignore giving xp to active team pets
-			cases = '';
-			for (let i in currActive.team) {
-				cases += ` WHEN animal.pid = ${currActive.team[i].pid} THEN 0`;
-			}
-		} else {
-			const uid = await p.global.getUid(p.msg.author.id);
-			let sql = `SELECT a.pid
-						FROM (
-							SELECT pt.pgid
-							FROM pet_team pt
-								LEFT JOIN pet_team_active pta ON pt.pgid = pta.pgid
-							WHERE pt.uid = ${uid}
-							ORDER BY pta.pgid DESC, pt.pgid ASC LIMIT 1
-						) temp
-						LEFT JOIN pet_team_animal a ON a.pgid = temp.pgid;`;
-			let result = await p.query(sql);
-			if (result.length) {
-				cases = '';
-				for (let i in result) {
-					cases += ` WHEN animal.pid = ${result[i].pid} THEN 0`;
-				}
-			}
-		}
+	if (!activePids) {
+		activePids = await getPrimaryPids(p, pgid);
 	}
-
-	await giveXpToPgid(p, pgid, totalXp, cases);
-
-	let sql = '';
-	if (addStreak) {
-		sql += `UPDATE pet_team SET highest_streak = IF(streak+1>highest_streak,streak+1,highest_streak), streak = streak + 1 WHERE pgid = ${pgid};`;
+	const secondaryXpOverrides = {};
+	for (let i in activePids) {
+		secondaryXpOverrides[activePids[i]] = 0;
 	}
-	if (resetStreak) {
-		sql += `UPDATE pet_team SET streak = 0 WHERE pgid = ${pgid};`;
-	}
-
-	sql && (await p.query(sql));
+	const pgid2 = secondaryPgid || (await getSecondaryPgid(p, user));
+	await giveXpToPgid(p, pgid2, xp / 2, secondaryXpOverrides);
 };
 
-exports.getSecondaryPgid = async function (p, user) {
+exports.updateTeamStreak = async function (pgid, { addStreak, resetStreak }) {
+	let sql;
+	if (addStreak) {
+		sql = `UPDATE pet_team SET highest_streak = IF(streak+1 > highest_streak, streak+1, highest_streak), streak = streak + 1 WHERE pgid = ${pgid};`;
+	}
+	if (resetStreak) {
+		sql = `UPDATE pet_team SET streak = 0 WHERE pgid = ${pgid};`;
+	}
+
+	sql && (await mysql.query(sql));
+};
+
+async function getSecondaryPgid(p, user) {
 	const uid = await p.global.getUid(user.id);
 	const sql = `SELECT pt.pgid, pta.pgid AS active FROM pet_team pt
 			LEFT JOIN pet_team_active pta ON pt.pgid = pta.pgid
@@ -560,9 +520,9 @@ exports.getSecondaryPgid = async function (p, user) {
 		}) || 0;
 	let nextLoc = (activeLoc + 1) % result.length;
 	return result[nextLoc]?.pgid;
-};
+}
 
-exports.getPrimaryPgid = async function (p, user) {
+async function getPrimaryPgid(p, user) {
 	const uid = await p.global.getUid(user.id);
 	const sql = `SELECT pt.pgid
 		FROM pet_team pt
@@ -571,10 +531,39 @@ exports.getPrimaryPgid = async function (p, user) {
 		ORDER BY pta.pgid DESC, pt.pgid ASC LIMIT 1`;
 	const result = await p.query(sql);
 	return result[0]?.pgid;
+}
+
+async function getPrimaryPids(p, pgid) {
+	const sql = `SELECT pid FROM pet_team_animal WHERE pgid = ${pgid}`;
+	const result = await p.query(sql);
+	const pids = [];
+	for (let i in result) {
+		pids.push(result[i].pid);
+	}
+	return pids;
+}
+
+exports.getPidFromTeam = function (team) {
+	const pids = [];
+	for (let i in team.team) {
+		pids.push(team.team[i].pid);
+	}
+	return pids;
 };
 
-async function giveXpToPgid(p, pgid, xp, cases) {
+async function giveXpToPgid(p, pgid, xp, xpOverrides) {
+	if (!pgid) {
+		return;
+	}
 	let sql = '';
+	let cases;
+	xp = Math.ceil(xp);
+	if (xpOverrides) {
+		cases = '';
+		for (let pid in xpOverrides) {
+			cases += ` WHEN animal.pid = ${pid} THEN ${xpOverrides[pid]}`;
+		}
+	}
 	if (cases) {
 		sql = `UPDATE IGNORE pet_team
 				INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
