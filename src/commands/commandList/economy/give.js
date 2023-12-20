@@ -38,7 +38,9 @@ module.exports = new CommandInterface({
 		let { amount, user, error } = await parseArgs.bind(this)();
 		if (error) return;
 
+
 		if (!(await checkLimit.bind(this)(user, amount))) return;
+
 
 		const message = await confirmation.bind(this)(user, amount);
 		if (!message) return;
@@ -61,7 +63,16 @@ async function parseArgs() {
 		} else if (this.global.isUser(this.args[i]) && !id) {
 			id = this.args[i].match(/[0-9]+/)[0];
 		} else {
-			invalid = true;
+			let value = this.args[i];
+			if (/^[0-9]+[kK]$/.test(value) && !amount) {
+				value = value.replace(/[kK]$/, "");
+				amount = parseInt(value) * 1000;
+			} else if (/^[0-9]+[mM]$/.test(value) && !amount) {
+				value = value.replace(/[mM]$/, "");
+				amount = parseInt(value) * 1000000;
+			} else {
+				invalid = true;
+			}
 		}
 	}
 
