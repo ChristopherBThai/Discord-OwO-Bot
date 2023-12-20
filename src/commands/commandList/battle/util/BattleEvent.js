@@ -166,12 +166,17 @@ module.exports = class BattleEvent {
 			{ team: this.enemy, win: enemyWin },
 			{ team: this.player, win: playerWin }
 		);
-		await teamUtil.giveXP(this.p, this.player, this.endResult.pXP, { updateStreak: true });
-		await teamUtil.giveXP(this.p, this.enemy, this.endResult.eXP);
-		const secondaryPgid = await teamUtil.getSecondaryPgid(this.p, this.p.msg.author);
-		await teamUtil.giveXP(this.p, secondaryPgid, this.endResult.pXP, {
-			secondary: true,
-			active: this.player,
+
+		await teamUtil.giveXPToUserTeams(this.p, this.p.msg.author, this.endResult.pXP.total, {
+			xpOverrides: this.endResult.pXP.xpOverrides,
+			activePgid: this.player.pgid,
+			activePids: teamUtil.getPidFromTeam(this.player),
+		});
+		await teamUtil.updateTeamStreak(this.player.pgid, this.endResult.pXP);
+		await teamUtil.giveXPToUserTeams(this.p, null, this.endResult.eXP.total, {
+			xpOverrides: this.endResult.eXP.xpOverrides,
+			activePgid: this.enemy.pgid,
+			ignoreSecondary: true,
 		});
 
 		/* Update TT on weapons */
