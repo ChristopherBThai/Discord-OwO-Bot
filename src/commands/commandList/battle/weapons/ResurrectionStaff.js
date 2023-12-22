@@ -71,6 +71,14 @@ module.exports = class ResurrectionStaff extends WeaponInterface {
 			allies: team,
 			enemies: enemy,
 		});
+		
+		/* remove debuffs */
+		for (const i in dead.buffs) {
+			if (dead.buffs[i].debuff) {
+				dead.buffs.splice(i, 1);
+			}
+		}
+		
 		logs.push(`[RSTAFF] ${me.nickname} revived ${dead.nickname} with ${heal.amount} HP`, heal.logs);
 
 		logs.addSubLogs(manaLogs);
