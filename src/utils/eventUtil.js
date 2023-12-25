@@ -298,7 +298,7 @@ async function getChristmasRewards(user) {
 	} else if (rand <= 0.3) {
 		// Shard
 		let rewardCount = 300;
-		rewardCount = Math.floor(rewardCount + Math.random() * 7000);
+		rewardCount = Math.floor(rewardCount + Math.random() * 700);
 		return {
 			rewardTxt: `Oops! You knocked an ornament off the tree and found **${this.global.toFancyNum(
 				rewardCount
