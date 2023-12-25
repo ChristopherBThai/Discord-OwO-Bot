@@ -283,7 +283,6 @@ async function getChristmasRewards(user) {
 	const id = user.id;
 	const uid = await this.global.getUserUid(user);
 	let rand = Math.random();
-	rand = 0.99;
 
 	if (rand <= 0.15) {
 		// Cowoncy
