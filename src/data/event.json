@@ -416,5 +416,11 @@
 		"end": 1699689600000,
 		"type": "halloween",
 		"chance": 0.05
+	},
+	"2023_christmas": {
+		"start": 1703491200000,
+		"end": 1704182400000,
+		"type": "christmas",
+		"chance": 0.05
 	}
 }
