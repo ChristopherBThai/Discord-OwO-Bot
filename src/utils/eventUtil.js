@@ -260,7 +260,7 @@ async function checkChristmas(event) {
 			'<:bulb1:1188727159309733888>',
 			'<:bulb2:1188727160433811456>',
 			'<:bulb3:1188727161411088485>',
-			'<:bulb4:1188727157434888243>'
+			'<:bulb4:1188727157434888243>',
 		];
 		const emoji = candies[Math.floor(Math.random() * candies.length)];
 		await con.query(rewardSql);
@@ -283,14 +283,16 @@ async function getChristmasRewards(user) {
 	const id = user.id;
 	const uid = await this.global.getUserUid(user);
 	let rand = Math.random();
-	rand = 0.99
+	rand = 0.99;
 
 	if (rand <= 0.15) {
 		// Cowoncy
 		let rewardCount = 1000;
 		rewardCount = Math.floor(rewardCount + Math.random() * 4000);
 		return {
-			rewardTxt: `You take a peek under the tree. What's this? You found **${this.global.toFancyNum(rewardCount)} ${this.config.emoji.cowoncy} Cowoncies**!`,
+			rewardTxt: `You take a peek under the tree. What's this? You found **${this.global.toFancyNum(
+				rewardCount
+			)} ${this.config.emoji.cowoncy} Cowoncies**!`,
 			rewardSql: `INSERT INTO cowoncy (id,money) VALUES (${id}, ${rewardCount}) ON DUPLICATE KEY UPDATE money = money + ${rewardCount};`,
 		};
 	} else if (rand <= 0.3) {
@@ -298,7 +300,9 @@ async function getChristmasRewards(user) {
 		let rewardCount = 300;
 		rewardCount = Math.floor(rewardCount + Math.random() * 7000);
 		return {
-			rewardTxt: `Oops! You knocked an ornament off the tree and found **${this.global.toFancyNum(rewardCount)} ${this.config.emoji.shards} Weapon Shards** inside!`,
+			rewardTxt: `Oops! You knocked an ornament off the tree and found **${this.global.toFancyNum(
+				rewardCount
+			)} ${this.config.emoji.shards} Weapon Shards** inside!`,
 			rewardSql: `INSERT INTO shards (uid,count) VALUES (${uid},${rewardCount}) ON DUPLICATE KEY UPDATE count = count + ${rewardCount};`,
 		};
 	} else if (rand <= 0.45) {
@@ -306,7 +310,9 @@ async function getChristmasRewards(user) {
 		let rewardCount = 1;
 		rewardCount = Math.floor(rewardCount + Math.random() * 2);
 		return {
-			rewardTxt: `Wait, these aren’t boxes of decorations. Are these gems? You find **${rewardCount} ${this.config.emoji.lootbox} Lootbox${rewardCount > 1 ? 'es' : ''}**!`,
+			rewardTxt: `Wait, these aren’t boxes of decorations. Are these gems? You find **${rewardCount} ${
+				this.config.emoji.lootbox
+			} Lootbox${rewardCount > 1 ? 'es' : ''}**!`,
 			rewardSql: `INSERT INTO lootbox (id,boxcount,claimcount,claim) VALUES (${id},${rewardCount},0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${rewardCount};`,
 		};
 	} else if (rand <= 0.6) {
@@ -314,7 +320,9 @@ async function getChristmasRewards(user) {
 		let rewardCount = 1;
 		rewardCount = Math.floor(rewardCount + Math.random() * 2);
 		return {
-			rewardTxt: `While putting the bauble on the tree, you notice **${rewardCount} ${this.config.emoji.crate} Weapon Crate${rewardCount > 1 ? 's' : ''}** hanging off the branches!`,
+			rewardTxt: `While putting the bauble on the tree, you notice **${rewardCount} ${
+				this.config.emoji.crate
+			} Weapon Crate${rewardCount > 1 ? 's' : ''}** hanging off the branches!`,
 			rewardSql: `INSERT INTO crate (uid,cratetype,boxcount,claimcount,claim) VALUES (${uid},0,${rewardCount},0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${rewardCount};`,
 		};
 	} else if (rand <= 0.75) {
@@ -331,7 +339,9 @@ async function getChristmasRewards(user) {
 		let gemSql = gem.sql;
 		gem = Object.values(gem.gems)[0].gem;
 		return {
-			rewardTxt: `What's this shiny star on top of the tree? Woah, you found ${this.global.getA(gem.rank)} **${gem.emoji} ${gem.rank} ${gem.type} Gem**!`,
+			rewardTxt: `What's this shiny star on top of the tree? Woah, you found ${this.global.getA(
+				gem.rank
+			)} **${gem.emoji} ${gem.rank} ${gem.type} Gem**!`,
 			rewardSql: gemSql,
 		};
 	} else {
