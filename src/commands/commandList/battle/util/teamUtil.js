@@ -474,6 +474,9 @@ exports.giveXPToUserTeams = async function (
 	{ xpOverrides, activePgid, activePids, secondaryPgid, ignoreSecondary } = {}
 ) {
 	const pgid = activePgid || (await getPrimaryPgid(p, user));
+	if (!pgid) {
+		return;
+	}
 	await giveXpToPgid(p, pgid, xp, xpOverrides);
 
 	if (ignoreSecondary) {
