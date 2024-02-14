@@ -196,7 +196,6 @@ async function getEventRewards(user) {
 	const id = user.id;
 	const uid = await this.global.getUserUid(user);
 	let rand = Math.random();
-	rand = 1.4;
 
 	if (rand <= 0.15) {
 		// Cowoncy
