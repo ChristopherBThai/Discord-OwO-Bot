@@ -422,5 +422,11 @@
 		"end": 1704355200000,
 		"type": "christmas",
 		"chance": 0.05
+	},
+	"2024_valentines": {
+		"start": 1707897600000,
+		"end": 1708588800000,
+		"type": "valentine",
+		"chance": 0.05
 	}
 }

@@ -301,14 +301,24 @@ async function doubleCheckMarriage(p, afterMid, marriage, cowoncy) {
 
 					let count = 1;
 					if (p.event.isValentines()) {
-						const event = p.event.getValentines();
-						sql += `INSERT INTO user_item (uid, name, count, claim_reset, claim_count) VALUES 
-											(${marriage.uid1}, '${event.item.id}', 1, '2017-01-01', 0),
-											(${marriage.uid2}, '${event.item.id}', 1, '2017-01-01', 0)
-										ON DUPLICATE KEY UPDATE
-											count = count + 1; `;
+						const item = {};
+						if (Math.random() < 0.5) {
+							sql += `INSERT INTO crate (uid, boxcount) VALUES
+										(${marriage.uid1}, 1), (${marriage.uid2}, 1)
+									ON DUPLICATE KEY UPDATE
+										boxcount = boxcount + 1;`;
+							item.emoji = p.config.emoji.crate;
+							item.name = 'Weapon Crate';
+						} else {
+							sql += `INSERT INTO lootbox (id, boxcount) VALUES
+										(${marriage.id1}, 1), (${marriage.id2}, 1)
+									ON DUPLICATE KEY UPDATE
+										boxcount = boxcount + 1;`;
+							item.emoji = p.config.emoji.lootbox;
+							item.name = 'Lootbox';
+						}
 						text =
-							`${valEmoji} **|** Happy Valentines, You got a ${event.item.emoji} **${event.item.name}** and some extra rewards! <3\n` +
+							`${valEmoji} **|** Happy Valentines! You got a ${item.emoji} **${item.name}** for being so cute together! <3\n` +
 							text;
 						count += 1;
 					}
@@ -443,14 +453,24 @@ async function checkMarriage(p, marriage) {
 
 	let count = 1;
 	if (p.event.isValentines()) {
-		const event = p.event.getValentines();
-		sql += `INSERT INTO user_item (uid, name, count, claim_reset, claim_count) VALUES 
-							(${marriage.uid1}, '${event.item.id}', 1, '2017-01-01', 0),
-							(${marriage.uid2}, '${event.item.id}', 1, '2017-01-01', 0)
-						ON DUPLICATE KEY UPDATE
-							count = count + 1; `;
+		const item = {};
+		if (Math.random() < 0.5) {
+			sql += `INSERT INTO crate (uid, boxcount) VALUES
+					(${marriage.uid1}, 1), (${marriage.uid2}, 1)
+				ON DUPLICATE KEY UPDATE
+					boxcount = boxcount + 1;`;
+			item.emoji = p.config.emoji.crate;
+			item.name = 'Weapon Crate';
+		} else {
+			sql += `INSERT INTO lootbox (id, boxcount) VALUES
+					(${marriage.id1}, 1), (${marriage.id2}, 1)
+				ON DUPLICATE KEY UPDATE
+					boxcount = boxcount + 1;`;
+			item.emoji = p.config.emoji.lootbox;
+			item.name = 'Lootbox';
+		}
 		text =
-			`\n${valEmoji} **|** Happy Valentines, You got a ${event.item.emoji} **${event.item.name}** and some extra rewards! <3` +
+			`\n${valEmoji} **|** Happy Valentines! You got a ${item.emoji} **${item.name}** for being so cute together! <3` +
 			text;
 		count += 1;
 	}
