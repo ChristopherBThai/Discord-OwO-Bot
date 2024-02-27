@@ -110,7 +110,9 @@ async function claim(p, msg, con, query, bot) {
 	let text =
 		'**' +
 		bot +
-		' |** `BEEP BOOP. I AM BACK WITH ' +
+		' |** '+ 
+		p.getTag() +
+		' `BEEP BOOP. I AM BACK WITH ' +
 		query.huntcount +
 		' ANIMALS,`\n**<:blank:427371936482328596> |** `' +
 		totalGain +
