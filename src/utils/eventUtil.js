@@ -202,10 +202,10 @@ async function getEventRewards(user) {
 		let rewardCount = 1000;
 		rewardCount = Math.floor(rewardCount + Math.random() * 4000);
 		return {
-			rewardTxt: `You received a red envelope! It has **${this.global.toFancyNum(rewardCount)} ${
+			rewardTxt: `What a lucky day! You found **${this.global.toFancyNum(rewardCount)} ${
 				this.config.emoji.cowoncy
-			} Cowoncies**, that's dope!`,
-			rewardEmoji: '🧧',
+			} Cowoncies**!`,
+			rewardEmoji: '🍀',
 			rewardSql: `INSERT INTO cowoncy (id,money) VALUES (${id}, ${rewardCount}) ON DUPLICATE KEY UPDATE money = money + ${rewardCount};`,
 		};
 	} else if (rand <= 0.3) {
@@ -213,47 +213,47 @@ async function getEventRewards(user) {
 		let rewardCount = 300;
 		rewardCount = Math.floor(rewardCount + Math.random() * 700);
 		return {
-			rewardTxt: `OwO what's this? A black cat left a gift behind? It's **${this.global.toFancyNum(
+			rewardTxt: `What a lucky day! You found **${this.global.toFancyNum(
 				rewardCount
-			)} ${this.config.emoji.shards} Weapon Shards** to make your weapons refined!`,
-			rewardEmoji: '🐈‍⬛',
+			)} ${this.config.emoji.shards} Weapon Shards**!`,
+			rewardEmoji: '🍀',
 			rewardSql: `INSERT INTO shards (uid,count) VALUES (${uid},${rewardCount}) ON DUPLICATE KEY UPDATE count = count + ${rewardCount};`,
 		};
 	} else if (rand <= 0.45) {
 		// Lootbox
 		let rewardCount = 1;
 		rewardCount = Math.floor(rewardCount + Math.random() * 2);
-		let rewardTxt = `Happy Chinese New Year! I hope `;
+		let rewardTxt = `What a lucky day! You found **${rewardCount} ${this.config.emoji.lootbox} Lootbox`;
 		if (rewardCount > 1) {
-			rewardTxt += `these **${rewardCount} ${this.config.emoji.lootbox} Lootboxes** can make your luck appear!`;
+			rewardTxt += `es**!`;
 		} else {
-			rewardTxt += `this **${rewardCount} ${this.config.emoji.lootbox} Lootbox** can make your luck appear!`;
+			rewardTxt += `**!`;
 		}
 		return {
 			rewardTxt,
-			rewardEmoji: `🧧`,
+			rewardEmoji: `🍀`,
 			rewardSql: `INSERT INTO lootbox (id,boxcount,claimcount,claim) VALUES (${id},${rewardCount},0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${rewardCount};`,
 		};
 	} else if (rand <= 0.6) {
 		// Crate
 		let rewardCount = 1;
 		rewardCount = Math.floor(rewardCount + Math.random() * 2);
-		let rewardTxt = `Look! A fairy with a gift for you! She left behind **${rewardCount} ${this.config.emoji.crate} Weapon Crate`;
+		let rewardTxt = `What a lucky day! You found **${rewardCount} ${this.config.emoji.crate} Weapon Crate`;
 		if (rewardCount > 1) {
-			rewardTxt += `s**, they look brand new!`;
+			rewardTxt += `s**!`;
 		} else {
-			rewardTxt += `**, it looks brand new!`;
+			rewardTxt += `**!`;
 		}
 		return {
 			rewardTxt,
-			rewardEmoji: '🧚',
+			rewardEmoji: '🍀',
 			rewardSql: `INSERT INTO crate (uid,cratetype,boxcount,claimcount,claim) VALUES (${uid},0,${rewardCount},0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${rewardCount};`,
 		};
 	} else if (rand <= 0.75) {
 		// Cookie
 		return {
-			rewardTxt: `Happy Valentine's! Enjoy this nice treat. I hope this **${this.config.emoji.cookie} Cookie** is very very sweet!`,
-			rewardEmoji: '❤️',
+			rewardTxt: `What a lucky day! You found a **${this.config.emoji.cookie} Cookie**!`,
+			rewardEmoji: '🍀',
 			rewardSql: `INSERT INTO rep (id, count) VALUES (${id},1) ON DUPLICATE KEY UPDATE count = count + 1;`,
 		};
 	} else if (rand <= 0.9) {
@@ -264,16 +264,16 @@ async function getEventRewards(user) {
 		let gemSql = gem.sql;
 		gem = Object.values(gem.gems)[0].gem;
 		return {
-			rewardTxt: `OwO! I wish you Good luck in the year ahead. If not, this **${gem.emoji} ${gem.rank} ${gem.type} Gem** will give you fortune instead!`,
-			rewardEmoji: '🧧',
+			rewardTxt: `What a lucky day! You found a **${gem.emoji} ${gem.rank} ${gem.type} Gem**!`,
+			rewardEmoji: '🍀',
 			rewardSql: gemSql,
 		};
 	} else {
 		// Special Pet
-		let animal = this.global.validAnimal('2024feb_owo');
+		let animal = this.global.validAnimal('2024spring_patrick');
 		return {
-			rewardTxt: `A cutie appeared, she asks, "Will you be my Valentine?". ${animal.value} OwO wants to stay with you all the time!`,
-			rewardEmoji: '💌',
+			rewardTxt: `You're in luck! ${animal.value} OwO came to come join your team!`,
+			rewardEmoji: '🍀',
 			rewardSql: `INSERT INTO animal (count, totalcount, id, name) VALUES (1,1,${id},'${animal.value}')
 					ON DUPLICATE KEY UPDATE count = count + 1, totalcount = totalcount + 1;
 					INSERT INTO animal_count (id, ${animal.rank}) VALUES (${id}, 1)
