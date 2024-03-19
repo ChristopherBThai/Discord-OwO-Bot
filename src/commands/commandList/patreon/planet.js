@@ -7,7 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const owners = ['692146302284202134', '412812867348463636'];
+const owners = ['692146302284202134'];
 const data = 'planet';
 const planets = [
 	{
