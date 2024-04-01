@@ -7,11 +7,16 @@
 const events = require('../data/event.json');
 //const itemUtil = require('../commands/commandList/shop/util/itemUtil.js');
 const rewardUtil = require('./rewardUtil.js');
-const lootboxUtil = require('../commands/commandList/zoo/lootboxUtil.js');
 const eventMax = 10;
 const itemToEvents = {};
 for (const key in events) {
 	const event = events[key];
+	if (typeof event.start === 'string') {
+		event.start = new Date(event.start).getTime();
+	}
+	if (typeof event.end === 'string') {
+		event.end = new Date(event.end).getTime();
+	}
 	if (event.item) {
 		itemToEvents[event.item.id] = event;
 	}
@@ -105,8 +110,14 @@ exports.getEventItem = async function () {
 						claim_count = ${claimed}, claim_reset = ${reset.sql};`;
 		await con.query(sql);
 
-		const { rewardSql, rewardTxt, rewardEmoji } = await getEventRewards.bind(this)(this.msg.author);
-		await con.query(rewardSql);
+		const { rewardSql, rewardTxt, rewardEmoji } = await getEventRewards.bind(this)(
+			this.msg.author,
+			con,
+			event
+		);
+		if (rewardSql) {
+			await con.query(rewardSql);
+		}
 		this.send(`${rewardEmoji} **|** \`[${claimed}/${eventMax}]\` ${rewardTxt}`);
 
 		await con.commit();
@@ -136,8 +147,9 @@ function isEventActive(event) {
 function setActiveEvents() {
 	activeEvents = {};
 	for (const key in events) {
-		if (Date.now() < events[key].end) {
-			activeEvents[key] = events[key];
+		const event = events[key];
+		if (Date.now() < event.end) {
+			activeEvents[key] = event;
 		}
 	}
 	console.log('Active Events: ' + JSON.stringify(activeEvents, null, 2));
@@ -192,92 +204,27 @@ async function parseReward(reward, con) {
 	return rewardUtil.getReward(this.msg.author.id, uid, con, reward.type, reward.id, reward.count);
 }
 
-async function getEventRewards(user) {
+async function getEventRewards(user, con, event) {
 	const id = user.id;
 	const uid = await this.global.getUserUid(user);
-	let rand = Math.random();
-
-	if (rand <= 0.15) {
-		// Cowoncy
-		let rewardCount = 1000;
-		rewardCount = Math.floor(rewardCount + Math.random() * 4000);
-		return {
-			rewardTxt: `What a lucky day! You found **${this.global.toFancyNum(rewardCount)} ${
-				this.config.emoji.cowoncy
-			} Cowoncies**!`,
-			rewardEmoji: '🍀',
-			rewardSql: `INSERT INTO cowoncy (id,money) VALUES (${id}, ${rewardCount}) ON DUPLICATE KEY UPDATE money = money + ${rewardCount};`,
-		};
-	} else if (rand <= 0.3) {
-		// Shard
-		let rewardCount = 300;
-		rewardCount = Math.floor(rewardCount + Math.random() * 700);
-		return {
-			rewardTxt: `What a lucky day! You found **${this.global.toFancyNum(
-				rewardCount
-			)} ${this.config.emoji.shards} Weapon Shards**!`,
-			rewardEmoji: '🍀',
-			rewardSql: `INSERT INTO shards (uid,count) VALUES (${uid},${rewardCount}) ON DUPLICATE KEY UPDATE count = count + ${rewardCount};`,
-		};
-	} else if (rand <= 0.45) {
-		// Lootbox
-		let rewardCount = 1;
-		rewardCount = Math.floor(rewardCount + Math.random() * 2);
-		let rewardTxt = `What a lucky day! You found **${rewardCount} ${this.config.emoji.lootbox} Lootbox`;
-		if (rewardCount > 1) {
-			rewardTxt += `es**!`;
-		} else {
-			rewardTxt += `**!`;
-		}
-		return {
-			rewardTxt,
-			rewardEmoji: `🍀`,
-			rewardSql: `INSERT INTO lootbox (id,boxcount,claimcount,claim) VALUES (${id},${rewardCount},0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${rewardCount};`,
-		};
-	} else if (rand <= 0.6) {
-		// Crate
-		let rewardCount = 1;
-		rewardCount = Math.floor(rewardCount + Math.random() * 2);
-		let rewardTxt = `What a lucky day! You found **${rewardCount} ${this.config.emoji.crate} Weapon Crate`;
-		if (rewardCount > 1) {
-			rewardTxt += `s**!`;
-		} else {
-			rewardTxt += `**!`;
-		}
-		return {
-			rewardTxt,
-			rewardEmoji: '🍀',
-			rewardSql: `INSERT INTO crate (uid,cratetype,boxcount,claimcount,claim) VALUES (${uid},0,${rewardCount},0,'2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${rewardCount};`,
-		};
-	} else if (rand <= 0.75) {
-		// Cookie
-		return {
-			rewardTxt: `What a lucky day! You found a **${this.config.emoji.cookie} Cookie**!`,
-			rewardEmoji: '🍀',
-			rewardSql: `INSERT INTO rep (id, count) VALUES (${id},1) ON DUPLICATE KEY UPDATE count = count + 1;`,
-		};
-	} else if (rand <= 0.9) {
-		// Special Gem
-		const specialGems = [79, 80, 81, 82, 83, 84, 85];
-		const gemId = specialGems[Math.floor(Math.random() * specialGems.length)];
-		let gem = lootboxUtil.getRandomGems(uid, 1, { gid: gemId });
-		let gemSql = gem.sql;
-		gem = Object.values(gem.gems)[0].gem;
-		return {
-			rewardTxt: `What a lucky day! You found a **${gem.emoji} ${gem.rank} ${gem.type} Gem**!`,
-			rewardEmoji: '🍀',
-			rewardSql: gemSql,
-		};
-	} else {
-		// Special Pet
-		let animal = this.global.validAnimal('2024spring_patrick');
-		return {
-			rewardTxt: `You're in luck! ${animal.value} OwO came to come join your team!`,
-			rewardEmoji: '🍀',
-			rewardSql: `INSERT INTO animal (count, totalcount, id, name) VALUES (1,1,${id},'${animal.value}')
-					ON DUPLICATE KEY UPDATE count = count + 1, totalcount = totalcount + 1;
-					INSERT INTO animal_count (id, ${animal.rank}) VALUES (${id}, 1)
-					ON DUPLICATE KEY UPDATE ${animal.rank} = ${animal.rank} + 1;`,
-		};
+	if (!event.rewardTotal) {
+		event.rewardTotal = event.rewards.reduce((acc, curr) => acc + curr.chance, 0);
 	}
+	const reward = this.global.selectRandom(event.rewards, event.rewardTotal);
+
+	let count = reward.count;
+	if (reward.min && reward.max) {
+		count = reward.min + Math.floor(Math.random() * (reward.max - reward.min));
+	}
+	const result = await rewardUtil.getReward(id, uid, con, reward.type, reward.id, count);
+
+	let rewardTxt = reward.text;
+	for (let key in result) {
+		rewardTxt = rewardTxt.replaceAll(`?${key}?`, result[key]);
+	}
+	return {
+		rewardTxt,
+		rewardEmoji: reward.textEmoji,
+		rewardSql: result.sql,
+	};
 }
