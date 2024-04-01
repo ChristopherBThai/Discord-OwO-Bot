@@ -458,3 +458,15 @@ exports.delay = function (delay) {
 		setTimeout(resolve, delay);
 	});
 };
+
+exports.selectRandom = function (array, total) {
+	const rand = 1 + Math.floor(Math.random() * total);
+	let temp = 0;
+	for (let i = 0; i <= array.length; i++) {
+		const item = array[i];
+		temp += item.chance;
+		if (rand <= temp) {
+			return item;
+		}
+	}
+};

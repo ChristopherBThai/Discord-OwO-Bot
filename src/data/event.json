@@ -434,5 +434,82 @@
 		"end": 1711609200000,
 		"type": "march",
 		"chance": 0.05
+	},
+	"2024_april": {
+		"start": "2024-04-01T00:00:00-0700",
+		"end": "2024-04-09T00:00:00-0700",
+		"type": "april",
+		"chance": 0.05,
+		"rewards": [
+			{
+				"type": "cowoncy",
+				"min": 1000,
+				"max": 5000,
+				"chance": 3,
+				"text": "Eid Mubarak! Happy Eid! Enjoy your holiday! You received **?count? ?emoji? Cowoncies**!",
+				"textEmoji": "🤲"
+			},
+			{
+				"type": "ws",
+				"min": 300,
+				"max": 1000,
+				"chance": 3,
+				"text": "Chocolate? What a nice Eid gift! You received **?count? ?emoji? Weapon Shards** in return!",
+				"textEmoji": "🍫"
+			},
+			{
+				"type": "lb",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "Happy Earth day! You received **?count? ?emoji? ?plural?**",
+				"textEmoji": "🌎"
+			},
+			{
+				"type": "wc",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "Happy Earth day! You received **?count? ?emoji? Weapon ?plural?**",
+				"textEmoji": "🌎"
+			},
+			{
+				"type": "flb",
+				"count": 1,
+				"chance": 1,
+				"text": "Happy Earth day! You received **?count? ?emoji? Fabled ?plural?**!",
+				"textEmoji": "🌎"
+			},
+			{
+				"type": "cookie",
+				"count": 1,
+				"chance": 1,
+				"text": "OwO, what's this? A cup of tea for me? Have a **?emoji? ?plural?** with it!",
+				"textEmoji": "🫖"
+			},
+			{
+				"type": "sgem",
+				"count": 1,
+				"chance": 3,
+				"text": "April Fools! Hope this **?emoji? ?rank? ?type? Gem** brings your luck around!",
+				"textEmoji": "😂"
+			},
+			{
+				"type": "animal",
+				"id": "2024april_fools",
+				"count": 1,
+				"chance": 3,
+				"text": "OwO What's this? The most powerful ?emoji? worm came to join your team!",
+				"textEmoji": "😂"
+			},
+			{
+				"type": "weapon",
+				"id": 22,
+				"count": 1,
+				"chance": 3,
+				"text": "OwO? Hopefully luck is in your favor. Your received **?text?**",
+				"textEmoji": "😂"
+			}
+		]
 	}
 }
