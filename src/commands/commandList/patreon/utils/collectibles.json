@@ -154,20 +154,21 @@
 	},
 	"flame": {
 		"alias": ["flm"],
-		"emoji": "<a:eternalflame:993701550327353355>",
+		"emoji": "<a:normalflames:1230598308632989767>",
 		"owners": ["640563808884228126", "863101441697775616", "460987842961866762"],
 		"fullControl": true,
 		"ownerOnly": true,
 		"dailyOnly": false,
 		"giveAmount": 1,
 		"description": "From the deepest depths of the underworld comes a flame like no other.\nDo not be fooled by its beauty, although it shines like the ocean blue.\nOne touch and your soul will leave you eternally.\n*dedicated/inspired by macchiato and estee*",
-		"displayMsg": "?emoji? **| ?user?**, you currently have ?count? ?emoji? Eternal Flame?plural?!",
-		"brokeMsg": ", you do not have any Eternal Flames! >:c",
-		"giveMsg": "?emoji? **| ?receiver?**, you have been given 1 Eternal flame from the underworld and it has claimed your soul.",
-		"hasMerge": false,
+		"displayMsg": "?emoji? **| ?user?**, you currently have ?count? ?emoji? Normal Flame?plural?!",
+		"brokeMsg": ", you do not have any Normal Flames! >:c",
+		"giveMsg": "?emoji? **| ?receiver?**, you have been given 1 normal flame.",
+		"hasMerge": true,
 		"mergeNeeded": 3,
-		"mergeEmoji": "",
-		"mergeMsg": ""
+		"mergeEmoji": "<a:eternalflame:993701550327353355>",
+		"mergeDisplayMsg": "?emoji? **| ?user?**, you currently have ?count? ?emoji? Normal Flame?plural?! and ?mergeCount? ?mergeEmoji? Eternal Flame?plural?!",
+		"mergeMsg": "?giveMsg?\n?mergeEmoji? **|** Your 3 normal flames have merged into an eternal flame from the underworld and it has claimed your soul!"
 	},
 	"penguin": {
 		"alias": ["pgn"],
