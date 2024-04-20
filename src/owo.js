@@ -113,6 +113,8 @@ class OwO extends Base {
 		this.patreon = require('./utils/patreon.js');
 		this.patreon.init(this);
 
+		this.patreonUtil = require('./commands/commandList/patreon/utils/patreonUtil.js');
+
 		try {
 			this.badwords = require('./../../tokens/badwords.json');
 		} catch (err) {

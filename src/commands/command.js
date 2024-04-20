@@ -296,6 +296,7 @@ function initParam(msg, command, args, main, context) {
 		dateUtil: main.dateUtil,
 		neo4j: main.neo4j,
 		giveaway: main.giveaway,
+		patreonUtil: main.patreonUtil,
 	};
 	param.setCooldown = function (cooldown) {
 		main.cooldown.setCooldown(param, aliasToCommand[command], cooldown);
