@@ -5,6 +5,10 @@
  * For more information, see README.md and LICENSE
  */
 const axios = require('axios');
+const { Campaign } = require('patreon-discord');
+const members = {};
+const cache = {};
+let campaign;
 
 exports.request = async function (cookie) {
 	console.log('getting cowoncy...');
@@ -67,10 +71,19 @@ async function getUsers(cookie, url, list) {
 				list.push({
 					name: item.attributes?.full_name,
 					discord: discord?.user_id,
+					user_id: item.id,
 				});
+			} else if (item.type === 'member') {
+				members[item.relationships.user.data.id] = item.id;
 			}
 		});
+		for (let i in list) {
+			if (!list[i].discord) {
+				list[i].discord = await getDiscordId(list[i].user_id);
+			}
+		}
 
+		console.log('list length: ' + list.length);
 		if (data.links.next) {
 			console.log('getting next page...');
 			return getUsers(cookie, data.links.next, list);
@@ -80,6 +93,25 @@ async function getUsers(cookie, url, list) {
 		console.error(err);
 		return list;
 	}
+}
+
+async function getDiscordId(userId) {
+	if (!campaign) {
+		campaign = new Campaign({
+			patreonToken: process.env.PATREON_ACCESS_TOKEN,
+			campaignId: 1623609,
+		});
+	}
+	const memberId = members[userId];
+
+	if (cache[memberId]) {
+		return cache[memberId];
+	}
+
+	const patron = await campaign.fetchPatron(memberId);
+	const discordId = patron.discord_user_id;
+	cache[memberId] = discordId;
+	return discordId;
 }
 
 /*

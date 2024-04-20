@@ -10,7 +10,6 @@ const animalUtil = require('./animalUtil.js');
 const WeaponInterface = require('../WeaponInterface.js');
 const global = require('../../../../utils/global.js');
 const mysql = require('../../../../botHandlers/mysqlHandler.js');
-const patreonUtil = require('../../patreon/utils/patreonUtil.js');
 const defaultMaxTeams = 2;
 let weaponUtil;
 
@@ -589,7 +588,7 @@ exports.setWeaponUtil = function (util) {
 
 exports.getMaxTeams = async function (user, patreonRank) {
 	let maxTeams = defaultMaxTeams;
-	let patreon = patreonRank || (await patreonUtil.getSupporterRank(this, user));
+	let patreon = patreonRank || (await this.patreonUtil.getSupporterRank(this, user));
 	if (patreon?.benefitRank >= 3) {
 		maxTeams++;
 	}
