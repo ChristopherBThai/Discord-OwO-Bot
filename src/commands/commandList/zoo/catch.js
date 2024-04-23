@@ -308,7 +308,7 @@ async function getAnimals(p, result, gems, uid) {
 	if (animal[0][0].charAt(2) == 'u' || animal[0][0].charAt(2) == 'e')
 		text = text.replace(' a ', ' an ');
 	if (gemLength > 0) {
-		text = '**🌱 | ' + p.getName() + '**, hunt is empowered by ';
+		text = '**🌱 | ' + p.getTag() + '**, hunt is empowered by ';
 		gemText = '';
 		for (let i in gems) {
 			let remaining = gems[i].activecount;
