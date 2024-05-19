@@ -93,6 +93,14 @@ exports.giveCustomCookie = async function (p, id) {
 	await p.query(sql);
 };
 
+exports.giveCustomZoo = async function (p, id) {
+	const uid = await p.global.getUid(id);
+	const sql = `INSERT INTO \`alter\` (uid, command, type) VALUES
+		(${uid}, 'zoo',  'paged'),
+		(${uid}, 'zoo',  'message');`;
+	await p.query(sql);
+};
+
 exports.getSupporterRank = async function (p, user) {
 	if (user.supporterRank) {
 		const now = new Date();

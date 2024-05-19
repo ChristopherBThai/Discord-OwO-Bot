@@ -57,6 +57,7 @@ async function addPerk(p, id) {
 	patreonUtil.giveCustomDaily(p, id);
 	patreonUtil.giveCustomWeapon(p, id);
 	patreonUtil.giveCustomCookie(p, id);
+	patreonUtil.giveCustomZoo(p, id);
 
 	// Send msgs
 	const user = await p.sender.msgUser(
