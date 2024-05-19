@@ -44,26 +44,34 @@ module.exports = new CommandInterface({
 
 		const header = '🌿 🌱 🌳** ' + this.getName() + "'s zoo! **🌳 🌿 🌱\n";
 		const body = createBody.bind(this)(userAnimals, biggest);
-		const paged = true;
-		const footer = createFooter.bind(this)(animalCount, paged);
+		let paged = false;
+		if (body?.length > 15000) {
+			paged = true;
+		}
+		const { footer, score, scoreText } = createFooter.bind(this)(animalCount, paged);
 
-		sendZooMessage.bind(this)(header, body, footer, paged);
+		const alterInfo = {
+			user: this.msg.author,
+			animalCount,
+			paged,
+			zooPoints: score,
+			countText: scoreText,
+			animals: body,
+		};
+		sendZooMessage.bind(this)(header, body, footer, paged, alterInfo);
 	},
 });
 
 /**
  * Send the emssage to channel
  */
-function sendZooMessage(header, text, footer, paged) {
-	let zooText = header + text + footer;
-	zooText = alterZoo.alter(this.msg.author.id, zooText, {
-		user: this.msg.author,
-	});
-
+async function sendZooMessage(header, text, footer, paged, alterInfo) {
 	if (paged) {
 		let pages = toPages(text);
-		sendPages(this, pages, header, footer);
+		sendPages(this, pages, header, footer, alterInfo);
 	} else {
+		let zooText = header + text + footer;
+		zooText = await alterZoo.alter(this, this.msg.author.id, zooText, alterInfo);
 		this.send(zooText);
 	}
 }
@@ -164,15 +172,20 @@ function createFooter(count, paged) {
 		}
 	}
 
+	const scoreText = animalUtil.zooScore(count);
 	if (paged) {
 		footer += `\nZoo Points: ${this.global.toFancyNum(total)}\n\t`;
-		footer += animalUtil.zooScore(count);
+		footer += scoreText;
 	} else {
 		footer += `\n**Zoo Points: __${this.global.toFancyNum(total)}__**\n\t**`;
-		footer += `${animalUtil.zooScore(count)}**`;
+		footer += `${scoreText}**`;
 	}
 
-	return footer;
+	return {
+		footer,
+		score: this.global.toFancyNum(total),
+		scoreText,
+	};
 }
 
 function initDisplay() {
@@ -227,14 +240,31 @@ function toPages(text) {
 	return pages;
 }
 
-async function sendPages(p, pages, header, footer) {
+async function sendPages(p, pages, header, footer, alterInfo) {
+	const formattedPages = await formatPages(p, header, pages, footer, alterInfo);
 	const createEmbed = (curr, _max) => {
-		return toEmbed(p, header, pages, footer, curr);
+		return formattedPages[curr];
 	};
-	new p.PagedMessage(p, createEmbed, pages.length - 1, { idle: 120000 });
+	new p.PagedMessage(p, createEmbed, formattedPages.length - 1, { idle: 120000 });
 }
 
-function toEmbed(p, header, pages, footer, loc) {
+async function formatPages(p, header, pages, footer, alterInfo) {
+	const formattedPages = [];
+	for (let i in pages) {
+		formattedPages.push(await toEmbed(p, header, pages, footer, i, alterInfo));
+	}
+	return formattedPages;
+}
+
+async function toEmbed(p, header, pages, footer, loc, alterInfo) {
+	const alterEmbed = await alterZoo.alter(p, p.msg.author.id, null, {
+		currentPage: loc + 1,
+		...alterInfo,
+	});
+	if (alterEmbed) {
+		return alterEmbed;
+	}
+
 	let embed = {
 		description: pages[loc].trim(),
 		color: p.config.embed_color,
@@ -243,7 +273,7 @@ function toEmbed(p, header, pages, footer, loc) {
 			icon_url: p.msg.author.avatarURL,
 		},
 		footer: {
-			text: `${footer}\n\nPage ${loc + 1}/${pages.length}`,
+			text: `${footer}\n\nPage ${parseInt(loc) + 1}/${pages.length}`,
 		},
 	};
 	return embed;

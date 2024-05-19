@@ -11,7 +11,7 @@ const patreonUtil = require('../patreon/utils/patreonUtil.js');
 const emoji = '🎉';
 
 module.exports = new CommandInterface({
-	alias: ['addallcustomize', 'aac'],
+	alias: ['addzoo'],
 
 	owner: true,
 
@@ -47,22 +47,14 @@ async function parseUsers(p) {
 }
 
 async function addPerk(p, id) {
-	patreonUtil.giveCustomInventory(p, id);
-	patreonUtil.giveCustomBattle(p, id);
-	patreonUtil.giveCustomHunt(p, id);
-	patreonUtil.giveCustomCowoncy(p, id);
-	patreonUtil.giveCustomGive(p, id);
-	patreonUtil.giveCustomPray(p, id);
-	patreonUtil.giveCustomInventory(p, id);
-	patreonUtil.giveCustomDaily(p, id);
-	patreonUtil.giveCustomWeapon(p, id);
-	patreonUtil.giveCustomCookie(p, id);
-	patreonUtil.giveCustomZoo(p, id);
+	// Fetch uid first
+	await p.global.getUid(id);
+	await patreonUtil.giveCustomZoo(p, id);
 
 	// Send msgs
 	const user = await p.sender.msgUser(
 		id,
-		`${emoji} **|** You received the ability to customize a bunch of commands!\n${p.config.emoji.blank} **|** You can customize it in our website: https://owobot.com/user/customize`
+		`${emoji} **|** You received the ability to customize your **zoo** command!\n${p.config.emoji.blank} **|** You can customize it in our website: https://owobot.com/user/customize/zoo`
 	);
 
 	if (user && !user.dmError) return { user };
