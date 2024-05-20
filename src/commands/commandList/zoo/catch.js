@@ -333,8 +333,11 @@ function getText(p, animals, gems) {
 			gemText += gems[i].emoji + '`[' + remaining + '/' + gems[i].length + ']` ';
 		}
 		text += gemText + ' !\n**<:blank:427371936482328596> |** You found: ';
-		for (let i = 1; i < animals.length; i++)
-			animalText += ' ' + global.unicodeAnimal(animals[i].value);
+		for (let i = 1; i < animals.length; i++) {
+			for (let j = 0; j < animals[i].count; j++) {
+				animalText += ' ' + global.unicodeAnimal(animals[i].value);
+			}
+		}
 		text += animalText;
 	}
 
