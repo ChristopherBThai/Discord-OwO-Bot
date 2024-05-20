@@ -137,7 +137,7 @@ function getRankRow(rank, rankAnimals, digits) {
 	let text = '';
 	if (preBuiltDisplay[rank]) {
 		text += preBuiltDisplay[rank];
-		rankAnimals.forEach((animal) => {
+		rankAnimals?.forEach((animal) => {
 			text = text.replace(
 				'~' + animal.name,
 				this.global.unicodeAnimal(animal.name) + this.global.toSmallNum(animal.count, digits)
