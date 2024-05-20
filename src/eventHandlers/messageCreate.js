@@ -21,6 +21,7 @@ const survey = require('../utils/survey.js');
 exports.handle = async function (msg, raw) {
 	// if (blacklist.checkBot(msg)) return;
 	if (this.optOut[msg.author.id]) return;
+	if (this.pause) return;
 
 	//Ignore if bot
 	if (msg.author.bot) {
