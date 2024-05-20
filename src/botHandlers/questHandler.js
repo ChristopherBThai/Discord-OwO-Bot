@@ -60,9 +60,10 @@ async function check(msg, id, username, questName, result, count, extra) {
 	if (questName == 'find') {
 		needed = 3;
 		/* Check if the tier matches */
-		if (quest.count[level] in extra) {
-			current += extra[quest.count[level]] - 1;
-			count = extra[quest.count[level]];
+		const rank = extra.find((ele) => ele.rank === quest.count[level]);
+		if (rank) {
+			count = rank.count;
+			current = result.count + count;
 		} else return;
 	}
 

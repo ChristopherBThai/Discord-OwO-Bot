@@ -82,26 +82,19 @@ async function claim(p, msg, con, query, bot) {
 	const supporter = await patreonUtil.getSupporterRank(p, p.msg.author);
 	let patreon = supporter.benefitRank > 0;
 
-	sql = '';
 	//Get total exp
 	let totalExp = Math.floor(autohuntutil.getLvl(query.exp, 0, 'exp').stat * duration);
 	await teamUtil.giveXPToUserTeams(p, p.msg.author, totalExp);
 
 	//Get all animal
-	let total = {};
-	let digits = 1;
 	let radar = autohuntutil.getLvl(query.radar, 0, 'radar');
-	for (let i = 0; i < query.huntcount; i++) {
-		let animal = animalUtil.randAnimal({
-			patreon: patreon,
-			huntbot: radar.stat / 100,
-		});
-		if (total[animal[1]]) {
-			total[animal[1]].count++;
-			if (total[animal[1]].count > digits) digits = total[animal[1]].count;
-		} else {
-			total[animal[1]] = { count: 1, rank: animal[2] };
-		}
+	let { animals, animalSql } = animalUtil.getMultipleAnimals(query.huntcount, p.msg.author, {
+		patreon: patreon,
+		huntbot: radar.stat / 100,
+	});
+	let digits = 0;
+	for (let key in animals) {
+		if (animals[key].count > digits) digits = animals[key].count;
 	}
 	digits = Math.trunc(Math.log10(digits) + 1);
 	let text =
@@ -115,59 +108,31 @@ async function claim(p, msg, con, query, bot) {
 		totalExp +
 		' EXPERIENCE`';
 	let tempText = [];
-	let animalSql = [];
-	let animalCountSql = {};
-	for (let animal in total) {
-		let animalString = animal + animalUtil.toSmallNum(total[animal].count, digits) + '  ';
-		let animalLoc = p.animals.order.indexOf(total[animal].rank);
+
+	for (let animal in animals) {
+		let animalString = animal + animalUtil.toSmallNum(animals[animal].count, digits) + '  ';
+		let animalLoc = p.animals.order.indexOf(animals[animal].rank);
 		if (animalLoc || animalLoc === 0) {
 			if (!tempText[animalLoc])
 				tempText[animalLoc] = ' \n' + p.animals.ranks[p.animals.order[animalLoc]] + ' **|**';
 			tempText[animalLoc] += ' ' + animalString;
 		}
-		animalSql.push(
-			`(${msg.author.id}, '${animal}', ${total[animal].count}, ${total[animal].count})`
-		);
-		if (!animalCountSql[total[animal].rank])
-			animalCountSql[total[animal].rank] = {
-				rank: total[animal].rank,
-				count: 0,
-			};
-		animalCountSql[total[animal].rank].count += total[animal].count;
 	}
-	animalCountSql = Object.values(animalCountSql);
-
-	sql += `INSERT INTO animal (id, name, count, totalcount)
-			VALUES ${animalSql.join(',')}
-			ON DUPLICATE KEY UPDATE
-				count = count + VALUES(count),
-				totalcount = totalcount + VALUES(totalcount);`;
-	sql += `INSERT INTO animal_count (id, ${animalCountSql
-		.map((animalCount) => animalCount.rank)
-		.join(',')})
-			VALUES (${msg.author.id}, ${animalCountSql.map((animalCount) => animalCount.count).join(',')})
-			ON DUPLICATE KEY UPDATE
-				${animalCountSql
-					.map((animalCount) => {
-						return `${animalCount.rank} = ${animalCount.rank} + ${animalCount.count}`;
-					})
-					.join(',')};
-			`;
 
 	for (let i = 0; i < tempText.length; i++) if (tempText[i]) text += tempText[i];
 
-	result = await p.query(sql);
+	result = await p.query(animalSql);
 	text = alterhb(msg.author.id, text, 'returned');
 	p.send(text);
-	for (let animal in total) {
+	for (let animal in animals) {
 		let tempAnimal = global.validAnimal(animal);
 		logger.incr(
 			'animal',
-			total[animal].count,
+			animals[animal].count,
 			{ rank: tempAnimal.rank, name: tempAnimal.name },
 			p.msg
 		);
-		logger.incr('zoo', tempAnimal.points * total[animal].count, {}, p.msg);
+		logger.incr('zoo', tempAnimal.points * animals[animal].count, {}, p.msg);
 	}
 	logger.incr('essence', totalGain, { type: 'huntbot' }, p.msg);
 }

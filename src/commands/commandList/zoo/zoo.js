@@ -21,7 +21,7 @@ let preBuiltDisplay = {};
 initDisplay();
 
 module.exports = new CommandInterface({
-	alias: ['zoo', 'z', 'z2'],
+	alias: ['zoo', 'z'],
 
 	args: '{display}',
 
