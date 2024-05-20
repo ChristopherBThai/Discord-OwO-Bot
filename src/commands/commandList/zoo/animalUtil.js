@@ -15,6 +15,10 @@ try {
 	animals = require('../../../../secret/owo-animals.json');
 	console.log('Found owo-animals.json file in secret folder!');
 }
+const animalRankDict = {};
+for (let i = 0; i <= animals.order.length; i++) {
+	animalRankDict[animals.order[i]] = i;
+}
 
 let enableDistortedTier = true;
 setTimeout(() => {
@@ -101,7 +105,14 @@ function getRate(special) {
 /**
  * Picks a random animal from secret json file
  */
-exports.randAnimal = function ({ patreon, gem, lucky, special, huntbot, manual } = {}) {
+const randAnimal = (exports.randAnimal = function ({
+	patreon,
+	gem,
+	lucky,
+	special,
+	huntbot,
+	manual,
+} = {}) {
 	let rand = Math.random();
 	let result = [];
 
@@ -224,6 +235,39 @@ exports.randAnimal = function ({ patreon, gem, lucky, special, huntbot, manual }
 		result.push(300000);
 	}
 	return result;
+});
+
+exports.getMultipleAnimals = function (count, user, opt) {
+	const total = {};
+	let xp = 0;
+	for (let i = 0; i < count; i++) {
+		let animal = randAnimal(opt);
+		xp += animal[3];
+		if (total[animal[1]]) {
+			total[animal[1]].count++;
+			total[animal[1]].totalXp += animal[3];
+		} else {
+			total[animal[1]] = {
+				count: 1,
+				rank: animal[2],
+				value: animal[1],
+				text: animal[0],
+				totalXp: animal[3],
+				singleXp: animal[3],
+			};
+		}
+	}
+
+	const ordered = sortAnimals(total);
+	const { sql, typeCount } = createSql(ordered, user);
+
+	return {
+		animals: total,
+		ordered: ordered,
+		animalSql: sql,
+		xp: xp,
+		typeCount,
+	};
 };
 
 exports.toSmallNum = function (count, digits) {
@@ -276,3 +320,66 @@ exports.getPid = async function (id, pet) {
 	const result = await mysql.query(sql);
 	return result[0]?.pid;
 };
+
+/**
+ * Sorts an array of animals by rank then alphabetical order
+ */
+function sortAnimals(animals) {
+	const animalList = [];
+	for (let value in animals) {
+		animalList.push(animals[value]);
+	}
+	animalList.sort((a, b) => {
+		const a_rank = animalRankDict[a.rank] || 0;
+		const b_rank = animalRankDict[b.rank] || 0;
+		if (a_rank > b_rank) {
+			return -1;
+		} else if (a_rank < b_rank) {
+			return 1;
+		} else if (a.value < b.value) {
+			return -1;
+		} else if (a.value > b.value) {
+			return 1;
+		} else {
+			return 0;
+		}
+	});
+	return animalList;
+}
+
+function createSql(orderedAnimal, user) {
+	let animalSql = [];
+	let animalCountSql = {};
+
+	orderedAnimal.forEach((animal) => {
+		animalSql.push(`(${user.id}, '${animal.value}', ${animal.count}, ${animal.count})`);
+		if (!animalCountSql[animal.rank])
+			animalCountSql[animal.rank] = {
+				rank: animal.rank,
+				count: 0,
+			};
+		animalCountSql[animal.rank].count += animal.count;
+	});
+	animalCountSql = Object.values(animalCountSql);
+
+	let sql = `INSERT INTO animal (id, name, count, totalcount)
+			VALUES ${animalSql.join(',')}
+			ON DUPLICATE KEY UPDATE
+				count = count + VALUES(count),
+				totalcount = totalcount + VALUES(totalcount);`;
+	sql += `INSERT INTO animal_count (id, ${animalCountSql
+		.map((animalCount) => animalCount.rank)
+		.join(',')})
+			VALUES (${user.id}, ${animalCountSql.map((animalCount) => animalCount.count).join(',')})
+			ON DUPLICATE KEY UPDATE
+				${animalCountSql
+					.map((animalCount) => {
+						return `${animalCount.rank} = ${animalCount.rank} + ${animalCount.count}`;
+					})
+					.join(',')};
+			`;
+	return {
+		sql,
+		typeCount: animalCountSql,
+	};
+}

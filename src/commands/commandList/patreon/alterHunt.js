@@ -102,16 +102,16 @@ async function checkDb(p, id, text, info) {
 		};
 	} else {
 		type = 'nogems';
-		const animal = p.global.validAnimal(info.animal[0][1]);
+		const animal = p.global.validAnimal(info.animals[0].value);
 		replacers = {
 			username: p.getName(),
 			discriminator: p.msg.author.discriminator,
 			blank: p.config.emoji.blank,
 			pets: info.petText || '',
 			xp: info.animalXp || '',
-			a: getA(info.animal[0][2]),
-			animalRank: info.animal[0][2],
-			animalRankEmoji: info.animal[0][0].match(/<a?:\w*:\d*>/i)[0],
+			a: getA(info.animals[0].rank),
+			animalRank: info.animals[0].rank,
+			animalRankEmoji: info.animals[0].text.match(/<a?:\w*:\d*>/i)[0],
 			animal: info.animalEmojis,
 			animalName: animal.name,
 		};
