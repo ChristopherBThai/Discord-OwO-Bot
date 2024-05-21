@@ -98,8 +98,12 @@ async function parseArgs() {
 async function sendMoney(user, amount, message) {
 	const con = await this.startTransaction();
 	try {
-		const canGive = await cowoncyUtils.canGive.bind(this)(this.msg.author, user, amount, con);
+		const canGive = await cowoncyUtils.canGive.bind(this)(this.msg.author, user, amount, con, {
+			skipCowoncyCheck: true,
+			isTransaction: true,
+		});
 		if (canGive.error) {
+			await con.rollback();
 			const text = await alterGive.alter(this, this.msg.author.id, null, {
 				from: this.msg.author,
 				to: user,
@@ -115,7 +119,6 @@ async function sendMoney(user, amount, message) {
 			} else {
 				this.errorMsg(canGive.error);
 			}
-			await con.rollback();
 			return false;
 		}
 
@@ -126,6 +129,7 @@ async function sendMoney(user, amount, message) {
 		let result = await con.query(sql);
 
 		if (!result[0].changedRows) {
+			await con.rollback();
 			const text = await alterGive.alter(this, this.msg.author.id, null, {
 				from: this.msg.author,
 				to: user,
@@ -141,7 +145,6 @@ async function sendMoney(user, amount, message) {
 			} else {
 				this.errorMsg(", you silly hooman! You don't have enough cowoncy!", 3000);
 			}
-			await con.rollback();
 			return false;
 		}
 
