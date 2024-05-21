@@ -179,7 +179,7 @@ async function getAnimals(p, result, gems, uid) {
 	);
 
 	let sql = animalSql + ' UPDATE cowoncy SET money = money - 5 WHERE id = ' + p.msg.author.id + ';';
-	sql += getGemSql(uid, gems, ordered.length);
+	sql += getGemSql(uid, gems, count);
 
 	let { animalText, text, gemText } = getText(p, ordered, gems);
 	typeCount.push({ rank: 'epic', count: 1 });
