@@ -511,5 +511,74 @@
 				"textEmoji": "😂"
 			}
 		]
+	},
+	"2024_may": {
+		"start": "2024-05-23T00:00:00-0700",
+		"end": "2024-06-01T00:00:00-0700",
+		"type": "may",
+		"chance": 0.05,
+		"rewards": [
+			{
+				"type": "cowoncy",
+				"min": 1000,
+				"max": 5000,
+				"chance": 3,
+				"text": "Huh? what's this warm feeling? Oh! It's a hug from momma! Along with a hug, you received **?count? ?emoji? Cowoncies**>!",
+				"textEmoji": "❤️"
+			},
+			{
+				"type": "ws",
+				"min": 300,
+				"max": 1000,
+				"chance": 3,
+				"text": "You used your bike instead of the car to help the polar bears and found **?count? ?emoji? Weapon Shards** in the basket!",
+				"textEmoji": "🐻‍❄️"
+			},
+			{
+				"type": "lb",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "Oh my! Look at those beautiful flowers of spring! Wait... those flowers have something hanging on them?? Oh its a **?count? ?emoji? ?plural?**!",
+				"textEmoji": "🪻"
+			},
+			{
+				"type": "wc",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "OwO signed you up to adopt a rhino! You received **?count? ?emoji? Weapon ?plural?** as a thank you!",
+				"textEmoji": "🦏"
+			},
+			{
+				"type": "flb",
+				"count": 1,
+				"chance": 1,
+				"text": "Oh! You found a golden shield from mom and earned **?count? ?emoji? Fabled ?plural?**!",
+				"textEmoji": "💛"
+			},
+			{
+				"type": "cookie",
+				"count": 1,
+				"chance": 1,
+				"text": "OwO? Is that a mother's love? Strengthened by the might of love, you discovered **?emoji? ?plural?**!",
+				"textEmoji": "💙"
+			},
+			{
+				"type": "sgem",
+				"count": 1,
+				"chance": 3,
+				"text": "OwO? what are these petals falling on us!? Oh spring is here! You tried picking up the petal but found **?emoji? ?rank? ?type? Gem** instead!",
+				"textEmoji": "🌸"
+			},
+			{
+				"type": "weapon",
+				"id": 18,
+				"count": 1,
+				"chance": 3,
+				"text": "You and OwO plant a tree together. What’s this under the leaves? There’s a **?text?**! ",
+				"textEmoji": "🦧"
+			}
+		]
 	}
 }
