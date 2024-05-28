@@ -182,7 +182,6 @@ async function getAnimals(p, result, gems, uid) {
 	sql += getGemSql(uid, gems, count);
 
 	let { animalText, text, gemText } = getText(p, ordered, gems);
-	typeCount.push({ rank: 'epic', count: 1 });
 
 	return {
 		sql: sql,
