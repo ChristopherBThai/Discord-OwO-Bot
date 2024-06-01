@@ -10,6 +10,8 @@ const CommandInterface = require('../../CommandInterface.js');
 const alterGive = require('../patreon/alterGive.js');
 const cowoncyUtils = require('./utils/cowoncyUtils.js');
 
+const ongoingTransactions = {};
+
 const agree = '✅';
 const decline = '❎';
 const spacer = '                                                               ';
@@ -38,12 +40,26 @@ module.exports = new CommandInterface({
 		let { amount, user, error } = await parseArgs.bind(this)();
 		if (error) return;
 
-		if (!(await checkLimit.bind(this)(user, amount))) return;
+		let ongoingUser = checkOngoing(this.msg.author, user)
+		if (ongoingUser) {
+			this.errorMsg(`, ${this.getTag(ongoingUser)} already has an ongoing cowoncy transaction!`);
+			return;
+		}
 
-		const message = await confirmation.bind(this)(user, amount);
-		if (!message) return;
+		let message;
+		try {
+			addOngoing(this.msg.author.id, user.id);
+			if (!(await checkLimit.bind(this)(user, amount))) return;
 
-		if (!(await sendMoney.bind(this)(user, amount, message))) return;
+			message = await confirmation.bind(this)(user, amount);
+			if (!message) return;
+
+			if (!(await sendMoney.bind(this)(user, amount, message))) return;
+		} catch (err) {
+			console.error(err);
+		} finally {
+			removeOngoing(this.msg.author.id, user.id);
+		}
 
 		await sendMsg.bind(this)(user, amount, message);
 
@@ -147,6 +163,7 @@ async function sendMoney(user, amount, message) {
 			}
 			return false;
 		}
+
 
 		await con.commit();
 		return true;
@@ -310,4 +327,24 @@ async function checkLimit(user, amount) {
 		return false;
 	}
 	return true;
+}
+
+function addOngoing(user1, user2) {
+	ongoingTransactions[user1] = true;
+	ongoingTransactions[user2] = true;
+}
+
+function removeOngoing(user1, user2) {
+	delete ongoingTransactions[user1]
+	delete ongoingTransactions[user2]
+}
+
+function checkOngoing(user1, user2) {
+	if (ongoingTransactions[user1.id]) {
+		return user1;
+	}
+	if (ongoingTransactions[user2.id]) {
+		return user2;
+	}
+	return false;
 }
