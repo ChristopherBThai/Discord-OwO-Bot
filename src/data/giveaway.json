@@ -74,5 +74,17 @@
 			"values": [1],
 			"chances": [1]
 		}
+	},
+	"giveaway_tickets": {
+		"name": "Giveaway Tickets",
+		"type": "item",
+		"rewardId": "giveaway_tickets",
+		"chance": 3,
+		"emoji": "<:gticket:1065956261541195898>",
+		"owoOnly": true,
+		"count": {
+			"values": [1, 2, 3, 4, 5],
+			"chances": [30, 20, 20, 10, 1]
+		}
 	}
 }
