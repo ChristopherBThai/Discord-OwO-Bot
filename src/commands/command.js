@@ -351,6 +351,18 @@ function initParam(msg, command, args, main, context) {
 	param.getTag = (user) => {
 		return param.global.getTag(user || param.msg.author);
 	};
+	param.getFlags = () => {
+		if (param.flags) {
+			return param.flags;
+		}
+		param.flags = {};
+		args?.forEach((arg) => {
+			if (arg.charAt(0) === '-') {
+				param.flags[arg.substring(1).toLowerCase()] = true;
+			}
+		});
+		return param.flags;
+	}
 	return param;
 }
 

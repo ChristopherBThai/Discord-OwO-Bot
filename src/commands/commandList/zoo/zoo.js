@@ -27,7 +27,7 @@ module.exports = new CommandInterface({
 
 	desc: "Displays your zoo! Some animals are rarer than others! Use the 'display' args to display all your animals from your history!",
 
-	example: ['owo zoo', 'owo zoo display'],
+	example: ['owo zoo', 'owo zoo -display', 'owo zoo -nopages'],
 
 	related: ['owo hunt', 'owo sell'],
 
@@ -40,12 +40,13 @@ module.exports = new CommandInterface({
 	six: 100,
 
 	execute: async function () {
+		const flags = this.getFlags();
 		const { userAnimals, animalCount, biggest } = await fetchZoo.bind(this)();
 
 		const header = '🌿 🌱 🌳** ' + this.getName() + "'s zoo! **🌳 🌿 🌱\n";
 		const body = createBody.bind(this)(userAnimals, biggest);
 		let paged = false;
-		if (body?.length > 15000) {
+		if (!(flags.nopage || flags.nopages) && body?.length > 15000) {
 			paged = true;
 		}
 		const { footer, score, scoreText } = createFooter.bind(this)(animalCount, paged);
@@ -84,7 +85,7 @@ async function fetchZoo() {
 	sql += `SELECT * FROM animal_count WHERE id = ${this.msg.author.id};`;
 	const result = await this.query(sql);
 
-	if (['display', 'd'].includes(this.args[0]?.toLowerCase())) {
+	if (this.flags.display || ['display', 'd'].includes(this.args[0]?.toLowerCase())) {
 		result[0].forEach((animal) => {
 			animal.count = animal.totalcount;
 		});
@@ -259,7 +260,9 @@ async function formatPages(p, header, pages, footer, alterInfo) {
 async function toEmbed(p, header, pages, footer, loc, alterInfo) {
 	const alterEmbed = await alterZoo.alter(p, p.msg.author.id, null, {
 		currentPage: loc + 1,
+		maxPages: pages.length,
 		...alterInfo,
+		animals: pages[loc].trim()
 	});
 	if (alterEmbed) {
 		return alterEmbed;
