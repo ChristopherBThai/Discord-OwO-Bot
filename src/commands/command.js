@@ -362,7 +362,7 @@ function initParam(msg, command, args, main, context) {
 			}
 		});
 		return param.flags;
-	}
+	};
 	return param;
 }
 

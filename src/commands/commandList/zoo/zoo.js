@@ -262,7 +262,7 @@ async function toEmbed(p, header, pages, footer, loc, alterInfo) {
 		currentPage: loc + 1,
 		maxPages: pages.length,
 		...alterInfo,
-		animals: pages[loc].trim()
+		animals: pages[loc].trim(),
 	});
 	if (alterEmbed) {
 		return alterEmbed;

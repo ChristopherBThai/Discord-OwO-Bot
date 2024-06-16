@@ -40,7 +40,7 @@ module.exports = new CommandInterface({
 		let { amount, user, error } = await parseArgs.bind(this)();
 		if (error) return;
 
-		let ongoingUser = checkOngoing(this.msg.author, user)
+		let ongoingUser = checkOngoing(this.msg.author, user);
 		if (ongoingUser) {
 			this.errorMsg(`, ${this.getTag(ongoingUser)} already has an ongoing cowoncy transaction!`);
 			return;
@@ -163,7 +163,6 @@ async function sendMoney(user, amount, message) {
 			}
 			return false;
 		}
-
 
 		await con.commit();
 		return true;
@@ -335,8 +334,8 @@ function addOngoing(user1, user2) {
 }
 
 function removeOngoing(user1, user2) {
-	delete ongoingTransactions[user1]
-	delete ongoingTransactions[user2]
+	delete ongoingTransactions[user1];
+	delete ongoingTransactions[user2];
 }
 
 function checkOngoing(user1, user2) {
