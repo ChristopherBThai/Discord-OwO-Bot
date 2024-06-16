@@ -181,7 +181,7 @@ async function getAnimals(p, result, gems, uid) {
 	let sql = animalSql + ' UPDATE cowoncy SET money = money - 5 WHERE id = ' + p.msg.author.id + ';';
 	sql += getGemSql(uid, gems, count);
 
-	let { animalText, text, gemText } = getText(p, ordered, gems);
+	let { animalText, text, gemText } = getText(p, ordered, gems, count);
 
 	return {
 		sql: sql,
@@ -293,7 +293,7 @@ function getGemSql(uid, gems, animalCount) {
 	return sql;
 }
 
-function getText(p, animals, gems) {
+function getText(p, animals, gems, animalCount) {
 	/* Construct output message for user */
 	let animalText = global.unicodeAnimal(animals[0].value);
 	let text =
@@ -317,22 +317,23 @@ function getText(p, animals, gems) {
 			if (gems[i].type == 'Patreon' || gems[i].type == 'Hunting') {
 				subtract = 1;
 			} else if (gems[i].type == 'Empowering') {
-				subtract = Math.trunc(animals.length / 2);
+				subtract = Math.trunc(animalCount / 2);
 			} else if (
 				['Lucky', 'Special'].includes(gems[i].type) &&
 				gems['Hunting'] &&
 				gems['Empowering']
 			) {
-				subtract = Math.trunc(animals.length / 2);
+				subtract = Math.trunc(animalCount / 2);
 			} else {
-				subtract = animals.length;
+				subtract = animalCount;
 			}
 			remaining -= subtract;
 			if (remaining < 0) remaining = 0;
 			gemText += gems[i].emoji + '`[' + remaining + '/' + gems[i].length + ']` ';
 		}
 		text += gemText + ' !\n**<:blank:427371936482328596> |** You found: ';
-		for (let i = 1; i < animals.length; i++) {
+		animalText = '';
+		for (let i = 0; i < animals.length; i++) {
 			for (let j = 0; j < animals[i].count; j++) {
 				animalText += ' ' + global.unicodeAnimal(animals[i].value);
 			}

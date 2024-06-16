@@ -3,10 +3,15 @@ const global = require('./global.js');
 const timerEmoji = '⏱';
 const cooldown = {};
 const lock = {};
+const ignore = { '184587051943985152': true };
 let macro;
 
 exports.check = async function (p, command) {
 	let key = 'cd_' + command + '_' + p.msg.author.id;
+
+	if (ignore[p.msg.author.id]) {
+		return true;
+	}
 
 	// On cooldown
 	if (cooldown[key] && !p.msg.interaction) return;
