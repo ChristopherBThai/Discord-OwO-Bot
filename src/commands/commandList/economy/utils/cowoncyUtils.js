@@ -47,7 +47,7 @@ async function checkSender(user, amount, con, { skipCowoncyCheck, isTransaction 
 		};
 	}
 
-	const afterMid = this.dateUtil.afterMidnight(result[0].reset);
+	const afterMid = this.dateUtil.afterMidnight(result[0]?.reset);
 	const limit = (await getUserLimits(user.id)).send;
 
 	if (afterMid.after) {
