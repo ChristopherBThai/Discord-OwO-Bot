@@ -171,6 +171,7 @@ module.exports = class BattleEvent {
 			xpOverrides: this.endResult.pXP.xpOverrides,
 			activePgid: this.player.pgid,
 			activePids: teamUtil.getPidFromTeam(this.player),
+			ignoreSecondary: true,
 		});
 		await teamUtil.updateTeamStreak(this.player.pgid, this.endResult.pXP);
 		await teamUtil.giveXPToUserTeams(this.p, null, this.endResult.eXP.total, {
