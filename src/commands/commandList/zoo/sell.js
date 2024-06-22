@@ -206,17 +206,16 @@ function sellAnimal(msg, con, animal, count, send, global, p) {
 }
 
 async function sellRanks(ranks) {
-	const rankNames = `'` + ranks.map(rank => rank.rank).join(`','`) + `'`;
+	const rankNames = `'` + ranks.map((rank) => rank.rank).join(`','`) + `'`;
 	let total = 0;
 	let sold = '';
-	let test = Date.now();
-	const con = await this.startTransaction()
+	const con = await this.startTransaction();
 	try {
 		let sql = `SELECT rank, count FROM animal INNER JOIN animals ON animal.name = animals.name WHERE id = ${this.msg.author.id} AND rank in (${rankNames}) AND count > 0;`;
 		let result = await con.query(sql);
 		const rows = result.length;
 		const combine = {};
-		result.forEach(rank => {
+		result.forEach((rank) => {
 			if (!combine[rank.rank]) {
 				combine[rank.rank] = 0;
 			}
@@ -224,12 +223,12 @@ async function sellRanks(ranks) {
 		});
 
 		for (let rankName in combine) {
-			const rank = ranks.find(rank => rank.rank === rankName);
+			const rank = ranks.find((rank) => rank.rank === rankName);
 			total += combine[rankName] * rank.price;
 			sold += rank.emoji + 'x' + combine[rankName] + ' ';
 		}
 		if (!total) {
-			this.errorMsg(', You don\'t have enough animals! >:c', 3000);
+			this.errorMsg(", You don't have enough animals! >:c", 3000);
 			await con.rollback();
 			return;
 		}
@@ -250,8 +249,12 @@ async function sellRanks(ranks) {
 		this.errorMsg(', failed to sell rank.', 3000);
 		return;
 	}
-	
+
 	sold = sold.slice(0, -1);
-	this.send(`**🔪 | ${this.getName()}** sold **${sold}** for a total of **<:cowoncy:416043450337853441> ${this.global.toFancyNum(total)}**`);
+	this.send(
+		`**🔪 | ${this.getName()}** sold **${sold}** for a total of **<:cowoncy:416043450337853441> ${this.global.toFancyNum(
+			total
+		)}**`
+	);
 	this.logger.incr('cowoncy', total, { type: 'sell' }, this.msg);
 }
