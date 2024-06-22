@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: owo
 -- ------------------------------------------------------
--- Server version	5.7.33-0ubuntu0.18.04.1
+-- Server version	5.7.42-0ubuntu0.18.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,6 +14,32 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `alter`
+--
+
+DROP TABLE IF EXISTS `alter`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `alter` (
+  `uid` int(11) NOT NULL,
+  `command` varchar(25) NOT NULL,
+  `type` varchar(25) NOT NULL,
+  `isEmbed` tinyint(4) NOT NULL DEFAULT '0',
+  `text` varchar(1500) DEFAULT NULL,
+  `sideImg` varchar(256) DEFAULT NULL,
+  `bottomImg` varchar(256) DEFAULT NULL,
+  `color` int(11) DEFAULT NULL,
+  `title` varchar(256) DEFAULT NULL,
+  `footer` varchar(256) DEFAULT NULL,
+  `author` varchar(256) DEFAULT NULL,
+  `showAvatar` tinyint(4) NOT NULL DEFAULT '0',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`uid`,`command`,`type`),
+  CONSTRAINT `alter_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `alterbattle`
@@ -129,8 +155,24 @@ DROP TABLE IF EXISTS `animals`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `animals` (
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`name`)
+  `rank` varchar(50) NOT NULL,
+  PRIMARY KEY (`name`),
+  KEY `fk_animals__animals_rank__rank` (`rank`),
+  CONSTRAINT `fk_animals__animals_rank__rank` FOREIGN KEY (`rank`) REFERENCES `animals_rank` (`rank`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `animals_rank`
+--
+
+DROP TABLE IF EXISTS `animals_rank`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `animals_rank` (
+  `rank` varchar(50) CHARACTER SET utf8mb4 NOT NULL,
+  PRIMARY KEY (`rank`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -687,6 +729,22 @@ CREATE TABLE `marriage` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `patreon_discord`
+--
+
+DROP TABLE IF EXISTS `patreon_discord`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `patreon_discord` (
+  `uid` int(11) NOT NULL,
+  `endDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `patreonType` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`uid`),
+  CONSTRAINT `patreon_discord_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `patreon_wh`
 --
 
@@ -737,6 +795,7 @@ CREATE TABLE `pet_team` (
   `censor` tinyint(1) DEFAULT '0',
   `streak` int(10) unsigned DEFAULT '0',
   `highest_streak` int(10) unsigned DEFAULT '0',
+  `disabled` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`pgid`,`uid`),
   KEY `uid` (`uid`),
   KEY `pet_team__streak` (`streak`),
@@ -1008,6 +1067,7 @@ DROP TABLE IF EXISTS `survey`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `survey` (
   `sid` int(10) unsigned NOT NULL,
+  `endDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`sid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1060,6 +1120,7 @@ CREATE TABLE `timers` (
   `questrrTime` timestamp NOT NULL DEFAULT '2017-01-01 08:00:00',
   `cookieTime` timestamp NOT NULL DEFAULT '2017-01-01 08:00:00',
   `checklist` timestamp NOT NULL DEFAULT '2017-01-01 08:00:00',
+  `eventTime` timestamp NOT NULL DEFAULT '2017-01-01 08:00:00',
   PRIMARY KEY (`uid`),
   CONSTRAINT `user_timers` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -1228,6 +1289,23 @@ CREATE TABLE `user_compensation` (
   KEY `cid` (`cid`),
   CONSTRAINT `user_compensation_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`),
   CONSTRAINT `user_compensation_ibfk_2` FOREIGN KEY (`cid`) REFERENCES `compensation` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `user_event`
+--
+
+DROP TABLE IF EXISTS `user_event`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_event` (
+  `uid` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `claim_reset` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `claim_count` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`uid`,`name`),
+  CONSTRAINT `user_event_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1625,4 +1703,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-09-11  0:32:43
+-- Dump completed on 2024-06-22 15:41:52
