@@ -580,5 +580,129 @@
 				"textEmoji": "🦧"
 			}
 		]
+	},
+	"2024_june": {
+		"start": "2024-06-24T00:00:00",
+		"end": "2024-07-02T00:00:00",
+		"type": "june",
+		"chance": 0.05,
+		"rewards": [
+			{
+				"type": "cowoncy",
+				"min": 1000,
+				"max": 5000,
+				"chance": 3,
+				"text": "OWO! Sharky thinks you are friend and gave you **?count? ?emoji? Cowoncies**!",
+				"textEmoji": "🦈"
+			},
+			{
+				"type": "ws",
+				"min": 300,
+				"max": 1000,
+				"chance": 3,
+				"text": "Aww~ you played with the dolphins. You receive **?count? ?emoji? Weapon Shards** for the entertainment!",
+				"textEmoji": "🐬"
+			},
+			{
+				"type": "lb",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "Oh ho! You went swimming and fought with lobsty. You surprisingly won and gained **?count? ?emoji? ?plural?**!",
+				"textEmoji": "🦞"
+			},
+			{
+				"type": "wc",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "UWU~ do you know milk contains calcium that strengthens your bones? You received **?count? ?emoji? Weapon ?plural?** for reading and knowing!",
+				"textEmoji": "🥛"
+			},
+			{
+				"type": "flb",
+				"count": 1,
+				"chance": 1,
+				"text": "Do you know Boba can be done not only with milk but also soymilk? You have gotten **?count? ?emoji? Fabled ?plural?** for your OWO treat!",
+				"textEmoji": "🧋"
+			},
+			{
+				"type": "cookie",
+				"count": 1,
+				"chance": 1,
+				"text": "Do you add milk into your coffee? Here's a **?emoji? ?plural?** for considering!",
+				"textEmoji": "☕"
+			},
+			{
+				"type": "sgem",
+				"count": 1,
+				"chance": 3,
+				"text": "OwO what's this! A rainbow peeking out of the clouds!? W-wait it just dropped a **?emoji? ?rank? ?type? Gem**!",
+				"textEmoji": "<:hrainbow:1254595698113118270>"
+			}
+		]
+	},
+	"2024_july": {
+		"start": "2024-07-02T00:00:01",
+		"end": "2024-07-10T00:00:00",
+		"type": "july",
+		"chance": 0.05,
+		"rewards": [
+			{
+				"type": "cowoncy",
+				"min": 1000,
+				"max": 5000,
+				"chance": 3,
+				"text": "Remember to stay cool~ you received **?count? ?emoji? Cowoncies** for keeping cool!",
+				"textEmoji": "🧊"
+			},
+			{
+				"type": "ws",
+				"min": 300,
+				"max": 1000,
+				"chance": 3,
+				"text": "Whose up for a soft serve and **?count? ?emoji? Weapon Shards** to chill off the day? Owo does~",
+				"textEmoji": "🍦"
+			},
+			{
+				"type": "lb",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "UwU? Have you tried to eat snow as ice cream? You receive **?count? ?emoji? ?plural?** for thinking about it",
+				"textEmoji": "❄️"
+			},
+			{
+				"type": "wc",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "UWU~ do you know milk contains calcium that strengthens your bones? You received  for reading and knowing!",
+				"text": "Fireworks are a fantastic way to celebrate! You can celebrate by having **?count? ?emoji? Weapon ?plural?**!",
+				"textEmoji": "🎆"
+			},
+			{
+				"type": "flb",
+				"count": 1,
+				"chance": 1,
+				"text": "While it may not be the festival of snakes, we still appreciate our serpent friends. Here is a **?count? ?emoji? Fabled ?plural?** to remember them!",
+				"textEmoji": "🐍"
+			},
+			{
+				"type": "cookie",
+				"count": 1,
+				"chance": 1,
+				"text": "Do you add milk into your coffee? Here's a  for considering!",
+				"text": "Not all snakes are scary! Some only grow to weigh less than 1 gram! To compensate here is a **?emoji? ?plural?**!",
+				"textEmoji": "🐍"
+			},
+			{
+				"type": "sgem",
+				"count": 1,
+				"chance": 3,
+				"text": "HIIII! i've nevew seen a boww of snakes befowe wow! Quick take these wewawds: **?emoji? ?rank? ?type? Gem** (；ω；)",
+				"textEmoji": "🐍"
+			}
+		]
 	}
 }
