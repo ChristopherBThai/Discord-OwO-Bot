@@ -68,17 +68,17 @@ exports.useItem = async function (item) {
 	this.send(text);
 };
 
-exports.getEventItem = async function () {
-	const event = getCurrentActive();
+const getEventItem = (exports.getEventItem = async function ({ overrideEvent, overrideItem } = {}) {
+	const event = getCurrentActive(overrideEvent);
 	if (!event) return;
 	const random = Math.random();
-	if (random >= event.chance) {
+	if (!overrideEvent && random >= event.chance) {
 		return;
 	}
 	// Cache if user is done today
 	let today = new Date();
 	today = today.toLocaleDateString();
-	if (this.msg.author.eventItemDone) {
+	if (!overrideEvent && this.msg.author.eventItemDone) {
 		const date = this.msg.author.eventItemDone;
 		if (date === today) {
 			return;
@@ -96,7 +96,7 @@ exports.getEventItem = async function () {
 		claimed = (result[0]?.claim_count || 0) + 1;
 
 		const reset = this.dateUtil.afterMidnight(result[0]?.claim_reset);
-		if (result[0] && result[0]?.claim_count >= eventMax && !reset.after) {
+		if (!overrideEvent && result[0] && result[0]?.claim_count >= eventMax && !reset.after) {
 			this.msg.author.eventItemDone = today;
 			con.rollback();
 			return;
@@ -113,7 +113,8 @@ exports.getEventItem = async function () {
 		const { rewardSql, rewardTxt, rewardEmoji } = await getEventRewards.bind(this)(
 			this.msg.author,
 			con,
-			event
+			event,
+			overrideItem
 		);
 		if (rewardSql) {
 			await con.query(rewardSql);
@@ -125,6 +126,17 @@ exports.getEventItem = async function () {
 		console.error(err);
 		con.rollback();
 		return;
+	}
+});
+
+exports.getAllItems = async function (overrideEvent) {
+	const event = events[overrideEvent];
+	if (!event) {
+		this.errorMsg(', no event');
+		return;
+	}
+	for (let overrideItem in event.rewards) {
+		await getEventItem.bind(this)({ overrideEvent, overrideItem });
 	}
 };
 
@@ -149,13 +161,19 @@ function setActiveEvents() {
 	for (const key in events) {
 		const event = events[key];
 		if (Date.now() < event.end) {
+			event.id = key;
 			activeEvents[key] = event;
 		}
 	}
-	console.log('Active Events: ' + JSON.stringify(activeEvents, null, 2));
+	console.log('Upcoming/Active: ' + Object.keys(activeEvents));
+	const current = getCurrentActive();
+	console.log('Current: ' + current?.id);
 }
 
-function getCurrentActive() {
+function getCurrentActive(override) {
+	if (override) {
+		return events[override];
+	}
 	let resetActive = false;
 	for (const key in activeEvents) {
 		if (isEventActive(activeEvents[key])) {
@@ -204,13 +222,14 @@ async function parseReward(reward, con) {
 	return rewardUtil.getReward(this.msg.author.id, uid, con, reward.type, reward.id, reward.count);
 }
 
-async function getEventRewards(user, con, event) {
+async function getEventRewards(user, con, event, override) {
 	const id = user.id;
 	const uid = await this.global.getUserUid(user);
 	if (!event.rewardTotal) {
 		event.rewardTotal = event.rewards.reduce((acc, curr) => acc + curr.chance, 0);
 	}
-	const reward = this.global.selectRandom(event.rewards, event.rewardTotal);
+	const reward =
+		event.rewards[override] || this.global.selectRandom(event.rewards, event.rewardTotal);
 
 	let count = reward.count;
 	if (reward.min && reward.max) {
