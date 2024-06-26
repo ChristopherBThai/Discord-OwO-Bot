@@ -204,8 +204,8 @@ async function sellRanks(ranks) {
 			return;
 		}
 
-		sql = `INSERT INTO autohunt (id, essence) VALUES (${this.msg.author.id}, ${total}) ON DUPLICATE KEY UPDATE essence = essence + ${total};`;
-		sql += `UPDATE animal INNER JOIN animals ON animal.name = animals.name SET sellcount = sellcount + count, count = 0 WHERE id = ${this.msg.author.id} AND rank IN (${rankNames}) AND count > 0;`;
+		sql = `INSERT INTO autohunt (id, essence, total) VALUES (${this.msg.author.id}, ${total}, ${total}) ON DUPLICATE KEY UPDATE essence = essence + ${total}, total = total + ${total};`;
+		sql += `UPDATE animal INNER JOIN animals ON animal.name = animals.name SET saccount = saccount + count, count = 0 WHERE id = ${this.msg.author.id} AND rank IN (${rankNames}) AND count > 0;`;
 		result = await con.query(sql);
 		if (result[1].changedRows != rows) {
 			this.errorMsg(', failed to sacrifice rank.', 3000);
