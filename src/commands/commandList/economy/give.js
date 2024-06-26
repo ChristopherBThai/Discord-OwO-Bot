@@ -40,21 +40,21 @@ module.exports = new CommandInterface({
 		let { amount, user, error } = await parseArgs.bind(this)();
 		if (error) return;
 
-		let ongoingUser = checkOngoing(this.msg.author, user);
-		if (ongoingUser) {
-			this.errorMsg(`, ${this.getTag(ongoingUser)} already has an ongoing cowoncy transaction!`);
-			return;
-		}
-
 		let message;
 		try {
-			addOngoing(this.msg.author.id, user.id);
-			if (!(await checkLimit.bind(this)(user, amount))) return;
+			if (!(await checkLimit.bind(this)(user, amount))) {
+				return;
+			}
 
 			message = await confirmation.bind(this)(user, amount);
-			if (!message) return;
+			if (!message) {
+				return;
+			}
 
-			if (!(await sendMoney.bind(this)(user, amount, message))) return;
+			if (!(await sendMoney.bind(this)(user, amount, message))) {
+				removeOngoing(this.msg.author.id, user.id);
+				return;
+			}
 		} catch (err) {
 			console.error(err);
 		} finally {
@@ -112,6 +112,13 @@ async function parseArgs() {
 }
 
 async function sendMoney(user, amount, message) {
+	let ongoingUser = checkOngoing(this.msg.author, user);
+	if (ongoingUser) {
+		this.errorMsg(`, ${this.getTag(ongoingUser)} already has an ongoing cowoncy transaction!`);
+		return false;
+	}
+	addOngoing(this.msg.author.id, user.id);
+
 	const con = await this.startTransaction();
 	try {
 		const canGive = await cowoncyUtils.canGive.bind(this)(this.msg.author, user, amount, con, {
@@ -135,6 +142,7 @@ async function sendMoney(user, amount, message) {
 			} else {
 				this.errorMsg(canGive.error);
 			}
+			removeOngoing(this.msg.author.id, user.id);
 			return false;
 		}
 
@@ -161,15 +169,18 @@ async function sendMoney(user, amount, message) {
 			} else {
 				this.errorMsg(", you silly hooman! You don't have enough cowoncy!", 3000);
 			}
+			removeOngoing(this.msg.author.id, user.id);
 			return false;
 		}
 
 		await con.commit();
+		removeOngoing(this.msg.author.id, user.id);
 		return true;
 	} catch (err) {
 		console.error(err);
 		this.errorMsg(', there was an error sending cowoncy! Please try again later.', 3000);
 		await con.rollback();
+		removeOngoing(this.msg.author.id, user.id);
 		return false;
 	}
 }
