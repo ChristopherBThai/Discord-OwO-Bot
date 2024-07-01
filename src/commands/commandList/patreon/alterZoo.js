@@ -77,7 +77,9 @@ async function checkDb(p, info) {
 		commonCount: info.animalCount.common,
 	};
 
-	return alterUtils.getAlterCommand('zoo', info.user, type, replacers);
+	return alterUtils.getAlterCommand('zoo', info.user, type, replacers, null, null, {
+		extraReplacers: p.animals.ranks,
+	});
 }
 
 function replaceRanks(text, newRanks) {
