@@ -7,7 +7,15 @@
 const mysql = require('../botHandlers/mysqlHandler.js');
 const global = require('./global.js');
 
-exports.getAlterCommand = async function (dbName, user, type, replacers, appendText, forceEmbed) {
+exports.getAlterCommand = async function (
+	dbName,
+	user,
+	type,
+	replacers,
+	appendText,
+	forceEmbed,
+	{ extraReplacers } = {}
+) {
 	const uid = await global.getUid(user.id);
 	let sql;
 	if (dbName === 'alterhunt' || dbName === 'alterbattle') {
@@ -20,6 +28,16 @@ exports.getAlterCommand = async function (dbName, user, type, replacers, appendT
 
 	result.text += appendText || '';
 	result.text = global.replacer(result.text, replacers);
+	try {
+		const extra = JSON.parse(result.extra);
+		for (let i in extraReplacers) {
+			if (extra[i]) {
+				result.text = result.text.replace(extraReplacers[i], extra[i]);
+			}
+		}
+	} catch (err) {
+		console.error(err);
+	}
 	if (!forceEmbed && !result.isEmbed) {
 		return result.text;
 	}
