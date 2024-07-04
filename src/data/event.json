@@ -702,6 +702,14 @@
 				"chance": 3,
 				"text": "HIIII! i've nevew seen a boww of snakes befowe wow! Quick take these wewawds: **?emoji? ?rank? ?type? Gem** (；ω；)",
 				"textEmoji": "🐍"
+			},
+			{
+				"type": "animal",
+				"id": "2024july_owo",
+				"count": 1,
+				"chance": 3,
+				"text": "OwO, look at the beautiful fireworks! ?emoji? came to join and watch with you <3",
+				"textEmoji": "🎆"
 			}
 		]
 	}
