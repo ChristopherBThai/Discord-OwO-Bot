@@ -476,7 +476,7 @@ exports.giveXPToUserTeams = async function (
 	if (!pgid) {
 		return;
 	}
-	await giveXpToPgid(p, pgid, xp, xpOverrides, activePids);
+	await giveXpToPgid(p, pgid, xp, xpOverrides);
 
 	if (ignoreSecondary) {
 		return;
@@ -490,8 +490,7 @@ exports.giveXPToUserTeams = async function (
 		secondaryXpOverrides[activePids[i]] = 0;
 	}
 	const pgid2 = secondaryPgid || (await getSecondaryPgid(p, user));
-	const secondaryActivePids = await getPrimaryPids(p, pgid2);
-	await giveXpToPgid(p, pgid2, xp / 2, secondaryXpOverrides, secondaryActivePids);
+	await giveXpToPgid(p, pgid2, xp / 2, secondaryXpOverrides);
 };
 
 exports.updateTeamStreak = async function (pgid, { addStreak, resetStreak }) {
@@ -554,7 +553,7 @@ exports.getPidFromTeam = function (team) {
 	return pids;
 };
 
-async function giveXpToPgid(p, pgid, xp, xpOverrides, pids) {
+async function giveXpToPgid(p, pgid, xp, xpOverrides) {
 	if (!pgid) {
 		return;
 	}
@@ -568,13 +567,17 @@ async function giveXpToPgid(p, pgid, xp, xpOverrides, pids) {
 		}
 	}
 	if (cases) {
-		sql = `UPDATE animal 
-			SET xp = xp + (CASE ${cases} ELSE ${xp} END)
-			WHERE pid IN (${pids.join(',')});`;
+		sql = `UPDATE IGNORE pet_team
+				INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
+				INNER JOIN animal ON pet_team_animal.pid = animal.pid
+			SET animal.xp = animal.xp + (CASE ${cases} ELSE ${xp} END)
+			WHERE pet_team.pgid = ${pgid};`;
 	} else {
-		sql = `UPDATE animal
-			SET xp = xp + ${xp}
-			WHERE pid IN (${pids.join(',')});`;
+		sql = `UPDATE IGNORE pet_team
+				INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
+				INNER JOIN animal ON pet_team_animal.pid = animal.pid
+			SET animal.xp = animal.xp + ${xp}
+			WHERE pet_team.pgid = ${pgid};`;
 	}
 	await p.query(sql);
 }
