@@ -35,9 +35,7 @@ exports.getAlterCommand = async function (
 				result.text = result.text.replace(extraReplacers[i], extra[i]);
 			}
 		}
-	} catch (err) {
-		console.error(err);
-	}
+	} catch (err) {}
 	if (!forceEmbed && !result.isEmbed) {
 		return result.text;
 	}
