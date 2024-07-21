@@ -6,7 +6,7 @@
  */
 const events = require('../data/event.json');
 //const itemUtil = require('../commands/commandList/shop/util/itemUtil.js');
-const rewardUtil = require('./rewardUtil.js');
+let rewardUtil;
 const eventMax = 10;
 const itemToEvents = {};
 for (const key in events) {
@@ -249,3 +249,7 @@ async function getEventRewards(user, con, event, override) {
 		rewardSql: result.sql,
 	};
 }
+
+exports.init = async function (main) {
+	rewardUtil = main.rewardUtil;
+};
