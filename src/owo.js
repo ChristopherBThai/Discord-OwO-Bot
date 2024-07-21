@@ -70,7 +70,10 @@ class OwO extends Base {
 
 		this.animalUtil = require('./utils/animalInfoUtil.js');
 
+		this.rewardUtil = require('./utils/rewardUtil.js');
+
 		this.event = require('./utils/eventUtil.js');
+		this.event.init(this);
 
 		// Message sender helper methods
 		this.sender = require('./utils/sender.js');
