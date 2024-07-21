@@ -260,7 +260,7 @@ function initParam(msg, command, args, main, context) {
 		context: context,
 		command: command,
 		client: main.bot,
-		animals: main.animals,
+		animalUtil: main.animalUtil,
 		dbl: main.dbl,
 		mysql: main.mysql,
 		con: main.mysql.con,
@@ -297,6 +297,7 @@ function initParam(msg, command, args, main, context) {
 		neo4j: main.neo4j,
 		giveaway: main.giveaway,
 		patreonUtil: main.patreonUtil,
+		cache: main.cache,
 	};
 	param.setCooldown = function (cooldown) {
 		main.cooldown.setCooldown(param, aliasToCommand[command], cooldown);

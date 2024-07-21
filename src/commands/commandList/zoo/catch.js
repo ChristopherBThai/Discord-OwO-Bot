@@ -15,6 +15,7 @@ const alterHunt = require('./../patreon/alterHunt.js');
 const patreonUtil = require('./../patreon/utils/patreonUtil.js');
 const teamUtil = require('../battle/util/teamUtil.js');
 const lootboxChance = 0.05;
+const rollPrice = 5;
 
 module.exports = new CommandInterface({
 	alias: ['hunt', 'h', 'catch'],
@@ -65,7 +66,7 @@ module.exports = new CommandInterface({
 			msg.author.id +
 			' AND activecount > 0;';
 		let result = await p.query(sql);
-		if (result[0][0] == undefined || result[0][0].money < this.animals.rollprice) {
+		if (result[0][0] == undefined || result[0][0].money < rollPrice) {
 			p.errorMsg(", You don't have enough cowoncy!", 3000);
 		} else {
 			//Sort gem benefits

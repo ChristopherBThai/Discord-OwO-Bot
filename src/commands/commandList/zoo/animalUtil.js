@@ -7,18 +7,8 @@
 
 const mysql = require('../../../botHandlers/mysqlHandler.js');
 const global = require('../../../utils/global.js');
-let animals;
-try {
-	animals = require('../../../../../tokens/owo-animals.json');
-} catch (err) {
-	console.error('Could not find owo-animals.json, attempting to use ./secret file...');
-	animals = require('../../../../secret/owo-animals.json');
-	console.log('Found owo-animals.json file in secret folder!');
-}
-const animalRankDict = {};
-for (let i = 0; i <= animals.order.length; i++) {
-	animalRankDict[animals.order[i]] = i;
-}
+const animals = require('../../../utils/animalInfoUtil.js');
+const eventUtil = require('../../../utils/eventUtil.js');
 
 let enableDistortedTier = true;
 setTimeout(() => {
@@ -26,71 +16,130 @@ setTimeout(() => {
 	enableDistortedTier = false;
 }, 21600000);
 
-let specialRatesManual = [];
-let specialRatesHuntbot = [];
-let specialPercentManual = 0;
-let specialPercentHuntbot = 0;
-let doubleSpecialRatesManual = [];
-let doubleSpecialRatesHuntbot = [];
-let doubleSpecialPercentManual = 0;
-let doubleSpecialPercentHuntbot = 0;
-setSpecialRates();
+function randAnimal(opts = {}) {
+	const event = getEventAnimals();
+	opts.event = event;
+	const rarities = getRarities(opts);
 
-function setSpecialRates() {
-	specialRatesManual = [];
-	specialRatesHuntbot = [];
-	specialPercentManual = 0;
-	specialPercentHuntbot = 0;
-	doubleSpecialRatesManual = [];
-	doubleSpecialRatesHuntbot = [];
-	doubleSpecialPercentManual = 0;
-	doubleSpecialPercentHuntbot = 0;
+	const rankName = getRandomRank(rarities);
+	const rank = animals.getRank(rankName);
+	let animalName;
+	if (rankName !== 'special') {
+		animalName = rank.animals[Math.floor(Math.random() * rank.animals.length)];
+	} else {
+		animalName = getRandomEventAnimal(event);
+	}
 
-	if (animals.specialRates && animals.specialRates.length) {
-		for (let i in animals.specialRates) {
-			const special = animals.specialRates[i];
-			const rate = getRate(special);
+	return animals.getAnimal(animalName);
+}
 
-			if (rate) {
-				specialRatesManual.push({
-					animal: special.animal,
-					rate: rate,
-				});
-				specialPercentManual += rate;
+function getRandomEventAnimal(event) {
+	const totalRarity = event.reduce((sum, val) => sum + val.rarity, 0);
+	const rand = Math.random() * totalRarity;
 
-				specialRatesHuntbot.push({
-					animal: special.animal,
-					rate: rate / 4,
-				});
-				specialPercentHuntbot += rate / 4;
+	let total = 0;
+	for (let i in event) {
+		total += event[i].rarity;
+		if (rand < total) {
+			return event[i].animal;
+		}
+	}
+}
 
-				doubleSpecialRatesManual.push({
-					animal: special.animal,
-					rate: rate * 2,
-				});
-				doubleSpecialPercentManual += rate * 2;
+function getRandomRank(rarities) {
+	const totalRarity = Object.values(rarities).reduce((sum, val) => sum + val, 0);
+	const rand = Math.random() * totalRarity;
 
-				doubleSpecialRatesHuntbot.push({
-					animal: special.animal,
-					rate: rate / 2,
-				});
-				doubleSpecialPercentHuntbot += rate / 2;
-			}
+	let total = 0;
+	for (let rank in rarities) {
+		total += rarities[rank];
+		if (rand < total) {
+			return rank;
+		}
+	}
+}
+
+function getRarities(opts) {
+	const rarity = {};
+	const ranks = animals.getRanks();
+	for (let key in ranks) {
+		const rank = ranks[key];
+		if (!rank.conditional) {
+			rarity[key] = rank.rarity;
+		} else {
+			rarity[key] = 0;
 		}
 	}
 
-	const d = new Date();
-	const h = new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours() + 1, 0, 1, 0);
-	const diff = h - d;
-	console.log('Special Rates: ' + JSON.stringify(specialRatesManual, null, 2));
-	setTimeout(setSpecialRates, diff);
+	if (opts.patreon) {
+		const patreon = animals.getRank('patreon');
+		rarity[patreon.id] = patreon.rarity;
+		rarity['common'] -= patreon.rarity;
+		const cpatreon = animals.getRank('cpatreon');
+		rarity[cpatreon.id] = cpatreon.rarity;
+		rarity['common'] -= cpatreon.rarity;
+	}
+
+	if (opts.gem) {
+		const gem = animals.getRank('gem');
+		let gemRarity = gem.rarity;
+		if (opts.lucky) {
+			gemRarity *= opts.lucky.amount;
+		}
+		rarity[gem.id] = gemRarity;
+		rarity['common'] -= gemRarity;
+	}
+
+	if (enableDistortedTier && opts.manual) {
+		const distorted = animals.getRank('distorted');
+		rarity[distorted.id] = distorted.rarity;
+		rarity['common'] -= distorted.rarity;
+	}
+
+	if (opts.huntbot) {
+		const bot = animals.getRank('bot');
+		rarity[bot.id] = opts.huntbot;
+		rarity['common'] -= opts.huntbot;
+	}
+
+	if (opts.event) {
+		let specialRarity = opts.event.reduce((sum, val) => sum + val.rarity, 0);
+		if (opts.special) {
+			specialRarity *= 2;
+		}
+		if (opts.huntbot) {
+			specialRarity /= 4;
+		}
+		const special = animals.getRank('special');
+		rarity[special.id] = specialRarity;
+		rarity['common'] -= specialRarity;
+	}
+
+	return rarity;
 }
 
-function getRate(special) {
-	const start = new Date(special.startDate).getTime();
-	const end = new Date(special.endDate).getTime();
+function getEventAnimals() {
+	const event = eventUtil.getCurrentActive();
+	if (!event || !event.animals) {
+		return [];
+	}
+
+	const eventAnimals = [];
+	event.animals.forEach((animal) => {
+		eventAnimals.push({
+			animal: animal.animal,
+			rarity: getEventRarity(animal, event),
+		});
+	});
+
+	return eventAnimals;
+}
+
+function getEventRarity(animal, event) {
+	const start = new Date(event.start).getTime();
+	const end = new Date(event.end).getTime();
 	const diff = end - start;
-	let rate = special.minRate;
+	let rate = animal.minRate;
 	const now = Date.now();
 
 	if (end < now || now < start) {
@@ -98,162 +147,29 @@ function getRate(special) {
 	}
 
 	const percentDiff = (now - start) / diff;
-	rate += (special.maxRate - special.minRate) * percentDiff;
+	rate += (animal.maxRate - animal.minRate) * percentDiff;
 	return rate;
 }
-
-/**
- * Picks a random animal from secret json file
- */
-const randAnimal = (exports.randAnimal = function ({
-	patreon,
-	gem,
-	lucky,
-	special,
-	huntbot,
-	manual,
-} = {}) {
-	let rand = Math.random();
-	let result = [];
-
-	/* Calculate percentage */
-	let specialRates, specialPercent;
-	if (special) {
-		specialRates = huntbot ? doubleSpecialRatesHuntbot : doubleSpecialRatesManual;
-		specialPercent = huntbot ? doubleSpecialPercentHuntbot : doubleSpecialPercentManual;
-	} else {
-		specialRates = huntbot ? specialRatesHuntbot : specialRatesManual;
-		specialPercent = huntbot ? specialPercentHuntbot : specialPercentManual;
-	}
-	// If user has patreon
-	let patreonPercent = animals.cpatreon[0] + animals.patreon[0];
-	if (!patreon) patreonPercent = 0;
-	// If user is using gems
-	let gemPercent = animals.gem[0];
-	if (!gem) gemPercent = 0;
-	else if (lucky) gemPercent += gemPercent * lucky.amount;
-	// If bot has restarted
-	let distortedPercent = enableDistortedTier && manual ? animals.distorted[0] : 0;
-	if (distortedPercent) {
-		distortedPercent += specialPercent + patreonPercent;
-		if (huntbot) distortedPercent += huntbot;
-		if (gemPercent) distortedPercent += gemPercent;
-	}
-
-	if (patreonPercent && rand < patreonPercent) {
-		if (rand < animals.cpatreon[0]) {
-			rand = Math.ceil(Math.random() * (animals.cpatreon.length - 1));
-			result.push('**patreon** ' + animals.ranks.cpatreon);
-			result.push(animals.cpatreon[rand]);
-			result.push('cpatreon');
-			result.push(2000);
-		} else {
-			rand = Math.ceil(Math.random() * (animals.patreon.length - 1));
-			result.push('**patreon** ' + animals.ranks.patreon);
-			result.push(animals.patreon[rand]);
-			result.push('patreon');
-			result.push(400);
-		}
-	} else if (specialPercent && rand < specialPercent + patreonPercent) {
-		let tempRate = patreonPercent;
-		let found = false;
-		for (let i in specialRates) {
-			tempRate += specialRates[i].rate;
-			if (!found && rand <= tempRate) {
-				found = true;
-				result.push('**special** ' + animals.ranks.special);
-				result.push(specialRates[i].animal);
-				result.push('special');
-				result.push(500);
-			}
-		}
-	} else if (huntbot && rand < huntbot + specialPercent + patreonPercent) {
-		rand = Math.ceil(Math.random() * (animals.bot.length - 1));
-		result.push('**bot** ' + animals.ranks.bot);
-		result.push(animals.bot[rand]);
-		result.push('bot');
-		result.push(100000);
-	} else if (gemPercent && rand < gemPercent + specialPercent + patreonPercent) {
-		rand = Math.ceil(Math.random() * (animals.gem.length - 1));
-		result.push('**gem** ' + animals.ranks.gem);
-		result.push(animals.gem[rand]);
-		result.push('gem');
-		result.push(5000);
-	} else if (rand < distortedPercent) {
-		rand = Math.ceil(Math.random() * (animals.distorted.length - 1));
-		result.push('**distorted** ' + animals.ranks.distorted);
-		result.push(animals.distorted[rand]);
-		result.push('distorted');
-		result.push(100000);
-	} else if (rand < animals.common[0]) {
-		rand = Math.ceil(Math.random() * (animals.common.length - 1));
-		result.push('**common** ' + animals.ranks.common);
-		result.push(animals.common[rand]);
-		result.push('common');
-		result.push(1);
-	} else if (rand < animals.uncommon[0]) {
-		rand = Math.ceil(Math.random() * (animals.uncommon.length - 1));
-		result.push('**uncommon** ' + animals.ranks.uncommon);
-		result.push(animals.uncommon[rand]);
-		result.push('uncommon');
-		result.push(10);
-	} else if (rand < animals.rare[0]) {
-		rand = Math.ceil(Math.random() * (animals.rare.length - 1));
-		result.push('**rare** ' + animals.ranks.rare);
-		result.push(animals.rare[rand]);
-		result.push('rare');
-		result.push(20);
-	} else if (rand < animals.epic[0]) {
-		rand = Math.ceil(Math.random() * (animals.epic.length - 1));
-		result.push('**epic** ' + animals.ranks.epic);
-		result.push(animals.epic[rand]);
-		result.push('epic');
-		result.push(400);
-	} else if (rand < animals.mythical[0]) {
-		rand = Math.ceil(Math.random() * (animals.mythical.length - 1));
-		result.push('**mythic** ' + animals.ranks.mythical);
-		result.push(animals.mythical[rand]);
-		result.push('mythical');
-		result.push(1000);
-	} else if (rand < animals.legendary[0]) {
-		rand = Math.ceil(Math.random() * (animals.legendary.length - 1));
-		result.push('**legendary** ' + animals.ranks.legendary);
-		result.push(animals.legendary[rand]);
-		result.push('legendary');
-		result.push(2000);
-	} else if (rand < animals.fabled[0]) {
-		rand = Math.ceil(Math.random() * (animals.fabled.length - 1));
-		result.push('**fabled** ' + animals.ranks.fabled);
-		result.push(animals.fabled[rand]);
-		result.push('fabled');
-		result.push(100000);
-	} else {
-		rand = Math.ceil(Math.random() * (animals.hidden.length - 1));
-		result.push('**hidden** ' + animals.ranks.hidden);
-		result.push(animals.hidden[rand]);
-		result.push('hidden');
-		result.push(300000);
-	}
-	return result;
-});
 
 exports.getMultipleAnimals = function (count, user, opt) {
 	const total = {};
 	let xp = 0;
 	for (let i = 0; i < count; i++) {
 		let animal = randAnimal(opt);
-		xp += animal[3];
-		if (total[animal[1]]) {
-			total[animal[1]].count++;
-			total[animal[1]].totalXp += animal[3];
+		let rank = animals.getRank(animal.rank);
+		xp += rank.xp;
+		if (total[animal.value]) {
+			total[animal.value].count++;
+			total[animal.value].totalXp += rank.xp;
 		} else {
-			total[animal[1]] = {
+			total[animal.value] = {
 				count: 1,
-				rank: animal[2],
-				value: animal[1],
-				text: animal[0],
-				totalXp: animal[3],
-				singleXp: animal[3],
+				rank: rank.id,
+				value: animal.value,
+				text: `**${rank.id}** ${rank.emoji}`,
+				totalXp: rank.xp,
+				singleXp: rank.xp,
+				rankSort: rank.order,
 			};
 		}
 	}
@@ -268,16 +184,6 @@ exports.getMultipleAnimals = function (count, user, opt) {
 		xp: xp,
 		typeCount,
 	};
-};
-
-exports.toSmallNum = function (count, digits) {
-	let result = '';
-	for (let i = 0; i < digits; i++) {
-		let digit = count % 10;
-		count = Math.trunc(count / 10);
-		result = animals.numbers[digit] + result;
-	}
-	return result;
 };
 
 exports.zooScore = function (zoo) {
@@ -300,7 +206,8 @@ exports.zooScore = function (zoo) {
 };
 
 exports.hasSpecials = function () {
-	return specialPercentManual !== 0;
+	const event = eventUtil.getCurrentActive();
+	return !!event?.animals;
 };
 
 exports.getPid = async function (id, pet) {
@@ -330,11 +237,9 @@ function sortAnimals(animals) {
 		animalList.push(animals[value]);
 	}
 	animalList.sort((a, b) => {
-		const a_rank = animalRankDict[a.rank] || 0;
-		const b_rank = animalRankDict[b.rank] || 0;
-		if (a_rank > b_rank) {
+		if (a.rankSort < b.rankSort) {
 			return -1;
-		} else if (a_rank < b_rank) {
+		} else if (a.rankSort > b.rankSort) {
 			return 1;
 		} else if (a.value < b.value) {
 			return -1;

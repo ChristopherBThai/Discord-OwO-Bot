@@ -187,6 +187,8 @@ function getCurrentActive(override) {
 	}
 }
 
+exports.getCurrentActive = getCurrentActive;
+
 function getEventByItem(itemName) {
 	return itemToEvents[itemName];
 }

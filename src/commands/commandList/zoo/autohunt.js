@@ -90,7 +90,7 @@ async function claim(p, msg, con, query, bot) {
 	let radar = autohuntutil.getLvl(query.radar, 0, 'radar');
 	let { animals, animalSql } = animalUtil.getMultipleAnimals(query.huntcount, p.msg.author, {
 		patreon: patreon,
-		huntbot: radar.stat / 100,
+		huntbot: radar.stat,
 	});
 	let digits = 0;
 	for (let key in animals) {
@@ -110,11 +110,12 @@ async function claim(p, msg, con, query, bot) {
 	let tempText = [];
 
 	for (let animal in animals) {
-		let animalString = animal + animalUtil.toSmallNum(animals[animal].count, digits) + '  ';
-		let animalLoc = p.animals.order.indexOf(animals[animal].rank);
+		let animalString = animal + p.global.toSmallNum(animals[animal].count, digits) + '  ';
+		const order = p.animalUtil.getOrder();
+		let animalLoc = order.indexOf(animals[animal].rank);
 		if (animalLoc || animalLoc === 0) {
 			if (!tempText[animalLoc])
-				tempText[animalLoc] = ' \n' + p.animals.ranks[p.animals.order[animalLoc]] + ' **|**';
+				tempText[animalLoc] = ' \n' + p.animalUtil.getRank(order[animalLoc]).emoji + ' **|**';
 			tempText[animalLoc] += ' ' + animalString;
 		}
 	}

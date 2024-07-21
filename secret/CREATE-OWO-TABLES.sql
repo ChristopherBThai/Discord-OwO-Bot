@@ -35,6 +35,7 @@ CREATE TABLE `alter` (
   `footer` varchar(256) DEFAULT NULL,
   `author` varchar(256) DEFAULT NULL,
   `showAvatar` tinyint(4) NOT NULL DEFAULT '0',
+  `extra` varchar(1024) DEFAULT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`uid`,`command`,`type`),
   CONSTRAINT `alter_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`)
@@ -156,6 +157,14 @@ DROP TABLE IF EXISTS `animals`;
 CREATE TABLE `animals` (
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `rank` varchar(50) NOT NULL,
+  `hp` tinyint(4) NOT NULL DEFAULT '0',
+  `att` tinyint(4) NOT NULL DEFAULT '0',
+  `pr` tinyint(4) NOT NULL DEFAULT '0',
+  `wp` tinyint(4) NOT NULL DEFAULT '0',
+  `mag` tinyint(4) NOT NULL DEFAULT '0',
+  `mr` tinyint(4) NOT NULL DEFAULT '0',
+  `description` varchar(2000) NOT NULL,
+  `alt` varchar(600) NOT NULL,
   PRIMARY KEY (`name`),
   KEY `fk_animals__animals_rank__rank` (`rank`),
   CONSTRAINT `fk_animals__animals_rank__rank` FOREIGN KEY (`rank`) REFERENCES `animals_rank` (`rank`)
@@ -1703,4 +1712,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-06-22 15:41:52
+-- Dump completed on 2024-07-20 17:47:59
