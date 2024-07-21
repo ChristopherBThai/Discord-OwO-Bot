@@ -67,7 +67,7 @@ module.exports = new CommandInterface({
 		if (result[0].saccount > 0)
 			sac = animal.essence + ' Essence | ' + global.toFancyNum(result[0].saccount) + ' killed';
 		let alias = 'None';
-		if (animal.alt.length > 0) alias = animal.alt.splice(1).join(', ');
+		if (animal.alt.length > 0) alias = animal.alt.slice(1).join(', ');
 		let phys = `<:hp:531620120410456064> \`${animal.hp}\` <:att:531616155450998794> \`${animal.att}\` <:pr:531616156222488606> \`${animal.pr}\` `;
 		let mag = `<:wp:531620120976687114> \`${animal.wp}\` <:mag:531616156231139338> \`${animal.mag}\` <:mr:531616156226945024> \`${animal.mr}\` `;
 		let rarity = global.toFancyNum(totalAnimals) + ' total caught';
