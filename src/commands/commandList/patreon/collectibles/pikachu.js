@@ -14,7 +14,12 @@ class Pikachu extends Collectible {
 		this.key = 'pikachu';
 		this.alias = ['pikachu', 'chu'];
 		this.emoji = '<a:pikachu:1099236809390702612>';
-		this.owners = ['768465041489657867','968621197011062804','879313703990870047','969176350621589514'];
+		this.owners = [
+			'768465041489657867',
+			'968621197011062804',
+			'879313703990870047',
+			'969176350621589514',
+		];
 		this.fullControl = true;
 		this.ownerOnly = true;
 		this.giveAmount = 1;

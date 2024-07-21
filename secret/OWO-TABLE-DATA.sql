@@ -64,7 +64,7 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-06-22 15:41:54
+-- Dump completed on 2024-07-20 17:48:25
 -- MySQL dump 10.13  Distrib 5.7.42, for Linux (x86_64)
 --
 -- Host: localhost    Database: owo
@@ -89,7 +89,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `animals` WRITE;
 /*!40000 ALTER TABLE `animals` DISABLE KEYS */;
-INSERT INTO `animals` VALUES (':bee:','common'),(':beetle:','common'),(':bug:','common'),(':butterfly:','common'),(':snail:','common'),(':crocodile:','epic'),(':elephant:','epic'),(':penguin:','epic'),(':tiger2:','epic'),(':whale:','epic'),(':cat2:','rare'),(':cow2:','rare'),(':dog2:','rare'),(':pig2:','rare'),(':sheep:','rare'),(':baby_chick:','uncommon'),(':chipmunk:','uncommon'),(':mouse2:','uncommon'),(':rabbit2:','uncommon'),(':rooster:','uncommon');
+INSERT INTO `animals` VALUES (':bee:','common',1,5,2,3,3,1,'How do bees go to school?\n~   On the school buzz!','bee,wasp'),(':beetle:','common',4,2,2,3,2,2,'Are they all female?','beetle,ladybug'),(':bug:','common',3,2,2,4,2,2,'It\'s a worm.','bug,worm,caterpillar'),(':butterfly:','common',1,1,1,5,5,2,'Why did you throw butter out the window?\n~ To see a butter fly!','butterfly'),(':snail:','common',8,1,2,3,5,1,'The slowest animal, but the toughest in the zoo','snail,slug'),(':crocodile:','epic',3,4,4,2,1,4,'How do you tell the difference between an alligator and an crocodile?\n~ You will see one later and one in a while','crocodile,alligator'),(':elephant:','epic',5,5,3,1,1,3,'They don\'t actually eat peanuts','elephant'),(':penguin:','epic',2,1,2,6,5,2,'The birds that can\'t fly','penguin'),(':tiger2:','epic',4,6,2,1,3,2,'Just a very large kitty','tiger,tiger2,cheetah'),(':whale:','epic',7,1,3,1,2,4,'whale, whale, whale, look what we have here','whale'),(':cat2:','rare',3,1,1,6,3,3,'They shoot lazers.','cat,cat2,kitty,kitten'),(':cow2:','rare',5,4,3,1,1,3,'Some say that they are highly sought-after','cow,cow2'),(':dog2:','rare',4,6,3,1,1,2,'Very loyal and protective','dog,dog2,doggy,puppy,wolf'),(':pig2:','rare',4,2,3,2,2,4,'aka ur mum','pig,pig2'),(':sheep:','rare',5,2,2,3,1,4,'Tastes like cotten candy!','sheep,ram,goat'),(':baby_chick:','uncommon',3,2,3,3,3,2,'chirp chirp! It\'s so cute!','chick,baby_chick'),(':chipmunk:','uncommon',3,5,2,3,2,1,'Don\'t mess with them.','chipmunk,squirrel'),(':mouse2:','uncommon',3,3,2,3,3,2,'~~sqeak~~ squeak!','mouse,mouse2,rat'),(':rabbit2:','uncommon',3,4,2,3,2,2,'There\'s a ton of them.','rabbit,rabbit2,bunny'),(':rooster:','uncommon',3,4,3,2,2,2,'The alarm cluck','chicken,rooster');
 /*!40000 ALTER TABLE `animals` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -102,4 +102,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-06-22 15:41:54
+-- Dump completed on 2024-07-20 17:48:25

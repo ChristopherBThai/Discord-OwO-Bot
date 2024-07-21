@@ -9,16 +9,7 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const animalUtil = require('./animalUtil.js');
 const alterZoo = require('../patreon/alterZoo.js');
-let animals;
-try {
-	animals = require('../../../../../tokens/owo-animals.json');
-} catch (err) {
-	console.error('Could not find owo-animals.json, attempting to use ./secret file...');
-	animals = require('../../../../secret/owo-animals.json');
-	console.log('Found owo-animals.json file in secret folder!');
-}
-let preBuiltDisplay = {};
-initDisplay();
+const animals = require('../../../utils/animalInfoUtil.js');
 
 module.exports = new CommandInterface({
 	alias: ['zoo', 'z'],
@@ -120,21 +111,25 @@ function createBody(userAnimals, biggest) {
 		animalGrouping[animalRank].push(userAnimal);
 	});
 
-	animals.order.forEach((rank) => {
+	const preBuiltDisplay = getPreBuiltDisplay();
+	animals.getOrder().forEach((rank) => {
 		const rankAnimals = animalGrouping[rank];
-		let text = getRankRow.bind(this)(rank, rankAnimals, digits);
+		let text = getRankRow.bind(this)(rank, rankAnimals, digits, preBuiltDisplay);
 		if (text) {
 			body += '\n' + text;
 		}
 	});
-	body = body.replace(/~:[a-zA-Z_0-9]+:/g, animals.question + this.global.toSmallNum(0, digits));
+	body = body.replace(
+		/~:[a-zA-Z_0-9]+:/g,
+		this.config.emoji.question + this.global.toSmallNum(0, digits)
+	);
 	return body.trim();
 }
 
 /**
  * Creates row text for a single rank
  */
-function getRankRow(rank, rankAnimals, digits) {
+function getRankRow(rank, rankAnimals, digits, preBuiltDisplay) {
 	let text = '';
 	if (preBuiltDisplay[rank]) {
 		text += preBuiltDisplay[rank];
@@ -148,7 +143,7 @@ function getRankRow(rank, rankAnimals, digits) {
 		if (!rankAnimals) {
 			return;
 		}
-		text += `${animals.ranks[rank]}    `;
+		text += `${animals.getRank(rank).emoji}    `;
 		for (let i = 0; i < rankAnimals.length; i++) {
 			const animal = rankAnimals[i];
 			if (i && i % 5 === 0) {
@@ -169,7 +164,7 @@ function createFooter(count, paged) {
 	let total = 0;
 	for (let rank in count) {
 		if (!['id', 'total'].includes(rank)) {
-			total += count[rank] * animals.points[rank];
+			total += count[rank] * animals.getRank(rank).points;
 		}
 	}
 
@@ -189,39 +184,20 @@ function createFooter(count, paged) {
 	};
 }
 
-function initDisplay() {
-	let commonDisplay = `${animals.ranks.common}   `;
-	for (let i = 1; i < animals.common.length; i++) {
-		commonDisplay += `~${animals.common[i]}  `;
-	}
-
-	let uncommonDisplay = `${animals.ranks.uncommon}   `;
-	for (let i = 1; i < animals.uncommon.length; i++) {
-		uncommonDisplay += `~${animals.uncommon[i]}  `;
-	}
-
-	let rareDisplay = `${animals.ranks.rare}   `;
-	for (let i = 1; i < animals.rare.length; i++) {
-		rareDisplay += `~${animals.rare[i]}  `;
-	}
-
-	let epicDisplay = `${animals.ranks.epic}   `;
-	for (let i = 1; i < animals.epic.length; i++) {
-		epicDisplay += `~${animals.epic[i]}  `;
-	}
-
-	let mythicalDisplay = `${animals.ranks.mythical}   `;
-	for (let i = 1; i < animals.mythical.length; i++) {
-		mythicalDisplay += `~${animals.mythical[i]}  `;
-	}
-
-	preBuiltDisplay = {
-		common: commonDisplay,
-		uncommon: uncommonDisplay,
-		rare: rareDisplay,
-		epic: epicDisplay,
-		mythical: mythicalDisplay,
-	};
+function getPreBuiltDisplay() {
+	const result = {};
+	const ranks = animals.getRanks();
+	Object.values(ranks).forEach((rank) => {
+		const placeholder = rank.placeholder;
+		if (!placeholder) {
+			return;
+		}
+		result[rank.id] = `${rank.emoji}   `;
+		rank.placeholder.forEach((animal) => {
+			result[rank.id] += `~${animal}  `;
+		});
+	});
+	return result;
 }
 
 function toPages(text) {

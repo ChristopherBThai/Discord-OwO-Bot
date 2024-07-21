@@ -77,8 +77,13 @@ async function checkDb(p, info) {
 		commonCount: info.animalCount.common,
 	};
 
+	const extraReplacers = {};
+	Object.values(p.animalUtil.getRanks()).forEach((rank) => {
+		extraReplacers[rank.id] = rank.emoji;
+	});
+
 	return alterUtils.getAlterCommand('zoo', info.user, type, replacers, null, null, {
-		extraReplacers: p.animals.ranks,
+		extraReplacers,
 	});
 }
 
