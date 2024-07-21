@@ -11,14 +11,13 @@ const mysql = require('./../botHandlers/mysqlHandler.js');
 class AnimalJson {
 	constructor() {
 		this.initialize = this.initialize.bind(this);
+		this.reinitialize = this.reinitialize.bind(this);
 		this.parseAnimal = this.parseAnimal.bind(this);
 		this.parseRank = this.parseRank.bind(this);
 		this.getAnimal = this.getAnimal.bind(this);
 		this.getRank = this.getRank.bind(this);
 		this.getRanks = this.getRanks.bind(this);
 		this.getOrder = this.getOrder.bind(this);
-
-		this.initialize();
 	}
 
 	async initialize() {
@@ -38,6 +37,30 @@ class AnimalJson {
 		this.order = this.order.sort((a, b) => {
 			return animalJson.ranks[a].order - animalJson.ranks[b].order;
 		});
+	}
+
+	async reinitialize(animalName) {
+		if (animalName) {
+			animalName = this.animalNameToKey[animalName] || animalName;
+			return this.reinitializeAnimal(animalName);
+		}
+		const newAnimalJson = new AnimalJson();
+		await newAnimalJson.initialize();
+		this.copy(newAnimalJson);
+	}
+
+	async reinitializeAnimal(animalName) {
+		const result = await mysql.query(`SELECT * FROM animals WHERE name = ?`, animalName);
+		this.parseAnimal(result[0]);
+		this.updateAnimalsAndRanks();
+	}
+
+	copy(newAnimalJson) {
+		this.animalNameToKey = newAnimalJson.animalNameToKey;
+		this.animals = newAnimalJson.animals;
+		this.order = newAnimalJson.order;
+		this.ranks = newAnimalJson.ranks;
+		this.rankNameToKey = newAnimalJson.rankNameToKey;
 	}
 
 	/**
@@ -62,8 +85,11 @@ class AnimalJson {
 		for (let key in this.animals) {
 			const animal = this.animals[key];
 			const rank = this.getRank(animal.rank);
-			rank.addAnimal(animal);
+			rank.addAnimalToTemp(animal);
 		}
+		Object.values(this.ranks).forEach((rank) => {
+			rank.useTemp();
+		});
 	}
 
 	getRank(rankName) {
@@ -154,6 +180,7 @@ class AnimalRank {
 		this.points = animalJson.ranks[rank].points;
 		this.essence = animalJson.ranks[rank].essence;
 		this.animals = [];
+		this.tempAnimals = [];
 		this.placeholder = animalJson.ranks[rank].placeholder;
 		this.conditional = animalJson.ranks[rank].conditional;
 		this.rarity = animalJson.ranks[rank].rarity;
@@ -165,6 +192,18 @@ class AnimalRank {
 		this.animals.push(animal.value);
 		animal.setRank(this);
 	}
+
+	addAnimalToTemp(animal) {
+		this.tempAnimals.push(animal.value);
+		animal.setRank(this);
+	}
+
+	useTemp() {
+		this.animals = this.tempAnimals;
+		this.tempAnimals = [];
+	}
 }
 
-module.exports = new AnimalJson();
+const obj = new AnimalJson();
+obj.initialize();
+module.exports = obj;
