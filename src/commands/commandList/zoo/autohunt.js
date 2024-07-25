@@ -155,7 +155,15 @@ async function autohunt(p, msg, con, args, global, send) {
 	if (password) password = password.toLowerCase();
 
 	if (!cowoncy && !length) {
-		send('**🚫 | ' + p.getName() + '**, Wrong syntax!', 3000);
+		send(
+			'**🚫 | ' +
+				p.getName() +
+				'**, Please include your cowoncy amount! The command is `owo autohunt ' +
+				cowoncy +
+				' {password}`!\n**<:blank:427371936482328596> |** Password will reset in ' +
+				(10 - result[0][0].pwtime) +
+				' minutes'
+		);
 		return;
 	}
 
