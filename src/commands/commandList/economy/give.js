@@ -10,6 +10,8 @@ const CommandInterface = require('../../CommandInterface.js');
 const alterGive = require('../patreon/alterGive.js');
 const cowoncyUtils = require('./utils/cowoncyUtils.js');
 
+const ongoingTransactions = {};
+
 const agree = '✅';
 const decline = '❎';
 const spacer = '                                                               ';
@@ -38,12 +40,26 @@ module.exports = new CommandInterface({
 		let { amount, user, error } = await parseArgs.bind(this)();
 		if (error) return;
 
-		if (!(await checkLimit.bind(this)(user, amount))) return;
+		let message;
+		try {
+			if (!(await checkLimit.bind(this)(user, amount))) {
+				return;
+			}
 
-		const message = await confirmation.bind(this)(user, amount);
-		if (!message) return;
+			message = await confirmation.bind(this)(user, amount);
+			if (!message) {
+				return;
+			}
 
-		if (!(await sendMoney.bind(this)(user, amount, message))) return;
+			if (!(await sendMoney.bind(this)(user, amount, message))) {
+				removeOngoing(this.msg.author.id, user.id);
+				return;
+			}
+		} catch (err) {
+			console.error(err);
+		} finally {
+			removeOngoing(this.msg.author.id, user.id);
+		}
 
 		await sendMsg.bind(this)(user, amount, message);
 
@@ -96,10 +112,21 @@ async function parseArgs() {
 }
 
 async function sendMoney(user, amount, message) {
+	let ongoingUser = checkOngoing(this.msg.author, user);
+	if (ongoingUser) {
+		this.errorMsg(`, ${this.getTag(ongoingUser)} already has an ongoing cowoncy transaction!`);
+		return false;
+	}
+	addOngoing(this.msg.author.id, user.id);
+
 	const con = await this.startTransaction();
 	try {
-		const canGive = await cowoncyUtils.canGive.bind(this)(this.msg.author, user, amount, con);
+		const canGive = await cowoncyUtils.canGive.bind(this)(this.msg.author, user, amount, con, {
+			skipCowoncyCheck: true,
+			isTransaction: true,
+		});
 		if (canGive.error) {
+			await con.rollback();
 			const text = await alterGive.alter(this, this.msg.author.id, null, {
 				from: this.msg.author,
 				to: user,
@@ -115,7 +142,7 @@ async function sendMoney(user, amount, message) {
 			} else {
 				this.errorMsg(canGive.error);
 			}
-			await con.rollback();
+			removeOngoing(this.msg.author.id, user.id);
 			return false;
 		}
 
@@ -126,6 +153,7 @@ async function sendMoney(user, amount, message) {
 		let result = await con.query(sql);
 
 		if (!result[0].changedRows) {
+			await con.rollback();
 			const text = await alterGive.alter(this, this.msg.author.id, null, {
 				from: this.msg.author,
 				to: user,
@@ -141,16 +169,18 @@ async function sendMoney(user, amount, message) {
 			} else {
 				this.errorMsg(", you silly hooman! You don't have enough cowoncy!", 3000);
 			}
-			await con.rollback();
+			removeOngoing(this.msg.author.id, user.id);
 			return false;
 		}
 
 		await con.commit();
+		removeOngoing(this.msg.author.id, user.id);
 		return true;
 	} catch (err) {
 		console.error(err);
 		this.errorMsg(', there was an error sending cowoncy! Please try again later.', 3000);
 		await con.rollback();
+		removeOngoing(this.msg.author.id, user.id);
 		return false;
 	}
 }
@@ -307,4 +337,24 @@ async function checkLimit(user, amount) {
 		return false;
 	}
 	return true;
+}
+
+function addOngoing(user1, user2) {
+	ongoingTransactions[user1] = true;
+	ongoingTransactions[user2] = true;
+}
+
+function removeOngoing(user1, user2) {
+	delete ongoingTransactions[user1];
+	delete ongoingTransactions[user2];
+}
+
+function checkOngoing(user1, user2) {
+	if (ongoingTransactions[user1.id]) {
+		return user1;
+	}
+	if (ongoingTransactions[user2.id]) {
+		return user2;
+	}
+	return false;
 }

@@ -31,12 +31,9 @@ try {
 }
 filter2.removeWords(goodwords);
 const namor = require('namor');
+const animalInfo = require('./animalInfoUtil.js');
 const mysql = require('./../botHandlers/mysqlHandler.js');
-let animalunicode = {};
-let animals = {};
-let ranks = {};
-let rankAlias = {};
-let client, animaljson, main;
+let client, main;
 let totalShards;
 const uidDict = {};
 
@@ -91,88 +88,13 @@ exports.parseID = function (id) {
 exports.init = function (bot) {
 	main = bot;
 	client = bot.bot;
-	animaljson = bot.animals;
-
-	let animallist = animaljson['list'];
-
-	//Make nickname alias
-	for (let key in animallist) {
-		let alt = animallist[key].alt;
-		animals[animallist[key].value] = key;
-		animals[animallist[key].value.toLowerCase()] = key;
-		animals[key] = key;
-		animals[key.toLowerCase()] = key;
-		for (let i in alt) {
-			animals[alt[i]] = key;
-			animals[alt[i].toLowerCase()] = key;
-		}
-	}
-
-	//to unicode
-	for (let key in animallist) {
-		if (animallist[key].uni != undefined)
-			animalunicode[animallist[key].value] = animallist[key].uni;
-	}
-
-	//other info to animaljson
-	for (let key in animaljson.ranks) {
-		ranks[key] = {};
-		let animalRank = [];
-		for (let i = 1; i < animaljson[key].length; i++) {
-			let name = animals[animaljson[key][i]];
-			try {
-				animalRank.push(animaljson[key][i]);
-				animaljson.list[name].rank = key;
-				animaljson.list[name].price = animaljson.price[key];
-				animaljson.list[name].points = animaljson.points[key];
-				animaljson.list[name].essence = animaljson.essence[key];
-			} catch (err) {
-				console.error(err);
-				console.error(animaljson[key][i]);
-			}
-		}
-		ranks[key].animals = animalRank;
-		ranks[key].price = animaljson.price[key];
-		ranks[key].points = animaljson.points[key];
-		ranks[key].essence = animaljson.essence[key];
-		ranks[key].emoji = animaljson.ranks[key];
-		ranks[key].rank = key;
-	}
-
-	for (let key in animaljson.alias) {
-		rankAlias[key] = key;
-		for (let i = 0; i < animaljson.alias[key].length; i++) {
-			rankAlias[animaljson.alias[key][i]] = key;
-		}
-	}
 };
 
-/**
- * Checks if its a valid animal
- */
-exports.validAnimal = function (animal) {
-	if (animal != undefined) animal = animal.toLowerCase();
-	let ranimal = animaljson.list[animals[animal]];
-	if (ranimal) ranimal['name'] = animals[animal];
-	return ranimal;
-};
-
-exports.validRank = function (rank) {
-	if (rank) rank.toLowerCase();
-	rank = rankAlias[rank];
-	return ranks[rank];
-};
-
-exports.getAllRanks = function () {
-	return ranks;
-};
-
-/**
- * Changes animal to unicode
- */
-exports.unicodeAnimal = function (animal) {
-	let unicode = animalunicode[animal];
-	return unicode == undefined ? animal : unicode;
+exports.validAnimal = animalInfo.getAnimal;
+exports.validRank = animalInfo.getRank;
+exports.getAllRanks = animalInfo.getRanks;
+exports.unicodeAnimal = function (name) {
+	return name;
 };
 
 exports.toSmallNum = function (count, digits) {
@@ -457,4 +379,16 @@ exports.delay = function (delay) {
 	return new Promise((resolve) => {
 		setTimeout(resolve, delay);
 	});
+};
+
+exports.selectRandom = function (array, total) {
+	const rand = 1 + Math.floor(Math.random() * total);
+	let temp = 0;
+	for (let i = 0; i <= array.length; i++) {
+		const item = array[i];
+		temp += item.chance;
+		if (rand <= temp) {
+			return item;
+		}
+	}
 };

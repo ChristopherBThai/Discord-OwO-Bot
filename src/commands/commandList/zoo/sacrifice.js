@@ -86,7 +86,7 @@ module.exports = new CommandInterface({
 		let animal, rank;
 		/* If multiple ranks */
 		if (ranks) {
-			await sellRanks(p, msg, con, ranks, p.send, global);
+			await sellRanks.bind(p)(Object.values(ranks));
 
 			//if its an animal...
 		} else if ((animal = global.validAnimal(name))) {
@@ -101,7 +101,7 @@ module.exports = new CommandInterface({
 		} else if ((rank = global.validRank(name))) {
 			if (args.length != 1)
 				p.errorMsg(', The correct syntax for sacrificing ranks is `owo sacrifice {rank}`!', 3000);
-			else sellRank(p, msg, con, rank, p.send, global);
+			else await sellRanks.bind(p)([rank]);
 
 			//if neither...
 		} else {
@@ -176,135 +176,56 @@ async function sellAnimal(p, msg, con, animal, count, send, global) {
 	}
 }
 
-async function sellRank(p, msg, con, rank, send, global) {
-	let sql = `SELECT * FROM autohunt WHERE id = ${msg.author.id};`;
-	let result = await p.query(sql);
-	if (!result[0])
-		await p.query(`INSERT IGNORE INTO autohunt (id,essence) VALUES (${msg.author.id},0);`);
-
-	let animals = "('" + rank.animals.join("','") + "')";
-	let points =
-		'(SELECT COALESCE(SUM(count),0) AS sum FROM animal WHERE id = ' +
-		msg.author.id +
-		' AND name IN ' +
-		animals +
-		')';
-	//sql = "SELECT COALESCE(SUM(count),0) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
-	sql =
-		'SELECT name,count FROM animal WHERE id = ' + msg.author.id + ' AND name IN ' + animals + ';';
-	sql +=
-		'UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id INNER JOIN ' +
-		points +
-		' s SET essence = essence + (s.sum*' +
-		rank.essence +
-		'), autohunt.total = autohunt.total + (s.sum*' +
-		rank.essence +
-		'), saccount = saccount + count, count = 0 WHERE animal.id = ' +
-		msg.author.id +
-		' AND name IN ' +
-		animals +
-		' AND count > 0;';
-
-	result = await p.query(sql);
-	if (result[1].affectedRows <= 0) {
-		send('**🚫 | ' + p.getName() + "**, You don't have enough animals! >:c", 3000);
-	} else {
-		let count = 0;
-		for (let i in result[0]) count += result[0][i].count;
-		send(
-			'**🔪 | ' +
-				p.getName() +
-				'** sacrificed **' +
-				rank.emoji +
-				'x' +
-				count +
-				'** for **' +
-				essence +
-				' ' +
-				global.toFancyNum(count * rank.essence) +
-				'**'
-		);
-
-		for (let i in result[0]) {
-			/* eslint-disable-next-line */
-			let tempAnimal = p.global.validAnimal(result[0][i].name);
-			p.logger.incr('essence', count * rank.essence, { type: 'sacrifice' }, p.msg);
-		}
-	}
-}
-
-async function sellRanks(p, msg, con, ranks, send, global) {
-	let sql = `SELECT * FROM autohunt WHERE id = ${msg.author.id};`;
-	let result = await p.query(sql);
-	if (!result[0])
-		await p.query(`INSERT IGNORE INTO autohunt (id,essence) VALUES (${msg.author.id},0);`);
-
-	sql = '';
-	for (let i in ranks) {
-		let rank = ranks[i];
-		let animals = "('" + rank.animals.join("','") + "')";
-		let points =
-			'(SELECT COALESCE(SUM(count),0) AS sum FROM animal WHERE id = ' +
-			msg.author.id +
-			' AND name IN ' +
-			animals +
-			')';
-		//sql += "SELECT COALESCE(SUM(count),0) AS total FROM animal WHERE id = "+msg.author.id+" AND name IN "+animals+";";
-		sql +=
-			'SELECT name,count FROM animal WHERE id = ' + msg.author.id + ' AND name IN ' + animals + ';';
-		sql +=
-			'UPDATE animal INNER JOIN autohunt ON animal.id = autohunt.id INNER JOIN ' +
-			points +
-			' s SET essence = essence + (s.sum*' +
-			rank.essence +
-			'), autohunt.total = autohunt.total + (s.sum*' +
-			rank.essence +
-			'), saccount = saccount + count, count = 0 WHERE animal.id = ' +
-			msg.author.id +
-			' AND name IN ' +
-			animals +
-			' AND count > 0;';
-	}
-	result = await p.query(sql);
-
-	let sold = '';
+async function sellRanks(ranks) {
+	const rankNames = `'` + ranks.map((rank) => rank.rank).join(`','`) + `'`;
 	let total = 0;
-	let count = 0;
-	for (let i in ranks) {
-		let rank = ranks[i];
-		let sellCount = 0;
-		for (let j in result[count * 2]) {
-			sellCount += result[count * 2][j].count;
-		}
-		if (sellCount > 0) {
-			sold += rank.emoji + 'x' + sellCount + ' ';
-			total += sellCount * rank.essence;
-		}
-		count++;
-	}
-	if (sold != '') {
-		sold = sold.slice(0, -1);
-		send(
-			'**🔪 | ' +
-				p.getName() +
-				'** sacrificed **' +
-				sold +
-				'** for **' +
-				essence +
-				' ' +
-				global.toFancyNum(total) +
-				'**'
-		);
-		count = 0;
-		for (let i in ranks) {
-			let rank = ranks[i];
-			for (let j in result[count * 2]) {
-				let temp = result[count * 2][j];
-				/* eslint-disable-next-line */
-				let tempAnimal = p.global.validAnimal(temp.name);
-				p.logger.incr('essence', temp.count * rank.essence, { type: 'sacrifice' }, p.msg);
+	let sold = '';
+	const con = await this.startTransaction();
+	try {
+		let sql = `SELECT rank, count FROM animal INNER JOIN animals ON animal.name = animals.name WHERE id = ${this.msg.author.id} AND rank in (${rankNames}) AND count > 0;`;
+		let result = await con.query(sql);
+		const rows = result.length;
+		const combine = {};
+		result.forEach((rank) => {
+			if (!combine[rank.rank]) {
+				combine[rank.rank] = 0;
 			}
-			count++;
+			combine[rank.rank] += rank.count;
+		});
+
+		for (let rankName in combine) {
+			const rank = ranks.find((rank) => rank.rank === rankName);
+			total += combine[rankName] * rank.essence;
+			sold += rank.emoji + 'x' + combine[rankName] + ' ';
 		}
-	} else send('**🚫 | ' + p.getName() + "**, You don't have enough animals! >:c", 3000);
+		if (!total) {
+			this.errorMsg(", You don't have enough animals! >:c", 3000);
+			await con.rollback();
+			return;
+		}
+
+		sql = `INSERT INTO autohunt (id, essence, total) VALUES (${this.msg.author.id}, ${total}, ${total}) ON DUPLICATE KEY UPDATE essence = essence + ${total}, total = total + ${total};`;
+		sql += `UPDATE animal INNER JOIN animals ON animal.name = animals.name SET saccount = saccount + count, count = 0 WHERE id = ${this.msg.author.id} AND rank IN (${rankNames}) AND count > 0;`;
+		result = await con.query(sql);
+		if (result[1].changedRows != rows) {
+			this.errorMsg(', failed to sacrifice rank.', 3000);
+			await con.rollback();
+			return;
+		}
+
+		await con.commit();
+	} catch (err) {
+		console.error(err);
+		con.rollback();
+		this.errorMsg(', failed to sacrifice rank.', 3000);
+		return;
+	}
+
+	sold = sold.slice(0, -1);
+	this.send(
+		`**🔪 | ${this.getName()}** sacrificed **${sold}** for a total of **${
+			this.config.emoji.essence
+		} ${this.global.toFancyNum(total)}**`
+	);
+	this.logger.incr('essence', total, { type: 'sell' }, this.msg);
 }

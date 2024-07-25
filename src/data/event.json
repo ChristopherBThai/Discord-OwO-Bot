@@ -416,5 +416,308 @@
 		"end": 1699689600000,
 		"type": "halloween",
 		"chance": 0.05
+	},
+	"2023_christmas": {
+		"start": 1703491200000,
+		"end": 1704355200000,
+		"type": "christmas",
+		"chance": 0.05
+	},
+	"2024_valentines": {
+		"start": 1707897600000,
+		"end": 1708588800000,
+		"type": "valentine",
+		"chance": 0.05
+	},
+	"2024_march": {
+		"start": 1710918000000,
+		"end": 1711609200000,
+		"type": "march",
+		"chance": 0.05
+	},
+	"2024_april": {
+		"start": "2024-04-01T00:00:00-0700",
+		"end": "2024-04-10T00:00:00-0700",
+		"type": "april",
+		"chance": 0.05,
+		"rewards": [
+			{
+				"type": "cowoncy",
+				"min": 1000,
+				"max": 5000,
+				"chance": 3,
+				"text": "Eid Mubarak! Happy Eid! Enjoy your holiday! You received **?count? ?emoji? Cowoncies**!",
+				"textEmoji": "🤲"
+			},
+			{
+				"type": "ws",
+				"min": 300,
+				"max": 1000,
+				"chance": 3,
+				"text": "Chocolate? What a nice Eid gift! You received **?count? ?emoji? Weapon Shards** in return!",
+				"textEmoji": "🍫"
+			},
+			{
+				"type": "lb",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "Happy Earth day! You received **?count? ?emoji? ?plural?**",
+				"textEmoji": "🌎"
+			},
+			{
+				"type": "wc",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "Happy Earth day! You received **?count? ?emoji? Weapon ?plural?**",
+				"textEmoji": "🌎"
+			},
+			{
+				"type": "flb",
+				"count": 1,
+				"chance": 1,
+				"text": "Happy Earth day! You received **?count? ?emoji? Fabled ?plural?**!",
+				"textEmoji": "🌎"
+			},
+			{
+				"type": "cookie",
+				"count": 1,
+				"chance": 1,
+				"text": "OwO, what's this? A cup of tea for me? Have a **?emoji? ?plural?** with it!",
+				"textEmoji": "🫖"
+			},
+			{
+				"type": "sgem",
+				"count": 1,
+				"chance": 3,
+				"text": "April Fools! Hope this **?emoji? ?rank? ?type? Gem** brings your luck around!",
+				"textEmoji": "😂"
+			},
+			{
+				"type": "animal",
+				"id": "2024april_fools",
+				"count": 1,
+				"chance": 3,
+				"text": "OwO What's this? The most powerful ?emoji? worm came to join your team!",
+				"textEmoji": "😂"
+			},
+			{
+				"type": "weapon",
+				"id": 22,
+				"count": 1,
+				"chance": 3,
+				"text": "OwO? Hopefully luck is in your favor. Your received **?text?**",
+				"textEmoji": "😂"
+			}
+		]
+	},
+	"2024_may": {
+		"start": "2024-05-23T00:00:00-0700",
+		"end": "2024-06-01T00:00:00-0700",
+		"type": "may",
+		"chance": 0.05,
+		"rewards": [
+			{
+				"type": "cowoncy",
+				"min": 1000,
+				"max": 5000,
+				"chance": 3,
+				"text": "Huh? what's this warm feeling? Oh! It's a hug from momma! Along with a hug, you received **?count? ?emoji? Cowoncies**>!",
+				"textEmoji": "❤️"
+			},
+			{
+				"type": "ws",
+				"min": 300,
+				"max": 1000,
+				"chance": 3,
+				"text": "You used your bike instead of the car to help the polar bears and found **?count? ?emoji? Weapon Shards** in the basket!",
+				"textEmoji": "🐻‍❄️"
+			},
+			{
+				"type": "lb",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "Oh my! Look at those beautiful flowers of spring! Wait... those flowers have something hanging on them?? Oh its a **?count? ?emoji? ?plural?**!",
+				"textEmoji": "🪻"
+			},
+			{
+				"type": "wc",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "OwO signed you up to adopt a rhino! You received **?count? ?emoji? Weapon ?plural?** as a thank you!",
+				"textEmoji": "🦏"
+			},
+			{
+				"type": "flb",
+				"count": 1,
+				"chance": 1,
+				"text": "Oh! You found a golden shield from mom and earned **?count? ?emoji? Fabled ?plural?**!",
+				"textEmoji": "💛"
+			},
+			{
+				"type": "cookie",
+				"count": 1,
+				"chance": 1,
+				"text": "OwO? Is that a mother's love? Strengthened by the might of love, you discovered **?emoji? ?plural?**!",
+				"textEmoji": "💙"
+			},
+			{
+				"type": "sgem",
+				"count": 1,
+				"chance": 3,
+				"text": "OwO? what are these petals falling on us!? Oh spring is here! You tried picking up the petal but found **?emoji? ?rank? ?type? Gem** instead!",
+				"textEmoji": "🌸"
+			},
+			{
+				"type": "weapon",
+				"id": 18,
+				"count": 1,
+				"chance": 3,
+				"text": "You and OwO plant a tree together. What’s this under the leaves? There’s a **?text?**! ",
+				"textEmoji": "🦧"
+			}
+		]
+	},
+	"2024_june": {
+		"start": "2024-06-24T00:00:00",
+		"end": "2024-07-02T00:00:00",
+		"type": "june",
+		"chance": 0.05,
+		"rewards": [
+			{
+				"type": "cowoncy",
+				"min": 1000,
+				"max": 5000,
+				"chance": 3,
+				"text": "OWO! Sharky thinks you are friend and gave you **?count? ?emoji? Cowoncies**!",
+				"textEmoji": "🦈"
+			},
+			{
+				"type": "ws",
+				"min": 300,
+				"max": 1000,
+				"chance": 3,
+				"text": "Aww~ you played with the dolphins. You receive **?count? ?emoji? Weapon Shards** for the entertainment!",
+				"textEmoji": "🐬"
+			},
+			{
+				"type": "lb",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "Oh ho! You went swimming and fought with lobsty. You surprisingly won and gained **?count? ?emoji? ?plural?**!",
+				"textEmoji": "🦞"
+			},
+			{
+				"type": "wc",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "UWU~ do you know milk contains calcium that strengthens your bones? You received **?count? ?emoji? Weapon ?plural?** for reading and knowing!",
+				"textEmoji": "🥛"
+			},
+			{
+				"type": "flb",
+				"count": 1,
+				"chance": 1,
+				"text": "Do you know Boba can be done not only with milk but also soymilk? You have gotten **?count? ?emoji? Fabled ?plural?** for your OWO treat!",
+				"textEmoji": "🧋"
+			},
+			{
+				"type": "cookie",
+				"count": 1,
+				"chance": 1,
+				"text": "Do you add milk into your coffee? Here's a **?emoji? ?plural?** for considering!",
+				"textEmoji": "☕"
+			},
+			{
+				"type": "sgem",
+				"count": 1,
+				"chance": 3,
+				"text": "OwO what's this! A rainbow peeking out of the clouds!? W-wait it just dropped a **?emoji? ?rank? ?type? Gem**!",
+				"textEmoji": "<:hrainbow:1254595698113118270>"
+			}
+		]
+	},
+	"2024_july": {
+		"start": "2024-07-02T00:00:01",
+		"end": "2024-07-10T00:00:00",
+		"type": "july",
+		"chance": 0.05,
+		"animals": [
+			{
+				"animal": "2024july_seal",
+				"minRate": 0.005,
+				"maxRate": 0.05
+			}
+		],
+		"rewards": [
+			{
+				"type": "cowoncy",
+				"min": 1000,
+				"max": 5000,
+				"chance": 3,
+				"text": "Remember to stay cool~ you received **?count? ?emoji? Cowoncies** for keeping cool!",
+				"textEmoji": "🧊"
+			},
+			{
+				"type": "ws",
+				"min": 300,
+				"max": 1000,
+				"chance": 3,
+				"text": "Whose up for a soft serve and **?count? ?emoji? Weapon Shards** to chill off the day? Owo does~",
+				"textEmoji": "🍦"
+			},
+			{
+				"type": "lb",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "UwU? Have you tried to eat snow as ice cream? You receive **?count? ?emoji? ?plural?** for thinking about it",
+				"textEmoji": "❄️"
+			},
+			{
+				"type": "wc",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "UWU~ do you know milk contains calcium that strengthens your bones? You received  for reading and knowing!",
+				"text": "Fireworks are a fantastic way to celebrate! You can celebrate by having **?count? ?emoji? Weapon ?plural?**!",
+				"textEmoji": "🎆"
+			},
+			{
+				"type": "flb",
+				"count": 1,
+				"chance": 1,
+				"text": "While it may not be the festival of snakes, we still appreciate our serpent friends. Here is a **?count? ?emoji? Fabled ?plural?** to remember them!",
+				"textEmoji": "🐍"
+			},
+			{
+				"type": "cookie",
+				"count": 1,
+				"chance": 1,
+				"text": "Do you add milk into your coffee? Here's a  for considering!",
+				"text": "Not all snakes are scary! Some only grow to weigh less than 1 gram! To compensate here is a **?emoji? ?plural?**!",
+				"textEmoji": "🐍"
+			},
+			{
+				"type": "sgem",
+				"count": 1,
+				"chance": 3,
+				"text": "HIIII! i've nevew seen a boww of snakes befowe wow! Quick take these wewawds: **?emoji? ?rank? ?type? Gem** (；ω；)",
+				"textEmoji": "🐍"
+			},
+			{
+				"type": "animal",
+				"id": "2024july_owo",
+				"count": 1,
+				"chance": 3,
+				"text": "OwO, look at the beautiful fireworks! ?emoji? came to join and watch with you <3",
+				"textEmoji": "🎆"
+			}
+		]
 	}
 }

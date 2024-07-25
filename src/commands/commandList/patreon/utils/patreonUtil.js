@@ -93,6 +93,14 @@ exports.giveCustomCookie = async function (p, id) {
 	await p.query(sql);
 };
 
+exports.giveCustomZoo = async function (p, id) {
+	const uid = await p.global.getUid(id);
+	const sql = `INSERT INTO \`alter\` (uid, command, type) VALUES
+		(${uid}, 'zoo',  'paged'),
+		(${uid}, 'zoo',  'message');`;
+	await p.query(sql);
+};
+
 exports.getSupporterRank = async function (p, user) {
 	if (user.supporterRank) {
 		const now = new Date();
@@ -150,14 +158,12 @@ exports.getSupporterRank = async function (p, user) {
 		await p.query(sql);
 	} else {
 		let sql = `SELECT pt.*, pta.pgid AS active FROM pet_team pt LEFT JOIN pet_team_active pta  ON pt.pgid = pta.pgid WHERE pt.uid = ${uid} ORDER BY pt.pgid ASC;`;
-		console.log(sql);
 		const result = await p.query(sql);
 		const maxTeams = await teamUtil.getMaxTeams.bind(p)(p.msg.author, supporter);
 		if (result.length > maxTeams) {
 			const pgid = result[result.length - 1].pgid;
 			sql = `UPDATE pet_team SET disabled = 1 WHERE pgid = ${pgid};
 					DELETE FROM pet_team_active WHERE pgid = ${pgid};`;
-			console.log(sql);
 			await p.query(sql);
 		}
 	}

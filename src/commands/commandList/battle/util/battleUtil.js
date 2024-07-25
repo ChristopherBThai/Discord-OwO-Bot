@@ -232,7 +232,32 @@ exports.calculateXP = function (team, enemy, currentStreak = 0) {
 		resetStreak = false;
 	}
 
-	return { total: xp + bonus, bonus, xp, resetStreak, addStreak };
+	const total = xp + bonus;
+
+	let highestLvl = 1;
+	let xpOverrides = {};
+	for (let i in team.team.team) {
+		let lvl = team.team.team[i].stats.lvl;
+		if (lvl > highestLvl) highestLvl = lvl;
+	}
+
+	for (let i in team.team.team) {
+		let mult = 1;
+		let lvl = team.team.team[i].stats.lvl;
+		if (lvl < highestLvl) mult = 2 + (highestLvl - lvl) / 10;
+		if (mult > 10) mult = 10;
+		mult += team.team.team[i].weapon?.getBonusXPPassive() || 0;
+		xpOverrides[team.team.team[i].pid] = Math.round(total * mult);
+	}
+
+	return {
+		total,
+		bonus,
+		xp,
+		resetStreak,
+		addStreak,
+		xpOverrides,
+	};
 };
 
 /* Bonus xp depending on the streak */

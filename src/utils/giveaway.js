@@ -35,7 +35,7 @@ async function createGiveaway(channelId, user, useTicket) {
 	const { endDate, diff } = getEndDate();
 	const giveaway = {
 		channelId: channelId,
-		rewards: getRandomGiveaways(),
+		rewards: getRandomGiveaways(channelId),
 		endDate: endDate,
 		winners: minWinners + Math.floor(Math.random() * (maxWinners - minWinners)),
 	};
@@ -347,17 +347,17 @@ function getEndDate() {
 	};
 }
 
-function getRandomGiveaways() {
+function getRandomGiveaways(cid) {
 	const giveaway = [];
 	let chance = 0;
 	do {
-		giveaway.push(getRandomGiveaway());
+		giveaway.push(getRandomGiveaway(cid));
 		chance = Math.random();
 	} while (chance <= multigiveChance);
 	return giveaway;
 }
 
-function getRandomGiveaway() {
+function getRandomGiveaway(cid) {
 	let random = Math.random() * totalGiveawayChance;
 	let chance = 0;
 	let giveaway;
@@ -367,6 +367,10 @@ function getRandomGiveaway() {
 			giveaway = giveaways[i];
 			i = giveaways.length + 1;
 		}
+	}
+
+	if (giveaway.owoOnly && !config.giveawayChannels.includes(cid)) {
+		return getRandomGiveaway(cid);
 	}
 
 	random = Math.random() * giveaway.count.chances.reduce((a, b) => a + b);

@@ -89,7 +89,7 @@ module.exports = new CommandInterface({
 		let animal, rank;
 		/* If multiple ranks */
 		if (ranks) {
-			sellRanks(msg, con, ranks, p.send, global, p);
+			await sellRanks.bind(p)(Object.values(ranks));
 
 			//if its an animal...
 		} else if ((animal = global.validAnimal(name))) {
@@ -111,7 +111,7 @@ module.exports = new CommandInterface({
 						'**, The correct syntax for selling ranks is `owo sell {rank}`!',
 					3000
 				);
-			else sellRank(msg, con, rank, p.send, global, p);
+			else await sellRanks.bind(p)([rank]);
 
 			//if a weapon or a ring...
 		} else if (args.length == 1) {
@@ -205,113 +205,56 @@ function sellAnimal(msg, con, animal, count, send, global, p) {
 	});
 }
 
-function sellRank(msg, con, rank, send, global, p) {
-	/*
-	if (rank.rank == 'special') {
-		p.errorMsg(', there is an issue selling specials. We are currently fixing the issue');
-		return;
-	}
-	*/
-	let animals = "('" + rank.animals.join("','") + "')";
-	let sql =
-		'SELECT SUM(count) AS total FROM animal WHERE id = ' +
-		msg.author.id +
-		' AND name IN ' +
-		animals +
-		';';
-	sql +=
-		'UPDATE animal INNER JOIN cowoncy ON animal.id = cowoncy.id INNER JOIN (SELECT COALESCE(SUM(count),0) AS sum FROM animal WHERE id = ' +
-		msg.author.id +
-		' AND name IN ' +
-		animals +
-		') s SET money = money + (s.sum*' +
-		rank.price +
-		'), sellcount = sellcount + count, count = 0 WHERE animal.id = ' +
-		msg.author.id +
-		' AND name IN ' +
-		animals +
-		' AND count > 0;';
-	con.query(sql, function (err, result) {
-		if (err) {
-			console.error(err);
+async function sellRanks(ranks) {
+	const rankNames = `'` + ranks.map((rank) => rank.rank).join(`','`) + `'`;
+	let total = 0;
+	let sold = '';
+	const con = await this.startTransaction();
+	try {
+		let sql = `SELECT rank, count FROM animal INNER JOIN animals ON animal.name = animals.name WHERE id = ${this.msg.author.id} AND rank in (${rankNames}) AND count > 0;`;
+		let result = await con.query(sql);
+		const rows = result.length;
+		const combine = {};
+		result.forEach((rank) => {
+			if (!combine[rank.rank]) {
+				combine[rank.rank] = 0;
+			}
+			combine[rank.rank] += rank.count;
+		});
+
+		for (let rankName in combine) {
+			const rank = ranks.find((rank) => rank.rank === rankName);
+			total += combine[rankName] * rank.price;
+			sold += rank.emoji + 'x' + combine[rankName] + ' ';
+		}
+		if (!total) {
+			this.errorMsg(", You don't have enough animals! >:c", 3000);
+			await con.rollback();
 			return;
 		}
-		if (result[1].affectedRows <= 0) {
-			send('**🚫 | ' + p.getName() + "**, You don't have enough animals! >:c", 3000);
-		} else {
-			let count = result[0][0].total;
-			send(
-				'**🔪 | ' +
-					p.getName() +
-					'** sold **' +
-					rank.emoji +
-					'x' +
-					count +
-					'** for a total of **<:cowoncy:416043450337853441> ' +
-					global.toFancyNum(count * rank.price) +
-					'**'
-			);
-			p.logger.incr('cowoncy', count * rank.price, { type: 'sell' }, p.msg);
-			// TODO neo4j
-		}
-	});
-}
 
-async function sellRanks(msg, con, ranks, send, global, p) {
-	let sold = '',
-		total = 0;
-	for (let i in ranks) {
-		let rank = ranks[i];
-		// TODO remove
-		if (rank.rank == 'special') {
-			break;
+		sql = `UPDATE cowoncy SET money = money + ${total} WHERE id = ${this.msg.author.id};`;
+		sql += `UPDATE animal INNER JOIN animals ON animal.name = animals.name SET sellcount = sellcount + count, count = 0 WHERE id = ${this.msg.author.id} AND rank IN (${rankNames}) AND count > 0;`;
+		result = await con.query(sql);
+		if (result[1].changedRows != rows) {
+			this.errorMsg(', failed to sell rank.', 3000);
+			await con.rollback();
+			return;
 		}
-		let animals = "('" + rank.animals.join("','") + "')";
-		let sql =
-			'SELECT SUM(count) AS total FROM animal WHERE id = ' +
-			msg.author.id +
-			' AND name IN ' +
-			animals +
-			';';
-		sql +=
-			'UPDATE animal INNER JOIN cowoncy ON animal.id = cowoncy.id INNER JOIN (SELECT COALESCE(SUM(count),0) AS sum FROM animal WHERE id = ' +
-			msg.author.id +
-			' AND name IN ' +
-			animals +
-			') s SET money = money + (s.sum*' +
-			rank.price +
-			'), sellcount = sellcount + count, count = 0 WHERE animal.id = ' +
-			msg.author.id +
-			' AND name IN ' +
-			animals +
-			' AND count > 0;';
 
-		try {
-			let result = await p.query(sql);
-			let sellCount = result[0][0].total;
-			if (sellCount > 0) {
-				sold += rank.emoji + 'x' + result[0][0].total + ' ';
-				total += sellCount * rank.price;
-			}
-		} catch (err) {
-			console.error(err);
-		}
+		await con.commit();
+	} catch (err) {
+		console.error(err);
+		con.rollback();
+		this.errorMsg(', failed to sell rank.', 3000);
+		return;
 	}
 
-	if (sold != '') {
-		sold = sold.slice(0, -1);
-		send(
-			'**🔪 | ' +
-				p.getName() +
-				'** sold **' +
-				sold +
-				'** for a total of **<:cowoncy:416043450337853441> ' +
-				global.toFancyNum(total) +
-				'**'
-		);
-		p.logger.incr('cowoncy', total, { type: 'sell' }, p.msg);
-		// TODO neo4j
-	} else {
-		send('**🚫 | ' + p.getName() + "**, You don't have enough animals! >:c", 3000);
-	}
+	sold = sold.slice(0, -1);
+	this.send(
+		`**🔪 | ${this.getName()}** sold **${sold}** for a total of **<:cowoncy:416043450337853441> ${this.global.toFancyNum(
+			total
+		)}**`
+	);
+	this.logger.incr('cowoncy', total, { type: 'sell' }, this.msg);
 }

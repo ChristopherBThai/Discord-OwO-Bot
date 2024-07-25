@@ -62,19 +62,18 @@ class OwO extends Base {
 		this.mysqlhandler = require('./botHandlers/mysqlHandler.js');
 		this.query = this.mysqlhandler.query;
 
-		try {
-			this.animals = require('./../../tokens/owo-animals.json');
-		} catch (err) {
-			console.error('Could not find owo-animals.json, attempting to use ./secret file...');
-			this.animals = require('../secret/owo-animals.json');
-			console.log('Found owo-animals.json file in secret folder!');
-		}
+		this.cache = require('./utils/cacheUtil.js');
 
 		// Global helper methods
 		this.global = require('./utils/global.js');
 		this.global.init(this);
 
+		this.animalUtil = require('./utils/animalInfoUtil.js');
+
+		this.rewardUtil = require('./utils/rewardUtil.js');
+
 		this.event = require('./utils/eventUtil.js');
+		this.event.init(this);
 
 		// Message sender helper methods
 		this.sender = require('./utils/sender.js');
@@ -112,6 +111,8 @@ class OwO extends Base {
 		// Helper for patreon benefits
 		this.patreon = require('./utils/patreon.js');
 		this.patreon.init(this);
+
+		this.patreonUtil = require('./commands/commandList/patreon/utils/patreonUtil.js');
 
 		try {
 			this.badwords = require('./../../tokens/badwords.json');

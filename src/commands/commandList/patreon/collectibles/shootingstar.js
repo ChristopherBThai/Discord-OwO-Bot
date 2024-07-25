@@ -19,6 +19,7 @@ class ShootingStar extends Collectible {
 			'412812867348463636',
 			'692146302284202134',
 			'417214768970203136',
+			'606142158067597332',
 		];
 		this.fullControl = true;
 		this.ownerOnly = true;
@@ -33,7 +34,7 @@ class ShootingStar extends Collectible {
 		this.giveMsg =
 			'<:starfrens:1067095520985751563> ooh, your **wish** <a:glitter:1080026999327834122> came true! the universe has listened to your dream, you got **1 shooting star**! ?emoji?';
 
-		this.failChance = 0.55;
+		this.failChance = 0.2;
 		this.failMsg =
 			'**<:starfrens:1067095520985751563> Sadly...maybe a dream is just meant to be a dream <a:pinkstars:1080026894436667402>**';
 

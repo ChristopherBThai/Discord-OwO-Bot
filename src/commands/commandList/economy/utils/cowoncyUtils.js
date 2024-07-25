@@ -7,11 +7,20 @@
 
 const levels = require('../../../../utils/levels.js');
 
-exports.canGive = async function (sender, receiver, amount, con) {
-	const senderLimit = await checkSender.bind(this)(sender, amount, con);
+exports.canGive = async function (
+	sender,
+	receiver,
+	amount,
+	con,
+	{ skipCowoncyCheck, isTransaction } = {}
+) {
+	const senderLimit = await checkSender.bind(this)(sender, amount, con, {
+		skipCowoncyCheck,
+		isTransaction,
+	});
 	if (senderLimit.error) return senderLimit;
 
-	const receiverLimit = await checkReceiver.bind(this)(receiver, amount, con);
+	const receiverLimit = await checkReceiver.bind(this)(receiver, amount, con, { isTransaction });
 	if (receiverLimit.error) return receiverLimit;
 
 	return {
@@ -19,21 +28,26 @@ exports.canGive = async function (sender, receiver, amount, con) {
 	};
 };
 
-async function checkSender(user, amount, con) {
+async function checkSender(user, amount, con, { skipCowoncyCheck, isTransaction }) {
 	let sql = `SELECT c.money, cl.send, cl.reset
 			FROM cowoncy c
 				LEFT JOIN cowoncy_limit cl ON c.id = cl.id
 			WHERE c.id = ${user.id}
-				AND c.money >= ${amount} FOR UPDATE;`;
+				AND c.money >= ${amount} ${isTransaction ? 'FOR UPDATE' : ''};`;
+	if (skipCowoncyCheck) {
+		sql = `SELECT cl.send, cl.reset
+			FROM cowoncy_limit cl
+			WHERE cl.id = ${user.id} ${isTransaction ? 'FOR UPDATE' : ''};`;
+	}
 	let result = await con.query(sql);
-	if (!result[0] || result[0].money < amount) {
+	if (!skipCowoncyCheck && (!result[0] || result[0].money < amount)) {
 		return {
 			error: ", you silly hooman! You don't have enough cowoncy!",
 			none: true,
 		};
 	}
 
-	const afterMid = this.dateUtil.afterMidnight(result[0].reset);
+	const afterMid = this.dateUtil.afterMidnight(result[0]?.reset);
 	const limit = (await getUserLimits(user.id)).send;
 
 	if (afterMid.after) {
@@ -79,11 +93,11 @@ async function checkSender(user, amount, con) {
 	};
 }
 
-async function checkReceiver(user, amount, con) {
+async function checkReceiver(user, amount, con, { isTransaction }) {
 	let sql = `SELECT cl.receive, cl.reset
 			FROM cowoncy_limit cl
 			WHERE cl.id = ${user.id}
-			FOR UPDATE;`;
+			${isTransaction ? 'FOR UPDATE' : ''};`;
 	let result = await con.query(sql);
 	const afterMid = this.dateUtil.afterMidnight(result[0]?.reset);
 	const limit = (await getUserLimits(user.id)).receive;
