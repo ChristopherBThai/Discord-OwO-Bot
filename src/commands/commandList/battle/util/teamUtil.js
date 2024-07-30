@@ -492,7 +492,9 @@ exports.giveXPToUserTeams = async function (
 	}
 	const pgid2 = secondaryPgid || (await getSecondaryPgid(p, user));
 	const secondaryActivePids = await getPrimaryPids(p, pgid2);
-	await giveXpToPgid(p, pgid2, xp / 2, secondaryXpOverrides, secondaryActivePids);
+	if (secondaryActivePids.length) {
+		await giveXpToPgid(p, pgid2, xp / 2, secondaryXpOverrides, secondaryActivePids);
+	}
 };
 
 exports.updateTeamStreak = async function (pgid, { addStreak, resetStreak }) {
