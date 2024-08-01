@@ -719,5 +719,84 @@
 				"textEmoji": "🎆"
 			}
 		]
+	},
+	"2024_august": {
+		"start2": "2024-08-01T00:00:00",
+		"start": "2024-07-01T00:00:00",
+		"end": "2024-08-09T00:00:00",
+		"type": "august",
+		"chance": 0.05,
+		"animals": [
+			{
+				"animal": "2024aug_maki",
+				"minRate": 0.005,
+				"maxRate": 0.05
+			},
+			{
+				"animal": "2024aug_Krishna",
+				"minRate": 0.005,
+				"maxRate": 0.05
+			},
+			{
+				"animal": "2024aug_cait",
+				"minRate": 0.005,
+				"maxRate": 0.05
+			}
+		],
+		"rewards": [
+			{
+				"type": "cowoncy",
+				"min": 1000,
+				"max": 5000,
+				"chance": 3,
+				"text": "Oh no! A witch turned you into cat! No matter, you received **?count? ?emoji? Cowoncies** as a welcoming treat!",
+				"textEmoji": "🔮 "
+			},
+			{
+				"type": "ws",
+				"min": 300,
+				"max": 1000,
+				"chance": 3,
+				"text": "Nya?! You found me? I shall give you **?count? ?emoji? Weapon Shards** for that feat! Meow~ okie back to sleep... /ᐠ – ﻌ–マ- ᶻ 𝗓 𐰁",
+				"textEmoji": "🐈‍⬛ "
+			},
+			{
+				"type": "lb",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "Strawberry cakie~ OWO likey! Do you? OwO shares **?count? ?emoji? ?plural?** with you!",
+				"textEmoji": "🍰"
+			},
+			{
+				"type": "wc",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "H-hewwo?? Shhh~ UwU has secretly prepared a present for you! (✿ ♡‿♡) You received **?count? ?emoji? Weapon ?plural?** as a gift! ❤️",
+				"textEmoji": "🎂 "
+			},
+			{
+				"type": "flb",
+				"count": 1,
+				"chance": 1,
+				"text": "Yummi yummi treats~ Who's ready for more? Ding You gained a **?count? ?emoji? Fabled ?plural?**!",
+				"textEmoji": "🍩 "
+			},
+			{
+				"type": "cookie",
+				"count": 1,
+				"chance": 1,
+				"text": "Don’t forget to give me treats! ฅ^ >ヮ<^₎  Mew~ Here's a **?emoji? ?plural?** as incentives!",
+				"textEmoji": "🐱"
+			},
+			{
+				"type": "sgem",
+				"count": 1,
+				"chance": 3,
+				"text": "Happy independence day to all the Indians! Oh my- you got a **?emoji? ?rank? ?type? Gem** for celebrating with them!",
+				"textEmoji": "🇮🇳"
+			}
+		]
 	}
 }
