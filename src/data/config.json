@@ -63,7 +63,8 @@
 		"perkTicket": {
 			"common": "<:cticket:815767124680114206>",
 			"wcommon": "<:wcticket:930641266159517726>",
-			"giveaway": "<:gticket:1065956261541195898>"
+			"giveaway": "<:gticket:1065956261541195898>",
+			"custom_pet": ""
 		},
 		"gift": "🎁",
 		"check": "✅",

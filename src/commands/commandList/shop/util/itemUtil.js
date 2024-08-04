@@ -37,6 +37,14 @@ const items = {
 		untradeable: true,
 		desc: `You can use this item to start a giveaway in this channel! Anyone who has access to the channel can join the giveaway.\n${config.emoji.warning} Selling this item for cowoncy, real money, or any item with monetary value will result in an immediate ban.`,
 	},
+	custom_pet_tickets: {
+		id: 19,
+		name: 'Custom Pet Ticket',
+		emoji: config.emoji.perkTicket.custom_pet,
+		column: 'custom_pet_tickets',
+		untradeable: true,
+		desc: `You can use this item to create one custom pet for yourself. You can choose the name, description, stats, and picture for the custom pet! Any users with a common perks or above will be able to hunt for your pet!`,
+	},
 };
 
 let lowestEventId = 22;
@@ -95,6 +103,9 @@ exports.use = async function (id, p) {
 			break;
 		case 18:
 			await useGiveawayTicket(item, p);
+			break;
+		case 19:
+			await useCustomPetTicket(item, p);
 			break;
 		default:
 			if (eventItemId > item?.id && item?.id >= lowestEventId) {
@@ -374,4 +385,8 @@ async function useGiveawayTicket(ticket, p) {
 			await msg.edit({ content: 'This message is now inactive', embed, components });
 		}
 	});
+}
+
+async function useCustomPetTicket(ticket, p) {
+	await p.send('Unfinished');
 }
