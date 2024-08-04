@@ -8,7 +8,8 @@
 		"lint:fix": "npx eslint --fix .",
 		"prettier": "npx prettier --check .",
 		"prettier:fix": "npx prettier --write .",
-		"format": "npm run lint:fix && npm run prettier:fix"
+		"format": "npm run lint:fix && npm run prettier:fix",
+		"checkCircular": "./node_modules/dpdm/lib/bin/dpdm.js --exit-code circular:1 ./src/owo.js"
 	},
 	"dependencies": {
 		"@2toad/profanity": "^1.3.0",
