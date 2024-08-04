@@ -13,6 +13,7 @@ const quests = require('../data/quests.json');
 const mysql = require('./mysqlHandler.js');
 const global = require('../utils/global.js');
 const questBy = ['friendlyBattle', 'friendlyBattleBy', 'emoteBy', 'prayBy', 'curseBy', 'cookieBy'];
+const cacheUtil = require('../utils/cacheUtil.js');
 
 module.exports = class Quest {
 	/* Constructer to grab mysql connection */
@@ -32,11 +33,7 @@ module.exports = class Quest {
 		/* Special quest parameters */
 		if (questName == 'friendlyBattleBy') questName = 'friendlyBattle';
 
-		/* Check if user has this quest */
-		let result = await mysql.query(
-			'SELECT * FROM quest WHERE qname = ? AND locked = 0 AND uid = (SELECT uid FROM user WHERE id = ?);',
-			[questName, id]
-		);
+		let result = await cacheUtil.getQuestByName(questName, id);
 
 		if (!result[0]) return;
 
@@ -69,11 +66,11 @@ async function check(msg, id, username, questName, result, count, extra) {
 
 	/* Check if the quest is complete */
 	let text, rewardSql, sql, variables, rewardVar;
+	const uid = await cacheUtil.getUid(id);
 	if (current >= needed) {
-		sql =
-			'DELETE FROM quest WHERE qid = ? AND qname = ? AND uid = (SELECT uid FROM user WHERE id = ?);';
+		sql = 'DELETE FROM quest WHERE qid = ? AND qname = ? AND uid = ?;';
 
-		variables = [result.qid, questName, id];
+		variables = [result.qid, questName, uid];
 		text = '**📜 | ' + username + '**! You finished a quest and earned: ';
 		if (rewardType == 'lootbox') {
 			text += '<:box:427352600476647425>'.repeat(reward);
@@ -83,13 +80,13 @@ async function check(msg, id, username, questName, result, count, extra) {
 		} else if (rewardType == 'crate') {
 			text += '<:crate:523771259302182922>'.repeat(reward);
 			rewardSql =
-				"INSERT INTO crate (uid,boxcount,claim) VALUES ((SELECT uid FROM user WHERE id = ?),?,'2017-01-01 10:10:10') ON DUPLICATE KEY UPDATE boxcount = boxcount + ?;";
-			rewardVar = [id, reward, reward];
+				"INSERT INTO crate (uid,boxcount,claim) VALUES (?,?,'2017-01-01 10:10:10') ON DUPLICATE KEY UPDATE boxcount = boxcount + ?;";
+			rewardVar = [uid, reward, reward];
 		} else if (rewardType == 'shards') {
 			text += '<:weaponshard:655902978712272917>**x' + reward + '**';
 			rewardSql =
-				'INSERT INTO shards (uid,count) VALUES ((SELECT uid FROM user WHERE id = ?),?) ON DUPLICATE KEY UPDATE count = count + ?;';
-			rewardVar = [id, reward, reward];
+				'INSERT INTO shards (uid,count) VALUES (?,?) ON DUPLICATE KEY UPDATE count = count + ?;';
+			rewardVar = [uid, reward, reward];
 		} else {
 			text += global.toFancyNum(reward) + ' <:cowoncy:416043450337853441>';
 			rewardSql =
@@ -98,13 +95,13 @@ async function check(msg, id, username, questName, result, count, extra) {
 		}
 		text += '!';
 	} else {
-		sql =
-			'UPDATE IGNORE quest SET count = count + ? WHERE qid = ? AND qname = ? AND uid = (SELECT uid FROM user WHERE id = ?);';
-		variables = [count, result.qid, questName, id];
+		sql = 'UPDATE IGNORE quest SET count = count + ? WHERE qid = ? AND qname = ? AND uid = ?;';
+		variables = [count, result.qid, questName, uid];
 	}
 
 	/* Query sql */
 	result = await mysql.query(sql, variables);
+	cacheUtil.clearQuests(id);
 	if (result.affectedRows == 1 && rewardSql) {
 		await mysql.query(rewardSql, rewardVar);
 		await msg.channel.createMessage(text);

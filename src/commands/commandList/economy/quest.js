@@ -113,6 +113,7 @@ async function rrQuest(p) {
 		p.msg.author.id +
 		') ORDER BY qid asc;';
 	result = await p.query(sql);
+	p.cache.clearQuests(p.msg.author.id);
 
 	/* Display the result */
 	let quests = parseQuests(p.msg.author.id, result[3], afterMid);
@@ -150,6 +151,7 @@ async function lockUnlockQuest(p) {
 	sql += `SELECT questTime FROM timers WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
 
 	result = await p.query(sql);
+	p.cache.clearQuests(p.msg.author.id);
 
 	/* Parse dates */
 	let afterMid = dateUtil.afterMidnight(result[2][0] ? result[2][0].questTime : undefined);
@@ -201,7 +203,10 @@ async function addQuest(p) {
 	if (quest) sql += quest.sql;
 	if (quests) sql += quests.sql;
 
-	if (sql != '') await p.query(sql);
+	if (sql != '') {
+		await p.query(sql);
+		p.cache.clearQuests(p.msg.author.id);
+	}
 
 	/*Create embed */
 	let embed = constructEmbed(p, afterMid, quests);
