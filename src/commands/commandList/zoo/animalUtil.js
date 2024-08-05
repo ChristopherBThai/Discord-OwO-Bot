@@ -262,7 +262,7 @@ async function createSql(orderedAnimal, user) {
 	orderedAnimal.forEach((animal) => {
 		animalSql.push(`(${user.id}, '${animal.value}', ${animal.count}, ${animal.count})`);
 		animals.push(`'${animal.value}'`);
-		animalCase += `WHEN name = '${animal.value}' THEN ${animal.count}\n`
+		animalCase += `WHEN name = '${animal.value}' THEN ${animal.count}\n`;
 		if (!animalCountSql[animal.rank])
 			animalCountSql[animal.rank] = {
 				rank: animal.rank,
@@ -271,11 +271,11 @@ async function createSql(orderedAnimal, user) {
 		animalCountSql[animal.rank].count += animal.count;
 	});
 	animalCountSql = Object.values(animalCountSql);
-	animalCase += 'ELSE 0 END)'
+	animalCase += 'ELSE 0 END)';
 
 	let sql = `UPDATE animal SET 
 			count = count + ${animalCase}, totalcount = totalcount + ${animalCase}
-			WHERE id = ${user.id} AND name in (${animals.join(',')});`
+			WHERE id = ${user.id} AND name in (${animals.join(',')});`;
 	sql += `INSERT INTO animal_count (id, ${animalCountSql
 		.map((animalCount) => animalCount.rank)
 		.join(',')})
