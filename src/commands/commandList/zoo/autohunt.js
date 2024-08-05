@@ -88,7 +88,7 @@ async function claim(p, msg, con, query, bot) {
 
 	//Get all animal
 	let radar = autohuntutil.getLvl(query.radar, 0, 'radar');
-	let { animals, animalSql } = animalUtil.getMultipleAnimals(query.huntcount, p.msg.author, {
+	let { animals, animalSql } = await animalUtil.getMultipleAnimals(query.huntcount, p.msg.author, {
 		patreon: patreon,
 		huntbot: radar.stat,
 	});

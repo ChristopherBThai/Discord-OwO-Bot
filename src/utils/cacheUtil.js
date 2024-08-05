@@ -9,6 +9,7 @@ const mysql = require('./../botHandlers/mysqlHandler.js');
 class CacheUtil {
 	constructor() {
 		this.getUid = this.getUid.bind(this);
+		this.getAnimalNames = this.getAnimalNames.bind(this);
 		this.get = this.get.bind(this);
 		this.set = this.set.bind(this);
 		this.cache = {};
@@ -101,6 +102,35 @@ class CacheUtil {
 		return quests.filter((quest) => {
 			return quest.qname === questName && (showLocked || quest.locked === 0);
 		});
+	}
+
+	async getAnimalNames(id) {
+		id = BigInt(id);
+		let result = this.get('animalNames', id);
+		if (result) {
+			return result;
+		}
+
+		const sql = `SELECT name FROM animal WHERE id = ${id};`;
+		result = await mysql.query(sql);
+		const animals = {};
+		result.forEach((row) => {
+			animals[row.name] = true;
+		});
+		this.set('animalNames', id, animals);
+		return animals;
+	}
+
+	async insertAnimal(id, animalName) {
+		const animals = await this.getAnimalNames(id);
+		if (animals[animalName]) {
+			return;
+		}
+
+		const sql = `INSERT INTO animal (id, name, count, totalcount) VALUES (${id}, '${animalName}', 0, 0);`;
+		await mysql.query(sql);
+
+		animals[animalName] = true;
 	}
 }
 

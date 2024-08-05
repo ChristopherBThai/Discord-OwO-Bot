@@ -173,7 +173,7 @@ async function getAnimals(p, result, gems, uid) {
 		if (gems['Patreon']) count += 1;
 	}
 
-	let { ordered, animalSql, typeCount, xp } = animalUtil.getMultipleAnimals(
+	let { ordered, animalSql, typeCount, xp } = await animalUtil.getMultipleAnimals(
 		count,
 		p.msg.author,
 		opt

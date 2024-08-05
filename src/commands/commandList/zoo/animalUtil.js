@@ -9,6 +9,7 @@ const mysql = require('../../../botHandlers/mysqlHandler.js');
 const global = require('../../../utils/global.js');
 const animals = require('../../../utils/animalInfoUtil.js');
 const eventUtil = require('../../../utils/eventUtil.js');
+const cacheUtil = require('../../../utils/cacheUtil.js');
 
 let enableDistortedTier = true;
 setTimeout(() => {
@@ -151,7 +152,7 @@ function getEventRarity(animal, event) {
 	return rate;
 }
 
-exports.getMultipleAnimals = function (count, user, opt) {
+exports.getMultipleAnimals = async function (count, user, opt) {
 	const total = {};
 	let xp = 0;
 	for (let i = 0; i < count; i++) {
@@ -175,7 +176,7 @@ exports.getMultipleAnimals = function (count, user, opt) {
 	}
 
 	const ordered = sortAnimals(total);
-	const { sql, typeCount } = createSql(ordered, user);
+	const { sql, typeCount } = await createSql(ordered, user);
 
 	return {
 		animals: total,
@@ -252,12 +253,16 @@ function sortAnimals(animals) {
 	return animalList;
 }
 
-function createSql(orderedAnimal, user) {
+async function createSql(orderedAnimal, user) {
 	let animalSql = [];
 	let animalCountSql = {};
 
+	let animalCase = '( CASE\n';
+	let animals = [];
 	orderedAnimal.forEach((animal) => {
 		animalSql.push(`(${user.id}, '${animal.value}', ${animal.count}, ${animal.count})`);
+		animals.push(`'${animal.value}'`);
+		animalCase += `WHEN name = '${animal.value}' THEN ${animal.count}\n`
 		if (!animalCountSql[animal.rank])
 			animalCountSql[animal.rank] = {
 				rank: animal.rank,
@@ -266,12 +271,11 @@ function createSql(orderedAnimal, user) {
 		animalCountSql[animal.rank].count += animal.count;
 	});
 	animalCountSql = Object.values(animalCountSql);
+	animalCase += 'ELSE 0 END)'
 
-	let sql = `INSERT INTO animal (id, name, count, totalcount)
-			VALUES ${animalSql.join(',')}
-			ON DUPLICATE KEY UPDATE
-				count = count + VALUES(count),
-				totalcount = totalcount + VALUES(totalcount);`;
+	let sql = `UPDATE animal SET 
+			count = count + ${animalCase}, totalcount = totalcount + ${animalCase}
+			WHERE id = ${user.id} AND name in (${animals.join(',')});`
 	sql += `INSERT INTO animal_count (id, ${animalCountSql
 		.map((animalCount) => animalCount.rank)
 		.join(',')})
@@ -283,8 +287,15 @@ function createSql(orderedAnimal, user) {
 					})
 					.join(',')};
 			`;
+	await checkDbInsert(user.id, orderedAnimal);
 	return {
 		sql,
 		typeCount: animalCountSql,
 	};
+}
+
+async function checkDbInsert(id, animals) {
+	for (let i in animals) {
+		await cacheUtil.insertAnimal(id, animals[i].value);
+	}
 }
