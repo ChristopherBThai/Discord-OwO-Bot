@@ -127,7 +127,7 @@ class CacheUtil {
 			return;
 		}
 
-		const sql = `INSERT INTO animal (id, name, count, totalcount) VALUES (${id}, '${animalName}', 0, 0);`;
+		const sql = `INSERT IGNORE INTO animal (id, name, count, totalcount) VALUES (${id}, '${animalName}', 0, 0);`;
 		await mysql.query(sql);
 
 		animals[animalName] = true;
