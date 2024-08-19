@@ -35,6 +35,7 @@ const animalInfo = require('./animalInfoUtil.js');
 const cacheUtil = require('./cacheUtil.js');
 let client, main;
 let totalShards;
+let clusterShards = 'n/a';
 
 /**
  * Checks if its an integer
@@ -87,6 +88,18 @@ exports.parseID = function (id) {
 exports.init = function (bot) {
 	main = bot;
 	client = bot.bot;
+	let lowestShard = Number.MAX_SAFE_INTEGER;
+	let highestShard = -1;
+	shards = bot.bot.shards.forEach((val) => {
+		const id = val.id;
+		if (id < lowestShard) {
+			lowestShard = id;
+		}
+		if (id > highestShard) {
+			highestShard = id;
+		}
+	});
+	clusterShards = `${lowestShard} - ${highestShard}`;
 };
 
 exports.validAnimal = animalInfo.getAnimal;
@@ -94,6 +107,10 @@ exports.validRank = animalInfo.getRank;
 exports.getAllRanks = animalInfo.getRanks;
 exports.unicodeAnimal = function (name) {
 	return name;
+};
+
+exports.getShardString = function() {
+	return clusterShards;
 };
 
 exports.toSmallNum = function (count, digits) {
