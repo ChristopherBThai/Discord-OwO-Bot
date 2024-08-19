@@ -135,6 +135,8 @@ class OwO extends Base {
 
 		// sends info to our main server every X seconds
 		this.InfoUpdater = new (require('./utils/InfoUpdater.js'))(this);
+
+		this.logger.logstashQos('launch');
 	}
 
 	async setOptOut() {

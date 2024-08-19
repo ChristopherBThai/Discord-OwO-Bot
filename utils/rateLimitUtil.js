@@ -6,9 +6,11 @@
  */
 const request = require('request');
 
+let influxErrorShown = false;
+
 exports.init = function (bucket, debug) {
 	setInterval(() => {
-		logBucket(bucket, debug)
+		logBucket(bucket, debug);
 	}, 10000);
 };
 

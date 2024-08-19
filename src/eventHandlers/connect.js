@@ -7,5 +7,5 @@
 
 // Fired when all shards turn ready
 exports.handle = function () {
-	this.logger.logstashQos('ready');
+	this.logger.logstashQos('connect');
 };
