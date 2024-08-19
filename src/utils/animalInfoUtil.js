@@ -27,7 +27,18 @@ class AnimalJson {
 		this.ranks = {};
 		this.rankNameToKey = {};
 
-		const result = await mysql.query(`SELECT * FROM animals;`);
+		let result;
+		try {
+			result = await mysql.query(`SELECT * FROM animals;`);
+		} catch (err) {
+			console.error(err);
+			console.error('Failed to fetch animals, retrying in 10s');
+			return new Promise((res) => {
+				setTimeout(() => {
+					res(this.initialize());
+				}, 5000);
+			});
+		}
 
 		result.forEach(this.parseAnimal);
 		Object.keys(animalJson.ranks).forEach(this.parseRank);
