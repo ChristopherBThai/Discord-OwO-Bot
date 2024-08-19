@@ -76,7 +76,8 @@ module.exports = new CommandInterface({
 			p.args = [];
 			if (item.id == 49) p.args.push('f');
 			lootbox.execute(p);
-		} else if (item.name == 'crate') {
+			// TODO REMOVE
+		} else if (false && item.name == 'crate') {
 			p.args = [];
 			crate.execute(p);
 		} else if (item.name == 'weapon') {
