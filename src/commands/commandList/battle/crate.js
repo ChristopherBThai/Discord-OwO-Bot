@@ -10,7 +10,7 @@ const CommandInterface = require('../../CommandInterface.js');
 const crateShake = '<a:crateshake:523771259172028420>';
 const crateOpen = '<a:crateopen:523771437408845852>';
 const weaponUtil = require('./util/weaponUtil.js');
-const maxBoxes = 50;
+const maxBoxes = 20;
 
 module.exports = new CommandInterface({
 	alias: ['crate', 'weaponcrate', 'wc'],
@@ -27,7 +27,7 @@ module.exports = new CommandInterface({
 
 	group: ['animals'],
 
-	cooldown: 5000,
+	cooldown: 30000,
 	half: 100,
 	six: 500,
 
