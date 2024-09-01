@@ -797,5 +797,83 @@
 				"textEmoji": "🇮🇳"
 			}
 		]
+	},
+	"2024_sept": {
+		"start": "2024-09-01T00:00:00",
+		"end": "2024-09-09T00:00:00",
+		"type": "september",
+		"chance": 0.05,
+		"animals": [
+			{
+				"animal": "2024sept_hyh",
+				"minRate": 0.005,
+				"maxRate": 0.05
+			},
+			{
+				"animal": "2024sept_nerdturtle",
+				"minRate": 0.005,
+				"maxRate": 0.05
+			},
+			{
+				"animal": "2024sept_vietnam",
+				"minRate": 0.005,
+				"maxRate": 0.05
+			}
+		],
+		"rewards": [
+			{
+				"type": "cowoncy",
+				"min": 1000,
+				"max": 5000,
+				"chance": 3,
+				"text": "A golden retriever named Maximus Mighty-Dog Mueller II served as the second mayor of Idyllwild, waaow! He kept the tennis ball payments, leaving you with **?count? ?emoji? Cowoncies**",
+				"textEmoji": ":tennis:"
+			},
+			{
+				"type": "ws",
+				"min": 300,
+				"max": 1000,
+				"chance": 3,
+				"text": "Raise your flag and watch the parade! Among the people wearing traditional áo dài, you see some colorful floats. Huh? Some look like **?count? ?emoji? Weapon Shards**",
+				"textEmoji": ":flag_vn:"
+			},
+			{
+				"type": "lb",
+				"min": 3,
+				"max": 3,
+				"chance": 3,
+				"text": "It’s very important to get enough sleep to retain what you’ve learnt. Try counting lootboxes, 1.. 2… **?count? ?emoji? ?plural?**!",
+				"textEmoji": ":zzz:"
+			},
+			{
+				"type": "wc",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "While flicking through your revision books, you notice **?count? ?emoji? Weapon ?plural?** between the pages. Bookmark that page!",
+				"textEmoji": ":pencil2:"
+			},
+			{
+				"type": "flb",
+				"count": 1,
+				"chance": 1,
+				"text": "An Akita Inu named Hachikō would return to Shibuya Station every day to await the return of his friend. While waiting **?count? ?emoji? Fabled ?plural?** was left at the station!",
+				"textEmoji": ":dog2:"
+			},
+			{
+				"type": "cookie",
+				"count": 1,
+				"chance": 1,
+				"text": "Don’t forget to take breaks when revising! I heard all the best breaks have snacks, so I brought you a **?emoji? ?plural?**",
+				"textEmoji": ":books:"
+			},
+			{
+				"type": "sgem",
+				"count": 1,
+				"chance": 3,
+				"text": "Try to visit your hometown once in a while, this could be a great opportunity! While seated for dinner, you spot a **?emoji? ?rank? ?type? Gem** on the shelf!",
+				"textEmoji": ":heart:"
+			}
+		]
 	}
 }
