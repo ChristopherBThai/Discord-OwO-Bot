@@ -12,7 +12,7 @@ const itemUtil = require('./util/itemUtil.js');
 const lootbox = require('../zoo/lootbox.js');
 const gemUtil = require('../zoo/gemUtil.js');
 const weapon = require('../battle/weapon.js');
-const crate = require('../battle/crate.js');
+//const crate = require('../battle/crate.js');
 
 module.exports = new CommandInterface({
 	alias: ['equip', 'use'],
@@ -77,9 +77,11 @@ module.exports = new CommandInterface({
 			if (item.id == 49) p.args.push('f');
 			lootbox.execute(p);
 			// TODO REMOVE
-		} else if (false && item.name == 'crate') {
+			/*
+		} else if (item.name == 'crate') {
 			p.args = [];
 			crate.execute(p);
+		*/
 		} else if (item.name == 'weapon') {
 			p.args = [p.args[0]]; // cut off any other junk
 			weapon.execute(p);

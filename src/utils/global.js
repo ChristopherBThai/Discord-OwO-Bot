@@ -90,7 +90,7 @@ exports.init = function (bot) {
 	client = bot.bot;
 	let lowestShard = Number.MAX_SAFE_INTEGER;
 	let highestShard = -1;
-	shards = bot.bot.shards.forEach((val) => {
+	bot.bot.shards.forEach((val) => {
 		const id = val.id;
 		if (id < lowestShard) {
 			lowestShard = id;
@@ -109,7 +109,7 @@ exports.unicodeAnimal = function (name) {
 	return name;
 };
 
-exports.getShardString = function() {
+exports.getShardString = function () {
 	return clusterShards;
 };
 
