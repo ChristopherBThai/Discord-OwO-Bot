@@ -136,7 +136,7 @@
 		"mergeMsg": ""
 	},
 	"des": {
-		"alias": ["sayang", "dg-hug"],
+		"alias": ["kasih"],
 		"emoji": "<a:des:993694521546260511>",
 		"dataOverride": "des2",
 		"owners": ["384202884553768961", "707939636835516457", "778204442411008021"],
@@ -333,7 +333,7 @@
 		"manualMergeData": "wolfpack"
 	},
 	"dg-hug": {
-		"alias": [],
+		"alias": ["sayang"],
 		"emoji": "<:hug:1016110925985624076>",
 		"owners": ["384202884553768961", "778204442411008021"],
 		"pluralName": "",

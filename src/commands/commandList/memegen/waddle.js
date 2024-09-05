@@ -78,7 +78,7 @@ async function display(p, url, name) {
 	// Create reaction collector
 	let filter = (emoji, userId) => emoji.name == p.config.emoji.steal && userId != p.client.user.id;
 	const collector = p.reactionCollector.create(msg, filter, { idle: 120000 });
-	const emojiAdder = new p.EmojiAdder(p, emojiName, url);
+	const emojiAdder = new p.EmojiAdder(p, { name: emojiName, url });
 
 	collector.on('collect', async function (emoji, userId) {
 		try {
