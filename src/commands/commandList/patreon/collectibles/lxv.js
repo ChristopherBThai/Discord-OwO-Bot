@@ -67,7 +67,7 @@ class Lxv extends Collectible {
 	async manualMerge(p) {
 		const { redis, msg } = p;
 		let count = (await p.redis.hget(`data_${p.msg.author.id}`, this.data)) || 0;
-		if (!count) {
+		if (parseInt(count) <= 0) {
 			p.errorMsg(', You need at least one lxv to pet the hedge!');
 			return;
 		}
