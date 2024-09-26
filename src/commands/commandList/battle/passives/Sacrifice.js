@@ -70,12 +70,17 @@ module.exports = class Sacrifice extends PassiveInterface {
 			}
 		}
 
-		healLogText = healLogText.slice(0, -2) + 'HP';
+		if (alive.length === 0) {
+			healLogText = '[SAC] did not find an ally to heal HP!';
+			repLogText = '[SAC] did not find an ally to replenish WP';
+		} else {
+			healLogText = healLogText.slice(0, -2) + 'HP';
+			repLogText = repLogText.slice(0, -2) + 'WP';
+		}
+		
 		logs.push(healLogText, healSubLogs);
-
-		repLogText = repLogText.slice(0, -2) + 'WP';
 		logs.push(repLogText, repSubLogs);
-
+		
 		return logs;
 	}
 };
