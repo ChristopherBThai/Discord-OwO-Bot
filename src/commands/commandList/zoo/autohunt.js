@@ -97,16 +97,7 @@ async function claim(p, msg, con, query, bot) {
 		if (animals[key].count > digits) digits = animals[key].count;
 	}
 	digits = Math.trunc(Math.log10(digits) + 1);
-	let text =
-		'**' +
-		bot +
-		' |** `BEEP BOOP. I AM BACK WITH ' +
-		query.huntcount +
-		' ANIMALS,`\n**<:blank:427371936482328596> |** `' +
-		totalGain +
-		' ESSENCE, AND ' +
-		totalExp +
-		' EXPERIENCE`';
+	let text = `**${bot} |** \`BEEP BOOP. \`**\`${msg.author.username}\`**\` I AM BACK WITH ${query.huntcount} ANIMALS,\`\n**<:blank:427371936482328596> |** \`${totalGain}  ESSENCE, AND ${totalExp} EXPERIENCE\``;
 	let tempText = [];
 
 	for (let animal in animals) {
@@ -185,17 +176,7 @@ async function autohunt(p, msg, con, args, global, send) {
 	if (result[0][0] && result[0][0].huntmin != 0) {
 		hunting = await claim(p, msg, con, result[0][0], bot);
 		if (hunting) {
-			let text =
-				'**' +
-				bot +
-				' |** `BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN ' +
-				hunting.time +
-				'`\n**<:blank:427371936482328596> |** `' +
-				hunting.percent +
-				'% DONE | ' +
-				hunting.count +
-				' ANIMALS CAPTURED`\n**<:blank:427371936482328596> |** ' +
-				hunting.bar;
+			let text = `**${bot} |** \`BEEP BOOP. \`**\`${msg.author.username}\`**\` I AM STILL HUNTING. I WILL BE BACK IN ${hunting.time}\`\n**<:blank:427371936482328596> |** \`${hunting.percent}% DONE | ${hunting.count} ANIMALS CAPTURED\`\n**<:blank:427371936482328596> |** ${hunting.bar}`;
 			text = alterhb(msg.author.id, text, 'progress');
 			send(text);
 		}
