@@ -149,7 +149,11 @@ exports.getSupporterRank = async function (p, user) {
 	}
 	if (result[2][0]) {
 		const benefitRank = result[2][0].patreonType;
-		const endTime = new Date(result[2][0].endDate);
+		let endTime = new Date(result[2][0].endDate);
+		if (result[2][0].active) {
+			endTime = new Date();
+			endTime = new Date(endTime.setMonth(endTime.getMonth() + 1));
+		}
 		getBetterSupporterRank(supporter, benefitRank, endTime);
 	}
 
@@ -188,7 +192,7 @@ function getBetterSupporterRank(supporter, benefitRank, endTime) {
 }
 
 exports.handleDiscordUpdate = async function (entitlement) {
-	let { userId, endDate, error } = parseEntitlment(entitlement);
+	let { userId, endDate, active, error } = parseEntitlement(entitlement);
 	if (error) {
 		console.error(error + ': ' + JSON.stringify(entitlement, null, 2));
 		return;
@@ -199,21 +203,25 @@ exports.handleDiscordUpdate = async function (entitlement) {
 	let result = await this.query(sql);
 	let renewal = false;
 	if (result[0]) {
-		const resultEnd = new Date(result[0].endDate);
-		if (resultEnd >= endDate) {
-			return;
+		const end = new Date(result[0].endDate);
+		const active = result[0].active;
+		const now = new Date();
+		if (end >= now || active) {
+			renewal = true;
 		}
-		renewal = true;
 	}
-	let mysqlDate = this.global.toMySQL(endDate);
-	sql = `INSERT INTO patreon_discord (uid, patreonType, endDate) VALUES (${uid}, 3, ${mysqlDate}) ON DUPLICATE KEY UPDATE endDate = ${mysqlDate};`;
+
+	active = active ? 1 : 0;
+	if (endDate) {
+		let mysqlDate = this.global.toMySQL(endDate);
+		sql = `INSERT INTO patreon_discord (uid, patreonType, endDate, active) VALUES (${uid}, 3, ${mysqlDate}, ${active}) ON DUPLICATE KEY UPDATE endDate = ${mysqlDate}, active = ${active};`;
+	} else {
+		sql = `INSERT INTO patreon_discord (uid, patreonType, active) VALUES (${uid}, 3, ${active}) ON DUPLICATE KEY UPDATE active = ${active};`;
+	}
 	await this.query(sql);
 
 	if (!renewal) {
 		let txt = `${this.config.emoji.owo.woah} **|** Thank you for supporting OwO Bot! Your account should have access to supporter benefits.`;
-		txt += `\n${
-			this.config.emoji.blank
-		} **|** Your benefit will renew on: ${this.global.toDiscordTimestamp(endDate)}`;
 		txt += `\n${this.config.emoji.blank} **|** If you have any questions, please stop by our support server: ${this.config.guildlink}`;
 		this.sender.msgUser(userId, txt);
 	}
@@ -232,7 +240,7 @@ exports.handleDiscordDelete = async function (entitlement) {
 	}
 };
 
-function parseEntitlment(entitlment) {
+function parseEntitlement(entitlment) {
 	if (entitlment.sku_id !== sku) {
 		return { error: 'Invalid SKU' };
 	}
@@ -240,10 +248,12 @@ function parseEntitlment(entitlment) {
 	if (!userId) {
 		return { error: 'Invalid User' };
 	}
-	let endDate = entitlment.ends_at;
-	if (!endDate) {
-		return { error: 'Invalid End Time' };
+	let endDate;
+	let active = false;
+	if (!entitlment.ends_at) {
+		active = true;
+	} else {
+		endDate = new Date(entitlment.ends_at);
 	}
-	endDate = new Date(endDate);
-	return { userId, endDate };
+	return { userId, endDate, active };
 }
