@@ -7,7 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const owners = ['184587051943985152','460987842961866762'];
+const owners = ['184587051943985152', '460987842961866762'];
 const desc =
 	"The passage of time is explored through the journey of life. A quest to find the precious gemstones that represents one's birth. Months may pass and possibly a life time to complete. Unlock two hidden gemstones, moonstone & sunstone once you have completed the twelve; Garnet, Amethyst, Aquamarine, Diamond, Emerald, Pearl, Ruby, Peridot, Sapphire, Opal, Citrine, Topaz.";
 
