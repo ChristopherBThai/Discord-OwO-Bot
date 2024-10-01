@@ -875,5 +875,83 @@
 				"textEmoji": ":heart:"
 			}
 		]
+	},
+	"2024_oct": {
+		"start": "2024-10-01T00:00:00",
+		"end": "2024-10-09T00:00:00",
+		"type": "october",
+		"chance": 0.05,
+		"animals": [
+			{
+				"animal": "2024oct_artistday",
+				"minRate": 0.005,
+				"maxRate": 0.05
+			},
+			{
+				"animal": "2024oct_skellybee",
+				"minRate": 0.005,
+				"maxRate": 0.05
+			},
+			{
+				"animal": "2024oct_teacherday",
+				"minRate": 0.005,
+				"maxRate": 0.05
+			}
+		],
+		"rewards": [
+			{
+				"type": "cowoncy",
+				"min": 1000,
+				"max": 5000,
+				"chance": 3,
+				"text": "OwO! Look at the art you just made! Here you go, **?count? ?emoji? Cowoncies** for your hard work!",
+				"textEmoji": "🖼️ "
+			},
+			{
+				"type": "ws",
+				"min": 300,
+				"max": 1000,
+				"chance": 3,
+				"text": "You gave your teacher a bouquet to appreciate them! They gifted you **?count? ?emoji? Weapon Shards** in return",
+				"textEmoji": "💐"
+			},
+			{
+				"type": "lb",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "Some people may share an apple with a teacher! Instead let's share **?count? ?emoji? ?plural?**!",
+				"textEmoji": "🍎"
+			},
+			{
+				"type": "wc",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "Time to dig through old boxes to find your Hallowe’en decorations- huh? Those boxes contains **?count? ?emoji? Weapon ?plural?**! ",
+				"textEmoji": "🎃"
+			},
+			{
+				"type": "flb",
+				"count": 1,
+				"chance": 1,
+				"text": "You and a friend win a Hallowe’en competition for dressing in matching bee and honey pot costumes! SO CUTE! Take **?count? ?emoji? Fabled ?plural?** as your prize!",
+				"textEmoji": "🐝"
+			},
+			{
+				"type": "cookie",
+				"count": 1,
+				"chance": 1,
+				"text": "Have a cup of coffee and a **?emoji? ?plural?** before starting a class! Good luck! ",
+				"textEmoji": "☕"
+			},
+			{
+				"type": "sgem",
+				"count": 1,
+				"chance": 3,
+				"text": "You managed to grade all your assignments and finalize your lesson plans! Have a **?emoji? ?rank? ?type? Gem** on us!",
+				"textEmoji": ":woman_teacher:"
+			}
+		]
 	}
 }
