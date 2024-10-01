@@ -7,7 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const owners = ['460987842961866762'];
+const owners = ['184587051943985152','460987842961866762'];
 const desc =
 	"The passage of time is explored through the journey of life. A quest to find the precious gemstones that represents one's birth. Months may pass and possibly a life time to complete. Unlock two hidden gemstones, moonstone & sunstone once you have completed the twelve; Garnet, Amethyst, Aquamarine, Diamond, Emerald, Pearl, Ruby, Peridot, Sapphire, Opal, Citrine, Topaz.";
 
@@ -121,7 +121,6 @@ module.exports = new CommandInterface({
 				return;
 			}
 			let user = this.getMention(this.args[1]);
-			let birthstone = birthstones[this.args[0].toLowerCase()];
 			if (!user) {
 				user = await this.fetch.getMember(this.msg.channel.guild, this.args[1]);
 				if (!user) {
@@ -130,6 +129,12 @@ module.exports = new CommandInterface({
 					return;
 				}
 			}
+			if (this.args[0] === 'reset') {
+				reset.bind(this)(user);
+				this.setCooldown(5);
+				return;
+			}
+			let birthstone = birthstones[this.args[0].toLowerCase()];
 			if (!birthstone) {
 				this.errorMsg(', Invalid syntax! Please mention a birthstone!', 3000);
 				this.setCooldown(5);
@@ -140,6 +145,11 @@ module.exports = new CommandInterface({
 		}
 	},
 });
+
+async function reset(user) {
+	await this.redis.hdel('data_' + user.id, data);
+	this.replyMsg(this.config.emoji.gear, `, successfully reset gemstones for ${user.username}`);
+}
 
 async function getStones(id) {
 	const stones = JSON.parse((await this.redis.hget('data_' + id, data)) || '{}');
