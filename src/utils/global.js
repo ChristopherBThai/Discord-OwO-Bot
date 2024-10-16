@@ -275,7 +275,7 @@ exports.parseEmoji = function (emoji) {
 	id = id[0].match(/[0-9]+/gi)[0];
 	let name = emoji.match(/:[\w]+:/gi);
 	if (!name || !name[0]) return;
-	name = emoji.slice(1, -1);
+	name = name[0].slice(1, -1);
 	return { id, name };
 };
 
