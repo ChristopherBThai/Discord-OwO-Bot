@@ -7,6 +7,7 @@
 
 let animalJson = require('../data/animal.json');
 const mysql = require('./../botHandlers/mysqlHandler.js');
+let bot;
 
 class AnimalJson {
 	constructor() {
@@ -18,6 +19,10 @@ class AnimalJson {
 		this.getRank = this.getRank.bind(this);
 		this.getRanks = this.getRanks.bind(this);
 		this.getOrder = this.getOrder.bind(this);
+	}
+
+	setBot(bot_) {
+		bot = bot_;
 	}
 
 	async initialize() {
@@ -163,7 +168,11 @@ class Animal {
 		this.alt = alt;
 		this.value = rawAnimal.name;
 		this.emoji = rawAnimal.name;
-		this.name = alt[0];
+		const emojiInfo = bot.global.parseEmoji(rawAnimal.name);
+		if (emojiInfo?.name) {
+			this.alt.push(emojiInfo.name);
+		}
+		this.name = emojiInfo?.name || alt[0];
 		this.hpr = this.hp = rawAnimal.hp;
 		this.attr = this.att = rawAnimal.att;
 		this.prr = this.pr = rawAnimal.pr;
