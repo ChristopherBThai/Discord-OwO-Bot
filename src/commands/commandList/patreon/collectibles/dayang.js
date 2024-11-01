@@ -12,7 +12,7 @@ class Dayang extends Collectible {
 		super();
 
 		this.key = 'dayang3';
-		this.alias = ['dayang', 'bunga', 'indonesia'];
+		this.alias = ['dayang', 'cinta', 'indonesia'];
 		this.emoji = '<a:dayang:1098860750891655219>';
 		this.owners = ['778204442411008021'];
 		this.fullControl = true;
