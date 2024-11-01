@@ -953,5 +953,83 @@
 				"textEmoji": ":woman_teacher:"
 			}
 		]
+	},
+	"2024_nov": {
+		"start": "2024-11-01T00:00:00",
+		"end": "2024-11-09T00:00:00",
+		"type": "november",
+		"chance": 0.05,
+		"animals": [
+			{
+				"animal": "2024nov_diwaliOwO",
+				"minRate": 0.005,
+				"maxRate": 0.05
+			},
+			{
+				"animal": "2024nov_juan",
+				"minRate": 0.005,
+				"maxRate": 0.05
+			},
+			{
+				"animal": "2024nov_tiago",
+				"minRate": 0.005,
+				"maxRate": 0.05
+			}
+		],
+		"rewards": [
+			{
+				"type": "cowoncy",
+				"min": 1000,
+				"max": 5000,
+				"chance": 3,
+				"text": "Happy Diwali everyone! Here you go, **?count? ?emoji? Cowoncies** for you on this auspicious occasion!",
+				"textEmoji": ":tada:"
+			},
+			{
+				"type": "ws",
+				"min": 300,
+				"max": 1000,
+				"chance": 3,
+				"text": "Bowom! Oh no! What was that!? Someone has lit fireworks yay! You got **?count? ?emoji? Weapon Shards**!",
+				"textEmoji": ":fireworks:"
+			},
+			{
+				"type": "lb",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "Yay! Lil lil sparkles! Aren't they cute? Wait... The fire dropped and turned into **?count? ?emoji? ?plural?**!? Woohoo!",
+				"textEmoji": ":sparkler:"
+			},
+			{
+				"type": "wc",
+				"min": 1,
+				"max": 3,
+				"chance": 3,
+				"text": "Yay! Lil lil sparkles! Aren't they cute? Wait... The fire dropped and turned into **?count? ?emoji? Weapon ?plural?**!? Woohoo!",
+				"textEmoji": ":sparkler:"
+			},
+			{
+				"type": "flb",
+				"count": 1,
+				"chance": 1,
+				"text": "OwO was walking down the street and found **?count? ?emoji? Fabled ?plural?** among the skeletons to give you! Yay!",
+				"textEmoji": ":candle:"
+			},
+			{
+				"type": "cookie",
+				"count": 1,
+				"chance": 1,
+				"text": "Among the food, cakes and sweets, OwO found something else. Wait! What is this? You got a **?emoji? ?plural?**!",
+				"textEmoji": ":cake:"
+			},
+			{
+				"type": "sgem",
+				"count": 1,
+				"chance": 3,
+				"text": "Feliz Dia De Los Muertos! Here is a **?emoji? ?rank? ?type? Gem** to share with your loved ones.",
+				"textEmoji": ":skull:"
+			}
+		]
 	}
 }
