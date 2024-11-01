@@ -15,7 +15,7 @@ class Stitch extends Collectible {
 		this.emoji = '<a:stitch:1288009365906915340>';
 		this.owners = ['942100445105647686', '638420840765063178'];
 		this.pluralName = 'Stitch';
-		this.singleName = 'Stitches';
+		this.singleName = 'Stitch';
 		this.fullControl = true;
 		this.ownerOnly = true;
 		this.giveAmount = 1;
