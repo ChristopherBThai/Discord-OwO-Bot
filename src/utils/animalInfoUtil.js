@@ -13,6 +13,7 @@ class AnimalJson {
 	constructor() {
 		this.initialize = this.initialize.bind(this);
 		this.reinitialize = this.reinitialize.bind(this);
+		this.reinitializeAnimal = this.reinitializeAnimal.bind(this);
 		this.parseAnimal = this.parseAnimal.bind(this);
 		this.parseRank = this.parseRank.bind(this);
 		this.getAnimal = this.getAnimal.bind(this);
@@ -63,6 +64,30 @@ class AnimalJson {
 		const newAnimalJson = new AnimalJson();
 		await newAnimalJson.initialize();
 		this.copy(newAnimalJson);
+	}
+
+	deleteAnimal(animalName) {
+		const animalId = this.animalNameToKey[animalName.toLowerCase()];
+		if (!animalId) {
+			return;
+		}
+		const animal = this.animals[animalId];
+		if (!animal) {
+			return;
+		}
+		delete this.animals[animalId];
+		animal.alt.forEach((alt) => {
+			alt = alt.toLowerCase();
+			if (this.animalNameToKey[alt] === animalId) {
+				delete this.animalNameToKey[alt];
+			}
+		});
+		if (this.animalNameToKey[animalId.toLowerCase()] === animalId) {
+			delete this.animalNameToKey[animalId.toLowerCase()];
+		}
+
+		const rank = this.ranks[animal.rank];
+		rank.deleteAnimal(animal);
 	}
 
 	async reinitializeAnimal(animalName) {
@@ -221,6 +246,13 @@ class AnimalRank {
 	useTemp() {
 		this.animals = this.tempAnimals;
 		this.tempAnimals = [];
+	}
+
+	deleteAnimal(animal) {
+		const index = this.animals.indexOf(animal.value);
+		if (index > -1) {
+			this.animals.splice(index, 1);
+		}
 	}
 }
 
