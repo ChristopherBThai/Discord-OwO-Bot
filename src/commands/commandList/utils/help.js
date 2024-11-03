@@ -33,6 +33,16 @@ module.exports = new CommandInterface({
 
 	related: [],
 
+	appCommands: [
+		{
+			'name': 'help',
+			'type': 1,
+			'description': 'OwO, do you need some help~?',
+			'integration_types': [0, 1],
+			'contexts': [0, 1, 2],
+		},
+	],
+
 	cooldown: 1000,
 	half: 100,
 	six: 500,

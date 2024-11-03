@@ -59,7 +59,7 @@ class Interaction {
 			id: data.channel_id,
 		};
 
-		const author = data.member.user;
+		const author = data.member?.user || data.user;
 		if (author.discriminator !== '0000') {
 			this.author = bot.users.update(author, bot);
 		} else {

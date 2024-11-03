@@ -118,7 +118,7 @@ exports.logstash = function (command, p) {
 		user: p.msg.author.id,
 		command: command,
 		text: p.msg.content,
-		guild: p.msg.channel.guild.id,
+		guild: p.msg.channel.guild?.id | 'dm',
 	};
 
 	request(

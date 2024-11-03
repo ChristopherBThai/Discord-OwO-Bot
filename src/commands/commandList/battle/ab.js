@@ -65,17 +65,25 @@ module.exports = new CommandInterface({
 
 		/* Get opponent name */
 		let sender = result[0][0].sender;
-		sender = await p.fetch.getMember(p.msg.channel.guild.id, sender);
+		if (p.msg.channel.guild) {
+			sender = await p.fetch.getMember(p.msg.channel.guild.id, sender);
+		} else {
+			sender = await p.fetch.getUser(sender);
+		}
 		if (!sender) {
 			p.errorMsg(', I could not find your opponent!', 3000);
 			return;
+		}
+		if (!p.msg.channel.guild) {
+			// Can't seem to edit message after interaction in DMs
+			flags.instant = true;
 		}
 
 		const settingOverride = {
 			friendlyBattle: true,
 			display: flags.display ? flags.display : 'image',
-			speed: flags.log ? 'instant' : 'short',
-			instant: flags.log ? true : false,
+			speed: flags.instant || flags.log ? 'instant' : 'short',
+			instant: flags.instant || flags.log ? true : false,
 			title: this.getName(author) + ' vs ' + this.getName(sender),
 			showLogs: flags.link ? 'link' : flags.log ? true : false,
 		};

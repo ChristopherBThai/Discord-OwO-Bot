@@ -9,7 +9,6 @@ const CommandInterface = require('../../CommandInterface.js');
 
 const baseURL = 'https://cdn.discordapp.com/emojis/';
 const stickerUrl = 'https://media.discordapp.net/stickers/';
-const stealEmoji = '🕵️';
 
 module.exports = new CommandInterface({
 	alias: ['emoji', 'enlarge', 'jumbo'],
@@ -25,6 +24,16 @@ module.exports = new CommandInterface({
 	permissions: ['sendMessages', 'embedLinks', 'addReactions'],
 
 	group: ['social'],
+
+	appCommands: [
+		{
+			'type': 3,
+			'name': 'Grab Emojis',
+			'dm_permission': true,
+			'integration_types': [0, 1],
+			'contexts': [0, 1, 2],
+		},
+	],
 
 	cooldown: 7000,
 	half: 100,
@@ -158,7 +167,7 @@ async function display(p, emojis) {
 		return embed;
 	};
 
-	const additionalButtons = await getStealButton(p);
+	const additionalButtons = await p.global.getStealButton(p);
 	const additionalFilter = (componentName, _user) => componentName === 'steal';
 	const pagedMsg = new p.PagedMessage(p, createEmbed, emojis.length - 1, {
 		idle: 120000,
@@ -181,25 +190,6 @@ async function display(p, emojis) {
 			}
 		}
 	});
-}
-
-async function getStealButton(p) {
-	const sql = `SELECT emoji_steal.guild FROM emoji_steal INNER JOIN user ON emoji_steal.uid = user.uid WHERE id = ${p.msg.author.id};`;
-	const canSteal = (await p.query(sql))[0]?.guild;
-	if (canSteal) {
-		return [
-			{
-				type: 2,
-				label: 'Steal',
-				style: 1,
-				custom_id: 'steal',
-				emoji: {
-					id: null,
-					name: stealEmoji,
-				},
-			},
-		];
-	}
 }
 
 async function setServer(p) {
@@ -228,11 +218,11 @@ async function setServer(p) {
 		}
 	}
 
-	p.replyMsg(stealEmoji, ', stolen emojis will now be sent to this server!');
+	p.replyMsg(p.config.emoji.steal, ', stolen emojis will now be sent to this server!');
 }
 
 async function unsetServer(p) {
 	let sql = `DELETE FROM emoji_steal WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
 	await p.query(sql);
-	p.replyMsg(stealEmoji, ', your server has been unset for stealing!');
+	p.replyMsg(p.config.emoji.steal, ', your server has been unset for stealing!');
 }
