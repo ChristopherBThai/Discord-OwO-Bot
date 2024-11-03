@@ -56,7 +56,7 @@ module.exports = new CommandInterface({
 		} else if (p.args.length > 0 && p.args[0].toLowerCase() == 'all') {
 			let sql = `SELECT boxcount FROM crate INNER JOIN user ON crate.uid = user.uid WHERE id = ${p.msg.author.id};`;
 			let result = await p.query(sql);
-			if (!result || result[0].boxcount <= 0) {
+			if (!result[0] || result[0].boxcount <= 0) {
 				p.errorMsg(", you don't have any more weapon crates!");
 				return;
 			}

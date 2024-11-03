@@ -63,7 +63,7 @@ module.exports = new CommandInterface({
 		) {
 			let sql = `SELECT boxcount FROM lootbox WHERE id = ${this.msg.author.id};`;
 			let result = await this.query(sql);
-			if (!result || result[0].boxcount <= 0) {
+			if (!result[0] || result[0].boxcount <= 0) {
 				this.errorMsg(", you don't have any more lootboxes!");
 				return;
 			}
