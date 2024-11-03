@@ -50,7 +50,7 @@ module.exports = new CommandInterface({
 		let result = await p.query(sql);
 
 		if (!result[0][0] || result[1].changedRows == 0) {
-			p.errorturnMsg(', You do not have any pending battles!', 3000);
+			p.errorMsg(', You do not have any pending battles!', 3000);
 			return;
 		}
 
