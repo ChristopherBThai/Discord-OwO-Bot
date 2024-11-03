@@ -27,6 +27,13 @@ class AnimalJson {
 	}
 
 	async initialize() {
+		if (!bot) {
+			return new Promise((res) => {
+				setTimeout(() => {
+					res(this.initialize());
+				}, 5000);
+			});
+		}
 		this.animalNameToKey = {};
 		this.animals = {};
 		this.order = [];

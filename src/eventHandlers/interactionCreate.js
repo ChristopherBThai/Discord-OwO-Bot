@@ -5,6 +5,8 @@
  * For more information, see README.md and LICENSE
  */
 
+const commandGroups = require('../utils/commandGroups.js');
+
 exports.handle = function (interaction) {
 	switch (interaction.type) {
 		case 2:
@@ -27,30 +29,38 @@ function handleCommand(interaction) {
 
 async function handleSlash(interaction) {
 	ackTimer(interaction);
-	interaction.command = interaction.data.name;
-	interaction.author = interaction.member.user || interaction.user;
+	interaction.command = getSlashCommand(interaction);
+	interaction.author = interaction.member?.user || interaction.user;
 	interaction.interaction = true;
 	interaction.acked = false;
-	interaction.options = getInteractionArgs(interaction);
+	interaction.options = getInteractionArgs(interaction.data, interaction.data.resolved);
 	interaction.args = [];
 	this.command.executeInteraction(interaction);
 }
 
-function getInteractionArgs(interaction) {
-	// console.log(interaction.data.options);
-	const result = {};
-	interaction.data.options?.forEach((option) => {
+function getSlashCommand(interaction) {
+	let command = commandGroups.interactionToCommand(interaction.data);
+	return command || interaction.data.name;
+}
+
+function getInteractionArgs(interaction, resolved, result = {}) {
+	interaction.options?.forEach((option) => {
+		/* eslint-disable no-fallthrough */
 		switch (option.type) {
 			// User
 			case 6:
-				result[option.name] = interaction.data.resolved.members.get(option.value);
+				result[option.name] = resolved.users.get(option.value);
 				break;
 			// Sub command
 			case 2:
-				// console.log(option);
+			// Command
+			case 1:
+				getInteractionArgs(option, resolved, result);
 				break;
 			// Number
 			case 4:
+			// String
+			case 3:
 				result[option.name] = option.value;
 				break;
 		}

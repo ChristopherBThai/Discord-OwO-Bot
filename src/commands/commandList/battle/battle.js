@@ -25,6 +25,23 @@ module.exports = new CommandInterface({
 
 	group: ['animals'],
 
+	appCommands: [
+		{
+			'name': 'battle',
+			'type': 1,
+			'description': 'Fight with your team of animals!',
+			'options': [
+				{
+					'type': 6,
+					'name': 'user',
+					'description': 'Fight a friend.',
+				},
+			],
+			'integration_types': [0, 1],
+			'contexts': [0, 1, 2],
+		},
+	],
+
 	cooldown: 15000,
 	half: 80,
 	six: 500,

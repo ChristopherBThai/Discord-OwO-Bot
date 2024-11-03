@@ -13,7 +13,7 @@ const timerEmoji = '⏱';
 
 exports.check = async function (p, command) {
 	let channel = p.msg.channel.id;
-	let guild = p.msg.channel.guild.id;
+	let guild = p.msg.channel.guild?.id || 0;
 	let author = p.msg.author.id;
 
 	if (cooldown[author + command]) return;

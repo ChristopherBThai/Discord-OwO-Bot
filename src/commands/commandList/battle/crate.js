@@ -27,6 +27,23 @@ module.exports = new CommandInterface({
 
 	group: ['animals'],
 
+	appCommands: [
+		{
+			'name': 'crate',
+			'type': 1,
+			'description': 'Open a weapon crate',
+			'options': [
+				{
+					'type': 4,
+					'name': 'count',
+					'description': 'Number of weapon crates',
+				},
+			],
+			'integration_types': [0, 1],
+			'contexts': [0, 1, 2],
+		},
+	],
+
 	cooldown: 30000,
 	half: 100,
 	six: 500,

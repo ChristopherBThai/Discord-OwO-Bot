@@ -23,11 +23,13 @@ class InteractionCollector {
 		return iee;
 	}
 
-	interact({ member, message, data, id, token, entitlements }) {
-		member.id = member.user.id;
+	interact({ user, member, message, data, id, token, entitlements }) {
+		if (member) {
+			member.id = member.user.id;
+		}
 		const listener = this.listeners[message.id] || this.listeners[message.interaction?.id];
 		if (listener) {
-			listener.interact(data, member, id, token, entitlements);
+			listener.interact(data, member || user, id, token, entitlements);
 		} else {
 			const url = `https://discord.com/api/v8/interactions/${id}/${token}/callback`;
 			const content = {

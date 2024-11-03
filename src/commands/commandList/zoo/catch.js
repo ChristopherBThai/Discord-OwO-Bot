@@ -32,6 +32,16 @@ module.exports = new CommandInterface({
 
 	group: ['animals'],
 
+	appCommands: [
+		{
+			'name': 'hunt',
+			'type': 1,
+			'description': 'Hunt for some animals!',
+			'integration_types': [0, 1],
+			'contexts': [0, 1, 2],
+		},
+	],
+
 	cooldown: 15000,
 	half: 80,
 	six: 500,

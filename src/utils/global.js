@@ -221,7 +221,7 @@ exports.cleanString = function (string) {
 };
 
 exports.isEmoji = function (string) {
-	return /^<a?:[\w]+:[0-9]+>$/gi.test(string.trim());
+	return /^<a?:[\w]+:[0-9]+>$/gi.test(string?.trim());
 };
 
 exports.parseTime = function (diff) {
@@ -391,4 +391,30 @@ exports.selectRandom = function (array, total) {
 			return item;
 		}
 	}
+};
+
+exports.getStealButton = async function (p, withComponent) {
+	const sql = `SELECT emoji_steal.guild FROM emoji_steal INNER JOIN user ON emoji_steal.uid = user.uid WHERE id = ${p.msg.author.id};`;
+	const canSteal = (await p.query(sql))[0]?.guild;
+	if (!canSteal) {
+		return;
+	}
+	const components = [
+		{
+			type: 1,
+			components: [
+				{
+					type: 2,
+					label: 'Steal',
+					style: 1,
+					custom_id: 'steal',
+					emoji: {
+						id: null,
+						name: p.config.emoji.steal,
+					},
+				},
+			],
+		},
+	];
+	return withComponent ? components : components[0].components;
 };
