@@ -7,6 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
+const commandGroups = require('../../../utils/commandGroups.js');
 const request = require('request');
 const rocketEmoji = '🚀';
 
@@ -25,13 +26,36 @@ module.exports = new CommandInterface({
 
 	group: ['memegeneration'],
 
+	appCommands: [
+		commandGroups.addOption('eject', ['gen'], {
+			'name': 'eject',
+			'description': 'Eject the user into space',
+			'type': 1,
+			'options': [
+				{
+					'name': 'user',
+					'description': 'The user to use',
+					'type': 6,
+					'required': true,
+				},
+			],
+		}),
+		{
+			'type': 2,
+			'name': 'Eject to space',
+			'dm_permission': true,
+			'integration_types': [0, 1],
+			'contexts': [0, 1, 2],
+		},
+	],
+
 	cooldown: 30000,
 	half: 100,
 	six: 500,
 	bot: true,
 
 	execute: async function (p) {
-		let user = p.getMention(p.args[0]);
+		let user = p.options.user || p.getMention(p.args[0]);
 		if (!user) {
 			p.errorMsg(', you must tag a user!', 5000);
 			p.setCooldown(5);

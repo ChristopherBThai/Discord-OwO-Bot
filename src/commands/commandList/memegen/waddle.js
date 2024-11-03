@@ -35,13 +35,11 @@ module.exports = new CommandInterface({
 					'name': 'user',
 					'description': "Generate a waddle emoji with a user's avatar",
 					'type': 1,
-					'required': false,
 					'options': [
 						{
 							'name': 'user',
 							'description': 'The user to use',
 							'type': 6,
-							'required': false,
 						},
 					],
 				},
@@ -49,7 +47,6 @@ module.exports = new CommandInterface({
 					'name': 'emoji',
 					'description': 'Generate a waddle emoji with an emoji',
 					'type': 1,
-					'required': false,
 					'options': [
 						{
 							'name': 'emoji',

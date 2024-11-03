@@ -22,6 +22,12 @@ function handleCommand(interaction) {
 		case 1:
 			handleSlash.bind(this)(interaction);
 			break;
+		case 2:
+			handleUser.bind(this)(interaction);
+			break;
+		case 3:
+			handleMessage.bind(this)(interaction);
+			break;
 		default:
 			break;
 	}
@@ -43,6 +49,36 @@ function getSlashCommand(interaction) {
 	return command || interaction.data.name;
 }
 
+async function handleMessage(interaction) {
+	ackTimer(interaction);
+	interaction.command = getApplicationCommand.bind(this)(interaction);
+	interaction.author = interaction.member?.user || interaction.user;
+	interaction.interaction = true;
+	interaction.acked = false;
+	interaction.options = getInteractionArgs(interaction.data, interaction.data.resolved);
+	interaction.options.message = interaction.data.resolved?.messages?.entries().next().value[1];
+	interaction.args = [];
+	this.command.executeInteraction(interaction);
+}
+
+async function handleUser(interaction) {
+	ackTimer(interaction);
+	interaction.command = getApplicationCommand.bind(this)(interaction);
+	interaction.author = interaction.member?.user || interaction.user;
+	interaction.interaction = true;
+	interaction.acked = false;
+	interaction.options = getInteractionArgs(interaction.data, interaction.data.resolved);
+	interaction.options.member = interaction.data.resolved?.members?.entries().next().value[1];
+	interaction.options.user = interaction.data.resolved?.users?.entries().next().value[1];
+	interaction.args = [];
+	this.command.executeInteraction(interaction);
+}
+
+function getApplicationCommand(interaction) {
+	let command = this.command.messageUserInteractionToCommand(interaction.data);
+	return command || interaction.data.name;
+}
+
 function getInteractionArgs(interaction, resolved, result = {}) {
 	interaction.options?.forEach((option) => {
 		/* eslint-disable no-fallthrough */
@@ -50,6 +86,9 @@ function getInteractionArgs(interaction, resolved, result = {}) {
 			// User
 			case 6:
 				result[option.name] = resolved.users.get(option.value);
+				break;
+			case 8:
+				result[option.name] = resolved.roles.get(option.value);
 				break;
 			// Sub command
 			case 2:

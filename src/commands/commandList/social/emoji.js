@@ -40,41 +40,20 @@ module.exports = new CommandInterface({
 	six: 500,
 
 	execute: async function (p) {
-		/* Look at previous message */
-		if (
-			p.args.length == 0 ||
-			(p.args[0] &&
-				(p.args[0].toLowerCase() == 'prev' ||
-					p.args[0].toLowerCase() == 'previous' ||
-					p.args[0].toLowerCase() == 'p'))
-		) {
+		// Special case for message interaction
+		if (this.interaction && this.options.message) {
+			const emojis = parseEmojis([this.options.message]);
+			await display(p, emojis);
+
+			/* Look at previous message */
+		} else if (!p.args.length || ['prev', 'previous', 'p'].includes(p.args[0]?.toLowerCase())) {
 			let msgs = await p.global.getChannelMessages(p.msg.channel, 10);
 			if (!msgs) {
 				p.errorMsg(', There are no emojis! >:c', 3000);
 				return;
 			}
-			let emojis = '';
-			for (let i in msgs) {
-				const msg = msgs[i];
-				emojis += msg.content;
-				emojis += JSON.stringify(msg.embeds);
-				if (msg.reactions) {
-					for (let name in msg.reactions) {
-						const emoji = msg.reactions[name];
-						emojis += `<${emoji.animated ? 'a' : ''}:${name}>`;
-					}
-				}
-				if (msg.stickerItems?.length) {
-					msg.stickerItems.forEach((sticker) => {
-						emojis += `<s:${sticker.name}:${sticker.id}>`;
-					});
-				}
-			}
-
-			emojis = parseIDs(emojis);
-			if (emojis.length == 0)
-				p.errorMsg(', There are no emojis! I can only look at the previous 10 messages! >:c', 3000);
-			else await display(p, emojis);
+			const emojis = parseEmojis(msgs);
+			await display(p, emojis);
 
 			// Set emoji steal guild
 		} else if (['setguild', 'setserver', 'set', 'setsteal'].includes(p.args[0].toLowerCase())) {
@@ -90,11 +69,31 @@ module.exports = new CommandInterface({
 		} else {
 			let text = p.args.join(' ');
 			let emojis = parseIDs(text);
-			if (emojis.length == 0) p.errorMsg(', There are no emojis! >:c', 3000);
-			else await display(p, emojis);
+			await display(p, emojis);
 		}
 	},
 });
+
+function parseEmojis(msgs) {
+	let emojis = '';
+	msgs.forEach((msg) => {
+		emojis += msg.content;
+		emojis += JSON.stringify(msg.embeds);
+		if (msg.reactions) {
+			for (let name in msg.reactions) {
+				const emoji = msg.reactions[name];
+				emojis += `<${emoji.animated ? 'a' : ''}:${name}>`;
+			}
+		}
+		if (msg.stickerItems?.length) {
+			msg.stickerItems.forEach((sticker) => {
+				emojis += `<s:${sticker.name}:${sticker.id}>`;
+			});
+		}
+	});
+
+	return parseIDs(emojis);
+}
 
 function parseIDs(text) {
 	let emojis = [];
@@ -130,6 +129,9 @@ function parseIDs(text) {
 }
 
 async function display(p, emojis) {
+	if (emojis.length == 0) {
+		return p.errorMsg(', There are no emojis! >:c', 3000);
+	}
 	const emojiAdders = [];
 	const createEmbed = (currentPage, maxPage) => {
 		const emoji = emojis[currentPage];

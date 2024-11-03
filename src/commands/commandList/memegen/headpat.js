@@ -35,13 +35,11 @@ module.exports = new CommandInterface({
 					'name': 'user',
 					'description': "Generate a headpat emoji with a user's avatar",
 					'type': 1,
-					'required': false,
 					'options': [
 						{
 							'name': 'user',
 							'description': 'The user to use',
 							'type': 6,
-							'required': false,
 						},
 					],
 				},
@@ -49,7 +47,6 @@ module.exports = new CommandInterface({
 					'name': 'emoji',
 					'description': 'Generate a headpat emoji with an emoji',
 					'type': 1,
-					'required': false,
 					'options': [
 						{
 							'name': 'emoji',
@@ -61,6 +58,13 @@ module.exports = new CommandInterface({
 				},
 			],
 		}),
+		{
+			'type': 2,
+			'name': 'Headpat',
+			'dm_permission': true,
+			'integration_types': [0, 1],
+			'contexts': [0, 1, 2],
+		},
 	],
 
 	cooldown: 30000,
@@ -120,11 +124,13 @@ async function display(p, url, name) {
 	collector.on('collect', async (component, user, ack) => {
 		try {
 			if (await emojiAdder.addEmoji(user.id)) {
-				(content.embed = createEmbed(p, url, name, emojiName, emojiAdder)), ack(content);
+				content.embed = createEmbed(p, url, name, emojiName, emojiAdder);
+				ack(content);
 			}
 		} catch (err) {
 			if (!emojiAdder.successCount) {
-				(content.embed = createEmbed(p, url, name, emojiName, emojiAdder)), ack(content);
+				content.embed = createEmbed(p, url, name, emojiName, emojiAdder);
+				ack(content);
 			}
 		}
 	});

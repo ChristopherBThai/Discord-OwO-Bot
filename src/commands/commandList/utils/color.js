@@ -36,27 +36,77 @@ module.exports = new CommandInterface({
 
 	group: ['utility'],
 
+	appCommands: [
+		{
+			'name': 'color',
+			'type': 1,
+			'description': 'Show a random color!',
+			'options': [
+				{
+					'type': 6,
+					'name': 'user',
+					'description': "Display a user's avatar color",
+				},
+				{
+					'type': 8,
+					'name': 'role',
+					'description': "Display a roles's color",
+				},
+				{
+					'type': 3,
+					'name': 'value',
+					'description': 'RGB, HEX, or HSL values',
+				},
+			],
+			'integration_types': [0, 1],
+			'contexts': [0, 1, 2],
+		},
+		{
+			'type': 2,
+			'name': 'Grab avatar colors',
+			'dm_permission': true,
+			'integration_types': [0, 1],
+			'contexts': [0, 1, 2],
+		},
+	],
+
 	cooldown: 4000,
 
 	execute: async function (p) {
 		let color, title, colors;
 
 		// No argument = random color
-		if (!p.args.length) {
+		if (!p.args.length && !Object.keys(p.options).length) {
 			color = randColor();
 			title = ', here is your random color!';
 		} else {
-			let args = p.args.join(' ').split(/[\s,]+/gi);
-			let args2 = p.args.join('').replace('#', '').toUpperCase();
-			title = ', here is your color for "' + p.args.join(' ') + '"';
+			let args = [];
+			let args2 = '';
+			let name = p.args.join(' ');
+			if (this.options.value) {
+				args = p.options.value.split(/[\s,]+/gi);
+				args2 = p.options.value.replace('#', '').toUpperCase();
+				name = p.options.value;
+			} else {
+				args = p.args.join(' ').split(/[\s,]+/gi);
+				args2 = p.args.join('').replace('#', '').toUpperCase();
+			}
+			title = ', here is your color for "' + name + '"';
 
 			//parse user's avatar color
 			if (
-				args.length == 1 &&
-				(p.global.isUser(p.args[0]) || (p.global.isInt(p.args[0]) && parseInt(p.args[0]) > maxInt))
+				p.options.user ||
+				(args.length == 1 &&
+					(p.global.isUser(p.args[0]) ||
+						(p.global.isInt(p.args[0]) && parseInt(p.args[0]) > maxInt)))
 			) {
-				let id = p.args[0].match(/[0-9]+/)[0];
-				let user = await p.fetch.getUser(id);
+				let user;
+				if (p.options.user) {
+					user = p.options.user;
+				} else {
+					let id = p.args[0].match(/[0-9]+/)[0];
+					user = await p.fetch.getUser(id);
+				}
 				if (!user) {
 					p.errorMsg(', That user does not exist!', 3000);
 					return;
@@ -95,23 +145,28 @@ module.exports = new CommandInterface({
 				}
 				user = await p.fetch.getMember(p.msg.channel.guild, user.id);
 				color = p.global.getRoleColor(user);
+				const name = user.username;
 				if (!color) {
 					p.errorMsg(', That user does not have a role color!', 3000);
 					return;
 				}
-				title = ', here is the role color for **' + user.username + '**';
+				title = ', here is the role color for **' + name + '**';
 				color = parseHex(color.replace('#', '').toUpperCase().padStart(6, '0'));
 
 				//randomHSL
-			} else if (p.args.join(' ').includes('%')) {
-				color = randHSL(p, p.args);
+			} else if (p.options.value?.includes('%') || p.args.join(' ').includes('%')) {
+				let args = p.args;
+				if (p.options.value) {
+					args = p.options.value.split(/[\s]+/gi);
+				}
+				color = randHSL(p, args);
 
 				//rgb values
 			} else if (args.length == 3 && args.every(p.global.isInt)) {
 				color = parseRGB(args);
 
 				//int values
-			} else if (p.args.length == 1 && p.global.isInt(p.args[0])) {
+			} else if (p.global.isInt(p.args[0] || p.options.value)) {
 				color = parseIntValue(p.args[0]);
 
 				//hex values
@@ -120,10 +175,12 @@ module.exports = new CommandInterface({
 
 				// role mention
 			} else if (
-				p.msg.roleMentions.length &&
-				(args.length == 1 || (args.length == 2 && ['r', 'role'].includes(args[0].toLowerCase())))
+				p.options.role ||
+				(p.msg.roleMentions?.length &&
+					(args.length == 1 || (args.length == 2 && ['r', 'role'].includes(args[0].toLowerCase()))))
 			) {
-				let role = p.msg.channel.guild.roles.get(p.msg.roleMentions[0]);
+				let role = p.options.role || p.msg.channel.guild.roles.get(p.msg.roleMentions[0]);
+				title = ', here is your color for "' + role.name + '"';
 				color = parseIntValue(role.color);
 			}
 		}
@@ -155,22 +212,46 @@ module.exports = new CommandInterface({
 			embed.image = {
 				url: colors[page].avatar,
 			};
+			const components = [
+				{
+					type: 1,
+					components: [
+						{
+							type: 2,
+							style: 1,
+							custom_id: 'prev',
+							emoji: {
+								id: null,
+								name: prevPageEmoji,
+							},
+						},
+						{
+							type: 2,
+							style: 1,
+							custom_id: 'next',
+							emoji: {
+								id: null,
+								name: nextPageEmoji,
+							},
+						},
+					],
+				},
+			];
 			let msg = await p.send({
 				content: colorEmoji + ' **| ' + p.getName() + '**' + title,
 				embed,
+				components,
 			});
-			await msg.addReaction(prevPageEmoji);
-			await msg.addReaction(nextPageEmoji);
 
-			let filter = (emoji, userID) =>
-				[nextPageEmoji, prevPageEmoji].includes(emoji.name) && userID == p.msg.author.id;
-			let collector = p.reactionCollector.create(msg, filter, {
+			let filter = (componentName, user) =>
+				['prev', 'next'].includes(componentName) && user.id == p.msg.author.id;
+			let collector = p.interactionCollector.create(msg, filter, {
 				time: 900000,
 				idle: 120000,
 			});
 
-			collector.on('collect', async function (emoji) {
-				if (emoji.name === nextPageEmoji) {
+			collector.on('collect', async (component, user, ack) => {
+				if (component === 'next') {
 					if (page + 1 < colors.length) page++;
 					else page = 0;
 					embed = await constructEmbed(colors[page]);
@@ -180,11 +261,12 @@ module.exports = new CommandInterface({
 					embed.image = {
 						url: colors[page].avatar,
 					};
-					await msg.edit({
+					await ack({
 						content: colorEmoji + ' **| ' + p.getName() + '**' + title,
 						embed,
+						components,
 					});
-				} else if (emoji.name === prevPageEmoji) {
+				} else if (component === 'prev') {
 					if (page > 0) page--;
 					else page = colors.length - 1;
 					embed = await constructEmbed(colors[page]);
@@ -194,15 +276,18 @@ module.exports = new CommandInterface({
 					embed.image = {
 						url: colors[page].avatar,
 					};
-					await msg.edit({
+					await ack({
 						content: colorEmoji + ' **| ' + p.getName() + '**' + title,
 						embed,
+						components,
 					});
 				}
 			});
 
 			collector.on('end', async function (_collected) {
-				await msg.edit({ content: 'This message is now inactive', embed });
+				components[0].components[0].disabled = true;
+				components[0].components[1].disabled = true;
+				await msg.edit({ content: 'This message is now inactive', embed, components });
 			});
 		}
 	},
