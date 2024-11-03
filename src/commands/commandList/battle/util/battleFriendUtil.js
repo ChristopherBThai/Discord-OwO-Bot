@@ -35,6 +35,10 @@ exports.challenge = async function (p, opponent) {
 	}
 
 	const player = await teamUtil.getBattleTeam.bind(p)({ id: p.msg.author.id });
+	if (!player) {
+		p.errorMsg(", You don't have a team!", 3000);
+		return;
+	}
 	player.username = p.getName();
 	player.id = p.msg.author.id;
 	// todo fix for self battles
@@ -43,17 +47,12 @@ exports.challenge = async function (p, opponent) {
 		null,
 		opponent.id === p.msg.author.id
 	);
-	enemy.username = p.getName(opponent);
-	enemy.id = opponent.id;
-
-	/* Error check for teams */
 	if (!enemy) {
 		p.errorMsg(", The opponent doesn't have a team!", 3000);
 		return;
-	} else if (!player) {
-		p.errorMsg(", You don't have a team!", 3000);
-		return;
 	}
+	enemy.username = p.getName(opponent);
+	enemy.id = opponent.id;
 
 	let stats = {};
 	stats.tie = result[1][0] ? result[1][0].tie : 0;

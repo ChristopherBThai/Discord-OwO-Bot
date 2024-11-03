@@ -77,7 +77,13 @@ exports.check = async function (p, command) {
 		setTimeout(() => {
 			delete cooldown[author + command];
 		}, 10000);
-		if (command != 'points') await p.errorMsg(", you're banned from this command! >:c", 3000);
+		if (command != 'points') {
+			try {
+				await p.errorMsg(", you're banned from this command! >:c", 3000);
+			} catch (err) {
+				/* supress */
+			}
+		}
 		p.logger.logstashBanned(p.commandAlias, p);
 	} else if (!result[0][0] || ['points', 'disable', 'enable'].includes(command)) {
 		// Success
@@ -88,7 +94,13 @@ exports.check = async function (p, command) {
 		setTimeout(() => {
 			delete cooldown[p.msg.author.id + command];
 		}, 30000);
-		if (command != 'points') await p.errorMsg(', that command is disabled on this channel!', 3000);
+		if (command != 'points') {
+			try {
+				await p.errorMsg(', that command is disabled on this channel!', 3000);
+			} catch (err) {
+				/* supress */
+			}
+		}
 	}
 };
 
