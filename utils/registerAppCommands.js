@@ -7,6 +7,7 @@
 
 // Run this file to update all application commands
 require('dotenv').config();
+process.env['REGITER_COMMANDS'] = true;
 const axios = require('axios');
 const requireDir = require('require-dir');
 const dir = requireDir('../src/commands/commandList', { recurse: true });
@@ -14,7 +15,7 @@ const CommandInterface = require('../src/commands/CommandInterface.js');
 
 const url = `https://discord.com/api/v8/applications/${process.env.CLIENT_ID}/commands`;
 const headers = {
-	'Authorization': `Bot ${process.env.CLIENT_SECRET}`,
+	'Authorization': `Bot ${process.env.BOT_TOKEN}`,
 };
 
 const newCommands = {};
