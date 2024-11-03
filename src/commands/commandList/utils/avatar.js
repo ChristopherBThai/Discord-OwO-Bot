@@ -22,13 +22,39 @@ module.exports = new CommandInterface({
 
 	group: ['social'],
 
+	appCommands: [
+		{
+			'name': 'avatar',
+			'type': 1,
+			'description': 'Display your avatar',
+			'options': [
+				{
+					'type': 6,
+					'name': 'user',
+					'description': "Display a user's avatar",
+				},
+			],
+			'integration_types': [0, 1],
+			'contexts': [0, 1, 2],
+		},
+		{
+			'type': 2,
+			'name': 'Display avatar',
+			'dm_permission': true,
+			'integration_types': [0, 1],
+			'contexts': [0, 1, 2],
+		},
+	],
+
 	cooldown: 2000,
 	half: 100,
 	six: 500,
 
 	execute: async function (p) {
 		let user;
-		if (p.args.length == 0) {
+		if (p.options.user) {
+			user = p.options.user;
+		} else if (p.args.length == 0) {
 			user = p.msg.author;
 		} else if (p.global.isUser(p.args[0]) || p.global.isInt(p.args[0])) {
 			let id = p.args[0].match(/[0-9]+/)[0];

@@ -16,6 +16,7 @@ const adminCommands = {};
 const aliasToCommand = {};
 const mcommands = {};
 const commandGroups = {};
+const appCommandNameToCommand = {};
 
 class Command {
 	constructor(main) {
@@ -144,6 +145,10 @@ class Command {
 			this.main.bot.users.update(rawUser, this.main.bot);
 		}
 	}
+
+	messageUserInteractionToCommand(interaction) {
+		return appCommandNameToCommand[interaction.name];
+	}
 }
 
 async function executeCommand(main, p) {
@@ -214,6 +219,13 @@ function initCommands() {
 			six: command.six,
 			group: command.group,
 		};
+
+		command.appCommands?.forEach((appCommand) => {
+			// Message or User commands
+			if (appCommand.type === 3 || appCommand.type === 2) {
+				appCommandNameToCommand[appCommand.name] = name;
+			}
+		});
 	};
 
 	let addAdminCommand = function (command) {
@@ -256,6 +268,7 @@ function initParam(msg, command, args, main, context) {
 	let param = {
 		msg: msg,
 		options: msg.options || {},
+		interaction: msg.interaction,
 		args: args,
 		context: context,
 		command: command,

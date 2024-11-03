@@ -37,4 +37,6 @@ function compute(expression) {
 	return limitedEvaluate(expression);
 }
 
-workerpool.worker({ compute: compute });
+if (process.send) {
+	workerpool.worker({ compute: compute });
+}

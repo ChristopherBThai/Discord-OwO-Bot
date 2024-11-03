@@ -29,14 +29,43 @@ module.exports = new CommandInterface({
 
 	group: ['social'],
 
+	appCommands: [
+		{
+			'name': 'profile',
+			'type': 1,
+			'description': 'Display your profile',
+			'options': [
+				{
+					'type': 6,
+					'name': 'user',
+					'description': "Display a user's profile",
+				},
+			],
+			'integration_types': [0, 1],
+			'contexts': [0, 1, 2],
+		},
+		{
+			'type': 2,
+			'name': 'Display profile',
+			'dm_permission': true,
+			'integration_types': [0, 1],
+			'contexts': [0, 1, 2],
+		},
+	],
+
 	cooldown: 3000,
 
 	execute: async function (p) {
-		if (p.args.length <= 0) {
+		if (!p.options.user && p.args.length <= 0) {
 			await profileUtil.displayProfile(p, p.msg.author);
-		} else if (p.global.isUser(p.args[0]) || p.global.isInt(p.args[0])) {
-			let user = p.args[0].match(/[0-9]+/)[0];
-			user = await p.fetch.getUser(user);
+		} else if (p.options.user || p.global.isUser(p.args[0]) || p.global.isInt(p.args[0])) {
+			let user;
+			if (p.options.user) {
+				user = p.options.user;
+			} else {
+				user = p.args[0].match(/[0-9]+/)[0];
+				user = await p.fetch.getUser(user);
+			}
 			if (!user) p.errorMsg(", I couldn't find that user!", 3000);
 			else {
 				let sql = `SELECT private FROM user INNER JOIN user_profile ON user.uid = user_profile.uid WHERE id = ${user.id};`;
