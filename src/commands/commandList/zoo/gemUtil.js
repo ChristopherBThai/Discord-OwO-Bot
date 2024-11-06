@@ -95,6 +95,10 @@ exports.use = async function (p, ids) {
 			text = `**🚫 | ${p.getName()}**, you already have an active ${
 				gems[0].type
 			} gem or you do not own this gem!`;
+			if (gems[0].type == "Special") {
+ 			   text += ` Your special gem might be hidden right now, it will show again during the next event!`;
+			  }
+
 		} else {
 			text =
 				`**${gems[0].emoji} | ${p.getName()}**, you activated a(n) **${ranks[gems[0].key[0]]} ${
@@ -106,6 +110,9 @@ exports.use = async function (p, ids) {
 		for (let i = 0; i < results.length; i++) {
 			if (!results[i] || results[i].changedRows == 0) {
 				text += `\r\n**🚫 |** you already have an active ${gems[i].type} gem or you do not own this gem!`;
+				if (gems[i].type == "Special") {
+ 			   text += ` Your special gem might be hidden right now, it will show again during the next event!`;
+			  }
 			} else {
 				text +=
 					`\r\n**${gems[i].emoji} |** A(n) **${ranks[gems[i].key[0]]} ${gems[i].type} Gem!**\r\n` +
