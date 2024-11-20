@@ -18,9 +18,9 @@ module.exports = new CommandInterface({
 
 	args: '',
 
-	desc: 'Describe an item from the shop!',
+	desc: 'Describe an item from your inventory!',
 
-	example: ['owo describe 2'],
+	example: ['owo describe 51'],
 
 	related: ['owo shop', 'owo inv', 'owo equip'],
 
