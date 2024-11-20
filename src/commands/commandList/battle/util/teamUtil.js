@@ -391,6 +391,9 @@ const createTeamEmbed = (exports.createTeamEmbed = function (p, team, other = {}
 				for (let j = 0; j < weapon.passives.length; j++) {
 					body += `${weapon.passives[j].emoji} `;
 				}
+				if (weapon.hasTT) {
+					body += `[${weapon.kills}] `;
+				}
 				body += `${weapon.avgQuality}%`;
 			}
 		}
