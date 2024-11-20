@@ -7,7 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const emotes = ['https://i.imgur.com/XR3wNhP.gif'];
+const emotes = ['https://giphy.com/gifs/anime-kiss-action-2wqKi8BmIzPJUgukLe'];
 
 module.exports = new CommandInterface({
 	alias: ['02kiss'],
