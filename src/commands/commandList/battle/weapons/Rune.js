@@ -35,7 +35,7 @@ module.exports = class Rune extends WeaponInterface {
 		];
 		this.defaultEmoji = '<:rune:543662986431037481>';
 		this.statDesc =
-			'Increase ALL stats by ?%, and changes your physical attacks to do 65% STR and 65% MAG as TRUE damage. This weapon does not have an active ability.';
+			'Increase ALL stats by **?%**, and changes your physical attacks to do 65% STR and 65% MAG as TRUE damage. This weapon does not have an active ability.';
 		this.availablePassives = [];
 		this.passiveCount = 0;
 		this.qualityList = [[5, 15]];
