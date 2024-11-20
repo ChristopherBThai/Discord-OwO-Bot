@@ -52,7 +52,7 @@ module.exports = new CommandInterface({
 				} else if (typeof result == 'object')
 					p.replyMsg(
 						mathEmoji,
-						p.replaceMentions(', the answer is: **' + JSON.stringify(result) + '**')
+						p.replaceMentions(', the answer is: **' + result.value + '**')
 					);
 				else p.replyMsg(mathEmoji, p.replaceMentions(', the answer is: **' + result + '**'));
 			})
