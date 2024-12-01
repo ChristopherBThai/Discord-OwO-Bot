@@ -7,7 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const ud = require('urban-dictionary');
+const ud = require('@dmzoneill/urban-dictionary');
 const nextPageEmoji = '➡️';
 const prevPageEmoji = '⬅️';
 
