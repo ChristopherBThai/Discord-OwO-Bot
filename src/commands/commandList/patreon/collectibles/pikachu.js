@@ -16,20 +16,52 @@ class Pikachu extends Collectible {
 		this.emoji = '<a:pikachu:1099236809390702612>';
 		this.owners = [
 			'768465041489657867',
-			'968621197011062804',
-			'879313703990870047',
-			'969176350621589514',
+            '968621197011062804',
+            '879313703990870047',
+            '969176350621589514',
+            '528801657111445544',
+            '956133987653398569'
 		];
 		this.fullControl = true;
 		this.ownerOnly = true;
 		this.giveAmount = 1;
-		this.description = `Charmeleons are red,\nWartortles are blue,\nIf you catch my heart,\nI’ll be your pikachu`;
-		this.displayMsg = '?emoji? **| ?user?**, you have **?count? Pikachu?plural?**';
+		this.description = `Charmeleons are red,\nWartortles are blue,\nIf you catch my heart,\nI’ll be your pikachu\n\nSubcommands: owo pikachu thunderstone`;
+		this.displayMsg = '?emoji? **| ?user?**, you have **?count? Pikachu?plural?** and **?mergeCount? Raichu?mergePlural?**';
 		this.brokeMsg = ', you do not have any Pikachus! >:c';
 		this.giveMsg = '?emoji? **| ?receiver?**, you have received **1 Pikachu** from **?giver?**';
+		this.hasManualMerge = true;
+		this.manualMergeCommands = ['thunderstone'];
+		this.mergeNeeded = 3;
+		this.mergeEmoji = ''; // Emoji Required
 
+		this.mergeMsg = 
+			'?emoji? **|** ?user? used a thunderstone to evolve Pikachu into **Raichu**! It looks electrifying! ?mergeEmoji? ';
+		this.manualMergeData = 'raichu';
 		this.init();
 	}
+	async manualMerge(p) {
+        const { redis, msg } = p;
+
+        // Get the current count of Pikachus
+        let count = (await redis.hget(`data_${msg.author.id}`, this.data)) || 0;
+
+        // Check if the user has enough Pikachus to evolve
+        if (parseInt(count) < this.mergeNeeded) {
+            p.errorMsg(`, you need at least **${this.mergeNeeded} Pikachus** to evolve into Raichu!`);
+            return;
+        }
+
+        // Deduct the required Pikachus for evolution
+        await redis.hincrby(`data_${msg.author.id}`, this.data, -this.mergeNeeded);
+
+        // Add a Raichu
+        await redis.hincrby(`data_${msg.author.id}`, this.manualMergeData, 1);
+
+        // Send evolution message
+        p.send(
+            this.mergeMsg.replace('?emoji?', this.mergeEmoji).replace('?mergeEmoji?', this.mergeEmoji).replace('?user?', p.getName())
+        );
+    }
 }
 
 module.exports = new Pikachu();
