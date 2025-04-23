@@ -234,7 +234,7 @@ function toEmbedRequest(p, stats, bet, sender, receiver, flags) {
 					(sender.name ? sender.name : sender.username + "'s Team") +
 					(sender.id == receiver.id
 						? ''
-						: ' | ' + (stats[sender.id] ? stats[sender.id] : 0) + ' wins'),
+						: ' | ' + (stats[receiver.id] ? stats[receiver.id] : 0) + ' wins'),
 				value: text[i],
 				inline: true,
 			});
@@ -245,7 +245,7 @@ function toEmbedRequest(p, stats, bet, sender, receiver, flags) {
 					(receiver.name ? receiver.name : receiver.username + "'s Team") +
 					(sender.id == receiver.id
 						? ''
-						: ' | ' + (stats[receiver.id] ? stats[receiver.id] : 0) + ' wins'),
+						: ' | ' + (stats[sender.id] ? stats[sender.id] : 0) + ' wins'),
 				value: text2[i],
 				inline: true,
 			});
