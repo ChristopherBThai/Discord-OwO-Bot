@@ -4,14 +4,14 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
  */
-
 const teamUtil = require('./teamUtil.js');
 const animalUtil = require('./animalUtil.js');
 const WeaponInterface = require('../WeaponInterface.js');
 
+const PAGE_SIZE = 9;
+
 /* get and parse animals from the database */
 exports.getAnimals = async function (p) {
-	/* Query animals and weapons */
 	let sql = `SELECT 
 			animal.name, animal.nickname, animal.pid, animal.xp,
 			user_weapon.uwid, user_weapon.wid, user_weapon.stat, user_weapon.wear,
@@ -23,19 +23,18 @@ exports.getAnimals = async function (p) {
 			LEFT JOIN user_weapon_kills ON user_weapon.uwid = user_weapon_kills.uwid
 		WHERE animal.id = ${p.msg.author.id}
 			AND animal.xp > 0
-		ORDER BY xp DESC LIMIT 25;`;
-
+		ORDER BY animal.xp DESC;`;
 	let result = await p.query(sql);
-
-	/* Parse data */
 	let animals = teamUtil.parseTeam(result, result);
 	for (let i in animals) animalUtil.stats(animals[i]);
-
 	return animals;
 };
 
 /* Construct embed message */
-exports.getDisplay = function (p, animals) {
+exports.getDisplay = function (p, animals, page = 0) {
+	const totalPages = Math.max(1, Math.ceil(animals.length / PAGE_SIZE));
+	const pageAnimals = animals.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
 	let embed = {
 		author: {
 			name: p.getName() + "'s pets",
@@ -43,13 +42,13 @@ exports.getDisplay = function (p, animals) {
 		},
 		color: p.config.embed_color,
 		fields: [],
+		footer: {
+			text: `Page ${page + 1} of ${totalPages}`,
+		},
 	};
 
-	let letterCount = embed.author.name.length;
-
-	for (let i in animals) {
-		let animal = animals[i];
-
+	for (let i in pageAnimals) {
+		let animal = pageAnimals[i];
 		let digits = 1;
 		let tempDigit = Math.log10(animal.stats.hp[1] + animal.stats.hp[3]) + 1;
 		if (tempDigit > digits) digits = tempDigit;
@@ -72,6 +71,7 @@ exports.getDisplay = function (p, animals) {
 		let pr = WeaponInterface.resToPrettyPercent(animal.stats.pr);
 		let mr = WeaponInterface.resToPrettyPercent(animal.stats.mr);
 		let stats = `<:hp:531620120410456064> \`${hp}\` <:wp:531620120976687114> \`${wp}\`\n<:att:531616155450998794> \`${att}\` <:mag:531616156231139338> \`${mag}\`\n<:pr:531616156222488606> \`${pr}\` <:mr:531616156226945024> \`${mr}\``;
+
 		let weapon = animal.weapon;
 		let weaponText = '';
 		if (weapon) {
@@ -92,13 +92,10 @@ exports.getDisplay = function (p, animals) {
 			)}/${p.global.toFancyNum(animal.stats.xp[1])}]\`\n${stats}\n${weaponText}`,
 			inline: true,
 		};
-
-		/* Discord embed char limit */
-		letterCount += field.name.length + field.value.length;
-		if (letterCount > 6000) return { embed };
-
 		embed.fields.push(field);
 	}
 
-	return { embed };
+	return embed;
 };
+
+exports.PAGE_SIZE = PAGE_SIZE;
