@@ -11,6 +11,7 @@ const whitelist = [
 	'552384921914572802',
 	'1149820261168849006',
 	'1218415296646484008',
+	'879414210793193532'
 ];
 const levels = require('../utils/levels.js');
 /* eslint-disable-next-line */
