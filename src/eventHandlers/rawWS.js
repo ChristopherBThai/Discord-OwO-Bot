@@ -13,6 +13,10 @@ exports.handle = function (packet, _id) {
 			case 3:
 				handleMessageComponent.bind(this)(packet);
 				break;
+			// Modal submissions
+			case 5:
+				this.interactionCollector.submitModal(packet.d).catch(console.error);
+				break;
 		}
 	} else if (packet.t === 'ENTITLEMENT_CREATE') {
 		patreonUtil.handleDiscordUpdate.bind(this)(packet.d);

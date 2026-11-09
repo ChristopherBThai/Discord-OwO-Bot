@@ -12,6 +12,7 @@ class InteractionCollector {
 	constructor(main) {
 		this.main = main;
 		this.listeners = {};
+		this.modals = {};
 	}
 
 	create(msg, filter, opt = {}) {
@@ -41,6 +42,32 @@ class InteractionCollector {
 				data: content,
 			});
 		}
+	}
+
+	registerModal(customId, userId, handler) {
+		this.modals[customId] = {
+			userId,
+			handler,
+			expires: Date.now() + 5 * 60 * 1000,
+		};
+	}
+
+	async submitModal(interaction) {
+		const { id, token, data } = interaction;
+		const modal = this.modals[data.custom_id];
+		const user = interaction.member?.user || interaction.user;
+		const url = `https://discord.com/api/v10/interactions/${id}/${token}/callback`;
+
+		if (!modal || modal.expires < Date.now() || modal.userId !== user?.id) {
+			delete this.modals[data.custom_id];
+			return axios.post(url, {
+				type: 4,
+				data: { content: 'This form is no longer active.', flags: 64 },
+			});
+		}
+
+		delete this.modals[data.custom_id];
+		return modal.handler(interaction);
 	}
 }
 
@@ -86,6 +113,7 @@ class InteractionEventEmitter extends EventEmitter {
 
 		const url = `https://discord.com/api/v8/interactions/${id}/${token}/callback`;
 		function ack(content) {
+			ack.responded = true;
 			if (content) {
 				if (typeof content === 'string') {
 					content = { content };
@@ -119,6 +147,15 @@ class InteractionEventEmitter extends EventEmitter {
 				data: content,
 			});
 		}
+
+		ack.responded = false;
+		ack.showModal = (modal) => {
+			ack.responded = true;
+			return axios.post(`https://discord.com/api/v10/interactions/${id}/${token}/callback`, {
+				type: 9,
+				data: modal,
+			});
+		};
 
 		this.emit('collect', component.custom_id, user, ack, err, component.values, entitlements);
 

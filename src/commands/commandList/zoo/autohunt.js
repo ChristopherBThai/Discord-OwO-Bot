@@ -17,6 +17,9 @@ const logger = require('../../../utils/logger.js');
 const parse = require('parse-duration');
 const patreonUtil = require('../patreon/utils/patreonUtil.js');
 const teamUtil = require('../battle/util/teamUtil.js');
+const numberModal = require('../../../utils/numberModal.js');
+
+const upgradeTraits = ['efficiency', 'duration', 'cost', 'gain', 'exp', 'radar'];
 
 module.exports = new CommandInterface({
 	alias: ['autohunt', 'huntbot', 'hb', 'ah'],
@@ -240,35 +243,16 @@ async function autohunt(p, msg, con, args, global, send) {
 			bot +
 			' | ' +
 			p.getName() +
-			'**, Here is your password!\n**<:blank:427371936482328596> |** Use the command `owo autohunt ' +
-			cowoncy +
-			' {password}`';
+			'**, Select the button that matches the CAPTCHA to start autohunt!';
 		text = alterhb(msg.author.id, text, 'password');
-		autohuntutil.captcha(p, rand, text);
+		await sendCaptcha(p, rand, text, cowoncy);
 		return;
 	}
 	//pw is set and wrong
 	if (result[0][0].password != password) {
-		if (!password)
-			send(
-				'**🚫 | ' +
-					p.getName() +
-					'**, Please include your password! The command is `owo autohunt ' +
-					cowoncy +
-					' {password}`!\n**<:blank:427371936482328596> |** Password will reset in ' +
-					(10 - result[0][0].pwtime) +
-					' minutes'
-			);
-		else
-			send(
-				'**🚫 | ' +
-					p.getName() +
-					'**, Wrong password! The command is `owo autohunt ' +
-					cowoncy +
-					' {password}`!\n**<:blank:427371936482328596> |** Password will reset in ' +
-					(10 - result[0][0].pwtime) +
-					' minutes'
-			);
+		let text = '**🚫 | ' + p.getName() + '**, That CAPTCHA answer was incorrect. Try again.';
+		text = alterhb(msg.author.id, text, 'password');
+		await sendCaptcha(p, result[0][0].password, text, cowoncy);
 		return;
 	}
 
@@ -411,7 +395,7 @@ async function display(p, msg, con) {
 			{
 				name: `\`BEEP. BOOP. I AM HUNTBOT. I WILL HUNT FOR YOU MASTER.\``,
 				value:
-					'Use the command `owo autohunt {cowoncy}` to get started.\nYou can use `owo upgrade {trait} {count}` to upgrade the traits below.\nTo obtain more essence, use `owo sacrifice {animal} {count}`.\n\n',
+					'Use the buttons below to start autohunt or manage upgrades.\nTo obtain more essence, use `owo sacrifice {animal} {count}`.\n\n',
 				inline: false,
 			},
 			{
@@ -476,7 +460,280 @@ async function display(p, msg, con) {
 		});
 	}
 	embed = alterhb(msg.author.id, embed, 'hb');
-	p.send({ embed });
+	const components = [
+		{
+			type: 1,
+			components: [
+				{ type: 2, style: 1, label: 'Start', custom_id: 'hb_start' },
+				{ type: 2, style: 2, label: 'Upgrades', custom_id: 'hb_upgrades' },
+			],
+		},
+	];
+	const message = await p.send({ embed, components });
+	const collector = p.interactionCollector.create(
+		message,
+		(_component, user) => user.id === msg.author.id,
+		{ time: 15 * 60 * 1000 }
+	);
+
+	collector.on('collect', async (component, user, ack) => {
+		try {
+			if (component === 'hb_start') {
+				const start = await getStartInfo(p, msg);
+				await ack(startPage(start));
+			} else if (component === 'hb_upgrades') {
+				const current = await p.query(`SELECT * FROM autohunt WHERE id = ${msg.author.id};`);
+				const stats = getTraitStats(current[0][0]);
+				await ack(upgradesPage(p, msg, stats));
+			} else if (component === 'hb_back') {
+				collector.stop('back');
+				await ack({ content: 'Loading HuntBot status...', components: [] });
+				await runCommand(p, 'autohunt', []);
+			} else if (component === 'hb_start_max') {
+				const start = await getStartInfo(p, msg);
+				if (start.max > 0) {
+					await ack({ content: 'Opening CAPTCHA...', components: [] });
+					await runCommand(p, 'autohunt', [String(start.max)]);
+					await message.edit(startPage(start));
+				} else await ack({ content: 'You do not have enough cowoncy to start autohunt.' });
+				return;
+			} else if (component === 'hb_start_other') {
+				await numberModal.open(p, ack, user, 'Start autohunt', 'Cowoncy amount', async (amount) => {
+					await runCommand(p, 'autohunt', [String(amount)]);
+					await message.edit(startPage(await getStartInfo(p, msg)));
+				});
+			} else if (component === 'hb_upgrade_back') {
+				const current = await p.query(`SELECT * FROM autohunt WHERE id = ${msg.author.id};`);
+				await ack(upgradesPage(p, msg, getTraitStats(current[0][0])));
+			} else if (component.startsWith('hb_trait_')) {
+				const trait = component.slice('hb_trait_'.length);
+				if (!upgradeTraits.includes(trait)) return ack();
+				const current = await p.query(`SELECT * FROM autohunt WHERE id = ${msg.author.id};`);
+				const stats = getTraitStats(current[0][0]);
+				await ack(traitPage(p, trait, stats[trait]));
+			} else if (component.startsWith('hb_level_')) {
+				const trait = component.slice('hb_level_'.length);
+				if (!upgradeTraits.includes(trait)) return ack();
+				await ack({ content: 'Processing upgrade...', components: [] });
+				await runCommand(p, 'upgrade', [trait, 'level']);
+				const result = await p.query(`SELECT * FROM autohunt WHERE id = ${msg.author.id};`);
+				await message.edit(traitPage(p, trait, getTraitStats(result[0][0])[trait]));
+			} else if (component.startsWith('hb_other_')) {
+				const trait = component.slice('hb_other_'.length);
+				if (!upgradeTraits.includes(trait)) return ack();
+				await numberModal.open(
+					p,
+					ack,
+					user,
+					`Upgrade ${trait}`,
+					'Animal essence amount',
+					async (amount) => {
+						await runCommand(p, 'upgrade', [trait, String(amount)]);
+						const result = await p.query(`SELECT * FROM autohunt WHERE id = ${msg.author.id};`);
+						await message.edit(traitPage(p, trait, getTraitStats(result[0][0])[trait]));
+					}
+				);
+			} else await ack({ content: 'Unknown HuntBot action.', components: [] });
+		} catch (err) {
+			console.error('HuntBot panel interaction failed.', err);
+			if (!ack.responded)
+				await ack({ content: 'This action could not be completed. Please try again later.' });
+			else await p.send('This action could not be completed. Please try again later.');
+		}
+	});
+}
+
+async function getStartInfo(p, msg) {
+	const result = await p.query(
+		`SELECT * FROM autohunt WHERE id = ${msg.author.id}; SELECT money FROM cowoncy WHERE id = ${msg.author.id};`
+	);
+	const row = result[0][0] || {};
+	const duration = autohuntutil.getLvl(row.duration || 0, 0, 'duration');
+	const efficiency = autohuntutil.getLvl(row.efficiency || 0, 0, 'efficiency');
+	const cost = autohuntutil.getLvl(row.cost || 0, 0, 'cost');
+	const capacity = Math.floor(duration.stat * efficiency.stat) * cost.stat;
+	const balance = result[1][0]?.money || 0;
+	return {
+		max: cost.stat > 0 ? Math.floor(Math.min(capacity, balance) / cost.stat) * cost.stat : 0,
+	};
+}
+
+function getTraitStats(row) {
+	const stats = {};
+	for (const trait of upgradeTraits) {
+		stats[trait] = autohuntutil.getLvl(row?.[trait] || 0, 0, trait);
+	}
+	return stats;
+}
+
+function startPage(start) {
+	return {
+		embed: {
+			color: 0x5865f2,
+			title: 'Start autohunt',
+			description: `Maximum available amount: **${global.toFancyNum(start.max)} cowoncy**`,
+		},
+		components: [
+			{
+				type: 1,
+				components: [
+					{
+						type: 2,
+						style: 1,
+						label: `Max (${start.max})`,
+						custom_id: 'hb_start_max',
+						disabled: start.max <= 0,
+					},
+					{ type: 2, style: 2, label: 'Other', custom_id: 'hb_start_other' },
+					{ type: 2, style: 2, label: 'Back', custom_id: 'hb_back' },
+				],
+			},
+		],
+	};
+}
+
+function upgradesPage(p, msg, stats) {
+	const names = {
+		efficiency: 'Efficiency',
+		duration: 'Duration',
+		cost: 'Cost',
+		gain: 'Gain',
+		exp: 'Experience',
+		radar: 'Radar',
+	};
+	return {
+		embed: {
+			color: p.config.embed_color,
+			title: `${p.getName()}'s HuntBot upgrades`,
+			description: upgradeTraits
+				.map(
+					(trait) =>
+						`**${names[trait]}** — Level ${stats[trait].lvl}${stats[trait].max ? ' (MAX)' : ''}`
+				)
+				.join('\n'),
+			footer: { text: p.getUniqueName(msg.author) },
+		},
+		components: [
+			{
+				type: 1,
+				components: upgradeTraits.slice(0, 5).map((trait) => ({
+					type: 2,
+					style: 2,
+					label: names[trait],
+					custom_id: `hb_trait_${trait}`,
+				})),
+			},
+			{
+				type: 1,
+				components: [
+					{
+						type: 2,
+						style: 2,
+						label: names.radar,
+						custom_id: 'hb_trait_radar',
+					},
+					{ type: 2, style: 2, label: 'Back', custom_id: 'hb_back' },
+				],
+			},
+		],
+	};
+}
+
+function traitPage(p, trait, stat) {
+	const nextLevel = stat.max
+		? 'Already at maximum level.'
+		: `Next level requires ${stat.maxxp - stat.currentxp} essence.`;
+	return {
+		embed: {
+			color: p.config.embed_color,
+			title: `${trait[0].toUpperCase()}${trait.slice(1)} upgrade`,
+			description: `Current level: **${stat.lvl}${stat.max ? ' (MAX)' : ''}**\n${nextLevel}`,
+		},
+		components: [
+			{
+				type: 1,
+				components: [
+					{
+						type: 2,
+						style: 1,
+						label: 'Next level',
+						custom_id: `hb_level_${trait}`,
+						disabled: stat.max,
+					},
+					{ type: 2, style: 2, label: 'Other', custom_id: `hb_other_${trait}` },
+					{ type: 2, style: 2, label: 'Back', custom_id: 'hb_upgrade_back' },
+				],
+			},
+		],
+	};
+}
+
+function runCommand(p, command, args) {
+	return p.runCommand
+		? p.runCommand(command, args)
+		: p.commands[command].execute({ ...p, args, command, commandAlias: command });
+}
+
+async function sendCaptcha(p, password, text, cowoncy, existingChoices) {
+	let choices = existingChoices;
+	if (!choices) {
+		choices = [password];
+		while (choices.length < 6) {
+			let choice = '';
+			for (let i = 0; i < 5; i++)
+				choice += letters.charAt(Math.floor(Math.random() * letters.length));
+			if (!choices.includes(choice)) choices.push(choice);
+		}
+		for (let i = choices.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[choices[i], choices[j]] = [choices[j], choices[i]];
+		}
+	}
+
+	const buttons = choices.map((choice, index) => ({
+		type: 2,
+		style: 2,
+		label: choice,
+		custom_id: `hb_captcha_${index}`,
+	}));
+	const components = [
+		{ type: 1, components: buttons.slice(0, 5) },
+		{ type: 1, components: buttons.slice(5) },
+	];
+	const message = await autohuntutil.captcha(p, password, text, components);
+	const collector = p.interactionCollector.create(
+		message,
+		(_component, user) => user.id === p.msg.author.id,
+		{ time: 2 * 60 * 1000 }
+	);
+	let processing = false;
+	collector.on('collect', async (component, _user, ack) => {
+		try {
+			if (processing) return ack();
+			processing = true;
+			const selected = Number(component.slice('hb_captcha_'.length));
+			if (choices[selected] === password) {
+				collector.stop();
+				await ack({ content: 'Correct CAPTCHA. Autohunt is starting.', components: [] });
+				await runCommand(p, 'autohunt', [String(cowoncy), password]);
+				return;
+			}
+
+			await ack();
+			collector.stop();
+			await message.edit({ components: [] });
+			await sendCaptcha(
+				p,
+				password,
+				`**🚫 | ${p.getName()}**, That CAPTCHA answer was incorrect. Try again.`,
+				cowoncy,
+				choices
+			);
+		} catch (err) {
+			console.error('HuntBot CAPTCHA interaction failed.', err);
+			await p.send('The CAPTCHA could not be processed. Please try again.');
+		}
+	});
 }
 
 function generatePercent(current, max, length) {
