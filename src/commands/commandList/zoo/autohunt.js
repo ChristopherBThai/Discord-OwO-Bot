@@ -535,7 +535,11 @@ async function display(p, msg, con) {
 				);
 			} else await ack({ content: 'Unknown HuntBot action.', components: [] });
 		} catch (err) {
-			console.error('HuntBot panel interaction failed.\n' + (err?.stack || err));
+			console.error(
+				'HuntBot panel interaction failed.\n' + (err?.stack || err),
+				err?.config?.url,
+				JSON.stringify(err?.response?.data)
+			);
 			if (!ack.responded)
 				await ack({ content: 'This action could not be completed. Please try again later.' });
 			else await p.send('This action could not be completed. Please try again later.');
@@ -730,7 +734,11 @@ async function sendCaptcha(p, password, text, cowoncy, existingChoices) {
 				choices
 			);
 		} catch (err) {
-			console.error('HuntBot CAPTCHA interaction failed.\n' + (err?.stack || err));
+			console.error(
+				'HuntBot CAPTCHA interaction failed.\n' + (err?.stack || err),
+				err?.config?.url,
+				JSON.stringify(err?.response?.data)
+			);
 			await p.send('The CAPTCHA could not be processed. Please try again.');
 		}
 	});
