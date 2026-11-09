@@ -6,6 +6,7 @@
  */
 
 const mysql = require('../../../botHandlers/mysqlHandler.js');
+const captchaImage = require('../../../utils/captchaImage.js');
 let macro;
 try {
 	macro = require('../../../../../tokens/macro.js');
@@ -109,7 +110,8 @@ function test(trait) {
 }
 
 exports.captcha = async function (p, word, text, components) {
-	let buffer = await macro.generateBuffer(word);
+	let buffer = await macro?.generateBuffer?.(word);
+	if (!buffer) buffer = captchaImage.generate(word);
 	return p.send(components ? { content: text, components } : text, null, {
 		file: buffer,
 		name: 'captcha.png',
