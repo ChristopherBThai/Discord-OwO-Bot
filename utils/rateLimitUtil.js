@@ -9,6 +9,10 @@ const request = require('request');
 let influxErrorShown = false;
 
 exports.init = function (bucket, debug) {
+	if (!process.env.INFLUXDB_HOST) {
+		console.warn('INFLUXDB_HOST is not configured; rate-limit metrics are disabled.');
+		return;
+	}
 	setInterval(() => {
 		logBucket(bucket, debug);
 	}, 10000);
@@ -39,9 +43,8 @@ async function logBucket(bucket, debug) {
 		},
 		function (err) {
 			if (err && !influxErrorShown) {
-				console.error('InfluxDB is inactive. Log upload will not work.');
+				console.error('InfluxDB is inactive. Log upload will not work.', err);
 				influxErrorShown = true;
-				throw err;
 			}
 		}
 	);

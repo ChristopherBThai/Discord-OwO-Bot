@@ -36,6 +36,27 @@ Do not skip install scripts: native modules and the Git-hosted `merge-images` fo
 need them to build. The bot also requires its database and configuration files; the
 installation steps alone do not configure MariaDB, Redis, or missing private files.
 
+### Troubleshooting local startup
+
+- If `canvas.node` is missing, verify `node -v` is 22.x and
+  `npm config get ignore-scripts` is `false`, install the native build packages
+  above, then run `npm ci --allow-git=all --ignore-scripts=false`. Verify with
+  `node -e "require('canvas'); console.log('canvas OK')"`. Do not start the bot
+  until the installation and this check succeed.
+- For a local Redis instance without authentication, leave `REDIS_PASS` empty in
+  the active environment file. Set it to the Redis password when authentication is
+  enabled. Passwordless Redis should not be exposed to untrusted networks.
+- The database name is `owo`. `MYSQL_USER` and `MYSQL_PASS` must identify a MariaDB
+  account that has access to that database. An administrator can inspect permissions
+  with `SHOW GRANTS FOR 'owobot'@'localhost';` and, if appropriate, grant access with
+  `GRANT ALL PRIVILEGES ON owo.* TO 'owobot'@'localhost';`. Replace the account name
+  and host as needed; create the database and account separately if they do not
+  exist. The supplied SQL dumps contain destructive `DROP TABLE` statements, so do
+  not import them into an existing database without a backup.
+- `INFLUXDB_HOST` is optional for local logging. If unset, InfluxDB metrics are
+  disabled. `SNAIL_SOCKET` refers to a separate service; an unset or unreachable
+  endpoint can produce connection warnings.
+
 ## License
 
 OwO Bot is licensed under the terms of [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International](https://github.com/ChristopherBThai/Discord-OwO-Bot/blob/master/LICENSE) ("CC-BY-NC-SA-4.0"). Commercial use is not allowed under this license. This includes any kind of revenue made with or based upon the software, even donations.

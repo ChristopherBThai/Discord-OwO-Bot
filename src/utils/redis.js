@@ -1,8 +1,6 @@
 const redis = require('redis');
-const client = redis.createClient({
-	host: process.env.REDIS_HOST,
-	password: process.env.REDIS_PASS,
-});
+const redisOptions = require('../../utils/redisOptions.js');
+const client = redis.createClient(redisOptions());
 
 exports.incr = function (key, value = 1) {
 	return new Promise(function (res, rej) {
