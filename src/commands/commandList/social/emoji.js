@@ -8,7 +8,7 @@
 const CommandInterface = require('../../CommandInterface.js');
 
 const baseURL = 'https://cdn.discordapp.com/emojis/';
-const stealEmoji = '🕵️';
+const stickerUrl = 'https://media.discordapp.net/stickers/';
 
 module.exports = new CommandInterface({
 	alias: ['emoji', 'enlarge', 'jumbo'],
@@ -25,34 +25,35 @@ module.exports = new CommandInterface({
 
 	group: ['social'],
 
+	appCommands: [
+		{
+			'type': 3,
+			'name': 'Grab Emojis',
+			'dm_permission': true,
+			'integration_types': [0, 1],
+			'contexts': [0, 1, 2],
+		},
+	],
+
 	cooldown: 7000,
 	half: 100,
 	six: 500,
 
 	execute: async function (p) {
-		/* Look at previous message */
-		if (
-			p.args.length == 0 ||
-			(p.args[0] &&
-				(p.args[0].toLowerCase() == 'prev' ||
-					p.args[0].toLowerCase() == 'previous' ||
-					p.args[0].toLowerCase() == 'p'))
-		) {
+		// Special case for message interaction
+		if (this.interaction && this.options.message) {
+			const emojis = parseEmojis([this.options.message]);
+			await display(p, emojis);
+
+			/* Look at previous message */
+		} else if (!p.args.length || ['prev', 'previous', 'p'].includes(p.args[0]?.toLowerCase())) {
 			let msgs = await p.global.getChannelMessages(p.msg.channel, 10);
 			if (!msgs) {
 				p.errorMsg(', There are no emojis! >:c', 3000);
 				return;
 			}
-			let emojis = '';
-			for (let i in msgs) {
-				emojis += msgs[i].content;
-				emojis += JSON.stringify(msgs[i].embeds);
-			}
-
-			emojis = parseIDs(emojis);
-			if (emojis.length == 0)
-				p.errorMsg(', There are no emojis! I can only look at the previous 10 messages! >:c', 3000);
-			else await display(p, emojis);
+			const emojis = parseEmojis(msgs);
+			await display(p, emojis);
 
 			// Set emoji steal guild
 		} else if (['setguild', 'setserver', 'set', 'setsteal'].includes(p.args[0].toLowerCase())) {
@@ -68,47 +69,82 @@ module.exports = new CommandInterface({
 		} else {
 			let text = p.args.join(' ');
 			let emojis = parseIDs(text);
-			if (emojis.length == 0) p.errorMsg(', There are no emojis! >:c', 3000);
-			else await display(p, emojis);
+			await display(p, emojis);
 		}
 	},
 });
 
+function parseEmojis(msgs) {
+	let emojis = '';
+	msgs.forEach((msg) => {
+		emojis += msg.content;
+		emojis += JSON.stringify(msg.embeds);
+		if (msg.reactions) {
+			for (let name in msg.reactions) {
+				const emoji = msg.reactions[name];
+				emojis += `<${emoji.animated ? 'a' : ''}:${name}>`;
+			}
+		}
+		if (msg.stickerItems?.length) {
+			msg.stickerItems.forEach((sticker) => {
+				emojis += `<s:${sticker.name}:${sticker.id}>`;
+			});
+		}
+	});
+
+	return parseIDs(emojis);
+}
+
 function parseIDs(text) {
 	let emojis = [];
 
-	let parsedEmojis = text.match(/<a?:[a-z0-9_]+:[0-9]+>/gi);
+	let parsedEmojis = text.match(/<[as]?:[a-z0-9_ ]+:[0-9]+>/gi);
 
 	for (let i in parsedEmojis) {
 		let emoji = parsedEmojis[i];
-		let name = emoji
-			.match(/:[a-z0-9_]+:/gi)[0]
-			.substr(1)
-			.slice(0, -1);
 		let id = emoji
 			.match(/:[0-9]+>/gi)[0]
 			.substr(1)
 			.slice(0, -1);
-		let gif = emoji.match(/<a:/gi) ? true : false;
-		let url = baseURL + id + (gif ? '.gif' : '.png');
-		emojis.push({ name, id, gif, url });
+		let isSticker = emoji.match(/<s:/gi) ? true : false;
+		if (isSticker) {
+			let name = emoji
+				.match(/:[a-z0-9_ ]+:/gi)[0]
+				.substr(1)
+				.slice(0, -1);
+			let url = `${stickerUrl}${id}.png`;
+			emojis.push({ name, id, url, isSticker });
+		} else {
+			let name = emoji
+				.match(/:[a-z0-9_]+:/gi)[0]
+				.substr(1)
+				.slice(0, -1);
+			let gif = emoji.match(/<a:/gi) ? true : false;
+			let url = baseURL + id + (gif ? '.gif' : '.png');
+			emojis.push({ name, id, gif, url, isSticker });
+		}
 	}
 
 	return emojis;
 }
 
 async function display(p, emojis) {
+	if (emojis.length == 0) {
+		return p.errorMsg(', There are no emojis! >:c', 3000);
+	}
 	const emojiAdders = [];
 	const createEmbed = (currentPage, maxPage) => {
 		const emoji = emojis[currentPage];
 
 		const embed = {
 			author: {
-				name: 'Enlarged Emojis!',
+				name: `Enlarged ${emoji.isSticker ? 'Sticker' : 'Emoji'}!`,
 				url: emoji.url,
 				icon_url: p.msg.author.avatarURL,
 			},
-			description: `\`${emoji.name}\` \`${emoji.id}\``,
+			description: `**${emoji.isSticker ? 'STICKER' : 'EMOJI'}**: \`${emoji.name}\` \`${
+				emoji.id
+			}\``,
 			color: p.config.embed_color,
 			image: { url: emoji.url },
 			url: emoji.url,
@@ -133,7 +169,7 @@ async function display(p, emojis) {
 		return embed;
 	};
 
-	const additionalButtons = await getStealButton(p);
+	const additionalButtons = await p.global.getStealButton(p);
 	const additionalFilter = (componentName, _user) => componentName === 'steal';
 	const pagedMsg = new p.PagedMessage(p, createEmbed, emojis.length - 1, {
 		idle: 120000,
@@ -144,8 +180,7 @@ async function display(p, emojis) {
 	pagedMsg.on('button', async (component, user, ack, { currentPage, maxPage }) => {
 		if (component === 'steal') {
 			const emoji = emojis[currentPage];
-			if (!emojiAdders[currentPage])
-				emojiAdders[currentPage] = new p.EmojiAdder(p, emoji.name, emoji.url);
+			if (!emojiAdders[currentPage]) emojiAdders[currentPage] = new p.EmojiAdder(p, emoji);
 			try {
 				if (await emojiAdders[currentPage].addEmoji(user.id)) {
 					await ack({ embed: createEmbed(currentPage, maxPage) });
@@ -157,25 +192,6 @@ async function display(p, emojis) {
 			}
 		}
 	});
-}
-
-async function getStealButton(p) {
-	const sql = `SELECT emoji_steal.guild FROM emoji_steal INNER JOIN user ON emoji_steal.uid = user.uid WHERE id = ${p.msg.author.id};`;
-	const canSteal = (await p.query(sql))[0]?.guild;
-	if (canSteal) {
-		return [
-			{
-				type: 2,
-				label: 'Steal Emoji',
-				style: 1,
-				custom_id: 'steal',
-				emoji: {
-					id: null,
-					name: stealEmoji,
-				},
-			},
-		];
-	}
 }
 
 async function setServer(p) {
@@ -204,11 +220,11 @@ async function setServer(p) {
 		}
 	}
 
-	p.replyMsg(stealEmoji, ', stolen emojis will now be sent to this server!');
+	p.replyMsg(p.config.emoji.steal, ', stolen emojis will now be sent to this server!');
 }
 
 async function unsetServer(p) {
 	let sql = `DELETE FROM emoji_steal WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
 	await p.query(sql);
-	p.replyMsg(stealEmoji, ', your server has been unset for stealing!');
+	p.replyMsg(p.config.emoji.steal, ', your server has been unset for stealing!');
 }

@@ -4,9 +4,12 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
  */
+const alterUtils = require('../../../utils/alterUtils.js');
 
-exports.alter = function (id, text, opt) {
-	switch (id) {
+exports.alter = async function (p, user, text, opt) {
+	const result = await checkDb(p, user, opt);
+	if (result) return result;
+	switch (user.id) {
 		case '408371860246364183':
 			return lanre(text, opt);
 		case '565212326291308545':
@@ -21,6 +24,23 @@ exports.alter = function (id, text, opt) {
 			return text;
 	}
 };
+
+async function checkDb(p, user, info) {
+	const type = 'display';
+	const replacers = {
+		username: p.getName(user),
+		user_tag: p.getTag(user),
+		discriminator: user.discriminator,
+		blank: p.config.emoji.blank,
+		current_page: info.page,
+		total_pages: info.total,
+		help: info.descHelp.trim(),
+		weapons: info.desc.trim(),
+		sort: info.sort,
+	};
+
+	return alterUtils.getAlterCommand('weapon', user, type, replacers, null, true);
+}
 
 function lanre(text, opt) {
 	text.description = opt.desc;
@@ -88,7 +108,12 @@ function quincey(text, opt) {
 	let image =
 		'https://cdn.discordapp.com/attachments/718562499703603251/1074740072399765707/20230212_191407.png';
 	text.color = 10183532;
-	switch (opt.wid) {
+
+	let wid = 'unknown';
+	if (opt.widList?.length === 1) {
+		wid = parseInt(opt.widList[0]);
+	}
+	switch (wid) {
 		case 1:
 			image =
 				'https://media.discordapp.net/attachments/718562499703603251/1074740362188435487/20230211_132513.png?width=767&height=192';

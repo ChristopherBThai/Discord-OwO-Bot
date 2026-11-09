@@ -4,13 +4,32 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
  */
+const alterUtils = require('../../../utils/alterUtils.js');
 
 const blank = '<:blank:427371936482328596>';
 const emoji = '🙏';
 const curseEmoji = '👻';
 
-exports.alter = function (id, text, info) {
-	switch (id) {
+/**
+ * {
+ * 	pray: pray command,
+ * 	curse: curse command,
+ * 	sender: user,
+ * 	receiver: user,
+ * 	luck: count
+ * }
+ */
+exports.alter = async function (p, text, info) {
+	if (info.command === 'pray') {
+		info.pray = true;
+	} else {
+		info.curse = true;
+	}
+	info.sender = p.msg.author;
+	info.receiver = info.user;
+	const result = await checkDb(p, info);
+	if (result) return result;
+	switch (p.msg.author.id) {
 		case '192692796841263104':
 			return dalu(text, info);
 		case '456598711590715403':
@@ -26,9 +45,56 @@ exports.alter = function (id, text, info) {
 		case '683742950668501001':
 			return dadada(text, info);
 		default:
-			return text;
+			if (info.receiver) {
+				return await checkReceive(p, info);
+			}
 	}
 };
+
+async function checkReceive(p, info) {
+	info.receiving = true;
+	const result = await checkDb(p, info);
+	if (result) return result;
+}
+
+function checkDb(p, info) {
+	let user = info.sender;
+	const replacers = {
+		sender: p.getName(info.sender),
+		sender_tag: p.getTag(info.sender),
+		receiver: p.getName(info.receiver),
+		receiver_tag: p.getTag(info.receiver),
+		blank: p.config.emoji.blank,
+		amount: info.luck,
+	};
+	let type;
+	if (info.receiving) {
+		user = info.receiver;
+		if (info.pray) {
+			type = 'receivepray';
+		} else {
+			type = 'receivecurse';
+		}
+	} else if (info.pray) {
+		if (info.receiver) {
+			type = 'pray';
+		} else {
+			type = 'prayself';
+			delete replacers.receiver;
+			delete replacers.receiver_tag;
+		}
+	} else {
+		if (info.receiver) {
+			type = 'curse';
+		} else {
+			type = 'curseself';
+			delete replacers.receiver;
+			delete replacers.receiver_tag;
+		}
+	}
+
+	return alterUtils.getAlterCommand('pray', user, type, replacers);
+}
 
 function dalu(text, info) {
 	const color = 63996;

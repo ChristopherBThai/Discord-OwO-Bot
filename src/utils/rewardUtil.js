@@ -15,7 +15,7 @@ const lootboxUtil = require('../commands/commandList/zoo/lootboxUtil.js');
 const beehiveUtil = require('../commands/commandList/social/util/beehiveUtil.js');
 
 exports.getReward = async function (id, uid, con, rewardType, rewardId, rewardCount) {
-	let sql, result, name, animal, weapon, uwid, weaponId, uwidList, item, ring, gem, gemSql, bee;
+	let sql, result, name, animal, weapon, item, ring, gem, gemSql, bee, specialGems, gemId;
 
 	switch (rewardType) {
 		case 'wallpaper':
@@ -36,6 +36,8 @@ exports.getReward = async function (id, uid, con, rewardType, rewardId, rewardCo
 			animal = global.validAnimal(rewardId);
 			return {
 				text: `a ${animal.value} ${animal.name}`,
+				emoji: animal.value,
+				name: animal.name,
 				sql: `INSERT INTO animal (count, totalcount, id, name) VALUES (1,1,${id},'${animal.value}')
 						ON DUPLICATE KEY UPDATE count = count + 1, totalcount = totalcount + 1;
 						INSERT INTO animal_count (id, ${animal.rank}) VALUES (${id}, 1)
@@ -44,24 +46,35 @@ exports.getReward = async function (id, uid, con, rewardType, rewardId, rewardCo
 		case 'lb':
 			return {
 				text: `a ${config.emoji.lootbox} Lootbox`,
+				count: rewardCount,
+				emoji: config.emoji.lootbox,
+				plural: pluralize('Lootbox', rewardCount),
 				sql: `INSERT INTO lootbox (id,boxcount,claimcount,claim) VALUES (${id},${rewardCount},0,'2017-01-01')
 						ON DUPLICATE KEY UPDATE boxcount = boxcount + ${rewardCount};`,
 			};
 		case 'flb':
 			return {
 				text: `a ${config.emoji.fabledLootbox} Fabled Lootbox`,
+				count: rewardCount,
+				emoji: config.emoji.fabledLootbox,
+				plural: pluralize('Lootbox', rewardCount),
 				sql: `INSERT INTO lootbox (id,fbox,claimcount,claim) VALUES (${id},${rewardCount},0,'2017-01-01')
 						ON DUPLICATE KEY UPDATE fbox = fbox + ${rewardCount};`,
 			};
 		case 'wc':
 			return {
 				text: `a ${config.emoji.crate} Weapon Crate`,
+				count: rewardCount,
+				emoji: config.emoji.crate,
+				plural: pluralize('Crate', rewardCount),
 				sql: `INSERT INTO crate (uid,cratetype,boxcount,claimcount,claim) VALUES (${uid},0,${rewardCount},0,'2017-01-01')
 						ON DUPLICATE KEY UPDATE boxcount = boxcount + ${rewardCount};`,
 			};
 		case 'cowoncy':
 			return {
 				text: `${global.toFancyNum(rewardCount)} ${config.emoji.cowoncy} Cowoncy`,
+				count: global.toFancyNum(rewardCount),
+				emoji: config.emoji.cowoncy,
 				sql: `INSERT INTO cowoncy (id,money) VALUES (${id}, ${rewardCount})
 						ON DUPLICATE KEY UPDATE money = money + ${rewardCount};`,
 			};
@@ -74,22 +87,18 @@ exports.getReward = async function (id, uid, con, rewardType, rewardId, rewardCo
 						count = count + ${rewardCount}`,
 			};
 		case 'weapon':
-			weapon = weaponUtil.getRandomWeapons(uid, 1, rewardId)[0];
-			result = await con.query(weapon.weaponSql);
-			uwid = result.insertId;
-			weapon.uwid = uwid;
-			uwidList = [];
-			for (let j = 0; j < weapon.passives.length; j++) uwidList.push(uwid);
-			await con.query(weapon.passiveSql, uwidList);
-			weaponId = weaponUtil.shortenUWID(weapon.uwid);
+			weapon = weaponUtil.getRandomWeapons(1, rewardId)[0];
+			await weapon.save(id);
 			return {
-				text: `${global.getA(weapon.rank.name)} \`${weaponId}\` ${weapon.rank.emoji} ${
+				text: `${global.getA(weapon.rank.name)} \`${weapon.shortenUWID}\` ${weapon.rank.emoji} ${
 					weapon.emoji
 				} ${weapon.rank.name} ${weapon.name}`,
 			};
 		case 'ws':
 			return {
 				text: `${global.toFancyNum(rewardCount)} ${config.emoji.shards} Weapon Shards`,
+				count: global.toFancyNum(rewardCount),
+				emoji: config.emoji.shards,
 				sql: `INSERT INTO shards (uid,count) VALUES (${uid},${rewardCount}) ON DUPLICATE KEY UPDATE count = count + ${rewardCount};`,
 			};
 		case 'essence':
@@ -114,6 +123,19 @@ exports.getReward = async function (id, uid, con, rewardType, rewardId, rewardCo
 				text: `${global.getA(gem.rank)} ${gem.emoji} ${gem.rank} ${gem.type} Gem`,
 				sql: gemSql,
 			};
+		case 'sgem':
+			specialGems = [79, 80, 81, 82, 83, 84, 85];
+			gemId = specialGems[Math.floor(Math.random() * specialGems.length)];
+			gem = lootboxUtil.getRandomGems(uid, 1, { gid: gemId });
+			gemSql = gem.sql;
+			gem = Object.values(gem.gems)[0].gem;
+			return {
+				text: `${global.getA(gem.rank)} ${gem.emoji} ${gem.rank} ${gem.type} Gem`,
+				rank: gem.rank,
+				emoji: gem.emoji,
+				type: gem.type,
+				sql: gemSql,
+			};
 		case 'bee':
 			bee = await beehiveUtil.addBee(id, rewardId);
 			return {
@@ -123,6 +145,14 @@ exports.getReward = async function (id, uid, con, rewardType, rewardId, rewardCo
 						? ''
 						: `\n${config.emoji.blank} **|** Type \`owo beehive\` to view your bees!`
 				}`,
+			};
+		case 'cookie':
+			return {
+				text: `${rewardCount} ${config.emoji.cookie} ${pluralize('Cookie', rewardCount)}`,
+				count: rewardCount,
+				emoji: config.emoji.cookie,
+				plural: pluralize('Cookie', rewardCount),
+				sql: `INSERT INTO rep (id, count) VALUES (${id},${rewardCount}) ON DUPLICATE KEY UPDATE count = count + ${rewardCount};`,
 			};
 
 		default:

@@ -4,6 +4,7 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
  */
+const alterUtils = require('../../../utils/alterUtils.js');
 
 const ranks = {
 	c: '<:common:416520037713838081>',
@@ -21,7 +22,10 @@ const ranks = {
 	b: '<a:botrank:716545289497870407>',
 };
 
-exports.alter = function (id, text, opt) {
+exports.alter = async function (p, id, text, info) {
+	const result = await checkDb(p, info);
+	if (result) return result;
+	if (info.paged) return text;
 	switch (id) {
 		case '250383887312748545':
 			return elsa(text);
@@ -38,13 +42,50 @@ exports.alter = function (id, text, opt) {
 		case '714215538821431398':
 			return ivy(text);
 		case '427296171883626496':
-			return lIlIIIll(text, opt);
+			return lIlIIIll(text, info);
 		case '460987842961866762':
-			return estee(text, opt);
+			return estee(text, info);
 		default:
 			return text;
 	}
 };
+
+async function checkDb(p, info) {
+	const type = info.paged ? 'paged' : 'message';
+	const replacers = {
+		username: p.getName(info.user),
+		discriminator: info.user.discriminator,
+		blank: p.config.emoji.blank,
+		currentPage: info.currentPage,
+		maxPages: info.maxPages,
+		animals: info.animals,
+		zooPoints: info.zooPoints,
+		countText: info.countText,
+		hiddenCount: info.animalCount.hidden,
+		fabledCount: info.animalCount.fabled,
+		cpatreonCount: info.animalCount.cpatreon,
+		distortedCount: info.animalCount.distorted,
+		botCount: info.animalCount.bot,
+		gemCount: info.animalCount.gem,
+		legendaryCount: info.animalCount.legendary,
+		patreonCount: info.animalCount.patreon,
+		mythicalCount: info.animalCount.mythical,
+		specialCount: info.animalCount.special,
+		epicCount: info.animalCount.epic,
+		rareCount: info.animalCount.rare,
+		uncommonCount: info.animalCount.uncommon,
+		commonCount: info.animalCount.common,
+	};
+
+	const extraReplacers = {};
+	Object.values(p.animalUtil.getRanks()).forEach((rank) => {
+		extraReplacers[rank.id] = rank.emoji;
+	});
+
+	return alterUtils.getAlterCommand('zoo', info.user, type, replacers, null, null, {
+		extraReplacers,
+	});
+}
 
 function replaceRanks(text, newRanks) {
 	for (let rank in newRanks) {

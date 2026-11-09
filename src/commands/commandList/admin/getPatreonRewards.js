@@ -41,7 +41,6 @@ async function getPatreons(p) {
 		console.error(err);
 		return;
 	}
-	console.log(patreons);
 	let result = [];
 	if (p.args[0] != 'ignoresql') {
 		let sql =

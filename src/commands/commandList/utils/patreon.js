@@ -7,10 +7,12 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const patreonUtil = require('../../../utils/patreon.js');
+const patreonUtil = require('../patreon/utils/patreonUtil.js');
+
+const checkId = 'supporter_check';
 
 module.exports = new CommandInterface({
-	alias: ['patreon', 'donate'],
+	alias: ['patreon', 'donate', 'support', 'supporter'],
 
 	args: '',
 
@@ -29,49 +31,82 @@ module.exports = new CommandInterface({
 	six: 500,
 
 	execute: async function (p) {
-		patreonUtil.checkPatreon(p, p.msg.author.id);
+		delete p.msg.author.supporterRank;
+		const supporter = await patreonUtil.getSupporterRank(p, p.msg.author);
 
-		let animalPerk, dailyPerk;
-		let sql = `SELECT patreonDaily, patreonAnimal FROM user WHERE id = ${p.msg.author.id};`;
-		sql += `SELECT
-				patreonMonths,
-				patreonTimer,
-				TIMESTAMPDIFF(MONTH, patreonTimer, NOW()) AS monthsPassed,
-				patreonType
-			FROM user INNER JOIN patreons ON user.uid = patreons.uid
-			WHERE id = ${p.msg.author.id};`;
-		sql += `SELECT patreonType, endDate FROM patreon_wh INNER JOIN user ON user.uid = patreon_wh.uid WHERE id = ${p.msg.author.id};`;
-		let result = await p.query(sql);
+		let content = createContent.bind(this)(supporter);
+		const msg = await p.send(content);
 
-		if (result[0][0]) {
-			animalPerk = result[0][0].patreonAnimal;
-			dailyPerk = result[0][0].patreonDaily;
-		}
+		let filter = (componentName, user) =>
+			componentName === checkId && user.id === this.msg.author.id;
+		let collector = this.interactionCollector.create(msg, filter, {
+			time: 900000,
+		});
 
-		let stat = 'Join today for special animals and benefits!';
-		if (animalPerk && !dailyPerk) stat = 'You are currently a **Patreon**!';
-		else if (dailyPerk) stat = 'You are currently a **Patreon+**!';
-		else if (result[1][0]) {
-			let parsed = patreonUtil.parsePatreon(result[1][0]);
-			if (parsed) {
-				if (parsed.animal && !parsed.cowoncy) stat = 'You are currently a **Patreon**';
-				else stat = 'You are currently a **Patreon+**';
-				const timestamp = this.global.toDiscordTimestamp(parsed.expireDate, 'f');
-				stat += '\n**<:blank:427371936482328596> |** until: **' + timestamp + '**';
+		collector.on('collect', async (component, user, ack, err, value, entitlements) => {
+			collector.stop();
+			if (entitlements && entitlements.length) {
+				for (let i in entitlements) {
+					await patreonUtil.handleDiscordUpdate.bind(this)(entitlements[i]);
+				}
 			}
-		} else if (result[2][0]) {
-			let parsed = patreonUtil.parseSecondPatreon(result[2][0]);
-			if (parsed) {
-				if (parsed.animal && !parsed.cowoncy) stat = 'You are currently a **Patreon**';
-				else stat = 'You are currently a **Patreon+**';
-				const timestamp = this.global.toDiscordTimestamp(parsed.expireDate, 'f');
-				stat += '\n**<:blank:427371936482328596> |** until: **' + timestamp + '**';
-			}
-		}
+			delete p.msg.author.supporterRank;
+			const supporter = await patreonUtil.getSupporterRank(p, p.msg.author);
+			let content = createContent.bind(this)(supporter);
+			content.components[0].components[2].disabled = true;
+			ack(content);
+		});
 
-		let text = '**<:patreon:449705754522419222> |** Donate to OwO Bot for special benefits!\n';
-		text += '**<:blank:427371936482328596> |** ' + stat + '\n';
-		text += '**<:blank:427371936482328596> |** https://www.patreon.com/OwOBot';
-		p.send(text);
+		collector.on('end', async () => {
+			if (content.components[0].components[2]) {
+				content.components[0].components[2].disabled = true;
+			}
+			msg.edit(content);
+		});
 	},
 });
+
+function createContent(supporter) {
+	let stat = 'Join today for special animals and benefits!';
+	const timestamp = this.global.toDiscordTimestamp(new Date(supporter.endTime), 'f');
+	if (supporter.benefitRank >= 3) {
+		stat = 'You are currently a **Supporter+**!';
+		stat += '\n**<:blank:427371936482328596> |** until: **' + timestamp + '**';
+	} else if (supporter.benefitRank >= 1) {
+		stat = 'You are currently a **Supporter**!';
+		stat += '\n**<:blank:427371936482328596> |** until: **' + timestamp + '**';
+	}
+
+	let content = `**${this.config.emoji.owo.woah} |** Donate to OwO Bot for special benefits!\n**${this.config.emoji.blank} |** ${stat}`;
+	content += `\n**${this.config.emoji.blank} |** Join by clicking my profile or one of the following choices below!`;
+	const components = [
+		{
+			type: 1,
+			components: [
+				{
+					type: 2,
+					label: 'Patreon',
+					style: 5,
+					url: 'https://www.patreon.com/OwOBot',
+				},
+				{
+					type: 2,
+					label: 'OwO Store',
+					style: 5,
+					url: 'https://owobot.com/store',
+				},
+				{
+					type: 2,
+					label: 'Check Subscription',
+					custom_id: checkId,
+					style: 1,
+					emoji: {
+						id: null,
+						name: this.config.emoji.magnify,
+					},
+				},
+			],
+		},
+	];
+	return { content, components };
+}

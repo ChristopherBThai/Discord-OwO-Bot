@@ -51,7 +51,7 @@ module.exports = new CommandInterface({
 
 		let text = '**====== ' + p.getName() + "'s Inventory ======**\n" + inv;
 		if (inv == '') text = 'Your inventory is empty :c';
-		text = alterInventory.alter(p, text, { user: p.msg.author, inv });
+		text = await alterInventory.alter(p, text, { user: p.msg.author, inv });
 		p.send(text);
 	},
 });
@@ -83,14 +83,11 @@ function addToString(items) {
 	let count = 0;
 	for (let i = 0; i < items.length; i++) {
 		let item = items[i];
-		text +=
-			'`' +
-			(item.id < 10 ? '0' : '') +
-			(item.id < 100 ? '0' : '') +
-			item.id +
-			'`' +
-			item.emoji +
-			shopUtil.toSmallNum(item.count, digits);
+		let itemId = (item.id < 10 ? '0' : '') + (item.id < 100 ? '0' : '') + item.id;
+		if (item.id == 200) {
+			itemId = '2--';
+		}
+		text += '`' + itemId + '`' + item.emoji + shopUtil.toSmallNum(item.count, digits);
 		count++;
 		if (count == 4) {
 			text += '\n';

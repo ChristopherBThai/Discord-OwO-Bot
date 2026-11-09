@@ -12,10 +12,11 @@ const autohuntutil = require('./autohuntutil.js');
 const animalUtil = require('./animalUtil.js');
 const global = require('../../../utils/global.js');
 const letters = 'abcdefghijklmnopqrstuvwxyz';
-const botrank =
-	'SELECT (COUNT(*)) AS rank, (SELECT COUNT(*) FROM autohunt) AS total FROM autohunt WHERE autohunt.total >= (SELECT autohunt.total FROM autohunt WHERE id = ';
+const botrank = `SELECT COUNT(id) AS rank FROM autohunt WHERE autohunt.total >= (SELECT autohunt.total FROM autohunt WHERE id = `;
 const logger = require('../../../utils/logger.js');
 const parse = require('parse-duration');
+const patreonUtil = require('../patreon/utils/patreonUtil.js');
+const teamUtil = require('../battle/util/teamUtil.js');
 
 module.exports = new CommandInterface({
 	alias: ['autohunt', 'huntbot', 'hb', 'ah'],
@@ -63,17 +64,7 @@ async function claim(p, msg, con, query, bot) {
 	//Get Total essence
 	let totalGain = Math.floor(autohuntutil.getLvl(query.gain, 0, 'gain').stat * duration);
 
-	let sql = `SELECT
-		IF(
-			patreonAnimal = 1
-			OR (TIMESTAMPDIFF(MONTH, patreonTimer, NOW()) < patreonMonths)
-			OR (endDate > NOW())
-		,1,0) as patreon
-		FROM user
-			LEFT JOIN patreons ON user.uid = patreons.uid
-			LEFT JOIN patreon_wh ON user.uid = patreon_wh.uid
-		WHERE user.id = ${msg.author.id};`;
-	sql +=
+	let sql =
 		'UPDATE autohunt SET huntmin = 0,huntcount=0,essence = essence +' +
 		totalGain +
 		',total = total + ' +
@@ -83,47 +74,27 @@ async function claim(p, msg, con, query, bot) {
 		' AND huntmin > 0;';
 	let result = await p.query(sql);
 
-	if (result[1].changedRows <= 0) {
+	if (result.changedRows <= 0) {
 		return;
 	}
 
 	//Check if patreon
-	let patreon = false;
-	if (result[0][0] && result[0][0].patreon == 1) patreon = true;
+	const supporter = await patreonUtil.getSupporterRank(p, p.msg.author);
+	let patreon = supporter.benefitRank > 0;
 
-	sql = '';
 	//Get total exp
 	let totalExp = Math.floor(autohuntutil.getLvl(query.exp, 0, 'exp').stat * duration);
-	sql += `UPDATE IGNORE user 
-			INNER JOIN pet_team ON user.uid = pet_team.uid
-			INNER JOIN pet_team_animal ON pet_team.pgid = pet_team_animal.pgid
-			INNER JOIN animal ON pet_team_animal.pid = animal.pid
-			LEFT JOIN (SELECT pt2.pgid FROM user u2
-					INNER JOIN pet_team pt2 ON pt2.uid = u2.uid
-					LEFT JOIN pet_team_active pt_act ON pt2.pgid = pt_act.pgid
-					WHERE u2.id = ${msg.author.id}
-					ORDER BY pt_act.pgid DESC, pt2.pgid ASC LIMIT 1) tmp
-				ON tmp.pgid = pet_team.pgid
-		SET animal.xp = animal.xp + (CASE WHEN tmp.pgid IS NULL THEN ${Math.round(
-			totalExp / 2
-		)} ELSE ${totalExp} END)
-		WHERE  user.id = ${msg.author.id};`;
+	await teamUtil.giveXPToUserTeams(p, p.msg.author, totalExp);
 
 	//Get all animal
-	let total = {};
-	let digits = 1;
 	let radar = autohuntutil.getLvl(query.radar, 0, 'radar');
-	for (let i = 0; i < query.huntcount; i++) {
-		let animal = animalUtil.randAnimal({
-			patreon: patreon,
-			huntbot: radar.stat / 100,
-		});
-		if (total[animal[1]]) {
-			total[animal[1]].count++;
-			if (total[animal[1]].count > digits) digits = total[animal[1]].count;
-		} else {
-			total[animal[1]] = { count: 1, rank: animal[2] };
-		}
+	let { animals, animalSql } = await animalUtil.getMultipleAnimals(query.huntcount, p.msg.author, {
+		patreon: patreon,
+		huntbot: radar.stat,
+	});
+	let digits = 0;
+	for (let key in animals) {
+		if (animals[key].count > digits) digits = animals[key].count;
 	}
 	digits = Math.trunc(Math.log10(digits) + 1);
 	let text =
@@ -137,58 +108,32 @@ async function claim(p, msg, con, query, bot) {
 		totalExp +
 		' EXPERIENCE`';
 	let tempText = [];
-	for (let animal in total) {
-		let animalString = animal + animalUtil.toSmallNum(total[animal].count, digits) + '  ';
-		let animalLoc = p.animals.order.indexOf(total[animal].rank);
+
+	for (let animal in animals) {
+		let animalString = animal + p.global.toSmallNum(animals[animal].count, digits) + '  ';
+		const order = p.animalUtil.getOrder();
+		let animalLoc = order.indexOf(animals[animal].rank);
 		if (animalLoc || animalLoc === 0) {
 			if (!tempText[animalLoc])
-				tempText[animalLoc] = ' \n' + p.animals.ranks[p.animals.order[animalLoc]] + ' **|**';
+				tempText[animalLoc] = ' \n' + p.animalUtil.getRank(order[animalLoc]).emoji + ' **|**';
 			tempText[animalLoc] += ' ' + animalString;
 		}
-		sql +=
-			'INSERT INTO animal (id,name,count,totalcount) VALUES (' +
-			msg.author.id +
-			",'" +
-			animal +
-			"'," +
-			total[animal].count +
-			',' +
-			total[animal].count +
-			') ON DUPLICATE KEY UPDATE count = count + ' +
-			total[animal].count +
-			',totalcount = totalcount + ' +
-			total[animal].count +
-			';';
-		sql +=
-			'INSERT INTO animal_count (id,' +
-			total[animal].rank +
-			') VALUES (' +
-			msg.author.id +
-			',' +
-			total[animal].count +
-			') ON DUPLICATE KEY UPDATE ' +
-			total[animal].rank +
-			' = ' +
-			total[animal].rank +
-			'+' +
-			total[animal].count +
-			';';
 	}
 
 	for (let i = 0; i < tempText.length; i++) if (tempText[i]) text += tempText[i];
 
-	result = await p.query(sql);
+	result = await p.query(animalSql);
 	text = alterhb(msg.author.id, text, 'returned');
 	p.send(text);
-	for (let animal in total) {
+	for (let animal in animals) {
 		let tempAnimal = global.validAnimal(animal);
 		logger.incr(
 			'animal',
-			total[animal].count,
+			animals[animal].count,
 			{ rank: tempAnimal.rank, name: tempAnimal.name },
 			p.msg
 		);
-		logger.incr('zoo', tempAnimal.points * total[animal].count, {}, p.msg);
+		logger.incr('zoo', tempAnimal.points * animals[animal].count, {}, p.msg);
 	}
 	logger.incr('essence', totalGain, { type: 'huntbot' }, p.msg);
 }
@@ -406,7 +351,7 @@ async function display(p, msg, con) {
 
 	//Get emoji
 	let bot = autohuntutil.getBot(result[1][0]);
-	let rank = result[1][0]?.rank || result[1][0]?.total;
+	let rank = result[1][0]?.rank || autohuntutil.getTotalBots();
 
 	let hunting;
 	if (result[0][0] && result[0][0].huntmin != 0) {

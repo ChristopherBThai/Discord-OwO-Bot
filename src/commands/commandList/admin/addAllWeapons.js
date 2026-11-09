@@ -7,7 +7,6 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 const WeaponInterface = require('../battle/WeaponInterface.js');
-const weaponUtil = require('../battle/util/weaponUtil.js');
 
 module.exports = new CommandInterface({
 	alias: ['addallweapons', 'aaw'],
@@ -60,7 +59,7 @@ module.exports = new CommandInterface({
 
 		const allWeapons = getAllWeapons();
 
-		addMissingWeapons.bind(this)(formattedWeapons, allWeapons, stat, uid);
+		addMissingWeapons.bind(this)(formattedWeapons, allWeapons, stat);
 	},
 });
 
@@ -96,12 +95,12 @@ function getAllPassives(count, passives) {
 	return result;
 }
 
-async function addMissingWeapons(existingWeapons, allWeapons, stat, uid) {
+async function addMissingWeapons(existingWeapons, allWeapons, stat) {
 	for (let allWid in allWeapons) {
 		let allPassives = allWeapons[allWid];
 		if (allPassives.length === 0) {
 			if (!existingWeapons[allWid]) {
-				await addWeapon.bind(this)(allWid, [], stat, uid);
+				await addWeapon.bind(this)(allWid, [], stat);
 			}
 		} else {
 			let existingPassives =
@@ -121,31 +120,20 @@ async function addMissingWeapons(existingWeapons, allWeapons, stat, uid) {
 					passives = passives.map((passive) => {
 						return parseInt(passive);
 					});
-					await addWeapon.bind(this)(allWid, passives, stat, uid);
+					await addWeapon.bind(this)(allWid, passives, stat);
 				}
 			}
 		}
 	}
 }
 
-async function addWeapon(wid, passives, stat, uid) {
+async function addWeapon(wid, passives, stat) {
 	console.log(`Adding weapon ${wid}: ${passives}`);
 	const weapon = new WeaponInterface.weapons[wid](null, null, null, {
 		passives,
 		statOverride: stat,
 	});
-	const sql = weaponUtil.toSql(uid, weapon);
-
-	let result = await this.query(sql.weapon);
-	let uwid = result.insertId;
-	if (!uwid) {
-		this.errorMsg(', Uh oh. Something went wrong! The weapon passive could not be applied');
-		console.error('Unable to add weapon passive to: ' + uwid);
-	} else if (passives.length) {
-		let uwidList = [];
-		for (let i = 0; i < passives.length; i++) uwidList.push(uwid);
-		await this.query(sql.passive, uwidList);
-	}
+	await weapon.save(this.msg.author.id);
 	await delay(500);
 }
 

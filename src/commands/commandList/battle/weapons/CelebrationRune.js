@@ -24,6 +24,15 @@ module.exports = class CRune extends WeaponInterface {
 			'<:lcrune:1080441110876397568>',
 			'<:fcrune:1080441108775059456>',
 		];
+		this.pristineEmojis = [
+			'<:pccrune:1132227785499353158>',
+			'<:pucrune:1132229454383550464>',
+			'<:prcrune:1132229196442239047>',
+			'<:pecrune:1132228082724524062>',
+			'<:pmcrune:1132229024337383485>',
+			'<:plcrune:1132228554562748467>',
+			'<:pfcrune:1132228243777400913>',
+		];
 		this.defaultEmoji = '<:crune:1080441105117614142>';
 		this.statDesc = 'Apply **Celebration** to an ally with the lowest health for 3 turns.';
 		this.availablePassives = 'all';
@@ -47,7 +56,7 @@ module.exports = class CRune extends WeaponInterface {
 
 		/* Grab buff and bind it to our animal */
 		let buff = this.getBuffs(me)[0];
-		let buffLogs = buff.bind(lowest, 3, {
+		let buffLogs = buff.attemptBind(lowest, 3, {
 			me: me,
 			allies: team,
 			enemies: enemy,

@@ -6,9 +6,15 @@
  */
 
 const WeaponInterface = require('../WeaponInterface.js');
+const teamUtil = require('./teamUtil.js');
+const animalUtil = require('../../zoo/animalUtil.js');
 const alterWeapon = require('../../patreon/alterWeapon.js');
 const alterWeaponDisplay = require('../../patreon/alterWeaponDisplay.js');
 const global = require('../../../../utils/global.js');
+const mysql = require('../../../../botHandlers/mysqlHandler.js');
+
+WeaponInterface.setWeaponUtil(this);
+teamUtil.setWeaponUtil(this);
 
 const prices = {
 	Common: 100,
@@ -75,35 +81,15 @@ const getRandomWeapon = (exports.getRandomWeapon = function (wid) {
 	return weapon;
 });
 
-exports.getRandomWeapons = function (uid, count, wid) {
+exports.getRandomWeapons = function (count, wid) {
 	let randomWeapons = [];
 	for (let i = 0; i < count; i++) {
 		let tempWeapon = getRandomWeapon(wid);
-		let sql = toSql(uid, tempWeapon);
-		tempWeapon.weaponSql = sql.weapon;
-		tempWeapon.passiveSql = sql.passive;
 		randomWeapons.push(tempWeapon);
 	}
 
 	return randomWeapons;
 };
-
-const toSql = (exports.toSql = function (uid, weapon) {
-	let weaponSql = `INSERT INTO user_weapon (uid,wid,stat,avg) VALUES (${uid ? uid : '?'},${
-		weapon.id
-	},'${weapon.sqlStat}',${weapon.avgQuality});`;
-	let passiveSql = 'INSERT INTO user_weapon_passive (uwid,pcount,wpid,stat) VALUES ';
-	for (let j = 0; j < weapon.passives.length; j++) {
-		let tempPassive = weapon.passives[j];
-		passiveSql += `(?,${j},${tempPassive.id},'${tempPassive.sqlStat}'),`;
-	}
-	passiveSql = `${passiveSql.slice(0, -1)};`;
-
-	return {
-		weapon: weaponSql,
-		passive: passiveSql,
-	};
-});
 
 exports.getItems = async function (p) {
 	let sql = `SELECT wid,count(uwid) AS count FROM user_weapon WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) GROUP BY wid`;
@@ -132,7 +118,9 @@ let parseWeapon = (exports.parseWeapon = function (data) {
 		for (let i = 0; i < data.passives.length; i++) {
 			let stats = data.passives[i].stat.split(',');
 			for (let j = 0; j < stats.length; j++) stats[j] = parseInt(stats[j]);
-			let passive = new WeaponInterface.allPassives[data.passives[i].id](stats);
+			let passive = new WeaponInterface.allPassives[data.passives[i].id](stats, null, {
+				wear: data.wear || 0,
+			});
 			passive.pcount = data.passives[i].pcount;
 			data.passives[i] = passive;
 		}
@@ -141,11 +129,19 @@ let parseWeapon = (exports.parseWeapon = function (data) {
 
 	/* Convert data to actual weapon data */
 	if (!weapons[data.id]) return;
-	let weapon = new weapons[data.id](data.passives, data.stat);
+	let weapon = new weapons[data.id](data.passives, data.stat, null, {
+		wear: data.wear || 0,
+		hasTT: data.hasTT,
+		kills: data.kills,
+		rrCount: data.rrCount,
+		rrAttempt: data.rrAttempt,
+	});
 	weapon.uwid = data.uwid;
 	weapon.ruwid = data.ruwid;
 	weapon.pid = data.pid;
 	weapon.animal = data.animal;
+	weapon.userId = data.userId;
+	weapon.favorite = !!data.favorite;
 
 	return weapon;
 });
@@ -159,6 +155,7 @@ let parseWeaponQuery = (exports.parseWeaponQuery = function (query) {
 			if (!(key in weapons)) {
 				weapons[key] = {
 					uwid: shortenUWID(query[i].uwid),
+					userId: query[i].id,
 					ruwid: query[i].uwid,
 					pid: query[i].pid,
 					id: query[i].wid,
@@ -168,6 +165,12 @@ let parseWeaponQuery = (exports.parseWeaponQuery = function (query) {
 						nickname: query[i].nickname,
 					},
 					passives: [],
+					wear: query[i].wear || 0,
+					hasTT: !!query[i].tt,
+					kills: query[i].kills,
+					rrAttempt: query[i].rrattempt,
+					rrCount: query[i].rrcount,
+					favorite: query[i].favorite,
 				};
 			}
 			if (query[i].wpid) {
@@ -337,12 +340,18 @@ exports.askDisplay = async function (p, id, opt = {}) {
 let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	let { wid, widList } = opt;
 	/* Query all weapons */
-	let sql = `SELECT temp.*,user_weapon_passive.wpid,user_weapon_passive.pcount,user_weapon_passive.stat as pstat
+	let sql = `SELECT
+			temp.*,
+			user_weapon_passive.wpid, user_weapon_passive.pcount, user_weapon_passive.stat as pstat
 		FROM
-			(SELECT user_weapon.uwid,user_weapon.wid,user_weapon.stat,animal.name,animal.nickname
+			(SELECT
+				user_weapon.uwid, user_weapon.wid, user_weapon.stat, user_weapon.rrcount, user_weapon.rrattempt, user_weapon.wear, user_weapon.favorite,
+			  animal.name, animal.nickname,
+				uwk.uwid as tt, uwk.kills
 			FROM  user
 				INNER JOIN user_weapon ON user.uid = user_weapon.uid
 				LEFT JOIN animal ON animal.pid = user_weapon.pid
+				LEFT JOIN user_weapon_kills uwk ON user_weapon.uwid = uwk.uwid
 			WHERE
 				user.id = ${user.id} `;
 	if (wid) {
@@ -355,12 +364,14 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	if (sort === 'rarity') sql += 'user_weapon.avg DESC,';
 	else if (sort === 'type') sql += 'user_weapon.wid DESC, user_weapon.avg DESC,';
 	else if (sort === 'equipped') sql += 'user_weapon.pid DESC,';
+	else if (sort === 'favorite') sql += 'user_weapon.favorite DESC, user_weapon.avg DESC,';
+	else if (sort === 'tt') sql += 'uwk.kills DESC,';
+	else if (sort === 'wear') sql += 'user_weapon.wear DESC, user_weapon.avg DESC,';
 
 	sql += ` user_weapon.uwid DESC
 			LIMIT ${weaponPerPage}
 			OFFSET ${page * weaponPerPage}) temp
-		LEFT JOIN
-			user_weapon_passive ON temp.uwid = user_weapon_passive.uwid
+		LEFT JOIN user_weapon_passive ON temp.uwid = user_weapon_passive.uwid
 	;`;
 	sql += `SELECT COUNT(uwid) as count FROM user
 			INNER JOIN user_weapon ON user.uid = user_weapon.uid
@@ -390,10 +401,9 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	let user_weapons = parseWeaponQuery(result[0]);
 
 	/* Parse actual weapon data for each weapon */
+	let descUser = `These weapons belong to <@${user.id}>`;
 	let descHelp =
-		'These weapons belong to <@' +
-		user.id +
-		'>\nDescription: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nReroll: `owo w rr {weaponID} [passive|stat]`\nSell: `owo sell {weaponID|cw,rw,uw...}`\nDismantle: `owo dismantle {weaponID|cw,rw,uw...}`\n';
+		'Description: `owo weapon {weaponID}`\nEquip: `owo weapon {weaponID} {animal}`\nUnequip: `owo weapon unequip {weaponID}`\nReroll: `owo w rr {weaponID} [passive|stat]`\nSell: `owo sell {weaponID|cw,rw,uw...}`\nDismantle: `owo dismantle {weaponID|cw,rw,uw...}`\n';
 	let desc = '';
 	let fieldText;
 	let fields = [];
@@ -403,12 +413,15 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 		if (weapon) {
 			user_weapons_2.push(weapon);
 			let row = '';
+
 			let emoji = `${weapon.rank.emoji}${weapon.emoji}`;
 			for (let i = 0; i < weapon.passives.length; i++) {
 				let passive = weapon.passives[i];
 				emoji += passive.emoji;
 			}
-			row += `\n\`${user_weapons[key].uwid}\` ${emoji} **${weapon.name}** ${weapon.avgQuality}%`;
+			row += `\n\`${user_weapons[key].uwid}\` ${emoji} ${
+				weapon.favorite ? p.config.emoji.star : ''
+			}**${weapon.fullName}** ${weapon.avgQuality}%`;
 			if (user_weapons[key].animal.name) {
 				let animal = p.global.validAnimal(user_weapons[key].animal.name);
 				row += p.replaceMentions(
@@ -427,7 +440,7 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 				} else {
 					fieldText += row;
 				}
-			} else if (descHelp.length + desc.length + row.length >= 4096) {
+			} else if (descUser.length + descHelp.length + desc.length + row.length >= 4096) {
 				fieldText = row;
 			} else {
 				desc += row;
@@ -448,7 +461,7 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 			name: title,
 			icon_url: user.avatarURL,
 		},
-		description: descHelp + desc,
+		description: descUser + '\n' + descHelp + desc,
 		color: p.config.embed_color,
 		footer: {
 			text: 'Page ' + (page + 1) + '/' + maxPage + ' | ',
@@ -460,14 +473,22 @@ let getDisplayPage = async function (p, user, page, sort, opt = {}) {
 	else if (sort === 'rarity') embed.footer.text += 'Sorting by rarity';
 	else if (sort === 'type') embed.footer.text += 'Sorting by type';
 	else if (sort === 'equipped') embed.footer.text += 'Sorting by equipped';
+	else if (sort === 'favorite') embed.footer.text += 'Sorting by favorited';
+	else if (sort === 'tt') embed.footer.text += 'Sorting by takedown tracker';
+	else if (sort === 'wear') embed.footer.text += 'Sorting by wear';
 
-	embed = alterWeapon.alter(user.id, embed, {
+	embed = await alterWeapon.alter(p, user, embed, {
 		...opt,
 		page: page + 1,
 		descHelp: descHelp,
 		desc: desc,
 		weapons: user_weapons_2,
+		total: maxPage,
+		sort: sort,
 	});
+	if (embed.embed) {
+		embed = embed.embed;
+	}
 
 	embed = {
 		embed,
@@ -487,6 +508,12 @@ function getDisplayComponents(showExtraButtons, sort, widList = []) {
 					custom_id: 'sort',
 					placeholder: 'Sort by...',
 					options: [
+						{
+							label: 'Favorite',
+							value: 'favorite',
+							description: 'Sorty by favorited weapons',
+							default: sort === 'favorite',
+						},
 						{
 							label: 'Weapon ID',
 							value: 'id',
@@ -508,8 +535,20 @@ function getDisplayComponents(showExtraButtons, sort, widList = []) {
 						{
 							label: 'Equipped',
 							value: 'equipped',
-							description: 'Show equipped weapons',
+							description: 'Sort by equipped weapons',
 							default: sort === 'equipped',
+						},
+						{
+							label: 'Takedown Tracker',
+							value: 'tt',
+							description: 'Sort by takedown tracker kills',
+							default: sort === 'tt',
+						},
+						{
+							label: 'Wear',
+							value: 'wear',
+							description: 'Sort by wear',
+							default: sort === 'wear',
 						},
 					],
 				},
@@ -593,30 +632,7 @@ function getDisplayComponents(showExtraButtons, sort, widList = []) {
 exports.describe = async function (p, uwid) {
 	uwid = expandUWID(uwid);
 
-	/* Check if valid */
-	if (!uwid) {
-		p.errorMsg(
-			', I could not find a weapon with that unique weapon id! Please use `owo weapon` for the weapon ID!'
-		);
-		return;
-	}
-
-	/* sql query */
-	let sql = `SELECT user.id,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat FROM user INNER JOIN user_weapon a ON user.uid = a.uid LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid WHERE a.uwid = ${uwid};`;
-	let result = await p.query(sql);
-
-	/* Check if valid */
-	if (!result[0]) {
-		p.errorMsg(
-			', I could not find a weapon with that unique weapon id! Please use `owo weapon` for the weapon ID!'
-		);
-		return;
-	}
-
-	/* parse weapon to get info */
-	let weapon = this.parseWeaponQuery(result);
-	weapon = weapon[Object.keys(weapon)[0]];
-	weapon = this.parseWeapon(weapon);
+	let weapon = await this.getWeapon(uwid);
 
 	/* If no weapon */
 	if (!weapon) {
@@ -637,7 +653,7 @@ exports.describe = async function (p, uwid) {
 	}
 
 	// Grab user
-	let user = await p.fetch.getUser(result[0].id);
+	let user = await p.fetch.getUser(weapon.userId);
 	let username = 'A User';
 	if (user) username = p.getUniqueName(user);
 
@@ -647,6 +663,10 @@ exports.describe = async function (p, uwid) {
 	desc += `**ID:** \`${shortenUWID(uwid)}\`\n`;
 	desc += `**Sell Value:** ${weapon.unsellable ? 'UNSELLABLE' : prices[weapon.rank.name]}\n`;
 	desc += `**Quality:** ${weapon.rank.emoji} ${weapon.avgQuality}%\n`;
+	desc += `**Wear:** \`${weapon.wearName?.toUpperCase()}\`\n`;
+	if (weapon.hasTakedownTracker) {
+		desc += `**Kills:** \`${p.global.toFancyNum(weapon.kills)}\`\n`;
+	}
 	desc += `**WP Cost:** ${Math.ceil(weapon.manaCost)} <:wp:531620120976687114>`;
 	desc += `\n**Description:** ${weapon.desc}\n`;
 	if (weapon.buffList.length > 0) {
@@ -665,13 +685,16 @@ exports.describe = async function (p, uwid) {
 	/* Construct embed */
 	let embed = {
 		author: {
-			name: p.getName(user) + "'s " + weapon.name,
+			name: p.getName(user) + "'s " + weapon.fullName,
 		},
 		color: p.config.embed_color,
 		thumbnail: {
 			url: url,
 		},
 		description: desc,
+		footer: {
+			text: `Reroll Changes: ${weapon.rrCount} | Reroll Attempts: ${weapon.rrAttempt}`,
+		},
 	};
 	if (user) {
 		embed.author.icon_url = user.avatarURL;
@@ -680,93 +703,103 @@ exports.describe = async function (p, uwid) {
 			weapon,
 		});
 	}
-	p.send({ embed });
+
+	if (user.id !== p.msg.author.id) {
+		return p.send({ embed });
+	}
+
+	const components = [
+		{
+			type: 1,
+			components: [
+				{
+					type: 2,
+					label: weapon.favorite ? 'Unfavorite' : 'Favorite',
+					style: weapon.favorite ? 4 : 3,
+					custom_id: weapon.favorite ? 'weapon_unfavorite' : 'weapon_favorite',
+					emoji: {
+						id: null,
+						name: p.config.emoji.star,
+					},
+				},
+			],
+		},
+	];
+	const content = { embed, components };
+
+	const msg = await p.send(content);
+
+	let filter = (componentName, reactionUser) =>
+		['weapon_favorite', 'weapon_unfavorite'].includes(componentName) &&
+		[p.msg.author.id].includes(reactionUser.id);
+	let collector = p.interactionCollector.create(msg, filter, {
+		time: 900000,
+		idle: 300000,
+	});
+
+	const uid = await p.global.getUid(user.id);
+	collector.on('collect', async (component, _reactionMember, ack, _err) => {
+		if (component === 'weapon_favorite') {
+			let sql = `UPDATE user_weapon SET favorite = 1 WHERE uwid = ${weapon.ruwid} AND uid = ${uid}`;
+			await p.query(sql);
+			content.components[0].components[0].label = 'Unfavorite';
+			content.components[0].components[0].custom_id = 'weapon_unfavorite';
+			content.components[0].components[0].style = 4;
+			ack(content);
+		} else if (component === 'weapon_unfavorite') {
+			let sql = `UPDATE user_weapon SET favorite = 0 WHERE uwid = ${weapon.ruwid} AND uid = ${uid}`;
+			await p.query(sql);
+			content.components[0].components[0].label = 'Favorite';
+			content.components[0].components[0].custom_id = 'weapon_favorite';
+			content.components[0].components[0].style = 3;
+			ack(content);
+		}
+	});
+
+	collector.on('end', async (_reason) => {
+		content.embed.color = 6381923;
+		content.content = 'This message is now inactive';
+		content.components[0].components[0].disabled = true;
+		await msg.edit(content);
+	});
 };
 
 exports.equip = async function (p, uwid, pet) {
+	const pid = await animalUtil.getPid(p.msg.author.id, pet);
+	const uid = await p.global.getUid(p.msg.author.id);
 	uwid = expandUWID(uwid);
-	if (!uwid) {
-		p.errorMsg(
-			', could not find that weapon or animal! The correct command is `owo weapon {weaponID} {animal}`\n' +
-				p.config.emoji.blank +
-				' **|** The weaponID can be found in the command `owo weapon`'
-		);
+	if (!uwid || !pid) {
 		return;
 	}
-	/* Construct sql depending in pet parameter */
-	let pid;
-	if (p.global.isInt(pet)) {
-		pid = `(SELECT pid FROM pet_team_animal c WHERE pos = ${pet}
-				AND pgid = (
-					SELECT pt2.pgid FROM user u2
-						INNER JOIN pet_team pt2
-							ON pt2.uid = u2.uid
-						LEFT JOIN pet_team_active pt_act
-							ON pt2.pgid = pt_act.pgid
-					WHERE u2.id = ${p.msg.author.id}
-					ORDER BY pt_act.pgid DESC, pt2.pgid ASC
-					LIMIT 1)
-				)`;
-	} else {
-		pid = `(SELECT pid FROM animal WHERE name = '${pet.value}' AND id = ${p.msg.author.id})`;
+
+	let sql = `UPDATE user_weapon SET pid = NULL WHERE pid = ${pid} AND uid = ${uid};`;
+	sql += `UPDATE user_weapon SET pid = ${pid} WHERE uid = ${uid} AND uwid = ${uwid};`;
+	const con = await p.startTransaction();
+	try {
+		const result = await con.query(sql);
+		if (result[1].changedRows <= 0 && result[1].affectedRows <= 0) {
+			await con.rollback();
+			return;
+		}
+		await con.commit();
+	} catch (err) {
+		con.rollback();
+		return;
 	}
-	let sql = `UPDATE IGNORE user_weapon SET pid = NULL WHERE
-			uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND
-			pid = ${pid} AND
-			(SELECT * FROM (SELECT uwid FROM user_weapon WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND uwid = ${uwid}) a) IS NOT NULL;`;
-	sql += `UPDATE IGNORE user_weapon SET
-			pid = ${pid}
-		WHERE
-			uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id}) AND
-			uwid = ${uwid} AND
-			${pid} IS NOT NULL;`;
-	sql += `SELECT animal.name,animal.nickname,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal ON a.pid = animal.pid WHERE a.uwid = ${uwid} AND uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
-	let result = await p.query(sql);
 
-	/* Success */
-	if (result[1].changedRows > 0) {
-		let animal = p.global.validAnimal(result[2][0].name);
-		let nickname = result[2][0].nickname;
-		let weapon = this.parseWeaponQuery(result[2]);
-		weapon = weapon[Object.keys(weapon)[0]];
-		weapon = this.parseWeapon(weapon);
-		if (weapon)
-			p.replyMsg(
-				weaponEmoji,
-				p.replaceMentions(
-					`, ${animal.uni ? animal.uni : animal.value} **${
-						nickname ? nickname : animal.name
-					}** is now wielding ${weapon.emoji} **${weapon.name}**!`
-				)
-			);
-		else p.errorMsg(', Could not find a weapon with that id!');
-
-		/* Already equipped */
-	} else if (result[1].affectedRows > 0) {
-		let animal = p.global.validAnimal(result[2][0].name);
-		let nickname = result[2][0].nickname;
-		let weapon = this.parseWeaponQuery(result[2]);
-		weapon = weapon[Object.keys(weapon)[0]];
-		weapon = this.parseWeapon(weapon);
-		if (weapon)
-			p.replyMsg(
-				weaponEmoji,
-				p.replaceMentions(
-					`, ${animal.uni ? animal.uni : animal.value} **${
-						nickname ? nickname : animal.name
-					}** is already wielding ${weapon.emoji} **${weapon.name}**!`
-				)
-			);
-		else p.errorMsg(', Could not find a weapon with that id!');
-
-		/* A Failure (like me!) */
-	} else {
-		p.errorMsg(
-			', could not find that weapon or animal! The correct command is `owo weapon {weaponID} {animal}`\n' +
-				p.config.emoji.blank +
-				' **|** The weaponID can be found in the command `owo weapon`'
-		);
+	const { animal, nickname, weapon } =
+		(await teamUtil.getBattleAnimal({ uwid }, p.msg.author.id)) || {};
+	if (!animal || !weapon) {
+		return;
 	}
+
+	p.replyMsg(
+		weaponEmoji,
+		p.replaceMentions(
+			`, ${animal.value} **${nickname}** is now wielding ${weapon.emoji} **${weapon.name}**!`
+		)
+	);
+	return true;
 };
 
 exports.unequip = async function (p, uwid) {
@@ -775,41 +808,28 @@ exports.unequip = async function (p, uwid) {
 		p.errorMsg(', Could not find a weapon with that id!');
 		return;
 	}
+	const { animal, nickname, weapon, error } =
+		(await teamUtil.getBattleAnimal({ uwid }, p.msg.author.id)) || {};
 
-	let sql = `SELECT animal.name,animal.nickname,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat FROM user_weapon a LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid LEFT JOIN animal ON a.pid = animal.pid WHERE a.uwid = ${uwid} AND uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
-	sql += `UPDATE IGNORE user_weapon SET pid = NULL WHERE uwid = ${uwid} AND uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
-	let result = await p.query(sql);
-
-	/* Success */
-	if (result[1].changedRows > 0) {
-		let animal = p.global.validAnimal(result[0][0].name);
-		let nickname = result[0][0].nickname;
-		let weapon = this.parseWeaponQuery(result[0]);
-		weapon = weapon[Object.keys(weapon)[0]];
-		weapon = this.parseWeapon(weapon);
-		if (weapon)
-			p.replyMsg(
-				weaponEmoji,
-				p.replaceMentions(
-					`, Unequipped ${weapon.emoji} **${weapon.name}** from ${
-						animal.uni ? animal.uni : animal.value
-					} **${nickname ? nickname : animal.name}**`
-				)
-			);
-		else p.errorMsg(', Could not find a weapon with that id!');
-
-		/* No body using weapon */
-	} else if (result[1].affectedRows > 0) {
-		let weapon = this.parseWeaponQuery(result[0]);
-		weapon = weapon[Object.keys(weapon)[0]];
-		weapon = this.parseWeapon(weapon);
-		if (weapon) p.replyMsg(weaponEmoji, `, No animal is using ${weapon.emoji} **${weapon.name}**`);
-		else p.errorMsg(', Could not find a weapon with that id!');
-
-		/* Invalid */
-	} else {
-		p.errorMsg(', Could not find a weapon with that id!');
+	if (error || !animal || !weapon) {
+		if (error?.weapon) {
+			p.errorMsg(', this weapon is not equipped on anyone!');
+		} else {
+			p.errorMsg(', Could not find a weapon with that id!');
+		}
+		return;
 	}
+
+	const uid = await p.global.getUid(p.msg.author.id);
+	let sql = `UPDATE IGNORE user_weapon SET pid = NULL WHERE uwid = ${uwid} AND uid = ${uid};`;
+	await p.query(sql);
+
+	p.replyMsg(
+		weaponEmoji,
+		p.replaceMentions(
+			`, Unequipped ${weapon.emoji} **${weapon.name}** from ${animal.value} **${nickname}**`
+		)
+	);
 };
 
 /* Sells a weapon */
@@ -830,41 +850,28 @@ exports.sell = async function (p, uwid) {
 	}
 
 	/* Grab the item we will sell */
-	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat,c.name,c.nickname
-		FROM user
-			LEFT JOIN user_weapon a ON user.uid = a.uid
-			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
-			LEFT JOIN animal c ON a.pid = c.pid
-		WHERE user.id = ${p.msg.author.id} AND a.uwid = ${uwid};`;
-
-	let result = await p.query(sql);
+	const weapon = await this.getWeapon(uwid, p.msg.author.id);
 
 	/* not a real weapon! */
-	if (!result[0]) {
+	if (!weapon) {
 		p.errorMsg(', you do not have a weapon with this id!', 3000);
 		return;
 	}
 
 	/* If an animal is using the weapon */
-	if (result[0] && result[0].name) {
+	if (weapon.animal?.name) {
 		p.errorMsg(', please unequip the weapon to sell it!', 3000);
-		return;
-	}
-
-	/* Parse stats to determine price */
-	let weapon = this.parseWeaponQuery(result);
-	for (let key in weapon) {
-		weapon = this.parseWeapon(weapon[key]);
-	}
-
-	if (!weapon) {
-		p.errorMsg(', you do not have a weapon with this id!', 3000);
 		return;
 	}
 
 	/* Is this weapon sellable? */
 	if (weapon.unsellable) {
 		p.errorMsg(', This weapon cannot be sold!');
+		return;
+	}
+
+	if (weapon.favorite) {
+		p.errorMsg(', unfavorite this weapon to sell!');
 		return;
 	}
 
@@ -875,11 +882,17 @@ exports.sell = async function (p, uwid) {
 		return;
 	}
 
-	sql = `DELETE user_weapon_passive FROM user
+	let sql = `DELETE user_weapon_passive FROM user
 		LEFT JOIN user_weapon ON user.uid = user_weapon.uid
 		LEFT JOIN user_weapon_passive ON user_weapon.uwid = user_weapon_passive.uwid
 		WHERE id = ${p.msg.author.id}
 			AND user_weapon_passive.uwid = ${uwid}
+			AND user_weapon.pid IS NULL;`;
+	sql += `DELETE user_weapon_kills FROM user
+		LEFT JOIN user_weapon ON user.uid = user_weapon.uid
+		LEFT JOIN user_weapon_kills ON user_weapon.uwid = user_weapon_kills.uwid
+		WHERE id = ${p.msg.author.id}
+			AND user_weapon_kills.uwid = ${uwid}
 			AND user_weapon.pid IS NULL;`;
 	sql += `DELETE user_weapon FROM user
 		LEFT JOIN user_weapon ON user.uid = user_weapon.uid
@@ -887,10 +900,10 @@ exports.sell = async function (p, uwid) {
 			AND user_weapon.uwid = ${uwid}
 			AND user_weapon.pid IS NULL;`;
 
-	result = await p.query(sql);
+	let result = await p.query(sql);
 
 	/* Check if deleted */
-	if (result[1].affectedRows == 0) {
+	if (result[2].affectedRows == 0) {
 		p.errorMsg(', you do not have a weapon with this id!', 3000);
 		return;
 	}
@@ -917,15 +930,20 @@ let sellRank = (exports.sellRank = async function (p, rankLoc) {
 	}
 	min *= 100;
 	max *= 100;
+	let lastRank = rankLoc == WeaponInterface.ranks.length - 1;
 
 	/* Grab the item we will sell */
-	let sql = `SELECT a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat
+	let sql = `SELECT
+			a.uwid, a.wid, a.stat, a.rrcount, a.rrattempt, a.wear,
+			b.pcount, b.wpid, b.stat as pstat,
+			c.uwid as tt, c.kills
 		FROM user
 			LEFT JOIN user_weapon a ON user.uid = a.uid
 			LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
-		WHERE user.id = ${p.msg.author.id} AND avg >${
-		min === 0 ? '=' : ''
-	} ${min} AND avg <= ${max} AND a.pid IS NULL LIMIT 500;`;
+			LEFT JOIN user_weapon_kills c ON a.uwid = c.uwid
+		WHERE user.id = ${p.msg.author.id} AND avg >${min === 0 ? '=' : ''} ${min} ${
+		lastRank ? '' : `AND avg <= ${max}`
+	} AND a.pid IS NULL AND a.favorite != 1 LIMIT 500;`;
 
 	let result = await p.query(sql);
 
@@ -971,6 +989,12 @@ let sellRank = (exports.sellRank = async function (p, rankLoc) {
 		WHERE id = ${p.msg.author.id}
 			AND user_weapon_passive.uwid IN ${weaponsSQL}
 			AND user_weapon.pid IS NULL;`;
+	sql += `DELETE user_weapon_kills FROM user
+		LEFT JOIN user_weapon ON user.uid = user_weapon.uid
+		LEFT JOIN user_weapon_kills ON user_weapon.uwid = user_weapon_kills.uwid
+		WHERE id = ${p.msg.author.id}
+			AND user_weapon_kills.uwid IN ${weaponsSQL}
+			AND user_weapon.pid IS NULL;`;
 	sql += `DELETE user_weapon FROM user
 		LEFT JOIN user_weapon ON user.uid = user_weapon.uid
 		WHERE id = ${p.msg.author.id}
@@ -980,13 +1004,13 @@ let sellRank = (exports.sellRank = async function (p, rankLoc) {
 	result = await p.query(sql);
 
 	/* Check if deleted */
-	if (result[1].affectedRows == 0) {
+	if (result[2].affectedRows == 0) {
 		p.errorMsg(', you do not have a weapon with this id!', 3000);
 		return;
 	}
 
 	/* calculate rewards */
-	price *= result[1].affectedRows;
+	price *= result[2].affectedRows;
 
 	/* Give cowoncy */
 	sql = `UPDATE cowoncy SET money = money + ${price} WHERE id = ${p.msg.author.id}`;
@@ -1017,4 +1041,39 @@ let expandUWID = (exports.expandUWID = function (euwid) {
 
 exports.getWID = function (id) {
 	return weapons[id];
+};
+
+exports.getWeapon = async function (uwid, id) {
+	if (!uwid) {
+		return null;
+	}
+
+	/* sql query */
+	let sql = `SELECT
+				user.id,
+				a.uwid, a.wid, a.stat, a.wear, a.rrcount, a.rrattempt, a.pid, a.favorite,
+				b.pcount, b.wpid, b.stat as pstat,
+				c.uwid as tt, c.kills,
+				d.name, d.nickname
+			FROM user
+				INNER JOIN user_weapon a ON user.uid = a.uid
+				LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid
+				LEFT JOIN user_weapon_kills c ON a.uwid = c.uwid
+				LEFT JOIN animal d ON a.pid = d.pid
+			WHERE a.uwid = ${uwid}`;
+	if (id) {
+		sql += ` AND user.id = ${id}`;
+	}
+	let result = await mysql.query(sql);
+
+	/* Check if valid */
+	if (!result[0]) {
+		return null;
+	}
+
+	/* parse weapon to get info */
+	let weapon = this.parseWeaponQuery(result);
+	weapon = weapon[Object.keys(weapon)[0]];
+	weapon = this.parseWeapon(weapon);
+	return weapon;
 };

@@ -25,12 +25,39 @@ module.exports = new CommandInterface({
 
 	group: ['social'],
 
+	appCommands: [
+		{
+			'name': 'level',
+			'type': 1,
+			'description': 'Display your level',
+			'integration_types': [0, 1],
+			'contexts': [0, 1, 2],
+			'options': [
+				{
+					'type': 3,
+					'name': 'type',
+					'description': 'Either server or global level',
+					'choices': [
+						{
+							'name': 'Server',
+							'value': 'server',
+						},
+						{
+							'name': 'Global',
+							'value': 'global',
+						},
+					],
+				},
+			],
+		},
+	],
+
 	cooldown: 15000,
 	half: 100,
 	six: 500,
 
 	execute: async function (p) {
-		let perms = p.msg.member.permissions;
+		let perms = p.msg.member?.permissions;
 		if (p.args.length >= 1 && ['disable', 'disabletext', 'dt'].includes(p.args[0].toLowerCase())) {
 			if (perms.has('manageChannels')) {
 				let sql = `INSERT INTO guild_setting (id,levelup) VALUES (${p.msg.channel.guild.id},1) ON DUPLICATE KEY UPDATE levelup = 1;`;
@@ -58,8 +85,16 @@ module.exports = new CommandInterface({
 		} else {
 			//try{
 			let opt = {};
-			if (p.args[0] == 's' || p.args[0] == 'server' || p.args[0] == 'g' || p.args[0] == 'guild') {
-				opt.guild = true;
+			if (
+				this.options.type === 'server' ||
+				p.args[0] == 's' ||
+				p.args[0] == 'server' ||
+				p.args[0] == 'g' ||
+				p.args[0] == 'guild'
+			) {
+				if (this.msg.channel.guild) {
+					opt.guild = true;
+				}
 			}
 			let uuid = await levelUtil.display(p, p.msg.author, opt);
 
@@ -71,7 +106,7 @@ module.exports = new CommandInterface({
 			let url = `${process.env.GEN_HOST}/level/${uuid}.png`;
 			let data = await p.DataResolver.urlToBuffer(url);
 			await p.send('', null, { file: data, name: 'level.png' });
-			if (!opt.guild) await levelRewards.distributeRewards(p.msg);
+			if (!opt.guild && this.msg.channel?.guild) await levelRewards.distributeRewards(p.msg);
 			/*
 			}catch(e){
 				console.error(e);

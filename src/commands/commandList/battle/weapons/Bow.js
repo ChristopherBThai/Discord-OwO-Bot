@@ -22,6 +22,15 @@ module.exports = class Bow extends WeaponInterface {
 			'<:lbow:535283613391126529>',
 			'<:fbow:535283614099832872>',
 		];
+		this.pristineEmojis = [
+			'<:pcbow:1132227780919165034>',
+			'<:pubow:1132229449723678872>',
+			'<:prbow:1132229191652347904>',
+			'<:pebow:1132228078471479336>',
+			'<:pmbow:1132229018855428177>',
+			'<:plbow:1132228549663785050>',
+			'<:pfbow:1132228241684447322>',
+		];
 		this.defaultEmoji = '<:bow:538196864277807105>';
 		this.statDesc = 'Deals **?%** of your ' + WeaponInterface.strEmoji + 'STR to a random opponent';
 		this.availablePassives = 'all';

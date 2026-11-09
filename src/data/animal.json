@@ -1,0 +1,155 @@
+{
+	"ranks": {
+		"patreon": {
+			"rarity": 0.5,
+			"order": 5,
+			"emoji": "<:patreon:449705754522419222>",
+			"alias": ["p"],
+			"price": 1000,
+			"points": 500,
+			"essence": 500,
+			"xp": 400,
+			"conditional": true
+		},
+		"cpatreon": {
+			"rarity": 0.01,
+			"order": 12,
+			"emoji": "<a:cpatreon:483053960337293321>",
+			"alias": ["cp"],
+			"price": 50000,
+			"points": 25000,
+			"essence": 25000,
+			"xp": 2000,
+			"conditional": true
+		},
+		"common": {
+			"rarity": 58.8489,
+			"order": 1,
+			"emoji": "<:common:416520037713838081>",
+			"alias": ["c"],
+			"price": 1,
+			"points": 1,
+			"essence": 1,
+			"xp": 1,
+			"placeholder": [":bee:", ":bug:", ":snail:", ":beetle:", ":butterfly:"]
+		},
+		"uncommon": {
+			"rarity": 30,
+			"order": 2,
+			"emoji": "<:uncommon:416520056269176842>",
+			"alias": ["u", "uc"],
+			"price": 3,
+			"points": 5,
+			"essence": 5,
+			"xp": 10,
+			"placeholder": [":baby_chick:", ":mouse2:", ":rooster:", ":rabbit2:", ":chipmunk:"]
+		},
+		"rare": {
+			"rarity": 10,
+			"order": 3,
+			"emoji": "<:rare:416520066629107712>",
+			"alias": ["r"],
+			"price": 10,
+			"points": 20,
+			"essence": 20,
+			"xp": 20,
+			"placeholder": [":sheep:", ":pig2:", ":cow2:", ":dog2:", ":cat2:"]
+		},
+		"epic": {
+			"rarity": 1,
+			"order": 4,
+			"emoji": "<:epic:416520722987614208>",
+			"alias": ["e"],
+			"price": 250,
+			"points": 250,
+			"essence": 250,
+			"xp": 400,
+			"placeholder": [":crocodile:", ":tiger2:", ":penguin:", ":elephant:", ":whale:"]
+		},
+		"mythical": {
+			"rarity": 0.1,
+			"order": 7,
+			"emoji": "<:mythic:416520808501084162>",
+			"alias": ["m", "mythic"],
+			"price": 5000,
+			"points": 3000,
+			"essence": 3000,
+			"xp": 1000,
+			"placeholder": [":dragon:", ":unicorn:", ":snowman2:", ":ghost:", ":dove:"]
+		},
+		"legendary": {
+			"rarity": 0.05,
+			"order": 9,
+			"emoji": "<a:legendary:417955061801680909>",
+			"alias": ["l", "legend"],
+			"price": 15000,
+			"points": 10000,
+			"essence": 10000,
+			"xp": 2000
+		},
+		"fabled": {
+			"rarity": 0.001,
+			"order": 13,
+			"emoji": "<a:fabled:438857004493307907>",
+			"alias": ["f"],
+			"price": 250000,
+			"points": 100000,
+			"essence": 100000,
+			"xp": 100000
+		},
+		"hidden": {
+			"rarity": 0.0001,
+			"order": 14,
+			"emoji": "<a:hidden:459203677438083074>",
+			"alias": ["h"],
+			"price": 1000000,
+			"points": 500000,
+			"essence": 500000,
+			"xp": 300000
+		},
+		"special": {
+			"rarity": 0,
+			"order": 6,
+			"emoji": "<:special:427935192137859073>",
+			"alias": ["s"],
+			"price": 6000,
+			"points": 500,
+			"essence": 5000,
+			"xp": 500,
+			"conditional": true
+		},
+		"gem": {
+			"rarity": 0.01,
+			"order": 8,
+			"emoji": "<a:gem:510023576489951232>",
+			"alias": ["g"],
+			"price": 30000,
+			"points": 20000,
+			"essence": 20000,
+			"xp": 5000,
+			"conditional": true
+		},
+		"bot": {
+			"rarity": 0,
+			"order": 10,
+			"emoji": "<a:botrank:716545289497870407>",
+			"alias": ["b"],
+			"price": 50000,
+			"points": 30000,
+			"essence": 10000,
+			"xp": 100000,
+			"conditional": true
+		},
+		"distorted": {
+			"rarity": 0.00025,
+			"order": 11,
+			"emoji": "<a:distorted:728812986147274835>",
+			"alias": ["d"],
+			"price": 300000,
+			"points": 200000,
+			"essence": 200000,
+			"xp": 100000,
+			"conditional": true
+		}
+	}
+}

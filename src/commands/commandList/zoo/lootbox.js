@@ -31,25 +31,51 @@ module.exports = new CommandInterface({
 
 	group: ['animals'],
 
+	appCommands: [
+		{
+			'name': 'lootbox',
+			'type': 1,
+			'description': 'Open a lootbox',
+			'options': [
+				{
+					'type': 3,
+					'name': 'count',
+					'description': 'Number of lootboxes: [number, "all", "fabled"]',
+				},
+			],
+			'integration_types': [0, 1],
+			'contexts': [0, 1, 2],
+		},
+	],
+
 	cooldown: 5000,
 	half: 100,
 	six: 500,
 
-	execute: async function (p) {
-		if (p.args.length > 0 && p.global.isInt(p.args[0])) await openMultiple(p, parseInt(p.args[0]));
-		else if (p.args.length > 0 && p.args[0].toLowerCase() == 'all') {
-			let sql = `SELECT boxcount FROM lootbox WHERE id = ${p.msg.author.id};`;
-			let result = await p.query(sql);
-			if (!result || result[0].boxcount <= 0) {
-				p.errorMsg(", you don't have any more lootboxes!");
+	execute: async function () {
+		if (this.args.length > 0 && this.global.isInt(this.args[0])) {
+			await openMultiple(this, parseInt(this.args[0]));
+		} else if (this.options.count && this.global.isInt(this.options.count)) {
+			await openMultiple(this, parseInt(this.options.count));
+		} else if (
+			(this.args.length > 0 && this.args[0].toLowerCase() == 'all') ||
+			(this.options.count && this.options.count.toLowerCase() == 'all')
+		) {
+			let sql = `SELECT boxcount FROM lootbox WHERE id = ${this.msg.author.id};`;
+			let result = await this.query(sql);
+			if (!result[0] || result[0].boxcount <= 0) {
+				this.errorMsg(", you don't have any more lootboxes!");
 				return;
 			}
 			let boxcount = result[0].boxcount;
 			if (boxcount > maxBoxes) boxcount = maxBoxes;
-			await openMultiple(p, boxcount);
-		} else if (p.args.length && ['f', 'fabled'].includes(p.args[0].toLowerCase())) {
-			await openFabledBox(p);
-		} else await openBox(p);
+			await openMultiple(this, boxcount);
+		} else if (
+			(this.args.length && ['f', 'fabled'].includes(this.args[0].toLowerCase())) ||
+			(this.options.count && ['f', 'fabled'].includes(this.options.count.toLowerCase()))
+		) {
+			await openFabledBox(this);
+		} else await openBox(this);
 	},
 });
 

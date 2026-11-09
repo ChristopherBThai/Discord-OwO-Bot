@@ -6,6 +6,21 @@
  */
 
 const CommandInterface = require('../../CommandInterface.js');
+const patreonUtil = require('../patreon/utils/patreonUtil.js');
+
+const voteComponent = [
+	{
+		type: 1,
+		components: [
+			{
+				type: 2,
+				label: 'Vote Now!',
+				style: 5,
+				url: 'https://top.gg/bot/408785106942164992/vote',
+			},
+		],
+	},
+];
 
 module.exports = new CommandInterface({
 	alias: ['vote'],
@@ -30,16 +45,15 @@ module.exports = new CommandInterface({
 		let id = p.msg.author.id;
 		const voted = await p.dbl.hasVoted('' + p.msg.author.id);
 		if (!voted) {
-			let text = '**☑ | Your daily vote is available!**\n';
-			text += '**<:blank:427371936482328596> |** You can vote every 12 hours!\n';
+			let text = `**${p.config.emoji.check} | Your daily vote is available!**\n`;
+			text += '**<:blank:427371936482328596> |** You can vote every 12 hours!';
 			//text += "**⚠ |** Automatic votes are currently broken!\n";
 			//text += "**<:blank:427371936482328596> |** Please retype `owo vote` 1-10min after you vote!\n";
-			text += '**<:blank:427371936482328596> |** https://top.gg/bot/408785106942164992/vote';
-			p.send(text);
+			p.send({ content: text, components: voteComponent });
 			return;
 		}
 		let weekend = await p.dbl.isWeekend();
-		let patreon = await hasPatreon.bind(this)();
+		let patreon = await patreonUtil.getSupporterRank(p, p.msg.author);
 
 		let sql = `SELECT count,TIMESTAMPDIFF(HOUR,date,NOW()) AS time FROM vote WHERE id = ${id};`;
 		let result = await this.query(sql);
@@ -47,7 +61,7 @@ module.exports = new CommandInterface({
 		if (result[0] == undefined) {
 			let box = getRandomBox.bind(this)();
 			let reward = 100;
-			let patreonBonus = patreon ? reward : 0;
+			let patreonBonus = patreon.benefitRank >= 3 ? reward : 0;
 			let weekendBonus = weekend ? reward : 0;
 
 			sql =
@@ -64,14 +78,11 @@ module.exports = new CommandInterface({
 				'** cowoncy for voting!' +
 				patreonMsg(patreonBonus) +
 				'\n';
-			if (weekend)
-				text +=
-					"**⛱ |** It's the weekend! You also earned a bonus of **" +
-					weekendBonus +
-					'** cowoncy!\n';
+			if (weekend) {
+				text += `**${p.config.emoji.beach} |** It's the weekend! You also earned a bonus of **${weekendBonus}** cowoncy!\n`;
+			}
 			text += box.text;
-			text += '**<:blank:427371936482328596> |** https://top.gg/bot/408785106942164992/vote';
-			p.send(text);
+			p.send({ content: text, components: voteComponent });
 
 			p.logger.incr('votecount', 1, {}, p.msg);
 			p.logger.incr('cowoncy', reward + patreonBonus + weekendBonus, { type: 'vote' }, p.msg);
@@ -90,32 +101,25 @@ module.exports = new CommandInterface({
 				box.sql;
 			await this.query(sql);
 
-			let text =
-				'**☑ |** You have received **' +
-				bonus +
-				'** cowoncy for voting!' +
-				patreonMsg(patreonBonus) +
-				'\n';
-			if (weekend)
-				text +=
-					"**⛱ |** It's the weekend! You also earned a bonus of **" +
-					weekendBonus +
-					'** cowoncy!\n';
+			let text = `**${
+				p.config.emoji.check
+			} |** You have received **${bonus}** cowoncy for voting!${patreonMsg(patreonBonus)}\n`;
+			if (weekend) {
+				text += `**${p.config.emoji.beach} |** It's the weekend! You also earned a bonus of **${weekendBonus}** cowoncy!\n`;
+			}
 			text += box.text;
-			text += '**<:blank:427371936482328596> |** https://top.gg/bot/408785106942164992/vote';
-			p.send(text);
+			p.send({ content: text, components: voteComponent });
 
 			p.logger.incr('votecount', 1, {}, p.msg);
 			p.logger.incr('cowoncy', bonus + patreonBonus + weekendBonus, { type: 'vote' }, p.msg);
 		} else {
-			let text = '**☑ |** Click the link to vote and gain 100+ cowoncy!\n';
+			let text = `**${p.config.emoji.check} |** Click the link to vote and gain 100+ cowoncy!\n`;
 			text += '**<:blank:427371936482328596> |** You can vote every 12 hours!\n';
 			text +=
 				'**<:blank:427371936482328596> |** Your daily vote is available in **' +
 				(12 - result[0].time) +
 				' H**\n';
-			text += '**<:blank:427371936482328596> |** https://top.gg/bot/408785106942164992/vote';
-			p.send(text);
+			p.send({ content: text, components: voteComponent });
 		}
 	},
 });
@@ -127,21 +131,6 @@ function patreonMsg(amount) {
 		amount +
 		'** cowoncy for being a <:patreon:449705754522419222> Patreon!'
 	);
-}
-
-async function hasPatreon() {
-	let sql = `SELECT IF(
-				patreonDaily = 1
-				OR ((TIMESTAMPDIFF(MONTH,patreonTimer,NOW())<patreonMonths) AND patreons.patreonType = 3)
-				OR (endDate > NOW() AND patreon_wh.patreonType = 3)
-			,1,0) as patreon
-			FROM user
-				LEFT JOIN patreons ON user.uid = patreons.uid
-				LEFT JOIN patreon_wh ON user.uid = patreon_wh.uid
-			WHERE user.id = ${this.msg.author.id};`;
-	let result = this.query(sql);
-
-	return result[0] && result[0].patreon == 1;
 }
 
 function getRandomBox() {

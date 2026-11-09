@@ -41,14 +41,13 @@ module.exports = new CommandInterface({
 			return;
 		}
 
-		let sql =
-			'SELECT * FROM animal WHERE id = ' + msg.author.id + " AND name = '" + animal.value + "';";
-		sql += "SELECT SUM(totalcount) as total FROM animal WHERE name = '" + animal.value + "';";
+		let sql = `SELECT * FROM animal WHERE id = ${msg.author.id} AND name = '${animal.value}';`;
 		let result = await p.query(sql);
-		if (!result[0][0]) {
+		if (!result[0]) {
 			p.errorMsg(', I could not find that animal in your zoo!', 3000);
 			return;
 		}
+		const totalAnimals = await this.cache.getAnimalCount(animal.value, 6 * 60 * 60 * 1000);
 
 		let emoji = animal.uni ? animal.uni : animal.value;
 		let temp;
@@ -59,24 +58,24 @@ module.exports = new CommandInterface({
 			emoji = temp;
 		} else emoji = undefined;
 
-		let rankEmoji = p.animals.ranks[animal.rank];
+		let rankEmoji = p.animalUtil.getRank(animal.rank).emoji;
 		let points = animal.points;
 		let sell = '???';
-		if (result[0][0].sellcount > 0)
-			sell = animal.price + ' Cowoncy | ' + global.toFancyNum(result[0][0].sellcount) + ' sold';
+		if (result[0].sellcount > 0)
+			sell = animal.price + ' Cowoncy | ' + global.toFancyNum(result[0].sellcount) + ' sold';
 		let sac = '???';
-		if (result[0][0].saccount > 0)
-			sac = animal.essence + ' Essence | ' + global.toFancyNum(result[0][0].saccount) + ' killed';
+		if (result[0].saccount > 0)
+			sac = animal.essence + ' Essence | ' + global.toFancyNum(result[0].saccount) + ' killed';
 		let alias = 'None';
-		if (animal.alt.length > 0) alias = animal.alt.join(', ');
-		let phys = `<:hp:531620120410456064> \`${animal.hpr}\` <:att:531616155450998794> \`${animal.attr}\` <:pr:531616156222488606> \`${animal.prr}\` `;
-		let mag = `<:wp:531620120976687114> \`${animal.wpr}\` <:mag:531616156231139338> \`${animal.magr}\` <:mr:531616156226945024> \`${animal.mrr}\` `;
-		let rarity = global.toFancyNum(result[1][0].total) + ' total caught';
+		if (animal.alt.length > 0) alias = animal.alt.slice(1).join(', ');
+		let phys = `<:hp:531620120410456064> \`${animal.hp}\` <:att:531616155450998794> \`${animal.att}\` <:pr:531616156222488606> \`${animal.pr}\` `;
+		let mag = `<:wp:531620120976687114> \`${animal.wp}\` <:mag:531616156231139338> \`${animal.mag}\` <:mr:531616156226945024> \`${animal.mr}\` `;
+		let rarity = global.toFancyNum(totalAnimals) + ' total caught';
 		let nickname = '';
-		if (result[0][0].nickname) nickname = '**Nickname:** ' + result[0][0].nickname + '\n';
+		if (result[0].nickname) nickname = '**Nickname:** ' + result[0].nickname + '\n';
 		let desc = "*No description created\nHave a fun/creative description?\nUse 'owo feedback'!*";
-		if (animal.desc) {
-			desc = '*' + animal.desc.trim() + '*';
+		if (animal.description) {
+			desc = '*' + animal.description.trim() + '*';
 			let ids = desc.match(/\?[0-9]+\?/g);
 			for (let i in ids) {
 				let descID = ids[i].match(/[0-9]+/);
@@ -139,9 +138,9 @@ module.exports = new CommandInterface({
 				'\n\n' +
 				nickname +
 				'**Count:** ' +
-				result[0][0].count +
+				result[0].count +
 				'/' +
-				result[0][0].totalcount +
+				result[0].totalcount +
 				'\n**Rank:** ' +
 				rankEmoji +
 				' ' +

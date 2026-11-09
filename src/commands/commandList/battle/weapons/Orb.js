@@ -21,6 +21,15 @@ module.exports = class Orb extends WeaponInterface {
 			'<:lorb:548783162566901770>',
 			'<:forb:548783035244478474>',
 		];
+		this.pristineEmojis = [
+			'<:pcorb:1132227951245664398>',
+			'<:puorb:1132229460935049257>',
+			'<:prorb:1132229279426564156>',
+			'<:peorb:1132228200966144060>',
+			'<:pmorb:1132229031429935176>',
+			'<:plorb:1132228607763288074>',
+			'<:pforb:1132228359791837214>',
+		];
 		this.defaultEmoji = '<:orb:548783216379559966>';
 		this.statDesc = 'This weapon has no active ability, but comes with two passives!';
 		this.availablePassives = 'all';

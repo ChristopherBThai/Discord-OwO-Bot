@@ -113,6 +113,7 @@ async function rrQuest(p) {
 		p.msg.author.id +
 		') ORDER BY qid asc;';
 	result = await p.query(sql);
+	p.cache.clearQuests(p.msg.author.id);
 
 	/* Display the result */
 	let quests = parseQuests(p.msg.author.id, result[3], afterMid);
@@ -150,6 +151,7 @@ async function lockUnlockQuest(p) {
 	sql += `SELECT questTime FROM timers WHERE uid = (SELECT uid FROM user WHERE id = ${p.msg.author.id});`;
 
 	result = await p.query(sql);
+	p.cache.clearQuests(p.msg.author.id);
 
 	/* Parse dates */
 	let afterMid = dateUtil.afterMidnight(result[2][0] ? result[2][0].questTime : undefined);
@@ -201,7 +203,10 @@ async function addQuest(p) {
 	if (quest) sql += quest.sql;
 	if (quests) sql += quests.sql;
 
-	if (sql != '') await p.query(sql);
+	if (sql != '') {
+		await p.query(sql);
+		p.cache.clearQuests(p.msg.author.id);
+	}
 
 	/*Create embed */
 	let embed = constructEmbed(p, afterMid, quests);
@@ -219,7 +224,7 @@ function constructEmbed(p, afterMid, quests) {
 			name: `${p.getName()}'s Quest Log`,
 			icon_url: p.msg.author.avatarURL,
 		},
-		description: quests.text,
+		description: `These quests belong to ${p.getTag()}\n${quests.text}`,
 	};
 }
 
@@ -289,7 +294,7 @@ function parseQuests(id, result, afterMid, quest) {
 	for (let i = 0; i < result.length; i++) {
 		const texts = parseQuest(result[i]);
 		text += `**${i + 1}. ${texts.text}**`;
-		text += `\n<:blank:427371936482328596>\`‣ Reward:\` ${texts.reward}`;
+		text += `<:blank:427371936482328596>\`‣ Reward:\` ${texts.reward}`;
 		text += `\n<:blank:427371936482328596>\`‣ Progress: [${texts.progress}]\`\n`;
 		if (texts.locked) {
 			text += '<:blank:427371936482328596>`‣ 🔒 Locked`\n';

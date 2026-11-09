@@ -37,4 +37,7 @@ function compute(expression) {
 	return limitedEvaluate(expression);
 }
 
-workerpool.worker({ compute: compute });
+// Not a child process if registering app commands, it will fail
+if (!process.env.REGITER_COMMANDS) {
+	workerpool.worker({ compute: compute });
+}

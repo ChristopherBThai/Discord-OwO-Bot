@@ -22,6 +22,15 @@ module.exports = class SpiritStaff extends WeaponInterface {
 			'<:lsstaff:572984069726404639>',
 			'<:fsstaff:572984070234046465>',
 		];
+		this.pristineEmojis = [
+			'<:pcsstaff:1132227959156117596>',
+			'<:pusstaff:1132229536113762355>',
+			'<:prsstaff:1132229390823071766>',
+			'<:pesstaff:1132228232486334514>',
+			'<:pmsstaff:1132229132344897596>',
+			'<:plsstaff:1132228941017522186>',
+			'<:pfsstaff:1132228539769430026>',
+		];
 		this.defaultEmoji = '<:sstaff:572984070158680088>';
 		this.statDesc =
 			'Heal all allies for **?%** of your ' +
@@ -65,7 +74,7 @@ module.exports = class SpiritStaff extends WeaponInterface {
 				subLogs.push(hl.logs);
 				// Apply buff
 				let buff = this.getBuffs(me)[0];
-				let buffLogs = buff.bind(team[i], 2, {
+				let buffLogs = buff.attemptBind(team[i], 2, {
 					me: team[i],
 					allies: team,
 					enemies: enemy,

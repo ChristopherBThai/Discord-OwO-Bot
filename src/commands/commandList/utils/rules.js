@@ -6,11 +6,15 @@
  */
 
 const CommandInterface = require('../../CommandInterface.js');
+const mysql = require('../../../botHandlers/mysqlHandler.js');
 
 const description =
 	'•  Any actions performed to gain an unfair advantage over other users are explicitly against the rules. This includes but not limited to:\n├> Using macros/scripts for any commands\n└> Using multiple accounts for any reason\n\n•  Do **not** use any exploits and report any found in the bot\n\n•  You can **not** sell/trade cowoncy or any bot goods for anything outside of the bot\n\n•  If you have any questions come ask us in our [server](https://discord.gg/owobot)!\n\n[Privacy Policy](https://owobot.com/privacy-policy)   **-**   [Terms of Service](https://owobot.com/terms-of-service)';
 const agreeEmoji = '👍';
 const warningEmoji = '⚠️';
+
+let agreeCount = 0;
+setInterval(updateCount, 1000 * 60 * 60 * 3);
 
 module.exports = new CommandInterface({
 	alias: ['rule', 'rules'],
@@ -34,22 +38,18 @@ module.exports = new CommandInterface({
 	execute: async function (p) {
 		/* Query for agree/disagree votes */
 		let sql = 'SELECT rules.* FROM rules INNER JOIN user ON user.uid = rules.uid WHERE id = ?;';
-		sql += 'SELECT COUNT(*) as agree FROM rules WHERE opinion = 1;';
-		sql += 'SELECT COUNT(*) as disagree FROM rules WHERE opinion = -1;';
 		let result = await p.query(sql, [BigInt(p.msg.author.id)]).catch(console.error);
 
 		/* Parse query result */
 		let voted = false;
-		if (result[0][0]) voted = true;
-		let agree = 0;
-		if (result[1][0]) agree = parseInt(result[1][0].agree);
+		if (result[0]) voted = true;
 
 		/* Construct embed message */
 		let descriptionExtra = '';
 		if (!voted)
 			descriptionExtra =
 				'\n\n*Clicking on the button means you will follow the rules and acknowlege the consequences*';
-		else if (result[0][0].opinion == 1)
+		else if (result[0].opinion == 1)
 			descriptionExtra = "\n\nOwO what's this? You already agreed to these rules! <3";
 		else
 			descriptionExtra = '\n\nUwU you disagreed! You still have to follow these rules though! c:<';
@@ -58,7 +58,7 @@ module.exports = new CommandInterface({
 			description: description + descriptionExtra,
 			color: p.config.embed_color,
 			footer: {
-				text: p.global.toFancyNum(agree) + ' Users agreed',
+				text: p.global.toFancyNum(agreeCount) + ' Users agreed',
 			},
 			author: {
 				name: 'OwO Bot Rules',
@@ -106,7 +106,7 @@ module.exports = new CommandInterface({
 			// Construct sql
 			let sql =
 				'INSERT IGNORE INTO rules (uid,opinion) VALUES ((SELECT uid FROM user WHERE id = ?),1)';
-			embed.footer.text = p.global.toFancyNum(agree + 1) + ' Users agreed';
+			embed.footer.text = p.global.toFancyNum(agreeCount + 1) + ' Users agreed';
 			embed.description = description + "\n\nOwO what's this? You agreed to these rules! <3";
 			sql = 'INSERT IGNORE INTO user (id,count) VALUES (?,0);' + sql;
 
@@ -135,3 +135,10 @@ module.exports = new CommandInterface({
 		});
 	},
 });
+
+async function updateCount() {
+	const sql = 'SELECT COUNT(*) as agree FROM rules WHERE opinion = 1;';
+	const result = await mysql.query(sql);
+	agreeCount = result[0]?.agree || 0;
+}
+updateCount();

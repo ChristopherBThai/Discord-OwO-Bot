@@ -6,12 +6,16 @@
  */
 /* eslint-disable no-unused-vars */
 const Tags = require('./util/tags.js');
+const Logs = require('./util/logUtil.js');
+const WeaponInterface = require('./WeaponInterface.js');
 
 module.exports = class BuffInterface {
 	/* Constructor */
-	constructor(from, qualities, duration, noCreate) {
+	constructor(from, qualities, duration, noCreate, opt = {}) {
 		this.init();
 		if (noCreate) return;
+
+		this.wear = WeaponInterface.getWear(opt.wear);
 
 		/* Initialize random qualities if it doesnt have any */
 		if (!qualities) qualities = this.randomQualities();
@@ -19,6 +23,7 @@ module.exports = class BuffInterface {
 
 		/* Calculate avg quality of this buff */
 		let avgQuality = qualities.reduce((a, b) => a + b, 0) / qualities.length;
+		avgQuality += this.wearBuff;
 
 		/* Construct stats based on qualities */
 		let stats = this.toStats(qualities);
@@ -55,6 +60,7 @@ module.exports = class BuffInterface {
 			let quality = qualities[i];
 			if (quality > 100) quality = 100;
 			if (quality < 0) quality = 0;
+			quality += this.wearBuff;
 			let min = this.qualityList[i][0];
 			let max = this.qualityList[i][1];
 
@@ -63,6 +69,36 @@ module.exports = class BuffInterface {
 		}
 		return stats;
 	}
+
+	attemptBind(animal, duration, tags) {
+		if (!(tags instanceof Tags)) {
+			tags = new Tags({
+				me: tags.me,
+				allies: tags.allies,
+				enemies: tags.enemies,
+			});
+		}
+
+		let logs = new Logs();
+		let preLogs = new Logs();
+		let dontBind = false;
+
+		for (let i in animal.buffs) {
+			const preBindResult = animal.buffs[i].preBind(animal, duration, tags, this) || {};
+			dontBind = dontBind || preBindResult.dontBind;
+			preLogs.push(preBindResult.logs);
+		}
+
+		if (!dontBind) {
+			logs.push(this.bind(animal, duration, tags));
+		}
+
+		logs.push(preLogs);
+		return logs;
+	}
+
+	/* before buff is binded */
+	preBind(animal, duration, tags) {}
 
 	/* Bind this buff to an animal */
 	bind(animal, duration, tags) {
@@ -129,5 +165,9 @@ module.exports = class BuffInterface {
 	}
 	static get getQualityList() {
 		return new this(null, null, null, true).qualityList;
+	}
+
+	get wearBuff() {
+		return this.wear?.buff || 0;
 	}
 };

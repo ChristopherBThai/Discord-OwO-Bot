@@ -22,6 +22,15 @@ module.exports = class LeechingScythe extends WeaponInterface {
 			'<:llsyth:1107927034308612097>',
 			'<:flsyth:1107927033222279268>',
 		];
+		this.pristineEmojis = [
+			'<:pclsyth:1132227949060427867>',
+			'<:pulsyth:1132229459370586222>',
+			'<:prlsyth:1132229246912315413>',
+			'<:pelsyth:1132228199548456990>',
+			'<:pmlsyth:1132229029756407818>',
+			'<:pllsyth:1132228605439647885>',
+			'<:pflsyth:1132228357728239717>',
+		];
 		this.defaultEmoji = '<:lsyth:1107927037190090804>';
 		this.statDesc = `Deal **?%** of your ${WeaponInterface.strEmoji}STR to a random enemy and apply **Leech** for 3 turns. If the **Leech** debuff is already on the target, deal **+?%** more damage.`;
 		this.availablePassives = 'all';
@@ -60,7 +69,7 @@ module.exports = class LeechingScythe extends WeaponInterface {
 		if (attacking.buffs.findIndex((buff) => buff.id === this.buffList[0]) < 0) {
 			appliedLeech = true;
 			let buff = this.getBuffs(me)[0];
-			buffLogs = buff.bind(attacking, 3, {
+			buffLogs = buff.attemptBind(attacking, 3, {
 				me,
 				allies: team,
 				enemies: enemy,

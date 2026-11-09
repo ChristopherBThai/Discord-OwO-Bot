@@ -5,13 +5,21 @@
  * For more information, see README.md and LICENSE
  */
 const events = require('../data/event.json');
-const itemUtil = require('../commands/commandList/shop/util/itemUtil.js');
-const rewardUtil = require('./rewardUtil.js');
-const dailyMax = 5;
+//const itemUtil = require('../commands/commandList/shop/util/itemUtil.js');
+let rewardUtil;
+const eventMax = 10;
 const itemToEvents = {};
 for (const key in events) {
 	const event = events[key];
-	itemToEvents[event.item.id] = event;
+	if (typeof event.start === 'string') {
+		event.start = new Date(event.start).getTime();
+	}
+	if (typeof event.end === 'string') {
+		event.end = new Date(event.end).getTime();
+	}
+	if (event.item) {
+		itemToEvents[event.item.id] = event;
+	}
 }
 
 let activeEvents = {};
@@ -60,14 +68,17 @@ exports.useItem = async function (item) {
 	this.send(text);
 };
 
-exports.getEventItem = async function () {
-	const event = getCurrentActive();
+const getEventItem = (exports.getEventItem = async function ({ overrideEvent, overrideItem } = {}) {
+	const event = getCurrentActive(overrideEvent);
 	if (!event) return;
-
+	const random = Math.random();
+	if (!overrideEvent && random >= event.chance) {
+		return;
+	}
 	// Cache if user is done today
 	let today = new Date();
 	today = today.toLocaleDateString();
-	if (this.msg.author.eventItemDone) {
+	if (!overrideEvent && this.msg.author.eventItemDone) {
 		const date = this.msg.author.eventItemDone;
 		if (date === today) {
 			return;
@@ -80,56 +91,57 @@ exports.getEventItem = async function () {
 	const con = await this.startTransaction();
 	let claimed;
 	try {
-		let rand = Math.random();
-		let sql = `SELECT * FROM user_item WHERE uid = ${uid} AND name = '${event.item.id}';`;
+		let sql = `SELECT * FROM user_event WHERE uid = ${uid} AND name = '${event.type}';`;
 		const result = await con.query(sql);
 		claimed = (result[0]?.claim_count || 0) + 1;
 
 		const reset = this.dateUtil.afterMidnight(result[0]?.claim_reset);
-		if (result[0] && result[0]?.claim_count >= dailyMax && !reset.after) {
+		if (!overrideEvent && result[0] && result[0]?.claim_count >= eventMax && !reset.after) {
 			this.msg.author.eventItemDone = today;
 			con.rollback();
 			return;
 		}
 		if (reset.after) {
-			rand = 0;
 			claimed = 1;
 		}
 
-		if (rand > event.item.chance) {
-			con.rollback();
-			return;
-		}
-
-		sql = `INSERT INTO user_item (uid, name, count, claim_reset, claim_count) VALUES 
-						(${uid}, '${event.item.id}', 1, ${reset.sql}, 1) ON DUPLICATE KEY UPDATE
-						count = count + 1, claim_count = ${claimed}, claim_reset = ${reset.sql};`;
+		sql = `INSERT INTO user_event (uid, name, claim_reset, claim_count) VALUES 
+						(${uid}, '${event.type}', ${reset.sql}, 1) ON DUPLICATE KEY UPDATE
+						claim_count = ${claimed}, claim_reset = ${reset.sql};`;
 		await con.query(sql);
+
+		const { rewardSql, rewardTxt, rewardEmoji } = await getEventRewards.bind(this)(
+			this.msg.author,
+			con,
+			event,
+			overrideItem
+		);
+		if (rewardSql) {
+			await con.query(rewardSql);
+		}
+		this.send(`${rewardEmoji} **|** \`[${claimed}/${eventMax}]\` ${rewardTxt}`);
+
 		await con.commit();
 	} catch (err) {
 		console.error(err);
 		con.rollback();
 		return;
 	}
+});
 
-	const item = itemUtil.getByName(event.item.id);
-	const text =
-		event.item.foundText.replaceAll('?emoji?', event.item.emoji) +
-		` \`[${claimed}/${dailyMax}]\`\n${this.config.emoji.blank} **|** To use this item, type \`owo use ${item.id}\``;
-
-	this.send(text);
+exports.getAllItems = async function (overrideEvent) {
+	const event = events[overrideEvent];
+	if (!event) {
+		this.errorMsg(', no event');
+		return;
+	}
+	for (let overrideItem in event.rewards) {
+		await getEventItem.bind(this)({ overrideEvent, overrideItem });
+	}
 };
 
 exports.isValentines = function () {
-	// TODO remove next year
-	if (Date.now() < 1676448000000) {
-		return false;
-	}
-	return isEventActive(events['valentine']);
-};
-
-exports.getValentines = function () {
-	return events['valentine'];
+	return getCurrentActive()?.type === 'valentine';
 };
 
 function isEventActive(event) {
@@ -147,14 +159,21 @@ function isEventActive(event) {
 function setActiveEvents() {
 	activeEvents = {};
 	for (const key in events) {
-		if (Date.now() < events[key].end) {
-			activeEvents[key] = events[key];
+		const event = events[key];
+		if (Date.now() < event.end) {
+			event.id = key;
+			activeEvents[key] = event;
 		}
 	}
-	console.log('Active Events: ' + JSON.stringify(activeEvents, null, 2));
+	console.log('Upcoming/Active: ' + Object.keys(activeEvents));
+	const current = getCurrentActive();
+	console.log('Current: ' + current?.id);
 }
 
-function getCurrentActive() {
+function getCurrentActive(override) {
+	if (override) {
+		return events[override];
+	}
 	let resetActive = false;
 	for (const key in activeEvents) {
 		if (isEventActive(activeEvents[key])) {
@@ -167,6 +186,8 @@ function getCurrentActive() {
 		setActiveEvents();
 	}
 }
+
+exports.getCurrentActive = getCurrentActive;
 
 function getEventByItem(itemName) {
 	return itemToEvents[itemName];
@@ -202,3 +223,33 @@ async function parseReward(reward, con) {
 	const uid = await this.global.getUserUid(this.msg.author);
 	return rewardUtil.getReward(this.msg.author.id, uid, con, reward.type, reward.id, reward.count);
 }
+
+async function getEventRewards(user, con, event, override) {
+	const id = user.id;
+	const uid = await this.global.getUserUid(user);
+	if (!event.rewardTotal) {
+		event.rewardTotal = event.rewards.reduce((acc, curr) => acc + curr.chance, 0);
+	}
+	const reward =
+		event.rewards[override] || this.global.selectRandom(event.rewards, event.rewardTotal);
+
+	let count = reward.count;
+	if (reward.min && reward.max) {
+		count = reward.min + Math.floor(Math.random() * (reward.max - reward.min));
+	}
+	const result = await rewardUtil.getReward(id, uid, con, reward.type, reward.id, count);
+
+	let rewardTxt = reward.text;
+	for (let key in result) {
+		rewardTxt = rewardTxt.replaceAll(`?${key}?`, result[key]);
+	}
+	return {
+		rewardTxt,
+		rewardEmoji: reward.textEmoji,
+		rewardSql: result.sql,
+	};
+}
+
+exports.init = async function (main) {
+	rewardUtil = main.rewardUtil;
+};

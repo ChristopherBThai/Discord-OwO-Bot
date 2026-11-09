@@ -22,6 +22,15 @@ module.exports = class GreatSword extends WeaponInterface {
 			'<:lgreatsword:535279249058168852>',
 			'<:fgreatsword:535279248923951116>',
 		];
+		this.pristineEmojis = [
+			'<:pcsword:1132227960473145446>',
+			'<:pusword:1132229537455935588>',
+			'<:prsword:1132229392681148446>',
+			'<:pesword:1132228233467801620>',
+			'<:pmsword:1132229134223945768>',
+			'<:plsword:1132228942321954837>',
+			'<:pfsword:1132228541484900393>',
+		];
 		this.defaultEmoji = '<:greatsword:538196865129250817>';
 		this.statDesc = 'Deals **?%** of your ' + WeaponInterface.strEmoji + 'STR to all opponents';
 		this.availablePassives = 'all';

@@ -7,6 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
+const commandGroups = require('../../../utils/commandGroups.js');
 const request = require('request');
 const Vibrant = require('node-vibrant');
 const rocketEmoji = '🚀';
@@ -25,6 +26,14 @@ module.exports = new CommandInterface({
 	permissions: ['sendMessages', 'attachFiles'],
 
 	group: ['memegeneration'],
+
+	appCommands: [
+		commandGroups.addOption('emergency', ['gen'], {
+			'name': 'emergency',
+			'description': 'Call an emergency meeting',
+			'type': 1,
+		}),
+	],
 
 	cooldown: 30000,
 	half: 100,

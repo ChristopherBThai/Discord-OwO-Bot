@@ -23,6 +23,15 @@ module.exports = class Shield extends WeaponInterface {
 			'<:lshield:546552083353174026>',
 			'<:fshield:546552026084016149>',
 		];
+		this.pristineEmojis = [
+			'<:pcshield:1132227958027849788>',
+			'<:pushield:1132229533857239151>',
+			'<:prshield:1132229388964986950>',
+			'<:peshield:1132228206284525568>',
+			'<:pmshield:1132229130675568640>',
+			'<:plshield:1132228939109109791>',
+			'<:pfshield:1132228367110918226>',
+		];
 		this.defaultEmoji = '<:shield:546552900986601493>';
 		this.statDesc = 'Adds a **taunt** buff to your animal for 2 turns';
 		this.availablePassives = 'all';
@@ -50,7 +59,7 @@ module.exports = class Shield extends WeaponInterface {
 
 		/* Grab buff and bind it to our animal */
 		let buff = this.getBuffs(animal)[0];
-		let buffLogs = buff.bind(animal, 2, {
+		let buffLogs = buff.attemptBind(animal, 2, {
 			me: animal,
 			allies: ally,
 			enemies: enemy,

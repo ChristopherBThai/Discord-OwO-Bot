@@ -36,7 +36,7 @@ module.exports = new CommandInterface({
 			this.config.emoji.cowoncy
 		} **| ${this.getName()}**, you currently have **__${money}__ cowoncy!**`;
 
-		text = alterCowoncy.alter(this, this.msg.author.id, text, {
+		text = await alterCowoncy.alter(this, this.msg.author.id, text, {
 			user: this.msg.author,
 			money: money,
 		});

@@ -38,12 +38,13 @@ module.exports = new CommandInterface({
 
 	execute: async function (p) {
 		// Grab marriage information
-		let sql = `SELECT 
-				u1.id AS id1,u2.id AS id2,TIMESTAMPDIFF(DAY,marriedDate,NOW()) as days,marriage.* 
+		const uid = await p.global.getUid(p.msg.author.id);
+		let sql = `SELECT
+				TIMESTAMPDIFF(DAY, marriedDate, NOW()) as days,
+				marriage.* 
 			FROM marriage 
-				LEFT JOIN user AS u1 ON marriage.uid1 = u1.uid 
-				LEFT JOIN user AS u2 ON marriage.uid2 = u2.uid 
-			WHERE u1.id = ${p.msg.author.id} OR u2.id = ${p.msg.author.id};`;
+			WHERE uid1 = ${uid} OR uid2 = ${uid};`;
+
 		let result = await p.query(sql);
 
 		if (result.length < 1) {
@@ -53,7 +54,10 @@ module.exports = new CommandInterface({
 
 		// Grab user and ring information
 		let ring = rings[result[0].rid];
-		let so = p.msg.author.id == result[0].id1 ? result[0].id2 : result[0].id1;
+		let so = uid == result[0].uid1 ? result[0].uid2 : result[0].uid1;
+		sql = `SELECT id FROM user WHERE uid = ${so}`;
+		const result2 = await p.query(sql);
+		so = result2[0].id;
 		so = await p.fetch.getUser(so);
 
 		// Ask for confirmation

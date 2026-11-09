@@ -6,9 +6,11 @@ on:
   push:
     branches:
       - master
+      - private
   pull_request:
     branches:
       - master
+      - private
 
 jobs:
   run-linters:
@@ -21,7 +23,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 15.14.0
 
       # ESLint and Prettier must be in `package.json`
       - name: Install Node.js dependencies
@@ -32,3 +34,6 @@ jobs:
         with:
           eslint: true
           prettier: true
+
+      - name: Run Cyclic Dependency check
+        run: ./node_modules/dpdm/lib/bin/dpdm.js --exit-code circular:1 ./src/owo.js

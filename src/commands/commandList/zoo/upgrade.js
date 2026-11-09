@@ -70,7 +70,7 @@ module.exports = new CommandInterface({
 			all = true;
 
 			// owo upg duration lvl
-		} else if ((args[1] && 'lvl' == args[1].toLowerCase()) || 'level' == args[1].toLowerCase()) {
+		} else if (['lvl', 'level'].includes(args[1]?.toLowerCase())) {
 			if (args[0]) {
 				trait = traits[args[0].toLowerCase()];
 			}

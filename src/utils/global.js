@@ -31,13 +31,11 @@ try {
 }
 filter2.removeWords(goodwords);
 const namor = require('namor');
-const mysql = require('./../botHandlers/mysqlHandler.js');
-let animalunicode = {};
-let animals = {};
-let ranks = {};
-let rankAlias = {};
-let client, animaljson, main;
+const animalInfo = require('./animalInfoUtil.js');
+const cacheUtil = require('./cacheUtil.js');
+let client, main;
 let totalShards;
+let clusterShards = 'n/a';
 
 /**
  * Checks if its an integer
@@ -90,88 +88,29 @@ exports.parseID = function (id) {
 exports.init = function (bot) {
 	main = bot;
 	client = bot.bot;
-	animaljson = bot.animals;
-
-	let animallist = animaljson['list'];
-
-	//Make nickname alias
-	for (let key in animallist) {
-		let alt = animallist[key].alt;
-		animals[animallist[key].value] = key;
-		animals[animallist[key].value.toLowerCase()] = key;
-		animals[key] = key;
-		animals[key.toLowerCase()] = key;
-		for (let i in alt) {
-			animals[alt[i]] = key;
-			animals[alt[i].toLowerCase()] = key;
+	let lowestShard = Number.MAX_SAFE_INTEGER;
+	let highestShard = -1;
+	bot.bot.shards.forEach((val) => {
+		const id = val.id;
+		if (id < lowestShard) {
+			lowestShard = id;
 		}
-	}
-
-	//to unicode
-	for (let key in animallist) {
-		if (animallist[key].uni != undefined)
-			animalunicode[animallist[key].value] = animallist[key].uni;
-	}
-
-	//other info to animaljson
-	for (let key in animaljson.ranks) {
-		ranks[key] = {};
-		let animalRank = [];
-		for (let i = 1; i < animaljson[key].length; i++) {
-			let name = animals[animaljson[key][i]];
-			try {
-				animalRank.push(animaljson[key][i]);
-				animaljson.list[name].rank = key;
-				animaljson.list[name].price = animaljson.price[key];
-				animaljson.list[name].points = animaljson.points[key];
-				animaljson.list[name].essence = animaljson.essence[key];
-			} catch (err) {
-				console.error(err);
-				console.error(animaljson[key][i]);
-			}
+		if (id > highestShard) {
+			highestShard = id;
 		}
-		ranks[key].animals = animalRank;
-		ranks[key].price = animaljson.price[key];
-		ranks[key].points = animaljson.points[key];
-		ranks[key].essence = animaljson.essence[key];
-		ranks[key].emoji = animaljson.ranks[key];
-		ranks[key].rank = key;
-	}
-
-	for (let key in animaljson.alias) {
-		rankAlias[key] = key;
-		for (let i = 0; i < animaljson.alias[key].length; i++) {
-			rankAlias[animaljson.alias[key][i]] = key;
-		}
-	}
+	});
+	clusterShards = `${lowestShard} - ${highestShard}`;
 };
 
-/**
- * Checks if its a valid animal
- */
-exports.validAnimal = function (animal) {
-	if (animal != undefined) animal = animal.toLowerCase();
-	let ranimal = animaljson.list[animals[animal]];
-	if (ranimal) ranimal['name'] = animals[animal];
-	return ranimal;
+exports.validAnimal = animalInfo.getAnimal;
+exports.validRank = animalInfo.getRank;
+exports.getAllRanks = animalInfo.getRanks;
+exports.unicodeAnimal = function (name) {
+	return name;
 };
 
-exports.validRank = function (rank) {
-	if (rank) rank.toLowerCase();
-	rank = rankAlias[rank];
-	return ranks[rank];
-};
-
-exports.getAllRanks = function () {
-	return ranks;
-};
-
-/**
- * Changes animal to unicode
- */
-exports.unicodeAnimal = function (animal) {
-	let unicode = animalunicode[animal];
-	return unicode == undefined ? animal : unicode;
+exports.getShardString = function () {
+	return clusterShards;
 };
 
 exports.toSmallNum = function (count, digits) {
@@ -282,7 +221,7 @@ exports.cleanString = function (string) {
 };
 
 exports.isEmoji = function (string) {
-	return /^<a?:[\w]+:[0-9]+>$/gi.test(string.trim());
+	return /^<a?:[\w]+:[0-9]+>$/gi.test(string?.trim());
 };
 
 exports.parseTime = function (diff) {
@@ -308,15 +247,7 @@ exports.parseTime = function (diff) {
 
 /* gets uid from discord id */
 exports.getUid = async function (id) {
-	id = BigInt(id);
-	let sql = 'SELECT uid FROM user where id = ?;';
-	let result = await mysql.query(sql, id);
-
-	if (result[0]?.uid) return result[0].uid;
-
-	sql = 'INSERT INTO user (id, count) VALUES (?, 0);';
-	result = await mysql.query(sql, id);
-	return result.insertId;
+	return cacheUtil.getUid(id);
 };
 
 exports.getUserUid = async function (user) {
@@ -344,7 +275,7 @@ exports.parseEmoji = function (emoji) {
 	id = id[0].match(/[0-9]+/gi)[0];
 	let name = emoji.match(/:[\w]+:/gi);
 	if (!name || !name[0]) return;
-	name = emoji.slice(1, -1);
+	name = name[0].slice(1, -1);
 	return { id, name };
 };
 
@@ -442,4 +373,48 @@ exports.getTag = function (user) {
 	const id = user?.id || user?.user?.id;
 	if (!id) return 'User';
 	return `<@${id}>`;
+};
+
+exports.delay = function (delay) {
+	return new Promise((resolve) => {
+		setTimeout(resolve, delay);
+	});
+};
+
+exports.selectRandom = function (array, total) {
+	const rand = 1 + Math.floor(Math.random() * total);
+	let temp = 0;
+	for (let i = 0; i <= array.length; i++) {
+		const item = array[i];
+		temp += item.chance;
+		if (rand <= temp) {
+			return item;
+		}
+	}
+};
+
+exports.getStealButton = async function (p, withComponent) {
+	const sql = `SELECT emoji_steal.guild FROM emoji_steal INNER JOIN user ON emoji_steal.uid = user.uid WHERE id = ${p.msg.author.id};`;
+	const canSteal = (await p.query(sql))[0]?.guild;
+	if (!canSteal) {
+		return;
+	}
+	const components = [
+		{
+			type: 1,
+			components: [
+				{
+					type: 2,
+					label: 'Steal',
+					style: 1,
+					custom_id: 'steal',
+					emoji: {
+						id: null,
+						name: p.config.emoji.steal,
+					},
+				},
+			],
+		},
+	];
+	return withComponent ? components : components[0].components;
 };

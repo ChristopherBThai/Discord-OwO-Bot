@@ -16,6 +16,7 @@ const adminCommands = {};
 const aliasToCommand = {};
 const mcommands = {};
 const commandGroups = {};
+const appCommandNameToCommand = {};
 
 class Command {
 	constructor(main) {
@@ -144,6 +145,10 @@ class Command {
 			this.main.bot.users.update(rawUser, this.main.bot);
 		}
 	}
+
+	messageUserInteractionToCommand(interaction) {
+		return appCommandNameToCommand[interaction.name];
+	}
 }
 
 async function executeCommand(main, p) {
@@ -214,6 +219,13 @@ function initCommands() {
 			six: command.six,
 			group: command.group,
 		};
+
+		command.appCommands?.forEach((appCommand) => {
+			// Message or User commands
+			if (appCommand.type === 3 || appCommand.type === 2) {
+				appCommandNameToCommand[appCommand.name] = name;
+			}
+		});
 	};
 
 	let addAdminCommand = function (command) {
@@ -256,11 +268,12 @@ function initParam(msg, command, args, main, context) {
 	let param = {
 		msg: msg,
 		options: msg.options || {},
+		interaction: msg.interaction,
 		args: args,
 		context: context,
 		command: command,
 		client: main.bot,
-		animals: main.animals,
+		animalUtil: main.animalUtil,
 		dbl: main.dbl,
 		mysql: main.mysql,
 		con: main.mysql.con,
@@ -296,6 +309,8 @@ function initParam(msg, command, args, main, context) {
 		dateUtil: main.dateUtil,
 		neo4j: main.neo4j,
 		giveaway: main.giveaway,
+		patreonUtil: main.patreonUtil,
+		cache: main.cache,
 	};
 	param.setCooldown = function (cooldown) {
 		main.cooldown.setCooldown(param, aliasToCommand[command], cooldown);
@@ -349,6 +364,18 @@ function initParam(msg, command, args, main, context) {
 	};
 	param.getTag = (user) => {
 		return param.global.getTag(user || param.msg.author);
+	};
+	param.getFlags = () => {
+		if (param.flags) {
+			return param.flags;
+		}
+		param.flags = {};
+		args?.forEach((arg) => {
+			if (arg.charAt(0) === '-') {
+				param.flags[arg.substring(1).toLowerCase()] = true;
+			}
+		});
+		return param.flags;
 	};
 	return param;
 }

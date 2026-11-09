@@ -22,6 +22,15 @@ module.exports = class GlacialAxe extends WeaponInterface {
 			'<:lgaxe:618389129817882625>',
 			'<:fgaxe:618389128396013598>',
 		];
+		this.pristineEmojis = [
+			'<:pcgaxe:1132239646789750885>',
+			'<:pugaxe:1132239658856751234>',
+			'<:prgaxe:1132239657665560616>',
+			'<:pegaxe:1132239649004335104>',
+			'<:pmgaxe:1132239655207718912>',
+			'<:plgaxe:1132239653743906837>',
+			'<:pfgaxe:1132239650505883718>',
+		];
 		this.defaultEmoji = '<:gaxe:618389128043692043>';
 		this.statDesc =
 			'Deals **?%** of your ' +
@@ -70,7 +79,7 @@ module.exports = class GlacialAxe extends WeaponInterface {
 			enemies: enemy,
 		});
 		let buff = this.getBuffs(me)[0];
-		let buffLogs = buff.bind(attacking, 2, {
+		let buffLogs = buff.attemptBind(attacking, 2, {
 			me,
 			allies: team,
 			enemies: enemy,

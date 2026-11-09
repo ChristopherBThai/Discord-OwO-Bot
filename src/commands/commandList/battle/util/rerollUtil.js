@@ -6,6 +6,7 @@
  */
 
 const weaponUtil = require('./weaponUtil.js');
+const global = require('../../../../utils/global.js');
 const passiveArray = ['passive', 'p'];
 const statArray = ['stat', 'stats', 's'];
 const yesEmoji = '✅';
@@ -24,6 +25,11 @@ exports.reroll = async function (p) {
 	let weapon = await getWeapon(p, uwid);
 	if (!weapon) return;
 
+	if (weapon.disableRR) {
+		p.errorMsg(', you cannot reroll this weapon!', 3000);
+		return;
+	}
+
 	// Check if enough shards
 	if (!(await useShards(p))) {
 		p.errorMsg(
@@ -33,32 +39,15 @@ exports.reroll = async function (p) {
 		return;
 	}
 
+	// Update rr attempt
+	await updateRRAttempt(p, weapon);
+
 	// Get rerolled weapon
 	let newWeapon = fetchNewWeapon(p, weapon, rrType);
 
 	// Send message
 	await sendMessage(p, weapon, newWeapon, rrType);
 };
-
-async function applyChange(p, weapon) {
-	let uwid = weapon.ruwid;
-	let stat = weapon.sqlStat;
-	let avg = weapon.avgQuality;
-	let sql = `UPDATE user_weapon SET stat = '${stat}', avg = ${avg} WHERE uwid = ${uwid};`;
-	for (let i in weapon.passives) {
-		let passive = weapon.passives[i];
-		let stat = passive.sqlStat;
-		let pcount = passive.pcount;
-		let wpid = passive.id;
-		sql += `UPDATE user_weapon_passive SET stat = '${stat}', wpid = ${wpid} WHERE uwid = ${uwid} AND pcount = ${pcount};`;
-	}
-
-	let result = await p.query(sql);
-	for (let i in result) {
-		if (result[i].affectedRows <= 0) return false;
-	}
-	return true;
-}
 
 function parseArgs(p) {
 	/* Parse reroll type and weapon id */
@@ -96,20 +85,7 @@ function parseArgs(p) {
 }
 
 async function getWeapon(p, uwid) {
-	/* Grab weapon from database */
-	let sql = `SELECT user.uid,a.uwid,a.wid,a.stat,b.pcount,b.wpid,b.stat as pstat FROM user INNER JOIN user_weapon a ON user.uid = a.uid LEFT JOIN user_weapon_passive b ON a.uwid = b.uwid WHERE a.uwid = ${uwid} AND user.id = ${p.msg.author.id};`;
-	let result = await p.query(sql);
-
-	/* Check if valid */
-	if (!result[0]) {
-		p.errorMsg(', I could not find a weapon with that unique weapon id!', 4000);
-		return;
-	}
-
-	/* Parse weapon to get info */
-	let weapon = weaponUtil.parseWeaponQuery(result);
-	weapon = weapon[Object.keys(weapon)[0]];
-	weapon = weaponUtil.parseWeapon(weapon);
+	const weapon = weaponUtil.getWeapon(uwid, p.msg.author.id);
 
 	/* If no weapon */
 	if (!weapon) {
@@ -126,59 +102,66 @@ async function getWeapon(p, uwid) {
 	return weapon;
 }
 
-async function sendMessage(p, oldWeapon, newWeapon, rrType, msg) {
-	let embed = createEmbed(p, oldWeapon, newWeapon);
+async function sendMessage(p, oldWeapon, newWeapon, rrType, msg, ack) {
+	let content = createContent(p, oldWeapon, newWeapon);
 	if (!msg) {
 		/* send and construct reaction collector */
-		msg = await p.send({ embed });
-		await msg.addReaction(yesEmoji);
-		await msg.addReaction(noEmoji);
-		await msg.addReaction(retryEmoji);
+		msg = await p.send(content);
 	} else {
-		msg.edit({ embed });
+		ack(content);
 	}
 
-	let filter = (emoji, userID) =>
-		[yesEmoji, noEmoji, retryEmoji].includes(emoji.name) && p.msg.author.id == userID;
-	let collector = p.reactionCollector.create(msg, filter, {
+	let filter = (componentName, reactionUser) =>
+		['rr_confirm', 'rr_cancel', 'rr_reroll'].includes(componentName) &&
+		[p.msg.author.id].includes(reactionUser.id);
+	let collector = p.interactionCollector.create(msg, filter, {
 		time: 900000,
 		idle: 300000,
 	});
 
-	collector.on('collect', async (emoji) => {
+	collector.on('collect', async (component, _reactionMember, ack, _err) => {
 		collector.stop('clicked');
-		if (emoji.name === yesEmoji) {
-			if (await applyChange(p, newWeapon)) {
-				embed.color = 65280;
-				msg.edit({ embed });
+		if (component === 'rr_confirm') {
+			content.components[0].components[0].disabled = true;
+			content.components[0].components[1].disabled = true;
+			content.components[0].components[2].disabled = true;
+			if (await newWeapon.update()) {
+				content.embed.color = 65280;
+				delete content.content;
+				ack(content);
 			} else {
-				embed.color = 16711680;
-				msg.edit({
-					content: 'Failed to change weapon stats! Please contact Scuttler#0001',
-					embed,
-				});
+				content.embed.color = 16711680;
+				content.content = 'Failed to change weapon stats! Please contact Scuttler#0001';
+				ack(content);
 			}
-		} else if (emoji.name === noEmoji) {
-			embed.color = 16711680;
-			msg.edit({ embed });
-		} else if (emoji.name === retryEmoji) {
+		} else if (component == 'rr_cancel') {
+			content.components[0].components[0].disabled = true;
+			content.components[0].components[1].disabled = true;
+			content.components[0].components[2].disabled = true;
+			content.embed.color = 16711680;
+			delete content.content;
+			ack(content);
+		} else if (component == 'rr_reroll') {
 			if (!(await useShards(p))) {
-				embed.color = 16711680;
-				msg.edit({
-					content: "You don't have enough " + shardEmoji + ' Weapon Shards!',
-					embed,
-				});
+				content.embed.color = 16711680;
+				content.content = `You don't have enough ${shardEmoji} Weapon Shards!`;
+				ack(content);
 			} else {
+				await updateRRAttempt(p, oldWeapon);
 				newWeapon = fetchNewWeapon(p, oldWeapon, rrType);
-				sendMessage(p, oldWeapon, newWeapon, rrType, msg);
+				sendMessage(p, oldWeapon, newWeapon, rrType, msg, ack);
 			}
 		}
 	});
 
 	collector.on('end', async function (reason) {
 		if (reason != 'clicked') {
-			embed.color = 6381923;
-			await msg.edit({ content: 'This message is now inactive', embed });
+			content.components[0].components[0].disabled = true;
+			content.components[0].components[1].disabled = true;
+			content.components[0].components[2].disabled = true;
+			content.embed.color = 6381923;
+			content.content = 'This message is now inactive';
+			await msg.edit(content);
 		}
 	});
 }
@@ -208,32 +191,73 @@ function fetchNewWeapon(p, weapon, type) {
 	return newWeapon;
 }
 
-function createEmbed(p, oldWeapon, newWeapon) {
+function createContent(p, oldWeapon, newWeapon) {
 	const embed = {
 		author: {
 			name: p.getName() + ' spent ' + rerollPrice + ' Weapon Shards to reroll!',
 			icon_url: p.msg.author.dynamicAvatarURL(),
 		},
 		footer: {
-			text:
-				yesEmoji +
-				' to keep the changes | ' +
-				noEmoji +
-				' to discard the changes | ' +
-				retryEmoji +
-				' to try again',
+			text: `Reroll Changes: ${newWeapon.rrCount} | Reroll Attempts: ${newWeapon.rrAttempt}`,
 		},
 		color: p.config.embed_color,
-		fields: [parseDescription('OLD WEAPON', oldWeapon), parseDescription('NEW WEAPON', newWeapon)],
+		fields: [parseDescription('[CURRENT]', oldWeapon), parseDescription('[NEW]', newWeapon)],
 	};
-
 	embed.fields[0].value += '\n‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗';
-	return embed;
+	embed.fields[1].value += `\n${p.config.emoji.blank}`;
+	if (oldWeapon.wear.id != newWeapon.wear.id) {
+		embed.description = `# ${p.config.emoji.warning} Your wear will change from \`${oldWeapon.wearName}\` to \`${newWeapon.wearName}\` ${p.config.emoji.warning}\n${p.config.emoji.blank}`;
+	} else {
+		embed.description = p.config.emoji.blank;
+	}
+
+	const components = [
+		{
+			type: 1,
+			components: [
+				{
+					type: 2,
+					label: 'Confirm',
+					style: 3,
+					custom_id: 'rr_confirm',
+					emoji: {
+						id: null,
+						name: yesEmoji,
+					},
+				},
+				{
+					type: 2,
+					label: 'Cancel',
+					style: 4,
+					custom_id: 'rr_cancel',
+					emoji: {
+						id: null,
+						name: noEmoji,
+					},
+				},
+				{
+					type: 2,
+					label: 'Reroll',
+					style: 2,
+					custom_id: 'rr_reroll',
+					emoji: {
+						id: null,
+						name: retryEmoji,
+					},
+				},
+			],
+		},
+	];
+	return { embed, components };
 }
 
 function parseDescription(title, weapon) {
 	let desc = `**ID:** \`${weapon.uwid}\`\n`;
 	desc += `**Quality:** ${weapon.rank.emoji} ${weapon.avgQuality}%\n`;
+	desc += `**Wear:** \`${weapon.wearName?.toUpperCase()}\`\n`;
+	if (weapon.hasTakedownTracker) {
+		desc += `**Kills:** \`${global.toFancyNum(weapon.kills)}\`\n`;
+	}
 	desc += `**WP Cost:** ${Math.ceil(weapon.manaCost)} <:wp:531620120976687114>`;
 	desc += `\n**Description:** ${weapon.desc}\n`;
 	if (weapon.buffList.length > 0) {
@@ -248,5 +272,11 @@ function parseDescription(title, weapon) {
 		let passive = weapon.passives[i];
 		desc += `\n${passive.emoji} **${passive.name}** - ${passive.desc}`;
 	}
-	return { name: weapon.emoji + ' **' + title + '**', value: desc };
+	return { name: `${weapon.emoji} **${title}** ${weapon.fullName}`, value: desc };
+}
+
+async function updateRRAttempt(p, weapon) {
+	const sql = `UPDATE user_weapon SET rrattempt = rrattempt + 1 WHERE uwid = ${weapon.ruwid};`;
+	await p.query(sql);
+	weapon.rrAttempt++;
 }

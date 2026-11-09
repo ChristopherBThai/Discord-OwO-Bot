@@ -22,6 +22,15 @@ module.exports = class PStaff extends WeaponInterface {
 			'<:lpstaff:1082882875495546900>',
 			'<:fpstaff:1082882873738145862>',
 		];
+		this.pristineEmojis = [
+			'<:pcpstaff:1132227782299103292>',
+			'<:pupstaff:1132229450512203828>',
+			'<:prpstaff:1132229193195860009>',
+			'<:pepstaff:1132228079599759381>',
+			'<:pmpstaff:1132229020625416302>',
+			'<:plpstaff:1132228551765135380>',
+			'<:pfpstaff:1132228350560190476>',
+		];
 		this.defaultEmoji = '<:pstaff:1082882869459947520>';
 		this.statDesc = `Remove a buff from an enemy. If successful, deal **?%** of your ${WeaponInterface.magEmoji}MAG to them. Remove a debuff from an ally. If successful, heal **?%** of your ${WeaponInterface.strEmoji}STR to them.`;
 		this.availablePassives = 'all';

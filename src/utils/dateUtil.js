@@ -9,7 +9,7 @@
 
 const global = require('./global.js');
 
-const overrideWithinDay = false;
+const overrideWithinDay = true;
 
 /* Checks if the given date is past midnight */
 exports.afterMidnight = function (date) {

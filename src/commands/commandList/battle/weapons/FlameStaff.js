@@ -22,6 +22,15 @@ module.exports = class FStaff extends WeaponInterface {
 			'<:lfstaff:572663875904733186>',
 			'<:ffstaff:572663876110254090>',
 		];
+		this.pristineEmojis = [
+			'<:pcfstaff:1132227786715705395>',
+			'<:pufstaff:1132229456484913152>',
+			'<:prfstaff:1132229197885087784>',
+			'<:pefstaff:1132228196121710602>',
+			'<:pmfstaff:1132229026455498853>',
+			'<:plfstaff:1132228892720111677>',
+			'<:pffstaff:1132228354746105876>',
+		];
 		this.defaultEmoji = '<:fstaff:572663875749675018>';
 		this.statDesc =
 			'Deals **?%** of your ' +
@@ -65,7 +74,7 @@ module.exports = class FStaff extends WeaponInterface {
 			enemies: enemy,
 		});
 		let buff = this.getBuffs(me)[0];
-		let buffLogs = buff.bind(attacking, 3, {
+		let buffLogs = buff.attemptBind(attacking, 3, {
 			me,
 			allies: team,
 			enemies: enemy,

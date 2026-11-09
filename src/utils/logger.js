@@ -4,6 +4,8 @@
  * This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
  * For more information, see README.md and LICENSE
  */
+const config = require('../data/config.json');
+const global = require('./global.js');
 
 /***** Datadog *****/
 var StatsD = require('node-dogstatsd').StatsD;
@@ -116,7 +118,7 @@ exports.logstash = function (command, p) {
 		user: p.msg.author.id,
 		command: command,
 		text: p.msg.content,
-		guild: p.msg.channel.guild.id,
+		guild: p.msg.channel.guild?.id | 'dm',
 	};
 
 	request(
@@ -169,6 +171,33 @@ exports.logstashCaptcha = function (metric) {
 		{
 			method: 'POST',
 			uri: `${process.env.INFLUXDB_HOST}/captcha`,
+			json: true,
+			body: metric,
+		},
+		function (err) {
+			if (err && !influxErrorShown) {
+				console.error('InfluxDB is inactive. Log upload will not work.');
+				influxErrorShown = true;
+				throw err;
+			}
+		}
+	);
+};
+
+exports.logstashQos = function (metricKey, metric = {}) {
+	metric.password = process.env.INFLUXDB_PASS;
+	metric.metric = metricKey;
+	metric.server = process.env.SHARDER_SERVER;
+	metric.shards = global.getShardString();
+
+	if (config.debug) {
+		metric.debug = true;
+	}
+
+	request(
+		{
+			method: 'POST',
+			uri: `${process.env.INFLUXDB_HOST}/qos`,
 			json: true,
 			body: metric,
 		},

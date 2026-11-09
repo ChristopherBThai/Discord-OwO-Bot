@@ -23,11 +23,13 @@ class InteractionCollector {
 		return iee;
 	}
 
-	interact({ member, message, data, id, token }) {
-		member.id = member.user.id;
+	interact({ user, member, message, data, id, token, entitlements }) {
+		if (member) {
+			member.id = member.user.id;
+		}
 		const listener = this.listeners[message.id] || this.listeners[message.interaction?.id];
 		if (listener) {
-			listener.interact(data, member, id, token);
+			listener.interact(data, member || user, id, token, entitlements);
 		} else {
 			const url = `https://discord.com/api/v8/interactions/${id}/${token}/callback`;
 			const content = {
@@ -58,7 +60,7 @@ class InteractionEventEmitter extends EventEmitter {
 		return this.filter(componentName, user);
 	}
 
-	interact(component, user, id, token) {
+	interact(component, user, id, token, entitlements) {
 		if (!this.checkFilter(component.custom_id, user)) {
 			const url = `https://discord.com/api/v8/interactions/${id}/${token}/callback`;
 			const content = {
@@ -118,7 +120,7 @@ class InteractionEventEmitter extends EventEmitter {
 			});
 		}
 
-		this.emit('collect', component.custom_id, user, ack, err, component.values);
+		this.emit('collect', component.custom_id, user, ack, err, component.values, entitlements);
 
 		if (this.idleTimeout) {
 			clearTimeout(this.idle);

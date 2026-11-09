@@ -56,7 +56,6 @@ class Calcifer extends Collectible {
 		}
 
 		let rand = Math.random();
-		rand = 0.8;
 		let result, msgOverride;
 		let count = (await p.redis.hget(`data_${p.msg.author.id}`, this.data)) || 0;
 		if (rand < 0.6) {

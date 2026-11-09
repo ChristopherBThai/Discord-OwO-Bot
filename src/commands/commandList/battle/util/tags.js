@@ -27,8 +27,17 @@ module.exports = class Tags {
 		return false;
 	}
 
-	copy({ me, allies, enemies }) {
-		return new Tags({ me, allies, enemies }, this.tags);
+	copy({ me, allies, enemies } = {}) {
+		me = me || this._me;
+		allies = allies || this._allies;
+		enemies = enemies || this._enemies;
+		return new Tags({ me, allies, enemies }, JSON.parse(JSON.stringify(this.tags)));
+	}
+
+	copyAdd(tag, animal, info) {
+		const copy = this.copy(info);
+		copy.add(tag, animal);
+		return copy;
 	}
 
 	get allies() {

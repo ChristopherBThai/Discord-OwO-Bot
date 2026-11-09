@@ -6,6 +6,8 @@
  */
 
 const CommandInterface = require('../../CommandInterface.js');
+const alterDaily = require('../patreon/alterDaily.js');
+const patreonUtil = require('../patreon/utils/patreonUtil.js');
 
 /*
  * Daily command.
@@ -52,15 +54,15 @@ module.exports = new CommandInterface({
 		// If it's not past midnight
 		if (afterMid && !afterMid.after) {
 			/* double check marriage */
-			await doubleCheckMarriage(p, afterMid, marriage);
+			await doubleCheckMarriage(p, afterMid, marriage, cowoncy);
 
 			// Past midnight
 		} else {
-			const generalRewards = getRewards(cowoncy, afterMid);
+			const generalRewards = await getRewards(p, cowoncy, afterMid);
 			const boxRewards = getRandomBox(p, uid);
 			const marriageRewards = await checkMarriage(p, marriage);
 
-			const { sql, text } = finalizeText(
+			const { sql, text, alterInfo } = finalizeText(
 				p,
 				uid,
 				generalRewards,
@@ -83,7 +85,8 @@ module.exports = new CommandInterface({
 				text,
 				showAnnouncement && cowoncy,
 				showSurvey,
-				generalRewards
+				generalRewards,
+				alterInfo
 			);
 		}
 	},
@@ -99,28 +102,42 @@ function finalizeText(
 	showSurvey,
 	afterMid
 ) {
+	let alterInfo = {
+		user: p.msg.author,
+		amount: gain,
+		streak: 0,
+	};
 	let sql = '';
 
 	if (showAnnouncement) {
 		sql += 'SELECT * FROM announcement ORDER BY aid DESC LIMIT 1;';
 		sql += `INSERT INTO user_announcement (uid, aid) VALUES (${uid}, (SELECT aid FROM announcement ORDER BY aid DESC LIMIT 1)) ON DUPLICATE KEY UPDATE aid = (SELECT aid FROM announcement ORDER BY aid DESC LIMIT 1);`;
+		alterInfo.announcement = true;
 	}
 
 	let text = `${moneyEmoji} **| ${p.getName()}**, Here is your daily **<:cowoncy:416043450337853441> ${gain} Cowoncy**!`;
 
-	if (streak - 1 > 0)
+	if (streak - 1 > 0) {
 		text += `\n${p.config.emoji.blank} **|** You're on a **${streak - 1} daily streak**!`;
-	if (extra > 0)
+		alterInfo.streak = streak - 1;
+	}
+	if (extra > 0) {
 		text += `\n${p.config.emoji.blank} **|** You got an extra **${extra} Cowoncy** for being a <:patreon:449705754522419222> Patreon!`;
+		alterInfo.amount += extra;
+	}
 
 	if (boxRewards) {
 		text += boxRewards.text;
 		sql += boxRewards.sql;
+		alterInfo.box_emoji = boxRewards.emoji;
+		alterInfo.box_name = boxRewards.name;
 	}
 
 	if (marriageRewards) {
 		sql += marriageRewards.sql;
 		text += marriageRewards.text;
+		alterInfo.marriage = true;
+		alterInfo = { ...alterInfo, ...marriageRewards.alterInfo };
 	}
 
 	if (showSurvey) {
@@ -130,12 +147,16 @@ function finalizeText(
 				sid = (SELECT sid FROM survey ORDER BY sid DESC LIMIT 1),
 				question_number = 1,
 				in_progress = 0;`;
-		text += `\n${surveyEmoji} **|** You have a survey available! Answer some questions for some cool rewards!`;
+		const surveyText = `${surveyEmoji} **|** You have a survey available! Answer some questions for some cool rewards!`;
+		alterInfo.surveyText = surveyText;
+		text += '\n' + surveyText;
 	}
 
-	text += `\n**⏱ |** Your next daily is in: ${afterMid.hours}H ${afterMid.minutes}M ${afterMid.seconds}S`;
+	const time = `${afterMid.hours}H ${afterMid.minutes}M ${afterMid.seconds}S`;
+	alterInfo.cooldown = time;
+	text += `\n**⏱️ |** Your next daily is in: ${time}`;
 
-	return { sql, text };
+	return { sql, text, alterInfo };
 }
 
 async function executeQuery(
@@ -145,7 +166,8 @@ async function executeQuery(
 	text,
 	showAnnouncement,
 	showSurvey,
-	{ gain, extra }
+	{ gain, extra },
+	alterInfo
 ) {
 	let rows = await p.query(cowoncySql);
 
@@ -183,7 +205,23 @@ async function executeQuery(
 			},
 		];
 	}
-	p.send({ content: text, embed, components });
+	let alterText = await alterDaily.alter(p, alterInfo);
+	if (alterText) {
+		if (typeof alterText === 'string') {
+			alterText = {
+				content: alterText,
+			};
+		}
+		if (components) {
+			alterText.components = components;
+		}
+		p.send(alterText);
+		if (showAnnouncement) {
+			p.send({ embed });
+		}
+	} else {
+		p.send({ content: text, embed, components });
+	}
 
 	levels.giveUserXP(p.msg.author.id, 100);
 }
@@ -191,17 +229,9 @@ async function executeQuery(
 async function getUserInfo(p, uid) {
 	let sql = `SELECT
 				daily,
-				daily_streak,
-				IF (
-					patreonDaily = 1
-					OR ((TIMESTAMPDIFF(MONTH, patreonTimer, NOW()) < patreonMonths) AND patreons.patreonType = 3)
-					OR (endDate > NOW() AND patreon_wh.patreonType = 3)
-				, 1, 0) as patreon 
+				daily_streak
 			FROM cowoncy
-				LEFT JOIN user ON cowoncy.id = user.id
-				LEFT JOIN patreons ON user.uid = patreons.uid
-				LEFT JOIN patreon_wh ON user.uid = patreon_wh.uid
-			WHERE cowoncy.id = ${p.msg.author.id};`;
+			WHERE id = ${p.msg.author.id};`;
 	sql += `SELECT *
 			FROM user_announcement
 			WHERE
@@ -232,7 +262,7 @@ async function getUserInfo(p, uid) {
 						AND is_done = 1
 					)
 				);`;
-	sql += 'SELECT sid FROM survey ORDER BY sid DESC limit 1';
+	sql += 'SELECT sid FROM survey WHERE endDate > NOW() ORDER BY sid DESC limit 1';
 	const rows = await p.query(sql);
 
 	return {
@@ -243,7 +273,7 @@ async function getUserInfo(p, uid) {
 	};
 }
 
-async function doubleCheckMarriage(p, afterMid, marriage) {
+async function doubleCheckMarriage(p, afterMid, marriage, cowoncy) {
 	// Exists in database?
 	if (marriage && marriage.daily1 && marriage.daily2) {
 		const afterMid = p.dateUtil.afterMidnight(marriage.claimDate);
@@ -271,14 +301,24 @@ async function doubleCheckMarriage(p, afterMid, marriage) {
 
 					let count = 1;
 					if (p.event.isValentines()) {
-						const event = p.event.getValentines();
-						sql += `INSERT INTO user_item (uid, name, count, claim_reset, claim_count) VALUES 
-											(${marriage.uid1}, '${event.item.id}', 1, '2017-01-01', 0),
-											(${marriage.uid2}, '${event.item.id}', 1, '2017-01-01', 0)
-										ON DUPLICATE KEY UPDATE
-											count = count + 1; `;
+						const item = {};
+						if (Math.random() < 0.5) {
+							sql += `INSERT INTO crate (uid, boxcount) VALUES
+										(${marriage.uid1}, 1), (${marriage.uid2}, 1)
+									ON DUPLICATE KEY UPDATE
+										boxcount = boxcount + 1;`;
+							item.emoji = p.config.emoji.crate;
+							item.name = 'Weapon Crate';
+						} else {
+							sql += `INSERT INTO lootbox (id, boxcount) VALUES
+										(${marriage.id1}, 1), (${marriage.id2}, 1)
+									ON DUPLICATE KEY UPDATE
+										boxcount = boxcount + 1;`;
+							item.emoji = p.config.emoji.lootbox;
+							item.name = 'Lootbox';
+						}
 						text =
-							`${valEmoji} **|** Happy Valentines, You got a ${event.item.emoji} **${event.item.name}** and some extra rewards! <3\n` +
+							`${valEmoji} **|** Happy Valentines! You got a ${item.emoji} **${item.name}** for being so cute together! <3\n` +
 							text;
 						count += 1;
 					}
@@ -304,11 +344,16 @@ async function doubleCheckMarriage(p, afterMid, marriage) {
 			}
 		}
 	}
-	p.send(
-		`**⏱ |** Nu! **${p.getName()}**! You need to wait **${afterMid.hours}H ${afterMid.minutes}M ${
-			afterMid.seconds
-		}S**`
-	);
+	const time = `${afterMid.hours}H ${afterMid.minutes}M ${afterMid.seconds}S`;
+	const text = `**⏱ |** Nu! **${p.getName()}**! You need to wait **${time}**`;
+	const alterText = await alterDaily.alter(p, {
+		cooldown: time,
+		isCooldown: true,
+		user: p.msg.author,
+		cowoncyInfo: cowoncy,
+		marriageInfo: marriage,
+	});
+	p.send(alterText || text);
 }
 
 function calculateMarriageBonus(p, marriage) {
@@ -321,13 +366,13 @@ function calculateMarriageBonus(p, marriage) {
 	return totalGain;
 }
 
-function getRewards(cowoncy, afterMid) {
+async function getRewards(p, cowoncy, afterMid) {
 	// Grab streak/patreon status
 	let streak = 0;
-	let patreon = false;
+	const supporter = await patreonUtil.getSupporterRank(p, p.msg.author);
+	let patreon = supporter.benefitRank >= 3;
 	if (cowoncy) {
 		streak = cowoncy.daily_streak;
-		if (cowoncy.patreon == 1) patreon = true;
 	}
 
 	//Calculate daily amount
@@ -352,11 +397,15 @@ function getRandomBox(p, uid) {
 		return {
 			sql: `INSERT INTO lootbox (id, boxcount, claimcount, claim) VALUES (${p.msg.author.id}, 1, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;`,
 			text: `\n**${p.config.emoji.lootbox} |** You received a **lootbox**!`,
+			emoji: p.config.emoji.lootbox,
+			name: 'lootbox',
 		};
 	} else {
 		return {
 			sql: `INSERT INTO crate(uid, cratetype, boxcount, claimcount, claim) VALUES (${uid}, 0, 1, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + 1;`,
 			text: `\n**${p.config.emoji.crate} |** You received a **weapon crate**!`,
+			emoji: p.config.emoji.crate,
+			name: 'weapon crate',
 		};
 	}
 }
@@ -404,17 +453,34 @@ async function checkMarriage(p, marriage) {
 
 	let count = 1;
 	if (p.event.isValentines()) {
-		const event = p.event.getValentines();
-		sql += `INSERT INTO user_item (uid, name, count, claim_reset, claim_count) VALUES 
-							(${marriage.uid1}, '${event.item.id}', 1, '2017-01-01', 0),
-							(${marriage.uid2}, '${event.item.id}', 1, '2017-01-01', 0)
-						ON DUPLICATE KEY UPDATE
-							count = count + 1; `;
+		const item = {};
+		if (Math.random() < 0.5) {
+			sql += `INSERT INTO crate (uid, boxcount) VALUES
+					(${marriage.uid1}, 1), (${marriage.uid2}, 1)
+				ON DUPLICATE KEY UPDATE
+					boxcount = boxcount + 1;`;
+			item.emoji = p.config.emoji.crate;
+			item.name = 'Weapon Crate';
+		} else {
+			sql += `INSERT INTO lootbox (id, boxcount) VALUES
+					(${marriage.id1}, 1), (${marriage.id2}, 1)
+				ON DUPLICATE KEY UPDATE
+					boxcount = boxcount + 1;`;
+			item.emoji = p.config.emoji.lootbox;
+			item.name = 'Lootbox';
+		}
 		text =
-			`\n${valEmoji} **|** Happy Valentines, You got a ${event.item.emoji} **${event.item.name}** and some extra rewards! <3` +
+			`\n${valEmoji} **|** Happy Valentines! You got a ${item.emoji} **${item.name}** for being so cute together! <3` +
 			text;
 		count += 1;
 	}
+	const alterInfo = {
+		partner: so,
+		ring_emoji: ring.emoji,
+		ring_name: ring.name,
+		marriage_amount: totalGain,
+		marriage_streak: marriage.dailies,
+	};
 	if (Math.random() < 0.5) {
 		sql += `INSERT INTO lootbox (id, boxcount, claimcount, claim) VALUES (${p.msg.author.id}, ${count}, 0, '2017-01-01'), (${soID}, ${count}, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
 		if (count > 1) {
@@ -422,6 +488,8 @@ async function checkMarriage(p, marriage) {
 		} else {
 			text += `a ${p.config.emoji.lootbox} **lootbox**!`;
 		}
+		alterInfo.marriage_box_emoji = p.config.emoji.lootbox;
+		alterInfo.marriage_box_name = 'lootbox';
 	} else {
 		sql += `INSERT INTO crate (uid, cratetype, boxcount, claimcount, claim) VALUES (${marriage.uid1}, 0, ${count}, 0, '2017-01-01'), (${marriage.uid2}, 0, ${count}, 0, '2017-01-01') ON DUPLICATE KEY UPDATE boxcount = boxcount + ${count};`;
 		if (count > 1) {
@@ -429,7 +497,13 @@ async function checkMarriage(p, marriage) {
 		} else {
 			text += `a ${p.config.emoji.crate} **weapon crate**!`;
 		}
+		alterInfo.marriage_box_emoji = p.config.emoji.crate;
+		alterInfo.marriage_box_name = 'weapon crate';
 	}
 
-	return { sql, text };
+	return {
+		sql,
+		text,
+		alterInfo,
+	};
 }
