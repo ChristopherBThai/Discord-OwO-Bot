@@ -108,9 +108,12 @@ function test(trait) {
 	}
 }
 
-exports.captcha = async function (p, word, text) {
+exports.captcha = async function (p, word, text, components) {
 	let buffer = await macro.generateBuffer(word);
-	p.send(text, null, { file: buffer, name: 'captcha.png' });
+	return p.send(components ? { content: text, components } : text, null, {
+		file: buffer,
+		name: 'captcha.png',
+	});
 };
 
 exports.getBot = function (result) {
