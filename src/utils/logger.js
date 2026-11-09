@@ -83,12 +83,16 @@ const decr = (exports.decr = function (name, amount = -1, tags = {}, msg) {
 });
 
 const request = require('request');
+if (!process.env.INFLUXDB_HOST) {
+	console.warn('INFLUXDB_HOST is not configured; InfluxDB logging is disabled.');
+}
 // Only display this error once per 5 minutes
 let influxErrorShown = false;
 setTimeout(() => {
 	influxErrorShown = false;
 }, 5 * 60 * 60 * 1000);
 exports.command = function (command, msg) {
+	if (!process.env.INFLUXDB_HOST) return;
 	const body = {
 		password: process.env.INFLUXDB_PASS,
 		command: command,
@@ -104,15 +108,15 @@ exports.command = function (command, msg) {
 		},
 		function (err) {
 			if (err && !influxErrorShown) {
-				console.error('InfluxDB is inactive. Log upload will not work.');
+				console.error('InfluxDB is inactive. Log upload will not work.', err);
 				influxErrorShown = true;
-				throw err;
 			}
 		}
 	);
 };
 
 exports.logstash = function (command, p) {
+	if (!process.env.INFLUXDB_HOST) return;
 	const body = {
 		password: process.env.INFLUXDB_PASS,
 		user: p.msg.author.id,
@@ -130,15 +134,15 @@ exports.logstash = function (command, p) {
 		},
 		function (err) {
 			if (err && !influxErrorShown) {
-				console.error('InfluxDB is inactive. Log upload will not work.');
+				console.error('InfluxDB is inactive. Log upload will not work.', err);
 				influxErrorShown = true;
-				throw err;
 			}
 		}
 	);
 };
 
 exports.logstashBanned = function (command, p) {
+	if (!process.env.INFLUXDB_HOST) return;
 	const body = {
 		password: process.env.INFLUXDB_PASS,
 		user: p.msg.author.id,
@@ -156,15 +160,15 @@ exports.logstashBanned = function (command, p) {
 		},
 		function (err) {
 			if (err && !influxErrorShown) {
-				console.error('InfluxDB is inactive. Log upload will not work.');
+				console.error('InfluxDB is inactive. Log upload will not work.', err);
 				influxErrorShown = true;
-				throw err;
 			}
 		}
 	);
 };
 
 exports.logstashCaptcha = function (metric) {
+	if (!process.env.INFLUXDB_HOST) return;
 	metric.password = process.env.INFLUXDB_PASS;
 
 	request(
@@ -176,15 +180,15 @@ exports.logstashCaptcha = function (metric) {
 		},
 		function (err) {
 			if (err && !influxErrorShown) {
-				console.error('InfluxDB is inactive. Log upload will not work.');
+				console.error('InfluxDB is inactive. Log upload will not work.', err);
 				influxErrorShown = true;
-				throw err;
 			}
 		}
 	);
 };
 
 exports.logstashQos = function (metricKey, metric = {}) {
+	if (!process.env.INFLUXDB_HOST) return;
 	metric.password = process.env.INFLUXDB_PASS;
 	metric.metric = metricKey;
 	metric.server = process.env.SHARDER_SERVER;
@@ -203,9 +207,8 @@ exports.logstashQos = function (metricKey, metric = {}) {
 		},
 		function (err) {
 			if (err && !influxErrorShown) {
-				console.error('InfluxDB is inactive. Log upload will not work.');
+				console.error('InfluxDB is inactive. Log upload will not work.', err);
 				influxErrorShown = true;
-				throw err;
 			}
 		}
 	);
