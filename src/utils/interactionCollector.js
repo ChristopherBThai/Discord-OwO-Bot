@@ -149,6 +149,7 @@ class InteractionEventEmitter extends EventEmitter {
 		}
 
 		ack.responded = false;
+		ack.age = () => Date.now() - Number((BigInt(id) >> 22n) + 1420070400000n);
 		ack.showModal = (modal) => {
 			ack.responded = true;
 			return axios.post(`https://discord.com/api/v10/interactions/${id}/${token}/callback`, {
