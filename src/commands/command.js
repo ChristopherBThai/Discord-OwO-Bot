@@ -58,6 +58,7 @@ class Command {
 
 		// Init params to pass into command
 		let param = initParam(msg, command, args, this.main, context);
+		addCommandRunner(param, this.main);
 
 		// Parse user raw data, so our cache is up to date
 		this.checkRaw(raw);
@@ -78,6 +79,7 @@ class Command {
 
 		// Init params to pass into command
 		let param = initParam(interaction, command, interaction.args, this.main);
+		addCommandRunner(param, this.main);
 
 		// Execute the command
 		await executeCommand(this.main, param);
@@ -378,6 +380,16 @@ function initParam(msg, command, args, main, context) {
 		return param.flags;
 	};
 	return param;
+}
+
+function addCommandRunner(param, main) {
+	param.runCommand = (command, args) =>
+		executeCommand(main, {
+			...param,
+			command,
+			args,
+			commandAlias: aliasToCommand[command],
+		});
 }
 
 async function checkPrefix(main, msg) {
