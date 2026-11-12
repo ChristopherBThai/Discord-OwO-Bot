@@ -66,5 +66,8 @@
 		"dpdm": "^3.13.1",
 		"eslint": "^8.29.0",
 		"eslint-config-prettier": "^8.5.0"
+	},
+	"allowScripts": {
+		"canvas@2.11.2": true
 	}
 }
