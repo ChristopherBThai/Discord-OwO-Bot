@@ -486,7 +486,7 @@ function kuma(text, type) {
 			text.author.name = text.author.name.replace("'s HuntBot", "'s Cookie Collector");
 			text.fields.shift();
 			text.color = 13344488;
-			if (text.fields.length >= 7) {
+			if (text.fields.length >= 8) {
 				text.fields[7].name = bear + " I'm still collecting minions master";
 				text.fields[7].value = text.fields[7].value
 					.replace('BEEP BOOP. I AM STILL HUNTING. I WILL BE BACK IN', 'I will be back in')

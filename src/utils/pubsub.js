@@ -6,14 +6,9 @@
  */
 
 const redis = require('redis');
-const sub = redis.createClient({
-	host: process.env.REDIS_HOST,
-	password: process.env.REDIS_PASS,
-});
-const pub = redis.createClient({
-	host: process.env.REDIS_HOST,
-	password: process.env.REDIS_PASS,
-});
+const redisOptions = require('../../utils/redisOptions.js');
+const sub = redis.createClient(redisOptions());
+const pub = redis.createClient(redisOptions());
 
 const requireDir = require('require-dir');
 const dir = requireDir('./pubsubHandlers');

@@ -7,7 +7,7 @@
 
 const CommandInterface = require('../../CommandInterface.js');
 
-const ud = require('urban-dictionary');
+const axios = require('axios');
 const nextPageEmoji = '➡️';
 const prevPageEmoji = '⬅️';
 
@@ -36,57 +36,66 @@ module.exports = new CommandInterface({
 			p.errorMsg(', Silly human! Makes sure to add a word to define!', 3000);
 			return;
 		}
+		let entries;
 		try {
-			await ud.define(word, function (error, entries) {
-				try {
-					if (error) {
-						p.errorMsg(", I couldn't find that word! :c", 3000);
-					} else {
-						let pages = [];
-						let count = 1;
-						for (let i = 0; i < entries.length; i++) {
-							let def = entries[i].definition;
-							let url = entries[i].permalink;
-							let example = '\n*``' + entries[i].example + ' ``*';
-							let result = def + example;
-							if (!p.msg.channel.nsfw && p.global.isProfane(result)) {
-								result =
-									'⚠️ **A few words may have been censored! To view an uncensored version, use this command in a NSFW channel.** ⚠️\n\n' +
-									p.global.cleanString(result);
-							}
-							let run = true;
-							do {
-								let print = '';
-								if (result.length > 1700) {
-									print = result.substring(0, 1700);
-									result = result.substring(1700);
-								} else {
-									print = result;
-									run = false;
-								}
-								let embed = {
-									description: print || '*no description*',
-									color: p.config.embed_color,
-									author: {
-										name: "Definition of '" + entries[0].word + "'",
-										icon_url: p.msg.author.avatarURL,
-									},
-									url: url,
-									footer: {
-										text: 'Definition ' + count + '/' + entries.length,
-									},
-								};
-								pages.push({ embed });
-							} while (run);
-							count++;
-						}
-						display(p, pages);
-					}
-					/* eslint-disable-next-line */
-				} catch (err) {}
+			const response = await axios.get('https://api.urbandictionary.com/v0/define', {
+				params: { term: word },
+				timeout: 10000,
 			});
-			/* eslint-disable-next-line */
-		} catch (err) {}
+			if (!Array.isArray(response.data?.list)) {
+				throw new Error('Invalid Urban Dictionary response');
+			}
+			entries = response.data.list;
+		} catch (err) {
+			console.error('Urban Dictionary lookup failed:', err.message);
+			p.errorMsg(', Urban Dictionary is unavailable. Please try again later.', 3000);
+			return;
+		}
+
+		if (!entries.length) {
+			p.errorMsg(", I couldn't find that word! :c", 3000);
+			return;
+		}
+
+		let pages = [];
+		let count = 1;
+		for (let i = 0; i < entries.length; i++) {
+			let def = entries[i].definition;
+			let url = entries[i].permalink;
+			let example = '\n*``' + entries[i].example + ' ``*';
+			let result = def + example;
+			if (!p.msg.channel.nsfw && p.global.isProfane(result)) {
+				result =
+					'⚠️ **A few words may have been censored! To view an uncensored version, use this command in a NSFW channel.** ⚠️\n\n' +
+					p.global.cleanString(result);
+			}
+			let run = true;
+			do {
+				let print = '';
+				if (result.length > 1700) {
+					print = result.substring(0, 1700);
+					result = result.substring(1700);
+				} else {
+					print = result;
+					run = false;
+				}
+				let embed = {
+					description: print || '*no description*',
+					color: p.config.embed_color,
+					author: {
+						name: "Definition of '" + entries[0].word + "'",
+						icon_url: p.msg.author.avatarURL,
+					},
+					url: url,
+					footer: {
+						text: 'Definition ' + count + '/' + entries.length,
+					},
+				};
+				pages.push({ embed });
+			} while (run);
+			count++;
+		}
+		await display(p, pages);
 	},
 });
 
