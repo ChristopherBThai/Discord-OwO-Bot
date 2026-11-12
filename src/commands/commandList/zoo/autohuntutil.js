@@ -7,6 +7,12 @@
 
 const mysql = require('../../../botHandlers/mysqlHandler.js');
 const captchaImage = require('../../../utils/captchaImage.js');
+const {
+	v2Message,
+	container,
+	textDisplay,
+	mediaGallery,
+} = require('../../../utils/componentsV2.js');
 let macro;
 try {
 	macro = require('../../../../../tokens/macro.js');
@@ -109,10 +115,23 @@ function test(trait) {
 	}
 }
 
-exports.captcha = async function (p, word, text, components) {
+/**
+ * Builds the Components V2 captcha message (text, image and buttons in one container).
+ * `rows` are the button action rows that go below the image.
+ */
+exports.captchaMessage = function (p, text, rows = []) {
+	return v2Message(
+		container([textDisplay(text), mediaGallery('attachment://captcha.png'), ...rows], {
+			accentColor: p.config?.embed_color,
+		})
+	);
+};
+
+exports.captcha = async function (p, word, text, rows) {
 	let buffer = await macro?.generateBuffer?.(word);
 	if (!buffer) buffer = captchaImage.generate(word);
-	return p.send(components ? { content: text, components } : text, null, {
+	// Only one file is uploaded; the container references it with attachment://captcha.png
+	return p.send(exports.captchaMessage(p, text, rows), null, {
 		file: buffer,
 		name: 'captcha.png',
 	});

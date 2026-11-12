@@ -6,7 +6,8 @@
  */
 
 const EventEmitter = require('eventemitter3');
-const axios = require('axios');
+// axios instance with a keep-alive agent, so button responses do not need a new connection
+const axios = require('./discordHttp.js').http;
 
 class InteractionCollector {
 	constructor(main) {
@@ -149,6 +150,11 @@ class InteractionEventEmitter extends EventEmitter {
 		}
 
 		ack.responded = false;
+		// Acknowledge without changing the message (deferred update)
+		ack.defer = () => {
+			ack.responded = true;
+			return axios.post(url, { type: 6 });
+		};
 		ack.age = () => Date.now() - Number((BigInt(id) >> 22n) + 1420070400000n);
 		ack.showModal = (modal) => {
 			ack.responded = true;

@@ -1,0 +1,645 @@
+{
+	"boyut": "512x512, seffaf arka plan",
+	"cark_sirasi": [
+		0,
+		32,
+		15,
+		19,
+		4,
+		21,
+		2,
+		25,
+		17,
+		34,
+		6,
+		27,
+		13,
+		36,
+		11,
+		30,
+		8,
+		23,
+		10,
+		5,
+		24,
+		16,
+		33,
+		1,
+		20,
+		14,
+		31,
+		9,
+		22,
+		18,
+		29,
+		7,
+		28,
+		12,
+		35,
+		3,
+		26
+	],
+	"aciklama": {
+		"yon": "Toplar saat yonunde doner. 0 numarali cep en ustte.",
+		"kare_sayisi": 148,
+		"cep_basina_kare": 4,
+		"pist": "Top dis pistte (rakamlarin disinda) doner.",
+		"hareket": "Top rakamlarin uzerinden tek tek gecer.",
+		"sonuc": "sonuc_<sayi>.png: top o sayinin cebinde durur ve cep altin renkle vurgulanir.",
+		"kullanim": "Animasyon icin pist/hareket karelerini sirayla oynat (000 -> 147). Son kareler icin hedef sayinin cebine kadar ilerle, sonra sonuc_<sayi>.png goster. Hedef kare = cark_sirasi.indexOf(sayi) * cep_basina_kare."
+	},
+	"kareler": [
+		{
+			"kare": 0,
+			"altindaki_sayi": 0
+		},
+		{
+			"kare": 1,
+			"altindaki_sayi": 0
+		},
+		{
+			"kare": 2,
+			"altindaki_sayi": 32
+		},
+		{
+			"kare": 3,
+			"altindaki_sayi": 32
+		},
+		{
+			"kare": 4,
+			"altindaki_sayi": 32
+		},
+		{
+			"kare": 5,
+			"altindaki_sayi": 32
+		},
+		{
+			"kare": 6,
+			"altindaki_sayi": 15
+		},
+		{
+			"kare": 7,
+			"altindaki_sayi": 15
+		},
+		{
+			"kare": 8,
+			"altindaki_sayi": 15
+		},
+		{
+			"kare": 9,
+			"altindaki_sayi": 15
+		},
+		{
+			"kare": 10,
+			"altindaki_sayi": 19
+		},
+		{
+			"kare": 11,
+			"altindaki_sayi": 19
+		},
+		{
+			"kare": 12,
+			"altindaki_sayi": 19
+		},
+		{
+			"kare": 13,
+			"altindaki_sayi": 19
+		},
+		{
+			"kare": 14,
+			"altindaki_sayi": 4
+		},
+		{
+			"kare": 15,
+			"altindaki_sayi": 4
+		},
+		{
+			"kare": 16,
+			"altindaki_sayi": 4
+		},
+		{
+			"kare": 17,
+			"altindaki_sayi": 4
+		},
+		{
+			"kare": 18,
+			"altindaki_sayi": 21
+		},
+		{
+			"kare": 19,
+			"altindaki_sayi": 21
+		},
+		{
+			"kare": 20,
+			"altindaki_sayi": 21
+		},
+		{
+			"kare": 21,
+			"altindaki_sayi": 21
+		},
+		{
+			"kare": 22,
+			"altindaki_sayi": 2
+		},
+		{
+			"kare": 23,
+			"altindaki_sayi": 2
+		},
+		{
+			"kare": 24,
+			"altindaki_sayi": 2
+		},
+		{
+			"kare": 25,
+			"altindaki_sayi": 2
+		},
+		{
+			"kare": 26,
+			"altindaki_sayi": 25
+		},
+		{
+			"kare": 27,
+			"altindaki_sayi": 25
+		},
+		{
+			"kare": 28,
+			"altindaki_sayi": 25
+		},
+		{
+			"kare": 29,
+			"altindaki_sayi": 25
+		},
+		{
+			"kare": 30,
+			"altindaki_sayi": 17
+		},
+		{
+			"kare": 31,
+			"altindaki_sayi": 17
+		},
+		{
+			"kare": 32,
+			"altindaki_sayi": 17
+		},
+		{
+			"kare": 33,
+			"altindaki_sayi": 17
+		},
+		{
+			"kare": 34,
+			"altindaki_sayi": 34
+		},
+		{
+			"kare": 35,
+			"altindaki_sayi": 34
+		},
+		{
+			"kare": 36,
+			"altindaki_sayi": 34
+		},
+		{
+			"kare": 37,
+			"altindaki_sayi": 34
+		},
+		{
+			"kare": 38,
+			"altindaki_sayi": 6
+		},
+		{
+			"kare": 39,
+			"altindaki_sayi": 6
+		},
+		{
+			"kare": 40,
+			"altindaki_sayi": 6
+		},
+		{
+			"kare": 41,
+			"altindaki_sayi": 6
+		},
+		{
+			"kare": 42,
+			"altindaki_sayi": 27
+		},
+		{
+			"kare": 43,
+			"altindaki_sayi": 27
+		},
+		{
+			"kare": 44,
+			"altindaki_sayi": 27
+		},
+		{
+			"kare": 45,
+			"altindaki_sayi": 27
+		},
+		{
+			"kare": 46,
+			"altindaki_sayi": 13
+		},
+		{
+			"kare": 47,
+			"altindaki_sayi": 13
+		},
+		{
+			"kare": 48,
+			"altindaki_sayi": 13
+		},
+		{
+			"kare": 49,
+			"altindaki_sayi": 13
+		},
+		{
+			"kare": 50,
+			"altindaki_sayi": 36
+		},
+		{
+			"kare": 51,
+			"altindaki_sayi": 36
+		},
+		{
+			"kare": 52,
+			"altindaki_sayi": 36
+		},
+		{
+			"kare": 53,
+			"altindaki_sayi": 36
+		},
+		{
+			"kare": 54,
+			"altindaki_sayi": 11
+		},
+		{
+			"kare": 55,
+			"altindaki_sayi": 11
+		},
+		{
+			"kare": 56,
+			"altindaki_sayi": 11
+		},
+		{
+			"kare": 57,
+			"altindaki_sayi": 11
+		},
+		{
+			"kare": 58,
+			"altindaki_sayi": 30
+		},
+		{
+			"kare": 59,
+			"altindaki_sayi": 30
+		},
+		{
+			"kare": 60,
+			"altindaki_sayi": 30
+		},
+		{
+			"kare": 61,
+			"altindaki_sayi": 30
+		},
+		{
+			"kare": 62,
+			"altindaki_sayi": 8
+		},
+		{
+			"kare": 63,
+			"altindaki_sayi": 8
+		},
+		{
+			"kare": 64,
+			"altindaki_sayi": 8
+		},
+		{
+			"kare": 65,
+			"altindaki_sayi": 8
+		},
+		{
+			"kare": 66,
+			"altindaki_sayi": 23
+		},
+		{
+			"kare": 67,
+			"altindaki_sayi": 23
+		},
+		{
+			"kare": 68,
+			"altindaki_sayi": 23
+		},
+		{
+			"kare": 69,
+			"altindaki_sayi": 23
+		},
+		{
+			"kare": 70,
+			"altindaki_sayi": 10
+		},
+		{
+			"kare": 71,
+			"altindaki_sayi": 10
+		},
+		{
+			"kare": 72,
+			"altindaki_sayi": 10
+		},
+		{
+			"kare": 73,
+			"altindaki_sayi": 10
+		},
+		{
+			"kare": 74,
+			"altindaki_sayi": 5
+		},
+		{
+			"kare": 75,
+			"altindaki_sayi": 5
+		},
+		{
+			"kare": 76,
+			"altindaki_sayi": 5
+		},
+		{
+			"kare": 77,
+			"altindaki_sayi": 5
+		},
+		{
+			"kare": 78,
+			"altindaki_sayi": 24
+		},
+		{
+			"kare": 79,
+			"altindaki_sayi": 24
+		},
+		{
+			"kare": 80,
+			"altindaki_sayi": 24
+		},
+		{
+			"kare": 81,
+			"altindaki_sayi": 24
+		},
+		{
+			"kare": 82,
+			"altindaki_sayi": 16
+		},
+		{
+			"kare": 83,
+			"altindaki_sayi": 16
+		},
+		{
+			"kare": 84,
+			"altindaki_sayi": 16
+		},
+		{
+			"kare": 85,
+			"altindaki_sayi": 16
+		},
+		{
+			"kare": 86,
+			"altindaki_sayi": 33
+		},
+		{
+			"kare": 87,
+			"altindaki_sayi": 33
+		},
+		{
+			"kare": 88,
+			"altindaki_sayi": 33
+		},
+		{
+			"kare": 89,
+			"altindaki_sayi": 33
+		},
+		{
+			"kare": 90,
+			"altindaki_sayi": 1
+		},
+		{
+			"kare": 91,
+			"altindaki_sayi": 1
+		},
+		{
+			"kare": 92,
+			"altindaki_sayi": 1
+		},
+		{
+			"kare": 93,
+			"altindaki_sayi": 1
+		},
+		{
+			"kare": 94,
+			"altindaki_sayi": 20
+		},
+		{
+			"kare": 95,
+			"altindaki_sayi": 20
+		},
+		{
+			"kare": 96,
+			"altindaki_sayi": 20
+		},
+		{
+			"kare": 97,
+			"altindaki_sayi": 20
+		},
+		{
+			"kare": 98,
+			"altindaki_sayi": 14
+		},
+		{
+			"kare": 99,
+			"altindaki_sayi": 14
+		},
+		{
+			"kare": 100,
+			"altindaki_sayi": 14
+		},
+		{
+			"kare": 101,
+			"altindaki_sayi": 14
+		},
+		{
+			"kare": 102,
+			"altindaki_sayi": 31
+		},
+		{
+			"kare": 103,
+			"altindaki_sayi": 31
+		},
+		{
+			"kare": 104,
+			"altindaki_sayi": 31
+		},
+		{
+			"kare": 105,
+			"altindaki_sayi": 31
+		},
+		{
+			"kare": 106,
+			"altindaki_sayi": 9
+		},
+		{
+			"kare": 107,
+			"altindaki_sayi": 9
+		},
+		{
+			"kare": 108,
+			"altindaki_sayi": 9
+		},
+		{
+			"kare": 109,
+			"altindaki_sayi": 9
+		},
+		{
+			"kare": 110,
+			"altindaki_sayi": 22
+		},
+		{
+			"kare": 111,
+			"altindaki_sayi": 22
+		},
+		{
+			"kare": 112,
+			"altindaki_sayi": 22
+		},
+		{
+			"kare": 113,
+			"altindaki_sayi": 22
+		},
+		{
+			"kare": 114,
+			"altindaki_sayi": 18
+		},
+		{
+			"kare": 115,
+			"altindaki_sayi": 18
+		},
+		{
+			"kare": 116,
+			"altindaki_sayi": 18
+		},
+		{
+			"kare": 117,
+			"altindaki_sayi": 18
+		},
+		{
+			"kare": 118,
+			"altindaki_sayi": 29
+		},
+		{
+			"kare": 119,
+			"altindaki_sayi": 29
+		},
+		{
+			"kare": 120,
+			"altindaki_sayi": 29
+		},
+		{
+			"kare": 121,
+			"altindaki_sayi": 29
+		},
+		{
+			"kare": 122,
+			"altindaki_sayi": 7
+		},
+		{
+			"kare": 123,
+			"altindaki_sayi": 7
+		},
+		{
+			"kare": 124,
+			"altindaki_sayi": 7
+		},
+		{
+			"kare": 125,
+			"altindaki_sayi": 7
+		},
+		{
+			"kare": 126,
+			"altindaki_sayi": 28
+		},
+		{
+			"kare": 127,
+			"altindaki_sayi": 28
+		},
+		{
+			"kare": 128,
+			"altindaki_sayi": 28
+		},
+		{
+			"kare": 129,
+			"altindaki_sayi": 28
+		},
+		{
+			"kare": 130,
+			"altindaki_sayi": 12
+		},
+		{
+			"kare": 131,
+			"altindaki_sayi": 12
+		},
+		{
+			"kare": 132,
+			"altindaki_sayi": 12
+		},
+		{
+			"kare": 133,
+			"altindaki_sayi": 12
+		},
+		{
+			"kare": 134,
+			"altindaki_sayi": 35
+		},
+		{
+			"kare": 135,
+			"altindaki_sayi": 35
+		},
+		{
+			"kare": 136,
+			"altindaki_sayi": 35
+		},
+		{
+			"kare": 137,
+			"altindaki_sayi": 35
+		},
+		{
+			"kare": 138,
+			"altindaki_sayi": 3
+		},
+		{
+			"kare": 139,
+			"altindaki_sayi": 3
+		},
+		{
+			"kare": 140,
+			"altindaki_sayi": 3
+		},
+		{
+			"kare": 141,
+			"altindaki_sayi": 3
+		},
+		{
+			"kare": 142,
+			"altindaki_sayi": 26
+		},
+		{
+			"kare": 143,
+			"altindaki_sayi": 26
+		},
+		{
+			"kare": 144,
+			"altindaki_sayi": 26
+		},
+		{
+			"kare": 145,
+			"altindaki_sayi": 26
+		},
+		{
+			"kare": 146,
+			"altindaki_sayi": 0
+		},
+		{
+			"kare": 147,
+			"altindaki_sayi": 0
+		}
+	]
+}

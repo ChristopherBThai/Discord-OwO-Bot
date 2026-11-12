@@ -18,6 +18,17 @@ const parse = require('parse-duration');
 const patreonUtil = require('../patreon/utils/patreonUtil.js');
 const teamUtil = require('../battle/util/teamUtil.js');
 const numberModal = require('../../../utils/numberModal.js');
+const {
+	ButtonStyle,
+	v2Message,
+	container,
+	section,
+	textDisplay,
+	separator,
+	thumbnail,
+	actionRow,
+	button,
+} = require('../../../utils/componentsV2.js');
 
 const upgradeTraits = ['efficiency', 'duration', 'cost', 'gain', 'exp', 'radar'];
 
@@ -459,17 +470,9 @@ async function display(p, msg, con) {
 				hunting.bar,
 		});
 	}
+	// Patreon customizations edit the embed object, so apply them before converting it
 	embed = alterhb(msg.author.id, embed, 'hb');
-	const components = [
-		{
-			type: 1,
-			components: [
-				{ type: 2, style: 1, label: 'Start', custom_id: 'hb_start' },
-				{ type: 2, style: 2, label: 'Upgrades', custom_id: 'hb_upgrades' },
-			],
-		},
-	];
-	const message = await p.send({ embed, components });
+	const message = await p.send(mainPage(embed));
 	const collector = p.interactionCollector.create(
 		message,
 		(_component, user) => user.id === msg.author.id,
@@ -487,15 +490,17 @@ async function display(p, msg, con) {
 				await ack(upgradesPage(p, msg, stats));
 			} else if (component === 'hb_back') {
 				collector.stop('back');
-				await ack({ content: 'Loading HuntBot status...', components: [] });
+				await ack(textPage(p, 'Loading HuntBot status...'));
 				await runCommand(p, 'autohunt', []);
 			} else if (component === 'hb_start_max') {
 				const start = await getStartInfo(p, msg);
 				if (start.max > 0) {
-					await ack({ content: 'Opening CAPTCHA...', components: [] });
+					await ack(textPage(p, 'Opening CAPTCHA...'));
 					await runCommand(p, 'autohunt', [String(start.max)]);
 					await message.edit(startPage(start));
-				} else await ack({ content: 'You do not have enough cowoncy to start autohunt.' });
+				} else {
+					await ack(startPage(start, 'You do not have enough cowoncy to start autohunt.'));
+				}
 				return;
 			} else if (component === 'hb_start_other') {
 				await numberModal.open(p, ack, user, 'Start autohunt', 'Cowoncy amount', async (amount) => {
@@ -514,7 +519,7 @@ async function display(p, msg, con) {
 			} else if (component.startsWith('hb_level_')) {
 				const trait = component.slice('hb_level_'.length);
 				if (!upgradeTraits.includes(trait)) return ack();
-				await ack({ content: 'Processing upgrade...', components: [] });
+				await ack(textPage(p, 'Processing upgrade...'));
 				await runCommand(p, 'upgrade', [trait, 'level']);
 				const result = await p.query(`SELECT * FROM autohunt WHERE id = ${msg.author.id};`);
 				await message.edit(traitPage(p, trait, getTraitStats(result[0][0])[trait]));
@@ -533,11 +538,11 @@ async function display(p, msg, con) {
 						await message.edit(traitPage(p, trait, getTraitStats(result[0][0])[trait]));
 					}
 				);
-			} else await ack({ content: 'Unknown HuntBot action.', components: [] });
+			} else await ack(textPage(p, 'Unknown HuntBot action.'));
 		} catch (err) {
 			console.error(describeError('HuntBot panel interaction failed.', err, ack));
 			if (!ack.responded)
-				await ack({ content: 'This action could not be completed. Please try again later.' });
+				await ack(textPage(p, 'This action could not be completed. Please try again later.'));
 			else await p.send('This action could not be completed. Please try again later.');
 		}
 	});
@@ -566,30 +571,66 @@ function getTraitStats(row) {
 	return stats;
 }
 
-function startPage(start) {
-	return {
-		embed: {
-			color: 0x5865f2,
-			title: 'Start autohunt',
-			description: `Maximum available amount: **${global.toFancyNum(start.max)} cowoncy**`,
-		},
-		components: [
-			{
-				type: 1,
-				components: [
-					{
-						type: 2,
-						style: 1,
-						label: `Max (${start.max})`,
-						custom_id: 'hb_start_max',
-						disabled: start.max <= 0,
-					},
-					{ type: 2, style: 2, label: 'Other', custom_id: 'hb_start_other' },
-					{ type: 2, style: 2, label: 'Back', custom_id: 'hb_back' },
-				],
-			},
-		],
-	};
+/* Components V2 pages. Every page is a single container so buttons live inside the box. */
+
+function textPage(p, text) {
+	return v2Message(container([textDisplay(text)], { accentColor: p.config?.embed_color }));
+}
+
+function navButton(customId, label, style = ButtonStyle.Secondary, disabled) {
+	return button({ customId, label, style, disabled });
+}
+
+/**
+ * Converts the (possibly patreon-altered) huntbot embed into a container with the buttons.
+ */
+function mainPage(embed) {
+	const head = [];
+	if (embed.author?.name) head.push(`### ${embed.author.name}`);
+	if (embed.title) head.push(`### ${embed.title}`);
+	if (embed.description) head.push(embed.description);
+	if (!head.length) head.push('### HuntBot');
+
+	const thumbUrl = embed.thumbnail?.url;
+	const headText = head.join('\n');
+	const components = [
+		thumbUrl ? section(headText, thumbnail(thumbUrl)) : textDisplay(headText),
+		separator(),
+	];
+
+	const fields = embed.fields || [];
+	fields.forEach((field, index) => {
+		if (index > 0 && !!fields[index - 1].inline !== !!field.inline) components.push(separator());
+		components.push(textDisplay(`**${field.name}**\n${field.value ?? ''}`));
+	});
+
+	if (embed.footer?.text) components.push(separator(), textDisplay(`-# ${embed.footer.text}`));
+	components.push(
+		separator(),
+		actionRow(
+			navButton('hb_start', 'Start', ButtonStyle.Primary),
+			navButton('hb_upgrades', 'Upgrades')
+		)
+	);
+	return v2Message(container(components, { accentColor: embed.color }));
+}
+
+function startPage(start, notice) {
+	const components = [
+		textDisplay(
+			`### Start autohunt\nMaximum available amount: **${global.toFancyNum(start.max)} cowoncy**`
+		),
+	];
+	if (notice) components.push(textDisplay(notice));
+	components.push(
+		separator(),
+		actionRow(
+			navButton('hb_start_max', `Max (${start.max})`, ButtonStyle.Primary, start.max <= 0),
+			navButton('hb_start_other', 'Other'),
+			navButton('hb_back', 'Back')
+		)
+	);
+	return v2Message(container(components, { accentColor: 0x5865f2 }));
 }
 
 function upgradesPage(p, msg, stats) {
@@ -601,71 +642,52 @@ function upgradesPage(p, msg, stats) {
 		exp: 'Experience',
 		radar: 'Radar',
 	};
-	return {
-		embed: {
-			color: p.config.embed_color,
-			title: `${p.getName()}'s HuntBot upgrades`,
-			description: upgradeTraits
-				.map(
-					(trait) =>
-						`**${names[trait]}** — Level ${stats[trait].lvl}${stats[trait].max ? ' (MAX)' : ''}`
-				)
-				.join('\n'),
-			footer: { text: p.getUniqueName(msg.author) },
-		},
-		components: [
-			{
-				type: 1,
-				components: upgradeTraits.slice(0, 5).map((trait) => ({
-					type: 2,
-					style: 2,
-					label: names[trait],
-					custom_id: `hb_trait_${trait}`,
-				})),
-			},
-			{
-				type: 1,
-				components: [
-					{
-						type: 2,
-						style: 2,
-						label: names.radar,
-						custom_id: 'hb_trait_radar',
-					},
-					{ type: 2, style: 2, label: 'Back', custom_id: 'hb_back' },
-				],
-			},
-		],
-	};
+	const description = upgradeTraits
+		.map(
+			(trait) =>
+				`**${names[trait]}** — Level ${stats[trait].lvl}${stats[trait].max ? ' (MAX)' : ''}`
+		)
+		.join('\n');
+	return v2Message(
+		container(
+			[
+				textDisplay(`### ${p.getName()}'s HuntBot upgrades\n${description}`),
+				textDisplay(`-# ${p.getUniqueName(msg.author)}`),
+				separator(),
+				actionRow(
+					...upgradeTraits
+						.slice(0, 5)
+						.map((trait) => navButton(`hb_trait_${trait}`, names[trait]))
+				),
+				actionRow(navButton('hb_trait_radar', names.radar), navButton('hb_back', 'Back')),
+			],
+			{ accentColor: p.config.embed_color }
+		)
+	);
 }
 
 function traitPage(p, trait, stat) {
 	const nextLevel = stat.max
 		? 'Already at maximum level.'
 		: `Next level requires ${stat.maxxp - stat.currentxp} essence.`;
-	return {
-		embed: {
-			color: p.config.embed_color,
-			title: `${trait[0].toUpperCase()}${trait.slice(1)} upgrade`,
-			description: `Current level: **${stat.lvl}${stat.max ? ' (MAX)' : ''}**\n${nextLevel}`,
-		},
-		components: [
-			{
-				type: 1,
-				components: [
-					{
-						type: 2,
-						style: 1,
-						label: 'Next level',
-						custom_id: `hb_level_${trait}`,
-						disabled: stat.max,
-					},
-					{ type: 2, style: 2, label: 'Other', custom_id: `hb_other_${trait}` },
-					{ type: 2, style: 2, label: 'Back', custom_id: 'hb_upgrade_back' },
-				],
-			},
-		],
-	};
+	return v2Message(
+		container(
+			[
+				textDisplay(
+					`### ${trait[0].toUpperCase()}${trait.slice(1)} upgrade\nCurrent level: **${stat.lvl}${
+						stat.max ? ' (MAX)' : ''
+					}**\n${nextLevel}`
+				),
+				separator(),
+				actionRow(
+					navButton(`hb_level_${trait}`, 'Next level', ButtonStyle.Primary, stat.max),
+					navButton(`hb_other_${trait}`, 'Other'),
+					navButton('hb_upgrade_back', 'Back')
+				),
+			],
+			{ accentColor: p.config.embed_color }
+		)
+	);
 }
 
 function describeError(label, err, ack) {
@@ -702,17 +724,12 @@ async function sendCaptcha(p, password, text, cowoncy, existingChoices) {
 		}
 	}
 
-	const buttons = choices.map((choice, index) => ({
-		type: 2,
-		style: 2,
-		label: choice,
-		custom_id: `hb_captcha_${index}`,
-	}));
-	const components = [
-		{ type: 1, components: buttons.slice(0, 5) },
-		{ type: 1, components: buttons.slice(5) },
-	];
-	const message = await autohuntutil.captcha(p, password, text, components);
+	const buttons = choices.map((choice, index) =>
+		navButton(`hb_captcha_${index}`, choice, ButtonStyle.Primary)
+	);
+	// Two rows of three buttons
+	const rows = [actionRow(...buttons.slice(0, 3)), actionRow(...buttons.slice(3, 6))];
+	const message = await autohuntutil.captcha(p, password, text, rows);
 	const collector = p.interactionCollector.create(
 		message,
 		(_component, user) => user.id === p.msg.author.id,
@@ -726,21 +743,16 @@ async function sendCaptcha(p, password, text, cowoncy, existingChoices) {
 			const selected = Number(component.slice('hb_captcha_'.length));
 			if (choices[selected] === password) {
 				collector.stop();
-				await ack({ content: 'Correct CAPTCHA. Autohunt is starting.', components: [] });
+				await ack(textPage(p, 'Correct CAPTCHA. Autohunt is starting.'));
 				await runCommand(p, 'autohunt', [String(cowoncy), password]);
 				return;
 			}
 
-			await ack();
+			const wrongText = `**🚫 | ${p.getName()}**, That CAPTCHA answer was incorrect. Try again.`;
 			collector.stop();
-			await message.edit({ components: [] });
-			await sendCaptcha(
-				p,
-				password,
-				`**🚫 | ${p.getName()}**, That CAPTCHA answer was incorrect. Try again.`,
-				cowoncy,
-				choices
-			);
+			// Replace the answered captcha with a plain container (no buttons, no image)
+			await ack(textPage(p, wrongText));
+			await sendCaptcha(p, password, wrongText, cowoncy, choices);
 		} catch (err) {
 			console.error(describeError('HuntBot CAPTCHA interaction failed.', err, ack));
 			await p.send('The CAPTCHA could not be processed. Please try again.');
